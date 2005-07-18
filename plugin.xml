@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.openoffice.ide.eclipse.editors.UnoidlEditor"
+            default="true"
+            extensions="idl"
+            icon="icons/idl_file.gif"
+            id="org.openoffice.ide.eclipse.editors.UnoidlEditor"
+            name="UNO-IDL Editor"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.openoffice.ide.eclipse.preferences.MainPage"
+            name="OpenOffice.org plugin"
+            id="org.openoffice.ide.eclipse.preferences.main"/>
+      <page
+            class="org.openoffice.ide.eclipse.preferences.UnoidlEditorPage"
+            category="org.openoffice.ide.eclipse.preferences.main"
+            name="UNO-IDL Editor"
+            id="org.openoffice.ide.eclipse.preferences.unoidlEditor"/>
+      <page
+            class="org.openoffice.ide.eclipse.preferences.UnoSDKConfigPage"
+            category="org.openoffice.ide.eclipse.preferences.main"
+            id="org.openoffice.ide.eclipse.preferences.unosdkconfig"
+            name="SDK Configuration"/>
+   </extension>
+   
+    <extension
+   		 point="org.eclipse.ui.newWizards">
+   	  <category
+   	        id="org.openoffice.ide.eclipse"
+   	        name="UNO">
+   	  </category>
+      <wizard
+            canFinishEarly="true"
+            category="org.openoffice.ide.eclipse"
+            class="org.openoffice.ide.eclipse.wizards.NewUnoFileWizard"
+            hasPages="false"
+            icon="icons/idl_file.gif"
+            id="org.openoffice.ide.eclipse.newunofile"
+            name="UNO-IDL File"
+            project="false"/>
+      <wizard
+            canFinishEarly="true"
+            category="org.openoffice.ide.eclipse"
+            class="org.openoffice.ide.eclipse.wizards.NewUnoProjectWizard"
+            hasPages="true"
+            id="org.openoffice.ide.eclipse.newunoproject"
+            name="UNO-IDL Project"
+            project="true"/>
+   </extension>
+   <extension
+         id="org.openoffice.ide.eclipse.natures.unonature"
+         name="UNO Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.openoffice.ide.eclipse.internal.UnoidlProject"/>
+      </runtime>
+   </extension>
+</plugin>

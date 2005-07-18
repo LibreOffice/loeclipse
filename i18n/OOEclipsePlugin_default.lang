@@ -1,0 +1,25 @@
+SDK_NAME         = SDK name
+SDK_VERSION      = SDK version
+SDK_PATH         = Path to SDK
+OOO_PROGRAM_PATH = Path to OOo program path
+
+ADD              = Add
+DEL              = Del
+BROWSE           = Browse
+
+FILE_SELECT_TITLE        = Select a file
+DIR_SELECT_TITLE         = Select a directory
+SDK_CONFIG_DIALOG_TITLE  = OpenOffice.org SDK configuration
+
+EDITOR_COLORS_PREF   = UNO-IDL Editor color preferences
+KEYWORD              = Keyword
+TEXT			     = Default text
+STRING			     = String
+COMMENT			     = Default comment
+AUTODOC_COMMENT      = Autodoc UNO-IDL comment
+PREPROCESSOR_COMMAND = Preprocessor command
+XML_TAG              = XML tag
+MODIFIER             = Method / property modifier
+TYPE                 = Basic type
+
+ALL_FIELDS_FILLED    = All the fields have to be filled

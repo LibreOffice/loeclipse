@@ -1,0 +1,25 @@
+HOWTO Install this plugin
+
+  - Shutdown your eclipse environment
+  - Unzip the ooeclipseintegration.zip file
+  - Move the org.openoffice.ide.eclipse.<version>.jar file into the eclipse 
+    plugin directory.
+  - Launch Eclipse and that is done.
+
+
+FEATURES
+  
+  - UNO-IDL syntax highlighting
+  - SDK Configuration (in the preferences)
+
+COMING SOON
+ 
+  - Java code generation
+  - New UNO-project wizard
+  - New UNO-file wizard
+  - New UNO-Component wizard
+
+NOTA BENE
+
+  There are still many ideas to implement, but this will be quite enougth
+  to realize before 2005, 1th September.
