@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -244,6 +244,20 @@ public abstract class LabeledRow {
 		field.setVisible(visible);
 		if (browse != null){
 			browse.setVisible(visible);
+		}
+	}
+	
+	/**
+	 * Set the enabled state of the field and the browse button if
+	 * the latter exists.
+	 * 
+	 * @param enabled <code>true</code> activate the row, otherwise the
+	 *                row is desactivated
+	 */
+	public void setEnabled(boolean enabled){
+		field.setEnabled(enabled);
+		if (null != browse){
+			browse.setEnabled(enabled);
 		}
 	}
 }

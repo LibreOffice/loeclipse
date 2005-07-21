@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlEditor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -84,7 +84,6 @@ public class UnoidlEditor extends TextEditor {
 
 	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
-			// TODO: Doesn't work: fix update of display on pref change
 			sourceViewer.invalidateTextPresentation();
 		}
 	};

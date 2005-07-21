@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:24 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,13 +61,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.gui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -100,7 +93,7 @@ import org.openoffice.ide.eclipse.gui.rows.FileRow;
 import org.openoffice.ide.eclipse.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
-import org.openoffice.ide.eclipse.i18n.Translator;
+import org.openoffice.ide.eclipse.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.preferences.sdk.SDK;
 import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 import org.openoffice.ide.eclipse.preferences.sdk.SDKListener;
@@ -126,7 +119,7 @@ public class SDKTable extends Composite{
 	/**
 	 * Model of the table
 	 */
-	private SDKContainer sdks = new SDKContainer();
+	private SDKContainer sdks;
 	
 	/**
 	 * Table object
@@ -152,11 +145,6 @@ public class SDKTable extends Composite{
 	 * Temporary SDK for storing the values fetched from the dialog
 	 */
 	private SDK tmpsdk;
-	
-	/**
-	 * Plugin home relative path for the sdks configuration file
-	 */
-	private final static String SDKS_CONFIG = ".sdks_config";
 		
 	/**
 	 * Main constructor of the SDK Table. It's style can't be configured like other
@@ -167,6 +155,8 @@ public class SDKTable extends Composite{
 	 */
 	public SDKTable(Composite parent) {
 		super(parent, SWT.NONE);
+		
+		SDKContainer.getSDKContainer();
 		createContent();
 	}
 	
@@ -175,39 +165,7 @@ public class SDKTable extends Composite{
 	 */
 	public void getPreferences(){
 		
-		try {
-			// Loads the sdks config file into a properties object
-			String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
-			File file = new File(sdks_config_url+"/"+SDKS_CONFIG);
-			if (!file.exists()){
-				file.createNewFile();
-			}
-			
-			Properties sdksProperties = new Properties();
-		
-			sdksProperties.load(new FileInputStream(file));
-			
-			int i=0;
-			boolean found = false;
-			
-			do {
-				String name = sdksProperties.getProperty(OOEclipsePlugin.SDKNAME_PREFERENCE_KEY+i);
-				String version = sdksProperties.getProperty(OOEclipsePlugin.SDKVERSION_PREFERENCE_KEY+i);
-				String path = sdksProperties.getProperty(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i);
-				String ooopath = sdksProperties.getProperty(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i);
-				
-				found = !(null == name || null == version || null == path || null == ooopath);
-				i++;
-				
-				if (found){
-					SDK sdk = new SDK(name, version, path, ooopath);
-					sdks.addSDK(sdk);
-				}				
-			} while (found);
-			
-		} catch (IOException e) {
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // TODO i18n
-		}
+		sdks = SDKContainer.getSDKContainer();
 	}
 	
 	/**
@@ -216,30 +174,7 @@ public class SDKTable extends Composite{
 	 */
 	public void savePreferences(){
 		
-		Properties sdksProperties = new Properties();
-				
-		// Saving the new SDKs 
-		for (int j=0, length=sdks.getSDKCount(); j<length; j++){
-			SDK sdkj = sdks.getSDK(j);
-			sdksProperties.put(OOEclipsePlugin.SDKNAME_PREFERENCE_KEY+j, sdkj.name);
-			sdksProperties.put(OOEclipsePlugin.SDKVERSION_PREFERENCE_KEY+j, sdkj.version);
-			sdksProperties.put(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+j, sdkj.path);
-			sdksProperties.put(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+j, sdkj.oooProgramPath);
-		}
-		
-		try {
-			String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
-			File file = new File(sdks_config_url+"/"+SDKS_CONFIG);
-			if (!file.exists()){
-				file.createNewFile();
-			}
-			
-			sdksProperties.store(new FileOutputStream(file), "");
-		} catch (FileNotFoundException e) {
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
-		} catch (IOException e){
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
-		}
+		sdks.saveSDKs();
 	}
 	
 	/**
@@ -267,6 +202,8 @@ public class SDKTable extends Composite{
 		createTable();
 		createTableViewer();
 		createButtons();
+		
+		tableViewer.setInput(sdks);
 	}
 
 
@@ -299,8 +236,9 @@ public class SDKTable extends Composite{
 		ooopath.setResizable(false);
 		ooopath.setWidth(100); // Used to 'fix' the eclipse-GTK+ painting bug
 		
-		// TODO Bug found: works on Win32 platform, however, there is no event
-		//      Recieved on a Linux one.
+		// Bug found: works on Win32 platform, however, there is no event
+		// Recieved on a Linux one. This seems to work again... computer science
+		// is sometime full of mystery
 		
 		// Add a listener for each painting to get the computed width of the table
 		// and thus resize all the columns at a constant rate
@@ -353,12 +291,9 @@ public class SDKTable extends Composite{
 					// Get the double clicked SDK line
 					SDK sdk = (SDK)((IStructuredSelection)event.getSelection()).getFirstElement();
 					
-					// fetches the sdk position for later update
-					int i = sdks.indexOf(sdk);
-					
 					// Launch the dialog
-					sdk = openDialog(sdk);
-					sdks.updateSDK(i, sdk);
+					sdk = openDialog(sdk, true);
+					sdks.updateSDK(sdk.name, sdk);
 				}
 			}
 			
@@ -374,12 +309,12 @@ public class SDKTable extends Composite{
 	 * @param sdk
 	 * @return
 	 */
-	protected SDK openDialog(SDK sdk){
+	protected SDK openDialog(SDK sdk, boolean editing){
 		
 		// Gets the shell of the active eclipse window
 		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 		
-		SDKDialog dialog = new SDKDialog(shell, sdk);
+		SDKDialog dialog = new SDKDialog(shell, sdk, editing);
 		if (SDKDialog.OK == dialog.open()){
 			// The user validates his choice, perform the changes
 			SDK newSDK = tmpsdk;
@@ -405,9 +340,8 @@ public class SDKTable extends Composite{
 	
 	private void createButtons() {
 		// Creates the two buttons ADD and DEL
-		Translator translator = OOEclipsePlugin.getDefault().getTranslator();
 		add = new Button(this, SWT.FLAT);
-		add.setText(translator.getString(I18nConstants.ADD));
+		add.setText(OOEclipsePlugin.getTranslationString(I18nConstants.ADD));
 		GridData gdAdd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
 				                      GridData.HORIZONTAL_ALIGN_FILL);
 		add.setLayoutData(gdAdd);
@@ -415,14 +349,14 @@ public class SDKTable extends Composite{
 
 			public void widgetSelected(SelectionEvent e) {
 				// Launch add SDK dialog
-				SDK sdk = openDialog(null);
+				SDK sdk = openDialog(null, false);
 				sdks.addSDK(sdk);
 			}
 		});
 		
 		
 		del = new Button(this, SWT.FLAT);
-		del.setText(translator.getString(I18nConstants.DEL));
+		del.setText(OOEclipsePlugin.getTranslationString(I18nConstants.DEL));
 		GridData gdDel = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
                 					  GridData.HORIZONTAL_ALIGN_FILL);
 		del.setLayoutData(gdDel);
@@ -448,7 +382,9 @@ public class SDKTable extends Composite{
 	class SDKContentProvider implements IStructuredContentProvider, SDKListener {
 		
 		public SDKContentProvider() {
-			sdks.addListener(this);
+			if (null == sdks){
+				sdks = SDKContainer.getSDKContainer();
+			}
 		}
 
 		public Object[] getElements(Object inputElement) {
@@ -496,17 +432,10 @@ public class SDKTable extends Composite{
 			table.redraw();
 		}
 
-		public void SDKUpdated(int i, SDK sdk) {
-			SDK oldSDK = (SDK)tableViewer.getElementAt(i);
-			if (null != oldSDK){
-				
-				oldSDK.name = sdk.name;
-				oldSDK.version = sdk.version;
-				oldSDK.path = sdk.path;
-				oldSDK.oooProgramPath = sdk.oooProgramPath;
-				
-				tableViewer.update(oldSDK, null);
-			}
+		public void SDKUpdated(SDK sdk) {
+			// Note that we can do this only because the SDK Container guarantees
+			// that the reference of the sdk will not change during an update
+			tableViewer.update(sdk, null);
 		}
 	}
 	
@@ -559,13 +488,17 @@ public class SDKTable extends Composite{
 		
 		private SDK sdk;
 		
+		private boolean editing = false;
+		
 		protected SDKDialog(Shell parentShell) {
-			this(parentShell, null);
+			this(parentShell, null, false);
 		}
 		
-		protected SDKDialog(Shell parentShell, SDK sdk) {
+		protected SDKDialog(Shell parentShell, SDK sdk, boolean editing) {
 			super(parentShell);
 			this.sdk = sdk;
+			
+			this.editing = editing;
 			
 			setBlockOnOpen(true); // This dialog is a modal one
 			setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.SDK_CONFIG_DIALOG_TITLE));
@@ -579,7 +512,7 @@ public class SDKTable extends Composite{
 			
 			Label image = new Label(body, SWT.RIGHT);
 			image.setBackground(new Color(getDisplay(), 255, 255, 255)); // White background
-			image.setImage(OOEclipsePlugin.getImageDescriptor("icons/OOoSDK.png").createImage());
+			image.setImage(OOEclipsePlugin.getImage(ImagesConstants.SDK_DIALOG_IMAGE));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
 			image.setLayoutData(gd);
@@ -588,6 +521,9 @@ public class SDKTable extends Composite{
 			sdknameRow = new TextRow(body, P_SDK_NAME, 
 					OOEclipsePlugin.getTranslationString(I18nConstants.SDK_NAME));
 			sdknameRow.setFieldChangedListener(this);
+			if (editing){
+				sdknameRow.setEnabled(false);
+			}
 			
 			sdkversionRow = new TextRow(body, P_SDK_VERSION, 
 					OOEclipsePlugin.getTranslationString(I18nConstants.SDK_VERSION));
@@ -619,6 +555,8 @@ public class SDKTable extends Composite{
 		protected void configureShell(Shell newShell) {
 
 			super.configureShell(newShell);
+			
+			// TODO somtimes the window is too small on Linux
 			newShell.setSize(400, 270);
 			newShell.setText(OOEclipsePlugin.getTranslationString(I18nConstants.SDK_CONFIG_DIALOG_TITLE));
 		}

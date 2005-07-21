@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,26 +61,121 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.wizards;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.model.UnoidlProject;
+import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 
 public class NewUnoProjectWizard extends Wizard implements INewWizard {
+	
+	private NewUnoProjectPage page;
 
 	public NewUnoProjectWizard() {
 		super();
-		// TODO Auto-generated constructor stub
+		
+		page = new NewUnoProjectPage();
+		addPage(page);
+		setForcePreviousAndNextButtons(false);
 	}
 
 	public boolean performFinish() {
-		// TODO Auto-generated method stub
-		return false;
+		
+		final IProject project = page.getProjectHandle();
+		final String prefix = page.getPrefix();
+		final String outputExt = page.getOutputExt();
+		final int language = page.getChosenLanguage();
+		final String sdkname = page.getSDKName();
+		
+		// Instantiation of a new thread with a Progress monitor to do the job.
+		IRunnableWithProgress op = new IRunnableWithProgress (){
+
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				// Creates the new project
+				createProject(project, monitor);
+				
+				// Create the ouput and idl packages
+				try {
+					UnoidlProject unoProject = (UnoidlProject)project.getNature(
+														OOEclipsePlugin.UNO_NATURE_ID);
+					unoProject.setCompanyPrefix(prefix);
+					unoProject.setOutputExtension(outputExt);
+					unoProject.setOuputLanguage(language);
+					unoProject.setSdk(SDKContainer.getSDKContainer().getSDK(sdkname));
+					
+					// Creation of the unoidl package
+					unoProject.createUnoidlPackage(monitor);
+					
+					// Creation of the Code Packages
+					unoProject.createCodePackage(monitor);
+					
+				} catch (CoreException e) {
+					OOEclipsePlugin.logError("Not a Unoidl project", e); //TODO i18n
+				}
+				
+			}			
+		};
+		
+		try {
+			getContainer().run(true, true, op);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace(); // TODO remove it
+			OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // TODO i18n
+		} catch (InterruptedException e) {
+			// Cancel pressed
+		}
+		
+		return true;
+	}
+
+	/**
+	 * This method creates and opens the project with the Java and Uno natures
+	 * 
+	 * @param project project to create
+	 * @param monitor monitor used to report the creation state
+	 */
+	protected void createProject(IProject project, IProgressMonitor monitor) {
+		try {
+			if (!project.exists()){
+				project.create(monitor);
+			}
+			
+			if (!project.isOpen()){
+				project.open(monitor);
+			}
+			
+			IProjectDescription description = project.getDescription();
+			String[] natureIds = description.getNatureIds();
+			String[] newNatureIds = new String[natureIds.length+1];
+			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
+			
+			// Adding the Uno Nature
+			newNatureIds[natureIds.length] = OOEclipsePlugin.UNO_NATURE_ID;
+			
+			description.setNatureIds(newNatureIds);
+			project.setDescription(description, monitor);
+			
+			monitor.worked(1);  // Tells the monitor that the process ended with no error
+			
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.NATURE_SET_FAILED), e);
+			monitor.worked(0);
+		}
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// TODO Auto-generated method stub
-
+		// Nothing to do
 	}
 
 }

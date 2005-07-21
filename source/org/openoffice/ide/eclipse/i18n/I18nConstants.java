@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:35:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -67,7 +67,11 @@ public class I18nConstants {
 	public static final String SDK_VERSION       = "SDK_VERSION";
 	public static final String SDK_PATH          = "SDK_PATH";
 	public static final String OOO_PROGRAM_PATH  = "OOO_PROGRAM_PATH";
+	public static final String USED_SDK          = "USED_SDK";
 	
+	public static final String COMPANY_PREFIX = "COMPANY_PREFIX";
+	public static final String OUTPUT_EXT = "OUTPUT_EXT";
+	public static final String PROG_LANGUAGE = "PROG_LANGUAGE";
 	
 	public static final String ADD = "ADD";
 	public static final String DEL = "DEL";
@@ -77,6 +81,10 @@ public class I18nConstants {
 	public static final String FILE_SELECT_TITLE = "FILE_SELECT_TITLE";
 	public static final String DIR_SELECT_TITLE = "DIR_SELECT_TITLE";
 	public static final String SDK_CONFIG_DIALOG_TITLE = "SDK_CONFIG_DIALOG_TITLE";
+	public static final String NEW_PROJECT_TITLE = "NEW_PROJECT_TITLE";
+	public static final String NEW_PROJECT_MESSAGE = "NEW_PROJECT_MESSAGE";
+	public static final String NEW_FILE_TITLE = "NEW_FILE_TITLE";
+	public static final String NEW_FILE_MESSAGE = "NEW_FILE_MESSAGE";
 	
 	
 	public static final String EDITOR_COLORS_PREF = "EDITOR_COLORS_PREF";
@@ -92,5 +100,21 @@ public class I18nConstants {
 	
 	// Error messages
 	public static final String ALL_FIELDS_FILLED = "ALL_FIELDS_FILLED";
+	public static final String FILE_UNREADABLE = "FILE_UNREADABLE";
+	public static final String FILE_NOT_FOUND = "FILE_NOT_FOUND";
+	public static final String COMPANY_PREFIX_ERROR = "COMPANY_PREFIX_ERROR";
+	public static final String OUTPUT_EXT_ERROR = "OUTPUT_EXT_ERROR";
+	public static final String NATURE_SET_FAILED = "NATURE_SET_FAILED";
+	public static final String CREATE_FILE_FAILED = "CREATE_FILE_FAILED";
+	public static final String NOT_IDL_EXTENSION = "NOT_IDL_EXTENSION";
+	public static final String NOT_IDL_CAPABLE = "NOT_IDL_CAPABLE";
+	
+	// Programming languages names
+	public static final String JAVA = "JAVA";
+	public static final String CPP = "CPP";
+	public static final String PYTHON = "PYTHON";
+	
+	// Others
+	public static final String WRITE_CODE_HERE = "WRITE_CODE_HERE";
 
 }

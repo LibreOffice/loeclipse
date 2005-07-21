@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlConfiguration.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -174,7 +174,6 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		// TODO Auto-generated method stub
 		return super.getContentAssistant(sourceViewer);
 	}
 }

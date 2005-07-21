@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:35:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,6 +61,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.core.runtime.Status;
@@ -68,7 +69,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.openoffice.ide.eclipse.editors.Colors;
+import org.openoffice.ide.eclipse.i18n.ImageManager;
 import org.openoffice.ide.eclipse.i18n.Translator;
+import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -87,18 +90,24 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 	/**
 	 * uno nature id
 	 */
-	public static final String UNO_NATURE_ID = OOECLIPSE_PLUGIN_ID + ".natures.uno";
+	// HELP The nature id is the natures extension point id appened to the plugin id
+	public static final String UNO_NATURE_ID = OOECLIPSE_PLUGIN_ID + ".unonature";
 	
 	public static final String SDKNAME_PREFERENCE_KEY    = "sdkname";
 	public static final String SDKVERSION_PREFERENCE_KEY = "sdkversion";
 	public static final String SDKPATH_PREFERENCE_KEY    = "sdkpath";
 	public static final String OOOPATH_PREFERENCE_KEY    = "ooopath";
 
+	public static final String UNO_EDITOR_ID = OOECLIPSE_PLUGIN_ID + ".editors.UnoidlEditor";
+
 	// The shared instance.
 	private static OOEclipsePlugin plugin;
 	
 	// An instance of the translator
 	private Translator translator;
+	
+	// An instance of the imageManager
+	private ImageManager imageManager;
 	
 	/**
 	 * The constructor.
@@ -113,6 +122,9 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		setDefaultPreferences();
+		
+		// Creates the SDK container
+		SDKContainer.getSDKContainer();
 	}
 
 	/**
@@ -136,7 +148,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 	 * 
 	 * @return the translator
 	 */
-	public Translator getTranslator(){
+	protected Translator getTranslator(){
 		
 		// HELP Do not access to the translator directly, even if it is
 	    //      supposed to be non-null: it could cause strange errors
@@ -146,18 +158,6 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 		}
 		
 		return translator;
-	}
-	
-	
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.openoffice.ide.eclipse", path);
 	}
 	
 	/**
@@ -174,6 +174,47 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 	 */
 	public static String getTranslationString(String key) {
 		return getDefault().getTranslator().getString(key);
+	}
+	
+	/**
+	 * Returns the image manager. If it is null, this method wil create it
+	 * before using it.
+	 * 
+	 * @return the image manager
+	 */
+	protected ImageManager getImageManager(){
+		if (null == imageManager){
+			imageManager = new ImageManager();
+		}
+		
+		return imageManager;
+	}
+	
+	/**
+	 * Returns the image corresponding to the provided key. If the image file
+	 * or the key doesn't exists, the method returns <code>null</code>.
+	 * 
+	 * @param key Key designing the image 
+	 * @return the image associated to the key
+	 * 
+	 * @see ImageManager#getImage(String)
+	 */
+	public static Image getImage(String key){
+		return getDefault().getImageManager().getImage(key);
+	}
+	
+	/**
+	 * Returns the image descriptor corresponding to the provided key. 
+	 * If the image file or the key doesn't exists, the method returns 
+	 * <code>null</code>.
+	 * 
+	 * @param key Key designing the image 
+	 * @return the image descriptor associated to the key
+	 * 
+	 * @see ImageManager#getImageDescriptor(String)
+	 */
+	public static ImageDescriptor getImageDescriptor(String key) {
+		return getDefault().getImageManager().getImageDescriptor(key);
 	}
 	
 	/**

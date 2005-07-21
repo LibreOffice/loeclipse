@@ -40,7 +40,7 @@
             canFinishEarly="true"
             category="org.openoffice.ide.eclipse"
             class="org.openoffice.ide.eclipse.wizards.NewUnoFileWizard"
-            hasPages="false"
+            hasPages="true"
             icon="icons/idl_file.gif"
             id="org.openoffice.ide.eclipse.newunofile"
             name="UNO-IDL File"
@@ -50,16 +50,31 @@
             category="org.openoffice.ide.eclipse"
             class="org.openoffice.ide.eclipse.wizards.NewUnoProjectWizard"
             hasPages="true"
+            icon="icons/uno_prj.gif"
             id="org.openoffice.ide.eclipse.newunoproject"
             name="UNO-IDL Project"
             project="true"/>
    </extension>
    <extension
-         id="org.openoffice.ide.eclipse.natures.unonature"
+         id="unonature"
          name="UNO Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
-         <run class="org.openoffice.ide.eclipse.internal.UnoidlProject"/>
+         <run class="org.openoffice.ide.eclipse.model.UnoidlProject"/>
       </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="org.openoffice.ide.eclipse.gui.UnoidlDecorator"
+            id="org.openoffice.ide.eclipse.decorator"
+            label="UNO decorator"
+            state="true">
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IResource"/>
+         </enablement>
+         This decorator provides new icons to distinguish UNO-IDL resources from the others.
+      </decorator>
    </extension>
 </plugin>

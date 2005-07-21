@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKListener.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:22 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -82,8 +82,7 @@ public interface SDKListener {
 	/**
 	 * Method fired when an SDK has been updated in the container
 	 * 
-	 * @param i index of the updated sdk
 	 * @param sdk new value of the sdk
 	 */
-	public void SDKUpdated(int i, SDK sdk);
+	public void SDKUpdated(SDK sdk);
 }
