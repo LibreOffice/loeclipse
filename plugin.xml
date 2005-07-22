@@ -9,32 +9,32 @@
             extensions="idl"
             icon="icons/idl_file.gif"
             id="org.openoffice.ide.eclipse.editors.UnoidlEditor"
-            name="UNO-IDL Editor"/>
+            name="%editor.name"/>
    </extension>
    
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="org.openoffice.ide.eclipse.preferences.MainPage"
-            name="OpenOffice.org plugin"
+            name="%preferences.oooplugin"
             id="org.openoffice.ide.eclipse.preferences.main"/>
       <page
             class="org.openoffice.ide.eclipse.preferences.UnoidlEditorPage"
             category="org.openoffice.ide.eclipse.preferences.main"
-            name="UNO-IDL Editor"
+            name="%preferences.unoidleditor"
             id="org.openoffice.ide.eclipse.preferences.unoidlEditor"/>
       <page
             class="org.openoffice.ide.eclipse.preferences.UnoSDKConfigPage"
             category="org.openoffice.ide.eclipse.preferences.main"
             id="org.openoffice.ide.eclipse.preferences.unosdkconfig"
-            name="SDK Configuration"/>
+            name="%preferences.sdkconfig"/>
    </extension>
    
     <extension
    		 point="org.eclipse.ui.newWizards">
    	  <category
    	        id="org.openoffice.ide.eclipse"
-   	        name="UNO">
+   	        name="%wizards">
    	  </category>
       <wizard
             canFinishEarly="true"
@@ -43,7 +43,7 @@
             hasPages="true"
             icon="icons/idl_file.gif"
             id="org.openoffice.ide.eclipse.newunofile"
-            name="UNO-IDL File"
+            name="%wizards.unoidlfile"
             project="false"/>
       <wizard
             canFinishEarly="true"
@@ -52,7 +52,7 @@
             hasPages="true"
             icon="icons/uno_prj.gif"
             id="org.openoffice.ide.eclipse.newunoproject"
-            name="UNO-IDL Project"
+            name="%wizards.unoidlproject"
             project="true"/>
    </extension>
    <extension
@@ -62,6 +62,7 @@
       <runtime>
          <run class="org.openoffice.ide.eclipse.model.UnoidlProject"/>
       </runtime>
+      <builder id="org.openoffice.ide.eclipse.javamaker"/>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
@@ -69,12 +70,50 @@
             adaptable="true"
             class="org.openoffice.ide.eclipse.gui.UnoidlDecorator"
             id="org.openoffice.ide.eclipse.decorator"
-            label="UNO decorator"
+            label="%decorator.name"
             state="true">
          <enablement>
             <objectClass name="org.eclipse.core.resources.IResource"/>
          </enablement>
-         This decorator provides new icons to distinguish UNO-IDL resources from the others.
+         <description>
+            
+         </description>
+         %decorator.description
       </decorator>
+   </extension>
+   <extension
+         id="javamaker"
+         name="%builders.javamaker"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            isConfigurable="false">
+         <run class="org.openoffice.ide.eclipse.builders.JavamakerBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="%newactions.description"
+            id="org.openoffice.ide.eclipse.newactions"
+            label="%newactions.name"
+            visible="true">
+         <action
+               class="org.openoffice.ide.eclipse.actions.NewUnoProjectAction"
+               icon="icons/newunoproject.gif"
+               id="org.openoffice.ide.eclipse.newactions.newproject"
+               label="%newactions.newproject.name"
+               style="push"
+               toolbarPath="uno"
+               tooltip="%newactions.newproject.tooltip"/>
+         <action
+               class="org.openoffice.ide.eclipse.actions.NewUnoFileAction"
+               icon="icons/newunofile.gif"
+               id="org.openoffice.ide.eclipse.newactions.newfile"
+               label="%newactions.newfile.name"
+               style="push"
+               toolbarPath="uno"
+               tooltip="%newactions.newfile.tooltip"/>
+      </actionSet>
    </extension>
 </plugin>
