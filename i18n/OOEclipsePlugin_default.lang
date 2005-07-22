@@ -1,7 +1,7 @@
 SDK_NAME         = SDK name
 SDK_VERSION      = SDK version
 SDK_PATH         = Path to SDK
-OOO_PROGRAM_PATH = Path to OOo program path
+OOO_PROGRAM_PATH = Path to OOo classes path
 USED_SDK         = Used SDK
 
 COMPANY_PREFIX   = Company prefix
@@ -39,7 +39,10 @@ OUTPUT_EXT_ERROR     = Implementation extension is a single word which begin wit
 NATURE_SET_FAILED    = Impossible to set project natures
 CREATE_FILE_FAILED   = Impossible to create file: 
 NOT_IDL_EXTENSION    = A UNO-IDL file has the .idl extension
-NOT_IDL_CAPABLE       Not a UNO-IDL capable folder
+NOT_IDL_CAPABLE      = Not a UNO-IDL capable folder
+SET_IDLLOCATION_FAILED = Setting IDL Location failed: 
+SET_OUTPUTEXT_FAILED   = Setting Output extension failed: 
+SET_SDKNAME_FAILED     = Setting SDK failed: 
 
 JAVA                 = Java
 CPP                  = C++

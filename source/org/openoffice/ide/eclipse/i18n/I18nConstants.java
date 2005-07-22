@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -108,6 +108,9 @@ public class I18nConstants {
 	public static final String CREATE_FILE_FAILED = "CREATE_FILE_FAILED";
 	public static final String NOT_IDL_EXTENSION = "NOT_IDL_EXTENSION";
 	public static final String NOT_IDL_CAPABLE = "NOT_IDL_CAPABLE";
+	public static final String SET_IDLLOCATION_FAILED = "SET_IDLLOCATION_FAILED";
+	public static final String SET_OUTPUTEXT_FAILED = "SET_OUTPUTEXT_FAILED";
+	public static final String SET_SDKNAME_FAILED = "SET_SDKNAME_FAILED";
 	
 	// Programming languages names
 	public static final String JAVA = "JAVA";

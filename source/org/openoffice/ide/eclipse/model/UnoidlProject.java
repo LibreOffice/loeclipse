@@ -1,3 +1,64 @@
+/*************************************************************************
+ *
+ * $RCSfile: UnoidlProject.java,v $
+ *
+ * $Revision: 1.2 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:10 $
+ *
+ * The Contents of this file are made available subject to the terms of
+ * either of the following licenses
+ *
+ *     - GNU Lesser General Public License Version 2.1
+ *     - Sun Industry Standards Source License Version 1.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ *
+ *
+ * Sun Industry Standards Source License Version 1.1
+ * =================================================
+ * The contents of this file are subject to the Sun Industry Standards
+ * Source License Version 1.1 (the "License"); You may not use this file
+ * except in compliance with the License. You may obtain a copy of the
+ * License at http://www.openoffice.org/license.html.
+ *
+ * Software provided under this License is provided on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
+ * WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
+ * MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
+ * See the License for the specific provisions governing your rights and
+ * obligations concerning the Software.
+ *
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
+ *
+ ************************************************************************/
 package org.openoffice.ide.eclipse.model;
 
 import java.io.File;
@@ -7,6 +68,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,6 +117,33 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	 */
 	public static final String IDL_FOLDER = "idlfolder";
 	
+	/**
+	 * <code>org.openoffice.ide.eclipse.idllocation</code> is a
+	 * persistent project property that stores the idl location
+	 */
+	public static final String IDL_LOCATION = "idllocation";
+	
+	/**
+	 * <code>org.openoffice.ide.eclipse.ouputextension</code> 
+	 * is a persistent project property that stores the output
+	 * extension
+	 */
+	public static final String OUTPUT_EXT = "outputextension";
+
+	/**
+	 * <code>org.openoffice.ide.eclipse.sdkname</code> 
+	 * is a persistent project property that stores the 
+	 * sdk name
+	 */
+	public static final String SDK_NAME = "sdkname";
+	
+	/**
+	 * <code>org.openoffice.ide.eclipse.unoproject</code> 
+	 * is a persistent project property that indicates that 
+	 * the project supports the uno nature
+	 */
+	public final static String UNO_PROJECT = "unoproject";
+	
 	
 	/**
 	 * Local reference to the associated project resource
@@ -86,6 +175,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		super();
 		
 		SDKContainer.getSDKContainer().addListener(this);
+		
 	}
 	
 	//------------ Unoidl properties Getters and Setters
@@ -93,10 +183,15 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	/**
 	 * Returns the project relative path of the base containing the idl definitions
 	 * 
-	 * @return IPath to the idl base folder
+	 * @return IPath to the idl base folder, or <code>null</code> if the company prefix is not set
 	 */
 	public IPath getUnoidlLocation(){
-		return project.getFolder(companyPrefix.replace('.', '/')).getProjectRelativePath();
+		IPath result = null;
+		
+		if (null != companyPrefix){
+			result = project.getFolder(companyPrefix.replace('.', '/')).getProjectRelativePath();
+		}
+		return result;
 	}
 	
 	/**
@@ -106,6 +201,15 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	 */
 	public void setCompanyPrefix(String prefix){
 		companyPrefix = prefix;
+		try {
+			getProject().setPersistentProperty(
+					new QualifiedName(
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							IDL_LOCATION), prefix);
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.SET_IDLLOCATION_FAILED)+getProject().getName(), e);
+		}
 	}
 	
 	/**
@@ -115,6 +219,15 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	 */
 	public void setOutputExtension(String outputExt){
 		outputExtension = outputExt;
+		try {
+			getProject().setPersistentProperty(
+					new QualifiedName(
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							OUTPUT_EXT), outputExtension);
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.SET_OUTPUTEXT_FAILED)+getProject().getName(), e);
+		}
 	}
 	
 	/**
@@ -143,6 +256,15 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	 */
 	public void setSdk(SDK sdk) {
 		this.sdk = sdk;
+		try {
+			getProject().setPersistentProperty(
+					new QualifiedName(
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							SDK_NAME), sdk.name);
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.SET_SDKNAME_FAILED)+getProject().getName(), e);
+		}
 	}
 	
 	public int getOutputLanguage(){
@@ -173,6 +295,20 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
 	public void configure() throws CoreException {
+		
+		// Load all the persistent properties into the members
+		String sdkName = getProject().getPersistentProperty(new QualifiedName(
+				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, SDK_NAME));
+		sdk = SDKContainer.getSDKContainer().getSDK(sdkName);
+		
+		String idllocation = getProject().getPersistentProperty(new QualifiedName(
+				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IDL_LOCATION));
+		companyPrefix = idllocation;
+		
+		
+		String outputExt = getProject().getPersistentProperty(new QualifiedName(
+				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OUTPUT_EXT));
+		outputExtension = outputExt;
 	}
 
 	/*
@@ -446,5 +582,62 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		}
 		
 		return jarsPath;
+	}
+	
+	/**
+	 * 
+	 *
+	 */
+	public void setIdlProperty(){
+	
+			// Get the children of the prefix company folder
+			IPath prefixFolder = getUnoidlLocation();
+			if (null != prefixFolder){
+				IFolder unoidlFolder = getProject().getFolder(prefixFolder);
+			
+				recurseSetIdlProperty(unoidlFolder);
+			}
+	}
+	
+	/**
+	 * 
+	 * @param container
+	 */
+	private void recurseSetIdlProperty(IFolder container){
+
+		try {
+
+			if (container.exists()){
+				IResource[] children = container.members();
+				String codeLocation = getCodeLocation().toString();
+				
+				for (int i=0, length=children.length; i<length; i++){
+				
+					IResource child = children[i];
+					String childPath = child.getProjectRelativePath().toString(); 
+					
+					// if the child is a folder that is not contained in the code location
+					// set it's unoidl property to true
+					// and recurse
+					if (IResource.FOLDER == child.getType() && 
+						!childPath.endsWith(codeLocation)){
+						
+						IFolder folder = (IFolder)child;
+						
+						// Sets the property
+						folder.setPersistentProperty(
+								new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+										          IDL_FOLDER),
+							    "true");
+						
+						// Recurse
+						recurseSetIdlProperty(folder);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError("Cannot get children of the folder:"+
+					 container.getName(), e);   // TODO i18n
+		}
 	}
 }

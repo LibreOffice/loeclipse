@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlWordDetector.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:35:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -75,23 +75,29 @@ public class UnoidlWordDetector implements IWordDetector {
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 	 */
 	public boolean isWordStart(char c) {
-	    if (c >= 'a' && c <= 'z')
-	        return true;
-	    if (c >= 'A' && c <= 'Z')
-	        return true;
-	    if (c == '_')
-	        return true;
-	    return false;
+		boolean result = false;
+		
+	    if ((c >= 'a' && c <= 'z') || 
+	        (c == '.') ||
+	        (c >= 'A' && c <= 'Z')||
+	        (c == '_')){
+	    	
+	    	result = true;
+	    	
+	    }
+	    return result;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 	 */
 	public boolean isWordPart(char c) {
-	    if (isWordStart(c))
-	        return true;
-	    if (c >= '0' && c <= '9')
-	        return true;
-	    return false;
+		boolean result = false;
+		
+	    if (isWordStart(c) || (c >= '0' && c <= '9')){
+	    	result = true;
+	    }
+	     
+	    return result;
 	}
 }

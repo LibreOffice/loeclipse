@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoidlSyntax.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -70,12 +70,13 @@ package org.openoffice.ide.eclipse.editors.syntax;
 public interface IUnoidlSyntax {
 	
 	public static final String[] RESERVED_WORDS = {
+		"get",            // new with the OpenOffice.org 2.0 SDK 
+		"set",			  // new with the OpenOffice.org 2.0 SDK 
 		"needs",
 		"observe",
 		"removable",
 		"service",
 		"singleton",
-		"transcient",
 		"type",
         "module",
         "interface",
@@ -92,6 +93,7 @@ public interface IUnoidlSyntax {
 	};
 	
 	public static final String[] MODIFIERS = {
+		"published",         // new with the OpenOffice.org 2.0 SDK 
 		"bound",
 		"constrained",
 		"maybeambigious",
@@ -102,7 +104,8 @@ public interface IUnoidlSyntax {
 		"property",
         "readonly",
         "in", "out", "inout",
-        "attribute"
+        "attribute",
+		"transcient"
 	};
 
 	public static final String[] CONSTANTS = {
@@ -127,6 +130,8 @@ public interface IUnoidlSyntax {
         "void",
         "typedef",
         "sequence",
-        "unsigned"
+        "unsigned",
+        "...",
+        "any..."       // in the uno idl grammar, there could be a space, or not
 	};
 }

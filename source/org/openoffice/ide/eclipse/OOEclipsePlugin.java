@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:10 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -64,6 +64,13 @@ package org.openoffice.ide.eclipse;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -71,6 +78,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.openoffice.ide.eclipse.editors.Colors;
 import org.openoffice.ide.eclipse.i18n.ImageManager;
 import org.openoffice.ide.eclipse.i18n.Translator;
+import org.openoffice.ide.eclipse.model.UnoidlProject;
 import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 import org.osgi.framework.BundleContext;
 
@@ -80,7 +88,7 @@ import org.osgi.framework.BundleContext;
  * @author cbosdonnat
  *
  */
-public class OOEclipsePlugin extends AbstractUIPlugin {
+public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChangeListener {
 
 	/**
 	 * ooeclipseintegration plugin id
@@ -125,6 +133,20 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 		
 		// Creates the SDK container
 		SDKContainer.getSDKContainer();
+		
+		// TODO Loads each uno Nature
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i=0, length=projects.length; i<length; i++){
+			IProject project = projects[i];
+			if (project.hasNature(UNO_NATURE_ID)){
+				UnoidlProject unoproject = (UnoidlProject)project.getNature(UNO_NATURE_ID);
+				unoproject.configure();
+			}
+		}
+		
+		// Add a listener to the resources changes of the workspace
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
+				IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -133,6 +155,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
+		
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
 	/**
@@ -275,5 +299,39 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 				message,
 				e));
 	}
+
+	//--------------- Resources changing listener method
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		
+		if (IResourceChangeEvent.POST_CHANGE == event.getType()){
+			// TODO Handle the addition of folders in a UNO-IDL capable folder
+			
+			// Extract all the additions among the changes
+			IResourceDelta delta = event.getDelta();
+			IResourceDelta[] added = delta.getAffectedChildren();
+						
+			// In all the added resources, process the projects
+			for (int i=0, length=added.length; i<length; i++){
+				IResourceDelta addedi = added[i];
+				
+				// Get the project
+				IResource resource = addedi.getResource();
+				IProject project = resource.getProject();
+				
+				try{
+					if (project.hasNature(UNO_NATURE_ID)){
+						((UnoidlProject)project.getNature(UNO_NATURE_ID)).
+														setIdlProperty();
+					}
+				} catch (CoreException e){
+					// Do nothing
+				}
+			}
+		}
+	}
 }

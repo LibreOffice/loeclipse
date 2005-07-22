@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: ImagesConstants.java,v $
+ * $RCSfile: JavamakerBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,15 +59,26 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.i18n;
+package org.openoffice.ide.eclipse.builders;
 
-public class ImagesConstants {
+import java.util.Map;
 
-	public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE";
-	public static final String ERROR = "ERROR";
-	public static final String IDL_FOLDER = "IDL_FOLDER";
-	public static final String UNO_PROJECT = "UNO_PROJECT";
-	public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ";
-	public static final String NEWFILE_WIZ = "NEWFILE_WIZ";
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+public class JavamakerBuilder extends IncrementalProjectBuilder {
+
+	public JavamakerBuilder() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+			throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

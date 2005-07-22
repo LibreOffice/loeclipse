@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoSDKConfigPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:35:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -102,6 +102,11 @@ public class UnoSDKConfigPage extends PreferencePage implements
 		table.savePreferences();
 		
 		return true;
+	}
+	
+	public void dispose() {
+		table.dispose();
+		super.dispose();
 	}
 	
 	/**

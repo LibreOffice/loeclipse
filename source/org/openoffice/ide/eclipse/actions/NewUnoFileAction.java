@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: ImagesConstants.java,v $
+ * $RCSfile: NewUnoFileAction.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:08 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,15 +59,39 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.i18n;
+package org.openoffice.ide.eclipse.actions;
 
-public class ImagesConstants {
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.openoffice.ide.eclipse.wizards.NewUnoFileWizard;
 
-	public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE";
-	public static final String ERROR = "ERROR";
-	public static final String IDL_FOLDER = "IDL_FOLDER";
-	public static final String UNO_PROJECT = "UNO_PROJECT";
-	public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ";
-	public static final String NEWFILE_WIZ = "NEWFILE_WIZ";
+public class NewUnoFileAction implements IWorkbenchWindowActionDelegate {
+
+	private IWorkbenchWindow window;
+	
+	public void dispose() {
+		// Nothing to do on dispose
+	}
+
+	public void init(IWorkbenchWindow window) {
+		this.window = window;
+	}
+
+	public void run(IAction action) {
+		// Launch the new IDL File wizard
+		NewUnoFileWizard wizard = new NewUnoFileWizard();
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		wizard.init(window.getWorkbench(), new StructuredSelection());
+		
+		dialog.open();
+	}
+
+	public void selectionChanged(IAction action, ISelection selection) {
+		// Nothing to do on selection change
+	}
 
 }

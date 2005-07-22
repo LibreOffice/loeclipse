@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:24 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:12 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -117,11 +117,6 @@ public class SDKTable extends Composite{
 	private TableColumn ooopath;
 	
 	/**
-	 * Model of the table
-	 */
-	private SDKContainer sdks;
-	
-	/**
 	 * Table object
 	 */
 	private Table table;
@@ -164,8 +159,7 @@ public class SDKTable extends Composite{
 	 * Fill the table with the preferences from the SDKS_CONFIG file
 	 */
 	public void getPreferences(){
-		
-		sdks = SDKContainer.getSDKContainer();
+		SDKContainer.getSDKContainer();
 	}
 	
 	/**
@@ -174,7 +168,7 @@ public class SDKTable extends Composite{
 	 */
 	public void savePreferences(){
 		
-		sdks.saveSDKs();
+		SDKContainer.getSDKContainer().saveSDKs();
 	}
 	
 	/**
@@ -186,7 +180,6 @@ public class SDKTable extends Composite{
 		add.dispose();
 		del.dispose();
 		table.dispose();
-		sdks.dispose();
 	}
 	
 	/**
@@ -203,7 +196,7 @@ public class SDKTable extends Composite{
 		createTableViewer();
 		createButtons();
 		
-		tableViewer.setInput(sdks);
+		tableViewer.setInput(SDKContainer.getSDKContainer());
 	}
 
 
@@ -236,9 +229,9 @@ public class SDKTable extends Composite{
 		ooopath.setResizable(false);
 		ooopath.setWidth(100); // Used to 'fix' the eclipse-GTK+ painting bug
 		
-		// Bug found: works on Win32 platform, however, there is no event
-		// Recieved on a Linux one. This seems to work again... computer science
-		// is sometime full of mystery
+		// TODO Bug found: works on Win32 platform, however, there is no event
+		// Recieved on a Linux one. This seems to work sometimes... computer 
+		// science is sometimes full of mystery
 		
 		// Add a listener for each painting to get the computed width of the table
 		// and thus resize all the columns at a constant rate
@@ -293,7 +286,7 @@ public class SDKTable extends Composite{
 					
 					// Launch the dialog
 					sdk = openDialog(sdk, true);
-					sdks.updateSDK(sdk.name, sdk);
+					SDKContainer.getSDKContainer().updateSDK(sdk.name, sdk);
 				}
 			}
 			
@@ -350,7 +343,7 @@ public class SDKTable extends Composite{
 			public void widgetSelected(SelectionEvent e) {
 				// Launch add SDK dialog
 				SDK sdk = openDialog(null, false);
-				sdks.addSDK(sdk);
+				SDKContainer.getSDKContainer().addSDK(sdk);
 			}
 		});
 		
@@ -366,7 +359,7 @@ public class SDKTable extends Composite{
 				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
 				if (selection != null) {
 					SDK sdk = (SDK)selection.getFirstElement();
-					sdks.delSDK(sdk);
+					SDKContainer.getSDKContainer().delSDK(sdk);
 				}
 			}
 		});
@@ -382,17 +375,17 @@ public class SDKTable extends Composite{
 	class SDKContentProvider implements IStructuredContentProvider, SDKListener {
 		
 		public SDKContentProvider() {
-			if (null == sdks){
-				sdks = SDKContainer.getSDKContainer();
+			if (null == SDKContainer.getSDKContainer()){
+				SDKContainer.getSDKContainer();
 			}
 		}
 
 		public Object[] getElements(Object inputElement) {
-			return sdks.toArray();
+			return SDKContainer.getSDKContainer().toArray();
 		}
 
 		public void dispose() {
-			sdks.removeListener(this);
+			SDKContainer.getSDKContainer().removeListener(this);
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
