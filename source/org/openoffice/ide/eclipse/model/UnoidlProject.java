@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:10 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:24:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -260,7 +260,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 			getProject().setPersistentProperty(
 					new QualifiedName(
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							SDK_NAME), sdk.name);
+							SDK_NAME), sdk.getId());
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_SDKNAME_FAILED)+getProject().getName(), e);
@@ -297,9 +297,9 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	public void configure() throws CoreException {
 		
 		// Load all the persistent properties into the members
-		String sdkName = getProject().getPersistentProperty(new QualifiedName(
+		String sdkKey = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, SDK_NAME));
-		sdk = SDKContainer.getSDKContainer().getSDK(sdkName);
+		sdk = SDKContainer.getSDKContainer().getSDK(sdkKey);
 		
 		String idllocation = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IDL_LOCATION));
@@ -402,8 +402,9 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 				
 			} catch (CoreException e) {
 				OOEclipsePlugin.logError(
-						"Unable to create folder: "+getUnoidlLocation().toString(),
-						e); // TODO i18n
+						OOEclipsePlugin.getTranslationString(I18nConstants.FOLDER_CREATION_FAILED)+
+							getUnoidlLocation().toString(),
+						e);
 			}
 		}
 	}
@@ -452,7 +453,8 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 			}
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(
-					"Folder creation failed: "+getCodeLocation().toString(), e);
+					OOEclipsePlugin.getTranslationString(I18nConstants.FOLDER_CREATION_FAILED) + getCodeLocation().toString(),
+					e);
 		}
 		
 	}
@@ -506,7 +508,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		
 		if (null != sdk){
 			// Find the jars in the first level of the directory
-			Vector jarPaths = findJarsFromPath(sdk.oooProgramPath);
+			Vector jarPaths = findJarsFromPath(sdk.getClassesPath());
 			try {
 				IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
 				IClasspathEntry[] entries = new IClasspathEntry[jarPaths.size()+
@@ -522,7 +524,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 				
 				javaProject.setRawClasspath(entries, null);
 			} catch (JavaModelException e){
-				OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // TODO i18n
+				OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(I18nConstants.PROJECT_CLASSPATH_ERROR), e);
 			}
 		}
 	}
@@ -555,7 +557,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 			javaProject.setRawClasspath(result, null);
 			
 		} catch (JavaModelException e) {
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // TODO i18n
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(I18nConstants.PROJECT_CLASSPATH_ERROR), e);
 		}
 		
 	}
@@ -576,7 +578,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		for (int i=0, length=content.length; i<length; i++){
 			String contenti = content[i];
 			if (contenti.endsWith(".jar")){
-				Path jariPath = new Path (sdk.oooProgramPath+"/"+contenti);
+				Path jariPath = new Path (sdk.getClassesPath()+"/"+contenti);
 				jarsPath.add(jariPath);
 			}
 		}
@@ -636,8 +638,8 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 				}
 			}
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError("Cannot get children of the folder:"+
-					 container.getName(), e);   // TODO i18n
+			OOEclipsePlugin.logError(
+					 OOEclipsePlugin.getTranslationString(I18nConstants.GET_CHILDREN_FAILED) + container.getName(), e);
 		}
 	}
 }

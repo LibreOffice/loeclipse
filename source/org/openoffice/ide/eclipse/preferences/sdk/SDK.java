@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:23:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,39 +61,365 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.preferences.sdk;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.eclipse.core.runtime.Path;
+import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.i18n.I18nConstants;
+
 /**
- * SDK Class used as model for a line of the table. It's properties are:
- * <ul>
- *   <li><b>name</b>: uncontrolled name of the SDK</li>
- *   <li><b>version</b>: uncontrolled version number of the OOo suite associated with this SDK</li>
- *   <li><b>path</b>: system absolute path where the SDK root is located</li>
- *   <li><b>oooProgramPath</b>: system absolute path to the $OOO_HOME/program directory</li>
- * </ul>
- * This class is not indended to be used outside the SDKTable object
+ * SDK Class used as model for a line of the table. This class doesn't take the new URE
+ * possibilities into account. It will certainly need some additionnal members to support
+ * UNO SDK other than the OpenOffice.org one. 
  * 
  * @author cbosdonnat
  *
  */
 public class SDK {
 	
-	public String name;
-	public String version;
-	public String path;
-	public String oooProgramPath;
+	/**
+	 * private constant that holds the sdk name key in the dk.mk file
+	 */
+	private static final String  K_SDK_NAME = "SDKNAME";
 	
 	/**
-	 * Standard and only constructor for the SDK object. Properties may be null except the name.
-	 * If the name is null, it will be replaced by "SDK"
-	 * 
-	 * @param name arbitrary name of the SDK
-	 * @param version version of the OOo suite
-	 * @param path absolute path of the SDK root
-	 * @param oooPath absolute path to the $OOO_HOME/program directory
+	 * private constant that holds the sdk name key in the dk.mk file.
+	 * Used for OpenOffice.org SDK 1.1 compatibility
 	 */
-	public SDK (String name, String version, String path, String oooPath){
-		this.name = name;
-		this.version = version;
-		this.path = path;
-		oooProgramPath = oooPath;
+	private static final String K_DK_NAME = "DKNAME";
+	
+	/**
+	 * private constant that holds the sdk build id key in the dk.mk file
+	 */
+	private static final String K_SDK_BUILDID = "BUILDID";
+	
+	/**
+	 * private constant that hold the name of the sdk config file (normaly dk.mk)
+	 * This is set to easily change if there are future sdk organization changes
+	 */
+	private static final String F_DK_CONFIG = "dk.mk";
+
+	
+	
+	/* SDK Members */
+	
+	private String name;
+	private String buildId;
+	private String sdkHome;
+	private String oooHome;
+	
+	/**
+	 * Standard and only constructor for the SDK object. The name and buildId will be fetched
+	 * from the $(SDK_HOME)/settings/dk.mk properties file.
+	 * 
+	 * @param sdkHome absolute path of the SDK root
+	 * @param oooHome absolute path to the $OOO_HOME directory
+	 */
+	public SDK (String sdkHome, String oooHome) throws InvalidSDKException {
+		
+		// Sets the path to the SDK
+		setSDKHome(sdkHome);
+		setOOoHome(oooHome);
+	}
+
+	/**
+	 * Set the new SDK Home after having checked for the existence of the idl and settings directory.
+	 * Fetches the sdk name and buildid from the dk.mk file
+	 * 
+	 * @param sdkHome path to the new sdk home
+	 * 
+	 * @exception InvalidSDKException <p>This exception is thrown when the following errors are encountered
+	 *            with the INVALID_SDK_HOME error code: </p>
+	 *             <ul>
+	 *                <li>the sdk path does not point to a valid directory</li>
+	 *                <li>the $(SDK_HOME)/idl directory doesnt exist</li>
+	 *                <li>the $(SDK_HOME)/settings directory doesnt exist</li>
+	 *                <li>the sdk name and buildid cannot be fetched</li>
+	 *                <li>an unexpected exception has been raised</li>
+	 *             </ul>
+	 */
+	public void setSDKHome(String sdkHome) throws InvalidSDKException {
+		try {
+		
+			// Get the file representing the given sdkHome
+			Path homePath = new Path(sdkHome);
+			File homeFile = homePath.toFile();
+			
+			// First check the existence of this directory
+			if (homeFile.exists() && homeFile.isDirectory()){
+				
+				/**
+				 * <p>If the provided sdk home does not contains <li><code>idl</code></li>
+				 * <li><code>settings</code></li> directories, the provided sdk is considered as invalid</p>
+				 */
+				
+				// test for the idl directory
+				File idlFile = new File(homeFile, "idl");
+				if (! (idlFile.exists() && idlFile.isDirectory()) ) {
+					throw new InvalidSDKException(
+							OOEclipsePlugin.getTranslationString(I18nConstants.IDL_DIR_MISSING), 
+							InvalidSDKException.INVALID_SDK_HOME);
+				}
+				
+				// test for the settings directory
+				File settingsFile = new File(homeFile, "settings");
+				if (! (settingsFile.exists() && settingsFile.isDirectory()) ) {
+					throw new InvalidSDKException(
+							OOEclipsePlugin.getTranslationString(I18nConstants.SETTINGS_DIR_MISSING),
+							InvalidSDKException.INVALID_SDK_HOME);
+				}
+				
+				
+				// If the settings and idl directory both exists, then try to fetch the name and buildId from
+				// the settings/dk.mk properties file
+				readSettings(settingsFile);
+				this.sdkHome = sdkHome;
+				
+			} else {
+				throw new InvalidSDKException(
+						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+sdkHome,
+						InvalidSDKException.INVALID_SDK_HOME);
+			}
+		} catch (Throwable e) {
+			
+			if (e instanceof InvalidSDKException) {
+				
+				// Rethrow the InvalidSDKException
+				InvalidSDKException exception = (InvalidSDKException)e;
+				throw exception;
+			} else {
+				
+				// Unexpected exception thrown
+				throw new InvalidSDKException(
+						OOEclipsePlugin.getTranslationString(I18nConstants.UNEXPECTED_EXCEPTION), 
+						InvalidSDKException.INVALID_SDK_HOME, e);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param oooHome
+	 * @throws InvalidSDKException
+	 */
+	public void setOOoHome(String oooHome) throws InvalidSDKException {
+		
+		try {
+			// Get the file representing the given OOo home path
+			Path homePath = new Path(oooHome);
+			File homeFile = homePath.toFile();
+			
+			
+				
+			// Check for the program directory
+			File programFile = new File(homeFile, "program");
+			if (programFile.exists() && programFile.isDirectory()){
+				
+				// checks for types.rdb
+				File typesFile = new File(programFile, "types.rdb");
+				if (! (typesFile.exists() && typesFile.isFile()) ){
+					throw new InvalidSDKException(
+							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+ typesFile.getAbsolutePath(), 
+							InvalidSDKException.INVALID_OOO_HOME);
+				}
+				
+				// checks for classes directory
+				File classesFile = new File (programFile, "classes");
+				if (! (classesFile.exists() && classesFile.isDirectory()) ){
+					throw new InvalidSDKException(
+							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR) + classesFile.getAbsolutePath(), 
+							InvalidSDKException.INVALID_OOO_HOME);
+				}
+				
+				this.oooHome = oooHome;
+				
+			} else {
+				throw new InvalidSDKException(
+						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR) + programFile.getAbsolutePath(), 
+						InvalidSDKException.INVALID_OOO_HOME);
+			}
+				
+			
+			
+		} catch (Throwable e){
+			
+			if (e instanceof InvalidSDKException) {
+				
+				// Rethrow the invalidSDKException
+				InvalidSDKException exception = (InvalidSDKException)e;
+				throw exception;
+			} else {
+
+				// Unexpected exception thrown
+				throw new InvalidSDKException(
+						OOEclipsePlugin.getTranslationString(I18nConstants.UNEXPECTED_EXCEPTION),
+						InvalidSDKException.INVALID_OOO_HOME, e);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the SDK name as set in the settings/mkdk file
+	 * 
+	 * @return sdk name
+	 */
+	public String getName(){
+		return name;
+	}
+	
+	/**
+	 * Build a unique id from the sdk name and build id
+	 *
+	 * @return the sdk unique id
+	 */
+	public String getId(){
+		return getId(name, buildId);
+	}
+	
+	/**
+	 * Creates a sdk unique id with a name and build id
+	 * 
+	 * @param name sdk name
+	 * @param buildId sdk build id
+	 * 
+	 * @return sdk unique identifier
+	 */
+	public static String getId(String name, String buildId){
+		return name+"-"+buildId;
+	}
+	
+	/**
+	 * Returns an array containing the name and build id composing the sdk unique id 
+	 * 
+	 * @param sdkKey sdk unique id to decompose
+	 * @return name and build if
+	 */
+	public static String[] getSdkNameBuildId(String sdkKey) {
+		
+		return sdkKey.split("-");
+	}
+	
+	/**
+	 * Returns the SDK build id without the parenthesized string. For example, if the
+	 * full build id is <code>680m92(Build:8896)</code>, the result will be: <code>680m92</code>.
+	 * 
+	 * If the builid is <code>null</code>, the return will be 
+	 * 
+	 * @return the shortened build id
+	 */
+	public String getBuildId(){
+		String result = null;
+		
+		String[] splits = buildId.split("\\(.*\\)");
+		if (splits.length > 0){
+			result = splits[0];
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the full build id with the parenthesized string. For example, if the
+	 * full build id is <code>680m92(Build:8896)</code>, the result will be same string.
+	 * 
+	 * @return the full build id of the sdk
+	 */
+	public String getFullBuildId(){
+		return buildId;
+	}
+	
+	/**
+	 * Returns the SDK home directory. This string could be passed to the
+	 * Path constructor to get the folder object. 
+	 * 
+	 * @return SDK home directory
+	 * @see Path
+	 */
+	public String getSDKHome(){
+		return sdkHome;
+	}
+	
+	/**
+	 * Returns the path to the associated OpenOffice.org home directory. This string could 
+	 * be passed to the Path constructor to get the folder object. 
+	 * 
+	 * @return path to the SDK associated OpenOffice.org home directory.
+	 * @see Path
+	 */
+	public String getOOoHome(){
+		return oooHome;
+	}
+	
+	/**
+	 * <p>Returns the path to the associated OpenOffice.org classes directory. This string could 
+	 * be passed to the Path constructor to get the folder object.</p> 
+	 * 
+	 * <p><em>This method should be used for future compatibility with URE applications</em></p>
+	 * 
+	 * @return path to the associated OpenOffice.org classes directory
+	 */
+	public String getClassesPath(){
+		return oooHome + "/program/classes";
+	}
+	
+	/**
+	 * Reads the dk.mk file to get the sdk name and buildid. They are set in the SDK object if 
+	 * they are both fetched. Otherwise an invalide sdk exception is thrown.
+	 * 
+	 * @param settingsFile
+	 * @throws InvalidSDKException Exception thrown when one of the following problems happened
+	 *          <ul>
+	 *             <li>the given settings file isn't a valid directory</li>
+	 *             <li>the settings/dk.mk file doesn't exists or is unreadable</li>
+	 *             <li>one or both of the sdk name or buildid key is not set</li>
+	 *          </ul>
+	 */
+	private void readSettings(File settingsFile) throws InvalidSDKException {
+		
+		if (settingsFile.exists() && settingsFile.isDirectory()) {
+		
+			// Get the dk.mk file
+			File dkFile = new File(settingsFile, F_DK_CONFIG);
+			
+			Properties dkProperties = new Properties();
+			try {
+				dkProperties.load(new FileInputStream(dkFile));
+				
+				// Checks if the name and buildid properties are set
+				if (dkProperties.containsKey(K_SDK_NAME) && dkProperties.containsKey(K_SDK_BUILDID)){
+					
+					// Sets the both value
+					name = dkProperties.getProperty(K_SDK_NAME);
+					buildId = dkProperties.getProperty(K_SDK_BUILDID);
+				} else if (dkProperties.containsKey(K_DK_NAME) && dkProperties.containsKey(K_SDK_BUILDID)){
+					
+					// Sets the both value
+					name = dkProperties.getProperty(K_DK_NAME);
+					buildId = dkProperties.getProperty(K_SDK_BUILDID);
+				} else {
+					throw new InvalidSDKException(
+							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + K_SDK_NAME + ", " + K_SDK_BUILDID,
+							InvalidSDKException.INVALID_SDK_HOME);
+				}
+				
+			} catch (FileNotFoundException e) {
+				throw new InvalidSDKException(
+						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+ "settings/" + F_DK_CONFIG , 
+						InvalidSDKException.INVALID_SDK_HOME);
+			} catch (IOException e) {
+				throw new InvalidSDKException(
+						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_READABLE_FILE) + "settings/" + F_DK_CONFIG, 
+						InvalidSDKException.INVALID_SDK_HOME);
+			}
+			
+		} else {
+			throw new InvalidSDKException(
+					OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+ settingsFile.getAbsolutePath(),
+					InvalidSDKException.INVALID_SDK_HOME);
+		}
 	}
 }

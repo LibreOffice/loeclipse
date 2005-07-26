@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:23:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -64,9 +64,9 @@ package org.openoffice.ide.eclipse.i18n;
 public class I18nConstants {
 
 	public static final String SDK_NAME          = "SDK_NAME";
-	public static final String SDK_VERSION       = "SDK_VERSION";
+	public static final String SDK_BUILID        = "SDK_BUILID";
 	public static final String SDK_PATH          = "SDK_PATH";
-	public static final String OOO_PROGRAM_PATH  = "OOO_PROGRAM_PATH";
+	public static final String OOO_HOME_PATH     = "OOO_HOME_PATH";
 	public static final String USED_SDK          = "USED_SDK";
 	
 	public static final String COMPANY_PREFIX = "COMPANY_PREFIX";
@@ -111,6 +111,18 @@ public class I18nConstants {
 	public static final String SET_IDLLOCATION_FAILED = "SET_IDLLOCATION_FAILED";
 	public static final String SET_OUTPUTEXT_FAILED = "SET_OUTPUTEXT_FAILED";
 	public static final String SET_SDKNAME_FAILED = "SET_SDKNAME_FAILED";
+	public static final String INVALID_SDK_PATH = "INVALID_SDK_PATH";
+	public static final String INVALID_OOO_PATH = "INVALID_OOO_PATH";
+	public static final String IDL_DIR_MISSING = "IDL_DIR_MISSING";
+	public static final String SETTINGS_DIR_MISSING = "SETTINGS_DIR_MISSING";
+	public static final String NOT_EXISTING_DIR = "NOT_EXISTING_DIR";
+	public static final String NOT_EXISTING_FILE = "NOT_EXISTING_FILE";
+	public static final String NOT_READABLE_FILE = "NOT_READABLE_FILE";
+	public static final String UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
+	public static final String KEYS_NOT_SET = "KEYS_NOT_SET";
+	public static final String FOLDER_CREATION_FAILED = "FOLDER_CREATION_FAILED";
+	public static final String PROJECT_CLASSPATH_ERROR = "PROJECT_CLASSPATH_ERROR";
+	public static final String GET_CHILDREN_FAILED = "GET_CHILDREN_FAILED";
 	
 	// Programming languages names
 	public static final String JAVA = "JAVA";

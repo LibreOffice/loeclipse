@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKContainer.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:24:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -74,6 +74,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.preferences.sdk.SDK;
 
 /**
@@ -145,17 +146,17 @@ public class SDKContainer {
 	public void addSDK(SDK sdk){
 		
 		/** 
-		 * If there already is a SDK with such a name, replace the values,
+		 * If there already is a SDK with such an identifier, replace the values,
 		 * not the object to keep the references on it
 		 */ 
 		
 		if (null != sdk){
-			if (!elements.containsKey(sdk.name)){
-				elements.put(sdk.name, sdk);
+			if (!elements.containsKey(sdk.getId())){
+				elements.put(sdk.getId(), sdk);
 				fireSDKAdded(sdk);
 			} else {
-				SDK sdkref = (SDK)elements.get(sdk.name);
-				updateSDK(sdkref.name, sdk);
+				SDK sdkref = (SDK)elements.get(sdk.getId());
+				updateSDK(sdkref.getId(), sdk);
 			}
 		}
 	}
@@ -175,8 +176,8 @@ public class SDKContainer {
 	 */
 	public void delSDK(SDK sdk){
 		if (null != sdk){
-			if (elements.containsKey(sdk.name)){
-				elements.remove(sdk.name);
+			if (elements.containsKey(sdk.getId())){
+				elements.remove(sdk.getId());
 				fireSDKRemoved(sdk);
 			}
 		}
@@ -192,11 +193,11 @@ public class SDKContainer {
 	}
 	
 	/**
-	 * Returns a vector containing the names of the contaiuned SDKs
+	 * Returns a vector containing the unique identifiers of the contained SDKs
 	 * 
 	 * @return names of the contained SDKs
 	 */
-	public Vector getSDKNames(){
+	public Vector getSDKKeys(){
 		Set names = elements.keySet();
 		return new Vector(names);
 	}
@@ -214,18 +215,21 @@ public class SDKContainer {
 	 * @param i position of the sdk to update
 	 * @param sdk new value for the SDK
 	 */
-	public void updateSDK(String sdkname, SDK sdk){
-		if (elements.containsKey(sdkname) && null != sdk){
+	public void updateSDK(String sdkkey, SDK sdk){
+		if (elements.containsKey(sdkkey) && null != sdk){
 			
-			SDK sdkref = (SDK)elements.get(sdkname);
+			SDK sdkref = (SDK)elements.get(sdkkey);
 			
 			// update the attributes
-			sdkref.path = sdk.path;
-			sdkref.version = sdk.version;
-			sdkref.oooProgramPath = sdk.oooProgramPath;
+			try {
+				sdkref.setSDKHome(sdk.getSDKHome());
+				sdkref.setOOoHome(sdk.getOOoHome());
+			} catch (InvalidSDKException e){
+				OOEclipsePlugin.logError(e.getLocalizedMessage(), e);  // This message is localized by the SDK class
+			}
 			
 			// Reassign the element in the hashmap
-			elements.put(sdkname, sdkref);
+			elements.put(sdkkey, sdkref);
 			fireSDKUpdated(sdk);
 		}
 	}
@@ -238,17 +242,16 @@ public class SDKContainer {
 	}
 	
 	/**
-	 * Returns the ith SDK of the list. As other arrays and Vectors in Java, the first
-	 * SDK is the number 0.
+	 * Returns the sdk that corresponds to the given sdk name and buildid.
 	 * 
-	 * @param sdkname name of the wanted sdk
+	 * @param sdkkey unique identifier of the wanted sdk
 	 * @return SDK which name equals the one provided
 	 */
-	public SDK getSDK(String sdkname){
+	public SDK getSDK(String sdkkey){
 		SDK sdk = null;
 		
-		if (elements.containsKey(sdkname)){
-			sdk = (SDK)elements.get(sdkname);
+		if (elements.containsKey(sdkkey)){
+			sdk = (SDK)elements.get(sdkkey);
 		} 
 		return sdk;
 	}
@@ -264,8 +267,6 @@ public class SDKContainer {
 		
 	/**
 	 * Dispose the vector used
-	 * 
-	 * TODO Check the code for effectively disposing
 	 *
 	 */
 	public void dispose() {
@@ -300,22 +301,25 @@ public class SDKContainer {
 			boolean found = false;
 			
 			do {
-				String name = sdksProperties.getProperty(OOEclipsePlugin.SDKNAME_PREFERENCE_KEY+i);
-				String version = sdksProperties.getProperty(OOEclipsePlugin.SDKVERSION_PREFERENCE_KEY+i);
 				String path = sdksProperties.getProperty(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i);
 				String ooopath = sdksProperties.getProperty(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i);
 				
-				found = !(null == name || null == version || null == path || null == ooopath);
+				found = !(null == path || null == ooopath);
 				i++;
 				
 				if (found){
-					SDK sdk = new SDK(name, version, path, ooopath);
-					container.addSDK(sdk);
+					try {
+						SDK sdk = new SDK(path, ooopath);
+						container.addSDK(sdk);
+					} catch (InvalidSDKException e){
+						OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // This message is localized in SDK class
+					}
 				}				
 			} while (found);
 			
 		} catch (IOException e) {
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // TODO i18n
+			OOEclipsePlugin.logError(
+					OOEclipsePlugin.getTranslationString(I18nConstants.NOT_READABLE_FILE)+SDKS_CONFIG, e);
 		}
 	}
 	
@@ -327,10 +331,8 @@ public class SDKContainer {
 		
 		for (int i=0, length=getSDKCount(); i<length; i++){
 			SDK sdki = (SDK)vElements.get(i);
-			sdksProperties.put(OOEclipsePlugin.SDKNAME_PREFERENCE_KEY+i, sdki.name);
-			sdksProperties.put(OOEclipsePlugin.SDKVERSION_PREFERENCE_KEY+i, sdki.version);
-			sdksProperties.put(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i, sdki.path);
-			sdksProperties.put(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i, sdki.oooProgramPath);
+			sdksProperties.put(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i, sdki.getSDKHome());
+			sdksProperties.put(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i, sdki.getOOoHome());
 		}
 		
 		try {
