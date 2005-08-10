@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoSDKConfigPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:24:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.openoffice.ide.eclipse.gui.OOoTable;
 import org.openoffice.ide.eclipse.gui.SDKTable;
 
 /**
@@ -77,25 +78,31 @@ import org.openoffice.ide.eclipse.gui.SDKTable;
 public class UnoSDKConfigPage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	
-	private SDKTable table;
+	private SDKTable sdkTable;
+	private OOoTable oooTable;
 
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		
-		table = new SDKTable(parent);
-		table.getPreferences();
+		sdkTable = new SDKTable(parent);
+		sdkTable.getPreferences();
 		
-		return table;
+		oooTable = new OOoTable(parent);
+		oooTable.getPreferences();
+		
+		return parent;
 	}
 	
 	public boolean performOk() {
-		table.savePreferences();
+		sdkTable.savePreferences();
+		oooTable.savePreferences();
 		
 		return true;
 	}
 	
 	public void dispose() {
-		table.dispose();
+		sdkTable.dispose();
+		oooTable.dispose();
 		super.dispose();
 	}
 	

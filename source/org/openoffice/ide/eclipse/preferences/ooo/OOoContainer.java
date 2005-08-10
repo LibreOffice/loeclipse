@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: SDKContainer.java,v $
+ * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,7 +59,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.preferences.sdk;
+package org.openoffice.ide.eclipse.preferences.ooo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,25 +77,24 @@ import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.preferences.ConfigListener;
 import org.openoffice.ide.eclipse.preferences.InvalidConfigException;
-import org.openoffice.ide.eclipse.preferences.sdk.SDK;
 
 /**
- * Singleton object containing the sdks.
+ * Singleton object containing the OOo configurations.
  * 
  * @author cbosdonnat
  *
  */
-public class SDKContainer { 
+public class OOoContainer { 
 	
-	private static SDKContainer container;
+	private static OOoContainer container;
 	
 	/**
-	 * Vector of the SDK container listeners
+	 * Vector of the config container listeners
 	 */
 	private Vector listeners;
 
 	/**
-	 * HashMap containing the sdk lines referenced by their name
+	 * HashMap containing the ooo lines referenced by their name
 	 */
 	private HashMap elements;
 	
@@ -103,9 +102,9 @@ public class SDKContainer {
 	/* Methods to manage the listeners */
 	
 	/**
-	 * Add a SDK listener to the container
+	 * Add a config listener to the container
 	 * 
-	 *  @param listener sdk listener to add 
+	 *  @param listener config listener to add 
 	 */
 	public void addListener(ConfigListener listener){
 		if (null != listener){
@@ -114,9 +113,9 @@ public class SDKContainer {
 	}
 	
 	/**
-	 * Removes a SDK listener from the container
+	 * Removes a config listener from the container
 	 * 
-	 * @param listener sdk listener to remove
+	 * @param listener config listener to remove
 	 */
 	public void removeListener(ConfigListener listener){
 		if (null != listener){
@@ -124,10 +123,10 @@ public class SDKContainer {
 		}
 	}
 	
-	/* Methods to manage the sdks */
+	/* Methods to manage the ooos */
 	
 	/**
-	 * Returns the sdks elements in an array
+	 * Returns the ooos elements in an array
 	 * @return
 	 */
 	public Object[] toArray(){
@@ -135,129 +134,129 @@ public class SDKContainer {
 	}
 	
 	/**
-	 * Add the sdk given in parameter to the list of the others. Do not use directly 
-	 * the private field to handle SDKs
+	 * Add the OOo given in parameter to the list of the others. Do not use directly 
+	 * the private field to handle OOos
 	 * 
-	 * @param sdk SDK to add
+	 * @param ooo OOo to add
 	 */
-	public void addSDK(SDK sdk){
+	public void addOOo(OOo ooo){
 		
 		/** 
-		 * If there already is a SDK with such an identifier, replace the values,
+		 * If there already is a OOo with such an identifier, replace the values,
 		 * not the object to keep the references on it
 		 */ 
 		
-		if (null != sdk){
-			if (!elements.containsKey(sdk.getId())){
-				elements.put(sdk.getId(), sdk);
-				fireSDKAdded(sdk);
+		if (null != ooo){
+			if (!elements.containsKey(ooo.getId())){
+				elements.put(ooo.getId(), ooo);
+				fireOOoAdded(ooo);
 			} else {
-				SDK sdkref = (SDK)elements.get(sdk.getId());
-				updateSDK(sdkref.getId(), sdk);
+				OOo oooref = (OOo)elements.get(ooo.getId());
+				updateOOo(oooref.getId(), ooo);
 			}
 		}
 	}
 	
-	private void fireSDKAdded(SDK sdk) {
+	private void fireOOoAdded(OOo ooo) {
 		for (int i=0, length=listeners.size(); i<length; i++){
 			ConfigListener listeneri = (ConfigListener)listeners.get(i);
-			listeneri.ConfigAdded(sdk);
+			listeneri.ConfigAdded(ooo);
 		}
 	}
 
 	/**
-	 * remove the given SDK from the list. Do not use directly the private field to 
-	 * handle SDKs
+	 * remove the given OOo from the list. Do not use directly the private field to 
+	 * handle OOos
 	 *  
-	 * @param sdk SDK to remove
+	 * @param ooo OOo to remove
 	 */
-	public void delSDK(SDK sdk){
-		if (null != sdk){
-			if (elements.containsKey(sdk.getId())){
-				elements.remove(sdk.getId());
-				fireSDKRemoved(sdk);
+	public void delOOo(OOo ooo){
+		if (null != ooo){
+			if (elements.containsKey(ooo.getId())){
+				elements.remove(ooo.getId());
+				fireOOoRemoved(ooo);
 			}
 		}
 	}
 	
 	/**
-	 * Removes all the SDK contained
+	 * Removes all the OOo contained
 	 *
 	 */
 	public void clear(){
 		elements.clear();
-		fireSDKRemoved(null);
+		fireOOoRemoved(null);
 	}
 	
 	/**
-	 * Returns a vector containing the unique identifiers of the contained SDKs
+	 * Returns a vector containing the unique identifiers of the contained OOos
 	 * 
-	 * @return names of the contained SDKs
+	 * @return names of the contained OOos
 	 */
-	public Vector getSDKKeys(){
+	public Vector getOOoKeys(){
 		Set names = elements.keySet();
 		return new Vector(names);
 	}
 	
-	private void fireSDKRemoved(SDK sdk) {
+	private void fireOOoRemoved(OOo ooo) {
 		for (int i=0, length=listeners.size(); i<length; i++){
 			ConfigListener listeneri = (ConfigListener)listeners.get(i);
-			listeneri.ConfigRemoved(sdk);
+			listeneri.ConfigRemoved(ooo);
 		}
 	}
 	
 	/**
-	 * update the ith SDK from the list with the given SDK.
+	 * update the ith OOo from the list with the given OOo.
 	 * 
-	 * @param i position of the sdk to update
-	 * @param sdk new value for the SDK
+	 * @param i position of the ooo to update
+	 * @param ooo new value for the OOo
 	 */
-	public void updateSDK(String sdkkey, SDK sdk){
-		if (elements.containsKey(sdkkey) && null != sdk){
+	public void updateOOo(String oookey, OOo ooo){
+		if (elements.containsKey(oookey) && null != ooo){
 			
-			SDK sdkref = (SDK)elements.get(sdkkey);
+			OOo oooref = (OOo)elements.get(oookey);
 			
 			// update the attributes
 			try {
-				sdkref.setSDKHome(sdk.getSDKHome());
+				oooref.setOOoHome(ooo.getOOoHome());
 			} catch (InvalidConfigException e){
-				OOEclipsePlugin.logError(e.getLocalizedMessage(), e);  // This message is localized by the SDK class
+				OOEclipsePlugin.logError(e.getLocalizedMessage(), e);  // This message is localized by the OOo class
 			}
 			
 			// Reassign the element in the hashmap
-			elements.put(sdkkey, sdkref);
-			fireSDKUpdated(sdk);
+			elements.put(oookey, oooref);
+			fireOOoUpdated(ooo);
 		}
 	}
 	
-	private void fireSDKUpdated(SDK sdk) {
+	private void fireOOoUpdated(OOo ooo) {
 		for (int i=0, length=listeners.size(); i<length; i++){
 			ConfigListener listeneri = (ConfigListener)listeners.get(i);
-			listeneri.ConfigUpdated(sdk);
+			listeneri.ConfigUpdated(ooo);
 		}
 	}
 	
 	/**
-	 * Returns the sdk that corresponds to the given sdk name and buildid.
+	 * Returns the ooo that corresponds to the given ooo name and buildid.
 	 * 
-	 * @param sdkkey unique identifier of the wanted sdk
-	 * @return SDK which name equals the one provided
+	 * @param oookey unique identifier of the wanted ooo
+	 * @return OOo which name equals the one provided
 	 */
-	public SDK getSDK(String sdkkey){
-		SDK sdk = null;
+	public OOo getOOo(String oookey){
+		OOo ooo = null;
 		
-		if (elements.containsKey(sdkkey)){
-			sdk = (SDK)elements.get(sdkkey);
+		if (elements.containsKey(oookey)){
+			ooo = (OOo)elements.get(oookey);
 		} 
-		return sdk;
+		return ooo;
 	}
 	
 	/**
-	 * Returns the number of SDK in the list
+	 * Returns the number of OOo in the list
 	 * 
-	 * @return number of SDK in the list
+	 * @return number of OOo in the list
 	 */
-	public int getSDKCount(){
+	public int getOOoCount(){
 		return elements.size();
 	}
 		
@@ -270,11 +269,11 @@ public class SDKContainer {
 		elements.clear();
 	}
 
-	public static SDKContainer getSDKContainer() {
+	public static OOoContainer getOOoContainer() {
 		
 		if (null == container){
-			container = new SDKContainer();
-			container.loadSDKs();
+			container = new OOoContainer();
+			container.loadOOos();
 		}
 		
 		return container;
@@ -288,31 +287,31 @@ public class SDKContainer {
 			file.createNewFile();
 		}
 		
-		Properties sdksProperties = new Properties();
+		Properties ooosProperties = new Properties();
 	
-		sdksProperties.load(new FileInputStream(file));
+		ooosProperties.load(new FileInputStream(file));
 		
-		return sdksProperties;
+		return ooosProperties;
 	}
 	
-	protected void loadSDKs(){
+	protected void loadOOos(){
 		try {
-			// Loads the sdks config file into a properties object
-			Properties sdksProperties = getProperties();
+			// Loads the ooos config file into a properties object
+			Properties ooosProperties = getProperties();
 			
 			int i=0;
 			boolean found = false;
 			
 			do {
-				String path = sdksProperties.getProperty(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i);
+				String ooopath = ooosProperties.getProperty(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i);
 				
-				found = !(null == path);
+				found = (null != ooopath);
 				i++;
 				
 				if (found){
 					try {
-						SDK sdk = new SDK(path);
-						container.addSDK(sdk);
+						OOo ooo = new OOo(ooopath);
+						container.addOOo(ooo);
 					} catch (InvalidConfigException e){
 						OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // This message is localized in SDK class
 					}
@@ -326,40 +325,39 @@ public class SDKContainer {
 		}
 	}
 	
-	public void saveSDKs(){
+	public void saveOOos(){
 		
 		try {
-			Properties sdksProperties = getProperties();
+			Properties ooosProperties = getProperties();
 			
-			// Load all the existing properties and remove the SDKPATH_PREFERENCE_KEY ones
+			// Load all the existing properties and remove the OOOPATH_PREFERENCE_KEY ones
 			int j=0;
 			boolean found = false;
 			
 			do {
-				String sdkPath = sdksProperties.getProperty(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+j);
-				found = (null != sdkPath);
+				String oooPath = ooosProperties.getProperty(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+j);
+				found = (null != oooPath);
 				
 				if (found){
-					sdksProperties.remove(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+j);
+					ooosProperties.remove(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+j);
 				}
 			} while (found);
 			
-			// Saving the new SDKs 
+			// Saving the new OOos 
 			Vector vElements = toVector();
 			
-			for (int i=0, length=getSDKCount(); i<length; i++){
-				SDK sdki = (SDK)vElements.get(i);
-				sdksProperties.put(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i, sdki.getSDKHome());
+			for (int i=0, length=getOOoCount(); i<length; i++){
+				OOo oooi = (OOo)vElements.get(i);
+				ooosProperties.put(OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i, oooi.getOOoHome());
 			}
 		
-			
-			String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
-			File file = new File(sdks_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
+			String ooos_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
+			File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
 			if (!file.exists()){
 				file.createNewFile();
 			}
 			
-			sdksProperties.store(new FileOutputStream(file), "");
+			ooosProperties.store(new FileOutputStream(file), "");
 		} catch (FileNotFoundException e) {
 			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
 		} catch (IOException e){
@@ -371,7 +369,7 @@ public class SDKContainer {
 	 * The SDK Container should not be created by another object
 	 *
 	 */
-	private SDKContainer(){
+	private OOoContainer(){
 		
 		// Initialize the members
 		elements = new HashMap();

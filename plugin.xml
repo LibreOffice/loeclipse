@@ -9,7 +9,14 @@
             extensions="idl"
             icon="icons/idl_file.gif"
             id="org.openoffice.ide.eclipse.editors.UnoidlEditor"
-            name="%editor.name"/>
+            name="%idleditor.name"/>
+      <editor
+            class="org.openoffice.ide.eclipse.editors.RegEditor"
+            default="true"
+            extensions="rdb, urd"
+            icon="icons/db_file.gif"
+            id="org.openoffice.ide.eclipse.editors.regvieweditor"
+            name="%regeditor.name"/>
    </extension>
    
    <extension
@@ -62,34 +69,9 @@
       <runtime>
          <run class="org.openoffice.ide.eclipse.model.UnoidlProject"/>
       </runtime>
-      <builder id="org.openoffice.ide.eclipse.javamaker"/>
-   </extension>
-   <extension
-         point="org.eclipse.ui.decorators">
-      <decorator
-            adaptable="true"
-            class="org.openoffice.ide.eclipse.gui.UnoidlDecorator"
-            id="org.openoffice.ide.eclipse.decorator"
-            label="%decorator.name"
-            state="true">
-         <enablement>
-            <objectClass name="org.eclipse.core.resources.IResource"/>
-         </enablement>
-         <description>
-            
-         </description>
-         %decorator.description
-      </decorator>
-   </extension>
-   <extension
-         id="javamaker"
-         name="%builders.javamaker"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true"
-            isConfigurable="false">
-         <run class="org.openoffice.ide.eclipse.builders.JavamakerBuilder"/>
-      </builder>
+      <builder id="org.openoffice.ide.eclipse.idlc"/>
+	  <builder id="org.openoffice.ide.eclipse.regmerge"/>
+	  <builder id="org.openoffice.ide.eclipse.javamaker"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -115,5 +97,93 @@
                toolbarPath="uno"
                tooltip="%newactions.newfile.tooltip"/>
       </actionSet>
+   </extension>
+   <extension
+         id="idlc"
+         name="%builders.idlc"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            isConfigurable="false">
+         <run class="org.openoffice.ide.eclipse.builders.IdlcBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         id="regmerge"
+         name="%builders.regmerge"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            isConfigurable="false">
+         <run class="org.openoffice.ide.eclipse.builders.RegmergeBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         id="javamaker"
+         name="%builders.javamaker"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            isConfigurable="false">
+         <run class="org.openoffice.ide.eclipse.builders.JavamakerBuilder"/>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="org.openoffice.ide.eclipse.gui.UnoidlDecorator"
+            id="org.openoffice.ide.eclipse.decorator"
+            label="%decorator.name"
+            state="true">
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IResource"/>
+         </enablement>
+         <description>
+            
+         </description>
+         %decorator.description
+      </decorator>
+   </extension>
+   <extension
+         id="idlcerrormarker"
+         name="%idlcerrormarker.name"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <persistent value="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <category
+            id="org.openoffice.ide.eclipse.cheatsheets"
+            name="%cheatsheets.name"/>
+      <cheatsheet
+            category="org.openoffice.ide.eclipse.cheatsheets"
+            contentFile="$nl$/doc/cheatsheets/starting.xml"
+            id="org.openoffice.ide.eclipse.cheatsheets.starting"
+            name="%cheatsheets.starting.name">
+         <description>
+            %cheatsheets.starting.description
+         </description>
+      </cheatsheet>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="doc/help/toc.xml"
+            primary="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               closeable="true"
+               id="org.eclipse.ui.cheatsheets.views.CheatSheetView"
+               moveable="true"
+               ratio="1.0"
+               relationship="right"
+               visible="true"/>
+      </perspectiveExtension>
    </extension>
 </plugin>

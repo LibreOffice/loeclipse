@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:23:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -64,6 +64,7 @@ package org.openoffice.ide.eclipse.gui.rows;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -76,8 +77,13 @@ import org.eclipse.swt.widgets.Label;
  *
  */
 public class ChoiceRow extends LabeledRow implements ModifyListener{
-
+	
 	public ChoiceRow (Composite parent, String property, String label){
+		this(parent, property, label, null);
+	}
+	
+	public ChoiceRow (Composite parent, String property, String label, String browse){
+		
 		super(property);
 		Label aLabel = new Label(parent, SWT.NONE);
 		aLabel.setText(label);
@@ -85,7 +91,13 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		Combo aField = new Combo(parent, SWT.READ_ONLY);
 		aField.addModifyListener(this);
 		
-		createContent(parent, aLabel, aField, null);
+		createContent(parent, aLabel, aField, browse);
+	}
+	
+	public void setBrowseSelectionListener(SelectionListener listener){
+		if (null != browse){
+			browse.addSelectionListener(listener);
+		}
 	}
 	
 	//------------- Méthodes de manipulation du combo box

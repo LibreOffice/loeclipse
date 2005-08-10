@@ -1,8 +1,8 @@
 /*************************************************************************
  *
- * $RCSfile: JavamakerBuilder.java,v $
+ * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
  * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:16 $
  *
@@ -61,104 +61,114 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.builders;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
-import org.openoffice.ide.eclipse.preferences.ooo.OOo;
-import org.openoffice.ide.eclipse.preferences.sdk.SDK;
 
-public class JavamakerBuilder extends IncrementalProjectBuilder {
+/**
+ * TODOC
+ * 
+ * @author cbosdonnat
+ *
+ */
+public class RegmergeBuilder extends IncrementalProjectBuilder {
 	
-	/**
-	 * Unique Id of the javamaker builder
-	 */
-	public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID+".javamaker";
-
+	public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".regmerge";
+	
 	/**
 	 * UNOI-IDL project handled. This is a quick access to the project nature 
 	 */
 	private UnoidlProject unoidlProject;
 	
+	/**
+	 * Root of the generated types, used by regmerge and javamaker. UCR is chosen for
+	 * OpenOffice.org compatibility 
+	 */
+	public static final String TYPE_ROOT_KEY = "/UCR";
 	
+	public RegmergeBuilder(UnoidlProject project){
+		unoidlProject = project;
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		
-		unoidlProject = (UnoidlProject)getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
-		
-		IdlcBuilder idlcBuilder = new IdlcBuilder(unoidlProject);
-		idlcBuilder.build(FULL_BUILD, args, monitor);
-		
-		RegmergeBuilder regmergeBuilder = new RegmergeBuilder(unoidlProject);
-		regmergeBuilder.build(FULL_BUILD, args, monitor);
-		
-		generateJava(monitor);
-		
-		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		
+		// Regmerge doesn't work as incremental builder, but
+		// allways as full builder
+		fullBuild(monitor);
+
 		return null;
 	}
-	
-	private void generateJava(IProgressMonitor monitor) throws CoreException {
-		
-		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		
-		// Get a handle on the rdb file
-		IFile registryFile = getProject().getFile(getProject().getName() + ".rdb");
-		
-		if (registryFile.exists()){
+
+	/**
+	 * 
+	 * @param monitor
+	 */
+	private void fullBuild(IProgressMonitor monitor) {
+		try {
+			// The registry file is placed in the root of the project as announced 
+			// to the api-dev mailing-list
+			IFolder urdFolder = unoidlProject.getProject().getFolder(
+					unoidlProject.getUrdLocation());
 			
-			try {
 			
-				UnoidlProject project = (UnoidlProject)getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
-				SDK sdk = project.getSdk();
-				OOo ooo = project.getOOo();
-				
-				if (null != sdk && null != ooo){
-					
-					IPath ooTypesPath = new Path (ooo.getOOoHome()).append("/program/types.rdb");
-					String firstModule = project.getUnoidlLocation().segment(0);
-					
-					// HELP quotes are placed here to prevent Windows path names with spaces
-					String command = "javamaker -T" + firstModule + ".* -nD -Gc -BUCR " + 
-											"-O ." + System.getProperty("file.separator") + 
-											         project.getCodeLocation().toOSString() + " " +
-											registryFile.getProjectRelativePath().toOSString() + " " +
-											"-X\"" + ooTypesPath.toOSString() + "\"";
-					
-					
-					Process process = OOEclipsePlugin.runTool(getProject(), command, monitor);
-					
-					LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(process.getErrorStream()));
-					
-					// Only for debugging purpose
-					if (null != System.getProperties().getProperty("DEBUG")){
-					
-						String line = lineReader.readLine();
-						while (null != line){
-							System.out.println(line);
-							line = lineReader.readLine();
-						}
-					}
-					
-					process.waitFor();
-				}
-			} catch (InterruptedException e) {
-				// interrupted process: the code generation failed
-			} catch (IOException e) {
-				// Error whilst reading the error stream
+			IFile mergeFile = unoidlProject.getProject().getFile(
+									unoidlProject.getProject().getName() + ".rdb");
+			if (mergeFile.exists()){
+				mergeFile.delete(true, monitor);
 			}
+			
+			// compile each idl file
+			urdFolder.accept(new RegmergeBuildVisitor(monitor));
+			
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError("Error raised during the regmerge execution", e);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 * @param monitor
+	 */
+	static void runRegmergeOnFile(IFile file, IProgressMonitor monitor){
+		
+		// The registry file is placed in the root of the project as announced 
+		// to the api-dev mailing-list
+		IFile mergeFile = file.getProject().getFile(file.getProject().getName() + ".rdb");
+		
+		String existingReg = "";
+		if (mergeFile.exists()){
+			existingReg = mergeFile.getProjectRelativePath().toOSString() + " ";
+		}
+		
+		String command = "regmerge " + mergeFile.getProjectRelativePath().toOSString() + " " +
+									   TYPE_ROOT_KEY + " " +
+									   existingReg + 
+									   file.getProjectRelativePath().toOSString();
+		
+		// Process creation
+		Process process = OOEclipsePlugin.runTool(file.getProject(), command, monitor);
+		
+		// Just wait for the process to end before destroying it
+		try {
+			process.waitFor();
+		} catch (InterruptedException e) {
+			// Process has been interrupted by the user
+		}
+		
+		// Do not forget to destroy the process
+		process.destroy();
 	}
 }

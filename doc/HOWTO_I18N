@@ -1,0 +1,28 @@
+HOWTO internationalize this plugin ?
+
+Create a new eclipse plugin fragment with the target ID: org.openoffice.ide.eclipse
+
+Then create the following tree:
+
++ Fragment root
+  + nl
+    + <lang>
+      + <country>
+        + doc
+          + cheatsheets
+            + starting.xml
+          + help
+            + html
+              + overview.html
+            + toc.xml
+  + org
+    + openoffice
+      + ide
+        + eclipse
+          + i18n
+            + ImageManager_<lang>_<country>.properties
+            + Translator_<lang>_<country>.properties
+  + plugin_<lang>_<country>.properties
+  
+This tree is for one language, but you could add as much language as you want in one tree.
+     

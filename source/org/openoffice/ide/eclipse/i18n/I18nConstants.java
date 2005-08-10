@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:23:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:22 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -63,16 +63,20 @@ package org.openoffice.ide.eclipse.i18n;
 
 public class I18nConstants {
 
-	public static final String SDK_NAME          = "SDK_NAME";
-	public static final String SDK_BUILID        = "SDK_BUILID";
+	public static final String NAME              = "NAME";
+	public static final String BUILID            = "BUILID";
 	public static final String SDK_PATH          = "SDK_PATH";
 	public static final String OOO_HOME_PATH     = "OOO_HOME_PATH";
 	public static final String USED_SDK          = "USED_SDK";
+	public static final String USED_OOO			 = "USED_OOO";
+	public static final String SDKS              = "SDKS";
+	public static final String OOOS				 = "OOOS";
 	
 	public static final String COMPANY_PREFIX = "COMPANY_PREFIX";
 	public static final String OUTPUT_EXT = "OUTPUT_EXT";
 	public static final String PROG_LANGUAGE = "PROG_LANGUAGE";
 	
+	public static final String OK = "OK";
 	public static final String ADD = "ADD";
 	public static final String DEL = "DEL";
 	public static final String BROWSE = "BROWSE";
@@ -81,10 +85,13 @@ public class I18nConstants {
 	public static final String FILE_SELECT_TITLE = "FILE_SELECT_TITLE";
 	public static final String DIR_SELECT_TITLE = "DIR_SELECT_TITLE";
 	public static final String SDK_CONFIG_DIALOG_TITLE = "SDK_CONFIG_DIALOG_TITLE";
+	public static final String OOO_CONFIG_DIALOG_TITLE = "OOO_CONFIG_DIALOG_TITLE";
 	public static final String NEW_PROJECT_TITLE = "NEW_PROJECT_TITLE";
 	public static final String NEW_PROJECT_MESSAGE = "NEW_PROJECT_MESSAGE";
 	public static final String NEW_FILE_TITLE = "NEW_FILE_TITLE";
 	public static final String NEW_FILE_MESSAGE = "NEW_FILE_MESSAGE";
+	public static final String SDKS_LIST = "SDKS_LIST";
+	public static final String OOOS_LIST = "OOOS_LIST";
 	
 	
 	public static final String EDITOR_COLORS_PREF = "EDITOR_COLORS_PREF";
@@ -108,9 +115,11 @@ public class I18nConstants {
 	public static final String CREATE_FILE_FAILED = "CREATE_FILE_FAILED";
 	public static final String NOT_IDL_EXTENSION = "NOT_IDL_EXTENSION";
 	public static final String NOT_IDL_CAPABLE = "NOT_IDL_CAPABLE";
+	public static final String NOT_UNO_PROJECT = "NOT_UNO_PROJECT";
 	public static final String SET_IDLLOCATION_FAILED = "SET_IDLLOCATION_FAILED";
 	public static final String SET_OUTPUTEXT_FAILED = "SET_OUTPUTEXT_FAILED";
 	public static final String SET_SDKNAME_FAILED = "SET_SDKNAME_FAILED";
+	public static final String SET_OOONAME_FAILED = "SET_OOONAME_FAILED";
 	public static final String INVALID_SDK_PATH = "INVALID_SDK_PATH";
 	public static final String INVALID_OOO_PATH = "INVALID_OOO_PATH";
 	public static final String IDL_DIR_MISSING = "IDL_DIR_MISSING";
@@ -123,6 +132,17 @@ public class I18nConstants {
 	public static final String FOLDER_CREATION_FAILED = "FOLDER_CREATION_FAILED";
 	public static final String PROJECT_CLASSPATH_ERROR = "PROJECT_CLASSPATH_ERROR";
 	public static final String GET_CHILDREN_FAILED = "GET_CHILDREN_FAILED";
+	public static final String BAD_SDKID = "BAD_SDKID";
+	public static final String SDK_INVALID_OS = "SDK_INVALID_OS";
+	public static final String SDK_INVALID_ARCH = "SDK_INVALID_ARCH";
+	public static final String ERROR_OUTPUT_UNREADABLE = "ERROR_OUTPUT_UNREADABLE";
+	public static final String VISIT_FAILED = "VISIT_FAILED";
+	public static final String MARKER_CREATION_FAILED = "MARKER_CREATION_FAILED";
+	public static final String UNO_PLUGIN_ERROR = "UNO_PLUGIN_ERROR";
+	public static final String PROJECT_CREATION_FAILED = "PROJECT_CREATION_FAILED";
+	public static final String PROCESS_ERROR = "PROCESS_ERROR";
+	public static final String DOCUMENT_ERROR = "DOCUMENT_ERROR";
+	public static final String REGVIEW_READ_ERROR = "REGVIEW_READ_ERROR";
 	
 	// Programming languages names
 	public static final String JAVA = "JAVA";

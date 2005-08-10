@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: UnoidlEditor.java,v $
+ * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,58 +59,57 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.editors;
+package org.openoffice.ide.eclipse.builders;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.model.UnoidlProject;
 
 /**
- * TODOC
+ * Class that visit each child of the project's tree to generate it's urd file.
  * 
  * @author cbosdonnat
  *
  */
-public class UnoidlEditor extends TextEditor {
-
-	 /**
-	  * Member that listens to the preferences porperty changes 
-	  */
-	 private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				getSourceViewer().invalidateTextPresentation();
-				
-			}
-		};
+public class IdlcBuildVisitor implements IResourceVisitor {
 	
+	private IProgressMonitor progressMonitor;
 	
-	private ColorProvider colorManager;
+	public IdlcBuildVisitor(IProgressMonitor monitor) {
+		progressMonitor = monitor;
+	}
 	
-	public UnoidlEditor() {
-		super();
+	public boolean visit(IResource resource) throws CoreException {
 		
-		colorManager = new ColorProvider();
-		setSourceViewerConfiguration(new UnoidlConfiguration(colorManager));
-		setDocumentProvider(new UnoidlDocumentProvider());
-		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyListener);
+		boolean visitChildren = false;
+
+		if (IResource.FILE == resource.getType()){
+			
+			// Try to compile the file if it is an idl file
+			if (resource.getFileExtension().equals("idl")){
+				
+				IdlcBuilder.runIdlcOnFile((IFile)resource, progressMonitor);
+				progressMonitor.worked(1);
+			}
+			
+		} else if (resource instanceof IContainer){
+			
+			UnoidlProject project = (UnoidlProject)resource.getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
+
+			if (!resource.getProjectRelativePath().toString().startsWith("bin") && 
+				!resource.getProjectRelativePath().toString().startsWith(project.getCodeLocation().toString()) &&
+				!resource.getProjectRelativePath().toString().startsWith(project.getUrdLocation().toString())){
+				
+				visitChildren = true;
+			}
+		}
+		
+		return visitChildren;
 	}
-	
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		return super.createSourceViewer(parent, ruler, styles);
-	}
-	
-	public void dispose() {
-		colorManager.dispose();
-		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyListener);
-		super.dispose();
-	}
-	
-    public void doSave(IProgressMonitor progressMonitor) {
-        super.doSave(progressMonitor);
-    }
+
 }

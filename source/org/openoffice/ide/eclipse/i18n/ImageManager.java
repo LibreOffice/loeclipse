@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:23:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,9 +61,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.i18n;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.PropertyResourceBundle;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -90,31 +90,25 @@ public class ImageManager {
 	 * <p>For example, this file will define that the ERROR key corresponds
 	 * to the /icons/errors.gif image.</p>
 	 */
-	private static final String IMAGES_FILE = "/icons/images.conf";
 	
-	private PropertyResourceBundle imageBundle;
+	private ResourceBundle imageBundle;
 	
 	private ImageRegistry registry = new ImageRegistry();
 	
 	public ImageManager() {
 		
-		URL fileUrl = OOEclipsePlugin.getDefault().getBundle().getEntry(IMAGES_FILE);
-		
 		try {
-			imageBundle = new PropertyResourceBundle(fileUrl.openStream());
-		} catch (IOException e) {
-			// Unable to read the image file
-			
-			OOEclipsePlugin.logError(
-					OOEclipsePlugin.getTranslationString(I18nConstants.FILE_UNREADABLE)+IMAGES_FILE,
-					e);
+			imageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.i18n.ImageManager");
 			
 		} catch (NullPointerException e) {
-			// No image file found
 			
-			OOEclipsePlugin.logError(
-					OOEclipsePlugin.getTranslationString(I18nConstants.FILE_NOT_FOUND)+IMAGES_FILE,
-					e);
+			if (null != System.getProperty("DEBUG")) {
+				System.out.println("Call to getBundle is incorrect: NullPointerException catched");
+			}
+		} catch(MissingResourceException e) {
+			
+			String message = "Image file not found for locale :" + Locale.getDefault().toString();
+			OOEclipsePlugin.logError(message, null);
 		}
 	}
 	

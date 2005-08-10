@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: UnoidlEditor.java,v $
+ * $RCSfile: IVisitable.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,16 +59,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.editors;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.editors.text.TextEditor;
-import org.openoffice.ide.eclipse.OOEclipsePlugin;
+package org.openoffice.ide.eclipse.model;
 
 /**
  * TODOC
@@ -76,41 +67,9 @@ import org.openoffice.ide.eclipse.OOEclipsePlugin;
  * @author cbosdonnat
  *
  */
-public class UnoidlEditor extends TextEditor {
+public interface IVisitable {
 
-	 /**
-	  * Member that listens to the preferences porperty changes 
-	  */
-	 private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				getSourceViewer().invalidateTextPresentation();
-				
-			}
-		};
+	public void accepts(ITreeVisitor visitor);
 	
-	
-	private ColorProvider colorManager;
-	
-	public UnoidlEditor() {
-		super();
-		
-		colorManager = new ColorProvider();
-		setSourceViewerConfiguration(new UnoidlConfiguration(colorManager));
-		setDocumentProvider(new UnoidlDocumentProvider());
-		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyListener);
-	}
-	
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		return super.createSourceViewer(parent, ruler, styles);
-	}
-	
-	public void dispose() {
-		colorManager.dispose();
-		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyListener);
-		super.dispose();
-	}
-	
-    public void doSave(IProgressMonitor progressMonitor) {
-        super.doSave(progressMonitor);
-    }
+	public String toString(TreeNode callingNode);
 }

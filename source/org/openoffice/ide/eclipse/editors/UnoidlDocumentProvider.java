@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDocumentProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:36:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -89,8 +89,7 @@ public class UnoidlDocumentProvider extends FileDocumentProvider{
 		super();
 	}
 	
-	protected IDocument createDocument(Object element) throws
-		CoreException {
+	protected IDocument createDocument(Object element) throws CoreException {
 		IDocument document = super.createDocument(element);
 		if (document!=null){
 			IDocumentPartitioner partitioner = createIDLPartitioner();

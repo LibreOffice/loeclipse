@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -67,6 +67,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -75,6 +76,7 @@ import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
+import org.openoffice.ide.eclipse.preferences.ooo.OOoContainer;
 import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 
 public class NewUnoProjectWizard extends Wizard implements INewWizard {
@@ -96,6 +98,7 @@ public class NewUnoProjectWizard extends Wizard implements INewWizard {
 		final String outputExt = page.getOutputExt();
 		final int language = page.getChosenLanguage();
 		final String sdkname = page.getSDKName();
+		final String oooname = page.getOOoName();
 		
 		// Instantiation of a new thread with a Progress monitor to do the job.
 		IRunnableWithProgress op = new IRunnableWithProgress (){
@@ -112,6 +115,7 @@ public class NewUnoProjectWizard extends Wizard implements INewWizard {
 					unoProject.setOutputExtension(outputExt);
 					unoProject.setOuputLanguage(language);
 					unoProject.setSdk(SDKContainer.getSDKContainer().getSDK(sdkname));
+					unoProject.setOOo(OOoContainer.getOOoContainer().getOOo(oooname));
 					
 					// Creation of the unoidl package
 					unoProject.createUnoidlPackage(monitor);
@@ -119,8 +123,13 @@ public class NewUnoProjectWizard extends Wizard implements INewWizard {
 					// Creation of the Code Packages
 					unoProject.createCodePackage(monitor);
 					
+					// Creation of the urd output directory
+					unoProject.createUrdDir(monitor);
+					
 				} catch (CoreException e) {
-					OOEclipsePlugin.logError("Not a Unoidl project", e); //TODO i18n
+					OOEclipsePlugin.logError(
+							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_UNO_PROJECT),
+							e);
 				}
 				
 			}			
@@ -129,8 +138,23 @@ public class NewUnoProjectWizard extends Wizard implements INewWizard {
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace(); // TODO remove it
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // TODO i18n
+			MessageDialog dialog = new MessageDialog(
+					getShell(),
+					OOEclipsePlugin.getTranslationString(I18nConstants.UNO_PLUGIN_ERROR),
+					null,
+					OOEclipsePlugin.getTranslationString(I18nConstants.PROJECT_CREATION_FAILED),
+					MessageDialog.ERROR,
+					new String[]{OOEclipsePlugin.getTranslationString(I18nConstants.OK)},
+					0);
+			dialog.setBlockOnOpen(true);
+			dialog.create();
+			dialog.open();
+		
+			try {
+				project.delete(true, true, null);
+			} catch (CoreException ex){
+				// Impossible to delete the project
+			}
 		} catch (InterruptedException e) {
 			// Cancel pressed
 		}

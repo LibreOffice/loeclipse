@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFileWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,54 +59,3 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.wizards;
-
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
-
-/**
- * Wizard for the creation of unoidl file.
- * 
- * @author cbosdonnat
- *
- */
-public class NewUnoFileWizard extends Wizard implements INewWizard {
-
-	private NewUnoFilePage page;
-	
-	private IWorkbench workbench;
-	
-	public NewUnoFileWizard() {
-		super();
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
-	public boolean performFinish() {
-		
-		IPath parentPath = page.getContainerFullPath();
-		IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(parentPath);
-		
-		return NewUnoFilePage.createUnoidlFile(folder, page.getFileName(), workbench);
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		
-		this.workbench = workbench;
-		
-		page = new NewUnoFilePage("configuration", selection);
-
-		addPage(page);
-	}
-}

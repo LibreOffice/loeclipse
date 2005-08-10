@@ -1,8 +1,8 @@
 /*************************************************************************
  *
- * $RCSfile: SDKTable.java,v $
+ * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.1 $
  *
  * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:28 $
  *
@@ -96,8 +96,8 @@ import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.preferences.ConfigListener;
 import org.openoffice.ide.eclipse.preferences.InvalidConfigException;
-import org.openoffice.ide.eclipse.preferences.sdk.SDK;
-import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
+import org.openoffice.ide.eclipse.preferences.ooo.OOo;
+import org.openoffice.ide.eclipse.preferences.ooo.OOoContainer;
 
 /**
  * This class creates the whole SDK table with it's viewer and content provider
@@ -106,14 +106,14 @@ import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
  * @author cbosdonnat
  *
  */
-public class SDKTable extends Composite{
+public class OOoTable extends Composite{
 
 	/** Column properties */
-	private static final String SDK_NAME = "SDK_NAME";
-	private static final String SDK_PATH = "SDK_PATH";
+	private static final String OOO_NAME = "OOO_NAME";
+	private static final String OOO_PATH = "OOO_PATH";
 	
-	private TableColumn sdkname;
-	private TableColumn sdkpath;
+	private TableColumn oooname;
+	private TableColumn ooopath;
 	
 	/**
 	 * Table object
@@ -136,38 +136,38 @@ public class SDKTable extends Composite{
 	private TableViewer tableViewer;
 	
 	/**
-	 * Temporary SDK for storing the values fetched from the dialog
+	 * Temporary OOo for storing the values fetched from the dialog
 	 */
-	private SDK tmpsdk;
+	private OOo tmpooo;
 		
 	/**
-	 * Main constructor of the SDK Table. It's style can't be configured like other
-	 * SWT composites. When using a SDK Table, you should add all the necessary Layouts
+	 * Main constructor of the OOo Table. It's style can't be configured like other
+	 * SWT composites. When using a OOo Table, you should add all the necessary Layouts
 	 * and Layout Data to display it correctly. 
 	 * 
 	 * @param parent Composite parent of the table.
 	 */
-	public SDKTable(Composite parent) {
+	public OOoTable(Composite parent) {
 		super(parent, SWT.NONE);
 		
-		SDKContainer.getSDKContainer();
+		OOoContainer.getOOoContainer();
 		createContent();
 	}
 	
 	/**
-	 * Fill the table with the preferences from the SDKS_CONFIG file
+	 * Fill the table with the preferences from the OOOS_CONFIG file
 	 */
 	public void getPreferences(){
-		SDKContainer.getSDKContainer();
+		OOoContainer.getOOoContainer();
 	}
 	
 	/**
-	 * Saves the sdks in the SDKS_CONFIG file
+	 * Saves the ooos in the OOOS_CONFIG file
 	 * 
 	 */
 	public void savePreferences(){
 		
-		SDKContainer.getSDKContainer().saveSDKs();
+		OOoContainer.getOOoContainer().saveOOos();
 	}
 	
 	/**
@@ -191,19 +191,19 @@ public class SDKTable extends Composite{
 		setLayout(new GridLayout(2, false));
 		setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label sdkLabel = new Label(this, SWT.NONE);
-		sdkLabel.setText(OOEclipsePlugin.getTranslationString(
-				I18nConstants.SDKS_LIST));
+		Label oooLabel = new Label(this, SWT.NONE);
+		oooLabel.setText(OOEclipsePlugin.getTranslationString(
+				I18nConstants.OOOS_LIST));
 		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		sdkLabel.setLayoutData(gd);
+		oooLabel.setLayoutData(gd);
 		
 		createTable();
 		createTableViewer();
 		createButtons();
 		
-		tableViewer.setInput(SDKContainer.getSDKContainer());
+		tableViewer.setInput(OOoContainer.getOOoContainer());
 	}
 
 
@@ -220,14 +220,14 @@ public class SDKTable extends Composite{
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		
-		// Creates the three columns: SDK Name+Version, SDK Path, OOo Program path
-		sdkname = new TableColumn(table, SWT.LEFT | SWT.RESIZE);
-		sdkname.setText(OOEclipsePlugin.getTranslationString(I18nConstants.NAME));
-		sdkname.setWidth(100); // Used to 'fix' the eclipse-GTK+ painting bug
+		// Creates the two columns: OOo Name+Version, OOo Path
+		oooname = new TableColumn(table, SWT.LEFT | SWT.RESIZE);
+		oooname.setText(OOEclipsePlugin.getTranslationString(I18nConstants.NAME));
+		oooname.setWidth(100); // Used to 'fix' the eclipse-GTK+ painting bug
 		
-		sdkpath = new TableColumn(table, SWT.LEFT | SWT.RESIZE);
-		sdkpath.setText(OOEclipsePlugin.getTranslationString(I18nConstants.SDK_PATH));
-		sdkpath.setWidth(200); // Used to 'fix' the eclipse-GTK+ painting bug
+		ooopath = new TableColumn(table, SWT.LEFT | SWT.RESIZE);
+		ooopath.setText(OOEclipsePlugin.getTranslationString(I18nConstants.OOO_HOME_PATH));
+		ooopath.setWidth(200); // Used to 'fix' the eclipse-GTK+ painting bug
 
 	}
 	
@@ -237,14 +237,14 @@ public class SDKTable extends Composite{
 		
 		// Sets the column properties to know which column is edited afterwards
 		tableViewer.setColumnProperties(new String[]{
-			SDK_NAME,
-			SDK_PATH
+			OOO_NAME,
+			OOO_PATH
 		});
 		
 		// Manages the label to print in the cells from the model
-		tableViewer.setLabelProvider(new SDKLabelProvider());
+		tableViewer.setLabelProvider(new OOoLabelProvider());
 		
-		tableViewer.setContentProvider(new SDKContentProvider());
+		tableViewer.setContentProvider(new OOoContentProvider());
 		
 		// Listen to a double clic to popup an edition dialog
 		tableViewer.addDoubleClickListener(new IDoubleClickListener(){
@@ -252,12 +252,12 @@ public class SDKTable extends Composite{
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()){
 					
-					// Get the double clicked SDK line
-					SDK sdk = (SDK)((IStructuredSelection)event.getSelection()).getFirstElement();
+					// Get the double clicked OOo line
+					OOo ooo = (OOo)((IStructuredSelection)event.getSelection()).getFirstElement();
 					
 					// Launch the dialog
-					sdk = openDialog(sdk, true);
-					SDKContainer.getSDKContainer().updateSDK(sdk.getId(), sdk);
+					ooo = openDialog(ooo, true);
+					OOoContainer.getOOoContainer().updateOOo(ooo.getId(), ooo);
 				}
 			}
 			
@@ -265,41 +265,42 @@ public class SDKTable extends Composite{
 	}
 	
 	/**
-	 * This method create and calls the dialog box to be launched on SDK edition or SDK creation.
-	 * The parameter <code>sdk</code> could be null: in this case, a new one will be created. 
-	 * Otherwise the fields of the old one will be changed. This is useful for SDK editing: the 
+	 * This method create and calls the dialog box to be launched on OOo edition or OOo creation.
+	 * The parameter <code>ooo</code> could be null: in this case, a new one will be created. 
+	 * Otherwise the fields of the old one will be changed. This is useful for OOo editing: the 
 	 * object reference is the same.
 	 * 
-	 * @param sdk
+	 * @param ooo
 	 * @return
 	 */
-	protected SDK openDialog(SDK sdk, boolean editing){
+	protected OOo openDialog(OOo ooo, boolean editing){
 		
 		// Gets the shell of the active eclipse window
-		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
+						getActiveWorkbenchWindow().getShell();
 		
-		SDKDialog dialog = new SDKDialog(shell, sdk);
-		if (SDKDialog.OK == dialog.open()){
+		OOoDialog dialog = new OOoDialog(shell, ooo);
+		if (OOoDialog.OK == dialog.open()){
 			// The user validates his choice, perform the changes
-			SDK newSDK = tmpsdk;
-			tmpsdk = null;
+			OOo newOOo = tmpooo;
+			tmpooo = null;
 			
-			if (null != sdk){
-				// Only an existing SDK modification
+			if (null != ooo){
+				// Only an existing OOo modification
 				try {
-					sdk.setSDKHome(newSDK.getSDKHome());
+					ooo.setOOoHome(newOOo.getOOoHome());
 				} catch (InvalidConfigException e) {
-					OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // localized in SDK class
+					OOEclipsePlugin.logError(
+							e.getLocalizedMessage(), e); // localized in OOo class
 				}
 			} else {
-				// Creation of a new SDK
-				
-				sdk = newSDK;
+				// Creation of a new OOo
+				ooo = newOOo;
 			}
 
 		}
 		
-		return sdk;
+		return ooo;
 	}
 	
 	private void createButtons() {
@@ -312,9 +313,9 @@ public class SDKTable extends Composite{
 		add.addSelectionListener(new SelectionAdapter(){
 
 			public void widgetSelected(SelectionEvent e) {
-				// Launch add SDK dialog
-				SDK sdk = openDialog(null, false);
-				SDKContainer.getSDKContainer().addSDK(sdk);
+				// Launch add OOodialog
+				OOo ooo = openDialog(null, false);
+				OOoContainer.getOOoContainer().addOOo(ooo);
 			}
 		});
 		
@@ -329,8 +330,8 @@ public class SDKTable extends Composite{
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
 				if (selection != null) {
-					SDK sdk = (SDK)selection.getFirstElement();
-					SDKContainer.getSDKContainer().delSDK(sdk);
+					OOo ooo = (OOo)selection.getFirstElement();
+					OOoContainer.getOOoContainer().delOOo(ooo);
 				}
 			}
 		});
@@ -338,39 +339,39 @@ public class SDKTable extends Composite{
 	}
 	
 	/**
-	 * The SDK content provider is a class which provides the SDKs objects to the viewer
+	 * The OOo content provider is a class which provides the OOos objects to the viewer
 	 * 
 	 * @author cbosdonnat
 	 *
 	 */
-	class SDKContentProvider implements IStructuredContentProvider, ConfigListener {
+	class OOoContentProvider implements IStructuredContentProvider, ConfigListener {
 		
-		public SDKContentProvider() {
-			if (null == SDKContainer.getSDKContainer()){
-				SDKContainer.getSDKContainer();
+		public OOoContentProvider() {
+			if (null == OOoContainer.getOOoContainer()){
+				OOoContainer.getOOoContainer();
 			}
 		}
 
 		public Object[] getElements(Object inputElement) {
-			return SDKContainer.getSDKContainer().toArray();
+			return OOoContainer.getOOoContainer().toArray();
 		}
 
 		public void dispose() {
-			SDKContainer.getSDKContainer().removeListener(this);
+			OOoContainer.getOOoContainer().removeListener(this);
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (null != oldInput){
-				((SDKContainer)oldInput).removeListener(this);
+				((OOoContainer)oldInput).removeListener(this);
 			}
 			
 			if (null != newInput){
-				((SDKContainer)newInput).addListener(this);
+				((OOoContainer)newInput).addListener(this);
 			}
 		}
 
 		public void ConfigAdded(Object element) {
-			if (element instanceof SDK){
+			if (element instanceof OOo){
 				tableViewer.add(element);
 				
 				// This redrawing order is necessary to avoid having strange columns
@@ -379,17 +380,17 @@ public class SDKTable extends Composite{
 		}
 
 		public void ConfigRemoved(Object element) {
-			if (null != element && element instanceof SDK){
-				// Only one SDK to remove
+			if (null != element && element instanceof OOo){
+				// Only one OOo to remove
 				tableViewer.remove(element);
 			} else {
-				// All the SDK have been removed
+				// All the OOo have been removed
 				if (null != tableViewer){
 					int i = 0;
-					SDK sdki = (SDK)tableViewer.getElementAt(i);
+					OOo oooi = (OOo)tableViewer.getElementAt(i);
 					
-					while (null != sdki){
-						tableViewer.remove(sdki);
+					while (null != oooi){
+						tableViewer.remove(oooi);
 					}
 				}
 			}
@@ -399,35 +400,35 @@ public class SDKTable extends Composite{
 		}
 
 		public void ConfigUpdated(Object element) {
-			if (element instanceof SDK) {
-				// Note that we can do this only because the SDK Container guarantees
-				// that the reference of the sdk will not change during an update
+			if (element instanceof OOo) {
+				// Note that we can do this only because the OOo Container guarantees
+				// that the reference of the ooo will not change during an update
 				tableViewer.update(element, null);
 			}
 		}
 	}
 	
 	/**
-	 * Internal class used to get the label to be put in the table cell from an sdk
+	 * Internal class used to get the label to be put in the table cell from an ooo
 	 * 
 	 * @author cbosdonnat
 	 *
 	 */
-	class SDKLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class OOoLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-		// Aucune image pour le SDK
+		// Aucune image pour le OOo
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			SDK sdk = (SDK)element;
+			OOo ooo = (OOo)element;
 			String text = new String();
 			
 			if (0 == columnIndex){  // name column
-				text = sdk.getName()+" - "+sdk.getBuildId();
-			} else if (1 == columnIndex) { // sdk path column
-				text = sdk.getSDKHome();
+				text = ooo.getName()+" - "+ooo.getBuildId();
+			} else if (1 == columnIndex) { // ooo path column
+				text = ooo.getOOoHome();
 			}
 			
 			return text;
@@ -435,33 +436,34 @@ public class SDKTable extends Composite{
 	}
 	
 	/**
-	 * Class for the SDK add/edit dialog. 
+	 * Class for the OOo add/edit dialog. 
 	 * 
 	 * @author cbosdonnat
 	 *
 	 */
-	class SDKDialog extends StatusDialog implements IFieldChangedListener{
+	class OOoDialog extends StatusDialog implements IFieldChangedListener{
 		
-		private static final String P_SDK_PATH    = "__sdk_path";
+		private static final String P_OOO_PATH    = "__ooo_path";
 
-		private FileRow sdkpathRow;
+		private FileRow ooopathRow;
 		
 		private TextRow nameRow;
 		private TextRow buidlidRow; 
 		
-		private SDK sdk;
+		private OOo ooo;
 		
-		protected SDKDialog(Shell parentShell) {
+		protected OOoDialog(Shell parentShell) {
 			this(parentShell, null);
 		}
 		
-		protected SDKDialog(Shell parentShell, SDK sdk) {
+		protected OOoDialog(Shell parentShell, OOo ooo) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.sdk = sdk;
+			this.ooo = ooo;
 			
 			setBlockOnOpen(true); // This dialog is a modal one
-			setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.SDK_CONFIG_DIALOG_TITLE));
+			setTitle(OOEclipsePlugin.getTranslationString(
+					I18nConstants.OOO_CONFIG_DIALOG_TITLE));
 		}
 		
 		protected Control createDialogArea(Composite parent) {
@@ -478,13 +480,13 @@ public class SDKTable extends Composite{
 			image.setLayoutData(gd);
 			
 			// Creates each line of the dialog
-			sdkpathRow = new FileRow(body, P_SDK_PATH, 
-					OOEclipsePlugin.getTranslationString(I18nConstants.SDK_PATH), true);
-			sdkpathRow.setFieldChangedListener(this);
+			ooopathRow = new FileRow(body, P_OOO_PATH, 
+					OOEclipsePlugin.getTranslationString(I18nConstants.OOO_HOME_PATH), true);
+			ooopathRow.setFieldChangedListener(this);
 			
-			// put the value of the edited SDK in the fields
-			if (null != sdk){
-				sdkpathRow.setFile(sdk.getSDKHome());
+			// put the value of the edited OOo in the fields
+			if (null != ooo){
+				ooopathRow.setFile(ooo.getOOoHome());
 			}
 			
 			nameRow = new TextRow(body, "", 
@@ -495,12 +497,12 @@ public class SDKTable extends Composite{
 					OOEclipsePlugin.getTranslationString(I18nConstants.BUILID));
 			buidlidRow.setEnabled(false);   // This line is only to show the value
 			
-			if (null != sdk && null != sdk.getName() && null != sdk.getBuildId()){
-				nameRow.setText(sdk.getName());
-				buidlidRow.setText(sdk.getBuildId());
+			if (null != ooo && null != ooo.getName() && null != ooo.getBuildId()){
+				nameRow.setText(ooo.getName());
+				buidlidRow.setText(ooo.getBuildId());
 			}
 			
-			// activate the OK button only if the SDK is correct
+			// activate the OK button only if the OOo is correct
 			Button okButton = getButton(IDialogConstants.OK_ID);
 			if (null != okButton){
 				okButton.setEnabled(isValid(null));
@@ -514,7 +516,7 @@ public class SDKTable extends Composite{
 			// If there is one field missing, print an error line at the bottom
 			// of the dialog.
 			
-			if (!sdkpathRow.getFile().equals("")) {
+			if (!ooopathRow.getFile().equals("")) {
 				isValid(null);
 				super.okPressed();
 			} else {
@@ -543,13 +545,13 @@ public class SDKTable extends Composite{
 		private boolean isValid(String property){
 			boolean result = false;
 				
-			// Try to create an SDK
+			// Try to create an OOo
 			try {
-				tmpsdk = new SDK (sdkpathRow.getFile()); 
+				tmpooo = new OOo (ooopathRow.getFile()); 
 
-				if (null != tmpsdk.getName() && null != tmpsdk.getBuildId()) {
-					nameRow.setText(tmpsdk.getName());
-					buidlidRow.setText(tmpsdk.getBuildId());
+				if (null != tmpooo.getName() && null != tmpooo.getBuildId()) {
+					nameRow.setText(tmpooo.getName());
+					buidlidRow.setText(tmpooo.getBuildId());
 				}
 				
 				updateStatus(new Status(Status.OK,
@@ -559,11 +561,13 @@ public class SDKTable extends Composite{
 				result = true;
 				
 			} catch (InvalidConfigException e) {
-				if (property.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()){
+				if (property.equals(P_OOO_PATH) && 
+						InvalidConfigException.INVALID_OOO_HOME == e.getErrorCode()){
+					
 					updateStatus(new Status(Status.ERROR, 
 						     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							 Status.ERROR,
-							 OOEclipsePlugin.getTranslationString(I18nConstants.INVALID_SDK_PATH),
+							 OOEclipsePlugin.getTranslationString(I18nConstants.INVALID_OOO_PATH),
 							 e));
 				} else {
 					updateStatus(new Status(Status.OK,

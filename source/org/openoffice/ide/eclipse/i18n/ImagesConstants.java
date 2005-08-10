@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:22 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -69,5 +69,6 @@ public class ImagesConstants {
 	public static final String UNO_PROJECT = "UNO_PROJECT";
 	public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ";
 	public static final String NEWFILE_WIZ = "NEWFILE_WIZ";
+	public static final String DB_FOLDER = "DB_FOLDER";
 
 }

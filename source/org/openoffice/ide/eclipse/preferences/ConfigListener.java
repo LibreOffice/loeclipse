@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: SDKListener.java,v $
+ * $RCSfile: ConfigListener.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,30 +59,28 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.preferences.sdk;
+package org.openoffice.ide.eclipse.preferences;
 
-import org.openoffice.ide.eclipse.preferences.sdk.SDK;
-
-public interface SDKListener {
+public interface ConfigListener {
 	
 	/**
-	 * Method fired when an SDK has been added to the container
+	 * Method fired when a config element has been added to the container
 	 * 
-	 * @param sdk added sdk
+	 * @param element added sdk or ooo
 	 */
-	public void SDKAdded(SDK sdk);
+	public void ConfigAdded(Object element);
 	
 	/**
-	 * Method fired when an SDK has been removed from the container
+	 * Method fired when a config element has been removed from the container
 	 * 
-	 * @param sdk removed sdk. <code>null</code> if the container has been cleared
+	 * @param element removed sdk or ooo. <code>null</code> if the container has been cleared
 	 */
-	public void SDKRemoved(SDK sdk);
+	public void ConfigRemoved(Object element);
 	
 	/**
-	 * Method fired when an SDK has been updated in the container
+	 * Method fired when a config element has been updated in the container
 	 * 
-	 * @param sdk new value of the sdk
+	 * @param element new value of the sdk or ooo
 	 */
-	public void SDKUpdated(SDK sdk);
+	public void ConfigUpdated(Object element);
 }

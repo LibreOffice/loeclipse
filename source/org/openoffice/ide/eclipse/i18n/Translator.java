@@ -2,9 +2,9 @@
  *
  * $RCSfile: Translator.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:35:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,60 +61,39 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.i18n;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Locale;
-import java.util.PropertyResourceBundle;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 
 public class Translator {
 	
-	private PropertyResourceBundle localeBundle;
-	private PropertyResourceBundle defaultBundle;
-	
-	private static final String I18N_PREFIX       = "/i18n/OOEclipsePlugin_";
-	private static final String I18N_SUFFIX       = ".lang";
-	private static final String I18N_DEFAULT_LANG = "default";
+	private ResourceBundle bundle;
 
 	
 	public Translator(){
-		String language = Locale.getDefault().getLanguage();
-		URL langFileURL = OOEclipsePlugin.getDefault().getBundle().
-								getEntry(I18N_PREFIX+language+I18N_SUFFIX);
-		URL defaultFileURL = OOEclipsePlugin.getDefault().getBundle().
-								getEntry(I18N_PREFIX+I18N_DEFAULT_LANG+I18N_SUFFIX);
-		
-		if (null == langFileURL){
-			OOEclipsePlugin.logWarning(
-								language+" translation file not found. Using default one",
-								null);
-			langFileURL = defaultFileURL;
-		}
 		
 		try {
-			defaultBundle = new PropertyResourceBundle(langFileURL.openStream());
-			localeBundle = new PropertyResourceBundle(langFileURL.openStream());
+			bundle = ResourceBundle.getBundle(
+					"org.openoffice.ide.eclipse.i18n.Translator", 
+					Locale.getDefault());
 			
-		} catch (IOException e) {
-			OOEclipsePlugin.logError("Unable to read "+langFileURL.getFile(), e);
 		} catch (NullPointerException e){
-			String message = "Translation file not found: ";
-			
-			if (null == defaultBundle){
-				message = message + I18N_DEFAULT_LANG;
+			if (null != System.getProperty("DEBUG")) {
+				System.out.println("Call to getBundle is incorrect: NullPointerException catched");
 			}
+		} catch (MissingResourceException e) {
+			
+			String message = "Translation file not found for locale :" + Locale.getDefault().toString();
 			OOEclipsePlugin.logError(message, null);
 		}
 	}
 	
 	/**
 	 * <p>Returns the localized translation for the key given in parameter. This value
-	 * is extracted from the <code>/i18n/OOEclipsePlugin_&lt;language&gt;.lang</code>
+	 * is extracted from the <code>Translator.properties</code>
 	 * file located in the plugin directory.</p>
-	 * 
-	 * <p>If the file or the key doesn't exists, the default translation for 
-	 * <code>key</code> is returned.</p> 
 	 * 
 	 * @param key wanted localized translation key
 	 * @return localized translation for key
@@ -123,32 +102,9 @@ public class Translator {
 		String result = "";
 
 		try {
-			result = localeBundle.getString(key);
+			result = bundle.getString(key);
 		} catch (Exception e){
-			OOEclipsePlugin.logError("Key not found : " + key+", using default one", e);
-			result = getDefaultString(key);
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * <p>Returns the default translation for the key given in parameter. This value
-	 * is extracted from the <code>/i18n/OOEclipsePlugin_default.lang</code> file
-	 * located in the plugin directory.</p>
-	 * 
-	 * <p>If one of the file or the key doesn't exists, the key is returned.</p>
-	 * 
-	 * @param key wanted default translation key
-	 * @return translation for key
-	 */
-	public String getDefaultString(String key){
-		String result = "";
-
-		try {
-			result = defaultBundle.getString(key);
-		} catch (Exception e){
-			OOEclipsePlugin.logError("Key not found in default translation file: " + key, e);
+			OOEclipsePlugin.logError("Key not found : " + key, e);
 			result = key;
 		}
 		

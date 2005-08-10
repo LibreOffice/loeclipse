@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: UnoidlEditor.java,v $
+ * $RCSfile: ScopedName.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,58 +59,54 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.editors;
+package org.openoffice.ide.eclipse.model;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.editors.text.TextEditor;
-import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import java.util.Vector;
 
 /**
- * TODOC
+ * Class that holds the scoped name of a uno declaration
  * 
  * @author cbosdonnat
  *
  */
-public class UnoidlEditor extends TextEditor {
+public class ScopedName {
 
-	 /**
-	  * Member that listens to the preferences porperty changes 
-	  */
-	 private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				getSourceViewer().invalidateTextPresentation();
-				
-			}
-		};
+	public final static String SEPARATOR = "::";
 	
+	private Vector segments = new Vector();
 	
-	private ColorProvider colorManager;
+	public ScopedName(String root, String name) {
+		changeScopedName(root + SEPARATOR + name);
+	}
 	
-	public UnoidlEditor() {
-		super();
+	public void changeScopedName(String name){
+		String[] splittedName = name.split("::");
+		segments.clear();
 		
-		colorManager = new ColorProvider();
-		setSourceViewerConfiguration(new UnoidlConfiguration(colorManager));
-		setDocumentProvider(new UnoidlDocumentProvider());
-		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyListener);
+		for (int i=0, length=splittedName.length; i<length; i++){
+			segments.add(splittedName[i]);
+		}
 	}
 	
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		return super.createSourceViewer(parent, ruler, styles);
+	public void appendSegment(String name){
+		String[] splittedName = name.split("::");
+		
+		for (int i=0, length=splittedName.length; i<length; i++){
+			segments.add(splittedName[i]);
+		}
 	}
 	
-	public void dispose() {
-		colorManager.dispose();
-		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyListener);
-		super.dispose();
+	public String lastSegment(){
+		return (String)segments.lastElement();
 	}
 	
-    public void doSave(IProgressMonitor progressMonitor) {
-        super.doSave(progressMonitor);
-    }
+	public String toString() {
+		String result = "";
+		
+		for (int i=0, length=segments.size(); i<length; i++){
+			result = result + (String)segments.get(i);
+		}
+		return result;
+	}
+
 }

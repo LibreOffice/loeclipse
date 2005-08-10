@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:23:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:24 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -70,6 +70,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.preferences.InvalidConfigException;
 
 /**
  * SDK Class used as model for a line of the table. This class doesn't take the new URE
@@ -110,20 +111,17 @@ public class SDK {
 	private String name;
 	private String buildId;
 	private String sdkHome;
-	private String oooHome;
 	
 	/**
 	 * Standard and only constructor for the SDK object. The name and buildId will be fetched
 	 * from the $(SDK_HOME)/settings/dk.mk properties file.
 	 * 
 	 * @param sdkHome absolute path of the SDK root
-	 * @param oooHome absolute path to the $OOO_HOME directory
 	 */
-	public SDK (String sdkHome, String oooHome) throws InvalidSDKException {
+	public SDK (String sdkHome) throws InvalidConfigException {
 		
 		// Sets the path to the SDK
 		setSDKHome(sdkHome);
-		setOOoHome(oooHome);
 	}
 
 	/**
@@ -132,7 +130,7 @@ public class SDK {
 	 * 
 	 * @param sdkHome path to the new sdk home
 	 * 
-	 * @exception InvalidSDKException <p>This exception is thrown when the following errors are encountered
+	 * @exception InvalidConfigException <p>This exception is thrown when the following errors are encountered
 	 *            with the INVALID_SDK_HOME error code: </p>
 	 *             <ul>
 	 *                <li>the sdk path does not point to a valid directory</li>
@@ -142,7 +140,7 @@ public class SDK {
 	 *                <li>an unexpected exception has been raised</li>
 	 *             </ul>
 	 */
-	public void setSDKHome(String sdkHome) throws InvalidSDKException {
+	public void setSDKHome(String sdkHome) throws InvalidConfigException {
 		try {
 		
 			// Get the file representing the given sdkHome
@@ -160,17 +158,17 @@ public class SDK {
 				// test for the idl directory
 				File idlFile = new File(homeFile, "idl");
 				if (! (idlFile.exists() && idlFile.isDirectory()) ) {
-					throw new InvalidSDKException(
+					throw new InvalidConfigException(
 							OOEclipsePlugin.getTranslationString(I18nConstants.IDL_DIR_MISSING), 
-							InvalidSDKException.INVALID_SDK_HOME);
+							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
 				// test for the settings directory
 				File settingsFile = new File(homeFile, "settings");
 				if (! (settingsFile.exists() && settingsFile.isDirectory()) ) {
-					throw new InvalidSDKException(
+					throw new InvalidConfigException(
 							OOEclipsePlugin.getTranslationString(I18nConstants.SETTINGS_DIR_MISSING),
-							InvalidSDKException.INVALID_SDK_HOME);
+							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
 				
@@ -180,84 +178,23 @@ public class SDK {
 				this.sdkHome = sdkHome;
 				
 			} else {
-				throw new InvalidSDKException(
+				throw new InvalidConfigException(
 						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+sdkHome,
-						InvalidSDKException.INVALID_SDK_HOME);
+						InvalidConfigException.INVALID_SDK_HOME);
 			}
 		} catch (Throwable e) {
 			
-			if (e instanceof InvalidSDKException) {
+			if (e instanceof InvalidConfigException) {
 				
 				// Rethrow the InvalidSDKException
-				InvalidSDKException exception = (InvalidSDKException)e;
+				InvalidConfigException exception = (InvalidConfigException)e;
 				throw exception;
 			} else {
 				
 				// Unexpected exception thrown
-				throw new InvalidSDKException(
+				throw new InvalidConfigException(
 						OOEclipsePlugin.getTranslationString(I18nConstants.UNEXPECTED_EXCEPTION), 
-						InvalidSDKException.INVALID_SDK_HOME, e);
-			}
-		}
-	}
-	
-	/**
-	 * 
-	 * @param oooHome
-	 * @throws InvalidSDKException
-	 */
-	public void setOOoHome(String oooHome) throws InvalidSDKException {
-		
-		try {
-			// Get the file representing the given OOo home path
-			Path homePath = new Path(oooHome);
-			File homeFile = homePath.toFile();
-			
-			
-				
-			// Check for the program directory
-			File programFile = new File(homeFile, "program");
-			if (programFile.exists() && programFile.isDirectory()){
-				
-				// checks for types.rdb
-				File typesFile = new File(programFile, "types.rdb");
-				if (! (typesFile.exists() && typesFile.isFile()) ){
-					throw new InvalidSDKException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+ typesFile.getAbsolutePath(), 
-							InvalidSDKException.INVALID_OOO_HOME);
-				}
-				
-				// checks for classes directory
-				File classesFile = new File (programFile, "classes");
-				if (! (classesFile.exists() && classesFile.isDirectory()) ){
-					throw new InvalidSDKException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR) + classesFile.getAbsolutePath(), 
-							InvalidSDKException.INVALID_OOO_HOME);
-				}
-				
-				this.oooHome = oooHome;
-				
-			} else {
-				throw new InvalidSDKException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR) + programFile.getAbsolutePath(), 
-						InvalidSDKException.INVALID_OOO_HOME);
-			}
-				
-			
-			
-		} catch (Throwable e){
-			
-			if (e instanceof InvalidSDKException) {
-				
-				// Rethrow the invalidSDKException
-				InvalidSDKException exception = (InvalidSDKException)e;
-				throw exception;
-			} else {
-
-				// Unexpected exception thrown
-				throw new InvalidSDKException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.UNEXPECTED_EXCEPTION),
-						InvalidSDKException.INVALID_OOO_HOME, e);
+						InvalidConfigException.INVALID_SDK_HOME, e);
 			}
 		}
 	}
@@ -344,41 +281,18 @@ public class SDK {
 	}
 	
 	/**
-	 * Returns the path to the associated OpenOffice.org home directory. This string could 
-	 * be passed to the Path constructor to get the folder object. 
-	 * 
-	 * @return path to the SDK associated OpenOffice.org home directory.
-	 * @see Path
-	 */
-	public String getOOoHome(){
-		return oooHome;
-	}
-	
-	/**
-	 * <p>Returns the path to the associated OpenOffice.org classes directory. This string could 
-	 * be passed to the Path constructor to get the folder object.</p> 
-	 * 
-	 * <p><em>This method should be used for future compatibility with URE applications</em></p>
-	 * 
-	 * @return path to the associated OpenOffice.org classes directory
-	 */
-	public String getClassesPath(){
-		return oooHome + "/program/classes";
-	}
-	
-	/**
 	 * Reads the dk.mk file to get the sdk name and buildid. They are set in the SDK object if 
 	 * they are both fetched. Otherwise an invalide sdk exception is thrown.
 	 * 
 	 * @param settingsFile
-	 * @throws InvalidSDKException Exception thrown when one of the following problems happened
+	 * @throws InvalidConfigException Exception thrown when one of the following problems happened
 	 *          <ul>
 	 *             <li>the given settings file isn't a valid directory</li>
 	 *             <li>the settings/dk.mk file doesn't exists or is unreadable</li>
 	 *             <li>one or both of the sdk name or buildid key is not set</li>
 	 *          </ul>
 	 */
-	private void readSettings(File settingsFile) throws InvalidSDKException {
+	private void readSettings(File settingsFile) throws InvalidConfigException {
 		
 		if (settingsFile.exists() && settingsFile.isDirectory()) {
 		
@@ -401,25 +315,25 @@ public class SDK {
 					name = dkProperties.getProperty(K_DK_NAME);
 					buildId = dkProperties.getProperty(K_SDK_BUILDID);
 				} else {
-					throw new InvalidSDKException(
+					throw new InvalidConfigException(
 							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + K_SDK_NAME + ", " + K_SDK_BUILDID,
-							InvalidSDKException.INVALID_SDK_HOME);
+							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
 			} catch (FileNotFoundException e) {
-				throw new InvalidSDKException(
+				throw new InvalidConfigException(
 						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+ "settings/" + F_DK_CONFIG , 
-						InvalidSDKException.INVALID_SDK_HOME);
+						InvalidConfigException.INVALID_SDK_HOME);
 			} catch (IOException e) {
-				throw new InvalidSDKException(
+				throw new InvalidConfigException(
 						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_READABLE_FILE) + "settings/" + F_DK_CONFIG, 
-						InvalidSDKException.INVALID_SDK_HOME);
+						InvalidConfigException.INVALID_SDK_HOME);
 			}
 			
 		} else {
-			throw new InvalidSDKException(
+			throw new InvalidConfigException(
 					OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+ settingsFile.getAbsolutePath(),
-					InvalidSDKException.INVALID_SDK_HOME);
+					InvalidConfigException.INVALID_SDK_HOME);
 		}
 	}
 }

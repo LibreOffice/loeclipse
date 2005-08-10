@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/26 06:24:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -64,11 +64,13 @@ package org.openoffice.ide.eclipse.model;
 import java.io.File;
 import java.util.Vector;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -80,11 +82,13 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.builders.JavamakerBuilder;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.preferences.ConfigListener;
+import org.openoffice.ide.eclipse.preferences.ooo.OOo;
+import org.openoffice.ide.eclipse.preferences.ooo.OOoContainer;
 import org.openoffice.ide.eclipse.preferences.sdk.SDK;
 import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
-import org.openoffice.ide.eclipse.preferences.sdk.SDKListener;
-import org.openoffice.ide.eclipse.wizards.NewUnoFilePage;
 
 /**
  * This class is used to mark projects as UNO-IDL ones.
@@ -93,7 +97,15 @@ import org.openoffice.ide.eclipse.wizards.NewUnoFilePage;
  * @author cbosdonnat
  *
  */
-public class UnoidlProject implements IProjectNature, SDKListener{
+public class UnoidlProject implements IProjectNature, ConfigListener{
+	
+	public final static String[] KEPT_JARS = {
+		"unoil.jar",
+		"ridl.jar",
+		"juh.jar",
+		"unoloader.jar",
+		"officebean.jar"
+	};
 
 	/**
 	 * Constant defining java as the project's language
@@ -138,12 +150,23 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	public static final String SDK_NAME = "sdkname";
 	
 	/**
+	 * <code>org.openoffice.ide.eclipse.oooname</code> 
+	 * is a persistent project property that stores the 
+	 * ooo name
+	 */
+	public static final String OOO_NAME = "oooname";
+	
+	/**
 	 * <code>org.openoffice.ide.eclipse.unoproject</code> 
 	 * is a persistent project property that indicates that 
 	 * the project supports the uno nature
 	 */
 	public final static String UNO_PROJECT = "unoproject";
 	
+	/**
+	 * Project relative path to the urd output folder.
+	 */
+	public static final String URD_BASIS = "urd";
 	
 	/**
 	 * Local reference to the associated project resource
@@ -166,6 +189,11 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	private SDK sdk;
 	
 	/**
+	 * selected OOo for the project
+	 */
+	private OOo ooo;
+	
+	/**
 	 * chosen programming language to use for code generation.
 	 * Default is Java.
 	 */
@@ -175,7 +203,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		super();
 		
 		SDKContainer.getSDKContainer().addListener(this);
-		
+		OOoContainer.getOOoContainer().addListener(this);
 	}
 	
 	//------------ Unoidl properties Getters and Setters
@@ -231,13 +259,31 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	}
 	
 	/**
-	 * Returns the path to the generated code
+	 * Returns the path to the directory containing the code
 	 * 
-	 * @return path to the generated code
+	 * @return path to the code directory
 	 */
 	public IPath getCodeLocation(){
+		return project.getFolder("source").getProjectRelativePath();
+	}
+	
+	/**
+	 * Path to the implementation directory
+	 * 
+	 * @return path to the implentation directory
+	 */
+	public IPath getImplementationLocation(){
 		String path = new String(companyPrefix+"."+outputExtension).replace('.', '/');
-		return project.getFolder(path).getProjectRelativePath();
+		return getCodeLocation().append(path);
+	}
+	
+	/**
+	 * Returns the path to the directory containing the generated urd files
+	 * 
+	 * @return path to the urd files
+	 */
+	public IPath getUrdLocation(){
+		return new Path (URD_BASIS);
 	}
 	
 	/**
@@ -264,6 +310,33 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_SDKNAME_FAILED)+getProject().getName(), e);
+		}
+	}
+	
+	/**
+	 * Gets the selected OOo
+	 * 
+	 * @return selected OOo
+	 */
+	public OOo getOOo() {
+		return ooo;
+	}
+	
+	/**
+	 * Sets the selected OOo
+	 * 
+	 * @param ooo new selected OOo
+	 */
+	public void setOOo(OOo ooo) {
+		this.ooo = ooo;
+		try {
+			getProject().setPersistentProperty(
+					new QualifiedName(
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							OOO_NAME), ooo.getId());
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.SET_OOONAME_FAILED)+getProject().getName(), e);
 		}
 	}
 	
@@ -301,6 +374,10 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, SDK_NAME));
 		sdk = SDKContainer.getSDKContainer().getSDK(sdkKey);
 		
+		String oooKey = getProject().getPersistentProperty(new QualifiedName(
+				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OOO_NAME));
+		ooo = OOoContainer.getOOoContainer().getOOo(oooKey);
+		
 		String idllocation = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IDL_LOCATION));
 		companyPrefix = idllocation;
@@ -309,6 +386,41 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		String outputExt = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OUTPUT_EXT));
 		outputExtension = outputExt;
+		
+		/* 
+		 * Add the builder at the first place
+		 */
+		
+		// Get the project description
+		IProjectDescription descr = getProject().getDescription();
+		ICommand[] builders = descr.getBuildSpec();
+		ICommand[] newCommands = new ICommand[1 + builders.length];
+	
+		// creates the code generation command
+		switch (getOutputLanguage()){
+			case CPP_LANGUAGE:
+				// TODO Add the cppmaker builder here
+				break;
+				
+			case PYTHON_LANGUAGE:
+				// TODO See what to add for python here
+				break;
+		
+			case JAVA_LANGUAGE:
+			default:
+				// Add javamaker builder here
+				ICommand javamakerCommand = descr.newCommand();
+				javamakerCommand.setBuilderName(JavamakerBuilder.BUILDER_ID);
+				newCommands[0] = javamakerCommand;
+				
+				break;
+		}
+		
+		// Adds the other builders
+		System.arraycopy(builders, 0, newCommands, 1, builders.length);
+		
+		descr.setBuildSpec(newCommands);
+		getProject().setDescription(descr, null);
 	}
 
 	/*
@@ -380,27 +492,61 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 				String[] directories = companyPrefix.split("\\.");
 				String tmpPath = "";
 				
+				Vector modules = new Vector();
+				
 				for (int i=0, length=directories.length; i<length; i++){
 					tmpPath = tmpPath + "/" + directories[i];
 					IFolder folder = project.getFolder(tmpPath);
 					
 					// create the folder
 					folder.create(true, true, monitor);
+					
+					// Add a persistent property to the folder to remember
+					// It is an idl file. All it's subfolder except the code
+					// output folder is an idl capable folder too.
+					folder.setPersistentProperty(
+							new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+											  IDL_FOLDER),
+							"true");
+
+					// Create the company prefix module in idl files and set them read-only
+					UnoidlFile unoidlFile = new UnoidlFile(folder.getFile(folder.getName()+".idl"));
+					
+					Module parent = null;
+					if (modules.size() > 0) {
+						parent = (Module)modules.lastElement();
+					}
+					
+					Module module = new Module(parent, folder.getName());
+					if (null != parent) {
+						parent.addNode(module);
+					}
+					modules.add(module);
+					
+					for (int j=0, max=modules.size(); j<max; j++){
+						Module tmpModule = (Module)modules.get(j);
+						tmpModule.addFile(unoidlFile);
+					}
+					
+					unoidlFile.addNode((Module)modules.firstElement());
+					
+					unoidlFile.save();
+					
+					if (!folder.equals(getProject().getFolder(getUnoidlLocation()))){
+						
+						// In each other cases, the file is set read only to prevent the user to disturb
+						// the plugin behaviour.
+						ResourceAttributes fileAttributes = unoidlFile.getFile().getResourceAttributes();
+						fileAttributes.setReadOnly(true);
+						unoidlFile.getFile().setResourceAttributes(fileAttributes);
+					}
 				}
 				
-				// Add a persistent property to the folder to remember
-				// It is an idl file. All it's subfolder except the code
-				// output folder is an idl capable folder too.
-				IFolder folder = getProject().getFolder(getUnoidlLocation());
-				folder.setPersistentProperty(
-						new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-										  IDL_FOLDER),
-						"true");
-				
-				// Create a basic new idl file with the project name
-				NewUnoFilePage.createUnoidlFile(folder, getProject().getName()+".idl");
-				
 			} catch (CoreException e) {
+				if (null != System.getProperty("DEBUG")){
+					e.printStackTrace();
+				}
+				
 				OOEclipsePlugin.logError(
 						OOEclipsePlugin.getTranslationString(I18nConstants.FOLDER_CREATION_FAILED)+
 							getUnoidlLocation().toString(),
@@ -417,10 +563,24 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	public void createCodePackage(IProgressMonitor monitor) {
 
 		try {
-			// Create the ouput directory
+			// Create the sources directory
 			IFolder codeFolder = getProject().getFolder(getCodeLocation());
 			if (!codeFolder.exists()){
 				codeFolder.create(true, true, monitor);
+			}
+			
+			// Create the implementation directory
+			IPath implementationPath = getImplementationLocation();
+			String tmpPath = "";
+			
+			for (int i=0, length=implementationPath.segmentCount(); i<length; i++){
+				tmpPath = tmpPath + "/" + implementationPath.segment(i);
+				IFolder folder = project.getFolder(tmpPath);
+				
+				// create the folder
+				if (!folder.exists()){
+					folder.create(true, true, monitor);
+				}
 			}
 			
 			switch (language) {
@@ -438,15 +598,15 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 						
 					// Adds the project to the classpath
 					IClasspathEntry entry = JavaCore.newSourceEntry(
-							getProject().getFullPath());
+							getProject().getFolder(getCodeLocation()).getFullPath());
 					entries[0] = entry;
 					
 					javaProject.setRawClasspath(entries, monitor);
 					
 					
 					// Adds the jars contained in the OOo program folder
-					// specified in the SDK to the class path.
-					addJarsFromSDK();
+					// to the class path.
+					addJarsFromOOo();
 					
 				default:
 					break;
@@ -459,28 +619,57 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		
 	}
 	
-	//---------------- Implementation for the SDKListener
+	/**
+	 * Creates the urd directory
+	 * 
+	 * @param monitor
+	 */
+	public void createUrdDir(IProgressMonitor monitor){
+		
+		try {
+			IFolder urdFolder = getProject().getFolder(URD_BASIS);
+			if (!urdFolder.exists()){
+				urdFolder.create(true, true, monitor);
+				urdFolder.setDerived(true);
+			}
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.FOLDER_CREATION_FAILED+ URD_BASIS), e);
+		}
+	}
+	
+	//	---------------- Implementation for the ConfigListener
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.sdk.SDKListener#SDKAdded(org.openoffice.ide.eclipse.preferences.sdk.SDK)
+	 * @see org.openoffice.ide.eclipse.preferences.ConfigListener#ConfigAdded(java.lang.Object)
 	 */
-	public void SDKAdded(SDK sdk) {
-		// the selected SDK cannot be added again...
+	public void ConfigAdded(Object element) {
+		// the selected SDK or OOo cannot be added again...
 	}
 
 	/*
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.preferences.sdk.SDKListener#SDKRemoved(org.openoffice.ide.eclipse.preferences.sdk.SDK)
 	 */
-	public void SDKRemoved(SDK sdk) {
-		if (sdk == this.sdk){
-			
-			// Removes all the jars
-			removeJars();
-			
-			// Sets the selected SDK to null, it will tag the project as invalid
-			this.sdk = null;
+	public void ConfigRemoved(Object element) {
+		if (element instanceof SDK){
+			if (element == this.sdk){
+
+				// Sets the selected OOo to null, it will tag the project as invalid
+				this.sdk = null;
+				// TODO add a problem marker
+			}
+		} else if (element instanceof OOo) {
+			if (element == this.ooo){
+				
+				// Removes all the jars
+				removeJars();
+				
+				// Sets the selected SDK to null, it will tag the project as invalid
+				this.ooo = null;
+				// TODO add a problem marker
+			}
 		}
 	}
 
@@ -488,27 +677,29 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.preferences.sdk.SDKListener#SDKUpdated(org.openoffice.ide.eclipse.preferences.sdk.SDK)
 	 */
-	public void SDKUpdated(SDK sdk) {
-		if (sdk == this.sdk){
-			// the sdk is updated thanks to it's reference. Remove the old jar files
-			// from the classpath and the new ones
-			
-			removeJars();
-			addJarsFromSDK();
+	public void ConfigUpdated(Object element) {
+		if (element instanceof OOo){
+			if (element == this.ooo){
+				// the ooo is updated thanks to it's reference. Remove the old jar files
+				// from the classpath and the new ones
+				
+				removeJars();
+				addJarsFromOOo();
+			}
 		}
 	}
 
 	/**
-	 * Adds the jars from the sdk to the classpath of the javaproject
+	 * Adds the jars from the ooo to the classpath of the javaproject
 	 *
 	 */
-	private void addJarsFromSDK(){
+	private void addJarsFromOOo(){
 
 		IJavaProject javaProject = JavaCore.create(getProject());
 		
-		if (null != sdk){
+		if (null != ooo){
 			// Find the jars in the first level of the directory
-			Vector jarPaths = findJarsFromPath(sdk.getClassesPath());
+			Vector jarPaths = findJarsFromPath(ooo.getClassesPath());
 			try {
 				IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
 				IClasspathEntry[] entries = new IClasspathEntry[jarPaths.size()+
@@ -563,7 +754,7 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 	}
 	
 	/**
-	 * returns the path of all the jars contained in the folder pointed by path.
+	 * returns the path of all the kept jars contained in the folder pointed by path.
 	 * 
 	 * @param path path of the container folder
 	 * @return a vector of Path pointing to each jar.
@@ -577,13 +768,36 @@ public class UnoidlProject implements IProjectNature, SDKListener{
 		String[] content = programFolder.list();
 		for (int i=0, length=content.length; i<length; i++){
 			String contenti = content[i];
-			if (contenti.endsWith(".jar")){
-				Path jariPath = new Path (sdk.getClassesPath()+"/"+contenti);
+			if (isKeptJar(contenti)){
+				Path jariPath = new Path (ooo.getClassesPath()+"/"+contenti);
 				jarsPath.add(jariPath);
 			}
 		}
 		
 		return jarsPath;
+	}
+	
+	/**
+	 * Check if the specified jar file is one of those define in the KEPT_JARS constant
+	 * 
+	 * @param jarName name of the jar file to check
+	 * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, 
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean isKeptJar(String jarName){
+		
+		int i = 0;
+		boolean isKept = false;
+		
+		while (i<KEPT_JARS.length && !isKept){
+			if (jarName.equals(KEPT_JARS[i])){
+				isKept = true;
+			} else {
+				i++;
+			}
+		}
+		
+		return isKept;
 	}
 	
 	/**

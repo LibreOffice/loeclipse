@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: UnoidlEditor.java,v $
+ * $RCSfile: ResourceNode.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,58 +59,55 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.editors;
+package org.openoffice.ide.eclipse.model;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.editors.text.TextEditor;
-import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.eclipse.core.resources.IResource;
 
-/**
- * TODOC
- * 
- * @author cbosdonnat
- *
- */
-public class UnoidlEditor extends TextEditor {
+public abstract class ResourceNode extends TreeNode implements IOpenable {
+	
+	public static final String PATH_DELIMITER = "/";
+	
+	public ResourceNode(TreeNode parent, IResource aResource, String aPath) {
+		super(parent, aPath);
+		setResource(aResource);
+	}
 
-	 /**
-	  * Member that listens to the preferences porperty changes 
-	  */
-	 private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				getSourceViewer().invalidateTextPresentation();
-				
-			}
-		};
-	
-	
-	private ColorProvider colorManager;
-	
-	public UnoidlEditor() {
-		super();
+	public String getName() {
+		String name = getPath();
 		
-		colorManager = new ColorProvider();
-		setSourceViewerConfiguration(new UnoidlConfiguration(colorManager));
-		setDocumentProvider(new UnoidlDocumentProvider());
-		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyListener);
+		String[] splittedPath = getPath().split(PATH_DELIMITER);
+		if (1 < splittedPath.length){
+			name = splittedPath[splittedPath.length - 1];
+		}
+		return name;
 	}
 	
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		return super.createSourceViewer(parent, ruler, styles);
+	//------------------------------------------------------ Resource managment
+	
+	private IResource resource;
+	
+	public IResource getResource(){
+		return resource;
 	}
 	
-	public void dispose() {
-		colorManager.dispose();
-		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyListener);
-		super.dispose();
+	private void setResource(IResource aResource){
+		resource = aResource;
 	}
+
+	//---------------------------------------------------- Implements IOpenable
 	
-    public void doSave(IProgressMonitor progressMonitor) {
-        super.doSave(progressMonitor);
-    }
+	/**
+	 * This method should create all the children nodes of this one. This 
+	 * mechanism is used to gain memory on huge trees.
+	 * 
+	 */
+	public abstract void open();
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IOpenable#close()
+	 */
+	public void close() {
+		removeAllNodes();
+	}
 }

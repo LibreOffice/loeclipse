@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlConfiguration.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,10 +61,10 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.editors;
 
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -93,12 +93,9 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 	public UnoidlConfiguration(ColorProvider colorManager) {
 		this.colorManager = colorManager;
 	}
-	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] {
-			UnoidlPartitionScanner.IDL_AUTOCOMMENT,
-			UnoidlPartitionScanner.IDL_COMMENT,
-			UnoidlPartitionScanner.IDL_PREPROCESSOR};
-	}
+	
+	//----------------------------------------- Text editing facilities support
+	
 	public ITextDoubleClickStrategy getDoubleClickStrategy(
 		ISourceViewer sourceViewer,
 		String contentType) {
@@ -106,7 +103,27 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 			doubleClickStrategy = new UnoidlDoubleClickStrategy();
 		return doubleClickStrategy;
 	}
+	
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer,
+											String contentType) {
+		
+		// TODO Add here the IAutoEditStrategies to manage:
+		//   - Automatic indentation
+		//   - Automatic bracket closing
+		//   - Automatic comment closing
+		
+		return super.getAutoEditStrategies(sourceViewer, contentType);
+	}
 
+	//--------------------------------------------- Syntax highlighting support
+	
+	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
+		return new String[] {
+			UnoidlPartitionScanner.IDL_AUTOCOMMENT,
+			UnoidlPartitionScanner.IDL_COMMENT,
+			UnoidlPartitionScanner.IDL_PREPROCESSOR};
+	}
+	
 	protected UnoidlScanner getCodeScanner() {
 		if (scanner == null) {
 			scanner = new UnoidlScanner(colorManager);
@@ -168,12 +185,5 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 		reconciler.setRepairer(drPreproc, UnoidlPartitionScanner.IDL_PREPROCESSOR);
 
 		return reconciler;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
-	 */
-	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		return super.getContentAssistant(sourceViewer);
 	}
 }

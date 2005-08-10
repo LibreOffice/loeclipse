@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/22 20:50:10 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -61,6 +61,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.*;
@@ -71,14 +74,20 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.openoffice.ide.eclipse.editors.Colors;
+import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.i18n.ImageManager;
 import org.openoffice.ide.eclipse.i18n.Translator;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
+import org.openoffice.ide.eclipse.preferences.ooo.OOo;
+import org.openoffice.ide.eclipse.preferences.sdk.SDK;
 import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 import org.osgi.framework.BundleContext;
 
@@ -90,6 +99,11 @@ import org.osgi.framework.BundleContext;
  */
 public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChangeListener {
 
+	/**
+	 * Plugin home relative path for the ooo configuration file
+	 */
+	public final static String OOO_CONFIG = ".ooo_config";
+	
 	/**
 	 * ooeclipseintegration plugin id
 	 */
@@ -134,7 +148,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		// Creates the SDK container
 		SDKContainer.getSDKContainer();
 		
-		// TODO Loads each uno Nature
+		// Loads each uno Nature
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i=0, length=projects.length; i<length; i++){
 			IProject project = projects[i];
@@ -309,7 +323,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	public void resourceChanged(IResourceChangeEvent event) {
 		
 		if (IResourceChangeEvent.POST_CHANGE == event.getType()){
-			// TODO Handle the addition of folders in a UNO-IDL capable folder
+			// Handle the addition of folders in a UNO-IDL capable folder
 			
 			// Extract all the additions among the changes
 			IResourceDelta delta = event.getDelta();
@@ -333,5 +347,154 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 				}
 			}
 		}
+	}
+	
+	//	----------------- Utilities provided to run an sdk tools
+	
+	
+	/**
+	 * Create a process for the given shell command. This process will be created with the project
+	 * paramters such as it's SDK and location path
+	 * 
+	 * @param project
+	 * @param shellCommand
+	 * @param monitor
+	 * @return
+	 */
+	public static Process runTool(IProject project, String shellCommand, IProgressMonitor monitor){
+		
+		Process process = null;
+		
+		try {
+			UnoidlProject unoProject = (UnoidlProject)project.getNature(OOEclipsePlugin.UNO_NATURE_ID);
+			SDK sdk = unoProject.getSdk();
+			OOo ooo = unoProject.getOOo();
+			
+			if (null != sdk && null != ooo){
+				
+				// Get local references to the SDK used members
+				String sdkHome = sdk.getSDKHome();
+				String oooHome = ooo.getOOoHome();
+				
+				String pathSeparator = System.getProperty("path.separator");
+				
+				String binPath = null;
+				String[] vars = null;
+				String[] command = new String[3];;
+				
+				// Fetch the OS family
+				String osName = System.getProperty("os.name").toLowerCase();
+				
+				
+				// Create the exec parameters depending on the OS
+				if (osName.startsWith("windows")){
+					String sdkWinHome = new Path(sdkHome).toOSString();
+					
+					binPath = sdkWinHome + "\\windows\\bin\\"; 
+					
+					// Definining path variables
+					vars = new String[1];
+					vars[0] = "PATH=" + binPath + pathSeparator + oooHome + "\\program";
+					
+					// Defining the command
+					
+					if (osName.startsWith("windows 9")){
+						command[0] = "command.com";
+					} else {
+						command[0] = "cmd.exe";
+					}
+					
+					command[1] = "/C";
+					command[2] = shellCommand;
+					
+					
+				} else if (osName.equals("linux") || osName.equals("solaris") || osName.equals("sun os")) {
+					
+					// An UN*X platform
+					
+					// Determine the platform
+					String platform = null;
+					
+					if (osName.equals("linux")){
+						platform = "/linux";
+					} else {
+						String osArch = System.getProperty("os.arch");
+						if (osArch.equals("sparc")) {
+							platform = "/solsparc";
+							
+						} else if (osArch.equals("x86")) {
+							platform = "/solintel";
+						}
+					}
+					
+					if (null != platform){
+						
+						// The platform is one supported by a SDK
+						binPath = sdkHome + platform + "/bin";
+						
+						vars = new String[2];
+						vars[0] = "PATH=" + sdkHome + platform + "/bin";
+						vars[1] = "LD_LIBRARY_PATH=" + oooHome + "/program";
+						
+						// Set the command
+						command[0] = "sh";
+						command[1] = "-c";
+						command[2] = shellCommand;
+					}
+					
+				} else {
+					// Unmanaged OS
+					OOEclipsePlugin.logError(
+							OOEclipsePlugin.getTranslationString(I18nConstants.SDK_INVALID_OS), 
+							null);
+				}
+				
+				// Run only if the OS and ARCH are valid for the SDK
+				if (null != vars && null != command){
+					
+					File projectFile = unoProject.getProject().getLocation().toFile();
+					process = Runtime.getRuntime().exec(command, vars, projectFile);
+				}
+				
+			} else {
+				// TODO Toggle sdk error marker if it doesn't exist
+			}
+			
+		} catch (CoreException e) {
+			// Not a uno nature
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(I18nConstants.NOT_UNO_PROJECT), e);
+			
+		} catch (IOException e) {
+			// Error while launching the process 
+			
+			MessageDialog dialog = new MessageDialog(
+					OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+					OOEclipsePlugin.getTranslationString(I18nConstants.UNO_PLUGIN_ERROR),
+					null,
+					OOEclipsePlugin.getTranslationString(I18nConstants.PROCESS_ERROR),
+					MessageDialog.ERROR,
+					new String[]{OOEclipsePlugin.getTranslationString(I18nConstants.OK)},
+					0);
+			dialog.setBlockOnOpen(true);
+			dialog.create();
+			dialog.open();
+			
+		} catch (SecurityException e) {
+			// SubProcess creation unauthorized
+			
+			MessageDialog dialog = new MessageDialog(
+					OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+					OOEclipsePlugin.getTranslationString(I18nConstants.UNO_PLUGIN_ERROR),
+					null,
+					OOEclipsePlugin.getTranslationString(I18nConstants.PROCESS_ERROR),
+					MessageDialog.ERROR,
+					new String[]{OOEclipsePlugin.getTranslationString(I18nConstants.OK)},
+					0);
+			dialog.setBlockOnOpen(true);
+			dialog.create();
+			dialog.open();
+		}
+		
+		return process;
 	}
 }
