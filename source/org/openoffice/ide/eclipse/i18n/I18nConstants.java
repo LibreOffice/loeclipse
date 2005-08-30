@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:32 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -143,13 +143,45 @@ public class I18nConstants {
 	public static final String PROCESS_ERROR = "PROCESS_ERROR";
 	public static final String DOCUMENT_ERROR = "DOCUMENT_ERROR";
 	public static final String REGVIEW_READ_ERROR = "REGVIEW_READ_ERROR";
+	public static final String URDFILE_NOT_REMOVED = "URDFILE_NOT_REMOVED";
+	public static final String NO_NEW_PARENT = "NO_NEW_PARENT";
+	public static final String NO_ROOT_DEFINED = "NO_ROOT_DEFINED";
+	public static final String NAME_EXISTS = "NAME_EXISTS";
+	public static final String SERVICE_CREATION_FAILED = "SERVICE_CREATION_FAILED";
 	
 	// Programming languages names
 	public static final String JAVA = "JAVA";
 	public static final String CPP = "CPP";
 	public static final String PYTHON = "PYTHON";
 	
-	// Others
-	public static final String WRITE_CODE_HERE = "WRITE_CODE_HERE";
+	public static final String NEW_SERVICE_TITLE = "NEW_SERVICE_TITLE";
+	public static final String DEPEND_TABLE_TITLE = "DEPEND_TABLE_TITLE";
+	public static final String OPT_TITLE = "OPT_TITLE";
+	public static final String SCOPED_NAME = "SCOPED_NAME";
+	public static final String PACKAGE_COLON = "PACKAGE_COLON";
+	public static final String SERVICE_NAME = "SERVICE_NAME";
+	public static final String INTERFACE_DEFINITION = "INTERFACE_DEFINITION";
+	public static final String FILTER_MODULES = "FILTER_MODULES";
+	public static final String FILTER_INTERFACES = "FILTER_INTERFACES";
+	public static final String FILTER_SERVICES = "FILTER_SERVICES";
+	public static final String FILTER_STRUCTS = "FILTER_STRUCTS";
+	public static final String FILTER_ENUMS = "FILTER_ENUMS";
+	public static final String FILTER_EXCEPTIONS = "FILTER_EXCEPTIONS";
+	public static final String FILTER_TYPEDEFS = "FILTER_TYPEDEFS";
+	public static final String FILTER_CONSTANTS = "FILTER_CONSTANTS";
+	public static final String FILTER_CONSTANTSS = "FILTER_CONSTANTSS";
+	public static final String FILTER_SINGLETONS = "FILTER_SINGLETONS";
+	public static final String TYPE_NAME = "TYPE_NAME";
+	public static final String FETCHING_TYPES = "FETCHING_TYPES";
+	public static final String UNO_BROWSER_TITLE = "UNO_BROWSER_TITLE";
+	public static final String WAITING_4_UNOTYPES = "WAITING_4_UNOTYPES";
+	public static final String SELECT_TYPE_MESSAGE = "SELECT_TYPE_MESSAGE";
+	public static final String EMPTY_SELECTION = "EMPTY_SELECTION";
+	public static final String PUBLISHED = "PUBLISHED";
+	
+	public static final String MAINPREF_TITLE = "MAINPREF_TITLE";
+	public static final String MAINPREF_DESCRIPTION = "MAINPREF_DESCRIPTION";
+	public static final String MAINPREF_CREDITS = "MAINPREF_CREDITS";
+	public static final String MAINPREF_COPYRIGHT = "MAINPREF_COPYRIGHT";
 
 }

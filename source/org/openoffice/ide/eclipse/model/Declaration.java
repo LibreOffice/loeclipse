@@ -2,9 +2,9 @@
  *
  * $RCSfile: Declaration.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:29 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -70,34 +70,35 @@ public abstract class Declaration extends TreeNode {
 	 */
 	public static int indentLevel = -1;
 
-	public final static String SEPARATOR = "#";
+	public final static String SEPARATOR = "::";
 	
 	//------------------------------------------------------- Declaration types
 	
 	public final static int T_MODULE = 0;
 	
+	public final static int T_SERVICE = 1;
+	
+	public final static int T_INTERFACE = 2;
+	
+	public final static int T_CONSTRUCTOR = 100;
+	
+	public final static int T_SERVICE_INHERITANCE = 101;
+	
+	public final static int T_INTERFACE_INHERITANCE = 102;
+	
+	public final static int T_PROPERTY = 103;
+	
 	//------------------------------------------------------------ Constructors
 	
 	public Declaration(TreeNode node, String aName, int aType) {
-		super(node, computeName(node, aName));
+		super(node, aName);
 		
 		setType(aType);
 		setScopedName(aName);
 	}
 	
-	private static String computeName(TreeNode node, String aName){
-		String path = "";
-		if (null != node) {
-			path = node.getPath();
-			
-			if (node instanceof UnoidlFile){
-				path = path + SEPARATOR;
-			} else {
-				path = path + ScopedName.SEPARATOR;
-			}
-		}
-		
-		return path + aName;
+	public String getSeparator() {
+		return SEPARATOR;
 	}
 
 	//------------------------------------------------------- Members managment
@@ -105,12 +106,6 @@ public abstract class Declaration extends TreeNode {
 	private int type;
 	
 	private ScopedName scopedName;
-
-	
-	public String getName() {
-		
-		return getScopedName().toString();
-	}
 	
 	public ScopedName getScopedName(){
 		
@@ -130,13 +125,14 @@ public abstract class Declaration extends TreeNode {
 		}
 		
 		scopedName = new ScopedName(baseName, aName);
+		setName(scopedName.lastSegment());
 	}
 	
 	public void setType(int type) {
 		this.type = type;
 	}
 	
-	//--------------------------------------- Module declaration file managment
+	//----------------------------------------- Node declaration file managment
 	
 	private Vector declarationFiles = new Vector();
 	
@@ -150,11 +146,54 @@ public abstract class Declaration extends TreeNode {
 		declarationFiles.remove(file);
 	}
 	
+	public void removeAllFiles(){
+		declarationFiles.removeAllElements();
+	}
+	
 	public boolean containsFile(UnoidlFile file){
 		return declarationFiles.contains(file);
 	}
 	
+	public Vector getFiles() {
+		return declarationFiles;
+	}
+	
 	//--------------------------------------------------- Node reimplementation
+	
+	/**
+	 * Returns the valid types of the children. This method should be 
+	 * reimplemented by each subclass.
+	 */
+	public int[] getValidTypes(){
+		return new int[] {T_MODULE, T_SERVICE, T_INTERFACE};
+	}
+	
+	
+	/**
+	 * A node is valid for a declaration if it is a declaration and one of the 
+	 * valid types declared in the parent. Subclasses do not intend to override
+	 * this method. Simply override the VALID_TYPES field will be enougth
+	 * to restrict the types of the children
+	 */
+	protected boolean isValidNode(TreeNode node) {
+
+		boolean isValid = false;
+		
+		if (node instanceof Declaration){
+		
+			int nodeType = ((Declaration)node).getType();
+			int i = 0;
+			
+			while (i<getValidTypes().length && !isValid){
+				if (getValidTypes()[i] == nodeType){
+					isValid = true;
+				} else {
+					i++;
+				}
+			}
+		}			
+		return isValid;
+	}
 	
 	public String computeBeforeString(TreeNode callingNode) {
 		String output = "";
@@ -170,9 +209,17 @@ public abstract class Declaration extends TreeNode {
 	}
 	
 	public String toString(TreeNode callingNode) {
-		indentLevel++;
-		String output = super.toString(callingNode);
-		indentLevel--;
+		
+		String output = "";
+		if (callingNode instanceof UnoidlFile){
+			
+			UnoidlFile file = (UnoidlFile)callingNode;
+			if (containsFile(file)){
+				indentLevel++;
+				output = super.toString(file);
+				indentLevel--;
+			}
+		}
 		
 		return output;
 	}

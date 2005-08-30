@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:26 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -63,7 +63,12 @@ package org.openoffice.ide.eclipse.wizards;
 
 import java.util.Vector;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -418,6 +423,14 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	}
 	
+	public boolean isPageComplete() {
+		boolean result = super.isPageComplete();
+		result = result && !prefixRow.getValue().equals("") &&
+		 				!outputExt.getValue().equals("");
+		
+		return result;
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
@@ -463,6 +476,104 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	};
 	
+	private UnoidlProject unoProject = null;
+	
+	public UnoidlProject getUnoidlProject() {
+		if (null == unoProject) {
+			createUnoidlProject();
+		}
+		
+		return unoProject;
+	}
+	
+	protected void createUnoidlProject() {
+		
+		final IProject project = getProjectHandle();
+		final String prefix = getPrefix();
+		final String outputExt = getOutputExt();
+		final int language = getChosenLanguage();
+		final String sdkname = getSDKName();
+		final String oooname = getOOoName();
+					
+		// Creates the new project whithout it's builders
+		createProject(project, null);
+		
+		// Create the ouput and idl packages
+		try {
+			unoProject = (UnoidlProject)project.getNature(
+										OOEclipsePlugin.UNO_NATURE_ID);
+			
+			unoProject.setCompanyPrefix(prefix);
+			unoProject.setOutputExtension(outputExt);
+			unoProject.setOuputLanguage(language);
+			unoProject.setSdk(
+					SDKContainer.getSDKContainer().getSDK(sdkname));
+			unoProject.setOOo(
+					OOoContainer.getOOoContainer().getOOo(oooname));
+			
+			// Creation of the unoidl package
+			unoProject.createUnoidlPackage(null);
+			
+			// Creation of the Code Packages
+			unoProject.createCodePackage(null);
+			
+			// Creation of the urd output directory
+			unoProject.createUrdDir(null);
+		} catch (CoreException e) {
+			MessageDialog dialog = new MessageDialog(
+					getShell(),
+					OOEclipsePlugin.getTranslationString(I18nConstants.UNO_PLUGIN_ERROR),
+					null,
+					OOEclipsePlugin.getTranslationString(I18nConstants.PROJECT_CREATION_FAILED),
+					MessageDialog.ERROR,
+					new String[]{OOEclipsePlugin.getTranslationString(I18nConstants.OK)},
+					0);
+			dialog.setBlockOnOpen(true);
+			dialog.create();
+			dialog.open();
+		
+			try {
+				unoProject.getProject().delete(true, true, null);
+				unoProject = null;
+			} catch (CoreException ex){
+				// Impossible to delete the project
+			}
+		}
+	}
+	
+	/**
+	 * This method creates and opens the project with the Java and Uno natures
+	 * 
+	 * @param project project to create
+	 * @param monitor monitor used to report the creation state
+	 */
+	protected void createProject(IProject project, IProgressMonitor monitor) {
+		try {
+			if (!project.exists()){
+				project.create(monitor);
+			}
+			
+			if (!project.isOpen()){
+				project.open(monitor);
+			}
+			
+			IProjectDescription description = project.getDescription();
+			String[] natureIds = description.getNatureIds();
+			String[] newNatureIds = new String[natureIds.length+1];
+			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
+			
+			// Adding the Uno Nature
+			newNatureIds[natureIds.length] = OOEclipsePlugin.UNO_NATURE_ID;
+			
+			description.setNatureIds(newNatureIds);
+			project.setDescription(description, monitor);
+			
+		} catch (CoreException e) {
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.NATURE_SET_FAILED), e);
+		}
+	}
+	
 	private class TableDialog extends Dialog {
 		
 		private boolean editSDK = true;
@@ -504,5 +615,5 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				((OOoTable)table).savePreferences();
 			}
 		}
-	}	
+	}
 }

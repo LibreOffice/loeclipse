@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:32 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -64,11 +64,18 @@ package org.openoffice.ide.eclipse.i18n;
 public class ImagesConstants {
 
 	public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE";
+	public static final String OOO_DIALOG_IMAGE = "OOO_DIALOG_IMAGE";
 	public static final String ERROR = "ERROR";
 	public static final String IDL_FOLDER = "IDL_FOLDER";
 	public static final String UNO_PROJECT = "UNO_PROJECT";
 	public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ";
 	public static final String NEWFILE_WIZ = "NEWFILE_WIZ";
 	public static final String DB_FOLDER = "DB_FOLDER";
+	public static final String NEW_SERVICE_IMAGE = "NEW_SERVICE_IMAGE";
+	public static final String CHECKED = "CHECKED";
+	public static final String UNCHECKED = "UNCHECKED";
+	public static final String SERVICE = "SERVICE";
+	public static final String INTERFACE = "INTERFACE";
+	public static final String ABOUT_BANNER = "ABOUT_BANNER";
 
 }

@@ -48,19 +48,28 @@
             category="org.openoffice.ide.eclipse"
             class="org.openoffice.ide.eclipse.wizards.NewUnoFileWizard"
             hasPages="true"
-            icon="icons/idl_file.gif"
+            icon="icons/newunofile.gif"
             id="org.openoffice.ide.eclipse.newunofile"
             name="%wizards.unoidlfile"
             project="false"/>
       <wizard
-            canFinishEarly="true"
+            canFinishEarly="false"
             category="org.openoffice.ide.eclipse"
             class="org.openoffice.ide.eclipse.wizards.NewUnoProjectWizard"
             hasPages="true"
-            icon="icons/uno_prj.gif"
+            icon="icons/newunoproject.gif"
             id="org.openoffice.ide.eclipse.newunoproject"
             name="%wizards.unoidlproject"
             project="true"/>
+      <wizard
+            canFinishEarly="false"
+            category="org.openoffice.ide.eclipse"
+            class="org.openoffice.ide.eclipse.wizards.NewServiceWizard"
+            hasPages="true"
+            icon="icons/newservice.gif"
+            id="org.openoffice.ide.eclipse.newservice"
+            name="%wizards.service"
+            project="false"/>
    </extension>
    <extension
          id="unonature"
@@ -185,5 +194,18 @@
                relationship="right"
                visible="true"/>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            class="org.openoffice.ide.eclipse.preferences.ProjectPropertiesPage"
+            id="org.openoffice.ide.eclipse.projectproperties"
+            name="%project.propertypage.name"
+            objectClass="org.eclipse.core.resources.IProject">
+         <filter
+               name="nature"
+               value="org.openoffice.ide.eclipse.unonature"/>
+      </page>
    </extension>
 </plugin>

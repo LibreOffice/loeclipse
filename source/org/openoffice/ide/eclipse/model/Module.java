@@ -2,9 +2,9 @@
  *
  * $RCSfile: Module.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:29 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -68,7 +68,7 @@ package org.openoffice.ide.eclipse.model;
  */
 public class Module extends Declaration {
 	
-	public Module(Module node, String aName) {
+	public Module(TreeNode node, String aName) {
 		super(node, aName, T_MODULE);
 	}
 	

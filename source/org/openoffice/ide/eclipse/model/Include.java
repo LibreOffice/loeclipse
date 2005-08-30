@@ -2,9 +2,9 @@
  *
  * $RCSfile: Include.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:30 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -78,6 +78,17 @@ public class Include {
 	public Include(String aName, boolean aLibrary) {
 		setName(aName);
 		setLibrary(aLibrary);
+	}
+	
+	public static Include createInclude(String type, boolean isLibrary){
+		// Local types are handled as libraries : as one type is one file
+		
+		String file = type.replace("::", "/");
+		file = file + ".idl";
+		
+		boolean library = isLibrary;
+		
+		return new Include(file, library);
 	}
 	
 	public String getName(){

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlFile.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:30 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -68,6 +68,7 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 
@@ -78,11 +79,9 @@ import org.openoffice.ide.eclipse.i18n.I18nConstants;
  */
 public class UnoidlFile extends ResourceNode {
 
-	public UnoidlFile(IFile aFile) {
+	public UnoidlFile(UnoidlProject aProject, IFile aFile) {
 		
-		// TODO For a moment, the file will be the root of the tree, however it 
-		// won't last long.
-		super(null, aFile, aFile.getProjectRelativePath().toString().replace('.', '_'));  
+		super(aProject, aFile, computePath(aFile));  
 	}
 
 	/**
@@ -105,9 +104,11 @@ public class UnoidlFile extends ResourceNode {
 		String text = "";
 		
 		// Creates the define constant for the file
-		String fileDefine = getFile().getProjectRelativePath().toString().replace('/', '_');
-		fileDefine = fileDefine.replace('\\', '_');
-		fileDefine = fileDefine.replace('.', '_');
+		UnoidlProject unoProject = (UnoidlProject)getParent();
+		IPath idlPath = unoProject.getIdlRelativePath(getFile());
+		
+		String fileDefine = idlPath.toString().replace('/', '_');
+		fileDefine = fileDefine.replace('\\', '_').replace('.', '_');
 		fileDefine = "__" + fileDefine + "__";
 		
 		// Creates the text to write
@@ -115,7 +116,7 @@ public class UnoidlFile extends ResourceNode {
 		String define = "#define " + fileDefine + "\n";
 		
 		// Creates all the include lines
-		String sIncludes = "";
+		String sIncludes = includes.size()>0? "\n": "";
 		for (int i=0, length=includes.size(); i<length; i++){
 			sIncludes = sIncludes + includes.get(i).toString();
 		}
@@ -160,6 +161,37 @@ public class UnoidlFile extends ResourceNode {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
 					I18nConstants.CREATE_FILE_FAILED) + getFile().getName(), e);
 		}		
+	}
+	
+	public void addDeclaration(Declaration declaration){
+		
+		TreeNode ancestor = declaration;
+		Declaration actualDeclaration = null;
+		while (null != ancestor && ancestor instanceof Declaration) {
+			actualDeclaration = (Declaration)ancestor;
+			actualDeclaration.addFile(this);
+			ancestor = ancestor.getParent();
+		}
+		
+		addNode(actualDeclaration);
+	}
+	
+	public static String computePath(IFile file){
+		
+		String result = "";
+		
+		try {
+			UnoidlProject unoProject = (UnoidlProject)file.getProject().
+					getNature(OOEclipsePlugin.UNO_NATURE_ID);
+			IPath idlPath = unoProject.getIdlRelativePath(file);
+			result = idlPath.toString().replace('.', '_');
+			
+		} catch (CoreException e) {
+			if (null != System.getProperty("DEBUG")){
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 	
 	//------------------------------------------------------ Includes managment

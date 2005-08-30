@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -66,6 +66,8 @@ import java.io.IOException;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -85,6 +87,7 @@ import org.openoffice.ide.eclipse.editors.Colors;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.i18n.ImageManager;
 import org.openoffice.ide.eclipse.i18n.Translator;
+import org.openoffice.ide.eclipse.model.ModelUpdater;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
 import org.openoffice.ide.eclipse.preferences.ooo.OOo;
 import org.openoffice.ide.eclipse.preferences.sdk.SDK;
@@ -148,6 +151,9 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		// Creates the SDK container
 		SDKContainer.getSDKContainer();
 		
+		// TODO Add the project recovery at the beginning of a session
+		
+		
 		// Loads each uno Nature
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i=0, length=projects.length; i<length; i++){
@@ -161,6 +167,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		// Add a listener to the resources changes of the workspace
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
 				IResourceChangeEvent.POST_CHANGE);
+
 	}
 
 	/**
@@ -314,6 +321,16 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 				e));
 	}
 
+	public static IWorkbenchPage getActivePage(){
+		IWorkbenchPage page = null;
+		
+		IWorkbenchWindow window = getDefault().getWorkbench().getActiveWorkbenchWindow();
+		if (null != window){
+			page = window.getActivePage();
+		}
+		return page;
+	}
+	
 	//--------------- Resources changing listener method
 	
 	/*
@@ -321,7 +338,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		
+
 		if (IResourceChangeEvent.POST_CHANGE == event.getType()){
 			// Handle the addition of folders in a UNO-IDL capable folder
 			
@@ -346,6 +363,15 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 					// Do nothing
 				}
 			}
+			
+			try {
+				delta.accept(new ModelUpdater());
+			} catch (CoreException e) {
+				if (null != System.getProperty("DEBUG")) {
+					e.printStackTrace();
+				}
+			}
+			
 		}
 	}
 	

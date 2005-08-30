@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/21 21:56:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:42 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -67,6 +67,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 
 /**
@@ -110,6 +111,10 @@ public abstract class LabeledRow {
 			          Control field, String browseText){
 		this.property = property;
 		createContent(parent, label, field, browseText);
+	}
+	
+	public void setLabel(String newLabel){
+		((Label)label).setText(newLabel);
 	}
 	
 	/**
@@ -161,57 +166,45 @@ public abstract class LabeledRow {
 		Layout layout = parent.getLayout();
 		
 		if (layout instanceof GridLayout){
-			// Traitement du cas ou le parent a un GridLayout 
+			// Supposes that the parent layout is a Grid one  
 			int span = ((GridLayout)layout).numColumns - 1;
 			
-			GridData gd = new GridData();
-			gd.verticalAlignment = GridData.VERTICAL_ALIGN_END;
-			label.setLayoutData(gd);
+			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 			
 			int fspan = browse != null ? span -1 : span;
 
-			gd = new GridData(GridData.FILL_HORIZONTAL);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = fspan;
-			gd.grabExcessHorizontalSpace = (fspan == 1);
+			gd.grabExcessHorizontalSpace = (1 == fspan);
 			gd.verticalAlignment = GridData.VERTICAL_ALIGN_CENTER;
 			gd.widthHint = 10;
 			field.setLayoutData(gd);
 			
 			if (browse != null){
-				gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-				gd.verticalAlignment = GridData.VERTICAL_ALIGN_CENTER;
-				browse.setLayoutData(gd);
+				browse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL |
+						GridData.VERTICAL_ALIGN_CENTER));
 			}
 		}
 	}
-	
-	/*
-	 * Méthodes de gestion du listener de champ
-	 */
+
 	
 	/**
-	 * Définir le listener réagissant au changement de valeur du champ
+	 * define the listener that will react to the field changes
 	 * 
-	 * @param listener listener de changement de champ
+	 * @param listener field changes listener
 	 */
 	public void setFieldChangedListener(IFieldChangedListener listener){
 		this.listener = listener;
 	}
 	
 	/**
-	 * Supprimer le listener de changement de champ actuel
+	 * remove the field changes listener
 	 *
 	 */
 	public void  removeFieldChangedlistener(){
 		listener = null;
 	}
 	
-	/**
-	 * Notifier un changement de la valeur du champ au listener
-	 * 
-	 * @param e Evenement de champ contenant la propriété associée au champ
-	 *          ainsi que la nouvelle valeur
-	 */
 	protected void fireFieldChangedEvent(FieldEvent e){
 		if (null != listener){
 			listener.fieldChanged(e);

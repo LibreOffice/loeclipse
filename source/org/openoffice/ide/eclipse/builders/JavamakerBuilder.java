@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavamakerBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -67,6 +67,7 @@ import java.io.LineNumberReader;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -97,6 +98,9 @@ public class JavamakerBuilder extends IncrementalProjectBuilder {
 		
 		unoidlProject = (UnoidlProject)getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
 		
+		// Clears the registries before beginning
+		removeAllRegistries();
+		
 		IdlcBuilder idlcBuilder = new IdlcBuilder(unoidlProject);
 		idlcBuilder.build(FULL_BUILD, args, monitor);
 		
@@ -108,6 +112,33 @@ public class JavamakerBuilder extends IncrementalProjectBuilder {
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		
 		return null;
+	}
+	
+	private void removeAllRegistries() {
+		
+		try {
+			IPath rdbPath = unoidlProject.getRegistryPath();
+			IFile rdbFile = getProject().getFile(rdbPath);
+			if (rdbFile.exists()) {
+				rdbFile.delete(true, null);
+			}
+			
+			IPath urdPath = unoidlProject.getUrdLocation();
+			IFolder urdFolder = getProject().getFolder(urdPath);
+			IResource[] members = urdFolder.members();
+			
+			for (int i=0, length=members.length; i<length; i++) {
+				IResource resi = members[i];
+				if (resi.exists()) {
+					resi.delete(true, null);
+				}
+			}
+			
+		} catch (CoreException e) {
+			if (null != System.getProperty("DEBUG")) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void generateJava(IProgressMonitor monitor) throws CoreException {
@@ -128,7 +159,9 @@ public class JavamakerBuilder extends IncrementalProjectBuilder {
 				if (null != sdk && null != ooo){
 					
 					IPath ooTypesPath = new Path (ooo.getOOoHome()).append("/program/types.rdb");
-					String firstModule = project.getUnoidlLocation().segment(0);
+					
+					// TODO Find the first modules using the AST
+					String firstModule = project.getUnoidlPrefixPath().segment(1);
 					
 					// HELP quotes are placed here to prevent Windows path names with spaces
 					String command = "javamaker -T" + firstModule + ".* -nD -Gc -BUCR " + 

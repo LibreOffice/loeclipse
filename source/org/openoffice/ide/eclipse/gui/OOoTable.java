@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:28 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -474,7 +474,7 @@ public class OOoTable extends Composite{
 			
 			Label image = new Label(body, SWT.RIGHT);
 			image.setBackground(new Color(getDisplay(), 255, 255, 255)); // White background
-			image.setImage(OOEclipsePlugin.getImage(ImagesConstants.SDK_DIALOG_IMAGE));
+			image.setImage(OOEclipsePlugin.getImage(ImagesConstants.OOO_DIALOG_IMAGE));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
 			image.setLayoutData(gd);

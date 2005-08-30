@@ -2,9 +2,9 @@
  *
  * $RCSfile: Translator.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:32 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -70,7 +70,6 @@ import org.openoffice.ide.eclipse.OOEclipsePlugin;
 public class Translator {
 	
 	private ResourceBundle bundle;
-
 	
 	public Translator(){
 		

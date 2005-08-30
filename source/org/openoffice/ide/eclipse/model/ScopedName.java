@@ -2,9 +2,9 @@
  *
  * $RCSfile: ScopedName.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:28 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -65,6 +65,7 @@ import java.util.Vector;
 
 /**
  * Class that holds the scoped name of a uno declaration
+ * TODOC
  * 
  * @author cbosdonnat
  *
@@ -75,8 +76,15 @@ public class ScopedName {
 	
 	private Vector segments = new Vector();
 	
+	public ScopedName(String name) {
+		changeScopedName(name);
+	}
+	
 	public ScopedName(String root, String name) {
-		changeScopedName(root + SEPARATOR + name);
+		if (!root.equals("")){
+			name = root + SEPARATOR + name;
+		}
+		changeScopedName(name);
 	}
 	
 	public void changeScopedName(String name){
@@ -86,6 +94,16 @@ public class ScopedName {
 		for (int i=0, length=splittedName.length; i<length; i++){
 			segments.add(splittedName[i]);
 		}
+	}
+	
+	public String[] getSegments(){
+		
+		String[] aSegments = new String[segments.size()];
+		for (int i=0, length=aSegments.length; i<length; i++){
+			aSegments[i] = (String)segments.get(i);
+		}
+		
+		return aSegments;
 	}
 	
 	public void appendSegment(String name){
@@ -103,9 +121,12 @@ public class ScopedName {
 	public String toString() {
 		String result = "";
 		
-		for (int i=0, length=segments.size(); i<length; i++){
-			result = result + (String)segments.get(i);
+		for (int i=0, length=segments.size()-1; i<length; i++){
+			result = result + (String)segments.get(i) + "::";
 		}
+		
+		result = result + (String)segments.get(segments.size() - 1);
+		
 		return result;
 	}
 

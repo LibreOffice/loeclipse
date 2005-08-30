@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectAction.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:44 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -59,3 +59,43 @@
  *
  *
  ************************************************************************/
+package org.openoffice.ide.eclipse.actions;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.wizards.NewUnoProjectWizard;
+
+public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
+
+	private IWorkbenchWindow window;
+	
+	public NewUnoProjectAction() {
+		init(OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow());
+	}
+	
+	public void dispose() {
+		// Nothing to do on dispose
+	}
+
+	public void init(IWorkbenchWindow window) {
+		this.window = window;
+	}
+
+	public void run(IAction action) {
+		
+		// Launch the new IDL Project wizard
+		NewUnoProjectWizard wizard = new NewUnoProjectWizard();
+		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		
+		dialog.open();
+	}
+
+	public void selectionChanged(IAction action, ISelection selection) {
+		// Nothing to do on selection changed
+	}
+
+}

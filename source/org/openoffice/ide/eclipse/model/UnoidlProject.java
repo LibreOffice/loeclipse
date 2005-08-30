@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:29 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -70,7 +70,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -97,7 +96,8 @@ import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
  * @author cbosdonnat
  *
  */
-public class UnoidlProject implements IProjectNature, ConfigListener{
+public class UnoidlProject extends TreeNode implements IProjectNature, 
+									                   ConfigListener {
 	
 	public final static String[] KEPT_JARS = {
 		"unoil.jar",
@@ -169,6 +169,11 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	public static final String URD_BASIS = "urd";
 	
 	/**
+	 * Project relative path to the idl root folder
+	 */
+	public static final String IDL_BASIS = "idl";
+	
+	/**
 	 * Local reference to the associated project resource
 	 */
 	private IProject project;
@@ -200,7 +205,7 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	private int language = JAVA_LANGUAGE;
 	
 	public UnoidlProject() {
-		super();
+		super(UnoidlModel.getUnoidlModel(), ""); // The name will be set later
 		
 		SDKContainer.getSDKContainer().addListener(this);
 		OOoContainer.getOOoContainer().addListener(this);
@@ -213,13 +218,36 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	 * 
 	 * @return IPath to the idl base folder, or <code>null</code> if the company prefix is not set
 	 */
-	public IPath getUnoidlLocation(){
+	public IPath getUnoidlPrefixPath(){
 		IPath result = null;
 		
 		if (null != companyPrefix){
-			result = project.getFolder(companyPrefix.replace('.', '/')).getProjectRelativePath();
+			result = project.getFolder(IDL_BASIS + "/" + 
+								companyPrefix.replace('.', '/')).getProjectRelativePath();
 		}
 		return result;
+	}
+	
+	public IPath getUnoidlLocation() {
+		return project.getFolder(IDL_BASIS).getProjectRelativePath();
+	}
+	
+	public String getRootScopedName(){
+		String result = "";
+		
+		if (null != companyPrefix) {
+			result = companyPrefix.replaceAll("\\.", "::");
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the project relative path to the project registry file
+	 * 
+	 * @return path to the registry file
+	 */
+	public IPath getRegistryPath() {
+		return new Path(getProject().getName() + ".rdb");
 	}
 	
 	/**
@@ -293,6 +321,24 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	 */
 	public SDK getSdk() {
 		return sdk;
+	}
+	
+	/**
+	 * Return the path of the file in the idl folder. If the given file doesn't
+	 * belong tho the idl folder, <code>null</code> is returned.
+	 * 
+	 * @param resource resourceof which the idl path is asked
+	 * @return idl relative path or <code>null</code>
+	 */
+	public IPath getIdlRelativePath(IResource resource){
+		IPath result = null;
+		
+		IPath projectRelative = resource.getProjectRelativePath();
+		
+		if (projectRelative.toString().startsWith(IDL_BASIS)){
+			result = projectRelative.removeFirstSegments(IDL_BASIS.split("/").length);
+		}
+		return result;
 	}
 	
 	/**
@@ -387,42 +433,50 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OUTPUT_EXT));
 		outputExtension = outputExt;
 		
-		/* 
-		 * Add the builder at the first place
-		 */
-		
-		// Get the project description
-		IProjectDescription descr = getProject().getDescription();
-		ICommand[] builders = descr.getBuildSpec();
-		ICommand[] newCommands = new ICommand[1 + builders.length];
-	
-		// creates the code generation command
-		switch (getOutputLanguage()){
-			case CPP_LANGUAGE:
-				// TODO Add the cppmaker builder here
-				break;
-				
-			case PYTHON_LANGUAGE:
-				// TODO See what to add for python here
-				break;
-		
-			case JAVA_LANGUAGE:
-			default:
-				// Add javamaker builder here
-				ICommand javamakerCommand = descr.newCommand();
-				javamakerCommand.setBuilderName(JavamakerBuilder.BUILDER_ID);
-				newCommands[0] = javamakerCommand;
-				
-				break;
-		}
-		
-		// Adds the other builders
-		System.arraycopy(builders, 0, newCommands, 1, builders.length);
-		
-		descr.setBuildSpec(newCommands);
-		getProject().setDescription(descr, null);
+		setBuilders();
 	}
 
+	public void setBuilders() throws CoreException {
+		if (!(null == sdk || null == ooo || 
+				null == companyPrefix || null == outputExtension)){
+		
+			/* 
+			 * Add the builder at the first place
+			 */
+			
+			// Get the project description
+			IProjectDescription descr = getProject().getDescription();
+			ICommand[] newCommands = new ICommand[2];
+		
+			// creates the code generation command
+			switch (getOutputLanguage()){
+				case CPP_LANGUAGE:
+					// TODO Add the cppmaker builder here
+					break;
+					
+				case PYTHON_LANGUAGE:
+					// TODO See what to add for python here
+					break;
+			
+				case JAVA_LANGUAGE:
+				default:
+					// Add javamaker builder here
+					ICommand javamakerCommand = descr.newCommand();
+					javamakerCommand.setBuilderName(JavamakerBuilder.BUILDER_ID);
+					newCommands[0] = javamakerCommand;
+					
+					ICommand javaCommand = descr.newCommand();
+					javaCommand.setBuilderName(JavaCore.BUILDER_ID);
+					newCommands[1] = javaCommand;
+					
+					break;
+			}
+	
+			descr.setBuildSpec(newCommands);
+			getProject().setDescription(descr, null);
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
@@ -444,6 +498,19 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
 	 */
 	public void setProject(IProject project) {
+		if (null == this.project ||
+				!project.getName().equals(this.project.getName())) {
+			try {
+				setName(project.getName());
+				moveFind(null, project.getName());
+			} catch (TreeException e) {
+				if (null != System.getProperty("DEBUG")) {
+					System.out.println("TreeException (" 
+							+ e.getCode() + "): " + e.getMessage());
+				}
+			}
+		}
+		
 		this.project = project;
 	}
 	
@@ -476,6 +543,69 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	
 	//------------- Creation methods
 	
+	public void createModules(ScopedName moduleName, 
+						IProgressMonitor monitor) throws TreeException {
+
+		try {
+		
+			String[] directories = moduleName.getSegments();
+			
+			Vector modules = new Vector();
+			IFolder folder = getProject().getFolder(IDL_BASIS);
+			
+			for (int i=0, length=directories.length; i<length; i++){
+			
+				// Create the folder if necessary
+				folder = folder.getFolder(directories[i]);
+				if (!folder.exists()) {
+					folder.create(true, true, monitor);
+				}
+				
+				// Adds the idl capable property
+				folder.setPersistentProperty(
+						new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+								IDL_FOLDER), "true");
+				
+				// gets the parent node
+				TreeNode parent = null;
+				if (modules.size() == 0) {
+					parent = this;
+				} else {
+					parent = (TreeNode)modules.lastElement();
+				}
+				
+				String path = parent.getPath() + parent.getSeparator() + 
+								directories[i];
+				TreeNode node = getTreeRoot().findNode(path);
+				
+				if (null == node) {
+					// Node creation
+					node = new Module(parent, directories[i]);
+					parent.addNode(node);
+					
+				} else if (!(node instanceof Module)) {
+					// The found node isn't a module, throw a TreeException
+					throw new TreeException(TreeException.BAD_TYPE_NODE,
+							"Node already exists with another type: " + path);
+				}
+				
+				modules.add(node);
+				
+			}
+		} catch (CoreException e) {
+			if (null != System.getProperty("DEBUG")){
+				e.printStackTrace();
+			}
+			
+			OOEclipsePlugin.logError(
+					OOEclipsePlugin.getTranslationString(
+							I18nConstants.FOLDER_CREATION_FAILED)+
+								getUnoidlPrefixPath().toString(),
+					e);
+		}
+		
+	}
+	
 	/**
 	 * This method creates the folder described by the company prefix. 
 	 * It assumes that the company prefix is already set, otherwise no
@@ -485,73 +615,33 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	 */
 	public void createUnoidlPackage(IProgressMonitor monitor) {
 		
-		if (null != companyPrefix){
-		
-			try {
-				// Creation of the idl folders
-				String[] directories = companyPrefix.split("\\.");
-				String tmpPath = "";
-				
-				Vector modules = new Vector();
-				
-				for (int i=0, length=directories.length; i<length; i++){
-					tmpPath = tmpPath + "/" + directories[i];
-					IFolder folder = project.getFolder(tmpPath);
-					
-					// create the folder
-					folder.create(true, true, monitor);
-					
-					// Add a persistent property to the folder to remember
-					// It is an idl file. All it's subfolder except the code
-					// output folder is an idl capable folder too.
-					folder.setPersistentProperty(
-							new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-											  IDL_FOLDER),
-							"true");
-
-					// Create the company prefix module in idl files and set them read-only
-					UnoidlFile unoidlFile = new UnoidlFile(folder.getFile(folder.getName()+".idl"));
-					
-					Module parent = null;
-					if (modules.size() > 0) {
-						parent = (Module)modules.lastElement();
-					}
-					
-					Module module = new Module(parent, folder.getName());
-					if (null != parent) {
-						parent.addNode(module);
-					}
-					modules.add(module);
-					
-					for (int j=0, max=modules.size(); j<max; j++){
-						Module tmpModule = (Module)modules.get(j);
-						tmpModule.addFile(unoidlFile);
-					}
-					
-					unoidlFile.addNode((Module)modules.firstElement());
-					
-					unoidlFile.save();
-					
-					if (!folder.equals(getProject().getFolder(getUnoidlLocation()))){
-						
-						// In each other cases, the file is set read only to prevent the user to disturb
-						// the plugin behaviour.
-						ResourceAttributes fileAttributes = unoidlFile.getFile().getResourceAttributes();
-						fileAttributes.setReadOnly(true);
-						unoidlFile.getFile().setResourceAttributes(fileAttributes);
-					}
+		try {
+			if (null != companyPrefix){
+			
+				IFolder basis = getProject().getFolder(IDL_BASIS);
+				if (!basis.exists()) {
+					basis.create(true, true, monitor);
 				}
 				
-			} catch (CoreException e) {
-				if (null != System.getProperty("DEBUG")){
-					e.printStackTrace();
-				}
+				// Adds the idl capable property
+				basis.setPersistentProperty(
+						new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+								IDL_FOLDER), "true");
 				
-				OOEclipsePlugin.logError(
-						OOEclipsePlugin.getTranslationString(I18nConstants.FOLDER_CREATION_FAILED)+
-							getUnoidlLocation().toString(),
-						e);
+				createModules(
+						new ScopedName(companyPrefix.replace(".", "::")), 
+						monitor);
 			}
+		} catch (Exception e) {
+			if (null != System.getProperty("DEBUG")){
+				e.printStackTrace();
+			}
+			
+			OOEclipsePlugin.logError(
+					OOEclipsePlugin.getTranslationString(
+							I18nConstants.FOLDER_CREATION_FAILED)+
+						getUnoidlPrefixPath().toString(),
+					e);
 		}
 	}
 
@@ -634,7 +724,7 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 			}
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
-					I18nConstants.FOLDER_CREATION_FAILED+ URD_BASIS), e);
+					I18nConstants.FOLDER_CREATION_FAILED)+ URD_BASIS, e);
 		}
 	}
 	
@@ -750,7 +840,6 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 		} catch (JavaModelException e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(I18nConstants.PROJECT_CLASSPATH_ERROR), e);
 		}
-		
 	}
 	
 	/**
@@ -796,7 +885,6 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 				i++;
 			}
 		}
-		
 		return isKept;
 	}
 	
@@ -806,13 +894,13 @@ public class UnoidlProject implements IProjectNature, ConfigListener{
 	 */
 	public void setIdlProperty(){
 	
-			// Get the children of the prefix company folder
-			IPath prefixFolder = getUnoidlLocation();
-			if (null != prefixFolder){
-				IFolder unoidlFolder = getProject().getFolder(prefixFolder);
-			
-				recurseSetIdlProperty(unoidlFolder);
-			}
+		// Get the children of the prefix company folder
+		IPath prefixFolder = getUnoidlPrefixPath();
+		if (null != prefixFolder){
+			IFolder unoidlFolder = getProject().getFolder(prefixFolder);
+		
+			recurseSetIdlProperty(unoidlFolder);
+		}
 	}
 	
 	/**

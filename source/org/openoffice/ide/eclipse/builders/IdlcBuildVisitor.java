@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -99,7 +99,8 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 			
 		} else if (resource instanceof IContainer){
 			
-			UnoidlProject project = (UnoidlProject)resource.getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
+			UnoidlProject project = (UnoidlProject)resource.getProject().
+				getNature(OOEclipsePlugin.UNO_NATURE_ID);
 
 			if (!resource.getProjectRelativePath().toString().startsWith("bin") && 
 				!resource.getProjectRelativePath().toString().startsWith(project.getCodeLocation().toString()) &&

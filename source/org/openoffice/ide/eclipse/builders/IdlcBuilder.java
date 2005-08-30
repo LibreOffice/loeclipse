@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuilder.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -68,12 +68,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,7 +84,7 @@ import org.openoffice.ide.eclipse.preferences.sdk.SDK;
  * @author cbosdonnat
  *
  */
-public class IdlcBuilder extends IncrementalProjectBuilder implements IResourceChangeListener {
+public class IdlcBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Identifier defined in the <code>plugin.xml</code> file for thi kind of builder
@@ -120,7 +115,6 @@ public class IdlcBuilder extends IncrementalProjectBuilder implements IResourceC
 		super();
 		
 		unoidlProject = project;
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	
@@ -155,7 +149,7 @@ public class IdlcBuilder extends IncrementalProjectBuilder implements IResourceC
 
 		try {
 			// compile each idl file
-			IFolder idlFolder = unoidlProject.getProject().getFolder(unoidlProject.getUnoidlLocation());
+			IFolder idlFolder = unoidlProject.getProject().getFolder(unoidlProject.getUnoidlPrefixPath());
 			idlFolder.accept(new IdlcBuildVisitor(monitor));
 			
 		} catch (CoreException e) {
@@ -171,7 +165,8 @@ public class IdlcBuilder extends IncrementalProjectBuilder implements IResourceC
 	static void runIdlcOnFile(IFile file, IProgressMonitor monitor){
 		
 		try {
-			UnoidlProject project = (UnoidlProject)file.getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
+			UnoidlProject project = (UnoidlProject)file.getProject().getNature(
+					OOEclipsePlugin.UNO_NATURE_ID);
 			SDK sdk = project.getSdk();
 			
 			if (null != sdk){
@@ -180,12 +175,16 @@ public class IdlcBuilder extends IncrementalProjectBuilder implements IResourceC
 				String sdkHome = sdk.getSDKHome();
 				
 				Path sdkPath = new Path(sdkHome);
+				int segmentCount = UnoidlProject.IDL_BASIS.split("/").length;
+				
 				IPath outputLocation = project.getUrdLocation().append(
-						file.getProjectRelativePath().removeLastSegments(1));
+						file.getProjectRelativePath().removeLastSegments(1).
+								removeFirstSegments(segmentCount));
 				
 				String command = "idlc -O " + outputLocation.toOSString() +
-								     " -I " + sdkPath.append("idl").toOSString() + " " +
-								     file.getProjectRelativePath().toString(); 
+								     " -I " + sdkPath.append("idl").toOSString() +
+								     " -I " + project.getUnoidlLocation().toOSString() + 
+								     " " + file.getProjectRelativePath().toString(); 
 
 				Process process = OOEclipsePlugin.runTool(project.getProject(), command, monitor);
 				
@@ -200,91 +199,8 @@ public class IdlcBuilder extends IncrementalProjectBuilder implements IResourceC
 			}
 		} catch (CoreException e) {
 			// Not a uno nature
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(I18nConstants.NOT_UNO_PROJECT), e);
+			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					I18nConstants.NOT_UNO_PROJECT), e);
 		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		
-		if (null != unoidlProject){
-			
-			switch (event.getType()) {
-				case IResourceChangeEvent.POST_CHANGE:
-					
-					// Visit the delta only if it has been removed
-					if (IResourceDelta.REMOVED == event.getDelta().getKind() || 
-							IResourceDelta.CHANGED == event.getDelta().getKind()){
-						
-						// Handle idl file deletion to delete their associated urd files if they exists
-						try {
-							event.getDelta().accept(new IdlDeleted1Visitor());
-						} catch (CoreException e) {
-							// In the worst case, the urd file will not be deleted: do not log the error
-						}
-					}
-					break;
-			}
-		}
-	} 
-	
-	class IdlDeleted1Visitor implements IResourceDeltaVisitor {
-		
-		public boolean visit(IResourceDelta delta) throws CoreException {
-			boolean visitChildren = true;
-			
-			// If the host resource path begins with the unoidl location
-			if (delta.getResource().getProjectRelativePath().toString().
-							startsWith(unoidlProject.getUnoidlLocation().toString())){
-				
-				if (IResource.FILE == delta.getResource().getType() && 
-						delta.getResource().getFileExtension().equals("idl") || 
-				 		IResource.FOLDER == delta.getResource().getType()){
-					
-					// Check if the resource is deleted
-					if (IResourceDelta.REMOVED == delta.getKind()){
-						
-						// Compute the name of the urd file / folder
-						
-						IPath idlPath = delta.getResource().getProjectRelativePath();
-						IPath urdPath = unoidlProject.getUrdLocation();
-						if (IResource.FILE == delta.getResource().getType()){
-							urdPath = urdPath.append(idlPath.removeFileExtension().addFileExtension("urd"));
-							IFile urdFile = getProject().getFile(urdPath);
-							
-							if (urdFile.exists()){
-								urdToDelete.add(urdFile);
-							}
-						} else {
-							// Necessarily a folder
-							urdPath = urdPath.append(idlPath);
-							if (null != getProject()){
-								IFolder urdFolder = getProject().getFolder(urdPath);
-							
-							
-								if (urdFolder.exists()){
-									urdToDelete.add(urdFolder);
-								}
-							}
-							
-							visitChildren = false;
-						}
-					}
-				}
-			}
-			
-			if (delta.getResource().getProjectRelativePath().toString().
-									startsWith(unoidlProject.getUrdLocation().toString()) || 
-					delta.getResource().getProjectRelativePath().toString().
-									startsWith(unoidlProject.getCodeLocation().toString())){
-				visitChildren = false;
-			}
-			
-			return visitChildren;
-		}
-		
 	}
 }

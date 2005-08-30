@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:15 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:26 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -63,81 +63,106 @@ package org.openoffice.ide.eclipse.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.model.InterfaceService;
+import org.openoffice.ide.eclipse.model.UnoidlFile;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
-import org.openoffice.ide.eclipse.preferences.ooo.OOoContainer;
-import org.openoffice.ide.eclipse.preferences.sdk.SDKContainer;
 
-public class NewUnoProjectWizard extends Wizard implements INewWizard {
+public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 	
-	private NewUnoProjectPage page;
+	private NewUnoProjectPage mainPage;
+	private NewServiceWizardPage servicePage;
+	
+	private IWorkbenchPage activePage;
 
 	public NewUnoProjectWizard() {
-		super();
 		
-		page = new NewUnoProjectPage();
-		addPage(page);
+		super();
+		activePage = OOEclipsePlugin.getActivePage();
 		setForcePreviousAndNextButtons(false);
 	}
+	
+	public void addPages() {
+		mainPage = new NewUnoProjectPage();
+		addPage(mainPage);
+		
+		servicePage = new NewServiceWizardPage("service", null);
+		addPage(servicePage);
+	}
 
+	public IWizardPage getNextPage(IWizardPage page) {
+		
+		if (page.equals(mainPage) && mainPage.isPageComplete()) {
+			
+			UnoidlProject unoProject = mainPage.getUnoidlProject();
+			
+			servicePage.setUnoidlProject(unoProject);
+			servicePage.setName(unoProject.getName(), false);
+			servicePage.setPackage("", true);
+		}
+		
+		return super.getNextPage(page);
+	}
+	
 	public boolean performFinish() {
 		
-		final IProject project = page.getProjectHandle();
-		final String prefix = page.getPrefix();
-		final String outputExt = page.getOutputExt();
-		final int language = page.getChosenLanguage();
-		final String sdkname = page.getSDKName();
-		final String oooname = page.getOOoName();
+		final UnoidlProject unoProject = mainPage.getUnoidlProject();
+		final String packageName = servicePage.getPackage();
+		final String name = servicePage.getServiceName();
+		final String ifaceName = servicePage.getInheritanceName();
+		final boolean published = servicePage.isPublished();
 		
 		// Instantiation of a new thread with a Progress monitor to do the job.
 		IRunnableWithProgress op = new IRunnableWithProgress (){
 
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				// Creates the new project
-				createProject(project, monitor);
 				
-				// Create the ouput and idl packages
+				InterfaceService service = servicePage.createService(
+						packageName, name, ifaceName, published);
+				UnoidlFile unofile = service.getFile();
+				
+				// Reveal the project main service file	
+				selectAndReveal(unofile.getFile());
+				openResource(unofile.getFile());
+				
 				try {
-					UnoidlProject unoProject = (UnoidlProject)project.getNature(
-														OOEclipsePlugin.UNO_NATURE_ID);
-					unoProject.setCompanyPrefix(prefix);
-					unoProject.setOutputExtension(outputExt);
-					unoProject.setOuputLanguage(language);
-					unoProject.setSdk(SDKContainer.getSDKContainer().getSDK(sdkname));
-					unoProject.setOOo(OOoContainer.getOOoContainer().getOOo(oooname));
+					// Add the project builders
+					unoProject.setBuilders();
 					
-					// Creation of the unoidl package
-					unoProject.createUnoidlPackage(monitor);
-					
-					// Creation of the Code Packages
-					unoProject.createCodePackage(monitor);
-					
-					// Creation of the urd output directory
-					unoProject.createUrdDir(monitor);
-					
+					// Initial build of the project 
+					unoProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 				} catch (CoreException e) {
 					OOEclipsePlugin.logError(
-							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_UNO_PROJECT),
-							e);
+							OOEclipsePlugin.getTranslationString(
+									I18nConstants.NOT_UNO_PROJECT), e);
 				}
-				
-			}			
+			}
 		};
+		
 		
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
+			
+			if (null != System.getProperty("DEBUG")){
+				e.printStackTrace();
+			}
+			
 			MessageDialog dialog = new MessageDialog(
 					getShell(),
 					OOEclipsePlugin.getTranslationString(I18nConstants.UNO_PLUGIN_ERROR),
@@ -151,7 +176,7 @@ public class NewUnoProjectWizard extends Wizard implements INewWizard {
 			dialog.open();
 		
 			try {
-				project.delete(true, true, null);
+				unoProject.getProject().delete(true, true, null);
 			} catch (CoreException ex){
 				// Impossible to delete the project
 			}
@@ -161,45 +186,28 @@ public class NewUnoProjectWizard extends Wizard implements INewWizard {
 		
 		return true;
 	}
-
-	/**
-	 * This method creates and opens the project with the Java and Uno natures
-	 * 
-	 * @param project project to create
-	 * @param monitor monitor used to report the creation state
-	 */
-	protected void createProject(IProject project, IProgressMonitor monitor) {
-		try {
-			if (!project.exists()){
-				project.create(monitor);
+	
+	protected void openResource(final IFile resource) {
+		
+		if (activePage != null) {
+			final Display display = getShell().getDisplay();
+			if (display != null) {
+				display.asyncExec(new Runnable() {
+					public void run() {
+						try {
+							IDE.openEditor(activePage, resource, true);
+						} catch (PartInitException e) {
+							if (null != System.getProperty("DEBUG")){
+								e.printStackTrace();
+							}
+						}
+					}
+				});
 			}
-			
-			if (!project.isOpen()){
-				project.open(monitor);
-			}
-			
-			IProjectDescription description = project.getDescription();
-			String[] natureIds = description.getNatureIds();
-			String[] newNatureIds = new String[natureIds.length+1];
-			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
-			
-			// Adding the Uno Nature
-			newNatureIds[natureIds.length] = OOEclipsePlugin.UNO_NATURE_ID;
-			
-			description.setNatureIds(newNatureIds);
-			project.setDescription(description, monitor);
-			
-			monitor.worked(1);  // Tells the monitor that the process ended with no error
-			
-		} catch (CoreException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
-					I18nConstants.NATURE_SET_FAILED), e);
-			monitor.worked(0);
 		}
 	}
-
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// Nothing to do
+	
+	public IWorkbench getWorkbench() {
+		return OOEclipsePlugin.getDefault().getWorkbench();
 	}
-
 }

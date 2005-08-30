@@ -2,9 +2,9 @@
  *
  * $RCSfile: ResourceNode.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:29 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -67,19 +67,13 @@ public abstract class ResourceNode extends TreeNode implements IOpenable {
 	
 	public static final String PATH_DELIMITER = "/";
 	
-	public ResourceNode(TreeNode parent, IResource aResource, String aPath) {
-		super(parent, aPath);
+	public ResourceNode(TreeNode parent, IResource aResource, String aName) {
+		super(parent, aName);
 		setResource(aResource);
 	}
-
-	public String getName() {
-		String name = getPath();
-		
-		String[] splittedPath = getPath().split(PATH_DELIMITER);
-		if (1 < splittedPath.length){
-			name = splittedPath[splittedPath.length - 1];
-		}
-		return name;
+	
+	public String getSeparator() {
+		return PATH_DELIMITER;
 	}
 	
 	//------------------------------------------------------ Resource managment

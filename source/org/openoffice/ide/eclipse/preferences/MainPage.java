@@ -2,9 +2,9 @@
  *
  * $RCSfile: MainPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/07/18 19:35:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:33 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the following licenses
@@ -62,10 +62,18 @@
 package org.openoffice.ide.eclipse.preferences;
 
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.i18n.ImagesConstants;
 
 /**
  * 
@@ -75,8 +83,62 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class MainPage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	protected Control createContents(Composite parent) {
-		// TODO filling the page
-		return null;
+		
+		Composite body = new Composite(parent, SWT.NONE);
+		body.setLayout(new GridLayout(2, false));
+		body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// Creates the left image
+		Label imgLabel = new Label(body, SWT.CENTER);
+		imgLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | 
+											GridData.VERTICAL_ALIGN_BEGINNING));
+		imgLabel.setImage(OOEclipsePlugin.getImage(ImagesConstants.ABOUT_BANNER));
+		
+		Composite textBody = new Composite(body, SWT.NONE);
+		textBody.setLayout(new GridLayout());
+		textBody.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		// Creates the title
+		Label titleLabel = new Label(textBody, SWT.CENTER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 10;
+		titleLabel.setLayoutData(gd);
+		titleLabel.setText(OOEclipsePlugin.getTranslationString(
+				I18nConstants.MAINPREF_TITLE));
+		titleLabel.setFont(new Font(getShell().getDisplay(), 
+				"Arial", 12, SWT.BOLD));
+		
+		// Creates the description
+		Label descrLabel = new Label(textBody, SWT.LEFT);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 30;
+		descrLabel.setLayoutData(gd);
+		descrLabel.setFont(new Font(getShell().getDisplay(), 
+				"Arial", 9, SWT.NORMAL));
+		descrLabel.setText(OOEclipsePlugin.getTranslationString(
+				I18nConstants.MAINPREF_DESCRIPTION));
+		
+		// Create the Credits
+		
+		Label creditsLabel = new Label(textBody, SWT.LEFT);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 30;
+		creditsLabel.setLayoutData(gd);
+		creditsLabel.setFont(new Font(getShell().getDisplay(), 
+				"Arial", 9, SWT.NORMAL));
+		creditsLabel.setText(OOEclipsePlugin.getTranslationString(
+				I18nConstants.MAINPREF_CREDITS));
+		
+		// Create the copyright section
+		Label copyLabel = new Label(textBody, SWT.LEFT);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 30;
+		copyLabel.setLayoutData(gd);
+		copyLabel.setText(OOEclipsePlugin.getTranslationString(
+				I18nConstants.MAINPREF_COPYRIGHT));
+		copyLabel.setFont(new Font(getShell().getDisplay(), 
+				"Arial", 7, SWT.ITALIC));
+		return body;
 	}
 
 	public void init(IWorkbench workbench) {
