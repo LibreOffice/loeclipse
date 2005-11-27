@@ -2,15 +2,12 @@
  *
  * $RCSfile: AbstractTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:16 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the following licenses
- *
- *     - GNU Lesser General Public License Version 2.1
- *     - Sun Industry Standards Source License Version 1.1
+ * either of the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -33,22 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- *
- *
- * Sun Industry Standards Source License Version 1.1
- * =================================================
- * The contents of this file are subject to the Sun Industry Standards
- * Source License Version 1.1 (the "License"); You may not use this file
- * except in compliance with the License. You may obtain a copy of the
- * License at http://www.openoffice.org/license.html.
- *
- * Software provided under this License is provided on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
- * WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
- * MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
- * See the License for the specific provisions governing your rights and
- * obligations concerning the Software.
- *
+ * 
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -68,6 +50,9 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -88,7 +73,16 @@ import org.eclipse.swt.widgets.TableItem;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 
-public class AbstractTable extends Composite {
+/**
+ * Abstract table structure used in the plugin. This avoid to rewrite to many 
+ * times the same code for basic table managment.
+ * 
+ * TODOC What should be rewritten to create a new table and links to examples
+ * 
+ * @author cbosdonnat
+ *
+ */
+public class AbstractTable extends Composite implements ISelectionProvider {
 	
 	protected Table table;
 	
@@ -132,6 +126,12 @@ public class AbstractTable extends Composite {
 		
 		createContent();
 		createColumns();
+	}
+	
+	protected void addLine(ITableElement element) {
+		lines.add(element);
+		tableViewer.add(element);
+		tableViewer.refresh();
 	}
 	
 	protected void createContent(){
@@ -337,5 +337,40 @@ public class AbstractTable extends Composite {
 			}
 			return text;
 		}
+	}
+
+	//------------------------------------- Implementation of ISelectionListener
+	
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		tableViewer.addSelectionChangedListener(listener);
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+	 */
+	public ISelection getSelection() {
+		return tableViewer.getSelection();
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		tableViewer.removeSelectionChangedListener(listener);
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
+	public void setSelection(ISelection selection) {
+		tableViewer.setSelection(selection);
 	}
 }

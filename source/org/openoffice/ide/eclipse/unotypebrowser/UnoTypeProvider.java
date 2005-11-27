@@ -2,15 +2,12 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:39 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:20 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the following licenses
- *
- *     - GNU Lesser General Public License Version 2.1
- *     - Sun Industry Standards Source License Version 1.1
+ * either of the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -33,22 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- *
- *
- * Sun Industry Standards Source License Version 1.1
- * =================================================
- * The contents of this file are subject to the Sun Industry Standards
- * Source License Version 1.1 (the "License"); You may not use this file
- * except in compliance with the License. You may obtain a copy of the
- * License at http://www.openoffice.org/license.html.
- *
- * Software provided under this License is provided on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
- * WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
- * MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
- * See the License for the specific provisions governing your rights and
- * obligations concerning the Software.
- *
+ * 
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -69,7 +51,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -79,6 +60,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
+import org.openoffice.ide.eclipse.preferences.ooo.OOo;
 
 /**
  * TODOC
@@ -113,11 +95,18 @@ public class UnoTypeProvider {
 		setProject(aProject);
 	}
 	
+	public UnoTypeProvider(OOo aOOoInstance, int aTypes) {
+		setTypes(aTypes);
+		setOOoInstance(aOOoInstance);
+	}
+	
 	public void dispose(){
 		removeAllTypes();
 		
 		internalTypes = null;
-		project = null;
+		oooInstance = null;
+		pathToRegister = null;
+		
 		if (null != getTypesJob){
 			getTypesJob = null;
 		}
@@ -241,7 +230,9 @@ public class UnoTypeProvider {
 	
 	//------------------------------------------------------- Project managment
 
-	private UnoidlProject project;
+	private OOo	oooInstance;
+	private String pathToRegister;
+	
 	private boolean initialized = false;
 	
 	public void setProject(UnoidlProject aProject){
@@ -251,7 +242,31 @@ public class UnoTypeProvider {
 				getTypesJob.cancel();
 			}
 			
-			project = aProject;
+			oooInstance = aProject.getOOo();
+			pathToRegister = (aProject.getProject().getFile(
+					aProject.getRegistryPath()).getLocation()).toOSString();
+			
+			initialized = false;
+			askUnoTypes();
+		}
+	}
+	
+	/**
+	 * Sets the OOo if the new one is different from the old one.
+	 * 
+	 *  @param aOOoInstance OpenOffice.org instance to bootstrap
+	 */
+	public void setOOoInstance(OOo aOOoInstance) {
+		
+		if (!(null != oooInstance && oooInstance.equals(aOOoInstance))) {
+			
+			// Stops the current job if there is already one.
+			if (null != getTypesJob) {
+				getTypesJob.cancel();
+			}
+			
+			oooInstance = aOOoInstance;
+			
 			initialized = false;
 			askUnoTypes();
 		}
@@ -266,7 +281,7 @@ public class UnoTypeProvider {
 	private String computeGetterCommand() throws IOException {
 		String command = null;
 		
-		if (null != project) {
+		if (null != oooInstance) {
 			// Defines OS specific constants
 			String pathSeparator = System.getProperty("path.separator");
 			String fileSeparator = System.getProperty("file.separator");
@@ -279,7 +294,7 @@ public class UnoTypeProvider {
 				classpath = classpath + "\"";
 			}
 			
-			String oooClassesPath = project.getOOo().getClassesPath();
+			String oooClassesPath = oooInstance.getClassesPath();
 			File oooClasses = new File(oooClassesPath);
 			String[] content = oooClasses.list();
 			
@@ -311,7 +326,7 @@ public class UnoTypeProvider {
 			
 			
 			// Transforms the soffice path into a bootsrap valid one
-			String sofficePath = project.getOOo().getOOoHome();
+			String sofficePath = oooInstance.getOOoHome();
 			sofficePath = sofficePath.replace(" ", "%20");
 			
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -319,17 +334,19 @@ public class UnoTypeProvider {
 			}
 			sofficePath = "-Ffile:///" + sofficePath + " ";
 			
-			// Fetch the local registry path
-			IFile registryFile = project.getProject().getFile(
-					project.getRegistryPath());
-			String localRegistryPath = registryFile.getLocation().toString();
-			localRegistryPath = "file:///" + localRegistryPath.replace(" ", "%20");
+			// Add the local registry path
+			String localRegistryPath = "";
+			// If the path to the registry isn't set, don't take
+			// it into account in the command build
+			if (null != pathToRegister) {
+				localRegistryPath = " -Lfile:///" + 
+					pathToRegister.replace(" ", "%20");
+			}
 			
 			// Computes the command  to execute
 			command = "java " + classpath + 
 					"org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter " + 
-					sofficePath + "-B/" +computeTypesString() + " -L" + 
-					localRegistryPath;
+					sofficePath + "-B/" +computeTypesString() + localRegistryPath;
 		}
 		return command;
 	}
@@ -337,7 +354,7 @@ public class UnoTypeProvider {
 	private Job getTypesJob;
 	
 	
-	private void askUnoTypes() {
+	public void askUnoTypes() {
 		
 		if (null == getTypesJob || Job.RUNNING != getTypesJob.getState()) {
 			getTypesJob = new Job(OOEclipsePlugin.getTranslationString(
@@ -364,10 +381,10 @@ public class UnoTypeProvider {
 						String[] vars = new String[1];
 						if (Platform.getOS().equals(Platform.OS_WIN32)) {
 							vars[0] = "PATH=" + 
-									project.getOOo().getOOoHome() + "\\program";
+									oooInstance.getOOoHome() + "\\program";
 						} else {
 							vars[0] = "LD_LIBRARY_PATH=" + 
-									project.getOOo().getOOoHome() + "/program";
+									oooInstance.getOOoHome() + "/program";
 						}
 						
 						Process process = Runtime.getRuntime().exec(command, vars);
@@ -399,6 +416,9 @@ public class UnoTypeProvider {
 							e.printStackTrace();
 						}
 					} catch (NullPointerException e) {
+						if (null != System.getProperty("DEBUG")) {
+							e.printStackTrace();
+						}
 						monitor.worked(0);
 						cancel();
 					}

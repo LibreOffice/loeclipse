@@ -2,15 +2,12 @@
  *
  * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:17 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the following licenses
- *
- *     - GNU Lesser General Public License Version 2.1
- *     - Sun Industry Standards Source License Version 1.1
+ * either of the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -33,22 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- *
- *
- * Sun Industry Standards Source License Version 1.1
- * =================================================
- * The contents of this file are subject to the Sun Industry Standards
- * Source License Version 1.1 (the "License"); You may not use this file
- * except in compliance with the License. You may obtain a copy of the
- * License at http://www.openoffice.org/license.html.
- *
- * Software provided under this License is provided on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
- * WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
- * MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
- * See the License for the specific provisions governing your rights and
- * obligations concerning the Software.
- *
+ * 
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -65,18 +47,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -84,8 +59,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.gui.rows.FieldEvent;
@@ -106,34 +79,7 @@ import org.openoffice.ide.eclipse.preferences.ooo.OOoContainer;
  * @author cbosdonnat
  *
  */
-public class OOoTable extends Composite{
-
-	/** Column properties */
-	private static final String OOO_NAME = "OOO_NAME";
-	private static final String OOO_PATH = "OOO_PATH";
-	
-	private TableColumn oooname;
-	private TableColumn ooopath;
-	
-	/**
-	 * Table object
-	 */
-	private Table table;
-	
-	/**
-	 * Reference to the add button, used for graphical rendering
-	 */
-	private Button add;
-	
-	/**
-	 * Reference to the del button, used for graphical rendering
-	 */
-	private Button del;
-	
-	/**
-	 * Table Viewer object to make table access easier
-	 */
-	private TableViewer tableViewer;
+public class OOoTable extends AbstractTable {
 	
 	/**
 	 * Temporary OOo for storing the values fetched from the dialog
@@ -148,10 +94,20 @@ public class OOoTable extends Composite{
 	 * @param parent Composite parent of the table.
 	 */
 	public OOoTable(Composite parent) {
-		super(parent, SWT.NONE);
+		super(parent, 
+			  OOEclipsePlugin.getTranslationString(I18nConstants.OOOS_LIST),
+			  new String[] {
+					OOEclipsePlugin.getTranslationString(I18nConstants.NAME),
+					OOEclipsePlugin.getTranslationString(I18nConstants.OOO_HOME_PATH)
+				},
+			  new int[] {100, 200},
+			  new String[] {
+				OOo.NAME,
+				OOo.PATH
+		      });
 		
-		OOoContainer.getOOoContainer();
-		createContent();
+		tableViewer.setInput(OOoContainer.getOOoContainer());
+		tableViewer.setContentProvider(new OOoContentProvider());
 	}
 	
 	/**
@@ -170,98 +126,32 @@ public class OOoTable extends Composite{
 		OOoContainer.getOOoContainer().saveOOos();
 	}
 	
-	/**
-	 * Removes all the elements of the composite
-	 */
-	public void dispose() {
-		super.dispose();
+	protected ITableElement addLine() {
 		
-		add.dispose();
-		del.dispose();
-		table.dispose();
+		OOo ooo = openDialog(null, false);
+		OOoContainer.getOOoContainer().addOOo(ooo);
+		return ooo;
 	}
 	
-	/**
-	 * Method used by the constructor to create the graphic components of the table
-	 * This method could be overridden by sub classes to adapt their look.
-	 *
-	 */
-	protected void createContent(){
-		// Creates the layout of the composite with 2 columns and extended at it's maximum size
-		setLayout(new GridLayout(2, false));
-		setLayoutData(new GridData(GridData.FILL_BOTH));
+	protected ITableElement removeLine() {
 		
-		Label oooLabel = new Label(this, SWT.NONE);
-		oooLabel.setText(OOEclipsePlugin.getTranslationString(
-				I18nConstants.OOOS_LIST));
-		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		oooLabel.setLayoutData(gd);
-		
-		createTable();
-		createTableViewer();
-		createButtons();
-		
-		tableViewer.setInput(OOoContainer.getOOoContainer());
-	}
-
-
-	private void createTable() {
-		// Creates a table, with a single full line selection and borders in this composite
-		table = new Table(this, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		
-		// The table uses two lines of the layout because of the two buttons Add and Del
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.verticalSpan = 2;
-		table.setLayoutData(gd);
-		
-		// Sets the graphical properties of the line
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-		
-		// Creates the two columns: OOo Name+Version, OOo Path
-		oooname = new TableColumn(table, SWT.LEFT | SWT.RESIZE);
-		oooname.setText(OOEclipsePlugin.getTranslationString(I18nConstants.NAME));
-		oooname.setWidth(100); // Used to 'fix' the eclipse-GTK+ painting bug
-		
-		ooopath = new TableColumn(table, SWT.LEFT | SWT.RESIZE);
-		ooopath.setText(OOEclipsePlugin.getTranslationString(I18nConstants.OOO_HOME_PATH));
-		ooopath.setWidth(200); // Used to 'fix' the eclipse-GTK+ painting bug
-
+		ITableElement o = super.removeLine();
+		if (null != o && o instanceof OOo) {
+			OOoContainer.getOOoContainer().delOOo((OOo)o);
+		}
+		return o;
 	}
 	
-	private void createTableViewer() {
-		// Creates the table viewer
-		tableViewer = new TableViewer(table);
-		
-		// Sets the column properties to know which column is edited afterwards
-		tableViewer.setColumnProperties(new String[]{
-			OOO_NAME,
-			OOO_PATH
-		});
-		
-		// Manages the label to print in the cells from the model
-		tableViewer.setLabelProvider(new OOoLabelProvider());
-		
-		tableViewer.setContentProvider(new OOoContentProvider());
-		
-		// Listen to a double clic to popup an edition dialog
-		tableViewer.addDoubleClickListener(new IDoubleClickListener(){
-
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()){
-					
-					// Get the double clicked OOo line
-					OOo ooo = (OOo)((IStructuredSelection)event.getSelection()).getFirstElement();
-					
-					// Launch the dialog
-					ooo = openDialog(ooo, true);
-					OOoContainer.getOOoContainer().updateOOo(ooo.getId(), ooo);
-				}
-			}
+	protected void handleDoubleClick(DoubleClickEvent event) {
+		if (!event.getSelection().isEmpty()){
 			
-		});
+			// Get the double clicked OOo line
+			OOo ooo = (OOo)((IStructuredSelection)event.getSelection()).getFirstElement();
+			
+			// Launch the dialog
+			ooo = openDialog(ooo, true);
+			OOoContainer.getOOoContainer().updateOOo(ooo.getId(), ooo);
+		}
 	}
 	
 	/**
@@ -301,41 +191,6 @@ public class OOoTable extends Composite{
 		}
 		
 		return ooo;
-	}
-	
-	private void createButtons() {
-		// Creates the two buttons ADD and DEL
-		add = new Button(this, SWT.NONE);
-		add.setText(OOEclipsePlugin.getTranslationString(I18nConstants.ADD));
-		GridData gdAdd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
-				                      GridData.HORIZONTAL_ALIGN_FILL);
-		add.setLayoutData(gdAdd);
-		add.addSelectionListener(new SelectionAdapter(){
-
-			public void widgetSelected(SelectionEvent e) {
-				// Launch add OOodialog
-				OOo ooo = openDialog(null, false);
-				OOoContainer.getOOoContainer().addOOo(ooo);
-			}
-		});
-		
-		
-		del = new Button(this, SWT.NONE);
-		del.setText(OOEclipsePlugin.getTranslationString(I18nConstants.DEL));
-		GridData gdDel = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
-                					  GridData.HORIZONTAL_ALIGN_FILL);
-		del.setLayoutData(gdDel);
-		del.addSelectionListener(new SelectionAdapter(){
-
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
-				if (selection != null) {
-					OOo ooo = (OOo)selection.getFirstElement();
-					OOoContainer.getOOoContainer().delOOo(ooo);
-				}
-			}
-		});
-		
 	}
 	
 	/**
@@ -409,33 +264,6 @@ public class OOoTable extends Composite{
 	}
 	
 	/**
-	 * Internal class used to get the label to be put in the table cell from an ooo
-	 * 
-	 * @author cbosdonnat
-	 *
-	 */
-	class OOoLabelProvider extends LabelProvider implements ITableLabelProvider {
-
-		// Aucune image pour le OOo
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		public String getColumnText(Object element, int columnIndex) {
-			OOo ooo = (OOo)element;
-			String text = new String();
-			
-			if (0 == columnIndex){  // name column
-				text = ooo.getName()+" - "+ooo.getBuildId();
-			} else if (1 == columnIndex) { // ooo path column
-				text = ooo.getOOoHome();
-			}
-			
-			return text;
-		}	
-	}
-	
-	/**
 	 * Class for the OOo add/edit dialog. 
 	 * 
 	 * @author cbosdonnat
@@ -486,7 +314,7 @@ public class OOoTable extends Composite{
 			
 			// put the value of the edited OOo in the fields
 			if (null != ooo){
-				ooopathRow.setFile(ooo.getOOoHome());
+				ooopathRow.setValue(ooo.getOOoHome());
 			}
 			
 			nameRow = new TextRow(body, "", 
@@ -498,8 +326,8 @@ public class OOoTable extends Composite{
 			buidlidRow.setEnabled(false);   // This line is only to show the value
 			
 			if (null != ooo && null != ooo.getName() && null != ooo.getBuildId()){
-				nameRow.setText(ooo.getName());
-				buidlidRow.setText(ooo.getBuildId());
+				nameRow.setValue(ooo.getName());
+				buidlidRow.setValue(ooo.getBuildId());
 			}
 			
 			// activate the OK button only if the OOo is correct
@@ -516,7 +344,7 @@ public class OOoTable extends Composite{
 			// If there is one field missing, print an error line at the bottom
 			// of the dialog.
 			
-			if (!ooopathRow.getFile().equals("")) {
+			if (!ooopathRow.getValue().equals("")) {
 				isValid(null);
 				super.okPressed();
 			} else {
@@ -547,11 +375,11 @@ public class OOoTable extends Composite{
 				
 			// Try to create an OOo
 			try {
-				tmpooo = new OOo (ooopathRow.getFile()); 
+				tmpooo = new OOo (ooopathRow.getValue()); 
 
 				if (null != tmpooo.getName() && null != tmpooo.getBuildId()) {
-					nameRow.setText(tmpooo.getName());
-					buidlidRow.setText(tmpooo.getBuildId());
+					nameRow.setValue(tmpooo.getName());
+					buidlidRow.setValue(tmpooo.getBuildId());
 				}
 				
 				updateStatus(new Status(Status.OK,

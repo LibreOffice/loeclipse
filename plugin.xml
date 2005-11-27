@@ -70,6 +70,15 @@
             id="org.openoffice.ide.eclipse.newservice"
             name="%wizards.service"
             project="false"/>
+      <wizard
+            canFinishEarly="false"
+            category="org.openoffice.ide.eclipse"
+            class="org.openoffice.ide.eclipse.wizards.NewInterfaceWizard"
+            hasPages="true"
+            icon="icons/newinterface.gif"
+            id="org.openoffice.ide.eclipse.newinterface"
+            name="%wizards.interface"
+            project="false"/>
    </extension>
    <extension
          id="unonature"

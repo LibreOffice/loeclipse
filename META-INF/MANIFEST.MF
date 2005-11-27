@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OOo eclipse integration
 Bundle-SymbolicName: org.openoffice.ide.eclipse; singleton:=true
-Bundle-Version: 0.0.7
+Bundle-Version: 1.0.1
 Bundle-Activator: org.openoffice.ide.eclipse.OOEclipsePlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -18,4 +18,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.cheatsheets,
  org.eclipse.help,
  org.eclipse.ui.forms
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
+Bundle-Vendor: OpenOffice.org API project
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

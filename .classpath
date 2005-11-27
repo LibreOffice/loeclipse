@@ -3,5 +3,8 @@
 	<classpathentry kind="src" path="source"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="var" path="OOO_CLASSES_HOME/juh.jar"/>
+	<classpathentry kind="var" path="OOO_CLASSES_HOME/jurt.jar"/>
+	<classpathentry kind="var" path="OOO_CLASSES_HOME/ridl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,52 +1,46 @@
-/*
- * $Id: FieldEvent.java,v 1.1 2005/07/18 19:36:05 cedricbosdo Exp $
- * $Log: FieldEvent.java,v $
- * Revision 1.1  2005/07/18 19:36:05  cedricbosdo
- * First working basis with syntax highlighting and SDK configuration. Some wizards are already begun, but does nothing for the moment.
- * CVS: ----------------------------------------------------------------------
- * CVS: Issue number:
- * CVS:   If this change addresses one or more issues,
- * CVS:   then enter the issue number(s) here.
- * CVS: Submitted by:
- * CVS:   If this code has been contributed to the project by someone else; i.e.,
- * CVS:   they sent us a patch or a set of diffs, then include their name/email
- * CVS:   address here. If this is your work then delete this line.
- * CVS: Reviewed by:
- * CVS:   If we are doing pre-commit code reviews and someone else has
- * CVS:   reviewed your changes, include their name(s) here.
- * CVS:   If you have not had it reviewed then delete this line.
- * CVS: ----------------------------------------------------------------------
- * CVS: Committers,
- * CVS:
- * CVS: Please follow these protocols:
- * CVS:
- * CVS: * Please include in the log message
- * CVS: reference(s) by ID / number and/or URL
- * CVS: to any and all relevant OpenOffice.org issue(s).
- * CVS:
- * CVS: * If the code is contributed from outside Sun
- * CVS: then please verify using the list at the following URL
- * CVS: http://www.openoffice.org/copyright/copyrightapproved.html
- * CVS: that Sun has received a signed Copyright Assignment Form
- * CVS: from the submitter.
- * CVS:
- * CVS: Otherwise,
- * CVS: please send an email TO: the submitter; and CC: OOCRequest@eng.sun.com
- * CVS: the letter (CopyRightRequest.txt) to request assignment of copyright to Sun
- * CVS: (http://www.openoffice.org/copyright/assign_copyright.html).
- * CVS:
- * CVS: Please do NOT commit code until you have verified (as detailed above) that
- * CVS: Sun has received a signed Copyright Assignment Form from the submitter.
- * CVS:
- * CVS: * Please send an email TO: the submitter
- * CVS: (particularly, if from outside Sun)
- * CVS: advising that the code has been committed,
- * CVS: and gratefully recognizing the contribution.
+/*************************************************************************
  *
- * Revision 1.1  2005/06/13 13:26:44  cbosdonnat
- * Création de composants simplifiés pour l'interface graphique
+ * $RCSfile: FieldEvent.java,v $
+ *
+ * $Revision: 1.2 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:23 $
+ *
+ * The Contents of this file are made available subject to the terms of
+ * either of the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
  * 
- */
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
+ *
+ ************************************************************************/
 package org.openoffice.ide.eclipse.gui.rows;
 
 /**

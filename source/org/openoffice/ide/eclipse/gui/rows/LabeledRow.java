@@ -2,15 +2,12 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/30 13:24:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:23 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the following licenses
- *
- *     - GNU Lesser General Public License Version 2.1
- *     - Sun Industry Standards Source License Version 1.1
+ * either of the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -33,22 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- *
- *
- * Sun Industry Standards Source License Version 1.1
- * =================================================
- * The contents of this file are subject to the Sun Industry Standards
- * Source License Version 1.1 (the "License"); You may not use this file
- * except in compliance with the License. You may obtain a copy of the
- * License at http://www.openoffice.org/license.html.
- *
- * Software provided under this License is provided on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
- * WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
- * MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
- * See the License for the specific provisions governing your rights and
- * obligations concerning the Software.
- *
+ * 
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -71,7 +53,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 
 /**
- * TODOC Translate into english and complete the doc
+ * Basic class for a property row. Subclasses will override:
+ * <ul>
+ *   <li>setValue</li>
+ *   <li>getValue</li>
+ * </ul>
+ * Their constructor should respect the following steps:
+ * <ol>
+ *   <li>Use the property constructor</li>
+ *   <li>Create the label and field controls to be used</li>
+ *   <li>Call createContents</li>
+ * </ol>
  * 
  * @author cbosdonnat
  *
@@ -86,26 +78,25 @@ public abstract class LabeledRow {
 	protected IFieldChangedListener listener;
 	
 	/**
-	 * Constructeur simple, affectant la propriété. Ce constructeur sera
-	 * appelé par tous les enfants de la classe.
+	 * Simple constructor only defining the property. This constructor should
+	 * only be called by the subclasses.
 	 * 
-	 * @param property valeur de la propriété associée au champ.
+	 * @param property property value given in the field changed event.
 	 */
 	public LabeledRow(String property){
 		this.property = property;
 	}
 	
 	/**
-	 * Créée un champ de base. Ce constructeur ne sera généralement pas surchargé.
+	 * Create a field base. This constructor may not be used by subclasses.
 	 * 
-	 * @param parent Composite parent dans lequel les composants seront ajoutés.
-	 * @param property Chaîne contenant le nom de la propriété gérée par le champ.
-	 *              Cette valeur est renvoyée lors d'un changement du champ.
-	 * @param label Control du label. La plupart des implémentations utilisera un Label,
-	 *              mais un Hyperlink ou autre contrôle peuvent utiles.
-	 * @param field Control contenant la donnée gérée par le champ.
-	 * @param browseText Texte du bouton. Celui-ci n'est pas créée si le texte est 
-	 *              <code>null</code>
+	 * @param parent Composite in which the row will be added
+	 * @param property Property value given in the field changed event.
+	 * @param label Control to use for the label. The most common is a text 
+	 *              control, but it could be something else like an hyperlink.
+	 * @param field Control containing the field data.
+	 * @param browseText Button text. If <code>null</code>, the button isn't 
+	 *              created.
 	 */
 	public LabeledRow(Composite parent, String property, Control label,
 			          Control field, String browseText){
@@ -113,20 +104,18 @@ public abstract class LabeledRow {
 		createContent(parent, label, field, browseText);
 	}
 	
+	/**
+	 * Replace the current label by a new one.
+	 * 
+	 * @param newLabel New label to use
+	 */
 	public void setLabel(String newLabel){
 		((Label)label).setText(newLabel);
+		label.pack(true);
 	}
 	
 	/**
-	 * Créée le contenu du champ. Cette méthode devrait être appelée par ses descendants
-	 * dans un méthode <code>createContent</code> adaptée au champ implémenté.
-	 * 
-	 * @param parent Composite parent dans lequel les composants seront ajoutés.
-	 * @param label Control du label. La plupart des implémentations utilisera un Label,
-	 *              mais un Hyperlink ou autre contrôle peuvent utiles.
-	 * @param field Control contenant la donnée gérée par le champ.
-	 * @param browseText Texte du bouton. Celui-ci n'est pas créée si le texte est 
-	 *               <code>null</code>
+	 * @see LabeledRow#LabeledRow(Composite, String, Control, Control, String)
 	 */
 	protected void createContent(Composite parent, Control label,
 	          Control field, String browseText){
@@ -140,9 +129,7 @@ public abstract class LabeledRow {
 	}
 	
 	/**
-	 * Accesseur de la propriété associée au champ
-	 * 
-	 * @return Valeur de la propriété associée sous forme de <code>String</code>.
+	 * Property getter
 	 */
 	public String getProperty(){
 		return this.property;
@@ -150,17 +137,14 @@ public abstract class LabeledRow {
 	
 	/**
 	 * Get or calculate the value of this property.
-	 * 
-	 * @return value
 	 */
 	public abstract String getValue();
 	
 	/**
-	 * Méthode organisant les différents composants dans le composite parent.
-	 * Elle tient compte du layout du père et affecte des layoutData conrrespondant
-	 * aux layout <code>TableWrapLayout</code> ou <code>GridLayout</code>
+	 * Method organizing the different graphic components in the parent 
+	 * composite.
 	 * 
-	 * @param parent composite parent
+	 * @param parent Parent composite.
 	 */
 	protected void fillRow(Composite parent){
 		Layout layout = parent.getLayout();
@@ -189,7 +173,7 @@ public abstract class LabeledRow {
 
 	
 	/**
-	 * define the listener that will react to the field changes
+	 * Defines the listener that will react to the field changes.
 	 * 
 	 * @param listener field changes listener
 	 */
@@ -198,7 +182,7 @@ public abstract class LabeledRow {
 	}
 	
 	/**
-	 * remove the field changes listener
+	 * Removes the field changes listener.
 	 *
 	 */
 	public void  removeFieldChangedlistener(){

@@ -2,15 +2,12 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/08/10 12:07:24 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:19 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the following licenses
- *
- *     - GNU Lesser General Public License Version 2.1
- *     - Sun Industry Standards Source License Version 1.1
+ * either of the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -33,22 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- *
- *
- * Sun Industry Standards Source License Version 1.1
- * =================================================
- * The contents of this file are subject to the Sun Industry Standards
- * Source License Version 1.1 (the "License"); You may not use this file
- * except in compliance with the License. You may obtain a copy of the
- * License at http://www.openoffice.org/license.html.
- *
- * Software provided under this License is provided on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
- * WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
- * MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
- * See the License for the specific provisions governing your rights and
- * obligations concerning the Software.
- *
+ * 
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -68,7 +50,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.graphics.Image;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.gui.ITableElement;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.preferences.InvalidConfigException;
 
@@ -80,7 +64,11 @@ import org.openoffice.ide.eclipse.preferences.InvalidConfigException;
  * @author cbosdonnat
  *
  */
-public class SDK {
+public class SDK implements ITableElement {
+	
+	public static final String NAME = "__sdk_name";
+	
+	public static final String PATH = "__sdk_path";
 	
 	/**
 	 * private constant that holds the sdk name key in the dk.mk file
@@ -335,5 +323,35 @@ public class SDK {
 					OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+ settingsFile.getAbsolutePath(),
 					InvalidConfigException.INVALID_SDK_HOME);
 		}
+	}
+	
+	public Image getImage(String property) {
+		return null;
+	}
+
+	public String getLabel(String property) {
+		String result = "";
+		if (property.equals(NAME)) {
+			result = getName()  + "-" + getBuildId();
+		} else if (property.equals(PATH)) {
+			result = getSDKHome();
+		}
+		return result;
+	}
+
+	public String[] getProperties() {
+		return new String[] {NAME, PATH};
+	}
+
+	public boolean canModify(String property) {
+		return false;
+	}
+
+	public Object getValue(String property) {
+		return null;
+	}
+
+	public void setValue(String property, Object value) {
+		// Nothing to do
 	}
 }

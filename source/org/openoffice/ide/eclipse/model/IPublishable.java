@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: ConfigListener.java,v $
+ * $RCSfile: IPublishable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,28 +41,31 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.preferences;
+package org.openoffice.ide.eclipse.model;
 
-public interface ConfigListener {
+/**
+ * Interface to describe a common access to the published modifier of 
+ * a declaration
+ * 
+ * @author cbosdonnat
+ *
+ */
+public interface IPublishable {
+
+	/**
+	 * Sets or unset the declaration as published. It will be prefixed
+	 * with "published"
+	 * 
+	 * @param published <code>true</code> sets the declaration as published, 
+	 * 			<code>false</code> unset this attribute.
+	 */
+	public void setPublished(boolean published);
 	
 	/**
-	 * Method fired when a config element has been added to the container
+	 * Gets the published value of the declaration. If <code>true</code> is 
+	 * returned, the declaration will be prefixed with "published".
 	 * 
-	 * @param element added sdk or ooo
+	 * @return <code>true</code> if the declaration is published
 	 */
-	public void ConfigAdded(Object element);
-	
-	/**
-	 * Method fired when a config element has been removed from the container
-	 * 
-	 * @param element removed sdk or ooo. <code>null</code> if the container has been cleared
-	 */
-	public void ConfigRemoved(Object element);
-	
-	/**
-	 * Method fired when a config element has been updated in the container
-	 * 
-	 * @param element new value of the sdk or ooo
-	 */
-	public void ConfigUpdated(Object element);
+	public boolean isPublished();
 }

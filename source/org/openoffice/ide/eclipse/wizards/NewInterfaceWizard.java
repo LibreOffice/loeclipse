@@ -1,8 +1,8 @@
 /*************************************************************************
  *
- * $RCSfile: NewServiceWizard.java,v $
+ * $RCSfile: NewInterfaceWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
  * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:22 $
  *
@@ -57,31 +57,31 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.model.InterfaceService;
+import org.openoffice.ide.eclipse.model.Interface;
 import org.openoffice.ide.eclipse.model.UnoidlFile;
 import org.openoffice.ide.eclipse.model.UnoidlProject;
 
-public class NewServiceWizard extends BasicNewResourceWizard implements INewWizard {
+/**
+ * TODOC 
+ * 
+ * @author cbosdonnat
+ *
+ */
+public class NewInterfaceWizard extends BasicNewResourceWizard implements
+		INewWizard {
 
-	private NewServiceWizardPage page;
+	private NewInterfaceWizardPage page;
 	
-	public NewServiceWizard() {
+	public NewInterfaceWizard() {
 		super();
 		
 		activePage = OOEclipsePlugin.getActivePage();
 	}
 
 	public boolean performFinish() {
-		
-		final String packageName = page.getPackage();
-		final String name = page.getElementName();
-		final String ifaceName = page.getInheritanceName();
-		final boolean published = page.isPublished();
-		
-		InterfaceService service = page.createService(
-				packageName, name, ifaceName, published);
-		
-		UnoidlFile unofile = service.getFile();
+		Interface newInterface = page.createInterface();
+
+		UnoidlFile unofile = newInterface.getFile();
 		
 		// Reveal the project main service file	
 		selectAndReveal(unofile.getFile());
@@ -89,7 +89,7 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 		
 		return true;
 	}
-
+	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		
 		super.init(workbench, selection);
@@ -106,6 +106,24 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 		}
 	}
 	
+	private void createPages(IProject project){
+		if (null != project){
+			try {
+				if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)){
+					UnoidlProject unoProject = (UnoidlProject)project.getNature(
+							OOEclipsePlugin.UNO_NATURE_ID);
+					
+					page = new NewInterfaceWizardPage("newiface", unoProject);
+					
+					addPage(page);
+				}
+			} catch (CoreException e){
+				if (null != System.getProperty("DEBUG")){
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	
 	private IWorkbenchPage activePage;
 	
@@ -128,24 +146,4 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 			}
 		}
 	}
-	
-	private void createPages(IProject project){
-		if (null != project){
-			try {
-				if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)){
-					UnoidlProject unoProject = (UnoidlProject)project.getNature(
-							OOEclipsePlugin.UNO_NATURE_ID);
-					
-					page = new NewServiceWizardPage("newservice", unoProject);
-					
-					addPage(page);
-				}
-			} catch (CoreException e){
-				if (null != System.getProperty("DEBUG")){
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 }

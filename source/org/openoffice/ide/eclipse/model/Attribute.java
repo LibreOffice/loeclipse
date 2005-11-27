@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: AccumulatedService.java,v $
+ * $RCSfile: Attribute.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,68 +45,83 @@ package org.openoffice.ide.eclipse.model;
 
 import java.util.Vector;
 
-public class AccumulatedService extends SingleFileDeclaration
-								implements IPublishable {
+/**
+ * Classe representant les attributs d'interfaces tels que definis dans la 
+ * grammaire de UNO-IDL pour OpenOffice.org 2.0
+ * 
+ * @author cbosdonnat
+ *
+ */
+public class Attribute extends TypedDeclaration {
 	
-	public final static String SEPARATOR = "$";
+	public final static String F_BOUND = "bound";
 	
-	public AccumulatedService(TreeNode node, String aName, UnoidlFile file) {
-		this(node, aName, file, new Vector());
-	}
+	public final static String F_READONLY = "readonly";
 	
-	public AccumulatedService(TreeNode node, String aName, 
-			UnoidlFile file, Vector members) {
+	public static final String[] FLAGS = {
+		F_BOUND,
+		F_READONLY
+	};
+
+	public Attribute(TreeNode node, String aName, UnoidlFile file,
+			String aDeclarationType) {
 		
-		super(node, aName, file, T_SERVICE);
-		
-		// The Declaration.addNode() method will add only the valid members 
-		for (int i=0, length=members.size(); i<length; i++) {
-			addNode((Declaration) members.get(i));
-		}
+		super(node, aName, file, T_ATTRIBUTE, aDeclarationType, false, false);
 	}
 
-	//------------------------------------------------------TreeNode overriding
+	//------------------------------------------------------ TreeNode overriding
+	
+	public int[] getValidTypes() {
+		return new int[] {T_ATTRIBUTE_ACCESS};
+	}
 	
 	public String computeBeforeString(TreeNode callingNode) {
 		
-		String output = "";
+		String result = "[attribute";
 		
-		if (isPublished()){
-			output = output + "[published] ";
+		for (int i=0, length= flags.size(); i<length; i++) {
+			result = result + ", " + (String)flags.get(i);
 		}
+			
+		result = result + "] " + getDeclarationType() + " " + getName() + " {\n";
 		
-		output = output + "service " + getScopedName().lastSegment() + "{\n";
-	
-		return indentLine(output);
+		return indentLine(result);
 	}
-	
 	
 	public String computeAfterString(TreeNode callingNode) {
 		return indentLine("};\n");
 	}
 	
-	public String getSeparator() {
-		return SEPARATOR;
+	//-------------------------------------------------------- Member management
+	
+	private Vector flags = new Vector();
+	
+	public void addFlag(String aFlag){
+		if (!flags.contains(aFlag) && isFlag(aFlag)) {
+			flags.add(aFlag);
+		}
 	}
 	
-	//-------------------------------------------------- Declaration overriding
-	
-	public int[] getValidTypes() {
-		return new int[] {T_SERVICE_INHERITANCE,
-					      T_INTERFACE_INHERITANCE, 
-					      T_PROPERTY
-		};
+	public void removeFlag(String aFlag){
+		flags.remove(aFlag);
 	}
 	
-	//-------------------------------------------------------- Member managment
-	
-	private boolean published = false;
-	
-	public boolean isPublished(){
-		return published;
+	public Vector getFlags(){
+		return flags;
 	}
 	
-	public void setPublished(boolean published){
-		this.published = published;
+	public static boolean isFlag(String aFlag){
+		boolean result = false;
+		
+		int i = 0;
+		
+		while (i < FLAGS.length && !result){
+			if (aFlag.equals(FLAGS[i])) {
+				result = true;
+			} else {
+				i++;
+			}
+		}
+		return result;
 	}
 }

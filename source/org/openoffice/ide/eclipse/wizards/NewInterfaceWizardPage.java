@@ -1,8 +1,8 @@
 /*************************************************************************
  *
- * $RCSfile: NewServiceWizardPage.java,v $
+ * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
  * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:22 $
  *
@@ -43,18 +43,26 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.wizards;
 
+import java.util.Vector;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.gui.InterfacesTable;
 import org.openoffice.ide.eclipse.gui.rows.BooleanRow;
-import org.openoffice.ide.eclipse.gui.rows.TypeRow;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.model.Declaration;
 import org.openoffice.ide.eclipse.model.Include;
-import org.openoffice.ide.eclipse.model.InterfaceService;
+import org.openoffice.ide.eclipse.model.Interface;
+import org.openoffice.ide.eclipse.model.InterfaceInheritance;
 import org.openoffice.ide.eclipse.model.ScopedName;
 import org.openoffice.ide.eclipse.model.TreeNode;
 import org.openoffice.ide.eclipse.model.UnoidlFile;
@@ -63,50 +71,61 @@ import org.openoffice.ide.eclipse.model.UnoidlProject;
 import org.openoffice.ide.eclipse.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.unotypebrowser.UnoTypeProvider;
 
-public class NewServiceWizardPage extends NewScopedElementWizardPage {
-	
-	public NewServiceWizardPage(String pageName, UnoidlProject project) {
-		super(pageName, project);
+public class NewInterfaceWizardPage extends NewScopedElementWizardPage 
+									implements ISelectionChangedListener{
+
+	public NewInterfaceWizardPage(String pageName, UnoidlProject unoProject) {
+		super(pageName, unoProject);
+	}
+
+	public NewInterfaceWizardPage(String pageName, UnoidlProject project,
+			String aRootName, String aElementName) {
+		super(pageName, project, aRootName, aElementName);
 	}
 	
-	public NewServiceWizardPage(String pageName, UnoidlProject project, 
-								String aRootName, String aServiceName){
-		super(pageName, project, aRootName, aServiceName);
+	public void dispose() {
+		
+		interfaceInheritances.removeSelectionChangedListener(this);
+		interfaceInheritances = null;
+		
+		super.dispose();
 	}
 	
 	public int getProvidedTypes() {
 		return UnoTypeProvider.INTERFACE;
 	}
 
-	//-------------------------------------------------- Page content managment
 	
-	private final static String P_IFACE_INHERITANCE = "__iface_inheritance"; 
-	private final static String P_PUBLISHED			= "__published";
-	
-	private TypeRow ifaceInheritanceRow;
+	//--------------------------------------------------- Page content managment
+
+	private final static String P_PUBLISHED = "__published";
 	private BooleanRow publishedRow;
+	private InterfacesTable interfaceInheritances;
 	
-	public void createSpecificControl(Composite parent) {
-		
-		ifaceInheritanceRow = new TypeRow(parent, 
-				P_IFACE_INHERITANCE, 
-				"Inherited interface",
-				typesProvider,
-				UnoTypeProvider.INTERFACE);
-		ifaceInheritanceRow.setValue("com.sun.star.uno.XInterface"); // TODO Configure
-		ifaceInheritanceRow.setFieldChangedListener(this);
-		
+	protected void createSpecificControl(Composite parent) {
 		
 		publishedRow = new BooleanRow(parent, P_PUBLISHED,
 				OOEclipsePlugin.getTranslationString(
 						I18nConstants.PUBLISHED));
 		publishedRow.setFieldChangedListener(this);
 		publishedRow.setValue(true);
+		
+		Composite tableParent = new Composite(parent, SWT.NORMAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
+		tableParent.setLayoutData(gd);
+		tableParent.setLayout(new GridLayout(1, false));
+		
+		interfaceInheritances = new InterfacesTable(tableParent,
+				 new UnoTypeProvider(unoProject, UnoTypeProvider.INTERFACE));
+		interfaceInheritances.addInterface(
+				"com.sun.star.uno.XInterface", false); // TODO configuration
+		interfaceInheritances.addSelectionChangedListener(this);
 	}
 	
 	public String getTitle() {
 		return OOEclipsePlugin.getTranslationString(
-				I18nConstants.NEW_SERVICE_TITLE);
+				I18nConstants.NEW_INTERFACE_TITLE);
 	}
 	
 	public String getDescription() {
@@ -114,66 +133,50 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	}
 	
 	protected String getTypeLabel() {
-		return OOEclipsePlugin.getTranslationString(I18nConstants.SERVICE_NAME);
+		return OOEclipsePlugin.getTranslationString(I18nConstants.INTERFACE_NAME);
 	}
 	
 	protected ImageDescriptor getImageDescriptor() {
 		return OOEclipsePlugin.getImageDescriptor(
-				ImagesConstants.NEW_SERVICE_IMAGE);
-	}
-	
-	public String getInheritanceName() {
-		return ifaceInheritanceRow.getValue();
-	}
-	
-	public boolean isPublished() {
-		return publishedRow.getBooleanValue();
-	}
-	
-	public void setInheritanceName(String value, boolean forced) {
-		
-		if (value.matches("[a-zA-Z0-9_]+(.[a-zA-Z0-9_])*")) {
-			ifaceInheritanceRow.setValue(value);
-			ifaceInheritanceRow.setEnabled(!forced);	
-		}
-	}
-	
-	public void setPublished(boolean value, boolean forced) {
-		
-		publishedRow.setValue(value);
-		publishedRow.setEnabled(!forced);
+				ImagesConstants.NEW_INTERFACE_IMAGE);
 	}
 
+	/*
+	 * 	Override isPageComplete to be sure to have at least one inheritance
+	 *  
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
+	 */
 	public boolean isPageComplete() {
-		boolean result = super.isPageComplete(); 
-		
-		try {
-			if (ifaceInheritanceRow.getValue().equals("")) {
-				result = false;
-			}
-		} catch (NullPointerException e) {
-			result = false;
-		}
-		
-		return result;
+		return super.isPageComplete() && 
+			interfaceInheritances.getLines().size() >= 1;
+	}
+
+	/*
+	 * When such an event is catch, this method reevaluate the page completeness
+	 * 
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		setPageComplete(isPageComplete());
 	}
 	
-	public InterfaceService createService(String packageName, String name,
-			String inheritanceName, boolean published){
+	public Interface createInterface() {
 		
-		InterfaceService service = null;
+		Interface newInterface = null;
 		
 		try {
 			String path = unoProject.getPath() + unoProject.getSeparator() +
 							unoProject.getRootScopedName();
 			
-			if (!packageName.equals("")) {
-				path = path + Declaration.SEPARATOR + packageName;
+			if (!getPackage().equals("")) {
+				path = path + Declaration.SEPARATOR + getPackage();
 			}
 			
 			unoProject.createModules(
 					new ScopedName(unoProject.getRootScopedName() + 
-							ScopedName.SEPARATOR + packageName),
+							ScopedName.SEPARATOR + getPackage()),
 					null);
 			
 			TreeNode parent = UnoidlModel.getUnoidlModel().findNode(path);
@@ -182,7 +185,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 			if (null != parent) {
 				
 				// Creates a file and the necessary folders for this new type
-				String[] segments = packageName.split("\\.");
+				String[] segments = getPackage().split("\\.");
 				
 				IFolder folder = unoProject.getProject().getFolder(
 						unoProject.getUnoidlPrefixPath());
@@ -194,7 +197,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 					}
 				}
 				
-				IFile file = folder.getFile(name + ".idl");
+				IFile file = folder.getFile(getElementName() + ".idl");
 				TreeNode fileNode = unoProject.findNode(
 						UnoidlFile.computePath(file));
 				UnoidlFile unofile = null;
@@ -205,36 +208,54 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 					unofile = (UnoidlFile)fileNode;
 				}
 				
-				String ifaceInheritanceName = inheritanceName.replace(".", "::");
+				// Create the new interface object
+				newInterface = new Interface(parent, 
+						getElementName(), 
+						unofile);
+				newInterface.setPublished(publishedRow.getBooleanValue());
 				
-				service = new InterfaceService(parent, 
-						name, 
-						unofile, 
-						new ScopedName(ifaceInheritanceName));
-				((InterfaceService)service).setPublished(
-						published);
+				// Add the selected interface inheritances as children of the 
+				// new interface created
 				
-				InternalUnoType type = typesProvider.getType(
-						inheritanceName);
-				boolean isLibrary = false;
-				if (null != type) {
-					isLibrary = !type.isLocalType();
+				Vector lines = interfaceInheritances.getLines();
+				for (int i=0, length=lines.size(); i<length; i++) {
+					InterfacesTable.InheritanceLine line = 
+						(InterfacesTable.InheritanceLine)lines.get(i);
+					
+					InterfaceInheritance inheritance = new InterfaceInheritance(
+							newInterface,
+							new ScopedName(line.getInterfaceName().replace(".", "::")),
+							unofile,
+							line.isOptional());
+					newInterface.addNode(inheritance);
+					
+					// Check whether the interface is a project one or not.
+					InternalUnoType type = typesProvider.getType(
+							line.getInterfaceName());
+					
+					boolean isLibrary = false;
+					if (null != type) {
+						isLibrary = !type.isLocalType();
+					}
+					
+					// Add the correct include to the file
+					unofile.addInclude(
+							Include.createInclude(
+									line.getInterfaceName().replace(".", "::"),
+									isLibrary));
 				}
 				
-				unofile.addInclude(
-						Include.createInclude(ifaceInheritanceName, isLibrary));
-				
-				parent.addNode(service);
+				parent.addNode(newInterface);
 				unoProject.addNode(unofile);
 				
-				unofile.addDeclaration(service);
+				unofile.addDeclaration(newInterface);
 				unofile.save();
 			}
 		} catch (Exception e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
 					I18nConstants.SERVICE_CREATION_FAILED), e);
 		}
-		return service;
+		
+		return newInterface;
 	}
-
 }
