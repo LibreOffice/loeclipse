@@ -18,6 +18,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.cheatsheets,
  org.eclipse.help,
  org.eclipse.ui.forms
-Eclipse-LazyStart: true
-Bundle-Vendor: OpenOffice.org API project
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Eclipse-AutoStart: true
