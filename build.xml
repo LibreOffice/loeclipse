@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:37:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 12:21:15 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -46,7 +46,7 @@
     </description>
 
 	<!-- please change the version number -->
-	<property name="version" value="1.0.1" />
+	<property name="version" value="1.0.2" />
 	
 	<!-- please change these values in order to fit to your installation -->
 	<property name="eclipse.home" value="/mnt/stockage/eclipse-test/eclipse" />
@@ -131,9 +131,15 @@
 		
 		<mkdir dir="${out.path}/plugins" />
 		<mkdir dir="${out.path}/plugin" />
-				<javac srcdir="source" destdir="${out.path}/plugin"
-		               target="1.3" source="1.3"
-					   classpathref="dependencies.path" />
+		<javac srcdir="source" destdir="${out.path}/plugin"
+			target="1.3" source="1.3"
+			classpathref="dependencies.path" />
+		
+		<copy todir="${out.path}/plugin">
+			<fileset dir="source">
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
 
 		<!-- Copy the important files in the directory -->
 		<copy todir="${out.path}/plugin/doc">
@@ -169,13 +175,15 @@
 			basedir="${out.path}/plugin"
 			includes="org/openoffice/ide/eclipse/unotypebrowser/*.class">
 			<manifest>
-				<attribute name="Main-Class" value="org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter."/>
+				<attribute name="Main-Class" 
+					value="org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter" />
 			</manifest>
 		</jar>
 		
 		<!-- Creating the plugin jar file -->
 		<jar destfile="${out.path}/plugins/org.openoffice.ide.eclipse_${version}.jar"
 			basedir="${out.path}/plugin"
+			manifest="${out.path}/plugin/META-INF/MANIFEST.MF"
 			includes="**/*" />
 		
 	</target>
