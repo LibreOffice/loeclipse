@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+ * $RCSfile: build.xml,v $
+ *
+ * $Revision: 1.1 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:37:55 $
+ *
+ * The Contents of this file are made available subject to the terms of 
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat                                                              
+ ====================================================================== -->
+
+<project name="ooeclipseintegration" default="site">
+	<description>
+            This project provides a new plugin for Eclipse to help OpenOffice.org 
+    </description>
+
+	<!-- please change the version number -->
+	<property name="version" value="1.0.1" />
+	
+	<!-- please change these values in order to fit to your installation -->
+	<property name="eclipse.home" value="/mnt/stockage/eclipse-test/eclipse" />
+	<property name="openoffice.home" value="/opt/openoffice.org2.0" />
+	
+	<property name="out.path" value="bin/ant" />
+
+	<path id="dependencies.path">
+		<pathelement location="${openoffice.home}/program/classes/juh.jar" />
+		<pathelement location="${openoffice.home}/program/classes/jurt.jar" />
+		<pathelement location="${openoffice.home}/program/classes/ridl.jar" />
+
+		<fileset dir="${eclipse.home}/plugins/">
+			<include name="org.eclipse*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="clean"
+			description="Cleans all the temporary files">
+		
+		<delete dir="${out.path}/plugin" />
+		<delete dir="${out.path}/feature" />
+		<delete file="${out.path}/site.xml" />
+	</target>
+	
+	<target name="purge"
+			description="Removes all the generated files">
+		<delete dir="${out.path}" />
+	</target>
+
+	<!-- ================================= 
+          target: site              
+         ================================= -->
+	<target name="site"
+    	        depends="plugin, feature" 
+    	        description="builds and delivers the plugin">
+
+		<copy file="build/site/site.xml.in" tofile="${out.path}/site.xml" />
+		<replace file="${out.path}/site.xml" 
+					token="@VERSION@" value="${version}" />
+		
+		<zip destfile="${out.path}/ooeclipseintegration_site.zip"
+			basedir="${out.path}"
+			includes="plugins/**/*, features/**/*, site.xml" />
+
+        <echo>
+           =================================================
+           The ooeclipseintegration update site is generated
+
+           To use it you, just unzip 
+           bin/ant/ooeclipseintegration_site.zip where you
+           want to create your update site.
+           
+           Eclipse can althought install from a local zipped
+           update site.
+           
+           =================================================
+        </echo>
+
+	</target>
+
+	<!-- - - - - - - - -   target: feature  - - - - - - - - - - - - -->
+	<target name="feature" depends="plugin">
+		
+		<mkdir dir="${out.path}/features" />
+		
+		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
+		<mkdir dir="${out.path}/feature" />
+		<copy file="build/feature/feature.xml.in"
+			tofile="${out.path}/feature/feature.xml" />
+		<replace file="${out.path}/feature/feature.xml" 
+			token="@VERSION@" value="${version}" />
+		
+		<jar destfile="${out.path}/features/org.openoffice.ide.eclipse_${version}.jar"
+			basedir="${out.path}/feature"
+			includes="feature.xml" />
+		
+	</target>
+
+	<!-- - - - - - - - -   target: plugin  - - - - - - - - - - - - -->
+	<target name="plugin">
+		
+		<mkdir dir="${out.path}/plugins" />
+		<mkdir dir="${out.path}/plugin" />
+				<javac srcdir="source" destdir="${out.path}/plugin"
+		               target="1.3" source="1.3"
+					   classpathref="dependencies.path" />
+
+		<!-- Copy the important files in the directory -->
+		<copy todir="${out.path}/plugin/doc">
+			<fileset dir="doc">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${out.path}/plugin/icons">
+	    		<fileset dir="icons">
+	    			<include name="**/*"/>
+	    		</fileset>
+		</copy>
+		
+		<copy file="META-INF/MANIFEST.MF.in"
+			tofile="${out.path}/plugin/META-INF/MANIFEST.MF" />
+		<replace file="${out.path}/plugin/META-INF/MANIFEST.MF"
+			token="@VERSION@" value="${version}" />
+		
+		<copy file="plugin.properties" tofile="${out.path}/plugin/plugin.properties" />
+		<copy file="plugin.xml" tofile="${out.path}/plugin/plugin.xml" />
+
+		<!-- Generate the javadoc API in the doc/html/api folder -->
+		<javadoc 
+			packagenames="org.openoffice.ide.eclipse.*"
+			sourcepath="source"
+			classpathref="dependencies.path"
+			destdir="${out.path}/plugin/doc/help/html/api">
+		</javadoc>
+		
+		<!-- Creating the UnoTypesGetter.jar file -->
+		<jar destfile="${out.path}/plugin/UnoTypesGetter.jar"
+			basedir="${out.path}/plugin"
+			includes="org/openoffice/ide/eclipse/unotypebrowser/*.class">
+			<manifest>
+				<attribute name="Main-Class" value="org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter."/>
+			</manifest>
+		</jar>
+		
+		<!-- Creating the plugin jar file -->
+		<jar destfile="${out.path}/plugins/org.openoffice.ide.eclipse_${version}.jar"
+			basedir="${out.path}/plugin"
+			includes="**/*" />
+		
+	</target>
+
+</project>
+

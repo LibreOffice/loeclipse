@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature 
+   		url="features/org.openoffice.ide.eclipse_@VERSION@.jar" 
+   		id="org.openoffice.ide.eclipse" version="@VERSION@">
+      <category name="OpenOffice.org"/>
+   </feature>
+   <category-def name="OpenOffice.org" label="OpenOffice.org"/>
+</site>
