@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:39 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -72,13 +72,7 @@ public class OOo implements ITableElement {
 	 */
 	private static final String  K_PRODUCTKEY = "ProductKey";
 	
-	/**
-	 * private constant that holds the ooo build id key in the bootstraprc file
-	 */
-	private static final String K_OOO_BUILDID = "buildid";
-	
 	private String name;
-	private String buildId;
 	private String oooHome;
 	
 	public OOo(String oooHome) throws InvalidConfigException {
@@ -101,61 +95,9 @@ public class OOo implements ITableElement {
 	 * @return the ooo unique id
 	 */
 	public String getId(){
-		return getId(name, buildId);
+		return name;
 	}
-	
-	/**
-	 * Creates a ooo unique id with a name and build id
-	 * 
-	 * @param name ooo name
-	 * @param buildId ooo build id
-	 * 
-	 * @return ooo unique identifier
-	 */
-	public static String getId(String name, String buildId){
-		return name+"-"+buildId;
-	}
-	
-	/**
-	 * Returns an array containing the name and build id composing the sdk unique id 
-	 * 
-	 * @param oooKey ooo unique id to decompose
-	 * @return name and build if
-	 */
-	public static String[] getSdkNameBuildId(String oooKey) {
-		
-		return oooKey.split("-");
-	}
-	
-	/**
-	 * Returns the OOo build id without the parenthesized string. For example, if the
-	 * full build id is <code>680m92(Build:8896)</code>, the result will be: <code>680m92</code>.
-	 * 
-	 * If the builid is <code>null</code>, the return will be 
-	 * 
-	 * @return the shortened build id
-	 */
-	public String getBuildId(){
-		String result = null;
-		
-		String[] splits = buildId.split("\\(.*\\)");
-		if (splits.length > 0){
-			result = splits[0];
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Returns the full build id with the parenthesized string. For example, if the
-	 * full build id is <code>680m92(Build:8896)</code>, the result will be same string.
-	 * 
-	 * @return the full build id of the ooo
-	 */
-	public String getFullBuildId(){
-		return buildId;
-	}
-	
+
 	/**
 	 * Returns the path to the OpenOffice.org home directory. This string could 
 	 * be passed to the Path constructor to get the folder object. 
@@ -190,8 +132,6 @@ public class OOo implements ITableElement {
 			// Get the file representing the given OOo home path
 			Path homePath = new Path(oooHome);
 			File homeFile = homePath.toFile();
-			
-			
 				
 			// Check for the program directory
 			File programFile = new File(homeFile, "program");
@@ -251,7 +191,7 @@ public class OOo implements ITableElement {
 	 *          <ul>
 	 *             <li>the given program file isn't a valid directory</li>
 	 *             <li>the program/bootstraprc file doesn't exists or is unreadable</li>
-	 *             <li>one or both of the product or buildid key is not set</li>
+	 *             <li>the product key is not set</li>
 	 *          </ul>
 	 */
 	private void readSettings(File programFile) throws InvalidConfigException {
@@ -271,16 +211,14 @@ public class OOo implements ITableElement {
 				bootstraprcProperties.load(new FileInputStream(bootstraprcFile));
 				
 				// Checks if the name and buildid properties are set
-				if (bootstraprcProperties.containsKey(K_PRODUCTKEY) && 
-						bootstraprcProperties.containsKey(K_OOO_BUILDID)){
+				if (bootstraprcProperties.containsKey(K_PRODUCTKEY)){
 					
 					// Sets the both value
 					name = bootstraprcProperties.getProperty(K_PRODUCTKEY);
-					buildId = bootstraprcProperties.getProperty(K_OOO_BUILDID);
 				} else {
 					throw new InvalidConfigException(
 							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + 
-									K_PRODUCTKEY + ", " + K_OOO_BUILDID,
+									K_PRODUCTKEY,
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
@@ -310,7 +248,7 @@ public class OOo implements ITableElement {
 	public String getLabel(String property) {
 		String result = "";
 		if (property.equals(NAME)) {
-			result = getName()  + "-" + getBuildId();
+			result = getName();
 		} else if (property.equals(PATH)) {
 			result = getOOoHome();
 		}

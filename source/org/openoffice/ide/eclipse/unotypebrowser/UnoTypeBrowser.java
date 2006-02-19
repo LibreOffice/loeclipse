@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeBrowser.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -184,6 +184,8 @@ public class UnoTypeBrowser extends StatusDialog
 		if (!typesProvider.isInitialized()) {
 			activateFields(false);
 		}
+		
+		inputRow.setFocus();
 		
 		return body;
 	}
@@ -551,6 +553,8 @@ public class UnoTypeBrowser extends StatusDialog
 			refresh();
 			
 		}
+		
+		inputRow.setFocus();
 	}
 	
 	//---------------------------------------- Filters the elements in the list
@@ -580,10 +584,13 @@ public class UnoTypeBrowser extends StatusDialog
 	/**
 	 * Returns the type path and it's type in the following way:
 	 * <code>&lt;path&gt; &lt;type&gt;</code>, where the type is a numeric
-	 * value among those defined in UnoTypeBrowser class. If the selection
+	 * value among those defined in UnoTypeProvider class. If the selection
 	 * is empty, the returned value is <code>null</code>.
 	 * 
-	 * @return
+	 * @see UnoTypeProvider
+	 * 
+	 * @return the exact path and type of the chosen UNO type. For example
+	 *       this could be "com::sun::star::uno::XInterface 2"
 	 */
 	public String getSelectedType(){
 		String typePath = null;

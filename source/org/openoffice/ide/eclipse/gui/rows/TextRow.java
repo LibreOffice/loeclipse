@@ -2,9 +2,9 @@
  *
  * $RCSfile: TextRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:39 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,6 +46,8 @@ package org.openoffice.ide.eclipse.gui.rows;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -56,7 +58,8 @@ import org.eclipse.swt.widgets.Text;
  * @author cbosdonnat
  *
  */
-public class TextRow extends LabeledRow implements FocusListener{
+public class TextRow extends LabeledRow
+					 implements FocusListener, KeyListener {
 	
 	private String value = new String();
 	
@@ -69,6 +72,7 @@ public class TextRow extends LabeledRow implements FocusListener{
 		
 		createContent(parent, aLabel, aField, null);
 		field.addFocusListener(this);
+		field.addKeyListener(this);
 	}
 
 	public void focusGained(FocusEvent e) {
@@ -84,6 +88,21 @@ public class TextRow extends LabeledRow implements FocusListener{
 	public void focusLost(FocusEvent e) {
 		if (!((Text)field).getText().equals(value)){
 			setValue(((Text)field).getText());
+		}
+	}
+	
+	String oldValue;
+	public void keyPressed(KeyEvent e) {
+		oldValue = ((Text)field).getText();
+	}
+
+	public void keyReleased(KeyEvent e) {
+		if (e.getSource().equals(field)) {
+			if (!((Text)field).getText().equals(oldValue)){
+				if (!((Text)field).getText().equals(value)){
+					setValue(((Text)field).getText());
+				}
+			}
 		}
 	}
 
@@ -104,7 +123,9 @@ public class TextRow extends LabeledRow implements FocusListener{
 		value = newText;
 		FieldEvent fe = new FieldEvent(getProperty(), getValue());
 		fireFieldChangedEvent(fe);
-		
-		
+	}
+	
+	public void setFocus(){
+		field.setFocus();
 	}
 }

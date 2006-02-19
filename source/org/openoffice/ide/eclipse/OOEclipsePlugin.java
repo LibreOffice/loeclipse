@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:39 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -367,7 +367,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 * @param project
 	 * @param shellCommand
 	 * @param monitor
-	 * @return
+	 * @return the process executing the tool
 	 */
 	public static Process runTool(IProject project, String shellCommand, IProgressMonitor monitor){
 		

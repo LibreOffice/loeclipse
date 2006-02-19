@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKContainer.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -110,7 +110,6 @@ public class SDKContainer {
 	
 	/**
 	 * Returns the sdks elements in an array
-	 * @return
 	 */
 	public Object[] toArray(){
 		return toVector().toArray(); 
@@ -130,12 +129,12 @@ public class SDKContainer {
 		 */ 
 		
 		if (null != sdk){
-			if (!elements.containsKey(sdk.getId())){
-				elements.put(sdk.getId(), sdk);
+			if (!elements.containsKey(sdk.getBuildId())){
+				elements.put(sdk.getBuildId(), sdk);
 				fireSDKAdded(sdk);
 			} else {
-				SDK sdkref = (SDK)elements.get(sdk.getId());
-				updateSDK(sdkref.getId(), sdk);
+				SDK sdkref = (SDK)elements.get(sdk.getBuildId());
+				updateSDK(sdkref.getBuildId(), sdk);
 			}
 		}
 	}
@@ -155,8 +154,8 @@ public class SDKContainer {
 	 */
 	public void delSDK(SDK sdk){
 		if (null != sdk){
-			if (elements.containsKey(sdk.getId())){
-				elements.remove(sdk.getId());
+			if (elements.containsKey(sdk.getBuildId())){
+				elements.remove(sdk.getBuildId());
 				fireSDKRemoved(sdk);
 			}
 		}
@@ -191,7 +190,7 @@ public class SDKContainer {
 	/**
 	 * update the ith SDK from the list with the given SDK.
 	 * 
-	 * @param i position of the sdk to update
+	 * @param sdkkey position of the sdk to update
 	 * @param sdk new value for the SDK
 	 */
 	public void updateSDK(String sdkkey, SDK sdk){

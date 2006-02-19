@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -71,17 +71,6 @@ public class SDK implements ITableElement {
 	public static final String PATH = "__sdk_path";
 	
 	/**
-	 * private constant that holds the sdk name key in the dk.mk file
-	 */
-	private static final String  K_SDK_NAME = "SDKNAME";
-	
-	/**
-	 * private constant that holds the sdk name key in the dk.mk file.
-	 * Used for OpenOffice.org SDK 1.1 compatibility
-	 */
-	private static final String K_DK_NAME = "DKNAME";
-	
-	/**
 	 * private constant that holds the sdk build id key in the dk.mk file
 	 */
 	private static final String K_SDK_BUILDID = "BUILDID";
@@ -96,7 +85,6 @@ public class SDK implements ITableElement {
 	
 	/* SDK Members */
 	
-	private String name;
 	private String buildId;
 	private String sdkHome;
 	
@@ -188,47 +176,6 @@ public class SDK implements ITableElement {
 	}
 	
 	/**
-	 * Returns the SDK name as set in the settings/mkdk file
-	 * 
-	 * @return sdk name
-	 */
-	public String getName(){
-		return name;
-	}
-	
-	/**
-	 * Build a unique id from the sdk name and build id
-	 *
-	 * @return the sdk unique id
-	 */
-	public String getId(){
-		return getId(name, buildId);
-	}
-	
-	/**
-	 * Creates a sdk unique id with a name and build id
-	 * 
-	 * @param name sdk name
-	 * @param buildId sdk build id
-	 * 
-	 * @return sdk unique identifier
-	 */
-	public static String getId(String name, String buildId){
-		return name+"-"+buildId;
-	}
-	
-	/**
-	 * Returns an array containing the name and build id composing the sdk unique id 
-	 * 
-	 * @param sdkKey sdk unique id to decompose
-	 * @return name and build if
-	 */
-	public static String[] getSdkNameBuildId(String sdkKey) {
-		
-		return sdkKey.split("-");
-	}
-	
-	/**
 	 * Returns the SDK build id without the parenthesized string. For example, if the
 	 * full build id is <code>680m92(Build:8896)</code>, the result will be: <code>680m92</code>.
 	 * 
@@ -292,19 +239,15 @@ public class SDK implements ITableElement {
 				dkProperties.load(new FileInputStream(dkFile));
 				
 				// Checks if the name and buildid properties are set
-				if (dkProperties.containsKey(K_SDK_NAME) && dkProperties.containsKey(K_SDK_BUILDID)){
+				if (dkProperties.containsKey(K_SDK_BUILDID)){
 					
-					// Sets the both value
-					name = dkProperties.getProperty(K_SDK_NAME);
 					buildId = dkProperties.getProperty(K_SDK_BUILDID);
-				} else if (dkProperties.containsKey(K_DK_NAME) && dkProperties.containsKey(K_SDK_BUILDID)){
+				} else if (dkProperties.containsKey(K_SDK_BUILDID)){
 					
-					// Sets the both value
-					name = dkProperties.getProperty(K_DK_NAME);
 					buildId = dkProperties.getProperty(K_SDK_BUILDID);
 				} else {
 					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + K_SDK_NAME + ", " + K_SDK_BUILDID,
+							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + K_SDK_BUILDID,
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
@@ -332,7 +275,7 @@ public class SDK implements ITableElement {
 	public String getLabel(String property) {
 		String result = "";
 		if (property.equals(NAME)) {
-			result = getName()  + "-" + getBuildId();
+			result = getBuildId();
 		} else if (property.equals(PATH)) {
 			result = getSDKHome();
 		}

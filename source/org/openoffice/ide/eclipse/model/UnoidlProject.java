@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,6 +62,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.builders.JavamakerBuilder;
 import org.openoffice.ide.eclipse.i18n.I18nConstants;
@@ -146,9 +147,19 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 	public final static String UNO_PROJECT = "unoproject";
 	
 	/**
+	 * Project relative path to the build directory
+	 */
+	public static final String BUILD_BASIS = "build";
+	
+	/**
+	 * Project relative path to the source directory
+	 */
+	public static final String SOURCE_BASIS = "source";
+	
+	/**
 	 * Project relative path to the urd output folder.
 	 */
-	public static final String URD_BASIS = "urd";
+	public static final String URD_BASIS = BUILD_BASIS + "/urd";
 	
 	/**
 	 * Project relative path to the idl root folder
@@ -273,8 +284,8 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 	 * 
 	 * @return path to the code directory
 	 */
-	public IPath getCodeLocation(){
-		return project.getFolder("source").getProjectRelativePath();
+	public IPath getBuildLocation(){
+		return project.getFolder(BUILD_BASIS).getProjectRelativePath();
 	}
 	
 	/**
@@ -284,7 +295,7 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 	 */
 	public IPath getImplementationLocation(){
 		String path = new String(companyPrefix+"."+outputExtension).replace('.', '/');
-		return getCodeLocation().append(path);
+		return getProject().getFolder(SOURCE_BASIS).getProjectRelativePath().append(path);
 	}
 	
 	/**
@@ -334,7 +345,7 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 			getProject().setPersistentProperty(
 					new QualifiedName(
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							SDK_NAME), sdk.getId());
+							SDK_NAME), sdk.getBuildId());
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_SDKNAME_FAILED)+getProject().getName(), e);
@@ -636,7 +647,7 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 
 		try {
 			// Create the sources directory
-			IFolder codeFolder = getProject().getFolder(getCodeLocation());
+			IFolder codeFolder = getProject().getFolder(SOURCE_BASIS);
 			if (!codeFolder.exists()){
 				codeFolder.create(true, true, monitor);
 			}
@@ -666,15 +677,17 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 					
 				case JAVA_LANGUAGE:
 					IJavaProject javaProject = JavaCore.create(getProject());
-					IClasspathEntry[] entries = new IClasspathEntry[1]; 
+					IClasspathEntry[] entries = new IClasspathEntry[3]; 
 						
 					// Adds the project to the classpath
 					IClasspathEntry entry = JavaCore.newSourceEntry(
-							getProject().getFolder(getCodeLocation()).getFullPath());
+							getProject().getFolder(SOURCE_BASIS).getFullPath());
 					entries[0] = entry;
+					entries[1] = JavaRuntime.getDefaultJREContainerEntry();
+					entries[2] = JavaCore.newLibraryEntry(
+							getProject().getFolder(BUILD_BASIS).getFullPath(), null, null, false);
 					
 					javaProject.setRawClasspath(entries, monitor);
-					
 					
 					// Adds the jars contained in the OOo program folder
 					// to the class path.
@@ -685,7 +698,7 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 			}
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(
-					OOEclipsePlugin.getTranslationString(I18nConstants.FOLDER_CREATION_FAILED) + getCodeLocation().toString(),
+					OOEclipsePlugin.getTranslationString(I18nConstants.FOLDER_CREATION_FAILED) + SOURCE_BASIS,
 					e);
 		}
 		
@@ -701,8 +714,18 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 		try {
 			IFolder urdFolder = getProject().getFolder(URD_BASIS);
 			if (!urdFolder.exists()){
-				urdFolder.create(true, true, monitor);
-				urdFolder.setDerived(true);
+				
+				String[] basis_dirs = URD_BASIS.split("/");
+				IFolder tmpFolder = getProject().getFolder(basis_dirs[0]);
+				int i = 0;
+				do {
+					if (!tmpFolder.exists()) {
+						tmpFolder.create(true, true, monitor);
+						tmpFolder.setDerived(true);
+					}
+					i++;
+					tmpFolder = tmpFolder.getFolder(basis_dirs[i]);
+				} while (i < basis_dirs.length - 1);
 			}
 		} catch (CoreException e) {
 			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
@@ -895,7 +918,6 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 
 			if (container.exists()){
 				IResource[] children = container.members();
-				String codeLocation = getCodeLocation().toString();
 				
 				for (int i=0, length=children.length; i<length; i++){
 				
@@ -906,7 +928,8 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 					// set it's unoidl property to true
 					// and recurse
 					if (IResource.FOLDER == child.getType() && 
-						!childPath.endsWith(codeLocation)){
+						!childPath.endsWith(SOURCE_BASIS) &&
+						!childPath.endsWith(BUILD_BASIS)){
 						
 						IFolder folder = (IFolder)child;
 						

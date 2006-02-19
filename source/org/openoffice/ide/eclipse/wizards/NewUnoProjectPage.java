@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -361,10 +361,12 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	public void fieldChanged(FieldEvent e) {
 		
 		if (!isChanging){
-			setPageComplete(true);
+			
+			setPageComplete(validatePage());
 			
 			// Check the prefix correctness
 			if (e.getProperty().equals(PREFIX)){
+				
 				String newCompanyPrefix = e.getValue();
 				/**
 				 * <p>The company prefix is a package like name used by the project
@@ -374,13 +376,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				if (!newCompanyPrefix.matches(
 						"([a-zA-Z][a-zA-Z0-9]*)(.[a-zA-Z][a-zA-Z0-9]*)*")){
 					/**
-					 * <p>If the new company prefix is invalid, it is set to
-					 * the empty string with an error message.</p>
+					 * <p>If the new company prefix is invalid, an error message
+					 * is set.</p>
 					 */
-					
-					isChanging = true;
-					prefixRow.setValue("");
-					isChanging = false;
 					
 					setErrorMessage(OOEclipsePlugin.getTranslationString(
 							I18nConstants.COMPANY_PREFIX_ERROR));
@@ -412,9 +410,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 					 * <p>If the new implementation extension is invalid, it is set to
 					 * the empty string with an error message.</p>
 					 */
-					isChanging = true;
-					outputExt.setValue("");
-					isChanging = false;
+					
 					setErrorMessage(OOEclipsePlugin.getTranslationString(
 										I18nConstants.OUTPUT_EXT_ERROR));
 					setPageComplete(false);
@@ -433,8 +429,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 							OOoContainer.getOOoContainer().getOOo(getOOoName()));
 				}
 			}
-			
-			validatePage();
 		}
 	}
 	

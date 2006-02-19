@@ -2,9 +2,9 @@
  *
  * $RCSfile: TreeNode.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -346,7 +346,6 @@ public class TreeNode implements  IVisitable, INodeListener {
 	 * Accepts or refuse a tree visitor.
 	 * 
 	 * @param visitor visitor to recieve or reject
-	 * @param node that asked for the visits
 	 */
 	public void accepts(ITreeVisitor visitor) {
 		boolean visitChildren = visitor.visits(this);

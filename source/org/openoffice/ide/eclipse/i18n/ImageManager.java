@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -98,7 +98,7 @@ public class ImageManager {
 	 * Method which returns the image corresponding to the provided key.
 	 * 
 	 * @param key Key corresponding to the image to find
-	 * @result image corresponding to the key, or <code>null</code> if the key
+	 * @return image corresponding to the key, or <code>null</code> if the key
 	 *         doesn't exists or the bundle is null
 	 */
 	public Image getImage(String key){
@@ -125,7 +125,7 @@ public class ImageManager {
 	 * Method which returns the image descriptor corresponding to the provided key.
 	 * 
 	 * @param key Key corresponding to the image to find
-	 * @result image descriptor corresponding to the key, or <code>null</code> 
+	 * @return image descriptor corresponding to the key, or <code>null</code> 
 	 * 		   if the key doesn't exists or the bundle is null
 	 */
 	public ImageDescriptor getImageDescriptor(String key){

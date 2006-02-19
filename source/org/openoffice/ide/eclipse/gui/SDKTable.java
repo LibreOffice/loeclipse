@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -97,7 +97,7 @@ public class SDKTable extends AbstractTable {
 		super(parent, 
 				  OOEclipsePlugin.getTranslationString(I18nConstants.SDKS_LIST),
 				  new String[] {
-						OOEclipsePlugin.getTranslationString(I18nConstants.NAME),
+						OOEclipsePlugin.getTranslationString(I18nConstants.BUILID),
 						OOEclipsePlugin.getTranslationString(I18nConstants.SDK_PATH)
 					},
 				  new int[] {100, 200},
@@ -130,7 +130,7 @@ public class SDKTable extends AbstractTable {
 			
 			// Launch the dialog
 			sdk = openDialog(sdk, true);
-			SDKContainer.getSDKContainer().updateSDK(sdk.getId(), sdk);
+			SDKContainer.getSDKContainer().updateSDK(sdk.getBuildId(), sdk);
 		}
 	}
 	
@@ -270,7 +270,6 @@ public class SDKTable extends AbstractTable {
 
 		private FileRow sdkpathRow;
 		
-		private TextRow nameRow;
 		private TextRow buidlidRow; 
 		
 		private SDK sdk;
@@ -311,16 +310,11 @@ public class SDKTable extends AbstractTable {
 				sdkpathRow.setValue(sdk.getSDKHome());
 			}
 			
-			nameRow = new TextRow(body, "", 
-					OOEclipsePlugin.getTranslationString(I18nConstants.NAME));
-			nameRow.setEnabled(false);   // This line is only to show the value
-			
 			buidlidRow = new TextRow(body, "", 
 					OOEclipsePlugin.getTranslationString(I18nConstants.BUILID));
 			buidlidRow.setEnabled(false);   // This line is only to show the value
 			
-			if (null != sdk && null != sdk.getName() && null != sdk.getBuildId()){
-				nameRow.setValue(sdk.getName());
+			if (null != sdk && null != sdk.getBuildId()){
 				buidlidRow.setValue(sdk.getBuildId());
 			}
 			
@@ -371,8 +365,7 @@ public class SDKTable extends AbstractTable {
 			try {
 				tmpsdk = new SDK (sdkpathRow.getValue()); 
 
-				if (null != tmpsdk.getName() && null != tmpsdk.getBuildId()) {
-					nameRow.setValue(tmpsdk.getName());
+				if (null != tmpsdk.getBuildId()) {
 					buidlidRow.setValue(tmpsdk.getBuildId());
 				}
 				

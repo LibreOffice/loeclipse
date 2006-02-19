@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -276,7 +276,6 @@ public class OOoTable extends AbstractTable {
 		private FileRow ooopathRow;
 		
 		private TextRow nameRow;
-		private TextRow buidlidRow; 
 		
 		private OOo ooo;
 		
@@ -321,13 +320,8 @@ public class OOoTable extends AbstractTable {
 					OOEclipsePlugin.getTranslationString(I18nConstants.NAME));
 			nameRow.setEnabled(false);   // This line is only to show the value
 			
-			buidlidRow = new TextRow(body, "", 
-					OOEclipsePlugin.getTranslationString(I18nConstants.BUILID));
-			buidlidRow.setEnabled(false);   // This line is only to show the value
-			
-			if (null != ooo && null != ooo.getName() && null != ooo.getBuildId()){
+			if (null != ooo && null != ooo.getName()) {
 				nameRow.setValue(ooo.getName());
-				buidlidRow.setValue(ooo.getBuildId());
 			}
 			
 			// activate the OK button only if the OOo is correct
@@ -377,9 +371,8 @@ public class OOoTable extends AbstractTable {
 			try {
 				tmpooo = new OOo (ooopathRow.getValue()); 
 
-				if (null != tmpooo.getName() && null != tmpooo.getBuildId()) {
+				if (null != tmpooo.getName()) {
 					nameRow.setValue(tmpooo.getName());
-					buidlidRow.setValue(tmpooo.getBuildId());
 				}
 				
 				updateStatus(new Status(Status.OK,

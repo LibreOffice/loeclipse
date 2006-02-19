@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuildVisitor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -90,7 +90,8 @@ public class RegmergeBuildVisitor implements IResourceVisitor {
 			
 			UnoidlProject project = (UnoidlProject)resource.getProject().getNature(OOEclipsePlugin.UNO_NATURE_ID);
 
-			if (!resource.getProjectRelativePath().toString().startsWith(project.getCodeLocation().toString()) || 
+			if (!resource.getProjectRelativePath().toString().startsWith(UnoidlProject.SOURCE_BASIS) ||
+				!resource.getProjectRelativePath().toString().startsWith(UnoidlProject.BUILD_BASIS) ||
 				!resource.getProjectRelativePath().toString().startsWith(project.getUnoidlPrefixPath().toString())){
 				
 				visitChildren = true;

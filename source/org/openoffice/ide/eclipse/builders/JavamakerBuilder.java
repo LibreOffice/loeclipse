@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavamakerBuilder.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -133,8 +133,8 @@ public class JavamakerBuilder extends IncrementalProjectBuilder {
 		
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		
-		// Get a handle on the rdb file
-		IFile registryFile = getProject().getFile(getProject().getName() + ".rdb");
+		// Get a handle on the types.rdb file
+		IFile registryFile = getProject().getFile("types.rdb");
 		
 		if (registryFile.exists()){
 			
@@ -154,7 +154,7 @@ public class JavamakerBuilder extends IncrementalProjectBuilder {
 					// HELP quotes are placed here to prevent Windows path names with spaces
 					String command = "javamaker -T" + firstModule + ".* -nD -Gc -BUCR " + 
 											"-O ." + System.getProperty("file.separator") + 
-											         project.getCodeLocation().toOSString() + " " +
+											         project.getBuildLocation().toOSString() + " " +
 											registryFile.getProjectRelativePath().toOSString() + " " +
 											"-X\"" + ooTypesPath.toOSString() + "\"";
 					

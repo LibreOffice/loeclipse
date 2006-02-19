@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -346,9 +346,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	
 	/**
 	 * <p>Returns the types to get in the UNO types provider. The returned integer
-	 * is a bit or of the types defined in the {@link UnoTypeProvider} class.</p>
+	 * is a <pre>bit or</pre> of the types defined in the {@link UnoTypeProvider} class.</p>
 	 * 
-	 * @return
 	 */
 	public abstract int getProvidedTypes();
 

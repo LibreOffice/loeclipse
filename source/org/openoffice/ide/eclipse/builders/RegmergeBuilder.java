@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -105,8 +105,7 @@ public class RegmergeBuilder extends IncrementalProjectBuilder {
 					unoidlProject.getUrdLocation());
 			
 			
-			IFile mergeFile = unoidlProject.getProject().getFile(
-									unoidlProject.getProject().getName() + ".rdb");
+			IFile mergeFile = unoidlProject.getProject().getFile("types.rdb");
 			if (mergeFile.exists()){
 				mergeFile.delete(true, monitor);
 			}
@@ -135,10 +134,8 @@ public class RegmergeBuilder extends IncrementalProjectBuilder {
 			existingReg = mergeFile.getProjectRelativePath().toOSString() + " ";
 		}
 		
-		String command = "regmerge " + mergeFile.getProjectRelativePath().toOSString() + " " +
-									   TYPE_ROOT_KEY + " " +
-									   existingReg + 
-									   file.getProjectRelativePath().toOSString();
+		String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " +
+						   existingReg + file.getProjectRelativePath().toOSString();
 		
 		// Process creation
 		Process process = OOEclipsePlugin.runTool(file.getProject(), command, monitor);

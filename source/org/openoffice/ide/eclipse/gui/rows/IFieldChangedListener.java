@@ -2,9 +2,9 @@
  *
  * $RCSfile: IFieldChangedListener.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2005/11/27 17:48:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:40 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,7 +44,11 @@
 package org.openoffice.ide.eclipse.gui.rows;
 
 /**
- * TODOC
+ * is an interface that will be used to get notified when a GUI field (row)
+ * has changed.
+ * 
+ * @see FieldEvent for the notification event description
+ * @see LabeledRow for the base class of the listened rows
  * 
  * @author cbosdonnat
  *
