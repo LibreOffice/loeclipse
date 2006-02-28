@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/02/19 11:32:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/02/28 19:22:34 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -86,6 +86,7 @@ public class UnoidlProject extends TreeNode implements IProjectNature,
 		"unoil.jar",
 		"ridl.jar",
 		"juh.jar",
+		"jurt.jar",
 		"unoloader.jar",
 		"officebean.jar"
 	};
