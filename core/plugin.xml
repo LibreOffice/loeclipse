@@ -1,82 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="language" name="Uno-idl project language binding Extension point" schema="schema/language.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.openoffice.ide.eclipse.editors.UnoidlEditor"
+            class="org.openoffice.ide.eclipse.core.editors.UnoidlEditor"
             default="true"
             extensions="idl"
             icon="icons/idl_file.gif"
-            id="org.openoffice.ide.eclipse.editors.UnoidlEditor"
+            id="org.openoffice.ide.eclipse.core.editors.UnoidlEditor"
             name="%idleditor.name"/>
       <editor
-            class="org.openoffice.ide.eclipse.editors.RegEditor"
+            class="org.openoffice.ide.eclipse.core.editors.RegEditor"
             default="true"
             extensions="rdb, urd"
             icon="icons/db_file.gif"
-            id="org.openoffice.ide.eclipse.editors.regvieweditor"
+            id="org.openoffice.ide.eclipse.core.editors.regvieweditor"
             name="%regeditor.name"/>
    </extension>
    
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.openoffice.ide.eclipse.preferences.MainPage"
+            class="org.openoffice.ide.eclipse.core.preferences.MainPage"
             name="%preferences.oooplugin"
-            id="org.openoffice.ide.eclipse.preferences.main"/>
+            id="org.openoffice.ide.eclipse.core.preferences.main"/>
       <page
-            class="org.openoffice.ide.eclipse.preferences.UnoidlEditorPage"
-            category="org.openoffice.ide.eclipse.preferences.main"
+            class="org.openoffice.ide.eclipse.core.preferences.UnoidlEditorPage"
+            category="org.openoffice.ide.eclipse.core.preferences.main"
             name="%preferences.unoidleditor"
-            id="org.openoffice.ide.eclipse.preferences.unoidlEditor"/>
+            id="org.openoffice.ide.eclipse.core.preferences.unoidlEditor"/>
       <page
-            class="org.openoffice.ide.eclipse.preferences.UnoSDKConfigPage"
-            category="org.openoffice.ide.eclipse.preferences.main"
-            id="org.openoffice.ide.eclipse.preferences.unosdkconfig"
+            class="org.openoffice.ide.eclipse.core.preferences.UnoSDKConfigPage"
+            category="org.openoffice.ide.eclipse.core.preferences.main"
+            id="org.openoffice.ide.eclipse.core.preferences.unosdkconfig"
             name="%preferences.sdkconfig"/>
    </extension>
    
     <extension
    		 point="org.eclipse.ui.newWizards">
    	  <category
-   	        id="org.openoffice.ide.eclipse"
+   	        id="org.openoffice.ide.eclipse.core"
    	        name="%wizards">
    	  </category>
       <wizard
             canFinishEarly="true"
-            category="org.openoffice.ide.eclipse"
-            class="org.openoffice.ide.eclipse.wizards.NewUnoFileWizard"
+            category="org.openoffice.ide.eclipse.core"
+            class="org.openoffice.ide.eclipse.core.wizards.NewUnoFileWizard"
             hasPages="true"
             icon="icons/newunofile.gif"
-            id="org.openoffice.ide.eclipse.newunofile"
+            id="org.openoffice.ide.eclipse.core.newunofile"
             name="%wizards.unoidlfile"
             project="false"/>
       <wizard
             canFinishEarly="false"
-            category="org.openoffice.ide.eclipse"
-            class="org.openoffice.ide.eclipse.wizards.NewUnoProjectWizard"
+            category="org.openoffice.ide.eclipse.core"
+            class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard"
             hasPages="true"
             icon="icons/newunoproject.gif"
-            id="org.openoffice.ide.eclipse.newunoproject"
+            id="org.openoffice.ide.eclipse.core.newunoproject"
             name="%wizards.unoidlproject"
             project="true"/>
       <wizard
             canFinishEarly="false"
-            category="org.openoffice.ide.eclipse"
-            class="org.openoffice.ide.eclipse.wizards.NewServiceWizard"
+            category="org.openoffice.ide.eclipse.core"
+            class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard"
             hasPages="true"
             icon="icons/newservice.gif"
-            id="org.openoffice.ide.eclipse.newservice"
+            id="org.openoffice.ide.eclipse.core.newservice"
             name="%wizards.service"
             project="false"/>
       <wizard
             canFinishEarly="false"
-            category="org.openoffice.ide.eclipse"
-            class="org.openoffice.ide.eclipse.wizards.NewInterfaceWizard"
+            category="org.openoffice.ide.eclipse.core"
+            class="org.openoffice.ide.eclipse.core.wizards.NewInterfaceWizard"
             hasPages="true"
             icon="icons/newinterface.gif"
-            id="org.openoffice.ide.eclipse.newinterface"
+            id="org.openoffice.ide.eclipse.core.newinterface"
             name="%wizards.interface"
             project="false"/>
    </extension>
@@ -85,31 +86,29 @@
          name="UNO Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
-         <run class="org.openoffice.ide.eclipse.model.UnoidlProject"/>
+         <run class="org.openoffice.ide.eclipse.core.internal.model.UnoidlProject"/>
       </runtime>
-      <builder id="org.openoffice.ide.eclipse.idlc"/>
-	  <builder id="org.openoffice.ide.eclipse.regmerge"/>
-	  <builder id="org.openoffice.ide.eclipse.javamaker"/>
+	  <builder id="org.openoffice.ide.eclipse.core.types"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             description="%newactions.description"
-            id="org.openoffice.ide.eclipse.newactions"
+            id="org.openoffice.ide.eclipse.core.newactions"
             label="%newactions.name"
             visible="true">
          <action
-               class="org.openoffice.ide.eclipse.actions.NewUnoProjectAction"
+               class="org.openoffice.ide.eclipse.core.actions.NewUnoProjectAction"
                icon="icons/newunoproject.gif"
-               id="org.openoffice.ide.eclipse.newactions.newproject"
+               id="org.openoffice.ide.eclipse.core.newactions.newproject"
                label="%newactions.newproject.name"
                style="push"
                toolbarPath="uno"
                tooltip="%newactions.newproject.tooltip"/>
          <action
-               class="org.openoffice.ide.eclipse.actions.NewUnoFileAction"
+               class="org.openoffice.ide.eclipse.core.actions.NewUnoFileAction"
                icon="icons/newunofile.gif"
-               id="org.openoffice.ide.eclipse.newactions.newfile"
+               id="org.openoffice.ide.eclipse.core.newactions.newfile"
                label="%newactions.newfile.name"
                style="push"
                toolbarPath="uno"
@@ -117,41 +116,21 @@
       </actionSet>
    </extension>
    <extension
-         id="idlc"
-         name="%builders.idlc"
+         id="types"
+         name="%builders.types"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true"
             isConfigurable="false">
-         <run class="org.openoffice.ide.eclipse.builders.IdlcBuilder"/>
-      </builder>
-   </extension>
-   <extension
-         id="regmerge"
-         name="%builders.regmerge"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true"
-            isConfigurable="false">
-         <run class="org.openoffice.ide.eclipse.builders.RegmergeBuilder"/>
-      </builder>
-   </extension>
-   <extension
-         id="javamaker"
-         name="%builders.javamaker"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true"
-            isConfigurable="false">
-         <run class="org.openoffice.ide.eclipse.builders.JavamakerBuilder"/>
+         <run class="org.openoffice.ide.eclipse.core.builders.TypesBuilder"/>
       </builder>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
             adaptable="true"
-            class="org.openoffice.ide.eclipse.gui.UnoidlDecorator"
-            id="org.openoffice.ide.eclipse.decorator"
+            class="org.openoffice.ide.eclipse.core.gui.UnoidlDecorator"
+            id="org.openoffice.ide.eclipse.core.decorator"
             label="%decorator.name"
             state="true">
          <enablement>
@@ -174,12 +153,12 @@
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
-            id="org.openoffice.ide.eclipse.cheatsheets"
+            id="org.openoffice.ide.eclipse.core.cheatsheets"
             name="%cheatsheets.name"/>
       <cheatsheet
-            category="org.openoffice.ide.eclipse.cheatsheets"
+            category="org.openoffice.ide.eclipse.core.cheatsheets"
             contentFile="$nl$/doc/cheatsheets/starting.xml"
-            id="org.openoffice.ide.eclipse.cheatsheets.starting"
+            id="org.openoffice.ide.eclipse.core.cheatsheets.starting"
             name="%cheatsheets.starting.name">
          <description>
             %cheatsheets.starting.description
@@ -208,13 +187,13 @@
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"
-            class="org.openoffice.ide.eclipse.preferences.ProjectPropertiesPage"
-            id="org.openoffice.ide.eclipse.projectproperties"
+            class="org.openoffice.ide.eclipse.core.preferences.ProjectPropertiesPage"
+            id="org.openoffice.ide.eclipse.core.projectproperties"
             name="%project.propertypage.name"
             objectClass="org.eclipse.core.resources.IProject">
          <filter
                name="nature"
-               value="org.openoffice.ide.eclipse.unonature"/>
+               value="org.openoffice.ide.eclipse.core.unonature"/>
       </page>
    </extension>
 </plugin>

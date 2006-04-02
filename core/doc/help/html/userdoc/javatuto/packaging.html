@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+        <title>UNO Java component creation explained</title>
+        <meta name="generator" content="Bluefish 1.0.5"/>
+        <meta name="description" content="OpenOffice.org allows the user to create new components to 
+      fit its needs. However understanding OpenOffice.org component 
+      model - UNO - is difficult for a beginner. This tutorial aims to 
+      guide the new developper steps throught UNO development using an 
+      Eclipse plugin." />
+        <link href="../../styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+	 <body class="article">
+    	 <h3 class="title">Packaging the component</h3>
+    	 
+    	 <p>The package component is a zip containing the UNO-IDL types 
+	       registry (<code class="filename">types.rdb</code>) and a jar with the 
+    	    compiled classes. To generate this, we will create an Ant build 
+      	 file (<code class="filename">build.xml</code>) with the following 
+      	 code:</p>
+      	 
+       <pre class="programlisting">&lt;?xml version="1.0"?&gt;
+&lt;project name="Helloworld" default="package"&gt;
+    &lt;description&gt;
+            This ant file is only to package the Helloworld component
+    &lt;/description&gt;
+
+ &lt;property name="out.path" value="bin/ant"/&gt;
+ 
+    &lt;!-- ================================= 
+          target: package              
+         ================================= --&gt;
+    &lt;target name="package" depends="purge"&gt;
+    
+     &lt;mkdir dir="${out.path}" /&gt;  
+     &lt;copy todir="${out.path}" file="types.rdb"&gt;
+      &lt;fileset dir="bin"&gt;
+       &lt;include name="**/*.class" /&gt;
+      &lt;/fileset&gt;
+      &lt;fileset dir="build"&gt;
+   &lt;include name="**/*.class" /&gt;
+      &lt;/fileset&gt;
+     &lt;/copy&gt;
+     
+     &lt;jar basedir="${out.path}" includes="**/*"
+      excludesfile="types.rdb"
+      destfile="${out.path}/Helloworld.jar"&gt;
+      &lt;manifest&gt;
+       &lt;attribute name="RegistrationClassName" 
+        value="org.openoffice.helloworld.comp.HelloworldImpl"/&gt;
+      &lt;/manifest&gt;
+     &lt;/jar&gt;
+    
+     &lt;mkdir dir="${out.path}/META-INF" /&gt;
+     &lt;copy todir="${out.path}/META-INF" file="manifest.xml" /&gt;
+     
+     &lt;zip destfile="${out.path}/helloworld.uno.pkg"
+       basedir="${out.path}" 
+       includes="Helloworld.jar,META-INF/manifest.xml,types.rdb" /&gt;
+     
+    &lt;/target&gt;
+ 
+    &lt;!-- This target is provided only to clean up the build --&gt;
+
+    &lt;target name="purge"&gt;
+        &lt;delete dir="${out.path}" /&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</pre>
+
+		 <p>You will also need to create a <code class="filename">
+      	 manifest.xml</code> file containing a description of the zip 
+      	 file. The syntax of these files is detailed in the OpenOffice.org 
+     	    Developer's Guide and will not be explained here. You just 
+      	 have to create the file at the project's root with the 
+      	 following XML code:</p>
+      	 
+       <pre class="programlisting">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE manifest:manifest PUBLIC "-//OpenOffice.org//DTD Manifest 1.0//EN" "Manifest.dtd"&gt;
+
+&lt;manifest:manifest&gt;
+   &lt;manifest:file-entry 
+           manifest:full-path="Helloworld.jar" 
+           manifest:media-type="application/vnd.sun.star.uno-component;type=Java"/&gt;
+   &lt;manifest:file-entry 
+           manifest:full-path="types.rdb" 
+           manifest:media-type="application/vnd.sun.star.uno-typelibrary;type=RDB"/&gt;
+&lt;/manifest:manifest&gt;</pre>
+
+		 <p>You are now ready to execute the newly created ant script 
+      	 to generate the package <code class="filename">
+      	 bin/ant/helloworld.uno.pkg</code>. To perform this action, 
+      	 you will have to open the Ant view by selecting the <span class="guimenu">
+      	 Window</span><span class="guisubmenu">Show View</span> <span class="guimenuitem">
+      	 Ant</span> menu item. You now have a tab like the one 
+      	 presented by the illustration 12. In this view, click on the ant 
+      	 icon to add your <code class="filename">build.xml</code> file to the list 
+      	 of ant files. You can now execute the package target by 
+      	 double-clicking on it in the Ant view. The build output is also 
+      	 shown in the Eclipse console view.</p>
+      	 
+       <div class="mediaobject" align="center">
+       	<img src="img/AntView.png" align="middle" 
+       		  alt="Ant build files view">
+       	<div class="caption">Illustration 12: Ant build files view</div>
+       </div>
+       
+       <p>If the console show you a result similar to the one below, 
+      	 then your component has been successfully generated. To see the 
+      	 generated files you can switch to the Resource perspective: they 
+      	 are generated in the bin/ant folder which is hidden in the Java 
+      	 package explorer.</p>
+      	 
+       <pre class="programlisting">Buildfile: /home/chef/develOOoppement/eclipse/Helloworld/build.xml
+purge:
+package:
+    [mkdir] Created dir: /home/chef/develOOoppement/eclipse/Helloworld/bin/ant
+     [copy] Copying 4 files to /home/chef/develOOoppement/eclipse/Helloworld/bin/ant
+      [jar] Building jar: /home/chef/develOOoppement/eclipse/Helloworld/bin/ant/Helloworld.jar
+    [mkdir] Created dir: /home/chef/develOOoppement/eclipse/Helloworld/bin/ant/META-INF
+     [copy] Copying 1 file to /home/chef/develOOoppement/eclipse/Helloworld/bin/ant/META-INF
+      [zip] Building zip: /home/chef/develOOoppement/eclipse/Helloworld/bin/ant/helloworld.uno.pkg
+BUILD SUCCESSFUL
+Total time: 1 second</pre>
+
+	 </body>        
+</html>

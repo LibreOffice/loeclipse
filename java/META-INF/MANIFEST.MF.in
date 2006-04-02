@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Java Plug-in for OOo eclipse integration
+Bundle-SymbolicName: org.openoffice.ide.eclipse.java; singleton:=true
+Bundle-Version: @VERSION@
+Bundle-Activator: org.openoffice.ide.eclipse.java.OOoJavaPlugin
+Bundle-Vendor: OpenOffice.org
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.openoffice.ide.eclipse.core,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.launching,
+ org.eclipse.jdt,
+ org.eclipse.jdt.ui
+Eclipse-AutoStart: true

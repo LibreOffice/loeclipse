@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+        <title>UNO Java component creation explained</title>
+        <meta name="generator" content="Bluefish 1.0.5"/>
+        <meta name="description" content="OpenOffice.org allows the user to create new components to 
+      fit its needs. However understanding OpenOffice.org component 
+      model - UNO - is difficult for a beginner. This tutorial aims to 
+      guide the new developper steps throught UNO development using an 
+      Eclipse plugin." />
+        <link href="../../styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+	 <body class="article">
+    	<h3 class="title">Creating the project</h3>
+    	
+    	<p>There are several ways to create a UNO project using the plugin:</p>
+    	
+    	<ul>
+    		<li><p>the first one is the <span class="guimenu">File</span> 
+            <span class="guisubmenu">New</span> <span class="guimenuitem">
+            Project</span> menu entry and choose the <span class="guimenu">
+            UNO</span> <span class="guimenuitem">UNO-IDL</span> Project 
+            item as shown by the illustration 6.</p>
+            
+            <div class="mediaobject" align="center">
+            	<img src="img/NewUnoProjectsItems.png" align="middle" 
+            		  alt="New UNO-IDL project item" />
+               <div class="caption">Illustration 6: New UNO-IDL project item</div>
+            </div>
+       	</li>
+       	
+       	<li><p>the second one is the icon in the toolbar 
+            representing a blue folder with a star as shown by the 
+            illustration 7.</p>
+            
+            <div class="mediaobject" align="center">
+            	<img src="img/NewUnoProjectIcon.png" align="middle" 
+            		  alt="New UNO-IDL project icon" />
+            	<div class="caption">Illustration 7: New UNO-IDL project icon</div>
+            </div>
+         </li>
+     	</ul>
+     	
+     	<p>Next you have to fill in a form (see illustration 8) to 
+        configure your project: the next lines will describe the 
+        different fields and their meaning to help you fill them.</p>
+        
+      <div class="mediaobject" align="center">
+      	<img src="img/NewUnoProject.jpg" align="middle" 
+      		  alt="New UNO-IDL project wizard page" />
+        	<div class="caption">Illustration 8: New UNO-IDL project wizard page</div>
+      </div>
+            
+      <dl>
+      	<dt>Project name</dt>
+      	<dd><p>is the component name, in our case, it will be 
+              <span class="emphasis"><em>Helloworld</em></span></p>
+         </dd>
+         
+         <dt>Directory</dt>
+         <dd><p>is the directory on your computer where the project 
+              will be created. You can change the default one by 
+              deselecting the <span class="guilabel">Use default</span> check 
+              box. The default location of each Eclipse project is a 
+              directory with your project name in the current Eclipse 
+              workspace.</p>
+         </dd>
+         
+         <dt>Root package</dt>
+         <dd><p>is the name of the first module of your component. 
+              It generally composed of two parts: the vendor name (here 
+              <span class="emphasis"><em>org.openoffice</em></span>) and the project name 
+              (here <span class="emphasis"><em>helloworld</em></span>).</p>
+         </dd>
+         
+         <dt>Used SDK</dt>
+         <dd><p>selects the OpenOffice.org SDK which will be used 
+              to develop the component. You generally will have only 
+              one SDK in the list, but you can add others in the 
+              preferences or by clicking on the <span class="guilabel">Configure 
+              SDKs</span> button.</p>
+         </dd>
+         
+         <dt>Used OOo</dt>
+         <dd><p>selects the version of OpenOffice.org to use to 
+              develop the component. As for the SDK, you will generally 
+              have only one entry in the list, but you can add others 
+              in the preferences or by clicking on the <span class="guilabel">OOo 
+              Installations</span> button.</p>
+         </dd>
+         
+         <dt>Programming language</dt>
+         <dd><p>selects the programming language for the component 
+              implementation. For the moment, there is only Java 
+              available, however C++ and python are planned.</p>
+         </dd>
+      </dl>
+     
+     <p>You can now click on the <span class="guilabel">Finish</span>
+         button or <span class="guilabel">Next</span>
+         if you are eager to know a bit more on what will happen during 
+         the project's creation. For this tutorial we will go 
+         further to better understand what you will get after the 
+         wizard. In fact the next step in the wizard will consist in 
+         configuring an empty service for the component. The default 
+         name of this service is the project name and it implements the 
+         <code class="code">com.sun.star.uno.XInterface</code>
+         interface. However you can change the default interface by 
+         clicking on the <span class="guilabel">Browse</span>
+         button which will provide you a list of the known interfaces.</p>
+         
+      <p>As we will define a new interface for our Helloworld 
+      	service, we will keep the default values and change the interface 
+      	name when we will have created it.</p>
+      	
+	 </body>        
+</html>

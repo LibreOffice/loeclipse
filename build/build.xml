@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+ * $RCSfile: build.xml,v $
+ *
+ * $Revision: 1.1 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:12:49 $
+ *
+ * The Contents of this file are made available subject to the terms of 
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat                                                              
+ ====================================================================== -->
+
+<project name="ooeclipseintegration" default="site">
+	<description>
+            This project provides a new plugin for Eclipse to help 
+			OpenOffice.org development
+    </description>
+
+	<property name="out.path" value="site" />
+
+	<target name="clean">
+		
+		<delete dir="${out.path}" />
+		<delete file="ooeclipseintegration_site.zip" />
+		
+	</target>
+	
+	<!-- ================================= 
+          target: site              
+         ================================= -->
+	<target name="site">
+		
+		<mkdir dir="${out.path}" />
+		<mkdir dir="${out.path}/plugins" />
+		<mkdir dir="${out.path}/features" />
+
+		<!-- Copying the features and plugins -->
+		
+		<copy todir="${out.path}/features" >
+			<fileset dir=".."
+				includes="**/features/*.jar" />
+			<mapper type="flatten" />
+		</copy>
+		
+		<copy todir="${out.path}/plugins">
+			<fileset dir=".." 
+				includes="**/plugins/*.jar" />
+			<mapper type="flatten" />
+		</copy>
+		
+		<!-- Site map generation -->
+		<concat destfile="${out.path}/site.xml">
+			<header file="site_header.xml" />
+			<fileset dir=".."
+				includes="**/site_fragment.xml">
+			</fileset>
+			<footer file="site_footer.xml" />
+		</concat>
+		
+		<zip destfile="ooeclipseintegration_site.zip"
+			basedir="${out.path}"
+			includes="plugins/**, features/**, site.xml" />
+
+        <echo>
+           =================================================
+           The ooeclipseintegration update site is generated
+
+           To use it you, just unzip 
+           bin/ant/ooeclipseintegration_site.zip where you
+           want to create your update site.
+           
+           Eclipse can althought install from a local zipped
+           update site.
+           
+           =================================================
+        </echo>
+
+	</target>
+
+</project>
+

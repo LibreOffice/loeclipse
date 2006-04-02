@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.openoffice.ide.eclipse.core.language">
+      <language
+            class="org.openoffice.ide.eclipse.java.Language"
+            name="Java"/>
+   </extension>
+   <extension
+         id="org.openoffice.ide.eclipse.java.builder"
+         point="org.eclipse.core.resources.builders">
+      <builder/>
+   </extension>
+
+</plugin>

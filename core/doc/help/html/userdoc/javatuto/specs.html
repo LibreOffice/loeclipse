@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+        <title>UNO Java component creation explained</title>
+        <meta name="generator" content="Bluefish 1.0.5"/>
+        <meta name="description" content="OpenOffice.org allows the user to create new components to 
+      fit its needs. However understanding OpenOffice.org component 
+      model - UNO - is difficult for a beginner. This tutorial aims to 
+      guide the new developper steps throught UNO development using an 
+      Eclipse plugin." />
+        <link href="../../styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+	 <body class="article">
+    	
+    	<h3 class="title">Writing the specification</h3>
+    	
+    	<p>Now you should have a new UNO-IDL project like the one 
+      	presented by the illustration 9. It is made of several folders 
+      	and files which you will have to know:</p>
+      	
+      <dl>
+      	<dt>source</dt>
+      	<dd><p>contains you Java implementation classes</p>      	
+      	</dd>
+      	
+      	<dt>build</dt>
+      	<dd><p>contains all the generated temporary files, such as 
+            the results of the specification files ( <code class="filename">
+            .idl</code> files) compilation ( <code class="filename">
+            .urd</code> files) or the class files corresponding to 
+            the specifications ( <code class="filename">.class</code> 
+            files)</p>
+         </dd>
+         
+         <dt>idl</dt>
+         <dd><p>contains the specifications of the component</p>
+         </dd>
+         
+         <dt>types.rdb</dt>
+         <dd><p>is the generated UNO types registry from which the 
+            class files will be generated</p>
+         </dd><dt>JRE and the jars</dt>
+         <dd><p>are describing the classpath of the component. They 
+            are visible only in the Java package explorer. The 
+            OpenOffice.org jars are changed if the OpenOffice.org 
+            version associated to the project is changed. <span class="emphasis"><em>In 
+            a future version, they will be packed in a user library to 
+            take less space in the tree.</em></span></p>
+         </dd>
+      </dl>
+      
+      <div class="mediaobject" align="center">
+      	<img src="img/ProjectTree.png" align="middle"
+      		  alt="Created UNO-IDL project" />
+      	<div class="caption">Illustration 9: Created UNO-IDL project</div>
+      </div>
+      
+      <p>Some other folders will be added in this tutorial because 
+      	the plugin does not support all the build chain currently. 
+      	However, this feature will be added in a next version of the 
+      	plugin and will simplify your task: so do not worry.</p>
+      	
+      <p>We will now have to write a new <code class="code">XHelloworld</code> 
+      	interface to the component. This interface will define a 
+      	<code class="code">sayHello()</code> method that will return a hello message. 
+      	To launch the interface creation wizard, select a file in your 
+      	project before selecting the <span class="guimenu">File</span> 
+      	<span class="guisubmenu">New</span><span class="guimenuitem">Other</span> 
+      	menu item and select the <span class="guimenu">UNO</span> 
+      	<span class="guimenuitem">UNO-IDL</span> interface wizard as shown by the 
+      	illustration 10. Note that if you didn't select something in 
+      	the UNO component project, you will not be able to click on the 
+     	 	next button.</p>
+     	 	
+     	<div class="mediaobject" align="center">
+     		<img src="img/UnoWizardItems.png" align="middle" 
+     			  alt="UNO-IDL wizards list" />
+     		<div class="caption">Illustration 10: UNO-IDL wizards list</div>
+     	</div>
+     	
+     	<p>The new interface wizard presents you several fields to 
+      	fill as you can see it on the illustration 11. We will now see 
+      	what these fields means and what you could do with them.</p>
+      	
+      <dl>
+      	<dt>Package</dt>
+      	<dd><p>corresponds to the UNO-IDL module where to add the 
+            interface. If the text field is left empty, the interface 
+            will be added in the root module of the component (filled 
+            in the project wizard). <span class="emphasis"><em>This field would be 
+            renamed in "module" in a next version</em></span></p>
+         </dd>
+         
+         <dt>Interface name</dt>
+         <dd><p>is the interface name. By convention, we generally 
+            name a interface beginning with an "X". In this tutorial 
+            case, the interface will be named <code class="code">XHelloworld</code></p>
+         </dd>
+         
+         <dt>Published</dt>
+         <dd><p>specifies if the interface is published or not. The 
+            published notion is translated into a keyword in UNO-IDL 
+            language. Declaring a UNO-IDL type as published means that 
+            it will not change in future releases: we will check it 
+            because this is far too complex for our example</p>
+         </dd>
+         
+         <dt>Inherited interfaces</dt>
+         <dd><p>is a list of all the interfaces from which the one 
+            that is about to be created will inherit. This is one of 
+            the changes in UNO-IDL between OpenOffice.org 1.1.x and 
+            2.0: that is why the plugin does not support OpenOffice.org 
+            version prior to 2.0. All the UNO-IDL interfaces are 
+            inheriting directly or not from the 
+            <code class="code">com::sun::star::uno::XInterface</code> type. As the 
+            <code class="code">XHelloworld</code> interface is very easy, there will 
+            be only this mother interface</p>
+            
+            <dl>
+            	<dt>"?" column</dt>
+            	<dd><p>specifies if the interface inheritance is 
+                  mandatory or not. If the box is checked, thus the 
+                  interface inheritance is optional and may not be 
+                  implemented.</p>
+               </dd>
+               
+               <dt>"Add" and "Del" buttons</dt>
+               <dd><p>allows to add an interface to the inherited 
+                  ones or removing the selected interface.</p>
+               </dd>
+            </dl>
+         </dd>
+      </dl>
+      
+      <div class="mediaobject" align="center">
+      	<img src="img/NewInterfacePage.png" align="middle" 
+      		  alt="UNO-IDL interface creation wizard" />
+      	<div class="caption">Illustration 11: UNO-IDL interface creation wizard</div>
+      </div>
+      
+      <p>Clicking one the <span class="guilabel">Finish</span> button will 
+      	add a new UNO-IDL file named <code class="filename">Xhelloworld.idl</code> 
+      	and a UNO-IDL text editor should be opened with the created file. 
+      	There is now to add the <code class="code">sayHello()</code> method to make 
+      	the new interface ready for use. Of course you can add some 
+      	Javadoc like comments to document your component API, but this 
+      	will not be discussed in this tutorial. You will better have to 
+      	look at the links section to go further on this point.</p>
+      	
+      <p>To add the <code class="code">sayHello()</code> method, you just have to 
+      	change the <code class="code">XHelloworld</code> code into the 
+      	following:</p>
+      	
+      <pre class="programlisting">published interface XHelloworld{
+ interface com::sun::star::uno::XInterface;
+
+ /** is just saying hello to the caller.
+     
+     @return
+    a string to say hello
+       */
+ string sayHello();
+};</pre>
+
+		<p>The interface is now correct, but do you remember that the 
+      	service was exporting the <code class="code">XInterface</code> interface? You 
+      	will now have to change the interface to make the service exports 
+      	the fresh <code class="code">XHelloworld</code> interface. For this, just 
+      	double-click on the <code class="filename">Helloworld.idl</code> file to 
+      	edit it and change the code into the following:</p>
+      
+      <pre class="programlisting">#include &lt;org/openoffice/helloworld/XHelloworld.idl&gt;
+
+module org {
+ module openoffice {
+  module helloworld {
+   published service Helloworld : XHelloworld {
+   };
+  };
+ };
+};</pre>
+
+		<p>Note that we have changed the UNO-IDL interface after the 
+      	":" of the service definition which corresponds to the exported 
+      	interface. Since OpenOffice.org 2.0, a service can export only 
+      	one interface, but this will be more detailed in the "Going 
+      	further" section. We had to change the include line too: this 
+      	works exactly as the C++ pre-compilation directives and has the 
+      	same role as the Java imports.</p>
+      	
+	 </body>        
+</html>

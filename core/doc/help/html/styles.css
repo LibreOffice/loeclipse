@@ -1,0 +1,240 @@
+body
+{
+  background: white url(userdoc/javatuto/img/OOoLogo.png) no-repeat fixed;
+  padding-left: 3em;
+  padding-right: 1em;
+}
+
+img
+{
+  max-width: 90%;
+}
+
+.abstract
+{
+  font-style: italic;
+  margin: 1em 4em;
+  display: block;
+}
+
+.abstract p
+{
+  margin: 0em;
+}
+
+.article
+{
+  margin: .25em;
+}
+
+div.author
+{
+  margin: 2em 4em;
+}
+
+div.author:before
+{
+  content: 'Author: ';
+  font-weight: bold;
+}
+
+.author h3
+{
+  display: inline;
+  font-size: medium;
+  font-weight: normal;
+}
+
+.author .email:before
+{
+  content: '(E-mail: ';
+}
+
+.author .email:after
+{
+  content: ')';
+}
+
+.caption
+{
+  display: block;
+  font-style: italic;
+  text-align: center;
+  font-size: small;
+}
+
+.citation
+{
+  font-style: italic;
+}
+
+.email
+{
+  display: inline;
+  font-style: italic;
+  font-size: medium;
+}
+
+.filename
+{
+  display: inline;
+  font: italic smaller "Courier New", monospace;
+}
+
+.surname
+{
+  font-variant: small-caps;
+}
+
+dl
+{
+  margin: 2em;
+}
+
+dt
+{
+  display: inline;
+  font-style: normal;
+  font-weight: bold;
+}
+
+dt:after
+{
+  content: ": ";
+  display: inline;
+}
+
+.guilabel
+{
+  font-family: monospace;
+  font-weight: bold;
+  font-size: medium;
+}
+
+.guimenu,
+.guisubmenu,
+.guimenuitem
+{
+  font-weight: bold;
+}
+
+.guimenu:after,
+.guisubmenu:after
+{
+  content: " > ";
+  font-weight: bold;
+}
+
+ul li
+{
+  list-style: square outside;
+  margin-left: 1em;
+}
+
+ul ul li
+{
+  list-style: circle;
+}
+
+ul ul ul li
+{
+  list-style: square;
+}
+
+.note
+{
+  border: thin solid #336;
+  padding: .1em 1em;
+  color: #669;
+}
+
+.note .title
+{
+  border: none;
+  margin-left: 0em;
+}
+
+p
+{
+  display: block;
+  text-align: justify;
+  margin-bottom: 1em;
+  margin-top: 1em;
+}
+
+.programlisting
+{
+  background-color: #ccf;
+  border: 0.2em solid #336;
+  font: x-small "Courier New", monospace;
+  display: block;
+  padding: 1em;
+  margin: 0em 3em;
+  white-space: pre;
+}
+
+h1, h2, h3, h4, h5
+{
+  display: block;
+  margin-left: 1.5em;
+}
+
+h1.title
+{
+  font: bold xx-large Arial, sans-serif;
+  display: block;
+  margin-top: 3em;
+  margin-bottom: 0.5em;
+  margin-left: 0em;
+  text-align: left;
+  color: #336;
+}
+
+.subtitle
+{
+  font: italic small Arial, sans-serif;
+  display: block;
+  margin-bottom: 16px;
+  text-align: left;
+  margin-left: 10em;
+  color: #669;
+  
+  padding-bottom: 6px;
+  border-bottom: thin solid #669;
+}
+
+h2.title
+{
+  font: bold xx-large Arial, sans-serif;
+  margin-top: .25em;
+  margin-bottom: .1em;
+  display: block;
+  text-align: left;
+  border-bottom: medium solid;
+  border-bottom-color: #336; 
+  color: #336;
+}
+h3.title
+{
+  font: italic bold x-large Arial, sans-serif;
+  display: block;
+  margin-top: .25em;
+  margin-bottom: .1em;
+  margin-left: 3em;
+  text-align: left;
+  border-bottom: thin solid;
+  border-bottom-color: #336; 
+  color: #669;
+}
+
+h4.title
+{
+  font: bold large Arial, sans-serif;
+  display: block;
+  margin-top: .25em;
+  margin-bottom: .1em;
+  margin-left: 6em;
+  text-align: left;
+  color: #99c;
+}
+

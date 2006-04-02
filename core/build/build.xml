@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/02/19 12:21:15 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:12:51 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -40,20 +40,22 @@
  * Contributor(s): Cedric Bosdonnat                                                              
  ====================================================================== -->
 
-<project name="ooeclipseintegration" default="site">
+<project name="org.openoffice.ide.eclipse.core" default="site">
 	<description>
-            This project provides a new plugin for Eclipse to help OpenOffice.org 
+            This project provides a new plugin for Eclipse to help 
+			OpenOffice.org development
     </description>
 
 	<!-- please change the version number -->
-	<property name="version" value="1.0.2" />
+	<property name="version" value="1.0.3" />
 	
 	<!-- please change these values in order to fit to your installation -->
 	<property name="eclipse.home" value="/mnt/stockage/eclipse-test/eclipse" />
 	<property name="openoffice.home" value="/opt/openoffice.org2.0" />
 	
-	<property name="out.path" value="bin/ant" />
-
+	<property name="prj.path" value=".." />
+	<property name="out.path" value="${prj.path}/bin/ant" />
+	
 	<path id="dependencies.path">
 		<pathelement location="${openoffice.home}/program/classes/juh.jar" />
 		<pathelement location="${openoffice.home}/program/classes/jurt.jar" />
@@ -69,7 +71,6 @@
 		
 		<delete dir="${out.path}/plugin" />
 		<delete dir="${out.path}/feature" />
-		<delete file="${out.path}/site.xml" />
 	</target>
 	
 	<target name="purge"
@@ -84,23 +85,18 @@
     	        depends="plugin, feature" 
     	        description="builds and delivers the plugin">
 
-		<copy file="build/site/site.xml.in" tofile="${out.path}/site.xml" />
-		<replace file="${out.path}/site.xml" 
-					token="@VERSION@" value="${version}" />
+		<copy file="site_fragment.xml.in" 
+			tofile="${out.path}/site_fragment.xml" />
+				
+		<replace file="${out.path}/site_fragment.xml"
+			token="@VERSION@" value="${version}" />
 		
-		<zip destfile="${out.path}/ooeclipseintegration_site.zip"
-			basedir="${out.path}"
-			includes="plugins/**/*, features/**/*, site.xml" />
-
         <echo>
            =================================================
-           The ooeclipseintegration update site is generated
-
-           To use it you, just unzip 
-           bin/ant/ooeclipseintegration_site.zip where you
-           want to create your update site.
            
-           Eclipse can althought install from a local zipped
+           The core plugin and feature are created. Please
+           run the build.xml file in the build project in
+           order to generate the whole ooeclipseintegration
            update site.
            
            =================================================
@@ -115,12 +111,12 @@
 		
 		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
 		<mkdir dir="${out.path}/feature" />
-		<copy file="build/feature/feature.xml.in"
+		<copy file="${prj.path}/build/feature.xml.in"
 			tofile="${out.path}/feature/feature.xml" />
 		<replace file="${out.path}/feature/feature.xml" 
 			token="@VERSION@" value="${version}" />
 		
-		<jar destfile="${out.path}/features/org.openoffice.ide.eclipse_${version}.jar"
+		<jar destfile="${out.path}/features/org.openoffice.ide.eclipse.core_${version}.jar"
 			basedir="${out.path}/feature"
 			includes="feature.xml" />
 		
@@ -131,62 +127,105 @@
 		
 		<mkdir dir="${out.path}/plugins" />
 		<mkdir dir="${out.path}/plugin" />
-		<javac srcdir="source" destdir="${out.path}/plugin"
+		<javac srcdir="${prj.path}/source" destdir="${out.path}/plugin"
 			target="1.3" source="1.3"
-			classpathref="dependencies.path" />
+			classpathref="dependencies.path" 
+			excludes="**/unittests/**"/>
 		
 		<copy todir="${out.path}/plugin">
-			<fileset dir="source">
+			<fileset dir="${prj.path}/source">
 				<include name="**/*.properties"/>
 			</fileset>
 		</copy>
 
 		<!-- Copy the important files in the directory -->
 		<copy todir="${out.path}/plugin/doc">
-			<fileset dir="doc">
+			<fileset dir="${prj.path}/doc">
 				<include name="**/*"/>
 			</fileset>
 		</copy>
 		
 		<copy todir="${out.path}/plugin/icons">
-	    		<fileset dir="icons">
+	    		<fileset dir="${prj.path}/icons">
 	    			<include name="**/*"/>
 	    		</fileset>
 		</copy>
 		
-		<copy file="META-INF/MANIFEST.MF.in"
+		<copy file="${prj.path}/META-INF/MANIFEST.MF.in"
 			tofile="${out.path}/plugin/META-INF/MANIFEST.MF" />
 		<replace file="${out.path}/plugin/META-INF/MANIFEST.MF"
 			token="@VERSION@" value="${version}" />
 		
-		<copy file="plugin.properties" tofile="${out.path}/plugin/plugin.properties" />
-		<copy file="plugin.xml" tofile="${out.path}/plugin/plugin.xml" />
+		<copy file="${prj.path}/plugin.properties" 
+			  tofile="${out.path}/plugin/plugin.properties" />
+		<copy file="${prj.path}/plugin.xml" 
+			  tofile="${out.path}/plugin/plugin.xml" />
 
 		<!-- Generate the javadoc API in the doc/html/api folder -->
 		<javadoc 
-			packagenames="org.openoffice.ide.eclipse.*"
-			sourcepath="source"
+			packagenames="org.openoffice.ide.eclipse.core.*"
 			classpathref="dependencies.path"
 			destdir="${out.path}/plugin/doc/help/html/api">
+			
+			<packageset dir="${prj.path}/source">
+				<include name="org/openoffice/ide/eclipse/core/**"/>
+				<exclude name="org/openoffice/ide/eclipse/core/internal/**"/>
+				<exclude name="org/openoffice/ide/eclipse/core/unittests/**"/>
+			</packageset>
 		</javadoc>
 		
 		<!-- Creating the UnoTypesGetter.jar file -->
 		<jar destfile="${out.path}/plugin/UnoTypesGetter.jar"
 			basedir="${out.path}/plugin"
-			includes="org/openoffice/ide/eclipse/unotypebrowser/*.class">
+			includes="org/openoffice/ide/eclipse/core/unotypebrowser/*.class">
 			<manifest>
 				<attribute name="Main-Class" 
-					value="org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter" />
+					value="org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter" />
 			</manifest>
 		</jar>
 		
 		<!-- Creating the plugin jar file -->
-		<jar destfile="${out.path}/plugins/org.openoffice.ide.eclipse_${version}.jar"
+		<jar destfile="${out.path}/plugins/org.openoffice.ide.eclipse.core_${version}.jar"
 			basedir="${out.path}/plugin"
 			manifest="${out.path}/plugin/META-INF/MANIFEST.MF"
 			includes="**/*" />
 		
 	</target>
 
+	<target name="internals">
+		
+		<!-- Generate the javadoc API in the doc/html/api folder -->				
+		<javadoc 
+			packagenames="org.openoffice.ide.eclipse.core.*"
+			classpathref="dependencies.path"
+			destdir="${prj.path}/doc/help/html/api">
+				
+			<packageset dir="${prj.path}/source">
+				<include name="org/openoffice/ide/eclipse/core/**"/>
+				<exclude name="org/openoffice/ide/eclipse/core/internal/**"/>
+				<exclude name="org/openoffice/ide/eclipse/core/unittests/**"/>
+			</packageset>
+		</javadoc>
+		
+		<!-- Creating the UnoTypesGetter.jar file -->
+		<jar destfile="${prj.path}/UnoTypesGetter.jar"
+			basedir="${prj.path}/bin"
+			includes="org/openoffice/ide/eclipse/core/unotypebrowser/*.class">
+			<manifest>
+				<attribute name="Main-Class" 
+					value="org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter" />
+			</manifest>
+		</jar>
+		
+	</target>
+	
+	
+	<target name="internals clean">
+		
+		<delete dir="${prj.path}/doc/help/html/api" />
+		<delete file="${prj.path}/UnoTypesGetter.jar" />
+		
+	</target>
+	
 </project>
 

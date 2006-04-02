@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<?NLS TYPE="org.eclipse.help.toc"?> 
+
+<toc label="OpenOffice.org plugin help">
+
+  <topic label="User documentation" href="doc/help/html/userdoc/index.html">
+	  <topic label="Java component tutorial" href="doc/help/html/userdoc/javatuto/index.html">
+	     <topic label="Introduction" href="doc/help/html/userdoc/javatuto/intro.html">
+		     <topic label="UNO components" href="doc/help/html/userdoc/javatuto/unocomp.html" />
+	    		 <topic label="Installation" href="doc/help/html/userdoc/javatuto/install.html" />
+	     </topic>
+	     
+	     <topic label="Creating a UNO component" href="doc/help/html/userdoc/javatuto/newcomp.html">
+	     	<topic label="Creating a project" href="doc/help/html/userdoc/javatuto/newproject.html" />
+	     	<topic label="Writing UNO specifications" href="doc/help/html/userdoc/javatuto/specs.html" />
+	     	<topic label="Implementing a component" href="doc/help/html/userdoc/javatuto/impl.html" />
+	     </topic>
+	     
+	     <topic label="Testing a UNO component" href="doc/help/html/userdoc/javatuto/testing.html">
+	     	<topic label="Packaging a component" href="doc/help/html/userdoc/javatuto/packaging.html" />
+	     	<topic label="Testing using a macro" href="doc/help/html/userdoc/javatuto/macro.html" />
+	     </topic>
+	     
+	     <topic label="Going further" href="doc/help/html/userdoc/javatuto/further.html" />
+	     <topic label="Licence" href="doc/help/html/userdoc/javatuto/licence.html" />
+	     
+	  </topic>
+  </topic>
+  
+  <topic label="Developer manual" href="doc/help/html/devdoc/index.html" /> 
+  <topic label="API Reference" href="doc/help/html/api/overview-summary.html">
+     <topic label="actions" href="doc/help/html/api/org/openoffice/ide/eclipse/actions/package-summary.html" />
+     <topic label="builders" href="doc/help/html/api/org/openoffice/ide/eclipse/builders/package-summary.html" />
+     <topic label="editors" href="doc/help/html/api/org/openoffice/ide/eclipse/editors/package-summary.html" />
+     <topic label="gui" href="doc/help/html/api/org/openoffice/ide/eclipse/gui/package-summary.html" />
+     <topic label="i18n" href="doc/help/html/api/org/openoffice/ide/eclipse/i18n/package-summary.html" />
+     <topic label="model" href="doc/help/html/api/org/openoffice/ide/eclipse/model/package-summary.html" />
+     <topic label="preferences" href="doc/help/html/api/org/openoffice/ide/eclipse/preferences/package-summary.html" />
+     <topic label="unotypebrowser" href="doc/help/html/api/org/openoffice/ide/eclipse/unotypebrowser/package-summary.html" />
+     <topic label="wizards" href="doc/help/html/api/org/openoffice/ide/eclipse/wizards/package-summary.html" />
+  </topic>
+  
+</toc>
