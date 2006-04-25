@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:09 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.PropertiesManager;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
@@ -196,7 +196,8 @@ public class OOoContainer {
 			try {
 				oooref.setHome(ooo.getHome());
 			} catch (InvalidConfigException e){
-				OOEclipsePlugin.logError(e.getLocalizedMessage(), e);  // This message is localized by the OOo class
+				PluginLogger.getInstance().error(e.getLocalizedMessage(), e);  
+				// This message is localized by the OOo class
 			}
 			
 			// Reassign the element in the hashmap

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,6 +58,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
@@ -412,13 +413,9 @@ public class UnoTypeProvider {
 								"",
 								e);
 						
-						if (null != System.getProperty("DEBUG")) {
-							e.printStackTrace();
-						}
+						PluginLogger.getInstance().debug(e.getMessage());
 					} catch (NullPointerException e) {
-						if (null != System.getProperty("DEBUG")) {
-							e.printStackTrace();
-						}
+						PluginLogger.getInstance().debug(e.getMessage());
 						monitor.worked(0);
 						cancel();
 					}

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypesGetter.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,6 +45,8 @@ package org.openoffice.ide.eclipse.core.unotypebrowser;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
+import org.openoffice.ide.eclipse.core.PluginLogger;
 
 import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.container.NoSuchElementException;
@@ -279,9 +281,7 @@ public class UnoTypesGetter {
 			System.err.println("Invalid root: " + root);
 		} catch (InvalidTypeNameException e) {
 			//Should never happen
-			if (null != System.getProperty("DEBUG")){
-				e.printStackTrace();
-			}
+			PluginLogger.getInstance().debug(e.getMessage());
 		}
 		
 		System.err.println("OK");
@@ -349,9 +349,7 @@ public class UnoTypesGetter {
 			}
 		} catch (NoSuchElementException e) {
 			// Should never happen
-			if (null != System.getProperty("DEBUG")){
-				e.printStackTrace();
-			}
+			PluginLogger.getInstance().debug(e.getMessage());
 		}
 	}
 }

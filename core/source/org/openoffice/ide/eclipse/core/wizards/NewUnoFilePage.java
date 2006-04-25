@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFilePage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,6 +61,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
@@ -168,7 +169,8 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 			unoProject.getProject().refreshLocal(IProject.DEPTH_INFINITE, null);
 			
 		} catch (Exception e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
 					I18nConstants.NOT_UNO_PROJECT), e);
 		}
 	}
@@ -224,16 +226,16 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 						
 						performed = true;
 					} else {
-						OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+						PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
 								I18nConstants.NOT_IDL_EXTENSION), null); 
 					}
 				} else {
-					OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+					PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
 							I18nConstants.NOT_IDL_CAPABLE), null);
 				}
 				
 			} catch (CoreException e) {
-				OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+				PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
 						I18nConstants.NOT_IDL_CAPABLE), e);
 			}
 		}

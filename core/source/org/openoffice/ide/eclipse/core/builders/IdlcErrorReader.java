@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcErrorReader.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:57 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,6 +58,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 
 /**
@@ -140,10 +141,11 @@ public class IdlcErrorReader {
 				line = reader.readLine();
 			}
 		} catch (IOException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
 					I18nConstants.ERROR_OUTPUT_UNREADABLE), e);
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError(
+			PluginLogger.getInstance().error(
 					OOEclipsePlugin.getTranslationString(
 							I18nConstants.MARKER_CREATION_FAILED)
 								+ compiledFile.getProjectRelativePath().
@@ -212,7 +214,7 @@ public class IdlcErrorReader {
 //				marker.setAttribute(IMarker.CHAR_END,  ((Integer)positions.get(IMarker.CHAR_END)).intValue());
 				
 			} catch (CoreException e) {
-				OOEclipsePlugin.logError(
+				PluginLogger.getInstance().error(
 						OOEclipsePlugin.getTranslationString(
 								I18nConstants.MARKER_CREATION_FAILED)
 									+ file.getProjectRelativePath().toString(),

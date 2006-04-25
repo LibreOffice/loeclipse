@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.internal.model.SDK;
@@ -44,7 +45,9 @@ public class PropertiesManager {
 						SDK sdk = new SDK(path);
 						sdks.add(sdk);
 					} catch (InvalidConfigException e){
-						OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // This message is localized in SDK class
+						PluginLogger.getInstance().error(
+								e.getLocalizedMessage(), e); 
+						// This message is localized in SDK class
 					}
 				}				
 			} while (found);
@@ -57,7 +60,7 @@ public class PropertiesManager {
 			}
 			
 		} catch (IOException e) {
-			OOEclipsePlugin.logError(
+			PluginLogger.getInstance().error(
 					OOEclipsePlugin.getTranslationString(
 							I18nConstants.NOT_READABLE_FILE)+
 							OOEclipsePlugin.OOO_CONFIG, e);
@@ -102,9 +105,9 @@ public class PropertiesManager {
 			
 			sdksProperties.store(new FileOutputStream(file), "");
 		} catch (FileNotFoundException e) {
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
+			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
 		} catch (IOException e){
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
+			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
 		}
 	}
 	
@@ -135,7 +138,8 @@ static public IOOo[] loadOOos(){
 						OOo ooo = new OOo(path);
 						ooos.add(ooo);
 					} catch (InvalidConfigException e){
-						OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
+						PluginLogger.getInstance().error(
+								e.getLocalizedMessage(), e);
 					}
 				}				
 			} while (found);
@@ -148,7 +152,7 @@ static public IOOo[] loadOOos(){
 			}
 			
 		} catch (IOException e) {
-			OOEclipsePlugin.logError(
+			PluginLogger.getInstance().error(
 					OOEclipsePlugin.getTranslationString(
 							I18nConstants.NOT_READABLE_FILE)+
 							OOEclipsePlugin.OOO_CONFIG, e);
@@ -194,9 +198,9 @@ static public IOOo[] loadOOos(){
 			
 			ooosProperties.store(new FileOutputStream(file), "");
 		} catch (FileNotFoundException e) {
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
+			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
 		} catch (IOException e){
-			OOEclipsePlugin.logError(e.getLocalizedMessage(), e);
+			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
 		}
 	}
 	

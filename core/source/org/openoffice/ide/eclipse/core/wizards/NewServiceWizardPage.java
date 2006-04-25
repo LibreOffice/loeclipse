@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,6 +47,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.TypeRow;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
@@ -212,7 +213,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 					unoProject.getIdlPath().append(filename));
 			
 		} catch (Exception e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
 					I18nConstants.SERVICE_CREATION_FAILED), e);
 		}
 		

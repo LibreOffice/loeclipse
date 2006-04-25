@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:03 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -59,7 +59,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -104,6 +103,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	public static final String SDKVERSION_PREFERENCE_KEY = "sdkversion";
 	public static final String SDKPATH_PREFERENCE_KEY    = "sdkpath";
 	public static final String OOOPATH_PREFERENCE_KEY    = "ooopath";
+	public static final String LOGLEVEL_PREFERENCE_KEY 	 = "loglevel";
 
 	public static final String UNO_EDITOR_ID = OOECLIPSE_PLUGIN_ID + ".editors.UnoidlEditor";
 
@@ -261,36 +261,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		PreferenceConverter.setDefault(store, Colors.C_PREPROCESSOR, PREPROCESSOR_COMMAND);
 		PreferenceConverter.setDefault(store, Colors.C_XML_TAG, XML_TAG);
 		PreferenceConverter.setDefault(store, Colors.C_MODIFIER, MODIFIER);
-	}
-	
-	/**
-	 * This static method is provided to easier log errors in the eclipse error view
-	 * 
-	 * @param message Message to print in the error log view
-	 * @param e Exception raised. Could be null.
-	 */
-	public static void logError(String message, Exception e){
-		getDefault().getLog().log(new Status(
-				Status.ERROR, 
-				getDefault().getBundle().getSymbolicName(),
-				Status.ERROR,
-				message,
-				e));
-	}
-
-	/**
-	 * This static method is provided to easier log warnings in the eclipse error view
-	 * 
-	 * @param message Message to print in the warning log view
-	 * @param e Exception raised. Could be null.
-	 */
-	public static void logWarning(String message, Exception e){
-		getDefault().getLog().log(new Status(
-				Status.WARNING, 
-				getDefault().getBundle().getSymbolicName(),
-				Status.WARNING,
-				message,
-				e));
+		
+		store.setDefault(LOGLEVEL_PREFERENCE_KEY, PluginLogger.INFO);
 	}
 
 	public static IWorkbenchPage getActivePage(){
@@ -431,7 +403,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 					
 				} else {
 					// Unmanaged OS
-					OOEclipsePlugin.logError(
+					PluginLogger.getInstance().error(
 							OOEclipsePlugin.getTranslationString(I18nConstants.SDK_INVALID_OS), 
 							null);
 				}

@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 
 public class ProjectsManager {
@@ -83,7 +84,7 @@ public class ProjectsManager {
 					addProject(unoproject);
 				}
 			} catch (CoreException e) {
-				OOEclipsePlugin.logError("Failed to load the project " + 
+				PluginLogger.getInstance().error("Failed to load the project " + 
 						project.getName(), e); // TODO i18n
 			}
 		}

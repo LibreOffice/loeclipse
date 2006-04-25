@@ -21,3 +21,4 @@ Eclipse-AutoStart: true
 Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.model,
  org.openoffice.ide.eclipse.core.preferences
+Bundle-Vendor: OpenOffice.org

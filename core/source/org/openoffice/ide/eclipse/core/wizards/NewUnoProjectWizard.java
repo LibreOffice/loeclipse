@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -59,6 +59,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
@@ -131,9 +132,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
 			
-			if (null != System.getProperty("DEBUG")){
-				e.printStackTrace();
-			}
+			PluginLogger.getInstance().debug(e.getMessage());
 			
 			MessageDialog dialog = new MessageDialog(
 					getShell(),
@@ -153,11 +152,12 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 			try {
 				mainPage.getProjectHandle().delete(true, true, null);
 			} catch (CoreException ex) {
-				// Impossible to delete
+				PluginLogger.getInstance().debug(
+						"Impossible to delete the project");
 			}
 			
 		} catch (InterruptedException e) {
-			// Cancel pressed
+			PluginLogger.getInstance().debug("Cancel pressed");
 		}
 		
 		return true;
@@ -173,9 +173,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 						try {
 							IDE.openEditor(activePage, resource, true);
 						} catch (PartInitException e) {
-							if (null != System.getProperty("DEBUG")){
-								e.printStackTrace();
-							}
+							PluginLogger.getInstance().debug(e.getMessage());
 						}
 					}
 				});

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -60,6 +60,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
@@ -475,10 +476,16 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		
 		result = result && constraint;
 		
+		PluginLogger.getInstance().debug("Wizard page validated ? " + result + 
+				" SDKName=" + getSDKName() + 
+				" Prefix=" + getPrefix() +
+				" OutputExt=" + getOutputExt());
+		
 		if (result) {
 			IWizardPage next = getWizard().getNextPage(this);
 			if (next instanceof NewScopedElementWizardPage) {
-				NewScopedElementWizardPage aScopedNext = (NewScopedElementWizardPage) next;
+				NewScopedElementWizardPage aScopedNext = 
+					(NewScopedElementWizardPage) next;
 				
 				// Sets the project name as the service name default value
 				String serviceName = getProjectName().trim().toLowerCase();

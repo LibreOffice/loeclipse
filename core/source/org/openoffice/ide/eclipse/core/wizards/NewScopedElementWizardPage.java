@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,6 +51,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
@@ -152,9 +153,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 			nameRow.removeFieldChangedlistener();
 			typesProvider.dispose();
 		} catch (NullPointerException e) {
-			if (null != System.getProperty("DEBUG")) {
-				e.printStackTrace();
-			}
+			PluginLogger.getInstance().debug(e.getMessage());
 		}
 		
 		super.dispose();
@@ -307,7 +306,6 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 					text = text + ".";
 				}
 				packageRow.setLabel(text);
-				((Composite)getControl()).layout();
 	
 			} else if (e.getProperty().equals(P_NAME)) {
 				// Test if there is the scoped name already exists

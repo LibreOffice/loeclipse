@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:15:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -64,7 +64,14 @@ public class I18nConstants {
 	public static final String ADD = "ADD";
 	public static final String DEL = "DEL";
 	public static final String BROWSE = "BROWSE";
-	
+
+    public static final String LOGLEVEL = "LOGLEVEL";
+    public static final String ALL = "ALL";
+    public static final String SEVERE = "SEVERE";
+    public static final String ERROR = "ERROR";
+    public static final String WARNING = "WARNING";
+    public static final String INFO = "INFO";
+    public static final String DEBUG = "DEBUG";
 	
 	public static final String FILE_SELECT_TITLE = "FILE_SELECT_TITLE";
 	public static final String DIR_SELECT_TITLE = "DIR_SELECT_TITLE";
@@ -114,7 +121,6 @@ public class I18nConstants {
 	public static final String UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 	public static final String KEYS_NOT_SET = "KEYS_NOT_SET";
 	public static final String FOLDER_CREATION_FAILED = "FOLDER_CREATION_FAILED";
-	public static final String PROJECT_CLASSPATH_ERROR = "PROJECT_CLASSPATH_ERROR";
 	public static final String GET_CHILDREN_FAILED = "GET_CHILDREN_FAILED";
 	public static final String BAD_SDKID = "BAD_SDKID";
 	public static final String SDK_INVALID_OS = "SDK_INVALID_OS";
@@ -132,11 +138,6 @@ public class I18nConstants {
 	public static final String NO_ROOT_DEFINED = "NO_ROOT_DEFINED";
 	public static final String NAME_EXISTS = "NAME_EXISTS";
 	public static final String SERVICE_CREATION_FAILED = "SERVICE_CREATION_FAILED";
-	
-	// Programming languages names
-	public static final String JAVA = "JAVA";
-	public static final String CPP = "CPP";
-	public static final String PYTHON = "PYTHON";
 	
 	public static final String NEW_SERVICE_TITLE = "NEW_SERVICE_TITLE";
 	public static final String DEPEND_TABLE_TITLE = "DEPEND_TABLE_TITLE";

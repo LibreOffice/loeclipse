@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
@@ -74,9 +75,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 			}
 			
 		} catch (CoreException e) {
-			if (null != System.getProperty("DEBUG")) {
-				e.printStackTrace();
-			}
+			PluginLogger.getInstance().debug(e.getMessage());
 		}
 	}
 

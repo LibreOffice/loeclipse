@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.FileRow;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
@@ -175,7 +176,9 @@ public class SDKTable extends AbstractTable {
 				try {
 					sdk.setHome(newSDK.getHome());
 				} catch (InvalidConfigException e) {
-					OOEclipsePlugin.logError(e.getLocalizedMessage(), e); // localized in SDK class
+					PluginLogger.getInstance().error(
+							e.getLocalizedMessage(), e); 
+					// localized in SDK class
 				}
 			} else {
 				// Creation of a new SDK

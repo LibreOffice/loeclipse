@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuilder.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:57 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,6 +56,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -131,7 +132,7 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 			idlFolder.accept(new IdlcBuildVisitor(monitor));
 			
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError(
+			PluginLogger.getInstance().error(
 					"Error raised during the idlc compilation", e); // TODO i18n
 		}
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openoffice.ide.eclipse.core"
-      label="OpenOffice.org development plugin"
+      label="OpenOffice.org development plugin core"
       version="@VERSION@"
       provider-name="Cédric Bosdonnat">
 
@@ -10,7 +10,15 @@
 provides two editors for UNO-IDL file edition and registry files
 viewing. The plugin helps the user to write it&apos;s UNO-IDL file
 with syntax highlighting and some wizards, it although generates
-the type registries and Java classes files. 
+the type registries. 
+
+KEEP IN MIND that this is only the core of the plugin: you will certainly
+need to install the plugin corresponding to the programming language used
+for the implementation. For example, to create a Java component, you need:
+  + The OOo development core plugin
+  + The OOo development Java plugin
+  + Of course the Eclipse JDT
+
 This plugin is user oriented and integrate some cheat sheets
 to guide the new user throught different steps.
 Even if this is a important piece of work, there are still other

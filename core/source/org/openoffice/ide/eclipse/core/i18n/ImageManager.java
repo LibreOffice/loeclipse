@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:15:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -52,6 +52,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
  * The image manager is a singleton object that returns an image or an image descriptor
@@ -83,14 +84,14 @@ public class ImageManager {
 			imageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.core.i18n.ImageManager");
 			
 		} catch (NullPointerException e) {
-			
-			if (null != System.getProperty("DEBUG")) {
-				System.out.println("Call to getBundle is incorrect: NullPointerException catched");
-			}
+			PluginLogger.getInstance().debug(
+					"Call to getBundle is incorrect: NullPointerException " +
+					"catched");
 		} catch(MissingResourceException e) {
 			
-			String message = "Image file not found for locale :" + Locale.getDefault().toString();
-			OOEclipsePlugin.logError(message, null);
+			String message = "Image file not found for locale :"
+				+ Locale.getDefault().toString();
+			PluginLogger.getInstance().error(message);
 		}
 	}
 	

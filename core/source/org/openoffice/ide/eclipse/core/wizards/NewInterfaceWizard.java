@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizard.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,6 +57,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 
 /**
@@ -113,9 +114,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 					addPage(page);
 				}
 			} catch (CoreException e){
-				if (null != System.getProperty("DEBUG")){
-					e.printStackTrace();
-				}
+				PluginLogger.getInstance().debug(e.getMessage());
 			}
 		}
 	}
@@ -132,9 +131,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 						try {
 							IDE.openEditor(activePage, resource, true);
 						} catch (PartInitException e) {
-							if (null != System.getProperty("DEBUG")){
-								e.printStackTrace();
-							}
+							PluginLogger.getInstance().debug(e.getMessage());
 						}
 					}
 				});

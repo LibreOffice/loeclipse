@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:03 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui.rows;
 
+import java.util.Hashtable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -54,12 +56,20 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Row class that could managed a combo box to select a value among others
  * 
+ * <p>In order to use this class correctly, please add items and define the
+ * default one. As every row type, don't forget to set the Modification
+ * listener to be notified of the value changes. This class supports 
+ * internationalized items since the version 1.0.3.
+ * </p>
+ * 
  * @author cbosdonnat
  * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow
  *
  */
 public class ChoiceRow extends LabeledRow implements ModifyListener{
 	
+    private Hashtable translations;
+        
 	public ChoiceRow (Composite parent, String property, String label){
 		this(parent, property, label, null);
 	}
@@ -67,6 +77,9 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	public ChoiceRow (Composite parent, String property, String label, String browse){
 		
 		super(property);
+
+        translations = new Hashtable();
+        
 		Label aLabel = new Label(parent, SWT.NONE);
 		aLabel.setText(label);
 		
@@ -95,25 +108,55 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		}
 	}
 	
+  
+    /**
+     * Adds a translated item.
+     *
+     * <p>This method adds the text to the combo box and deals with
+     * its translation. If the text is alread contained in the box,
+     * nothing will be done.</p>
+     */
+    public void add(String text, String value, int index){
+        if (!translations.containsKey(text)) {
+            translations.put(text, value);
+            if (index >= 0) {
+                ((Combo)field).add(text, index);
+            } else {
+                ((Combo)field).add(text);
+            }
+        }
+    }
+    
+    /**
+     * adds an internationalized item at the end of the list 
+     * 
+     * @param text the internationalized text
+     * @param value the value of the item
+     * @see #add(String, String, int)
+     */
+    public void add(String text, String value) {
+    	add(text, value, -1);
+    }
+    
 	/**
 	 * Adds the provided item at the provided position
 	 * 
 	 * @param item text of the item to add
 	 * @param index position where to add the item in the list
-	 * @see Combo#add(java.lang.String, int)
+     * @see add(java.lang.String, java.lang.String, int)
 	 */
 	public void add(String item, int index){
-		((Combo)field).add(item, index);
+    	add(item, item, index);
 	}
 	
 	/**
 	 * Append the item at the end of the item list
 	 * 
 	 * @param item text of the item to append
-	 * @see Combo#add(java.lang.String)
+     * @see add(java.lang.String, java.lang.String, int)
 	 */
 	public void add(String item){
-		((Combo)field).add(item);
+		add(item, item, -1);
 	}
 	
 	/**
@@ -122,8 +165,9 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @param item text of the items to remove
 	 * @see Combo#remove(java.lang.String)
 	 */
-	public void remove(String item){
-		((Combo)field).remove(item);
+	public void remove(String text){
+        translations.remove(text);
+		((Combo)field).remove(text);
 	}
 	
 	/**
@@ -133,7 +177,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#remove(int)
 	 */
 	public void remove(int index){
-		((Combo)field).remove(index);
+        remove(getItem(index));
 	}
 	
 	/**
@@ -145,7 +189,9 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#remove(int, int)
 	 */
 	public void remove(int start, int end){
-		((Combo)field).remove(start, end);
+        for (int i=start; i<end; i++){
+		    remove(i);
+        }
 	}
 	
 	/**
@@ -154,6 +200,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#removeAll()
 	 */
 	public void removeAll(){
+        translations.clear();
 		((Combo)field).removeAll();
 	}
 	
@@ -175,15 +222,15 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * Set the provided text as the active item if the item is present
 	 * in the choice. Otherwise, do nothing.
 	 * 
-	 * @param text Text of the item to select
+	 * @param value value of the item to select
 	 */
-	public void select(String text){
+	public void select(String value){
 		int result = -1;
 		
 		Combo cField = ((Combo)field);
 		int i = 0;
 	    while (i < cField.getItemCount() && -1 == result){
-			if (cField.getItem(i).equals(text)){
+			if (getValue(i).equals(value)){
 				result = i;
 			}
 			i++;
@@ -196,9 +243,11 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * 
 	 * @param index position of the item to fetch
 	 * @see Combo#getItem(int)
+     * @deprecated This methods only returns the text of the item, use
+     *     <code>getValue()</code> to get the selected value.
 	 */
-	public void getItem(int index){
-		((Combo)field).getItem(index);
+	public String getItem(int index){
+		return ((Combo)field).getItem(index);
 	}
 
 	/**
@@ -222,14 +271,39 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	}
 
 	/**
-	 * Returns the selected value
+	 * Returns the selected value.
+     *
+     * @since 1.0.3 
+     *      This method returns the language independent value of the item
 	 */
 	public String getValue() {
-		String result = null;
+		String result = null; 
 		
 		int selectedId = ((Combo)field).getSelectionIndex();
-		if (-1 != selectedId){
-			result = ((Combo)field).getItem(selectedId); 
+		if (-1 != selectedId) {
+			result = getValue(selectedId);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the value of the ith item. 
+	 * 
+	 * @param i the index of the value to get
+	 * @return the language independent value of the item
+	 */
+	public String getValue(int i) {
+		String result = null;
+		
+		if (i >= 0 && i < getItemCount()){
+			String text = ((Combo)field).getItem(i);
+			result = text;
+			
+			String value = (String)translations.get(text);
+			if (value != null) {
+				result = value;
+			}
 		}
 		return result;
 	}

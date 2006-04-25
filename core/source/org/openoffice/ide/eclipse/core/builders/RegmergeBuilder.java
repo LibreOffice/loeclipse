@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:57 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -52,6 +52,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
@@ -113,7 +114,8 @@ public class RegmergeBuilder extends IncrementalProjectBuilder {
 			urdFolder.accept(new RegmergeBuildVisitor(monitor));
 			
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError("Error raised during the regmerge execution", e);
+			PluginLogger.getInstance().error(
+					"Error raised during the regmerge execution", e);
 		}
 	}
 	

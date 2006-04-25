@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -112,6 +112,7 @@ public abstract class LabeledRow {
 	public void setLabel(String newLabel){
 		((Label)label).setText(newLabel);
 		label.pack(true);
+		label.getParent().layout(true);
 	}
 	
 	/**

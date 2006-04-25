@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:09 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -55,6 +55,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
@@ -296,7 +297,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							IDL_LOCATION), prefix);
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_IDLLOCATION_FAILED)+getName(), e);
 		}
 	}
@@ -313,7 +315,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							OUTPUT_EXT), outputExtension);
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_OUTPUTEXT_FAILED)+getName(), e);
 		}
 	}
@@ -368,7 +371,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							SDK_NAME), sdk.getId());
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_SDKNAME_FAILED)+getName(), e);
 		}
 	}
@@ -398,7 +402,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							OOO_NAME), ooo.getId());
 		} catch (CoreException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
 					I18nConstants.SET_OOONAME_FAILED)+getName(), e);
 		}
 	}
@@ -419,8 +424,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		
 		if (language == null && newLanguage != null){
 			language = newLanguage; 
-			addNature(OOEclipsePlugin.UNO_NATURE_ID);
 			language.addProjectNature(getProject());
+			PluginLogger.getInstance().debug("Language specific nature added");
 			
 			try {
 				getProject().setPersistentProperty(
@@ -428,8 +433,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 								LANGUAGE), 
 								LanguagesHelper.getNameFromLanguage(language));
+				PluginLogger.getInstance().debug(
+						"Persistent language property set");
 			} catch (CoreException e) {
-				OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
+				PluginLogger.getInstance().error(
+					OOEclipsePlugin.getTranslationString(
 						I18nConstants.SET_OOONAME_FAILED)+getName(), e);
 			}
 		}
@@ -554,31 +562,4 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 			getLanguage().addLanguageBuilder(getProject());
 		}
 	}
-	
-	private void addNature(String natureid){
-		try {
-			if (!project.exists()){
-				project.create(null);
-			}
-			
-			if (!project.isOpen()){
-				project.open(null);
-			}
-			
-			IProjectDescription description = project.getDescription();
-			String[] natureIds = description.getNatureIds();
-			String[] newNatureIds = new String[natureIds.length+1];
-			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
-			
-			// Adding the nature
-			newNatureIds[natureIds.length] = natureid;
-			
-			description.setNatureIds(newNatureIds);
-			project.setDescription(description, null);
-			
-		} catch (CoreException e) {
-			OOEclipsePlugin.logError(OOEclipsePlugin.getTranslationString(
-					I18nConstants.NATURE_SET_FAILED), e);
-		}
-	}	
 }
