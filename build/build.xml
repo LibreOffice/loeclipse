@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:12:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:03:57 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -40,7 +40,7 @@
  * Contributor(s): Cedric Bosdonnat                                                              
  ====================================================================== -->
 
-<project name="ooeclipseintegration" default="site">
+<project name="ooeclipseintegration" default="site" basedir="..">
 	<description>
             This project provides a new plugin for Eclipse to help 
 			OpenOffice.org development
@@ -50,15 +50,66 @@
 
 	<target name="clean">
 		
-		<delete dir="${out.path}" />
-		<delete file="ooeclipseintegration_site.zip" />
+		<!-- plugins cleaning -->
+		<ant dir="core/build/" inheritall="false"
+			target="clean" />
+
+		<ant dir="java/build/" inheritall="false" 
+			target="clean" />
+				
 		
+		<!-- build cleaning -->
+		<delete dir="${out.path}" />
+		
+	</target>
+	
+	<target name="purge">
+			
+			<!-- plugins cleaning -->
+			<ant dir="core/build/" inheritall="false"
+				target="purge" />
+
+			<ant dir="java/build/" inheritall="false" 
+				target="purge" />
+					
+			
+			<!-- build cleaning -->
+			<delete dir="${out.path}" />
+			<delete file="ooeclipseintegration_site.zip" />
+			
+		</target>
+	
+	<target name="help">
+		<echo>
+		This ant file has to be called with the following parameters:
+			-Dhome.openoffice=/path/to/your/ooo/
+			-Dhome.eclipse=/path/to/your/eclipse/
+			
+			These arguments can be either put in the command line or in an
+			environment variable called ANT_ARGS.
+			
+		Targets:
+			site (default): generates the eclipse update site
+			clean: removes all the temporary build results
+			purge: removes all the build results
+		</echo>
 	</target>
 	
 	<!-- ================================= 
           target: site              
          ================================= -->
 	<target name="site">
+		
+		<!-- Executing the ant site targets for all the plugins 
+			 The file has to be named 'build.xml' in the given
+			 directories, and its default target builds the site
+		-->
+		
+		<ant dir="core/build/" inheritall="false" />
+
+		<ant dir="java/build/" inheritall="false" />
+		
+		<!-- Gathering plugins infos into a site -->
 		
 		<mkdir dir="${out.path}" />
 		<mkdir dir="${out.path}/plugins" />
@@ -80,11 +131,11 @@
 		
 		<!-- Site map generation -->
 		<concat destfile="${out.path}/site.xml">
-			<header file="site_header.xml" />
-			<fileset dir=".."
+			<header file="build/site_header.xml" />
+			<fileset dir="."
 				includes="**/site_fragment.xml">
 			</fileset>
-			<footer file="site_footer.xml" />
+			<footer file="build/site_footer.xml" />
 		</concat>
 		
 		<zip destfile="ooeclipseintegration_site.zip"
