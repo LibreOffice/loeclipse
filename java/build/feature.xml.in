@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openoffice.ide.eclipse.java"
-      label="OpenOffice.org development plugin"
+      label="OpenOffice.org development plugin support for Java implementation"
       version="@VERSION@"
       provider-name="Cédric Bosdonnat">
 
    <description>
-      Tool to support OpenOffice.org development using Eclipse. It
-provides two editors for UNO-IDL file edition and registry files
-viewing. The plugin helps the user to write it&apos;s UNO-IDL file
-with syntax highlighting and some wizards, it although generates
-the type registries and Java classes files. 
-This plugin is user oriented and integrate some cheat sheets
-to guide the new user throught different steps.
+This plugin provides the support of Java implementation for OpenOffice.org
+component development. This plugin depends on the OpenOffice.org development
+core plugin.
+
 Even if this is a important piece of work, there are still other
 features to add and bugs to correct, please do not hesitate to
 express your remarks and requests on the dev@api openoffice mailing

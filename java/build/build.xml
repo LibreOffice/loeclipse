@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:44 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -46,11 +46,7 @@
 			OpenOffice.org development
     </description>
 
-	<!-- please change the version number -->
-	<property name="version" value="0.1.0" />
-	
-	<!-- please change these values in order to fit to your installation -->
-	<property name="eclipse.home" value="/mnt/stockage/eclipse-test/eclipse" />
+	<propertyfile file="build.properties" />
 	
 	<property name="prj.path" value=".." />
 	<property name="out.path" value="${prj.path}/bin/ant" />
@@ -58,7 +54,7 @@
 	<path id="dependencies.path">
 		<pathelement location="${prj.path}/../core/bin/ant/plugin/"/>
 		
-		<fileset dir="${eclipse.home}/plugins/">
+		<fileset dir="${home.eclipse}/plugins/">
 			<include name="org.eclipse*.jar"/>
 		</fileset>
 	</path>
@@ -82,7 +78,7 @@
     	        depends="plugin, feature" 
     	        description="builds and delivers the plugin">
 
-		<copy file="site_fragment.xml.in" 
+		<copy file="${prj.path}/build/site_fragment.xml.in" 
 			tofile="${out.path}/site_fragment.xml" />
 		<replace file="${out.path}/site_fragment.xml"
 			token="@VERSION@" value="${version}" />

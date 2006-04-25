@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -29,10 +30,6 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 public class Language implements ILanguage {
-
-	public Language(){
-		// Nothing to do ;)
-	}
 	
 	/*
 	 *  (non-Javadoc)
@@ -42,10 +39,13 @@ public class Language implements ILanguage {
 		try {
 			if (!project.exists()){
 				project.create(null);
+				PluginLogger.getInstance().debug(
+						"Project created during language specific operation");
 			}
 			
 			if (!project.isOpen()){
 				project.open(null);
+				PluginLogger.getInstance().debug("Project opened");
 			}
 			
 			IProjectDescription description = project.getDescription();
@@ -58,9 +58,11 @@ public class Language implements ILanguage {
 			
 			description.setNatureIds(newNatureIds);
 			project.setDescription(description, null);
+			PluginLogger.getInstance().debug("Java nature set");
 			
 		} catch (CoreException e) {
-			// TODO Log Java nature set failed
+			// TODO i18n
+			PluginLogger.getInstance().error("Setting Java nature failed");
 		}
 	}
 
@@ -85,7 +87,9 @@ public class Language implements ILanguage {
 			project.setDescription(descr, null);
 			
 		} catch(CoreException e) {
-			// TODO log cannot Add Java Builder
+			// TODO i18n
+			PluginLogger.getInstance().error(
+					"Cannot add Java builder");
 		}
 	}
 	
@@ -139,13 +143,21 @@ public class Language implements ILanguage {
 					process.waitFor();
 				}
 			} catch (InterruptedException e) {
-				// interrupted process: the code generation failed
+				// TODO i18n
+				PluginLogger.getInstance().error(
+						"Code generation failed", e);
 			} catch (IOException e) {
-				// Error whilst reading the error stream
+				// TODO i18n
+				PluginLogger.getInstance().warning(
+						"Error whilst reading the error stream");
 			}
 		}
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.ILanguage#addLanguageDependencies(org.openoffice.ide.eclipse.core.model.IUnoidlProject, org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void addLanguageDependencies(IUnoidlProject unoproject,
 			IProject project, IProgressMonitor monitor) throws CoreException {
 		
@@ -168,15 +180,6 @@ public class Language implements ILanguage {
 		
 	}
 	
-	public final static String[] KEPT_JARS = {
-		"unoil.jar",
-		"ridl.jar",
-		"juh.jar",
-		"jurt.jar",
-		"unoloader.jar",
-		"officebean.jar"
-	};
-	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.ILanguage#addOOoDependencies(org.openoffice.ide.eclipse.preferences.IOOo, org.eclipse.core.resources.IProject)
@@ -192,46 +195,24 @@ public class Language implements ILanguage {
 			try {
 				IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
 				IClasspathEntry[] entries = new IClasspathEntry[jarPaths.size()+
-				                                                oldEntries.length];
+				                                            oldEntries.length];
 				
 				System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
 				
 				for (int i=0, length=jarPaths.size(); i<length; i++){
 					IPath jarPathi = (IPath)jarPaths.get(i);
-					IClasspathEntry entry = JavaCore.newLibraryEntry(jarPathi, null, null);
+					IClasspathEntry entry = JavaCore.newLibraryEntry(
+							jarPathi, null, null);
 					entries[oldEntries.length+i] = entry;
 				}
 				
 				javaProject.setRawClasspath(entries, null);
 			} catch (JavaModelException e){
-				// TODO log error PROJECT_CLASSPATH_ERROR
+				// TODO i18n
+				PluginLogger.getInstance().error(
+						"Error while setting the project classpath", e);
 			}
 		}
-	}
-	
-	/**
-	 * returns the path of all the kept jars contained in the folder pointed by path.
-	 * 
-	 * @param ooo the OOo instance from which to get the jars
-	 * @return a vector of Path pointing to each jar.
-	 */
-	private Vector findJarsFromPath(IOOo ooo){
-		Vector jarsPath = new Vector();
-		
-		Path folderPath = new Path(ooo.getClassesPath());
-		File programFolder = folderPath.toFile();
-		
-		String[] content = programFolder.list();
-		for (int i=0, length=content.length; i<length; i++){
-			String contenti = content[i];
-			if (isKeptJar(contenti)){
-				Path jariPath = new Path (
-						ooo.getClassesPath()+"/"+contenti);
-				jarsPath.add(jariPath);
-			}
-		}
-		
-		return jarsPath;
 	}
 	
 	/*
@@ -262,9 +243,46 @@ public class Language implements ILanguage {
 			javaProject.setRawClasspath(result, null);
 			
 		} catch (JavaModelException e) {
-			
-			// TODO log error PROJECT_CLASSPATH_ERROR
+			// TODO i18n
+			PluginLogger.getInstance().error(
+					"Error while setting the project classpath", e);
 		}
+	}
+	
+	//--------------------------------------------- Jar finding private methods
+	
+	private final static String[] KEPT_JARS = {
+		"unoil.jar",
+		"ridl.jar",
+		"juh.jar",
+		"jurt.jar",
+		"unoloader.jar",
+		"officebean.jar"
+	};
+	
+	/**
+	 * returns the path of all the kept jars contained in the folder pointed by path.
+	 * 
+	 * @param ooo the OOo instance from which to get the jars
+	 * @return a vector of Path pointing to each jar.
+	 */
+	private Vector findJarsFromPath(IOOo ooo){
+		Vector jarsPath = new Vector();
+		
+		Path folderPath = new Path(ooo.getClassesPath());
+		File programFolder = folderPath.toFile();
+		
+		String[] content = programFolder.list();
+		for (int i=0, length=content.length; i<length; i++){
+			String contenti = content[i];
+			if (isKeptJar(contenti)){
+				Path jariPath = new Path (
+						ooo.getClassesPath()+"/"+contenti);
+				jarsPath.add(jariPath);
+			}
+		}
+		
+		return jarsPath;
 	}
 	
 	/**
