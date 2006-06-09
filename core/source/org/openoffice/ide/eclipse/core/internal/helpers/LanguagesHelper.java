@@ -9,6 +9,12 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
 
+/**
+ * Helper class for implementation languages handling
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class LanguagesHelper {
 	
 	/**
@@ -29,6 +35,13 @@ public class LanguagesHelper {
 		return result;
 	}
 	
+	/**
+	 * Returns the language name as specified in the <code>plugin.xml</code>
+	 * file from the language object.
+	 * 
+	 * @param language the language object
+	 * @return the language name
+	 */
 	public static String getNameFromLanguage(ILanguage language) {
 		
 		String name = null;
@@ -87,6 +100,12 @@ public class LanguagesHelper {
 		return language;
 	}
 	
+	/**
+	 * Convenience method returning the language definitions from the plugins
+	 * extensions points descriptions.
+	 * 
+	 * @return the array of the configuration element for the languages.
+	 */
 	private static IConfigurationElement[] getLanguagesDefs(){
 		IConfigurationElement[] result = null;
 		

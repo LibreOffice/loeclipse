@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -70,6 +70,10 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 		activePage = OOEclipsePlugin.getActivePage();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
+	 */
 	public boolean performFinish() {
 		
 		final String packageName = page.getPackage();
@@ -87,6 +91,10 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 		return true;
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		
 		super.init(workbench, selection);
@@ -139,5 +147,4 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 			}
 		}
 	}
-
 }

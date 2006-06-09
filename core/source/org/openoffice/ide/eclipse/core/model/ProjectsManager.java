@@ -3,13 +3,23 @@ package org.openoffice.ide.eclipse.core.model;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 
-public class ProjectsManager {
+/**
+ * Singleton mapping the UNO-IDL projects to their name to provide an easy
+ * acces to UNO-IDL projects.
+ * 
+ * @author cbosdonnat
+ */
+public class ProjectsManager implements IResourceChangeListener {
 
 	private Hashtable projects;
 	
@@ -64,11 +74,17 @@ public class ProjectsManager {
 		projects.clear();
 	}
 	
+	/**
+	 * Private constructor for the singleton. Its charge is to load all the
+	 * existing UNO-IDL projects
+	 *
+	 */
 	private ProjectsManager(){
 		projects = new Hashtable();
 		
 		/* Load all the existing unoidl projects */
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		IProject[] projects = ResourcesPlugin.getWorkspace().
+				getRoot().getProjects();
 		for (int i=0, length=projects.length; i<length; i++){
 			IProject project = projects[i];
 			
@@ -84,9 +100,27 @@ public class ProjectsManager {
 					addProject(unoproject);
 				}
 			} catch (CoreException e) {
-				PluginLogger.getInstance().error("Failed to load the project " + 
-						project.getName(), e); // TODO i18n
+				PluginLogger.getInstance().error(
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.LOAD_PROJECT_ERROR) + 
+						project.getName(), e);
 			}
+		}
+		
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
+				IResourceChangeEvent.PRE_DELETE);
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		
+		// detect UNO IDL project about to be deleted
+		IResource removed = event.getResource();
+		if (projects.containsKey(removed.getName())) {
+			projects.remove(removed.getName());
 		}
 	}
 }

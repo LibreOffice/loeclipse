@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -53,7 +53,8 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * Class that visit each child of the project's tree to generate it's urd file.
+ * Class visiting each child of the idl folder to generate the corresponding
+ * <code>urd</code> file.
  * 
  * @author cbosdonnat
  *
@@ -62,10 +63,19 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 	
 	private IProgressMonitor progressMonitor;
 	
+	/**
+	 * Default constructor
+	 * 
+	 * @param monitor progress monitor
+	 */
 	public IdlcBuildVisitor(IProgressMonitor monitor) {
 		progressMonitor = monitor;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
+	 */
 	public boolean visit(IResource resource) throws CoreException {
 		
 		boolean visitChildren = false;
@@ -93,5 +103,4 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 		
 		return visitChildren;
 	}
-
 }

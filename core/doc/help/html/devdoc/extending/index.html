@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+		<title>Plugin Developer Documentation</title>
+		<link href="../../styles.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div class="article">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h1 class="title"><a id="id2407146"/>
+							Extending the OpenOffice.org 
+							integration plugin</h1>
+					</div>
+					<div>
+						<h3 class="subtitle">
+							<i>How to add new languages</i></h3>
+					</div>
+					<div>
+						<div class="abstract">
+							<p class="title">
+								<b>Abstract</b>
+							</p>
+							<p>This document explains how to add a new 
+								implementation support and how to internationalize
+								the plugin. This is a part of the plugin developer's
+								documentation.</p>
+						</div>
+					</div>
+				</div>
+				<hr/>
+			</div>
+			
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both">
+								<a id="id2498127"/>Internationalizing</h2>
+						</div>
+					</div>
+				</div>
+				<p>To bring the plugin to other languages, there are a few 
+					things to do. Even if you have no knowledge of Java, 
+					internationalizing the plugin will be easy, because there 
+					is no code to write or read. Here is a short list of what 
+					to translate or change:</p>
+				<div class="orderedlist">
+					<ol type="1">
+						<li><p>the messages strings</p></li>
+						<li><p>the on-line help</p></li>
+						<li><p>some images</p></li>
+						<li><p>The translation informations will have to be 
+							packed into a plugin fragment</p></li>
+					</ol>
+				</div>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h3 class="title"><a id="id2512552"/>Language 
+									files</h3>
+							</div>
+						</div>
+					</div>
+					<p>First create a new plugin fragment using the	
+						<span class="strong"><strong>File &gt; New &gt; 
+						Fragment project</strong></span> menu. In this tutorial,
+						the project name will be <code class="literal">
+						org.openoffice.ide.eclipse.core.nl</code>, and the host
+						plugin has to be <code class="literal">org.openoffice.
+						ide.eclipse.core</code>. Then you will create the 
+						following structure:</p>
+					<img src="img/tree.png" width="228" alt="Internationalization tree"/>
+					
+					<p>We can distinguish three parts in this tree:</p>
+					<div class="orderedlist">
+						<ol type="1">
+							<li><p>the <code class="literal">nl/fr</code> 
+								directory: contains all the directories at the 
+								plugin root, ie <code class="literal">doc</code>.
+								This will reproduce each plugin directory and 
+								file with the translated version. Note that the 
+								german translation would be located in the 
+								<code class="literal">nl/de</code> directory and
+								the fr_BE translation would be in 
+								<code class="literal">nl/fr/BE</code> 
+								directory.</p>
+							</li>
+							<li><p>the <code class="literal">org</code>
+								directory: reproduces all the source tree. Then
+								in for each .property file containing strings to
+								translate, there will be a <code class="literal">
+								_lang_REGION.properties</code> file, eg:
+								<code class="literal">Translator_fr.properties</code>.
+								To add a german translation, simply add a 
+								<code class="literal">Translator_de.properties</code>
+								file beneath the <code class="literal">
+								Translator_fr.properties</code> file.</p>
+							</li>
+							<li><p>the <code class="literal">
+								plugin_fr.properties</code>file: contains all 
+								the translated strings from the <code class="literal">
+								plugin.properties</code>file of the host plugin.</p>
+							</li>
+						</ol>
+					</div>
+				</div>
+				<div class="section">
+					<div class="titlepage">
+						<div>
+							<div>
+								<h3 class="title"><a id="id2468776"/>
+									Packaging the language data</h3>
+							</div>
+						</div>
+					</div>
+					<p>Now that you have translated everything, you will have 
+						to package you plugin fragment. For this, double click 
+						on the <code class="literal">META-INF/MANIFEST.MF</code>
+						file contained in the fragment and add the following 
+						items to the binary build in the "<span class="strong">
+						<strong>build</strong></span>" tab:</p>
+					<div class="orderedlist">
+						<ol type="1">
+							<li><p><code class="literal">nl</code></p></li>
+							<li><p><code class="literal">org</code></p></li>
+							<li><p>all the translated files (i.e.: 
+								<code class="literal">plugin_fr.properties</code>
+								and so on)</p>
+							</li>
+						</ol>
+					</div>
+					<p>Then you will have to build the plugin fragment. In the 
+						same editor, select the "<span class="strong"><strong>
+						Overview</strong></span>" tab and click on the 
+						"<span class="strong"><strong>Export Wizard</strong></span>"
+						link. Just select the fragment and the destination file 
+						before to click on "<span class="strong"><strong>Finish
+						</strong></span>": you fragment is generated.</p>
+					<p>For the moment, there is no structure on the CVS to automate
+						the language fragments build: this will come later. But all 
+						the language fragments will certainly be put together in one
+						fragment as the other Eclipse plugin do.</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

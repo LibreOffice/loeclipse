@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcErrorReader.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,7 +62,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 
 /**
- * Class that can read the idlc error output to transform the errors into markers
+ * Class reading the idlc error output to transform the errors into markers
  * 
  * @author cbosdonnat
  *
@@ -71,7 +71,8 @@ public class IdlcErrorReader {
 	
 	/**
 	 * <p>Include error regular expression:</p>
-	 * <p><em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find include file &lt;missing include&gt;</em></p>
+	 * <p><em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find 
+	 * include file &lt;missing include&gt;</em></p>
 	 */
 	private final static String R_IDLCPP_ERROR = "cpp: (\\S+):([0-9]+)(.*:[0-9]+)? (.*)";
 	
@@ -96,7 +97,9 @@ public class IdlcErrorReader {
 		compiledFile = file;
 	}
 	
-	
+	/**
+	 * Computes the error into idl markers
+	 */
 	public void readErrors(){
 		
 		try {

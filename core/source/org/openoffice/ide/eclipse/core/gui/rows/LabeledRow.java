@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -184,12 +184,16 @@ public abstract class LabeledRow {
 	
 	/**
 	 * Removes the field changes listener.
-	 *
 	 */
 	public void  removeFieldChangedlistener(){
 		listener = null;
 	}
 	
+	/**
+	 * Fires a change of the row
+	 * 
+	 * @param e the event to throw for the change
+	 */
 	protected void fireFieldChangedEvent(FieldEvent e){
 		if (null != listener){
 			listener.fieldChanged(e);

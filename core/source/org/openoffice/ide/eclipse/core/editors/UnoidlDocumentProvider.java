@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDocumentProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -52,25 +52,38 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
 
 /**
- * TODOC
+ * The document provider used by the UNO-IDL editor. The partion scanner are
+ * defined in the document configuration {@link UnoidlConfiguration}. In order
+ * to fully understand the editor mechanisms, please report to Eclipse plugin
+ * developer's guide.
  * 
  * @author cbosdonnat
- *
  */
 public class UnoidlDocumentProvider extends FileDocumentProvider{
 
 	private static UnoidlPartitionScanner scanner = null;
 	
+	/**
+	 * The scannable partitions in the idl text. Each one should have an
+	 * associated scanner in the configuration. 
+	 */
 	private final static String[] TYPES = new String[]{
 		UnoidlPartitionScanner.IDL_AUTOCOMMENT,
 		UnoidlPartitionScanner.IDL_COMMENT,
 		UnoidlPartitionScanner.IDL_PREPROCESSOR
 	};
 	
+	/**
+	 * Default constructor
+	 */
 	public UnoidlDocumentProvider(){
 		super();
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
+	 */
 	protected IDocument createDocument(Object element) throws CoreException {
 		IDocument document = super.createDocument(element);
 		if (document!=null){
@@ -81,12 +94,19 @@ public class UnoidlDocumentProvider extends FileDocumentProvider{
 		return document;
 	}
 	
+	/**
+	 * Creates an IDL partitioner to cut the file text into scannable
+	 * partitions.
+	 */
 	private FastPartitioner createIDLPartitioner(){
 		return new FastPartitioner(
 			getIDLPartitionScanner(), TYPES
 		);
 	}
 	
+	/**
+	 * Creates the IDL partition scanner if it's not alread created
+	 */
 	private UnoidlPartitionScanner getIDLPartitionScanner(){
 		if (scanner == null){
 			scanner = new UnoidlPartitionScanner();

@@ -2,9 +2,9 @@
  *
  * $RCSfile: EqualityNameRule.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -65,8 +65,9 @@ public class EqualityNameRule extends RegexRule {
 		super("[a-zA-Z]+\\p{Blank}?=", aToken);
 	}
 	
-	/**
-	 * @see org.openoffice.ide.eclipse.core.editors.syntax.RegexRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		IToken result = super.evaluate(scanner);
@@ -75,5 +76,4 @@ public class EqualityNameRule extends RegexRule {
 		}
 		return result;
 	}
-	
 }

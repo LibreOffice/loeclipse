@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegexRule.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,10 +51,9 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * TODOC
+ * A scanning rule matching a regular expression.
  * 
  * @author cbosdonnat
- * 
  */
 public class RegexRule implements IRule {
 
@@ -64,12 +63,20 @@ public class RegexRule implements IRule {
     private int charReadNb = 0;
     private char[][] delimiters;
     
+    /**
+     * Constructor, initializing the token to return and the regex to
+     * match.
+     * 
+     * @param aRegex the regular expression to match
+     * @param aToken the token to associate
+     */
     public RegexRule(String aRegex, IToken aToken){
         token = aToken;
         regex = aRegex;
     }
     
-    /**
+    /*
+     *  (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
      */
     public IToken evaluate(ICharacterScanner scanner) {
@@ -118,10 +125,17 @@ public class RegexRule implements IRule {
         return result;
     }
   
+    /**
+     * Returns the associated token
+     */
     protected IToken getToken(){
     	return token;
     }
     
+    /**
+     * Convenience method to determine if a character corresponds to an end
+     * of line.
+     */
     protected boolean isEOL (int c){
  
         for (int i= 0; i < delimiters.length; i++) {
@@ -132,6 +146,10 @@ public class RegexRule implements IRule {
         return false;
     }
     
+    /**
+     * Convenience method to determine if a character corresponds to an end
+     * of file.
+     */
     protected boolean isEOF (int c){
         boolean result = false;
         if (ICharacterScanner.EOF == c){

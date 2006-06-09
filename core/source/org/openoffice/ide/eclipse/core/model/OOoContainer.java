@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:08 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -48,6 +48,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.PropertiesManager;
@@ -71,7 +73,7 @@ public class OOoContainer {
 	private Vector listeners;
 
 	/**
-	 * HashMap containing the ooo lines referenced by their name
+	 * HashMap containing the ooo lines referenced by their path
 	 */
 	private HashMap elements;
 	
@@ -106,29 +108,29 @@ public class OOoContainer {
 	 * Returns the ooos elements in an array
 	 */
 	public Object[] toArray(){
-		return toVector().toArray(); 
+		return toVector().toArray();
 	}
 	
 	/**
-	 * Add the OOo given in parameter to the list of the others. Do not use directly 
-	 * the private field to handle OOos
+	 * Add the OOo given in parameter to the list of the others. Do not use 
+	 * directly the private field to handle OOos
 	 * 
 	 * @param ooo OOo to add
 	 */
 	public void addOOo(IOOo ooo){
 		
 		/** 
-		 * If there already is a OOo with such an identifier, replace the values,
-		 * not the object to keep the references on it
+		 * If there already is a OOo with such an identifier, replace the 
+		 * values, not the object to keep the references on it
 		 */ 
 		
 		if (null != ooo){
-			if (!elements.containsKey(ooo.getId())){
-				elements.put(ooo.getId(), ooo);
+			if (!elements.containsKey(ooo.getName())){
+				elements.put(ooo.getName(), ooo);
 				fireOOoAdded(ooo);
 			} else {
-				IOOo oooref = (IOOo)elements.get(ooo.getId());
-				updateOOo(oooref.getId(), ooo);
+				IOOo oooref = (IOOo)elements.get(ooo.getName());
+				updateOOo(oooref.getName(), ooo);
 			}
 		}
 	}
@@ -141,15 +143,15 @@ public class OOoContainer {
 	}
 
 	/**
-	 * remove the given OOo from the list. Do not use directly the private field to 
-	 * handle OOos
+	 * remove the given OOo from the list. Do not use directly the private 
+	 * field to handle OOos
 	 *  
 	 * @param ooo OOo to remove
 	 */
 	public void delOOo(IOOo ooo){
 		if (null != ooo){
-			if (elements.containsKey(ooo.getId())){
-				elements.remove(ooo.getId());
+			if (elements.containsKey(ooo.getName())){
+				elements.remove(ooo.getName());
 				fireOOoRemoved(ooo);
 			}
 		}
@@ -170,8 +172,49 @@ public class OOoContainer {
 	 * @return names of the contained OOos
 	 */
 	public Vector getOOoKeys(){
-		Set names = elements.keySet();
-		return new Vector(names);
+		Set paths = elements.keySet();
+		return new Vector(paths);
+	}
+	
+	/**
+	 * Checks whether the corresponding OOo name already exists
+	 * 
+	 * @param name the OOo Name to check
+	 * @return <code>true</code> if the name is already present, 
+	 * 		<code>false</code> otherwise.
+	 */
+	public boolean containsName(String name) {
+		return elements.containsKey(name);
+	}
+	
+	/**
+	 * Computes a unique name from the given one.
+	 * 
+	 * @param name the name to render unique
+	 * @return the unique name
+	 */
+	public String getUniqueName(String name) {
+		
+		String newName = name;
+		if (containsName(newName)) {
+			Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName);
+			
+			// initialise as if the name contains no #i at its end
+			int number = 0;
+			String nameRoot = new String(newName);
+			
+			if (m.matches()) {
+				number = Integer.parseInt(m.group(2));
+				nameRoot = m.group(1);
+			}
+			
+			// Check for the last number
+			do {
+				number += 1;
+				newName = nameRoot + " #" + number;
+			} while (containsName(newName));
+		}
+		return newName;
 	}
 	
 	private void fireOOoRemoved(IOOo ooo) {
@@ -195,9 +238,8 @@ public class OOoContainer {
 			// update the attributes
 			try {
 				oooref.setHome(ooo.getHome());
-			} catch (InvalidConfigException e){
-				PluginLogger.getInstance().error(e.getLocalizedMessage(), e);  
-				// This message is localized by the OOo class
+			} catch (InvalidConfigException e) {
+				PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
 			}
 			
 			// Reassign the element in the hashmap
@@ -246,6 +288,10 @@ public class OOoContainer {
 		elements.clear();
 	}
 
+	/**
+	 * Singleton accessor, named <code>getInstance</code> in many other
+	 * singleton pattern implementations
+	 */
 	public static OOoContainer getOOoContainer() {
 		
 		if (null == container){
@@ -256,6 +302,10 @@ public class OOoContainer {
 		return container;
 	}
 	
+	/**
+	 * Loads the OpenOffice.org already configured instances from the 
+	 * preferences.
+	 */
 	protected void loadOOos(){
 		
 		IOOo[] ooos = PropertiesManager.loadOOos();
@@ -264,6 +314,10 @@ public class OOoContainer {
 		}
 	}
 	
+	/**
+	 * Saves the OpenOffice.org already configured instances to the 
+	 * preferences.
+	 */
 	public void saveOOos(){
 		
 		// Saving the new OOos 
@@ -279,7 +333,6 @@ public class OOoContainer {
 	
 	/**
 	 * The SDK Container should not be created by another object
-	 *
 	 */
 	private OOoContainer(){
 		

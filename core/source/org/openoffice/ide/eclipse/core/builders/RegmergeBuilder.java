@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,7 +57,12 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * TODOC
+ * Builder for the URD files generating the <code>types.rdb</code> registry.
+ * 
+ * <p>This builder should not be associated directly
+ * to a UNO project: the right builder for this is {@link TypesBuilder}. 
+ * This builder doesn't make any difference between full and incremental 
+ * builds.</p>
  * 
  * @author cbosdonnat
  *
@@ -65,16 +70,21 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 public class RegmergeBuilder extends IncrementalProjectBuilder {
 		
 	/**
-	 * UNOI-IDL project handled. This is a quick access to the project nature 
+	 * UNO-IDL project handled. This is a quick access to the project nature 
 	 */
 	private IUnoidlProject unoidlProject;
 	
 	/**
-	 * Root of the generated types, used by regmerge and javamaker. UCR is chosen for
-	 * OpenOffice.org compatibility 
+	 * Root of the generated types, used by regmerge and javamaker. UCR 
+	 * is chosen for OpenOffice.org compatibility 
 	 */
 	public static final String TYPE_ROOT_KEY = "/UCR";
 	
+	/**
+	 * Default constructor
+	 * 
+	 * @param project the UNO-IDL project on which to build
+	 */
 	public RegmergeBuilder(IUnoidlProject project){
 		unoidlProject = project;
 	}
@@ -94,8 +104,12 @@ public class RegmergeBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
+	 * Computes the full build of all the <code>urd</code> files into a single
+	 * <code>types.rdb</code> file. This resulting file is given by 
+	 * {@link IUnoidlProject#getTypesPath()}. This methods simply launches the
+	 * {@link RegmergeBuildVisitor} on the urd folder.
 	 * 
-	 * @param monitor
+	 * @param monitor progress monitor
 	 */
 	private void fullBuild(IProgressMonitor monitor) {
 		try {
@@ -119,7 +133,13 @@ public class RegmergeBuilder extends IncrementalProjectBuilder {
 		}
 	}
 	
-	
+	/**
+	 * Convenience method to execute the <code>regmerge</code> tool 
+	 * on a given file.
+	 * 
+	 * @param file the file to run <code>regmerge</code> on.
+	 * @param monitor a progress monitor
+	 */
 	static void runRegmergeOnFile(IFile file, IProgressMonitor monitor){
 		
 		IUnoidlProject project = ProjectsManager.getInstance().getProject(

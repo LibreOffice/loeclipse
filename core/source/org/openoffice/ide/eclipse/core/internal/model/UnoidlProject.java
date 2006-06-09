@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,6 +46,7 @@ package org.openoffice.ide.eclipse.core.internal.model;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
@@ -69,8 +70,7 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
- * This class is used to mark projects as UNO-IDL ones.
- * TODOC
+ * This class implements the UNO-IDL and project nature interface.
  * 
  * @author cbosdonnat
  *
@@ -133,6 +133,12 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	private IConfigListener __configListener;
 	
+	/**
+	 * Listener for the configuration to handle the changes on SDK and OOo
+	 * instances
+	 * 
+	 * @author cbosdonnat
+	 */
 	private class configListener implements IConfigListener {
 		
 		/*
@@ -186,6 +192,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	//------------------------------------------------------------ Constructors
 	
+	/**
+	 * Default constructor initializing the configuration listener
+	 */
 	public UnoidlProject() {
 		
 		__configListener = new configListener();
@@ -220,6 +229,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
 	/*
 	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getLanguage()
+	 */
+	public ILanguage getLanguage(){
+		return language;
+	}
+	
+	/*
+	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getName()
 	 */
 	public String getName(){
@@ -228,26 +245,135 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getProjectPath()
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getOOo()
 	 */
-	public IPath getProjectPath() {
-		return getProject().getLocation();
+	public IOOo getOOo() {
+		return ooo;
 	}
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getSourcePath()
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getSdk()
 	 */
-	public IPath getSourcePath() {
-		return getFolder(UnoidlProjectHelper.SOURCE_BASIS).getProjectRelativePath();
+	public ISdk getSdk() {
+		return sdk;
 	}
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getIdlPath()
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setLanguage(org.openoffice.ide.eclipse.model.ILanguage)
 	 */
-	public IPath getIdlPath() {
-		return getFolder(UnoidlProjectHelper.IDL_BASIS).getProjectRelativePath();
+	public void setLanguage(ILanguage newLanguage) {
+		
+		if (language == null && newLanguage != null){
+			language = newLanguage; 
+			language.addProjectNature(getProject());
+			PluginLogger.getInstance().debug("Language specific nature added");
+			
+			try {
+				getProject().setPersistentProperty(
+						new QualifiedName(
+								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+								LANGUAGE), 
+								LanguagesHelper.getNameFromLanguage(language));
+				PluginLogger.getInstance().debug(
+						"Persistent language property set");
+			} catch (CoreException e) {
+				PluginLogger.getInstance().error(
+					OOEclipsePlugin.getTranslationString(
+						I18nConstants.SET_OOONAME_FAILED)+getName(), e);
+			}
+		}
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setOOo(org.openoffice.ide.eclipse.preferences.IOOo)
+	 */
+	public void setOOo(IOOo ooo) {
+		
+		if (null != ooo && null != getSdk()){
+			try {
+				getProject().deleteMarkers(IMarker.PROBLEM, true,
+						IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+				PluginLogger.getInstance().error(
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.REMOVING_MARKER_FAILED), e);
+			}
+		} else if (null == ooo && null != getSdk()){
+			// Toggle ooo error marker if it doesn't exist
+			IProject prjRes = getProject();
+			try {
+				IMarker marker = prjRes.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				marker.setAttribute(IMarker.MESSAGE, 
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.NO_SDK_OOO));
+			} catch (CoreException e){
+				PluginLogger.getInstance().error(
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.MARKER_CREATION_FAILED) + 
+								getProjectPath().toString(), e);
+			}
+		}
+		
+		this.ooo = ooo;
+		try {
+			getProject().setPersistentProperty(
+					new QualifiedName(
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							OOO_NAME), ooo.getName());
+		} catch (CoreException e) {
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
+					I18nConstants.SET_OOONAME_FAILED)+getName(), e);
+		}
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setSdk(org.openoffice.ide.eclipse.preferences.ISdk)
+	 */
+	public void setSdk(ISdk sdk) {
+		
+		if (sdk != null && null != getOOo()) {
+			try {
+				getProject().deleteMarkers(IMarker.PROBLEM, true,
+						IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+				PluginLogger.getInstance().error(
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.REMOVING_MARKER_FAILED), e);
+			}
+		} else if (null == sdk && null != getOOo()) {
+			// Toggle error marker if SDK doesn't exist
+			IProject prjRes = getProject();
+			try {
+				IMarker marker = prjRes.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				marker.setAttribute(IMarker.MESSAGE, 
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.NO_SDK_OOO));
+			} catch (CoreException e){
+				PluginLogger.getInstance().error(
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.MARKER_CREATION_FAILED) + 
+								getProjectPath().toString(), e);
+			}
+		}
+		
+		this.sdk = sdk;
+		try {
+			getProject().setPersistentProperty(
+					new QualifiedName(
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							SDK_NAME), sdk.getId());
+		} catch (CoreException e) {
+			PluginLogger.getInstance().error(
+				OOEclipsePlugin.getTranslationString(
+					I18nConstants.SET_SDKNAME_FAILED)+getName(), e);
+		}
 	}
 	
 	/*
@@ -275,14 +401,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 					companyPrefix.replaceAll("\\.", "/"));
 		}
 		return result;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getTypesPath()
-	 */
-	public IPath getTypesPath() {
-		return new Path("types.rdb");
 	}
 	
 	/*
@@ -331,6 +449,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	/*
 	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getIdlPath()
+	 */
+	public IPath getIdlPath() {
+		return getFolder(UnoidlProjectHelper.IDL_BASIS).getProjectRelativePath();
+	}
+	
+	/*
+	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getImplementationPath()
 	 */
 	public IPath getImplementationPath(){
@@ -340,109 +466,36 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	/*
 	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getProjectPath()
+	 */
+	public IPath getProjectPath() {
+		return getProject().getLocation();
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getTypesPath()
+	 */
+	public IPath getTypesPath() {
+		return new Path("types.rdb");
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getSourcePath()
+	 */
+	public IPath getSourcePath() {
+		return getFolder(UnoidlProjectHelper.SOURCE_BASIS).getProjectRelativePath();
+	}
+	
+	/*
+	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getUrdPath()
 	 */
 	public IPath getUrdPath(){
 		return getFolder(UnoidlProjectHelper.URD_BASIS).getProjectRelativePath();
 	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getSdk()
-	 */
-	public ISdk getSdk() {
-		return sdk;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setSdk(org.openoffice.ide.eclipse.preferences.ISdk)
-	 */
-	public void setSdk(ISdk sdk) {
-		
-		if (sdk != null) {
-			// TODO add a problem marker
-		}
-		
-		this.sdk = sdk;
-		try {
-			getProject().setPersistentProperty(
-					new QualifiedName(
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							SDK_NAME), sdk.getId());
-		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-				OOEclipsePlugin.getTranslationString(
-					I18nConstants.SET_SDKNAME_FAILED)+getName(), e);
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getOOo()
-	 */
-	public IOOo getOOo() {
-		return ooo;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setOOo(org.openoffice.ide.eclipse.preferences.IOOo)
-	 */
-	public void setOOo(IOOo ooo) {
-		
-		if (ooo != null){
-			// TODO add a problem marker
-		}
-		
-		this.ooo = ooo;
-		try {
-			getProject().setPersistentProperty(
-					new QualifiedName(
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							OOO_NAME), ooo.getId());
-		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-				OOEclipsePlugin.getTranslationString(
-					I18nConstants.SET_OOONAME_FAILED)+getName(), e);
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getLanguage()
-	 */
-	public ILanguage getLanguage(){
-		return language;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setLanguage(org.openoffice.ide.eclipse.model.ILanguage)
-	 */
-	public void setLanguage(ILanguage newLanguage) {
-		
-		if (language == null && newLanguage != null){
-			language = newLanguage; 
-			language.addProjectNature(getProject());
-			PluginLogger.getInstance().debug("Language specific nature added");
-			
-			try {
-				getProject().setPersistentProperty(
-						new QualifiedName(
-								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-								LANGUAGE), 
-								LanguagesHelper.getNameFromLanguage(language));
-				PluginLogger.getInstance().debug(
-						"Persistent language property set");
-			} catch (CoreException e) {
-				PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-						I18nConstants.SET_OOONAME_FAILED)+getName(), e);
-			}
-		}
-	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getFile(org.eclipse.core.runtime.IPath)
@@ -474,11 +527,12 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	public IFolder getFolder(String path) {
 		return getProject().getFolder(path);
 	}
+
+	
 	
 	//*************************************************************************
 	// IProjectNature Implementation
 	//*************************************************************************
-	
 	
 	/*
 	 *  (non-Javadoc)
@@ -544,6 +598,10 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	//*************************************************************************
 	
 
+	/**
+	 * Set the builders for the project. This method configures the builders
+	 * using the implementation language informations 
+	 */
 	public void setBuilders() throws CoreException {
 		if (!(null == sdk || null == ooo || 
 				null == companyPrefix || null == outputExtension)){

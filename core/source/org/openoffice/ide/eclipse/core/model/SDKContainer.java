@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKContainer.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:08 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,10 +56,9 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
 /**
- * Singleton object containing the sdks.
+ * Singleton object containing the SDK instances.
  * 
  * @author cbosdonnat
- *
  */
 public class SDKContainer { 
 	
@@ -246,6 +245,10 @@ public class SDKContainer {
 		elements.clear();
 	}
 
+	/**
+	 * Singleton accessor, named <code>getInstance</code> in many other
+	 * singleton pattern implementations
+	 */
 	public static SDKContainer getSDKContainer() {
 		
 		if (null == container){
@@ -256,6 +259,10 @@ public class SDKContainer {
 		return container;
 	}
 	
+	/**
+	 * Loads the SDK already configured instances from the 
+	 * preferences.
+	 */
 	protected void loadSDKs(){
 		
 		ISdk[] sdks = PropertiesManager.loadSDKs();
@@ -264,6 +271,10 @@ public class SDKContainer {
 		}
 	}
 	
+	/**
+	 * Saves the SDK already configured instances to the 
+	 * preferences.
+	 */
 	public void saveSDKs(){
 		
 		// Saving the new SDKs 

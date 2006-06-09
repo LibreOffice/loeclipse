@@ -2,9 +2,9 @@
  *
  * $RCSfile: TextRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -53,7 +53,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * TODOC
+ * GUI row for a text input. It supports only the Grid Layout
+ * and can be extended to manage more complex texts.
+ * 
+ * @see org.openoffice.ide.eclipse.core.gui.rows.FileRow
+ * 		for a file row based on this class
+ * @see org.openoffice.ide.eclipse.core.gui.rows.TypeRow
+ * 		for a Uno type selection row based on this class 
  * 
  * @author cbosdonnat
  *
@@ -75,6 +81,10 @@ public class TextRow extends LabeledRow
 		field.addKeyListener(this);
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+	 */
 	public void focusGained(FocusEvent e) {
 		// Ne fait rien...
 	}
@@ -91,11 +101,20 @@ public class TextRow extends LabeledRow
 		}
 	}
 	
-	String oldValue;
+	private String oldValue;
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+	 */
 	public void keyPressed(KeyEvent e) {
 		oldValue = ((Text)field).getText();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+	 */
 	public void keyReleased(KeyEvent e) {
 		if (e.getSource().equals(field)) {
 			if (!((Text)field).getText().equals(oldValue)){
@@ -106,6 +125,10 @@ public class TextRow extends LabeledRow
 		}
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
+	 */
 	public String getValue() {
 		return value;
 	}

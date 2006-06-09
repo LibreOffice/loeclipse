@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDecorator.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,15 +57,18 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * TODOC
+ * For Eclipse a decorator is a small class changing an element 
+ * image and/or label. This decorator replaces the icons for IDL files and
+ * registries.
  * 
  * @author cbosdonnat
  *
  */
 public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
 
-	/**
-	 * Methods that returns the idl icons for idl resources
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
 	 */
 	public Image decorateImage(Image image, Object element) {
 		
@@ -90,8 +93,9 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
 		return newImage;
 	}
 
-	/**
-	 * Replace the "." by "/". It avoid the package explorer to show it as a package
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
 	 */
 	public String decorateText(String text, Object element) {
 		

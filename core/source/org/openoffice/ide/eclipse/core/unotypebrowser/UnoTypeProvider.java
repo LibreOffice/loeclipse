@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -60,11 +60,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 
 /**
- * TODOC
+ * Class providing UNO types from an OpenOffice.org instance and optionally
+ * from a UNO project.
  * 
  * @author cbosdonnat
  *
@@ -91,16 +93,31 @@ public class UnoTypeProvider {
 	
 	public final static int SINGLETON = 512;
 	
+	/**
+	 * Creates a UNO type provider from a UNO project.
+	 * 
+	 * @param aProject the UNO project to query (with its OOo parameter)
+	 * @param aTypes the types to get
+	 */
 	public UnoTypeProvider(IUnoidlProject aProject, int aTypes) {
 		setTypes(aTypes);
 		setProject(aProject);
 	}
 	
+	/**
+	 * Creates a UNO type provider from an OpenOffice.org instance
+	 * 
+	 * @param aOOoInstance the OOo instance to query
+	 * @param aTypes the types to get
+	 */
 	public UnoTypeProvider(IOOo aOOoInstance, int aTypes) {
 		setTypes(aTypes);
 		setOOoInstance(aOOoInstance);
 	}
 	
+	/**
+	 * Dispose the type provider
+	 */
 	public void dispose(){
 		removeAllTypes();
 		
@@ -109,7 +126,11 @@ public class UnoTypeProvider {
 		pathToRegister = null;
 		
 		if (null != getTypesJob){
+			if (!getTypesJob.cancel()) { // Not sure it stops when running
+				process.destroy();
+			}
 			getTypesJob = null;
+			process = null;
 		}
 	}
 	
@@ -117,7 +138,7 @@ public class UnoTypeProvider {
 	
 	private int types = 1023;
 	
-	private static int[] allowededTypes = {
+	private static int[] allowedTypes = {
 		MODULE,
 		INTERFACE,
 		SERVICE,
@@ -130,24 +151,18 @@ public class UnoTypeProvider {
 		SINGLETON
 	};
 	
-	private static String[] stringTypes = {
-		UnoTypesGetter.S_MODULE,
-		UnoTypesGetter.S_INTERFACE,
-		UnoTypesGetter.S_SERVICE,
-		UnoTypesGetter.S_STRUCT,
-		UnoTypesGetter.S_ENUM,
-		UnoTypesGetter.S_EXCEPTION,
-		UnoTypesGetter.S_TYPEDEF,
-		UnoTypesGetter.S_CONSTANT,
-		UnoTypesGetter.S_CONSTANTS,
-		UnoTypesGetter.S_SINGLETON
-	};
-	
-	public static int invertTypeBits(int aType){
+	/**
+	 * Method changing all the '1' into '0' and the '0' into '1' but only
+	 * on the interesting bytes for the types.
+	 * 
+	 * @param aType
+	 * @return
+	 */
+	static int invertTypeBits(int aType){
 		int result = 0;
 		
 		String sInv = Integer.toBinaryString(aType);
-		int length = allowededTypes.length - sInv.length();
+		int length = allowedTypes.length - sInv.length();
 		
 		if (length <= 10){
 			
@@ -163,26 +178,12 @@ public class UnoTypeProvider {
 		return result;
 	}
 	
-	public static int convertTypeToInt(String aType) {
-		
-		int i = 0;
-		boolean found = false;
-		
-		while (i<stringTypes.length && !found){
-			if (stringTypes[i].equals(aType)) {
-				found = true;
-			} else {
-				i++;
-			}
-		}
-		
-		int result = -1;
-		if (found) {
-			result = allowededTypes[i];
-		}
-		return result;
-	}
-	
+	/**
+	 * Set one or more types. To specify more than one types give the bit or
+	 * of all the types, eg <code>INTERFACE | SERVICE</code>
+	 * 
+	 * @param aTypes the bit or of the types
+	 */
 	public void setTypes(int aTypes) {
 		
 		// Only 10 bits available
@@ -191,38 +192,42 @@ public class UnoTypeProvider {
 		}
 	}
 	
+	/**
+	 * Get the types set as an integer. The types field is a bit or of all the
+	 * types set.
+	 */
 	public int getTypes(){
 		return types;
 	}
 	
+	/**
+	 * Checks if the given type will be queried
+	 * 
+	 * @param type the type to match
+	 * @return <code>true</code> if the type is one of the types set
+	 */
 	public boolean isTypeSet(int type){
 		return (getTypes() & type) == type;
 	}
 	
-	protected String computeTypesString(){
-		String result = "";
-		
-		for (int i=0, length=allowededTypes.length; i<length; i++){
-			int typeValue = allowededTypes[i];
-			
-			if (isTypeSet(typeValue)){
-				result = result + " " + stringTypes[i];
-			}
-		}
-		
-		return result;
-	}
-	
+	/**
+	 * Checks whether the list contains the given type name
+	 * 
+	 * @param scopedName the type name to match
+	 * @return <code>true</code> if the list contains a type with this name
+	 */
 	public boolean contains(String scopedName) {
 		
 		boolean result = false;
 		scopedName = scopedName.replaceAll("::", ".");
 		
-		Iterator iter = internalTypes.iterator();
-		while (iter.hasNext() && !result) {
-			InternalUnoType type = (InternalUnoType)iter.next();
-			if (type.getPath().equals(scopedName)) {
-				result = true;
+		if (isInitialized()) {
+			Iterator iter = internalTypes.iterator();
+			while (iter.hasNext() && !result) {
+				InternalUnoType type = (InternalUnoType)iter.next();
+				if (type.getFullName().equals(scopedName)) {
+					result = true;
+				}
 			}
 		}
 		
@@ -236,6 +241,13 @@ public class UnoTypeProvider {
 	
 	private boolean initialized = false;
 	
+	/**
+	 * Set the UNO projet for which to get the UNO types. This project's
+	 * <code>types.rdb</code> registry will be used as external registry
+	 * for the types query.
+	 * 
+	 * @param aProject the project for which to launch the type query 
+	 */
 	public void setProject(IUnoidlProject aProject){
 		
 		if (null != aProject) {
@@ -273,6 +285,9 @@ public class UnoTypeProvider {
 		}
 	}
 	
+	/**
+	 * Return whether the type provider has been initialized
+	 */
 	public boolean isInitialized(){
 		return initialized;
 	}
@@ -286,8 +301,6 @@ public class UnoTypeProvider {
 			// Defines OS specific constants
 			String pathSeparator = System.getProperty("path.separator");
 			String fileSeparator = System.getProperty("file.separator");
-			
-			
 			
 			// Constitute the classpath for OOo Boostrapping
 			String classpath = "-cp ";
@@ -325,15 +338,12 @@ public class UnoTypeProvider {
 			}
 			classpath = classpath + " ";
 			
+			// Compute the types mask argument
+			String typesMask = "-T" + types;
 			
-			// Transforms the soffice path into a bootsrap valid one
-			String sofficePath = oooInstance.getHome();
-			sofficePath = sofficePath.replace(" ", "%20");
-			
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				sofficePath = sofficePath.replace(fileSeparator, "/");
-			}
-			sofficePath = "-Ffile:///" + sofficePath + " ";
+			// Get the OOo types.rdb registry path as external registry
+			String typesPath = oooInstance.getTypesPath();
+			typesPath = "-Efile:///" + typesPath.replace(" ", "%20");
 			
 			// Add the local registry path
 			String localRegistryPath = "";
@@ -344,23 +354,40 @@ public class UnoTypeProvider {
 					pathToRegister.replace(" ", "%20");
 			}
 			
-			// Computes the command  to execute
-			command = "java " + classpath + 
-					"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter " + 
-					sofficePath + "-B/" +computeTypesString() + localRegistryPath;
+			// Computes the command to execute if oooInstance isn't the URE
+			if (oooInstance instanceof OOo) {
+				command = "java " + classpath + 
+						"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter " + 
+						typesPath + " " + localRegistryPath + " " + typesMask;
+			} else {
+				
+				// compute the arguments array
+				String[] args = new String[] {
+						typesPath,
+						localRegistryPath,
+						typesMask
+				};
+				
+				command = oooInstance.createUnoCommand(
+						"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter", 
+						"file:///"+path, new String[]{}, args);
+			}
 		}
 		return command;
 	}
 	
 	private Job getTypesJob;
+	private Process process;
 	
-	
+	/**
+	 * Launches the UNO type query process
+	 */
 	public void askUnoTypes() {
 		
 		if (null == getTypesJob || Job.RUNNING != getTypesJob.getState()) {
 			getTypesJob = new Job(OOEclipsePlugin.getTranslationString(
 					I18nConstants.FETCHING_TYPES)) {
-	
+				
 				protected IStatus run(IProgressMonitor monitor) {
 					
 					IStatus status = new Status(IStatus.OK,
@@ -379,20 +406,13 @@ public class UnoTypeProvider {
 						String command = computeGetterCommand();
 						
 						// Computes the environment variables
-						String[] vars = new String[1];
-						if (Platform.getOS().equals(Platform.OS_WIN32)) {
-							vars[0] = "PATH=" + 
-									oooInstance.getHome() + "\\program";
-						} else {
-							vars[0] = "LD_LIBRARY_PATH=" + 
-									oooInstance.getHome() + "/program";
-						}
 						
-						Process process = Runtime.getRuntime().exec(command, vars);
+						process = Runtime.getRuntime().exec(command);
 						
 						// Reads the types and add them to the list
 						LineNumberReader reader = new LineNumberReader(
-									new InputStreamReader(process.getInputStream()));
+									new InputStreamReader(
+											process.getInputStream()));
 						
 						String line = reader.readLine();
 						monitor.worked(1);
@@ -402,6 +422,7 @@ public class UnoTypeProvider {
 							addType(internalType);
 							line = reader.readLine();
 						}
+						
 						monitor.worked(1);
 						setInitialized();
 						
@@ -414,8 +435,8 @@ public class UnoTypeProvider {
 								e);
 						
 						PluginLogger.getInstance().debug(e.getMessage());
-					} catch (NullPointerException e) {
-						PluginLogger.getInstance().debug(e.getMessage());
+					} catch (Exception e) {
+						PluginLogger.getInstance().error(e.getMessage(), e);
 						monitor.worked(0);
 						cancel();
 					}
@@ -427,7 +448,6 @@ public class UnoTypeProvider {
 			getTypesJob.setSystem(true);
 			getTypesJob.setPriority(Job.INTERACTIVE);
 			
-			
 			// Execute the job asynchronously
 			getTypesJob.schedule();
 		}
@@ -435,14 +455,23 @@ public class UnoTypeProvider {
 	
 	private Vector listeners = new Vector(); 
 	
+	/**
+	 * Register the given listener
+	 */
 	public void addInitListener(IInitListener listener) {
 		listeners.add(listener);
 	}
 	
+	/**
+	 * Makes the given initialization listener stop listening
+	 */
 	public void removeInitListener(IInitListener listener) {
 		listeners.remove(listener);
 	}
 	
+	/**
+	 * Propagate the news to the listeners that it has been initialized.
+	 */
 	private void setInitialized(){
 		initialized = true;
 		
@@ -455,7 +484,13 @@ public class UnoTypeProvider {
 	
 	private Vector internalTypes = new Vector();
 	
-	
+	/**
+	 * Get a type from its path
+	 * 
+	 * @param typePath the type path
+	 * 
+	 * @return the corresponding complete type description
+	 */
 	public InternalUnoType getType(String typePath) {
 		
 		Iterator iter = internalTypes.iterator();
@@ -463,7 +498,7 @@ public class UnoTypeProvider {
 		
 		while (null == result && iter.hasNext()) {
 			InternalUnoType type = (InternalUnoType)iter.next();
-			if (type.getPath().equals(typePath)) {
+			if (type.getFullName().equals(typePath)) {
 				result = type;
 			}
 		}
@@ -471,15 +506,26 @@ public class UnoTypeProvider {
 		
 	}
 	
+	/**
+	 * Returns the types list as an array
+	 */
 	protected Object[] toArray() {
 		return internalTypes.toArray();
 	}
 	
+	/**
+	 * Add a type to the list
+	 */
 	protected void addType(InternalUnoType internalType) {
 		internalTypes.add(internalType);
 	}
 
+	/**
+	 * purge the types list
+	 */
 	protected void removeAllTypes() {
-		internalTypes.clear();
+		if (internalTypes != null) {
+			internalTypes.clear();
+		}
 	}
 }

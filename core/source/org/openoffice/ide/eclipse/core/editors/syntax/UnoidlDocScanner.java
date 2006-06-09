@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDocScanner.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -54,13 +54,18 @@ import org.openoffice.ide.eclipse.core.editors.ColorProvider;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 
 /**
- * TODOC
+ * UNO-IDL comment scanner. Used by the UNO-IDL viewer configuration. In order 
+ * to fully understand the editor mechanisms, please report to Eclipse 
+ * plugin developer's guide.
  * 
  * @author cbosdonnat
  *
  */
 public class UnoidlDocScanner extends RuleBasedScanner {
 	
+	/**
+	 * Default constructor initializing the color manager to colorize.
+	 */
 	public UnoidlDocScanner(ColorProvider colorManager) {
 		
 		IToken body = new Token (

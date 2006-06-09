@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -74,8 +74,10 @@ import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
 /**
- * This class creates the whole SDK table with it's viewer and content provider
- * TODOC
+ *This class creates the whole SDK table with it's viewer and content provider.
+ * This class encloses a SDK editor dialog.
+ * 
+ * @see AbstractTable for the basic table functions descriptions
  * 
  * @author cbosdonnat
  *
@@ -88,9 +90,9 @@ public class SDKTable extends AbstractTable {
 	private SDK tmpsdk;
 		
 	/**
-	 * Main constructor of the SDK Table. It's style can't be configured like other
-	 * SWT composites. When using a SDK Table, you should add all the necessary Layouts
-	 * and Layout Data to display it correctly. 
+	 * Main constructor of the SDK Table. It's style can't be configured like
+	 * other SWT composites. When using a SDK Table, you should add all the 
+	 * necessary Layouts and Layout Data to display it correctly. 
 	 * 
 	 * @param parent Composite parent of the table.
 	 */
@@ -118,11 +120,19 @@ public class SDKTable extends AbstractTable {
 		SDKContainer.getSDKContainer();
 	}
 	
+	/**
+	 * Saves the SDK preferences
+	 *
+	 */
 	public void savePreferences(){
 		
 		SDKContainer.getSDKContainer().saveSDKs();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#handleDoubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+	 */
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		if (!event.getSelection().isEmpty()){
 			
@@ -135,6 +145,10 @@ public class SDKTable extends AbstractTable {
 		}
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#addLine()
+	 */
 	protected ITableElement addLine() {
 		// Launch add SDK dialog
 		SDK sdk = openDialog(null, false);
@@ -142,6 +156,10 @@ public class SDKTable extends AbstractTable {
 		return sdk;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#removeLine()
+	 */
 	protected ITableElement removeLine() {
 		ITableElement o = super.removeLine();
 		if (null != o && o instanceof SDK) {
@@ -152,13 +170,16 @@ public class SDKTable extends AbstractTable {
 	}
 	
 	/**
-	 * This method create and calls the dialog box to be launched on SDK edition or SDK creation.
-	 * The parameter <code>sdk</code> could be null: in this case, a new one will be created. 
-	 * Otherwise the fields of the old one will be changed. This is useful for SDK editing: the 
-	 * object reference is the same.
+	 * This method create and calls the dialog box to be launched on SDK 
+	 * edition or SDK creation. The parameter <code>sdk</code> could be null: 
+	 * in this case, a new one will be created. Otherwise the fields of the 
+	 * old one will be changed. This is useful for SDK editing: the object 
+	 * reference is the same.
 	 * 
-	 * @param sdk
-	 * @return
+	 * @param sdk the SDK instance to edit if any
+	 * @param editing <code>true</code> if about to edit a SDK instance
+	 * 
+	 * @return the modified or created SDK instance
 	 */
 	protected SDK openDialog(SDK sdk, boolean editing){
 		
@@ -192,7 +213,8 @@ public class SDKTable extends AbstractTable {
 	}
 	
 	/**
-	 * The SDK content provider is a class which provides the SDKs objects to the viewer
+	 * The SDK content provider is a class which provides the SDKs objects to 
+	 * the viewer.
 	 * 
 	 * @author cbosdonnat
 	 *
@@ -205,14 +227,26 @@ public class SDKTable extends AbstractTable {
 			}
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
 		public Object[] getElements(Object inputElement) {
 			return SDKContainer.getSDKContainer().toArray();
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
 		public void dispose() {
 			SDKContainer.getSDKContainer().removeListener(this);
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (null != oldInput){
 				((SDKContainer)oldInput).removeListener(this);
@@ -223,6 +257,10 @@ public class SDKTable extends AbstractTable {
 			}
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigAdded(java.lang.Object)
+		 */
 		public void ConfigAdded(Object element) {
 			if (element instanceof SDK){
 				tableViewer.add(element);
@@ -232,6 +270,10 @@ public class SDKTable extends AbstractTable {
 			}
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigRemoved(java.lang.Object)
+		 */
 		public void ConfigRemoved(Object element) {
 			if (null != element && element instanceof SDK){
 				// Only one SDK to remove
@@ -252,6 +294,10 @@ public class SDKTable extends AbstractTable {
 			table.redraw();
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigUpdated(java.lang.Object)
+		 */
 		public void ConfigUpdated(Object element) {
 			if (element instanceof SDK) {
 				// Note that we can do this only because the SDK Container guarantees
@@ -265,7 +311,6 @@ public class SDKTable extends AbstractTable {
 	 * Class for the SDK add/edit dialog. 
 	 * 
 	 * @author cbosdonnat
-	 *
 	 */
 	class SDKDialog extends StatusDialog implements IFieldChangedListener{
 		
@@ -277,10 +322,21 @@ public class SDKTable extends AbstractTable {
 		
 		private SDK sdk;
 		
+		/**
+		 * Create the SDK dialog without any SDK instance
+		 * 
+		 * @param parentShell the shell where to put the dialog 
+		 */
 		protected SDKDialog(Shell parentShell) {
 			this(parentShell, null);
 		}
 		
+		/**
+		 * Create the SDK dialog with an SDK instance to edit
+		 * 
+		 * @param parentShell the shell where to put the dialog 
+		 * @param sdk the SDK instance to edit
+		 */
 		protected SDKDialog(Shell parentShell, SDK sdk) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -290,6 +346,10 @@ public class SDKTable extends AbstractTable {
 			setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.SDK_CONFIG_DIALOG_TITLE));
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+		 */
 		protected Control createDialogArea(Composite parent) {
 			
 			Composite body = new Composite(parent, SWT.None);
@@ -330,6 +390,10 @@ public class SDKTable extends AbstractTable {
 			return body;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+		 */
 		protected void okPressed() {
 			// Perform data controls on the fields: they are all mandatory
 			// If there is one field missing, print an error line at the bottom
@@ -347,11 +411,19 @@ public class SDKTable extends AbstractTable {
 			}
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
+		 */
 		protected void cancelPressed() {
 			
 			super.cancelPressed();
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
+		 */
 		public void fieldChanged(FieldEvent e) {
 			// The result doesn't matter: we only want to update the status of the windows
 
@@ -361,6 +433,13 @@ public class SDKTable extends AbstractTable {
 			}
 		}
 		
+		/**
+		 * Checks if the property is valid
+		 * 
+		 * @param property the property to check
+		 * @return <code>true</code> if the property is valid, <code>false</code>
+		 * 			otherwise.
+		 */
 		private boolean isValid(String property){
 			boolean result = false;
 				

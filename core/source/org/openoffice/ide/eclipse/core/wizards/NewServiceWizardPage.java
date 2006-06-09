@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,17 +58,43 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
+/**
+ * Service creation wizard page. This page is based on the 
+ * {@link NewScopedElementWizardPage}.
+ * 
+ * @author cbosdonnat
+ */
 public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	
+	/**
+	 * Simple constructor setting the package root and element name to 
+	 * blank values.
+	 * 
+	 * @param pageName the page name
+	 * @param project the project where to create the service
+	 */
 	public NewServiceWizardPage(String pageName, IUnoidlProject project) {
 		super(pageName, project);
 	}
 	
+	/**
+	 * Constructor setting Allowing to set custom root package and service
+	 * name
+	 * 
+	 * @param pageName the page name
+	 * @param project the project where to create the service
+	 * @param aRootName the project root namespace
+	 * @param aServiceName the default service name 
+	 */
 	public NewServiceWizardPage(String pageName, IUnoidlProject project, 
 								String aRootName, String aServiceName){
 		super(pageName, project, aRootName, aServiceName);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getProvidedTypes()
+	 */
 	public int getProvidedTypes() {
 		return UnoTypeProvider.INTERFACE;
 	}
@@ -81,6 +107,10 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	private TypeRow ifaceInheritanceRow;
 	private BooleanRow publishedRow;
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#createSpecificControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createSpecificControl(Composite parent) {
 		
 		ifaceInheritanceRow = new TypeRow(parent, 
@@ -98,32 +128,57 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		publishedRow.setFieldChangedListener(this);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
+	 */
 	public String getTitle() {
 		return OOEclipsePlugin.getTranslationString(
 				I18nConstants.NEW_SERVICE_TITLE);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
+	 */
 	public String getDescription() {
 		return "";
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getTypeLabel()
+	 */
 	protected String getTypeLabel() {
 		return OOEclipsePlugin.getTranslationString(I18nConstants.SERVICE_NAME);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getImageDescriptor()
+	 */
 	protected ImageDescriptor getImageDescriptor() {
 		return OOEclipsePlugin.getImageDescriptor(
 				ImagesConstants.NEW_SERVICE_IMAGE);
 	}
 	
+	/**
+	 * Gets the name of the exported interface
+	 */
 	public String getInheritanceName() {
 		return ifaceInheritanceRow.getValue();
 	}
 	
+	/**
+	 * Returns whether the service is published or not
+	 */
 	public boolean isPublished() {
 		return publishedRow.getBooleanValue();
 	}
 	
+	/**
+	 * Sets the name of the exported interface
+	 */
 	public void setInheritanceName(String value, boolean forced) {
 		
 		if (value.matches("[a-zA-Z0-9_]+(.[a-zA-Z0-9_])*")) {
@@ -132,12 +187,19 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		}
 	}
 	
+	/**
+	 * Sets whether the service is published or not
+	 */
 	public void setPublished(boolean value, boolean forced) {
 		
 		publishedRow.setValue(value);
 		publishedRow.setEnabled(!forced);
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
+	 */
 	public boolean isPageComplete() {
 		boolean result = super.isPageComplete(); 
 		
@@ -152,6 +214,16 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		return result;
 	}
 	
+	/**
+	 * Create a service
+	 * 
+	 * @param packageName the name of the container
+	 * @param name the name of the service
+	 * @param inheritanceName the name of the exported interface
+	 * @param published <code>true</code> if the service is published
+	 * 
+	 * @return the handle on the created file containing the service
+	 */
 	public IFile createService(String packageName, String name,
 			String inheritanceName, boolean published){
 		
@@ -219,5 +291,4 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		
 		return serviceFile;
 	}
-
 }

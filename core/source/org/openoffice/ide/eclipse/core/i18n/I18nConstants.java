@@ -2,9 +2,9 @@
  *
  * $RCSfile: I18nConstants.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.i18n;
 
+/**
+ * Defines the keys to use for string internationalization. The english text
+ * is defined in the <code>Translator.properties</code> file 
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class I18nConstants {
 
 	public static final String NAME              = "NAME";
@@ -128,16 +135,20 @@ public class I18nConstants {
 	public static final String ERROR_OUTPUT_UNREADABLE = "ERROR_OUTPUT_UNREADABLE";
 	public static final String VISIT_FAILED = "VISIT_FAILED";
 	public static final String MARKER_CREATION_FAILED = "MARKER_CREATION_FAILED";
+	public static final String REMOVING_MARKER_FAILED = "REMOVING_MARKER_FAILED";
 	public static final String UNO_PLUGIN_ERROR = "UNO_PLUGIN_ERROR";
 	public static final String PROJECT_CREATION_FAILED = "PROJECT_CREATION_FAILED";
 	public static final String PROCESS_ERROR = "PROCESS_ERROR";
 	public static final String DOCUMENT_ERROR = "DOCUMENT_ERROR";
 	public static final String REGVIEW_READ_ERROR = "REGVIEW_READ_ERROR";
 	public static final String URDFILE_NOT_REMOVED = "URDFILE_NOT_REMOVED";
-	public static final String NO_NEW_PARENT = "NO_NEW_PARENT";
-	public static final String NO_ROOT_DEFINED = "NO_ROOT_DEFINED";
 	public static final String NAME_EXISTS = "NAME_EXISTS";
 	public static final String SERVICE_CREATION_FAILED = "SERVICE_CREATION_FAILED";
+	public static final String NO_SDK_OOO = "NO_SDK_OOO";
+	public static final String CODE_GENERATION_FAILED = "CODE_GENERATION_FAILED";
+	public static final String IDLC_ERROR = "IDLC_ERROR";
+	public static final String LOAD_PROJECT_ERROR = "LOAD_PROJECT_ERROR";
+	public static final String NOT_UNIQUE_OOO_NAME = "NOT_UNIQUE_OOO_NAME";
 	
 	public static final String NEW_SERVICE_TITLE = "NEW_SERVICE_TITLE";
 	public static final String DEPEND_TABLE_TITLE = "DEPEND_TABLE_TITLE";
@@ -173,5 +184,4 @@ public class I18nConstants {
 	public static final String INTERFACE_NAME_TITLE = "INTERFACE_NAME_TITLE";
 	public static final String NEW_INTERFACE_TITLE = "NEW_INTERFACE_TITLE";
 	public static final String INTERFACE_NAME = "INTERFACE_NAME";
-
 }

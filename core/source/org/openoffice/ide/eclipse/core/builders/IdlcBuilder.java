@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,12 +57,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
- * TODOC
+ * Builder for the IDL files. 
+ * 
+ * <p>This builder should not be associated directly
+ * to a UNO project: the right builder for this is {@link TypesBuilder}. 
+ * This builder doesn't make any difference between full and incremental 
+ * builds.</p>
  * 
  * @author cbosdonnat
  *
@@ -94,7 +100,6 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 		
 		unoidlProject = project;
 	}
-
 	
 	/*
 	 *  (non-Javadoc)
@@ -118,10 +123,12 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Method that perform the full build of the project.
-	 * TODOC further documentation to write
+	 * Method that perform the full build of the project. 
 	 * 
-	 * @param monitor
+	 * <p>It launches the {@link IdlcBuildVisitor} on the idl
+	 * folder to build every <code>.idl</code> file.</p>
+	 * 
+	 * @param monitor progress monitor
 	 */
 	private void fullBuild(IProgressMonitor monitor) {
 
@@ -133,15 +140,22 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 			
 		} catch (CoreException e) {
 			PluginLogger.getInstance().error(
-					"Error raised during the idlc compilation", e); // TODO i18n
+					OOEclipsePlugin.getTranslationString(
+							I18nConstants.IDLC_ERROR), e);
 		}
 	}
 	
-	
+	/**
+	 * Convenience method to execute the <code>idlc</code> tool on a given
+	 * file.
+	 * 
+	 * @param file the file to run <code>idlc</code> on.
+	 * @param monitor a progress monitor
+	 */
 	static void runIdlcOnFile(IFile file, IProgressMonitor monitor){
 		
 		IUnoidlProject project = ProjectsManager.getInstance().
-		getProject(file.getProject().getName());
+				getProject(file.getProject().getName());
 		
 		ISdk sdk = project.getSdk();
 		
@@ -171,9 +185,6 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 			
 			// Do not forget to destroy the process
 			process.destroy();
-			
-		} else {
-			// TODO Toggle sdk error marker if it doesn't exist
 		}
 	}
 }

@@ -1,0 +1,13 @@
+<toc label="Extending the plugin">
+	<topic label="Extending the plugin" href="doc/help/html/devdoc/extending/index.html">
+  		<topic label="Internationalizing" href="doc/help/html/devdoc/extending/index.html#id2498127">
+    		<topic label="Language files" href="doc/help/html/devdoc/extending/index.html#id2512552"/>
+	    	<topic label="Packaging the language data" href="doc/help/html/devdoc/extending/index.html#id2468776"/>
+  		</topic>
+	  	<topic label="Adding a new language support" href="doc/help/html/devdoc/extending/ar01s02.html">
+    		<topic label="The language extension point" href="doc/help/html/devdoc/extending/ar01s02.html#id2469372"/>
+    		<topic label="Packaging the language plugin" href="doc/help/html/devdoc/extending/ar01s02.html#id2469426"/>
+	  	</topic>
+  		<topic label="License" href="doc/help/html/devdoc/extending/ar01s03.html"/>
+  	</topic>
+</toc>

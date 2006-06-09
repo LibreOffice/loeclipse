@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFileAction.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:09 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,18 +51,36 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.openoffice.ide.eclipse.core.wizards.NewUnoFileWizard;
 
+/**
+ * This action is used to create a new UNO File. Please note that this class
+ * should be dropped before the 1.1 version fo the plugin.
+ * 
+ * @author cbosdonnat
+ */
 public class NewUnoFileAction implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow window;
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
 	public void dispose() {
 		// Nothing to do on dispose
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
 	public void run(IAction action) {
 		// Launch the new IDL File wizard
 		NewUnoFileWizard wizard = new NewUnoFileWizard();
@@ -72,6 +90,10 @@ public class NewUnoFileAction implements IWorkbenchWindowActionDelegate {
 		dialog.open();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Nothing to do on selection change
 	}

@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:08 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,249 +45,147 @@ package org.openoffice.ide.eclipse.core.internal.model;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.graphics.Image;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.gui.ITableElement;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
 /**
- * TODOC
+ * Representing an OpenOffice.org instance for use in the UNO-IDL projects.
+ * 
+ * <p>An OpenOffice.org instance is recognized to the following files:
+ * 	<ul>
+ * 		<li><code>program/classes</code> directory</li>
+ * 		<li><code>program/types.rdb</code> registry</li>
+ * 		<li><code>program/bootstraprc</code> file</li>
+ * 	</ul>
+ * </p>
+ * 
  * @author cbosdonnat
  *
  */
-public class OOo implements IOOo, ITableElement {
+public class OOo extends AbstractOOo {
 	
-	public static final String NAME = "__ooo_name";
-	
-	public static final String PATH = "__ooo_path";
-
 	/**
 	 * private constant that holds the ooo name key in the bootstraprc file
 	 */
 	private static final String  K_PRODUCTKEY = "ProductKey";
 	
-	private String name;
-	private String oooHome;
-	
+	/**
+	 * Creating a new OOo instance specifying its home directory
+	 * 
+	 * @param oooHome the OpenOffice.org home directory
+	 * @throws InvalidConfigException is thrown if the home directory doesn't
+	 * 		contains the required files and directories
+	 */
 	public OOo(String oooHome) throws InvalidConfigException {
-		super();
-		setHome(oooHome);
+		super(oooHome);
+	}
+	
+	public OOo(String oooHome, String oooName) throws InvalidConfigException {
+		super(oooHome, oooName);
 	}
 
 	//----------------------------------------------------- IOOo Implementation
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.IOOo#getName()
-	 */
-	public String getName(){
-		return name;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.IOOo#getId()
-	 */
-	public String getId(){
-		return name;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.IOOo#getHome()
-	 */
-	public String getHome(){
-		return oooHome;
-	}
-	
-	/*
-	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.preferences.IOOo#getClassesPath()
 	 */
 	public String getClassesPath(){
-		return oooHome + "/program/classes";
+		return getHome() + "/program/classes";
 	}
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.IOOo#setHome(java.lang.String)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getLibsPath()
 	 */
-	public void setHome(String home) throws InvalidConfigException {
-		
-		try {
-			// Get the file representing the given OOo home path
-			Path homePath = new Path(home);
-			File homeFile = homePath.toFile();
-				
-			// Check for the program directory
-			File programFile = new File(homeFile, "program");
-			if (programFile.exists() && programFile.isDirectory()){
-				
-				// checks for types.rdb
-				File typesFile = new File(programFile, "types.rdb");
-				if (! (typesFile.exists() && typesFile.isFile()) ){
-					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+ typesFile.getAbsolutePath(), 
-							InvalidConfigException.INVALID_OOO_HOME);
-				}
-				
-				// checks for classes directory
-				File classesFile = new File (programFile, "classes");
-				if (! (classesFile.exists() && classesFile.isDirectory()) ){
-					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR) + classesFile.getAbsolutePath(), 
-							InvalidConfigException.INVALID_OOO_HOME);
-				}
-				
-				this.oooHome = home;
-				readSettings(programFile);
-				
-			} else {
-				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR) + programFile.getAbsolutePath(), 
-						InvalidConfigException.INVALID_OOO_HOME);
-			}
-				
-			
-			
-		} catch (Throwable e){
-			
-			if (e instanceof InvalidConfigException) {
-				
-				// Rethrow the invalidSDKException
-				InvalidConfigException exception = (InvalidConfigException)e;
-				throw exception;
-			} else {
+	public String getLibsPath() {
+		return getHome() + "/program";
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getTypesPath()
+	 */
+	public String getTypesPath() {
+		return getHome() + "/program/types.rdb";
+	}
 
-				// Unexpected exception thrown
-				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.UNEXPECTED_EXCEPTION),
-						InvalidConfigException.INVALID_OOO_HOME, e);
-			}
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getServicesPath()
+	 */
+	public String getServicesPath() {
+		return getHome() + "/program/services.rdb";
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnorcPath()
+	 */
+	public String getUnorcPath() {
+		String path = getHome() + "/program/bootstrap";
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			path += ".ini";
+		} else {
+			path += "rc";
 		}
+		return path;
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnoPath()
+	 */
+	public String getUnoPath() {
+		return getHome() + "/program/uno";
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.internal.model.AbstractOOo#setName(java.lang.String)
+	 */
+	protected void setName(String aName) {
+		
+		String name = aName;
+		if (name == null || name.equals("")) {
+			name = getOOoName();
+		}
+		
+		super.setName(name);
 	}
 	
 	/**
-	 * Reads the bootstraprc file to get the ooo name and buildid. They are set 
-	 * in the OOo object if they are both fetched. Otherwise an invalid config 
-	 * exception is thrown.
-	 * 
-	 * @param programFile
-	 * @throws InvalidConfigException Exception thrown when one of the following problems happened
-	 *          <ul>
-	 *             <li>the given program file isn't a valid directory</li>
-	 *             <li>the program/bootstraprc file doesn't exists or is unreadable</li>
-	 *             <li>the product key is not set</li>
-	 *          </ul>
+	 * @return The OOo name as defined in Bootstraprc or <code>null</code>.
 	 */
-	private void readSettings(File programFile) throws InvalidConfigException {
+	private String getOOoName() {
 		
-		if (programFile.exists() && programFile.isDirectory()) {
+		String oooname = null;
 		
-			// Get the bootstrap configuration file
-			String bootstrapName = "bootstraprc";
-			if (System.getProperty("os.name").toLowerCase().startsWith("windows")){
-				bootstrapName = "bootstrap.ini";
-			}
-			
-			File bootstraprcFile = new File(programFile, bootstrapName);
-			
+		Path unorcPath = new Path(getUnorcPath());
+		File unorcFile = unorcPath.toFile();
+		
+		if (unorcFile.exists() && unorcFile.isFile()) {
+		
 			Properties bootstraprcProperties = new Properties();
 			try {
-				bootstraprcProperties.load(new FileInputStream(bootstraprcFile));
+				bootstraprcProperties.load(
+						new FileInputStream(unorcFile));
 				
 				// Checks if the name and buildid properties are set
 				if (bootstraprcProperties.containsKey(K_PRODUCTKEY)){
 					
 					// Sets the both value
-					name = bootstraprcProperties.getProperty(K_PRODUCTKEY);
-				} else {
-					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + 
-									K_PRODUCTKEY,
-							InvalidConfigException.INVALID_SDK_HOME);
+					oooname = bootstraprcProperties.getProperty(K_PRODUCTKEY);
 				}
 				
-			} catch (FileNotFoundException e) {
-				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+
-								"program/" + bootstrapName , 
-						InvalidConfigException.INVALID_OOO_HOME);
-			} catch (IOException e) {
-				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_READABLE_FILE) + 
-								"program/" + bootstrapName, 
-						InvalidConfigException.INVALID_OOO_HOME);
+			} catch (Exception e) {
+				// Nothing to report
 			}
-			
-		} else {
-			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+ programFile.getAbsolutePath(),
-					InvalidConfigException.INVALID_OOO_HOME);
 		}
-	}
-
-	//-------------------------------------------- ITableElement Implementation
-	
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getImage(java.lang.String)
-	 */
-	public Image getImage(String property) {
-		return null;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getLabel(java.lang.String)
-	 */
-	public String getLabel(String property) {
-		String result = "";
-		if (property.equals(NAME)) {
-			result = getName();
-		} else if (property.equals(PATH)) {
-			result = getHome();
-		}
-		return result;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getProperties()
-	 */
-	public String[] getProperties() {
-		return new String[] {NAME, PATH};
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#canModify(java.lang.String)
-	 */
-	public boolean canModify(String property) {
-		return false;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getValue(java.lang.String)
-	 */
-	public Object getValue(String property) {
-		return null;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#setValue(java.lang.String, java.lang.Object)
-	 */
-	public void setValue(String property, Object value) {
-		// Nothing to do
+		
+		return oooname;
 	}
 }

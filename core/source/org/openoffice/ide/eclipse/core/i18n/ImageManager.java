@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -55,10 +55,9 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
- * The image manager is a singleton object that returns an image or an image descriptor
- * from a key. The keys are described in the ImagesConstants class and the associated 
- * properties file is /icons/images.conf. The goal of this object is to better parametrize
- * the images and minimize the images creations.
+ * The image manager is an object returning an image or an image descriptor
+ * from a key. The keys are described in the ImagesConstants class and the 
+ * associated properties file is <code>ImageManager.properties</code>. 
  * 
  * @author cbosdonnat
  *
@@ -78,6 +77,9 @@ public class ImageManager {
 	
 	private ImageRegistry registry = new ImageRegistry();
 	
+	/**
+	 * Default constructor
+	 */
 	public ImageManager() {
 		
 		try {
@@ -142,5 +144,4 @@ public class ImageManager {
 		
 		return imageDescr;
 	}
-	
 }

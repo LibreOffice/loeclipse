@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -60,7 +60,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
@@ -82,7 +81,7 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * Uses the default Project wizard page and add some UNO-IDL special
- * fields: SDK choice company prefix and Output path
+ * fields: SDK and OOo choices company prefix and Output path
  * 
  * @author cbosdonnat
  *
@@ -130,6 +129,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	private Label messageLabel;
 	private Label messageIcon;
 	
+	/**
+	 * Default constructor
+	 */
 	public NewUnoProjectPage() {
 		super(OOEclipsePlugin.getTranslationString(
 				I18nConstants.NEW_PROJECT_TITLE));
@@ -147,6 +149,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		SDKContainer.getSDKContainer().addListener(this);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		
@@ -206,6 +212,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		return oooName;
 	}
 	
+	/**
+	 * Returns the chosen implementation language
+	 */
 	public ILanguage getChosenLanguage(){
 		 String value = languageRow.getValue();
 		 return LanguagesHelper.getLanguageFromName(value);
@@ -440,6 +449,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigAdded(java.lang.Object)
+	 */
 	public void ConfigAdded(Object element) {
 		if (element instanceof IOOo){
 			fillOOoRow();
@@ -448,6 +461,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigRemoved(java.lang.Object)
+	 */
 	public void ConfigRemoved(Object element) {
 		
 		if (null == element || element instanceof IOOo){
@@ -459,6 +476,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigUpdated(java.lang.Object)
+	 */
 	public void ConfigUpdated(Object element) {
 		if (element instanceof IOOo){
 			fillOOoRow();
@@ -467,6 +488,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	};
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.WizardNewProjectCreationPage#validatePage()
+	 */
 	protected boolean validatePage() {
 		boolean result = super.validatePage();
 		
@@ -475,11 +500,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				 null == getOutputExt() || getOutputExt().equals(""));
 		
 		result = result && constraint;
-		
-		PluginLogger.getInstance().debug("Wizard page validated ? " + result + 
-				" SDKName=" + getSDKName() + 
-				" Prefix=" + getPrefix() +
-				" OutputExt=" + getOutputExt());
 		
 		if (result) {
 			IWizardPage next = getWizard().getNextPage(this);
@@ -501,10 +521,25 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	
 	private IUnoidlProject unoProject = null;
 	
+	/**
+	 * Returns the reference to the unoidl project
+	 * @return the underlying UnoIdl project
+	 */
 	public IUnoidlProject getUnoidlProject() {
 		return unoProject;
 	}
 	
+	/**
+	 * Create the uno idl projet
+	 * 
+	 * @param project the created project handle
+	 * @param prefix the company prefix
+	 * @param outputExt the code output extension
+	 * @param language the implemntation language
+	 * @param sdkname the SDK name
+	 * @param oooname the OOo name
+	 * @param monitor a progress monitor
+	 */
 	protected void createUnoidlProject(
 			IProject project,
 			String prefix,
@@ -539,6 +574,11 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		UnoidlProjectHelper.createUrdDir(unoProject, monitor);
 	}
 	
+	/**
+	 * Dialog for OOo and SDK configuration
+	 * 
+	 * @author cbosdonnat
+	 */
 	private class TableDialog extends Dialog {
 		
 		private boolean editSDK = true;
@@ -558,6 +598,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 			}
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+		 */
 		protected Control createDialogArea(Composite parent) {
 			
 			if (editSDK){
@@ -571,6 +615,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 			return parent;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+		 */
 		protected void okPressed() {
 			super.okPressed();
 			

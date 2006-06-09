@@ -8,10 +8,11 @@ public interface ISdk {
 	 * Set the new SDK Home after having checked for the existence of the idl and settings directory.
 	 * Fetches the sdk name and buildid from the dk.mk file
 	 * 
-	 * @param sdkHome path to the new sdk home
+	 * @param home path to the new sdk home
 	 * 
-	 * @exception InvalidConfigException <p>This exception is thrown when the following errors are encountered
-	 *            with the INVALID_SDK_HOME error code: </p>
+	 * @exception InvalidConfigException <p>This exception is thrown when the 
+	 * 			  following errors are encountered with the 
+	 * 			  {@link InvalidConfigException#INVALID_SDK_HOME}error code: </p>
 	 *             <ul>
 	 *                <li>the sdk path does not point to a valid directory</li>
 	 *                <li>the $(SDK_HOME)/idl directory doesnt exist</li>

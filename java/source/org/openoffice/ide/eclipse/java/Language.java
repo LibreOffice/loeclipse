@@ -23,12 +23,18 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
+/**
+ * Implementation for the Java language
+ * 
+ * @author cbosdonnat
+ */
 public class Language implements ILanguage {
 	
 	/*
@@ -40,12 +46,12 @@ public class Language implements ILanguage {
 			if (!project.exists()){
 				project.create(null);
 				PluginLogger.getInstance().debug(
-						"Project created during language specific operation");
+						"Project created during language specific operation"); //$NON-NLS-1$
 			}
 			
 			if (!project.isOpen()){
 				project.open(null);
-				PluginLogger.getInstance().debug("Project opened");
+				PluginLogger.getInstance().debug("Project opened"); //$NON-NLS-1$
 			}
 			
 			IProjectDescription description = project.getDescription();
@@ -58,11 +64,10 @@ public class Language implements ILanguage {
 			
 			description.setNatureIds(newNatureIds);
 			project.setDescription(description, null);
-			PluginLogger.getInstance().debug("Java nature set");
+			PluginLogger.getInstance().debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
 			
 		} catch (CoreException e) {
-			// TODO i18n
-			PluginLogger.getInstance().error("Setting Java nature failed");
+			PluginLogger.getInstance().error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
 		}
 	}
 
@@ -87,9 +92,8 @@ public class Language implements ILanguage {
 			project.setDescription(descr, null);
 			
 		} catch(CoreException e) {
-			// TODO i18n
 			PluginLogger.getInstance().error(
-					"Cannot add Java builder");
+					Messages.getString("Language.JavaBuilderAddFailed")); //$NON-NLS-1$
 		}
 	}
 	
@@ -106,20 +110,19 @@ public class Language implements ILanguage {
 				
 				if (null != sdk && null != ooo){
 					
-					IPath ooTypesPath = new Path (ooo.getHome()).append(
-							"/program/types.rdb");
+					IPath ooTypesPath = new Path (ooo.getTypesPath());
 					
 					// TODO What if the user creates other root modules ?
-					String firstModule = rootModule.split("::")[0];
+					String firstModule = rootModule.split("::")[0]; //$NON-NLS-1$
 					
 					// HELP quotes are placed here to prevent Windows path 
 					// names with spaces
-					String command = "javamaker -T" + firstModule + 
-						".* -nD -Gc -BUCR " + 
-						"-O ." + System.getProperty("file.separator") + 
-						buildFolder.getProjectRelativePath().toOSString() + " " +
-						typesFile.getProjectRelativePath().toOSString() + " " +
-						"-X\"" + ooTypesPath.toOSString() + "\"";
+					String command = "javamaker -T" + firstModule +  //$NON-NLS-1$
+						".* -nD -Gc -BUCR " +  //$NON-NLS-1$
+						"-O ." + System.getProperty("file.separator") +  //$NON-NLS-1$ //$NON-NLS-2$
+						buildFolder.getProjectRelativePath().toOSString() + " " + //$NON-NLS-1$
+						typesFile.getProjectRelativePath().toOSString() + " " + //$NON-NLS-1$
+						"-X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					
 					
 					Process process = OOEclipsePlugin.runTool(
@@ -131,7 +134,7 @@ public class Language implements ILanguage {
 							new InputStreamReader(process.getErrorStream()));
 					
 					// Only for debugging purpose
-					if (null != System.getProperties().getProperty("DEBUG")){
+					if (PluginLogger.getInstance().isLevel(PluginLogger.DEBUG)){ //$NON-NLS-1$
 					
 						String line = lineReader.readLine();
 						while (null != line){
@@ -143,13 +146,13 @@ public class Language implements ILanguage {
 					process.waitFor();
 				}
 			} catch (InterruptedException e) {
-				// TODO i18n
 				PluginLogger.getInstance().error(
-						"Code generation failed", e);
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.CODE_GENERATION_FAILED), e);
 			} catch (IOException e) {
-				// TODO i18n
 				PluginLogger.getInstance().warning(
-						"Error whilst reading the error stream");
+						OOEclipsePlugin.getTranslationString(
+								I18nConstants.ERROR_OUTPUT_UNREADABLE));
 			}
 		}
 	}
@@ -208,9 +211,8 @@ public class Language implements ILanguage {
 				
 				javaProject.setRawClasspath(entries, null);
 			} catch (JavaModelException e){
-				// TODO i18n
 				PluginLogger.getInstance().error(
-						"Error while setting the project classpath", e);
+						Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -243,21 +245,20 @@ public class Language implements ILanguage {
 			javaProject.setRawClasspath(result, null);
 			
 		} catch (JavaModelException e) {
-			// TODO i18n
 			PluginLogger.getInstance().error(
-					"Error while setting the project classpath", e);
+					Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
 		}
 	}
 	
 	//--------------------------------------------- Jar finding private methods
 	
 	private final static String[] KEPT_JARS = {
-		"unoil.jar",
-		"ridl.jar",
-		"juh.jar",
-		"jurt.jar",
-		"unoloader.jar",
-		"officebean.jar"
+		"unoil.jar", //$NON-NLS-1$
+		"ridl.jar", //$NON-NLS-1$
+		"juh.jar", //$NON-NLS-1$
+		"jurt.jar", //$NON-NLS-1$
+		"unoloader.jar", //$NON-NLS-1$
+		"officebean.jar" //$NON-NLS-1$
 	};
 	
 	/**
@@ -277,7 +278,7 @@ public class Language implements ILanguage {
 			String contenti = content[i];
 			if (isKeptJar(contenti)){
 				Path jariPath = new Path (
-						ooo.getClassesPath()+"/"+contenti);
+						ooo.getClassesPath()+"/"+contenti); //$NON-NLS-1$
 				jarsPath.add(jariPath);
 			}
 		}

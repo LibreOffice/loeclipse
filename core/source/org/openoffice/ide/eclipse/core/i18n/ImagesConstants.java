@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:15:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.i18n;
 
+/**
+ * Defines the keys to use for images internationalization. The default file name
+ * is defined in the <code>ImageManager.properties</code> file 
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class ImagesConstants {
 
 	public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE";

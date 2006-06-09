@@ -2,9 +2,9 @@
  *
  * $RCSfile: MainPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -73,6 +73,10 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
 
     private ChoiceRow loglevel;
     
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+     */
 	protected Control createContents(Composite parent) {
 		
 		Composite body = new Composite(parent, SWT.NONE);
@@ -98,24 +102,26 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
 		return body;
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
 	public void init(IWorkbench workbench) {
 		
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#doGetPreferenceStore()
+	 */
 	protected IPreferenceStore doGetPreferenceStore() {
 		return OOEclipsePlugin.getDefault().getPreferenceStore();
 	}
-	
-    private class loglevelListener implements IFieldChangedListener {
-        
-    	public void fieldChanged(FieldEvent e) {
-            if (e.getProperty().equals(LOGLEVEL)) {
-                // set the new logger level
-                PluginLogger.getInstance().setLevel(e.getValue());
-            }
-        }
-    }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+     */
     public boolean performOk() {
     	boolean result = super.performOk();
     	
@@ -126,11 +132,31 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
     	return result;
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+     */
     protected void performDefaults() {
     	super.performDefaults();
     	
     	IPreferenceStore store = getPreferenceStore();
     	loglevel.select(store.getDefaultString(
     			OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
+    }
+    
+    /**
+	 * Listens to the log level changes and set the correct level to the
+	 * plugin logger.
+	 * 
+	 * @author cbosdonnat
+	 */
+    private class loglevelListener implements IFieldChangedListener {
+        
+    	public void fieldChanged(FieldEvent e) {
+            if (e.getProperty().equals(LOGLEVEL)) {
+                // set the new logger level
+                PluginLogger.getInstance().setLevel(e.getValue());
+            }
+        }
     }
 }

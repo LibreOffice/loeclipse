@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfacesTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,23 +51,30 @@ import org.eclipse.swt.widgets.Table;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 /**
- * This class corresponds to the table of interface inheritances. It shouldn't
- * be subclassed.
- * 
- * TODOC
+ * This class corresponds to the table of interface inheritances. The add
+ * action launches the UNO Type browser to select one interface. This class 
+ * shouldn't be subclassed. 
  * 
  * @author cbosdonnat
- *
  */
 public class InterfacesTable extends AbstractTable {
 
 
 	private UnoTypeProvider typesProvider;
 	
+	/**
+	 * Simplified constructor for this kind of table. It uses a types provider
+	 * in order to fetch the UNO types earlier than showing the UNO type browser.
+	 * This way it avoids a too long UI freeze time.
+	 * 
+	 * @param parent the parent composite where to put the table
+	 * @param aTypesProvider a UNO type provider to initialize the Type browser 
+	 */
 	public InterfacesTable(Composite parent, UnoTypeProvider aTypesProvider) {
 		super(
 				parent, 
@@ -89,6 +96,12 @@ public class InterfacesTable extends AbstractTable {
 		typesProvider = aTypesProvider;
 	}
 
+	/**
+	 * Add a new interface in the table
+	 * 
+	 * @param ifaceName the name of the interface to add
+	 * @param optional <code>true</code> if the interface is optional.
+	 */
 	public void addInterface(String ifaceName, boolean optional) {
 		InheritanceLine line = new InheritanceLine();
 		line.interfaceName = ifaceName;
@@ -97,6 +110,10 @@ public class InterfacesTable extends AbstractTable {
 		addLine(line);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#createCellEditors(org.eclipse.swt.widgets.Table)
+	 */
 	protected CellEditor[] createCellEditors(Table table) {
 		CellEditor[] editors = new CellEditor[] {
 			new CheckboxCellEditor(),
@@ -106,6 +123,10 @@ public class InterfacesTable extends AbstractTable {
 		return editors;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#addLine()
+	 */
 	protected ITableElement addLine() {
 		ITableElement line = null;
 		
@@ -121,13 +142,9 @@ public class InterfacesTable extends AbstractTable {
 			
 			String value = null;
 			
-			String selectedType = browser.getSelectedType();
+			InternalUnoType selectedType = browser.getSelectedType();
 			if (null != selectedType){
-				String[] splittedType = selectedType.split(" ");
-				
-				if (2 == splittedType.length) {
-					value = splittedType[0];
-				}
+				value = selectedType.getFullName();
 			}
 			
 			// Creates the line only if OK has been pressed
@@ -143,7 +160,8 @@ public class InterfacesTable extends AbstractTable {
 	
 	/**
 	 * The interface names are stored in path-like strings, ie: using "::"
-	 * as separator
+	 * as separator. This class describes a line in the table and thus has 
+	 * to implement {@link ITableElement} interface
 	 * 
 	 * @author cbosdonnat
 	 *
@@ -176,6 +194,11 @@ public class InterfacesTable extends AbstractTable {
 		
 		//----------------------------------------- ITableElement implementation
 		
+		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getImage(java.lang.String)
+		 */
 		public Image getImage(String property) {
 			Image image = null;
 			
@@ -189,6 +212,10 @@ public class InterfacesTable extends AbstractTable {
 			return image;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getLabel(java.lang.String)
+		 */
 		public String getLabel(String property) {
 			String label = null;
 			
@@ -198,6 +225,10 @@ public class InterfacesTable extends AbstractTable {
 			return label;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getProperties()
+		 */
 		public String[] getProperties() {
 			return new String[] {
 					OPTIONAL,
@@ -205,11 +236,19 @@ public class InterfacesTable extends AbstractTable {
 			};
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#canModify(java.lang.String)
+		 */
 		public boolean canModify(String property) {
 			
 			return property.equals(OPTIONAL);
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getValue(java.lang.String)
+		 */
 		public Object getValue(String property) {
 			Object result = null;
 			
@@ -219,6 +258,10 @@ public class InterfacesTable extends AbstractTable {
 			return result;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#setValue(java.lang.String, java.lang.Object)
+		 */
 		public void setValue(String property, Object value) {
 			
 			if (property.equals(OPTIONAL) && value instanceof Boolean) {

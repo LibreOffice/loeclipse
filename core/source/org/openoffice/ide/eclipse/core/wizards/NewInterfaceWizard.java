@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,7 +61,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 
 /**
- * TODOC 
+ * Interface creation wizard. This class uses a {@link NewInterfaceWizardPage}
  * 
  * @author cbosdonnat
  *
@@ -71,12 +71,19 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 
 	private NewInterfaceWizardPage page;
 	
+	/**
+	 * Creates the wizard
+	 */
 	public NewInterfaceWizard() {
 		super();
 		
 		activePage = OOEclipsePlugin.getActivePage();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
+	 */
 	public boolean performFinish() {
 		IFile file = page.createInterface();
 		
@@ -87,6 +94,10 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 		return true;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		
 		super.init(workbench, selection);
@@ -102,6 +113,11 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 		}
 	}
 	
+	/**
+	 * Creates the new interface page
+	 * 
+	 * @param project the project in which to create the interface
+	 */
 	private void createPages(IProject project){
 		if (null != project){
 			try {
@@ -121,6 +137,11 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 	
 	private IWorkbenchPage activePage;
 	
+	/**
+	 * Method opening a file in an UNO-IDL editor
+	 * 
+	 * @param resource the file to open
+	 */
 	protected void openResource(final IFile resource) {
 		
 		if (activePage != null) {

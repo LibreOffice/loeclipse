@@ -2,9 +2,9 @@
  *
  * $RCSfile: FieldEvent.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,6 +44,9 @@
 package org.openoffice.ide.eclipse.core.gui.rows;
 
 /**
+ * Event describing a raw change. Each row is associated to one property in 
+ * order to recognize it when it changes.
+ * 
  * @author cbosdonnat
  *
  */
@@ -52,15 +55,27 @@ public class FieldEvent {
 	private String property;
 	private String value;
 	
+	/**
+	 * Creates a new row change event
+	 * 
+	 * @param property the property associated to the changed row
+	 * @param value the new value of the row
+	 */
 	public FieldEvent(String property, String value){
 		this.property = property;
 		this.value = value;
 	}
 
+	/**
+	 * Returns the property associated to the changed row
+	 */
 	public String getProperty() {
 		return property;
 	}
 
+	/**
+	 * Returns the new value of the row
+	 */
 	public String getValue() {
 		return value;
 	}

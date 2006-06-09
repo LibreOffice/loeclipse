@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlConfiguration.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -60,24 +60,35 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlPreprocessorScanner;
 import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlScanner;
 
 /**
- * TODOC
+ * <p>Provides the UNO-IDL editor configuration. In order to fully understand
+ * the editor mechanisms, please report to Eclipse plugin developer's guide.
+ * Most of the scanners and rules used by this class are defined in the 
+ * <code>org.openoffice.ide.eclipse.core.editors.syntax</code> package.</p>
  * 
  * @author cbosdonnat
- *
  */
 public class UnoidlConfiguration extends SourceViewerConfiguration {
+	
 	private UnoidlDoubleClickStrategy doubleClickStrategy;
 	private UnoidlScanner scanner;
 	private UnoidlDocScanner docScanner;
 	private UnoidlPreprocessorScanner preprocScanner;
 	private ColorProvider colorManager;
 
+	/**
+	 * Default constructor using a color manager.
+	 * @param colorManager the color manager to colorize the syntax elements
+	 */
 	public UnoidlConfiguration(ColorProvider colorManager) {
 		this.colorManager = colorManager;
 	}
 	
 	//----------------------------------------- Text editing facilities support
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
 	public ITextDoubleClickStrategy getDoubleClickStrategy(
 		ISourceViewer sourceViewer,
 		String contentType) {
@@ -86,6 +97,10 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 		return doubleClickStrategy;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer,
 											String contentType) {
 		
@@ -99,6 +114,10 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 
 	//--------------------------------------------- Syntax highlighting support
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
+	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
 			UnoidlPartitionScanner.IDL_AUTOCOMMENT,
@@ -106,39 +125,10 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 			UnoidlPartitionScanner.IDL_PREPROCESSOR};
 	}
 	
-	protected UnoidlScanner getCodeScanner() {
-		if (scanner == null) {
-			scanner = new UnoidlScanner(colorManager);
-			scanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-						colorManager.getColor(Colors.C_TEXT))));
-		}
-		return scanner;
-	}
-	
-	protected UnoidlDocScanner getDocScanner(){
-		if (docScanner == null) {
-			docScanner = new UnoidlDocScanner(colorManager);
-			docScanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-						colorManager.getColor(Colors.C_AUTODOC_COMMENT))));
-		}
-		return docScanner;
-	}
-	
-	protected UnoidlPreprocessorScanner getPreprocScanner(){
-		if (preprocScanner == null) {
-			preprocScanner = new UnoidlPreprocessorScanner(colorManager);
-			preprocScanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-						colorManager.getColor(Colors.C_PREPROCESSOR))));
-		}
-		return preprocScanner;
-	}
-
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		
@@ -167,5 +157,48 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 		reconciler.setRepairer(drPreproc, UnoidlPartitionScanner.IDL_PREPROCESSOR);
 
 		return reconciler;
+	}
+	
+	/**
+	 * Creates the code scanner if it's not already created.
+	 */
+	protected UnoidlScanner getCodeScanner() {
+		if (scanner == null) {
+			scanner = new UnoidlScanner(colorManager);
+			scanner.setDefaultReturnToken(
+				new Token(
+					new TextAttribute(
+						colorManager.getColor(Colors.C_TEXT))));
+		}
+		return scanner;
+	}
+	
+	/**
+	 * Return the comments scanner if it's not already created
+	 */
+	protected UnoidlDocScanner getDocScanner(){
+		if (docScanner == null) {
+			docScanner = new UnoidlDocScanner(colorManager);
+			docScanner.setDefaultReturnToken(
+				new Token(
+					new TextAttribute(
+						colorManager.getColor(Colors.C_AUTODOC_COMMENT))));
+		}
+		return docScanner;
+	}
+	
+	/**
+	 * Returns the preprocessor instruction scanner if it's not already
+	 * created.
+	 */
+	protected UnoidlPreprocessorScanner getPreprocScanner(){
+		if (preprocScanner == null) {
+			preprocScanner = new UnoidlPreprocessorScanner(colorManager);
+			preprocScanner.setDefaultReturnToken(
+				new Token(
+					new TextAttribute(
+						colorManager.getColor(Colors.C_PREPROCESSOR))));
+		}
+		return preprocScanner;
 	}
 }

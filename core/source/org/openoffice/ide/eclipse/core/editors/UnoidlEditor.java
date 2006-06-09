@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlEditor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -53,26 +53,37 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
- * TODOC
+ * Class handling the UNO-IDL text to render them in an Eclipse editor. In order
+ * to fully understand the editor mechanisms, please report to Eclipse plugin
+ * developer's guide.
+ * 
+ * @see UnoidlConfiguration for the viewer configuration
+ * @see UnoidlDocumentProvider for the document provider
  * 
  * @author cbosdonnat
  *
  */
 public class UnoidlEditor extends TextEditor {
-
-	 /**
-	  * Member that listens to the preferences porperty changes 
-	  */
-	 private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				getSourceViewer().invalidateTextPresentation();
-				
-			}
-		};
 	
+	/**
+	 * Member that listens to the preferences porperty changes 
+	 */
+	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			getSourceViewer().invalidateTextPresentation();
+			
+		}
+	};
 	
+	/**
+	 * The color manager providing the colors for the editor
+	 */
 	private ColorProvider colorManager;
 	
+	/**
+	 * Default constructor setting the correct document provider and viewer
+	 * configuration.
+	 */
 	public UnoidlEditor() {
 		super();
 		
@@ -82,17 +93,29 @@ public class UnoidlEditor extends TextEditor {
 		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyListener);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		return super.createSourceViewer(parent, ruler, styles);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
 	public void dispose() {
 		colorManager.dispose();
 		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyListener);
 		super.dispose();
 	}
 	
-    public void doSave(IProgressMonitor progressMonitor) {
-        super.doSave(progressMonitor);
-    }
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor progressMonitor) {
+		super.doSave(progressMonitor);
+	}
 }

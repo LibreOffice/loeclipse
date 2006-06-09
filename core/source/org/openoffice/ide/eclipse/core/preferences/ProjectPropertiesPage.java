@@ -2,9 +2,9 @@
  *
  * $RCSfile: ProjectPropertiesPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -68,12 +68,21 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 
+/**
+ * The project preference page. This page can be used to reconfigure the
+ * project OOo and SDK.
+ * 
+ * @author cbosdonnat
+ */
 public class ProjectPropertiesPage extends PropertyPage 
 								   implements IWorkbenchPropertyPage, 
 								   		   IConfigListener {
 
 	private UnoidlProject project;
 	
+	/**
+	 * Default constructor setting configuration listeners
+	 */
 	public ProjectPropertiesPage() {
 		super();
 		
@@ -82,6 +91,10 @@ public class ProjectPropertiesPage extends PropertyPage
 		OOoContainer.getOOoContainer().addListener(this);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
 	public void dispose() {
 		
 		SDKContainer.getSDKContainer().removeListener(this);
@@ -98,7 +111,10 @@ public class ProjectPropertiesPage extends PropertyPage
 	private static final String SDK = "__sdk";
 	private static final String OOO = "__ooo";
 	
-	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
+	 */
 	public void setElement(IAdaptable element) {
 		super.setElement(element);
 		
@@ -168,6 +184,10 @@ public class ProjectPropertiesPage extends PropertyPage
 		return true;
 	}
 	
+	/**
+	 * Convenience method to save the SDK and OOo values in their plugin 
+	 * configuration file.
+	 */
 	private void saveValues(){
 		if (!sdkRow.getValue().equals("")) {
 			ISdk sdk = SDKContainer.getSDKContainer().getSDK(sdkRow.getValue());
@@ -180,6 +200,9 @@ public class ProjectPropertiesPage extends PropertyPage
 		}
 	}
 	
+	/**
+	 * Fills the SDK row with the existing values of the SDK container
+	 */
 	private void fillSDKRow (){
 		
 		if (null != sdkRow){
@@ -202,6 +225,9 @@ public class ProjectPropertiesPage extends PropertyPage
 		}
 	}
 
+	/**
+	 * Fills the OOo row with the existing values of the OOo container
+	 */
 	private void fillOOoRow(){
 		
 		if (null != oooRow){
@@ -217,13 +243,19 @@ public class ProjectPropertiesPage extends PropertyPage
 			oooRow.removeAll();
 			oooRow.addAll(ooos);
 			if (null != project.getOOo()){
-				oooRow.select(project.getOOo().getId());
+				oooRow.select(project.getOOo().getName());
 			} else {
 				oooRow.select(0);
 			}
 		}
 	}
 	
+	/**
+	 * The dialog to configure the plugin OOos and SDKs.
+	 * 
+	 * @author cbosdonnat
+	 *
+	 */
 	private class TableDialog extends Dialog {
 		
 		private boolean editSDK = true;
@@ -237,12 +269,18 @@ public class ProjectPropertiesPage extends PropertyPage
 			
 			setBlockOnOpen(true); // This dialog is a modal one
 			if (editSDK) {
-				setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.SDKS));
+				setTitle(OOEclipsePlugin.getTranslationString(
+						I18nConstants.SDKS));
 			} else {
-				setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.OOOS));
+				setTitle(OOEclipsePlugin.getTranslationString(
+						I18nConstants.OOOS));
 			}
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+		 */
 		protected Control createDialogArea(Composite parent) {
 			
 			if (editSDK){
@@ -256,6 +294,10 @@ public class ProjectPropertiesPage extends PropertyPage
 			return parent;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+		 */
 		protected void okPressed() {
 			super.okPressed();
 			

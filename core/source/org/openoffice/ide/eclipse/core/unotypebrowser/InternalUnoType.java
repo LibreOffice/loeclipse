@@ -2,9 +2,9 @@
  *
  * $RCSfile: InternalUnoType.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,15 +46,20 @@ package org.openoffice.ide.eclipse.core.unotypebrowser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
- * TODOC
+ * Class describing a UNO-Type. Only used with the {@link UnoTypeProvider}.
+ * A Uno type is described by its name, a boolean field defining if it's a
+ * local type and a path containing the fully qualified name of the type 
+ * container.
  * 
  * @author cbosdonnat
  *
  */
 public class InternalUnoType {
 
+	private static final String LOCAL_TAG = "L";
+	private static final String EXTERNAL_TAG= "E";
+	
 	private String path;
 	private int type;
 	private boolean local = false;
@@ -62,16 +67,26 @@ public class InternalUnoType {
 	public InternalUnoType(String typeString) {
 		if (null != typeString) {
 			Matcher typeMatcher = Pattern.compile(
-					"("+UnoTypesGetter.UNO_TAG  +"|" + UnoTypesGetter.LOCAL_TAG +
-					") ([^\\s]*) (.*)").matcher(typeString);
+					"(" + EXTERNAL_TAG + "|" + LOCAL_TAG +
+					") ([^\\s]*) ([0-9]+)").matcher(typeString);
 			if (typeMatcher.matches() && 3 == typeMatcher.groupCount()){
 				setLocal(typeMatcher.group(1));
-				setType(typeMatcher.group(2));
-				path = typeMatcher.group(3);
+				setType(Integer.parseInt(typeMatcher.group(3)));
+				path = typeMatcher.group(2);
 			}
 		}
 	}
 	
+	public InternalUnoType(String completeName, int aType, boolean isLocal) {
+		local = isLocal;
+		setType(aType);
+		path = completeName;
+	}
+	
+	/**
+	 * Returns the type name, ie <code>XInterface</code> for 
+	 * <code>com.sun.star.uno.XInterface</code>
+	 */
 	public String getName() {
 		String name = "";
 		
@@ -82,24 +97,54 @@ public class InternalUnoType {
 		return name;
 	}
 	
-	public String getPath(){
+	/**
+	 * Returns the type complete name, ie 
+	 * <code>com.sun.star.uno.XInterface</code> for <code>
+	 * com.sun.star.uno.XInterface</code>
+	 */
+	public String getFullName(){
 		return path;
 	}
 	
+	/**
+	 * Returns the type of the type, ie {@link UnoTypeProvider#INTERFACE} for 
+	 * <code>com.sun.star.uno.XInterface</code>
+	 * 
+	 * @return one of the types defined in {@link UnoTypeProvider}
+	 */
 	public int getType(){
 		return type;
 	}
 	
+	/**
+	 * Returns whether the type is defined in an external project or not.
+	 */
 	public boolean isLocalType(){
 		return local;
 	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		
+		String sLocal = EXTERNAL_TAG;
+		if (isLocalType()) {
+			sLocal = LOCAL_TAG;
+		}
+		
+		return sLocal + " " + getFullName() + " " + getType();
+	}
 	
-	private void setType(String aType) {
-		type = UnoTypeProvider.convertTypeToInt(aType);
+	private void setType(int aType) {
+		if (aType >= 0 && aType < 1024) {
+			type = aType;
+		}
 	}
 	
 	private void setLocal(String tag){
-		if (tag.equals(UnoTypesGetter.LOCAL_TAG)) {
+		if (tag.equals(LOCAL_TAG)) {
 			local = true;
 		} else {
 			local = false;

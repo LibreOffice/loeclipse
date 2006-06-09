@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui.rows;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -51,11 +53,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
+import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 public class TypeRow extends TextRow {
 
+	private InternalUnoType selectedType;
 	private UnoTypeProvider typesProvider;
 	private int type = 0;
 	
@@ -69,6 +73,10 @@ public class TypeRow extends TextRow {
 		typesProvider = aTypeProvider;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#createContent(org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.Control, org.eclipse.swt.widgets.Control, java.lang.String)
+	 */
 	protected void createContent(Composite parent, Control label, 
 			Control field, String browseText) {
 
@@ -86,20 +94,25 @@ public class TypeRow extends TextRow {
 				
 				UnoTypeBrowser browser = new UnoTypeBrowser(
 						shell, typesProvider);
+				browser.setSelectedType(selectedType);
 				
 				if (UnoTypeBrowser.OK == browser.open()) {
-					String selectedType = browser.getSelectedType();
+					selectedType = browser.getSelectedType();
 					if (null != selectedType){
-						String[] splittedType = selectedType.split(" ");
-						
-						if (2 == splittedType.length) {
-							setValue(splittedType[0]);
-						}
+						setValue(selectedType.getFullName());
 					}
 				}
 				
 				typesProvider.setTypes(oldType);
 			}
+		});
+		
+		((Button)browse).addDisposeListener(new DisposeListener(){
+
+			public void widgetDisposed(DisposeEvent e) {
+				typesProvider.dispose();
+			}
+			
 		});
 	}
 }

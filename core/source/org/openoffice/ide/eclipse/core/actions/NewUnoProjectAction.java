@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectAction.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:09 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,22 +51,43 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
+/**
+ * This action launches the New UNO Project wizard.
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow window;
 	
+	/**
+	 * Default constructor just initializing the action.
+	 */
 	public NewUnoProjectAction() {
 		init(OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow());
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
 	public void dispose() {
 		// Nothing to do on dispose
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
 	public void run(IAction action) {
 		
 		// Launch the new IDL Project wizard
@@ -76,6 +97,10 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 		dialog.open();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Nothing to do on selection changed
 	}

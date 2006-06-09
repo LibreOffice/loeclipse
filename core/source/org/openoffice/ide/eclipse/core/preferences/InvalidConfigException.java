@@ -2,9 +2,9 @@
  *
  * $RCSfile: InvalidConfigException.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:10 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,10 +44,13 @@
 package org.openoffice.ide.eclipse.core.preferences;
 
 /**
- * TODOC This exception is used to get the SDK validity problems.
+ * This exception is thrown when an OOo or SDK isn't valid, ie that it's home
+ * doesn't fit to a correct home directory for an OOo or SDK.
+ * 
+ * @see IOOo
+ * @see ISdk
  * 
  * @author cbosdonnat
- *
  */
 public class InvalidConfigException extends Exception {
 
@@ -58,12 +61,18 @@ public class InvalidConfigException extends Exception {
 	
 	private int errorCode;
 	
+	/**
+	 * The error points to an invalid SDK home path
+	 */
 	public static final int INVALID_SDK_HOME = 0;
 	
+	/**
+	 * The error points to an invalid OOo home path
+	 */
 	public static final int INVALID_OOO_HOME = 1;
 
 	/**
-	 * Constructor of the invlalid SDK exception. It needs a message and a error
+	 * Constructor of the invalid SDK exception. It needs a message and a error
 	 * code among those defined as constants of this class.
 	 * 
 	 * @param arg0 error message

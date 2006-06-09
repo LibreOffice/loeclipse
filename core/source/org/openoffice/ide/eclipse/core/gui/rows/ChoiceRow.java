@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -70,11 +70,29 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	
     private Hashtable translations;
         
+    /**
+     * Create a new choice row. The parent composite should have a grid layout
+	 * with 2 or 3 horizontal spans.
+     * 
+     * @param parent the parent composite where to create the raw 
+     * @param property the property name of the raw
+     * @param label label the label to print on the left of the raw
+     */
 	public ChoiceRow (Composite parent, String property, String label){
 		this(parent, property, label, null);
 	}
 	
-	public ChoiceRow (Composite parent, String property, String label, String browse){
+	/**
+     * Create a new choice row with a button on the right. The parent 
+     * composite should have a grid layout with 3 horizontal spans.
+     * 
+     * @param parent the parent composite where to create the row 
+     * @param property the property name of the row
+     * @param label label the label to print on the left of the row
+     * @param browse the label of the button
+     */
+	public ChoiceRow (Composite parent, String property, String label,
+			String browse){
 		
 		super(property);
 
@@ -89,6 +107,12 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		createContent(parent, aLabel, aField, browse);
 	}
 	
+	/**
+	 * Set the listener for the browse button action. There is only on
+	 * listener, because there is generally no need for more.
+	 * 
+	 * @param listener the browse action listener
+	 */
 	public void setBrowseSelectionListener(SelectionListener listener){
 		if (null != browse){
 			browse.addSelectionListener(listener);
@@ -143,7 +167,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * 
 	 * @param item text of the item to add
 	 * @param index position where to add the item in the list
-     * @see add(java.lang.String, java.lang.String, int)
+     * @see #add(java.lang.String, java.lang.String, int)
 	 */
 	public void add(String item, int index){
     	add(item, item, index);
@@ -153,7 +177,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * Append the item at the end of the item list
 	 * 
 	 * @param item text of the item to append
-     * @see add(java.lang.String, java.lang.String, int)
+     * @see #add(java.lang.String, java.lang.String, int)
 	 */
 	public void add(String item){
 		add(item, item, -1);
@@ -162,7 +186,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	/**
 	 * Removes the items with the provided text
 	 * 
-	 * @param item text of the items to remove
+	 * @param text text of the items to remove
 	 * @see Combo#remove(java.lang.String)
 	 */
 	public void remove(String text){

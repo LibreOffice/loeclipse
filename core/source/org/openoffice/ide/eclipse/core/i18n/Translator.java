@@ -2,9 +2,9 @@
  *
  * $RCSfile: Translator.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:09:56 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,10 +49,22 @@ import java.util.ResourceBundle;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
+/**
+ * The translator is an object returning an internationalized text from a key
+ * depending on the system localee. The keys are described in the 
+ * {@link I18nConstants} class and the associated properties file is 
+ * <code>Translator.properties</code>.
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class Translator {
 	
 	private ResourceBundle bundle;
 	
+	/**
+	 * Default Constructor
+	 */
 	public Translator(){
 		
 		try {

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDoubleClickStrategy.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,7 +49,8 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextViewer;
 
 /**
- * TODOC
+ * This class is responsible for the selection of words using double-clics
+ * in the UNO-IDL editor.
  * 
  * @author cbosdonnat
  *
@@ -57,6 +58,10 @@ import org.eclipse.jface.text.ITextViewer;
 public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
+	 */
 	public void doubleClicked(ITextViewer part) {
 		int pos = part.getSelectedRange().x;
 
@@ -69,6 +74,14 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 			selectWord(pos);
 		}
 	}
+	
+	/**
+	 * Test if the caret is positioned in a comment partition
+	 * 
+	 * @param caretPos the caret position
+	 * @return <code>true</code> if the cursor is in a comment, 
+	 * 		<code>false</code> ortherwise
+	 */
 	protected boolean selectComment(int caretPos) {
 		IDocument doc = fText.getDocument();
 		int startPos, endPos;
@@ -117,6 +130,14 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		return false;
 	}
+	
+	/**
+	 * Test if the caret is positioned in a word partition
+	 * 
+	 * @param caretPos the caret position
+	 * @return <code>true</code> if the cursor is in a word, 
+	 * 		<code>false</code> ortherwise
+	 */
 	protected boolean selectWord(int caretPos) {
 
 		IDocument doc = fText.getDocument();
@@ -156,6 +177,12 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 		return false;
 	}
 
+	/**
+	 * Define the text selection using a range.
+	 * 
+	 * @param startPos the position of the selection start
+	 * @param stopPos the position of the selection end
+	 */
 	private void selectRange(int startPos, int stopPos) {
 		int offset = startPos + 1;
 		int length = stopPos - offset;

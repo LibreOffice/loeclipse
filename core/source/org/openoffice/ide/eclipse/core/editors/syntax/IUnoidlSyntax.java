@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoidlSyntax.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,13 +44,24 @@
 package org.openoffice.ide.eclipse.core.editors.syntax;
 
 /**
- * TODOC
+ * <p>This class only defines the UNO-IDL main keywords in fonction of their 
+ * use in the file. They are devided into
+ * 	<ul>
+ * 		<li>Reserved words</li>
+ * 		<li>IDL modifiers usually written in brackets</li>
+ * 		<li>constants like the boolean <code>True</code></li>
+ * 		<li>UNO-IDL types</li>
+ * 	</ul>
+ * </p>
  * 
  * @author cbosdonnat
  *
  */
 public interface IUnoidlSyntax {
 	
+	/**
+	 * The UNO-IDL reserved words: they will be rendered as keywords
+	 */
 	public static final String[] RESERVED_WORDS = {
 		"published",      // new with the OpenOffice.org 2.0 SDK 
 		"get",            // new with the OpenOffice.org 2.0 SDK 
@@ -69,6 +80,9 @@ public interface IUnoidlSyntax {
         "typedef"
 	};
 	
+	/**
+	 * UNO-IDL modifiers, usually written in brackets
+	 */
 	public static final String[] MODIFIERS = {
 		"bound",
 		"constrained",
@@ -84,6 +98,9 @@ public interface IUnoidlSyntax {
 		"removable"
 	};
 
+	/**
+	 * UNO-IDL constants
+	 */
 	public static final String[] CONSTANTS = {
 		"TRUE",
 		"True",
@@ -91,6 +108,9 @@ public interface IUnoidlSyntax {
 		"False"
 	};
 	
+	/**
+	 * UNO-IDL types
+	 */
 	public static final String[] TYPES = {
         "string",
         "short",

@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:08 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,9 +58,7 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
 /**
- * SDK Class used as model for a line of the table. This class doesn't take the new URE
- * possibilities into account. It will certainly need some additionnal members to support
- * UNO SDK other than the OpenOffice.org one. 
+ * Class representing a SDK instance used in the UNO-IDL projects
  * 
  * @author cbosdonnat
  *

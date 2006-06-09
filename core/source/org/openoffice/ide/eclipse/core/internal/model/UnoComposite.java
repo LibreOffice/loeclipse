@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 
 /**
+ * Implements the UNO-IDL model composite. This class could certainly be
+ * rewritten using the Java Format tools.
+ * 
  * @author cbosdonnat
  *
  */
@@ -134,6 +137,16 @@ public class UnoComposite implements IUnoComposite {
 	
 	/*
 	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoComposite#setIndented(boolean)
+	 */
+	public void setIndented(boolean toIndent) {
+		if (type == COMPOSITE_TYPE_TEXT){
+			indentation = toIndent;
+		}
+	}
+	
+	/*
+	 *  (non-Javadoc)
 	 * @see unotest.IUnoComposite#create(boolean)
 	 */
 	public void create(boolean force) throws Exception {
@@ -232,7 +245,8 @@ public class UnoComposite implements IUnoComposite {
 		return result;
 	}
 	
-	/** splits the template into text parts and variables.
+	/** 
+	 * splits the template into text parts and variables.
 	 * 
 	 * @return an array containing each part in the right order
 	 */
@@ -306,11 +320,5 @@ public class UnoComposite implements IUnoComposite {
 		}
 		
 		return strings;
-	}
-	
-	public void setIndented(boolean toIndent) {
-		if (type == COMPOSITE_TYPE_TEXT){
-			indentation = toIndent;
-		}
 	}
 }

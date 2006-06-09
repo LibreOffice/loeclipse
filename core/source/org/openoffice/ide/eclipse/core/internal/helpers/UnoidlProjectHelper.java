@@ -18,6 +18,12 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactory;
 
+/**
+ * Helper class for UNO-IDL project handling.
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class UnoidlProjectHelper {
 
 	/**
@@ -271,7 +277,7 @@ public class UnoidlProjectHelper {
 	/**
 	 * Creates the urd directory
 	 * 
-	 * @param monitor
+	 * @param monitor a progress monitor
 	 */
 	public static void createUrdDir(IUnoidlProject unoproject,
 			IProgressMonitor monitor){
@@ -305,6 +311,11 @@ public class UnoidlProjectHelper {
 		}
 	}
 	
+	/**
+	 * Set the IDL property on the IDL folder of the project
+	 * 
+	 * @param unoproject project on which to set the IDL property
+	 */
 	public static void setIdlProperty(IUnoidlProject unoproject){
 		
 		// Get the children of the prefix company folder
@@ -316,6 +327,29 @@ public class UnoidlProjectHelper {
 		}
 	}
 
+	/**
+	 * Returns the UNO project underlying <code>IProject</code> resource
+	 *
+	 * @return the underlying <code>IProject</code> or <code>null</code>
+	 * 			if the given project is <code>null</code> or any problem
+	 * 			appear.
+	 */
+	public static IProject getProject(IUnoidlProject unoProject) {
+		
+		IProject project = null;
+		if (unoProject != null && unoProject instanceof UnoidlProject) {
+			project = ((UnoidlProject)unoProject).getProject();
+		}
+		
+		return project;
+	}
+	
+	/**
+	 * Recursion method to set the IDL property
+	 *  
+	 * @param container the folder on which children to set the property 
+	 * @param unoproject the containing project
+	 */
 	private static void recurseSetIdlProperty(IFolder container,
 			IUnoidlProject unoproject){
 

@@ -2,9 +2,9 @@
  *
  * $RCSfile: IInitListener.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,12 +44,14 @@
 package org.openoffice.ide.eclipse.core.unotypebrowser;
 
 /**
- * TODOC
+ * Listener interface for the {@link UnoTypeProvider} initialization.
  * 
  * @author cbosdonnat
- *
  */
 public interface IInitListener {
 
+	/**
+	 * Method called when the {@link UnoTypeProvider} is initialized
+	 */
 	public void initialized();
 }

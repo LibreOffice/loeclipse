@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:44 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:41 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -46,7 +46,7 @@
 			OpenOffice.org development
     </description>
 
-	<propertyfile file="build.properties" />
+	<loadproperties srcfile="build.properties" />
 	
 	<property name="prj.path" value=".." />
 	<property name="out.path" value="${prj.path}/bin/ant" />
@@ -54,7 +54,7 @@
 	<path id="dependencies.path">
 		<pathelement location="${prj.path}/../core/bin/ant/plugin/"/>
 		
-		<fileset dir="${home.eclipse}/plugins/">
+		<fileset dir="${eclipse.home}/plugins/">
 			<include name="org.eclipse*.jar"/>
 		</fileset>
 	</path>

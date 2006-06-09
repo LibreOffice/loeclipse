@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -13,12 +14,38 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.internal.model.SDK;
+import org.openoffice.ide.eclipse.core.internal.model.URE;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
+/**
+ * Helper class for OOo and SDK preferences handling. These aren't stored in
+ * the standard plugin preferences, but in a separate file: 
+ * {@link org.openoffice.ide.eclipse.core.OOEclipsePlugin#OOO_CONFIG} 
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class PropertiesManager {
-
+	
+	/**
+	 * OOo SDK path preference key. Used to store the preferences
+	 */
+	private static final String SDKPATH_PREFERENCE_KEY    = "sdkpath";
+	
+	/**
+	 * OOo path preference key. Used to store the preferences
+	 */
+	private static final String OOOPATH_PREFERENCE_KEY    = "ooopath";
+	
+	private static final String OOONAME_PREFERENCE_KEY	  = "oooname";
+	
+	/**
+	 * Loads the SDK properties
+	 * 
+	 * @return the loaded SDKs
+	 */
 	static public ISdk[] loadSDKs(){
 		
 		ISdk[] result = null;
@@ -35,7 +62,7 @@ public class PropertiesManager {
 			Vector sdks = new Vector(); 
 			
 			do {
-				String path = sdksProperties.getProperty(OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i);
+				String path = sdksProperties.getProperty(SDKPATH_PREFERENCE_KEY+i);
 				
 				found = !(null == path);
 				i++;
@@ -69,35 +96,35 @@ public class PropertiesManager {
 		return result;
 	}
 	
+	/**
+	 * Saves the SDK properties.
+	 * 
+	 * @param sdks the SDKs to save
+	 */
 	static public void saveSDKs(ISdk[] sdks){
 		
 		try {
 			Properties sdksProperties = getProperties();
 			
 			// Load all the existing properties and remove the SDKPATH_PREFERENCE_KEY ones
-			int j=0;
-			boolean found = false;
-			
-			do {
-				String sdkPath = sdksProperties.getProperty(
-						OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+j);
-				found = (null != sdkPath);
-				
-				if (found){
-					sdksProperties.remove(
-							OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+j);
+			Enumeration keys = sdksProperties.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String)keys.nextElement();
+								
+				if (key.startsWith(SDKPATH_PREFERENCE_KEY)){
+					sdksProperties.remove(key);
 				}
-			} while (found);
+			}
 			
 			// Saving the new SDKs 
 			for (int i=0; i<sdks.length; i++){
 				ISdk sdki = sdks[i];
-				sdksProperties.put(
-						OOEclipsePlugin.SDKPATH_PREFERENCE_KEY+i, sdki.getHome());
+				sdksProperties.put(SDKPATH_PREFERENCE_KEY+i, sdki.getHome());
 			}
 		
 			
-			String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
+			String sdks_config_url = OOEclipsePlugin.getDefault().
+					getStateLocation().toString();
 			File file = new File(sdks_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
 			if (!file.exists()){
 				file.createNewFile();
@@ -111,7 +138,12 @@ public class PropertiesManager {
 		}
 	}
 	
-static public IOOo[] loadOOos(){
+	/**
+	 * Loads the OOo properties
+	 * 
+	 * @return the loaded OOos
+	 */
+	static public IOOo[] loadOOos(){
 		
 		IOOo[] result = null;
 		
@@ -128,18 +160,27 @@ static public IOOo[] loadOOos(){
 			
 			do {
 				String path = ooosProperties.getProperty(
-						OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i);
+						OOOPATH_PREFERENCE_KEY+i);
+				String name = ooosProperties.getProperty(
+						OOONAME_PREFERENCE_KEY+i);
 				
 				found = !(null == path);
 				i++;
 				
 				if (found){
 					try {
-						OOo ooo = new OOo(path);
+						OOo ooo = new OOo(path, name);
 						ooos.add(ooo);
 					} catch (InvalidConfigException e){
-						PluginLogger.getInstance().error(
-								e.getLocalizedMessage(), e);
+						
+						try {
+							URE ure = new URE(path, name);
+							ooos.add(ure);
+						}
+						catch (InvalidConfigException ex) {
+							PluginLogger.getInstance().error(
+									e.getLocalizedMessage(), ex);
+						}
 					}
 				}				
 			} while (found);
@@ -161,31 +202,32 @@ static public IOOo[] loadOOos(){
 		return result;
 	}
 	
+	/**
+	 * Saves the OOo properties.
+	 * 
+	 * @param sdks the OOos to save
+	 */
 	static public void saveOOos(IOOo[] ooos){
 		
 		try {
 			Properties ooosProperties = getProperties();
 			
 			// Load all the existing properties and remove the OOOPATH_PREFERENCE_KEY ones
-			int j=0;
-			boolean found = false;
-			
-			do {
-				String oooPath = ooosProperties.getProperty(
-						OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+j);
-				found = (null != oooPath);
-				
-				if (found){
-					ooosProperties.remove(
-							OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+j);
+			Enumeration keys = ooosProperties.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String)keys.nextElement();
+								
+				if (key.startsWith(OOOPATH_PREFERENCE_KEY) ||
+						key.startsWith(OOONAME_PREFERENCE_KEY)){
+					ooosProperties.remove(key);
 				}
-			} while (found);
+			}
 			
 			// Saving the new OOos 
 			for (int i=0; i<ooos.length; i++){
 				IOOo oooi = ooos[i];
-				ooosProperties.put(
-						OOEclipsePlugin.OOOPATH_PREFERENCE_KEY+i, oooi.getHome());
+				ooosProperties.put(OOOPATH_PREFERENCE_KEY+i, oooi.getHome());
+				ooosProperties.put(OOONAME_PREFERENCE_KEY+i, oooi.getName());
 			}
 		
 			
@@ -204,9 +246,18 @@ static public IOOo[] loadOOos(){
 		}
 	}
 	
+	/**
+	 * Loads the OOo and SDK properties from the 
+	 * {@link OOEclipsePlugin#OOO_CONFIG} file.
+	 * 
+	 * @return the loaded properties
+	 * @throws IOException is thrown if any problem happened during the file 
+	 * 			reading
+	 */
 	static private Properties getProperties() throws IOException{
 		// Loads the ooos config file into a properties object
-		String ooos_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
+		String ooos_config_url = OOEclipsePlugin.getDefault().
+				getStateLocation().toString();
 		File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
 		if (!file.exists()){
 			file.createNewFile();

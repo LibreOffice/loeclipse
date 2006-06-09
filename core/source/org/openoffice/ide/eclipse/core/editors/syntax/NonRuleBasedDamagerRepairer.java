@@ -2,9 +2,9 @@
  *
  * $RCSfile: NonRuleBasedDamagerRepairer.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,7 +57,9 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.StyleRange;
 
 /**
- * TODOC
+ * The UNO-IDL document repairer. This is used by the UNO-IDL editor. In 
+ * order to fully understand the editor mechanisms, please report to 
+ * Eclipse plugin developer's guide. 
  * 
  * @author cbosdonnat
  *
@@ -71,7 +73,7 @@ public class NonRuleBasedDamagerRepairer
 	protected TextAttribute fDefaultTextAttribute;
 	
 	/**
-	 * Constructor for NonRuleBasedDamagerRepairer.
+	 * Default constructor
 	 */
 	public NonRuleBasedDamagerRepairer(TextAttribute defaultTextAttribute) {
 		Assert.isNotNull(defaultTextAttribute);
@@ -79,20 +81,22 @@ public class NonRuleBasedDamagerRepairer
 		fDefaultTextAttribute = defaultTextAttribute;
 	}
 
-	/**
-	 * @see IPresentationRepairer#setDocument(IDocument)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
 		fDocument = document;
 	}
 
 	/**
-	 * Returns the end offset of the line that contains the specified offset or
-	 * if the offset is inside a line delimiter, the end offset of the next line.
+	 * Returns the end offset of the line that contains the specified offset.
+	 * If the offset is inside a line delimiter, the end offset of the next line.
 	 *
 	 * @param offset the offset whose line end offset must be computed
 	 * @return the line end offset for the given offset
-	 * @exception BadLocationException if offset is invalid in the current document
+	 * @exception BadLocationException if offset is invalid in the current
+	 * 			 document
 	 */
 	protected int endOfLineOf(int offset) throws BadLocationException {
 
@@ -109,8 +113,9 @@ public class NonRuleBasedDamagerRepairer
 		}
 	}
 
-	/**
-	 * @see IPresentationDamager#getDamageRegion(ITypedRegion, DocumentEvent, boolean)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
 	 */
 	public IRegion getDamageRegion(
 		ITypedRegion partition,
@@ -149,8 +154,9 @@ public class NonRuleBasedDamagerRepairer
 		return partition;
 	}
 
-	/**
-	 * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#createPresentation(org.eclipse.jface.text.TextPresentation, org.eclipse.jface.text.ITypedRegion)
 	 */
 	public void createPresentation(
 		TextPresentation presentation,
@@ -175,6 +181,7 @@ public class NonRuleBasedDamagerRepairer
 		int offset,
 		int length,
 		TextAttribute attr) {
+		
 		if (attr != null)
 			presentation.addStyleRange(
 				new StyleRange(

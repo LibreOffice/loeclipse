@@ -170,6 +170,13 @@
       <toc
             file="doc/help/toc.xml"
             primary="true"/>
+      <toc
+            file="doc/help/html/devdoc/extending/toc.xml"
+            primary="true"/>
+      <toc
+            file="doc/help/html/userdoc/javatuto/toc.xml"
+            primary="true"/>      
+            
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

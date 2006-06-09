@@ -16,6 +16,11 @@ public interface IUnoidlProject {
 	public static final String IDL_FOLDER = "idlfolder";
 	
 	//---------------------------------------------------- Properties accessors
+
+	/**
+	 * Gets the project implementation language.
+	 */
+	public ILanguage getLanguage();
 	
 	/**
 	 * Gets the project name.
@@ -23,9 +28,14 @@ public interface IUnoidlProject {
 	public String getName();
 	
 	/**
-	 * Gets the project implementation language.
+	 * Gets the selected OOo
 	 */
-	public ILanguage getLanguage();
+	public IOOo getOOo();
+	
+	/**
+	 * Gets the selected SDK
+	 */
+	public ISdk getSdk();
 	
 	/**
 	 * Set the language of the project implementation. This method can
@@ -35,41 +45,17 @@ public interface IUnoidlProject {
 	 */
 	public void setLanguage(ILanguage aLanguage);
 	
-	//-------------------------------------------------------- Config accessors
-	
-	/**
-	 * Sets the company prefix
-	 * 
-	 * @param prefix new company prefix 
-	 */
-	public void setCompanyPrefix(String prefix);
-	
-	/**
-	 * Sets the output extension
-	 * 
-	 * @param outputExt new output extension to set
-	 */
-	public void setOutputExtension(String outputExt);
-	
-	/**
-	 * Sets the selected SDK
-	 */
-	public void setSdk(ISdk aSdk);
-	
 	/**
 	 * Sets the selected OOo
 	 */
 	public void setOOo(IOOo aOOo);
 	
 	/**
-	 * Gets the selected SDK
+	 * Sets the selected SDK
 	 */
-	public ISdk getSdk();
+	public void setSdk(ISdk aSdk);
 	
-	/**
-	 * Gets the selected OOo
-	 */
-	public IOOo getOOo();
+	//-------------------------------------------------------- Config accessors
 	
 	/**
 	 * Gets the root module of the project. It corresponds to the prefix
@@ -87,7 +73,37 @@ public interface IUnoidlProject {
 	 */
 	public IPath getRootModulePath();
 	
+	/**
+	 * Sets the company prefix
+	 * 
+	 * @param prefix new company prefix 
+	 */
+	public void setCompanyPrefix(String prefix);
+	
+	/**
+	 * Sets the output extension
+	 * 
+	 * @param outputExt new output extension to set
+	 */
+	public void setOutputExtension(String outputExt);
+	
 	//------------------------------------------------------------ Path getters
+
+	/**
+	 * Returns the path to the project directory containing the temporary
+	 * build files.
+	 */
+	public IPath getBuildPath();
+	
+	/**
+	 * Returns the path to the project directory containing the idl files.
+	 */
+	public IPath getIdlPath();
+	
+	/**
+	 * Returns the path to the project implementation directory
+	 */
+	public IPath getImplementationPath();
 	
 	/**
 	 * Returns the full path to the project 
@@ -105,26 +121,10 @@ public interface IUnoidlProject {
 	public IPath getTypesPath();
 	
 	/**
-	 * Returns the path to the project directory containing the idl files.
-	 */
-	public IPath getIdlPath();
-	
-	/**
-	 * Returns the path to the project directory containing the temporary
-	 * build files.
-	 */
-	public IPath getBuildPath();
-	
-	/**
 	 * Returns the path to the project directory containing the generated 
 	 * urd files.
 	 */
 	public IPath getUrdPath();
-	
-	/**
-	 * Returns the path to the project implementation directory
-	 */
-	public IPath getImplementationPath();
 	
 	//----------------------------------------------- Project resources getters
 	

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlPartitionScanner.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,10 +51,10 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * TODOC
+ * Scanner splitting the text into partitions. In order to fully understand
+ * the editor mechanisms, please report to Eclipse plugin developer's guide.
  * 
  * @author cbosdonnat
- *
  */
 public class UnoidlPartitionScanner extends RuleBasedPartitionScanner {
 	
@@ -62,6 +62,9 @@ public class UnoidlPartitionScanner extends RuleBasedPartitionScanner {
 	public final static String IDL_COMMENT = "_idl_comment";
 	public final static String IDL_PREPROCESSOR = "_idl_preprocessor";
 	
+	/**
+	 * Constructor defining the rules to use to match the different partitions
+	 */
 	public UnoidlPartitionScanner() {
 		IToken idlComment = new Token(IDL_COMMENT);
 		IToken idlAutoComment = new Token(IDL_AUTOCOMMENT);

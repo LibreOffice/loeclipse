@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlScanner.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,7 +56,9 @@ import org.openoffice.ide.eclipse.core.editors.ColorProvider;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 
 /**
- * TODOC
+ * UNO-IDL code scanner. Used by the UNO-IDL viewer configuration. In order 
+ * to fully understand the editor mechanisms, please report to Eclipse 
+ * plugin developer's guide.
  * 
  * @author cbosdonnat
  *
@@ -64,7 +66,13 @@ import org.openoffice.ide.eclipse.core.editors.Colors;
 public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax{
 	
 	private ColorProvider provider;
-	
+
+	/**
+	 * Default constructor, initializing the rules to apply in the uno-idl
+	 * code.
+	 *  
+	 * @param cp a color provider to colorize the resulting tokens
+	 */
 	public UnoidlScanner(ColorProvider cp) {
 		provider = cp;
 		
@@ -78,20 +86,16 @@ public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax{
 			new TextAttribute(
 				provider.getColor(Colors.C_TYPE),
 				null,
-				SWT.BOLD
-			)
-		);
+				SWT.BOLD));
 		
 		IToken modifier = new Token(
 			new TextAttribute(provider.getColor(Colors.C_MODIFIER)));
 		
 		IToken string = new Token(
-			new TextAttribute(provider.getColor(Colors.C_STRING))
-		);
+			new TextAttribute(provider.getColor(Colors.C_STRING)));
 		
 		IToken other = new Token(
-			new TextAttribute(provider.getColor(Colors.C_TEXT))
-		);
+			new TextAttribute(provider.getColor(Colors.C_TEXT)));
 		
 		setDefaultReturnToken(other);
 		
@@ -122,5 +126,4 @@ public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax{
 		rules[3] = wordRule;
 		setRules(rules);
 	}
-
 }

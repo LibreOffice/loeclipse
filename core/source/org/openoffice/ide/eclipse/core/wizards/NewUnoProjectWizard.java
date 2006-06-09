@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -79,6 +79,10 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		setForcePreviousAndNextButtons(false);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
+	 */
 	public void addPages() {
 		mainPage = new NewUnoProjectPage();
 		addPage(mainPage);
@@ -87,6 +91,10 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		addPage(servicePage);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
+	 */
 	public boolean performFinish() {
 		
 		// First create the UNO project, then create the service.
@@ -181,6 +189,10 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		}
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#getWorkbench()
+	 */
 	public IWorkbench getWorkbench() {
 		return OOEclipsePlugin.getDefault().getWorkbench();
 	}

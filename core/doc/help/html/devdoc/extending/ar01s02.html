@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+		<title>Adding a new language support</title>
+		<link href="../../styles.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div class="section">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h2 class="title" style="clear: both">
+						   <a id="id2469267"/>Adding a new language 
+						   support</h2>
+					</div>
+				</div>
+			</div>
+			
+			<p>In order to add a new programming language to the ones 
+			   supported by the OpenOffice.org integration plugin, you 
+			   will have to develop a small other plugin. This chapter
+			   will require some Java skills.</p>
+			
+			<p>First of all, create a new Eclipse Plugin project using 
+			   <span class="strong"><strong>File &gt; New Project</strong>
+			   </span> and use the following values to fill in the form:</p>
+			
+			<div class="orderedlist">
+				<ol type="1">
+					<li><p>
+				      <code class="literal">
+				        org.openoffice.ide.eclipse.&lt;language&gt;</code>
+						</p>
+				    </li>
+					<li><p>
+					  Plugin ID: <code class="literal">
+					  	org.openoffice.ide.eclipse.&lt;language&gt;</code>
+						</p>
+					</li>
+					<li><p>
+					  Class name: <code class="literal">
+					    org.openoffice.ide.eclipse.&lt;language&gt;.&lt;Language&gt;Plugin</code>
+						</p>
+					</li>
+				</ol>
+			</div>
+			
+			<p>In the opened editor, go to the "<span class="strong">
+			   <strong>dependencies</strong></span>" page and add the
+			   <code class="literal">org.openoffice.ide.eclipse.core</code>
+			   plugin to the dependencies. In order to fit the other 
+			   plugins, rename the <code class="literal">src</code>
+			   folder into <code class="literal">source</code>. In order
+			   to have a short directory name, rename you project 
+			   directory in <code class="literal">&lt;language&gt;</code>
+			   using your preferred file browser.</p>
+
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title"><a id="id2469372"/>
+								The language extension point</h3>
+						</div>
+					</div>
+				</div>
+				
+				<p>Now you are ready to add a new language in your 
+				  freshly created plugin. Therefore go to the					
+				  "<span class="strong"><strong>extensions</strong>
+				  </span>" page and add a new <code class="literal">
+				  org.openoffice.ide.eclipse.core.language</code>
+				  extension.</p>
+				
+				<p>Now right click on it and select language to add a 
+				  language item to configure. Change the name into the 
+				  language name to print in the plugin dialogs (e.g.: 
+				  "Java", "C++" or "Python"). Then click on the 
+				  "<span class="strong"><strong>class</strong></span>"
+				  link to create a new class implementing the 
+				  <code class="literal">ILanguage</code> interface -
+				  this class could be named Language. Now you will have 
+				  to fill in the class methods. You can get some help on
+				  each method in the plugin API reference.</p>
+			</div>
+			
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h3 class="title"><a id="id2469426"/>
+							   Packaging the language plugin</h3>
+						</div>
+					</div>
+				</div>
+				
+				<p>There are several ways to package your language 
+				  plugin. The best one is to integrate it in the global
+				  plugin build chain. For this, checkout the other 
+				  project from the CVS: they are named 
+				  "<code class="literal">core</code>", 
+				  "<code class="literal">java</code>" and 
+				  "<code class="literal">build</code>". Now follow these
+				  instructions to make your plugin to be build with the 
+				  others.</p>
+				  
+				<div class="orderedlist">
+					<ol type="1">
+						<li><p>Create a	<code class="literal">build</code> 
+							directory</p>
+						</li>
+						<li><p>Copy the content of the
+							<code class="literal">build</code> directory 
+							from the <code class="literal">java</code> plugin</p>
+						</li>
+						<li><p>Replace <code class="literal">java</code>
+							by your language in all the copied files</p>
+						</li>
+						<li><p>Change the version in the 
+							<code class="literal">build/build.properties</code>
+							file</p>
+						</li>
+						<li><p>Add an ant call to your 
+							<code class="literal">build.xml</code> file 
+							in the build project's 
+							<code class="literal">build.xml</code> file 
+							like this:</p>
+						</li>
+					</ol>
+				</div>
+				
+				<pre class="programlisting">&lt;ant dir="language/build/" inheritall="false" target="clean" /&gt;</pre>
+				
+				<p>Now, you will be able to build all the plugins by 
+					running the build project ant file.</p>
+			</div>
+		</div>
+	</body>
+</html>

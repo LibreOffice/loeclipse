@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -46,17 +46,17 @@
 			OpenOffice.org development
     </description>
 
-	<propertyfile file="build.properties"/>
+	<loadproperties srcfile="build.properties" />
 	
 	<property name="prj.path" value=".." />
 	<property name="out.path" value="${prj.path}/bin/ant" />
 	
 	<path id="dependencies.path">
-		<pathelement location="${home.openoffice}/program/classes/juh.jar" />
-		<pathelement location="${home.openoffice}/program/classes/jurt.jar" />
-		<pathelement location="${home.openoffice}/program/classes/ridl.jar" />
+		<pathelement location="${openoffice.home}/program/classes/juh.jar" />
+		<pathelement location="${openoffice.home}/program/classes/jurt.jar" />
+		<pathelement location="${openoffice.home}/program/classes/ridl.jar" />
 
-		<fileset dir="${home.eclipse}/plugins/">
+		<fileset dir="${eclipse.home}/plugins/">
 			<include name="org.eclipse*.jar"/>
 		</fileset>
 	</path>
@@ -118,14 +118,14 @@
 	</target>
 
 	<!-- - - - - - - - -   target: plugin  - - - - - - - - - - - - -->
-	<target name="plugin">
+	<target name="plugin" depends="internals">
 		
 		<mkdir dir="${out.path}/plugins" />
 		<mkdir dir="${out.path}/plugin" />
 		<javac srcdir="${prj.path}/source" destdir="${out.path}/plugin"
 			target="1.3" source="1.3"
 			classpathref="dependencies.path" 
-			excludes="**/unittests/**"/>
+			excludes="**/unittests/**,**/UnoTypesGetter*"/>
 		
 		<copy todir="${out.path}/plugin">
 			<fileset dir="${prj.path}/source">
@@ -155,29 +155,6 @@
 			  tofile="${out.path}/plugin/plugin.properties" />
 		<copy file="${prj.path}/plugin.xml" 
 			  tofile="${out.path}/plugin/plugin.xml" />
-
-		<!-- Generate the javadoc API in the doc/html/api folder -->
-		<javadoc 
-			packagenames="org.openoffice.ide.eclipse.core.*"
-			classpathref="dependencies.path"
-			destdir="${out.path}/plugin/doc/help/html/api">
-			
-			<packageset dir="${prj.path}/source">
-				<include name="org/openoffice/ide/eclipse/core/**"/>
-				<exclude name="org/openoffice/ide/eclipse/core/internal/**"/>
-				<exclude name="org/openoffice/ide/eclipse/core/unittests/**"/>
-			</packageset>
-		</javadoc>
-		
-		<!-- Creating the UnoTypesGetter.jar file -->
-		<jar destfile="${out.path}/plugin/UnoTypesGetter.jar"
-			basedir="${out.path}/plugin"
-			includes="org/openoffice/ide/eclipse/core/unotypebrowser/*.class">
-			<manifest>
-				<attribute name="Main-Class" 
-					value="org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter" />
-			</manifest>
-		</jar>
 		
 		<!-- Creating the plugin jar file -->
 		<jar destfile="${out.path}/plugins/org.openoffice.ide.eclipse.core_${version}.jar"
@@ -204,11 +181,19 @@
 		
 		<!-- Creating the UnoTypesGetter.jar file -->
 		<jar destfile="${prj.path}/UnoTypesGetter.jar"
-			basedir="${prj.path}/bin"
-			includes="**/unotypebrowser/*.class">
+			basedir="${prj.path}/bin">
+			
+			<fileset dir="${prj.path}/source">
+				<filename name="**/InternalUnoType*"/>
+				<filename name="**/UnoTypesGetter*"/>
+				<filename name="**/UnoTypeProvider*"/>
+			</fileset>
+			
 			<manifest>
 				<attribute name="Main-Class" 
 					value="org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter" />
+				<attribute name="RegistrationClassName"
+					value="org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter"/>
 			</manifest>
 		</jar>
 		

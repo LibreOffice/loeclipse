@@ -38,7 +38,6 @@ public final class UnoFactory {
 	public static IUnoComposite createTypeFile(String fullName, 
 			IUnoidlProject project) {
 		
-		// TODO find a way to create a JUnit test for this method
 		IUnoComposite file = null;
 		
 		if (fullName != null && !fullName.equals("")) {
@@ -58,13 +57,13 @@ public final class UnoFactory {
 	 * 
 	 * @param filehandle the relative filename
 	 * 
-	 * @see #createTypeFile(String) for file creation from Type name
+	 * @see #createTypeFile(String, IUnoidlProject) for file creation from 
+	 * 		Type name
 	 * 
 	 * @return a Uno composite of FILE type
 	 */
 	public static IUnoComposite createFile(IFile filehandle) {
 		
-		// TODO find a way to create a JUnit test for this method
 		IUnoComposite file = null;
 		
 		if (filehandle != null) {
@@ -180,8 +179,7 @@ public final class UnoFactory {
 	 * <p><pre>module foo { };</pre></p>
 	 * 
 	 * @param name is the module name (eg <code>foo</code>)
-	 * @return the top-most uno composite corresponding to the top-most
-	 *  			module.
+	 * @return the uno composite corresponding to the module.
 	 */
 	public static IUnoComposite createModuleSpace(String name){
 		
@@ -201,7 +199,7 @@ public final class UnoFactory {
 	 * 
 	 * @param fullName is the fully qualified name of the
 	 * 			module to create (eg: <code>org::openoffice::foo</code>)
-	 * @return
+	 * @return the top-most composite corresponding to the top-most module
 	 */
 	public static IUnoComposite createModulesSpaces(String fullName){
 		

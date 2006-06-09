@@ -5,6 +5,11 @@ import org.openoffice.ide.eclipse.core.model.UnoFactory;
 
 import junit.framework.TestCase;
 
+/**
+ * JUnit tests for the Uno composite factory
+ * 
+ * @author cbosdonnat
+ */
 public class UnoFactoryTest extends TestCase {
 	
 	/*

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeBrowser.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -77,7 +77,9 @@ import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 
 /**
- * TODOC
+ * A dialog to browse UNO types. This class doesn't launch the types query:
+ * this job is performed by the uno type provider to avoid very slow window
+ * rendering.
  * 
  * @author cbosdonnat
  *
@@ -89,6 +91,13 @@ public class UnoTypeBrowser extends StatusDialog
 	private UnoTypeProvider typesProvider;
 	private InternalUnoType selectedType;
 	
+	/**
+	 * Creates a new browser dialog. The browser, waits for the type provider
+	 * to finish its work if it's not already over.
+	 * 
+	 * @param parentShell the shell where to create the dialog
+	 * @param aUnoTypesProvider the uno type provider
+	 */
 	public UnoTypeBrowser(Shell parentShell, UnoTypeProvider aUnoTypesProvider) {
 		super(parentShell);
 		
@@ -153,7 +162,10 @@ public class UnoTypeBrowser extends StatusDialog
 	
 	private final static String F_SINGLETON = "__singleton";
 	
-	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createDialogArea(Composite parent) {
 		
 		// Create the control that contains all the UI components
@@ -190,6 +202,10 @@ public class UnoTypeBrowser extends StatusDialog
 		return body;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.unotypebrowser.IInitListener#initialized()
+	 */
 	public void initialized() {
 	
 		Runnable run = new Runnable(){
@@ -210,6 +226,11 @@ public class UnoTypeBrowser extends StatusDialog
 		getContents().getDisplay().asyncExec(run);
 	}
 	
+	/**
+	 * Create and configure the types list
+	 * 
+	 * @param parent the parent composite where to create the list
+	 */
 	private void createList(Composite parent){
 		
 		Table table = new Table(parent, SWT.BORDER | SWT.V_SCROLL| SWT.SINGLE);
@@ -257,6 +278,11 @@ public class UnoTypeBrowser extends StatusDialog
 		});
 	}
 	
+	/**
+	 * Creates the type filter checkboxes
+	 * 
+	 * @param parent the parent composite where to create the boxes
+	 */
 	private void createFilterRows(Composite parent){
 		
 		// Create the necessary filter rows depending on the needed types
@@ -352,6 +378,9 @@ public class UnoTypeBrowser extends StatusDialog
 		}
 	}
 	
+	/**
+	 * Method to activate or unactivate the dialog fields
+	 */
 	public void activateFields(boolean activate) {
 		inputRow.setEnabled(activate);
 		typesList.getTable().setEnabled(activate);
@@ -407,8 +436,17 @@ public class UnoTypeBrowser extends StatusDialog
 		}
 	}
 	
+	/**
+	 * Provides the label and image for the list items
+	 * 
+	 * @author cbosdonnat
+	 */
 	class TypeLabelProvider extends LabelProvider {
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+		 */
 		public Image getImage(Object element) {
 			Image result = null;
 			
@@ -425,6 +463,10 @@ public class UnoTypeBrowser extends StatusDialog
 			return result;
 		}
 		
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
 		public String getText(Object element) {
 			String result = "";
 			
@@ -437,7 +479,7 @@ public class UnoTypeBrowser extends StatusDialog
 								typesList.getSelection();
 					
 					if (selection.getFirstElement().equals(type)){
-						result = result + " - " + type.getPath();
+						result = result + " - " + type.getFullName();
 					}
 				}
 			}
@@ -446,11 +488,17 @@ public class UnoTypeBrowser extends StatusDialog
 		
 	}
 	
-	/**
-	 * The calling method have to close the dialog window after having get the 
-	 * resulting data.
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
+		
+		/**
+		 * The calling method have to close the dialog window after having get the 
+		 * resulting data.
+		 */
+		
 		if (typesList.getSelection().isEmpty()) {
 			updateStatus(new Status(Status.ERROR,
 					OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
@@ -469,6 +517,9 @@ public class UnoTypeBrowser extends StatusDialog
 	
 	private int filter;
 	
+	/**
+	 * Refreshes the dialog
+	 */
 	private void refresh(){
 		
 		activateFields(false);
@@ -476,6 +527,10 @@ public class UnoTypeBrowser extends StatusDialog
 		activateFields(true);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
+	 */
 	public void fieldChanged(FieldEvent e) {
 		
 		if (e.getProperty().equals(F_INPUT)) {
@@ -524,7 +579,7 @@ public class UnoTypeBrowser extends StatusDialog
 			
 			refresh();
 			
-		}else if (e.getProperty().equals(F_TYPEDEF)) {
+		} else if (e.getProperty().equals(F_TYPEDEF)) {
 			boolean newValue = typedefFilterRow.getBooleanValue();
 			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.TYPEDEF);
 			filter = newValue ? filter & inv | UnoTypeProvider.TYPEDEF : filter & inv;
@@ -559,9 +614,19 @@ public class UnoTypeBrowser extends StatusDialog
 	
 	//---------------------------------------- Filters the elements in the list
 	
+	/**
+	 * List items filter class 
+	 * 
+	 * @author cbosdonnat
+	 */
 	private class UnoTypesFilter extends ViewerFilter {
 
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
 			boolean select = false;
 			
 			if (element instanceof InternalUnoType){
@@ -579,48 +644,55 @@ public class UnoTypeBrowser extends StatusDialog
 	
 	//----------------------------------------- Manages the content of the list
 	
+	/**
+	 * Returns the selected {@link InternalUnoType}
+	 */
+	public InternalUnoType getSelectedType(){
+		return selectedType;
+	}
 	
+	public void setSelectedType(InternalUnoType type) {
+		selectedType = type;
+		if (null != typesList){
+			IStructuredSelection selection = StructuredSelection.EMPTY;
+			if (null != selectedType) {
+				selection = new StructuredSelection(selectedType);
+			}
+			
+			typesList.setSelection(selection);
+		}
+	}
 	
 	/**
-	 * Returns the type path and it's type in the following way:
-	 * <code>&lt;path&gt; &lt;type&gt;</code>, where the type is a numeric
-	 * value among those defined in UnoTypeProvider class. If the selection
-	 * is empty, the returned value is <code>null</code>.
+	 * Provides the content to the list viewer
 	 * 
-	 * @see UnoTypeProvider
-	 * 
-	 * @return the exact path and type of the chosen UNO type. For example
-	 *       this could be "com::sun::star::uno::XInterface 2"
+	 * @author cbosdonnat
+	 *
 	 */
-	public String getSelectedType(){
-		String typePath = null;
-		
-		if (null != selectedType){
-			typePath = selectedType.getPath() + " " + selectedType.getType();
-		}
-		
-		return typePath;
-	}
-	
-	public void setSelectedType(String type) {
-		
-		selectedType = new InternalUnoType(type);
-		typesList.setSelection(new StructuredSelection(selectedType));
-	}
-	
 	private class InternalTypesProvider implements IStructuredContentProvider {
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
 		public Object[] getElements(Object inputElement) {
 			return typesProvider.toArray();
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
 		public void dispose() {
 			// Nothing to do
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Should never happen
 		}
-		
 	}
 }

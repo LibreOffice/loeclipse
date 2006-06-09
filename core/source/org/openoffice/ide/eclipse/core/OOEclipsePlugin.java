@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -76,10 +76,13 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.osgi.framework.BundleContext;
 
 /**
- * TODOC
+ * Plugin entry point, it is used by Eclipse as a bundle. 
+ * 
+ * <p>This class contains the main constants of the plugin, like its
+ * ID, the UNO project nature. The internationalization method is provided
+ * in this class too.</p> 
  * 
  * @author cbosdonnat
- *
  */
 public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChangeListener {
 
@@ -99,13 +102,15 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	// HELP The nature id is the natures extension point id appened to the plugin id
 	public static final String UNO_NATURE_ID = OOECLIPSE_PLUGIN_ID + ".unonature";
 	
-	public static final String SDKNAME_PREFERENCE_KEY    = "sdkname";
-	public static final String SDKVERSION_PREFERENCE_KEY = "sdkversion";
-	public static final String SDKPATH_PREFERENCE_KEY    = "sdkpath";
-	public static final String OOOPATH_PREFERENCE_KEY    = "ooopath";
-	public static final String LOGLEVEL_PREFERENCE_KEY 	 = "loglevel";
-
+	/**
+	 * Uno idl editor ID
+	 */
 	public static final String UNO_EDITOR_ID = OOECLIPSE_PLUGIN_ID + ".editors.UnoidlEditor";
+	
+	/**
+	 * Log level preference key. Used to store the preferences
+	 */
+	public static final String LOGLEVEL_PREFERENCE_KEY 	 = "loglevel";
 
 	// The shared instance.
 	private static OOEclipsePlugin plugin;
@@ -265,6 +270,9 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		store.setDefault(LOGLEVEL_PREFERENCE_KEY, PluginLogger.INFO);
 	}
 
+	/**
+	 * Convenience method returning the active workbench page.
+	 */
 	public static IWorkbenchPage getActivePage(){
 		IWorkbenchPage page = null;
 		
@@ -312,12 +320,14 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	
 	
 	/**
-	 * Create a process for the given shell command. This process will be created with the project
-	 * paramters such as it's SDK and location path
+	 * Create a process for the given shell command. This process will 
+	 * be created with the project parameters such as it's SDK and 
+	 * location path
 	 * 
-	 * @param project
-	 * @param shellCommand
-	 * @param monitor
+	 * @param project the UNO-IDL project on which to run the tool
+	 * @param shellCommand the shell command to execute the tool
+	 * @param monitor a process monitor to watch the tool launching
+	 * 
 	 * @return the process executing the tool
 	 */
 	public static Process runTool(IUnoidlProject project, 
@@ -333,7 +343,6 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 				
 				// Get local references to the SDK used members
 				String sdkHome = sdk.getHome();
-				String oooHome = ooo.getHome();
 				
 				String pathSeparator = System.getProperty("path.separator");
 				
@@ -353,7 +362,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 					
 					// Definining path variables
 					vars = new String[1];
-					vars[0] = "PATH=" + binPath + pathSeparator + oooHome + "\\program";
+					Path oooLibsPath = new Path(ooo.getLibsPath());
+					vars[0] = "PATH=" + binPath + pathSeparator + oooLibsPath.toOSString();
 					
 					// Defining the command
 					
@@ -367,7 +377,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 					command[2] = shellCommand;
 					
 					
-				} else if (osName.equals("linux") || osName.equals("solaris") || osName.equals("sun os")) {
+				} else if (osName.equals("linux") || osName.equals("solaris") || 
+						osName.equals("sun os")) {
 					
 					// An UN*X platform
 					
@@ -393,7 +404,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 						
 						vars = new String[2];
 						vars[0] = "PATH=" + sdkHome + platform + "/bin";
-						vars[1] = "LD_LIBRARY_PATH=" + oooHome + "/program";
+						vars[1] = "LD_LIBRARY_PATH=" + ooo.getLibsPath();
 						
 						// Set the command
 						command[0] = "sh";
@@ -415,8 +426,6 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 					process = Runtime.getRuntime().exec(command, vars, projectFile);
 				}
 				
-			} else {
-				// TODO Toggle sdk error marker if it doesn't exist
 			}
 			
 		} catch (IOException e) {
@@ -443,12 +452,16 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 			// SubProcess creation unauthorized
 			
 			MessageDialog dialog = new MessageDialog(
-					OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
-					OOEclipsePlugin.getTranslationString(I18nConstants.UNO_PLUGIN_ERROR),
+					OOEclipsePlugin.getDefault().getWorkbench().
+							getActiveWorkbenchWindow().getShell(),
+					OOEclipsePlugin.getTranslationString(
+							I18nConstants.UNO_PLUGIN_ERROR),
 					null,
-					OOEclipsePlugin.getTranslationString(I18nConstants.PROCESS_ERROR),
+					OOEclipsePlugin.getTranslationString(
+							I18nConstants.PROCESS_ERROR),
 					MessageDialog.ERROR,
-					new String[]{OOEclipsePlugin.getTranslationString(I18nConstants.OK)},
+					new String[]{OOEclipsePlugin.getTranslationString(
+							I18nConstants.OK)},
 					0);
 			dialog.setBlockOnOpen(true);
 			dialog.create();

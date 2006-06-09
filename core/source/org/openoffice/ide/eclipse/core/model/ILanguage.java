@@ -66,7 +66,19 @@ public interface ILanguage {
 	public void addLanguageDependencies(IUnoidlProject unoproject, 
 			IProject project, IProgressMonitor monitor) throws CoreException;
 	
+	/**
+	 * Adds the language specific OpenOffice.org dependencies to the project.
+	 * 
+	 * @param ooo the OpenOffice.org instance
+	 * @param project the project on which to add the dependencies
+	 */
 	public void addOOoDependencies(IOOo ooo, IProject project);
 	
+	/**
+	 * Removes the language specific OpenOffice.org dependencies from the project.
+	 * 
+	 * @param ooo the OpenOffice.org instance
+	 * @param project the project from which to remove the dependencies
+	 */
 	public void removeOOoDependencies(IOOo ooo, IProject project);
 }

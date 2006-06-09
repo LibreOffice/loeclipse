@@ -10,6 +10,11 @@ import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 
 import junit.framework.TestCase;
 
+/**
+ * JUnit tests for the UNO-IDL composite structure
+ * 
+ * @author cbosdonnat
+ */
 public class CompositeTest extends TestCase {
 
 	public CompositeTest(String arg0) {

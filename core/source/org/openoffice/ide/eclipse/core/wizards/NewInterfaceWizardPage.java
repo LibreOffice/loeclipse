@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -77,6 +77,10 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 		super(pageName, project, aRootName, aElementName);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
 	public void dispose() {
 		
 		interfaceInheritances.removeSelectionChangedListener(this);
@@ -85,6 +89,10 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 		super.dispose();
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getProvidedTypes()
+	 */
 	public int getProvidedTypes() {
 		return UnoTypeProvider.INTERFACE;
 	}
@@ -96,6 +104,10 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	private BooleanRow publishedRow;
 	private InterfacesTable interfaceInheritances;
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#createSpecificControl(org.eclipse.swt.widgets.Composite)
+	 */
 	protected void createSpecificControl(Composite parent) {
 		
 		publishedRow = new BooleanRow(parent, P_PUBLISHED,
@@ -116,19 +128,35 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 		interfaceInheritances.addSelectionChangedListener(this);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
+	 */
 	public String getTitle() {
 		return OOEclipsePlugin.getTranslationString(
 				I18nConstants.NEW_INTERFACE_TITLE);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
+	 */
 	public String getDescription() {
 		return "";
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getTypeLabel()
+	 */
 	protected String getTypeLabel() {
 		return OOEclipsePlugin.getTranslationString(I18nConstants.INTERFACE_NAME);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getImageDescriptor()
+	 */
 	protected ImageDescriptor getImageDescriptor() {
 		return OOEclipsePlugin.getImageDescriptor(
 				ImagesConstants.NEW_INTERFACE_IMAGE);
@@ -155,6 +183,11 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 		setPageComplete(isPageComplete());
 	}
 	
+	/**
+	 * Create the interface from the page fields
+	 * 
+	 * @return the file handle of the created interface
+	 */
 	public IFile createInterface() {
 		
 		IFile interfaceFile = null;

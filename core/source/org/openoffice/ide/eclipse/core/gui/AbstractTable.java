@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractTable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -78,29 +78,35 @@ import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
  * Abstract table structure used in the plugin. This avoid to rewrite to many 
  * times the same code for basic table managment.
  * 
- * TODOC What should be rewritten to create a new table and links to examples
+ * <p>In order to create a new table class, the following methods should be
+ * overridden:
+ * 	<ul>
+ * 		<li>{@link #addLine()} to customize the action performed when clicking
+ * 			on the <em>Add</em> button.</li>
+ * 		<li>{@link #removeLine()} to customize the action performed when 
+ * 			clicking on the <em>Del</em> button.</li>
+ * 		<li>{@link #handleDoubleClick(DoubleClickEvent)} to customize the
+ * 			action performed on a doucle click on the table.</li>
+ * 		<li>{@link #createCellEditors(Table)} to customize how to edit the
+ * 			cells of the differents columns of the table.</li>
+ * 	</ul>
+ * </p>
  * 
  * @author cbosdonnat
  *
  */
 public class AbstractTable extends Composite implements ISelectionProvider {
 	
-	protected Table table;
-	
-	protected TableViewer tableViewer;
-	
-	private Button add;
-	
-	private Button del;
-	
-	private String[] columnTitles;
-	
-	private int[] columnWidths;
-	
-	private String[] columnProperties;
-	
-	private String title;
-	
+	/**
+	 * Constructor for a generic table. The number of columns is the minimum
+	 * of the length of the three arrays in parameter.
+	 * 
+	 * @param parent the parent composite where to add the table
+	 * @param aTitle a title for the table
+	 * @param colTitles an array with the colums titles 
+	 * @param colWidths an array with the columns width
+	 * @param colProperties an array with the columns properties
+	 */
 	public AbstractTable(Composite parent, String aTitle, String[] colTitles, 
 			int[] colWidths, String[] colProperties) {
 		super(parent, SWT.NONE);
@@ -129,12 +135,30 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		createColumns();
 	}
 	
+	/**
+	 * Convenient method to get the table lines.
+	 * 
+	 * @return a vector containing the {@link ITableElement} objects 
+	 *			representing the lines.
+	 */
+	public Vector getLines(){
+		return lines;
+	}
+	
+	/**
+	 * Adding a line to the table model.
+	 * 
+	 * @param element the line to add.
+	 */
 	protected void addLine(ITableElement element) {
 		lines.add(element);
 		tableViewer.add(element);
 		tableViewer.refresh();
 	}
 	
+	/**
+	 * Creates and layout all the graphic components of the table.
+	 */
 	protected void createContent(){
 		// Creates the layout of the composite with 2 columns and extended at it's maximum size
 		setLayout(new GridLayout(2, false));
@@ -154,6 +178,63 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		tableViewer.setInput(this);
 	}
 
+	/**
+	 * Method called to configure the columns cell editors. This method should
+	 * be overridden in order to set customized editors. The default action is
+	 * to return <code>null</code> to indicate that no editing is alloweded.
+	 * 
+	 * @param table the table for which to create the cell editors, ie the
+	 * 		internal table object of this class.
+	 * 
+	 * @return the cell editors in the order of the columns
+	 */
+	protected CellEditor[] createCellEditors(Table table){
+		return null;
+	}
+	
+	/**
+	 * Method called after an action on the <em>Add</em> button. This method
+	 * should be overridden to customize the table.
+	 * 
+	 * @return the new table line to add.
+	 */
+	protected ITableElement addLine(){
+		return null;
+	}
+	
+	/**
+	 * Method called after an action on the <em>Del</em> button. This method
+	 * should be overridden to customize the table.
+	 * 
+	 * @return the table line removed or <code>null</code> if none was removed.
+	 */
+	protected ITableElement removeLine(){
+		
+		IStructuredSelection selection = (IStructuredSelection)tableViewer.
+												getSelection();
+		ITableElement toRemove = null;
+		
+		if (!selection.isEmpty()){
+			if (selection.getFirstElement() instanceof ITableElement){
+				toRemove = (ITableElement)selection.getFirstElement();
+			}
+		}
+		return toRemove;
+	}
+	
+	/**
+	 * Method called when a double click event has been raised by the table.
+	 * This implementation doesn't perform any action and is intended to be
+	 * overridden.
+	 *  
+	 * @param event the double click event raised
+	 */
+	protected void handleDoubleClick(DoubleClickEvent event){
+	}
+	
+	/**
+	 * Creates the table component.
+	 */
 	private void createTable(){
 		table = new Table(this, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		
@@ -167,6 +248,9 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		table.setHeaderVisible(true);
 	}
 
+	/**
+	 * Creates and configure the table viewer which will render its content
+	 */
 	private void createTableViewer() {
 		// Creates the table viewer
 		tableViewer = new TableViewer(table);
@@ -190,12 +274,11 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 			}
 			
 		});
-	}
+	}	
 	
-	protected CellEditor[] createCellEditors(Table table){
-		return null;
-	}
-	
+	/**
+	 * Creates and configure the Add and Del button components.
+	 */
 	private void createButtons() {
 		// Creates the two buttons ADD and DEL
 		add = new Button(this, SWT.NONE);
@@ -216,7 +299,6 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 			}
 		});
 		
-		
 		del = new Button(this, SWT.NONE);
 		del.setText(OOEclipsePlugin.getTranslationString(I18nConstants.DEL));
 		GridData gdDel = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
@@ -234,6 +316,10 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		});
 	}
 	
+	/**
+	 * Creates and configures all the table columns
+	 *
+	 */
 	private void createColumns(){
 		for (int i=0, length=Math.min(columnWidths.length, 
 				columnTitles.length); i<length; i++){
@@ -243,51 +329,78 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		}
 	}
 	
-	protected ITableElement addLine(){
-		return null;
-	}
-	
-	protected ITableElement removeLine(){
-		
-		IStructuredSelection selection = (IStructuredSelection)tableViewer.
-												getSelection();
-		ITableElement toRemove = null;
-		
-		if (!selection.isEmpty()){
-			if (selection.getFirstElement() instanceof ITableElement){
-				toRemove = (ITableElement)selection.getFirstElement();
-			}
-		}
-		return toRemove;
-	}
-	
-	protected void handleDoubleClick(DoubleClickEvent event){
-	}
-	
 	private Vector lines = new Vector();
 	
-	public Vector getLines(){
-		return lines;
-	}
+	// Components private instances
 	
+	protected Table table;
+	
+	protected TableViewer tableViewer;
+	
+	private Button add;
+	
+	private Button del;
+	
+	// Columns configuration
+	
+	private String[] columnTitles;
+	
+	private int[] columnWidths;
+	
+	private String[] columnProperties;
+	
+	private String title;
+	
+	/**
+	 * Provides the content of the table. The main method used here is the
+	 * {@link #getElements(Object)} one which returns all the 
+	 * {@link ITableElement} lines.
+	 * 
+	 * @author cbosdonnat
+	 *
+	 */
 	private class AbstractContentProvider implements IStructuredContentProvider {
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
 		public Object[] getElements(Object inputElement) {
 			return lines.toArray();
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
 		public void dispose() {
 			// nothing to do here
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Nothing to do here
 		}
 		
 	}
 	
+	/**
+	 * This class is responsible to handle the different editon actions 
+	 * performed on the table cells. This uses the 
+	 * {@link ITableElement#canModify(String)}, {@link ITableElement#getValue(String)}
+	 * and {@link ITableElement#setValue(String, Object)}.
+	 * 
+	 * @author cbosdonnat
+	 */
 	private class AbstractCellModifier implements ICellModifier {
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
+		 */
 		public boolean canModify(Object element, String property) {
 			boolean result = false;
 			
@@ -297,6 +410,10 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 			return result;
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
+		 */
 		public Object getValue(Object element, String property) {
 			Object value = null;
 			
@@ -306,6 +423,10 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 			return value; 
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
+		 */
 		public void modify(Object element, String property, Object value) {
 			
 			TableItem item = (TableItem)element;
@@ -318,9 +439,20 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		
 	}
 	
+	/**
+	 * The class responsible to provide the labels and images for each 
+	 * table cell. This class will use the {@link ITableElement#getLabel(String)}
+	 * and {@link ITableElement#getImage(String)} methods.
+	 * 
+	 * @author cbosdonnat
+	 */
 	private class AbstractLabelProvider extends LabelProvider 
 										implements ITableLabelProvider {
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
 		public Image getColumnImage(Object element, int columnIndex) {
 			Image image = null; 
 			
@@ -330,6 +462,10 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 			return image;
 		}
 
+		/*
+		 *  (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
 		public String getColumnText(Object element, int columnIndex) {
 			String text = null; 
 			

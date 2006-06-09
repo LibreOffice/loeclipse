@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,7 +62,7 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 /**
- * Basic class for a wizard page to create a scoped element
+ * Astract class for a wizard page to create a scoped element
  * such as a service or an interface.
  * 
  * @author cbosdonnat
@@ -118,10 +118,23 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 
 	}
 	
+	/**
+	 * Creates a default scoped name type wizard page with blank container
+	 * path and type name.
+	 */
 	public NewScopedElementWizardPage(String aPageName, IOOo aOOoInstance) {
 		this(aPageName, "", "", aOOoInstance);
 	}
 	
+	/**
+	 * Constructor to use when the uno project is already created, the 
+	 * scoped type name and it's path already known
+	 * 
+	 * @param aPageName name of the wizard page
+	 * @param aRootName scoped name of the module containing the type 
+	 * @param aElementName name of the type, without any '.' or '::'
+	 * @param aOOoInstance the reference to the OOo to use for type selection
+	 */
 	public NewScopedElementWizardPage(String aPageName,
 			String aRootName, String aElementName, IOOo aOOoInstance) {
 		
@@ -130,6 +143,15 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		
 	}
 	
+	/**
+	 * Creates a default page for a scoped element like an interface or a 
+	 * service. This constructor let provide default values for the container
+	 * path and the type name. 
+	 * 
+	 * @param pageName name of the wizard page
+	 * @param aRootName scoped name of the module containing the type 
+	 * @param aElementName name of the type, without any '.' or '::'
+	 */
 	private NewScopedElementWizardPage(
 			String pageName, String aRootName, String aElementName) {
 		
@@ -143,10 +165,111 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		elementName = null != aElementName ? aElementName : "";
 	}
 	
+	/**
+	 * Return the string corresponding to the type name, eg "interface"
+	 */
 	protected abstract String getTypeLabel();
 	
+	/**
+	 * Return the image descriptor to put on the top-right of the page
+	 */
 	protected abstract ImageDescriptor getImageDescriptor();
 
+	/**
+	 * Implement this method to add specific controls for the subclassing 
+	 * wizard page.
+	 * 
+	 * @param parent the composite parent where to put the controls
+	 */
+	protected abstract void createSpecificControl(Composite parent);
+	
+	/**
+	 * <p>Returns the types to get in the UNO types provider. The returned integer
+	 * is a <pre>bit or</pre> of the types defined in the {@link UnoTypeProvider} class.</p>
+	 */
+	public abstract int getProvidedTypes();
+	
+	/**
+	 * Launch or relaunch the type provider by setting 
+	 * the used OOo instance
+	 * 
+	 * @param aOOoInstance OOo instance to use.
+	 */
+	public void setOOoInstance(IOOo aOOoInstance) {
+		
+		if (null == typesProvider) {
+			typesProvider = new UnoTypeProvider(aOOoInstance, getProvidedTypes());
+		} else {
+			typesProvider.setOOoInstance(aOOoInstance);
+		}
+	}
+	
+	/**
+	 * Sets the Uno project in which to create the scoped name type
+	 */
+	public void setUnoidlProject(IUnoidlProject aUnoProject) {
+		unoProject = aUnoProject;
+	}
+	
+	/**
+	 * the container name of the type to create is composed of two parts: the
+	 * package root and the package. This method returns the second part.
+	 */
+	public String getPackage() {
+		return packageRow.getValue();
+	}
+	
+	/**
+	 * Get the name of the element to create
+	 */
+	public String getElementName() {
+		return nameRow.getValue();
+	}
+	
+	/**
+	 * the container name of the type to create is composed of two parts: the
+	 * package root and the package. This method sets the first part.
+	 */
+	public void setPackageRoot(String value) {
+		String packageLabel = OOEclipsePlugin.getTranslationString(
+				I18nConstants.PACKAGE_COLON) + value;
+		
+		packageRow.setLabel(packageLabel);
+	}
+	
+	/**
+	 * the container name of the type to create is composed of two parts: the
+	 * package root and the package. This method sets the second part.
+	 * 
+	 * @param value the new package value
+	 * @param forced <code>true</code> will replace the current value, 
+	 * 			<code>false</code> will set the value only if the current
+	 * 			package is empty or <code>null</code>. 
+	 */
+	public void setPackage(String value, boolean forced) {
+		
+		packageRow.setValue(value);
+		packageRow.setEnabled(!forced);	
+	}
+	
+	/**
+	 * Sets the name of the element to create
+	 * 
+	 * @param value the new package value
+	 * @param forced <code>true</code> will replace the current value, 
+	 * 			<code>false</code> will set the value only if the current
+	 * 			package is empty or <code>null</code>. 
+	 */
+	public void setName(String value, boolean forced) {
+		
+		nameRow.setValue(value);
+		nameRow.setEnabled(!forced);
+	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
 	public void dispose() {
 		try {
 			packageRow.removeFieldChangedlistener();
@@ -174,6 +297,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	private Label messageLabel;
 	private Label messageIcon;
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createControl(Composite parent) {
 		
 		Composite body = new Composite(parent, SWT.NONE);
@@ -220,8 +347,6 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		setControl(body);
 	}
 	
-	protected abstract void createSpecificControl(Composite parent);
-	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
@@ -240,6 +365,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		}
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
+	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		
@@ -248,52 +377,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		}
 	}
 	
-	/**
-	 * Launch or relaunch the type provider by setting 
-	 * the used OOo instance
-	 * 
-	 * @param aOOoInstance OOo instance to use.
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
 	 */
-	public void setOOoInstance(IOOo aOOoInstance) {
-		
-		if (null == typesProvider) {
-			typesProvider = new UnoTypeProvider(aOOoInstance, getProvidedTypes());
-		} else {
-			typesProvider.setOOoInstance(aOOoInstance);
-		}
-	}
-	
-	public void setUnoidlProject(IUnoidlProject aUnoProject) {
-		unoProject = aUnoProject;
-	}
-	
-	public String getPackage() {
-		return packageRow.getValue();
-	}
-	
-	public String getElementName() {
-		return nameRow.getValue();
-	}
-	
-	public void setPackageRoot(String value) {
-		String packageLabel = OOEclipsePlugin.getTranslationString(
-				I18nConstants.PACKAGE_COLON) + value;
-		
-		packageRow.setLabel(packageLabel);
-	}
-	
-	public void setPackage(String value, boolean forced) {
-		
-		packageRow.setValue(value);
-		packageRow.setEnabled(!forced);	
-	}
-	
-	public void setName(String value, boolean forced) {
-		
-		nameRow.setValue(value);
-		nameRow.setEnabled(!forced);
-	}
-	
 	public void fieldChanged(FieldEvent e) {
 		try {
 			if (e.getProperty().equals(P_PACKAGE)) {
@@ -326,6 +413,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		setPageComplete(isPageComplete());
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
+	 */
 	public boolean isPageComplete() {
 		boolean result = false; 
 		
@@ -341,12 +432,4 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		
 		return result;
 	}
-	
-	/**
-	 * <p>Returns the types to get in the UNO types provider. The returned integer
-	 * is a <pre>bit or</pre> of the types defined in the {@link UnoTypeProvider} class.</p>
-	 * 
-	 */
-	public abstract int getProvidedTypes();
-
 }

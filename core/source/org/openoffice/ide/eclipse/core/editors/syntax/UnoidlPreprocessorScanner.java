@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlPreprocessorScanner.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -55,13 +55,17 @@ import org.openoffice.ide.eclipse.core.editors.ColorProvider;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 
 /**
- * TODOC
+ * Scanner splitting the preprocessor commands into items to be colorized. 
+ * In order to fully understand the editor mechanisms, please report to 
+ * Eclipse plugin developer's guide.
  * 
  * @author cbosdonnat
- *
  */
 public class UnoidlPreprocessorScanner extends RuleBasedScanner {
 	
+	/**
+	 * The preprocessor commands to match
+	 */
 	public static final String[] PREPROC_COMMANDS = {
 		"include",
 		"ifdef",
@@ -76,6 +80,11 @@ public class UnoidlPreprocessorScanner extends RuleBasedScanner {
 		"pragma"
 	};
 	
+	/**
+	 * Constructor initializing the rules for the preprocessor command analysis.
+	 * 
+	 * @param colorManager the color manager from where to get the colors
+	 */
 	public UnoidlPreprocessorScanner(ColorProvider colorManager){
 		
 		IToken path = new Token(

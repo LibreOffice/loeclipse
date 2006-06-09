@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegDocumentProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,17 +61,27 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * TODOC 
+ * Provides the document content for the registry editor. This class uses
+ * the <code>regview</code> tool.
+ * 
+ * @see org.openoffice.ide.eclipse.core.editors.RegEditor for the editor
  * 
  * @author cbosdonnat
  *
  */
 public class RegDocumentProvider extends FileDocumentProvider {
 	
+	/**
+	 * Default constructor
+	 */
 	public RegDocumentProvider() {
 		super();
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
+	 */
 	protected IDocument createDocument(Object element) throws CoreException {
 		// create a document from the output of the regview execution
 		
@@ -136,10 +146,13 @@ public class RegDocumentProvider extends FileDocumentProvider {
 		return null;
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSaveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
+	 */
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
 		
 		// This kind of document cannot be edited, nor saved
 	}
-
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: FileRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/02 20:13:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -79,7 +79,8 @@ public class FileRow extends LabeledRow{
 	 * @param directory if <code>true</code>, the field is a directory path, 
 	 *                  otherwise the field is a file path.
 	 */
-	public FileRow (Composite parent, String property, String label, boolean directory){
+	public FileRow (Composite parent, String property, String label, 
+			boolean directory){
 		super(property);
 		
 		Label aLabel = new Label(parent, SWT.SHADOW_NONE | SWT.LEFT);
@@ -107,7 +108,6 @@ public class FileRow extends LabeledRow{
 	
 	/**
 	 * Method called when the button browse is clicked
-	 *
 	 */
 	protected void browse() {
 		BusyIndicator.showWhile(browse.getDisplay(), new Runnable(){
@@ -117,6 +117,9 @@ public class FileRow extends LabeledRow{
 		});
 	}
 
+	/**
+	 * Open the File selection dialog
+	 */
 	protected void doOpenFileSelectionDialog() {
 		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
 								getActiveWorkbenchWindow().getShell();
@@ -151,10 +154,19 @@ public class FileRow extends LabeledRow{
 		}
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
+	 */
 	public String getValue() {
 		return value;
 	}
 	
+	/**
+	 * Set a new value to the row
+	 * 
+	 * @param aValue the new value
+	 */
 	public void setValue(String aValue){
 
 		((Text)field).setText(aValue);

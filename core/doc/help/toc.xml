@@ -4,30 +4,13 @@
 <toc label="OpenOffice.org plugin help">
 
   <topic label="User documentation" href="doc/help/html/userdoc/index.html">
-	  <topic label="Java component tutorial" href="doc/help/html/userdoc/javatuto/index.html">
-	     <topic label="Introduction" href="doc/help/html/userdoc/javatuto/intro.html">
-		     <topic label="UNO components" href="doc/help/html/userdoc/javatuto/unocomp.html" />
-	    		 <topic label="Installation" href="doc/help/html/userdoc/javatuto/install.html" />
-	     </topic>
-	     
-	     <topic label="Creating a UNO component" href="doc/help/html/userdoc/javatuto/newcomp.html">
-	     	<topic label="Creating a project" href="doc/help/html/userdoc/javatuto/newproject.html" />
-	     	<topic label="Writing UNO specifications" href="doc/help/html/userdoc/javatuto/specs.html" />
-	     	<topic label="Implementing a component" href="doc/help/html/userdoc/javatuto/impl.html" />
-	     </topic>
-	     
-	     <topic label="Testing a UNO component" href="doc/help/html/userdoc/javatuto/testing.html">
-	     	<topic label="Packaging a component" href="doc/help/html/userdoc/javatuto/packaging.html" />
-	     	<topic label="Testing using a macro" href="doc/help/html/userdoc/javatuto/macro.html" />
-	     </topic>
-	     
-	     <topic label="Going further" href="doc/help/html/userdoc/javatuto/further.html" />
-	     <topic label="Licence" href="doc/help/html/userdoc/javatuto/licence.html" />
-	     
-	  </topic>
+	  <link toc="doc/help/html/userdoc/javatuto/toc.xml"/>
   </topic>
   
-  <topic label="Developer manual" href="doc/help/html/devdoc/index.html" /> 
+  <topic label="Developer manual" href="doc/help/html/devdoc/index.html"> 
+  	<link toc="doc/help/html/devdoc/extending/toc.xml" />
+  </topic>
+  
   <topic label="API Reference" href="doc/help/html/api/overview-summary.html">
      <topic label="actions" href="doc/help/html/api/org/openoffice/ide/eclipse/actions/package-summary.html" />
      <topic label="builders" href="doc/help/html/api/org/openoffice/ide/eclipse/builders/package-summary.html" />

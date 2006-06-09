@@ -134,6 +134,14 @@ public interface IUnoComposite {
 	 */
 	public void configure(String filename);
 	
+	/** sets whether the output string of the text composite will be indented
+	 *  or not. The method has no effect if the type is different from
+	 *  <code>COMPOSITE_TYPE_TEXT</code>
+	 * 
+	 * @param toIndent <code>true</code> will add indentation.
+	 */
+	public void setIndented(boolean toIndent);
+	
 	/** creates the file or folder with its non-existing parents.
 	 * 
 	 * @param force <code>true</code> let the method overwrite the existing
@@ -150,12 +158,4 @@ public interface IUnoComposite {
 	 * @return the string representing the node.
 	 */
 	public String toString();
-	
-	/** sets whether the output string of the text composite will be indented
-	 *  or not. The method has no effect if the type is different from
-	 *  <code>COMPOSITE_TYPE_TEXT</code>
-	 * 
-	 * @param toIndent <code>true</code> will add indentation.
-	 */
-	public void setIndented(boolean toIndent);
 }
