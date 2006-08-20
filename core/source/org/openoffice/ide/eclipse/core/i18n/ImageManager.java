@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -73,9 +73,9 @@ public class ImageManager {
 	 * to the /icons/errors.gif image.</p>
 	 */
 	
-	private ResourceBundle imageBundle;
+	private ResourceBundle mImageBundle;
 	
-	private ImageRegistry registry = new ImageRegistry();
+	private ImageRegistry mRegistry = new ImageRegistry();
 	
 	/**
 	 * Default constructor
@@ -83,17 +83,17 @@ public class ImageManager {
 	public ImageManager() {
 		
 		try {
-			imageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.core.i18n.ImageManager");
+			mImageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.core.i18n.ImageManager"); //$NON-NLS-1$
 			
 		} catch (NullPointerException e) {
-			PluginLogger.getInstance().debug(
-					"Call to getBundle is incorrect: NullPointerException " +
-					"catched");
+			PluginLogger.debug(
+					"Call to getBundle is incorrect: NullPointerException " + //$NON-NLS-1$
+					"caught"); //$NON-NLS-1$
 		} catch(MissingResourceException e) {
 			
-			String message = "Image file not found for locale :"
+			String message = "Image file not found for locale :" //$NON-NLS-1$
 				+ Locale.getDefault().toString();
-			PluginLogger.getInstance().error(message);
+			PluginLogger.error(message);
 		}
 	}
 	
@@ -107,7 +107,7 @@ public class ImageManager {
 	public Image getImage(String key){
 		
 		// Tries to load the image from the registry before looking into the bundle
-		Image image = registry.get(key);
+		Image image = mRegistry.get(key);
 		
 		if (null == image){
 		
@@ -117,7 +117,7 @@ public class ImageManager {
 			if (null != descr){
 				// if the descriptor isn't null, create the image
 				image = descr.createImage();
-				registry.put(key, image);
+				mRegistry.put(key, image);
 			}
 		}
 		
@@ -134,9 +134,9 @@ public class ImageManager {
 	public ImageDescriptor getImageDescriptor(String key){
 		ImageDescriptor imageDescr = null;
 		
-		if (null != imageBundle){
+		if (null != mImageBundle){
 			// Fetch the plugin relative path from the bundle
-			String path = imageBundle.getString(key);
+			String path = mImageBundle.getString(key);
 			imageDescr = AbstractUIPlugin.imageDescriptorFromPlugin(
 									OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
 									path);

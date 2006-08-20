@@ -2,9 +2,9 @@
  *
  * $RCSfile: FileRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 
 /**
  * GUI row for a file selection. It supports only the Grid Layout
@@ -67,8 +66,8 @@ import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
  */
 public class FileRow extends LabeledRow{
 	
-	private String value = new String();
-	private boolean directory = false;
+	private String mValue = new String();
+	private boolean mDirectory = false;
 	
 	/**
 	 * File row contructor.
@@ -88,29 +87,29 @@ public class FileRow extends LabeledRow{
 		
 		Text aField = new Text(parent, SWT.BORDER);
 			
-		createContent(parent, aLabel, aField,OOEclipsePlugin.getTranslationString(I18nConstants.BROWSE));
+		createContent(parent, aLabel, aField,
+				Messages.getString("FileRow.Browse")); //$NON-NLS-1$
 		
-		field.addFocusListener(new FocusAdapter(){
+		mField.addFocusListener(new FocusAdapter(){
 			public void focusLost(FocusEvent e){
 				setValue(getValue());
 			}
 		});
 		
-		
-		browse.addSelectionListener(new SelectionAdapter(){
+		mBrowse.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				browse();
 			}
 		});
 		
-		this.directory = directory;
+		mDirectory = directory;
 	}
 	
 	/**
 	 * Method called when the button browse is clicked
 	 */
 	protected void browse() {
-		BusyIndicator.showWhile(browse.getDisplay(), new Runnable(){
+		BusyIndicator.showWhile(mBrowse.getDisplay(), new Runnable(){
 			public void run() {
 				doOpenFileSelectionDialog();
 			}
@@ -126,12 +125,12 @@ public class FileRow extends LabeledRow{
 		
 		String newFile = null;
 		
-		if (directory){
+		if (mDirectory){
 			DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
 			
 			String file = getValue();
 			if (file != null){
-				dialog.setText(OOEclipsePlugin.getTranslationString(I18nConstants.DIR_SELECT_TITLE));
+				dialog.setText(Messages.getString("FileRow.DirectoryTitle")); //$NON-NLS-1$
 				
 				newFile = dialog.open();
 			}
@@ -144,7 +143,7 @@ public class FileRow extends LabeledRow{
 				dialog.setFileName(file);
 			}
 			
-			dialog.setText(OOEclipsePlugin.getTranslationString(I18nConstants.FILE_SELECT_TITLE));
+			dialog.setText(Messages.getString("FileRow.FileTitle")); //$NON-NLS-1$
 
 			newFile = dialog.open();
 		}
@@ -159,7 +158,7 @@ public class FileRow extends LabeledRow{
 	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
 	 */
 	public String getValue() {
-		return value;
+		return mValue;
 	}
 	
 	/**
@@ -169,8 +168,8 @@ public class FileRow extends LabeledRow{
 	 */
 	public void setValue(String aValue){
 
-		((Text)field).setText(aValue);
-		value = aValue;
+		((Text)mField).setText(aValue);
+		mValue = aValue;
 		FieldEvent fe = new FieldEvent (getProperty(), getValue());
 		fireFieldChangedEvent(fe);
 	}

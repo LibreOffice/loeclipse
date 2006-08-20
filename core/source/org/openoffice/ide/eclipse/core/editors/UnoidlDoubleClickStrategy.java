@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDoubleClickStrategy.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,7 +56,8 @@ import org.eclipse.jface.text.ITextViewer;
  *
  */
 public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
-	protected ITextViewer fText;
+	
+	protected ITextViewer mText;
 
 	/*
 	 *  (non-Javadoc)
@@ -68,7 +69,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 		if (pos < 0)
 			return;
 
-		fText = part;
+		mText = part;
 
 		if (!selectComment(pos)) {
 			selectWord(pos);
@@ -83,7 +84,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 	 * 		<code>false</code> ortherwise
 	 */
 	protected boolean selectComment(int caretPos) {
-		IDocument doc = fText.getDocument();
+		IDocument doc = mText.getDocument();
 		int startPos, endPos;
 
 		try {
@@ -123,7 +124,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 			int offset = startPos + 1;
 			int len = endPos - offset;
-			fText.setSelectedRange(offset, len);
+			mText.setSelectedRange(offset, len);
 			return true;
 		} catch (BadLocationException x) {
 		}
@@ -140,7 +141,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 	 */
 	protected boolean selectWord(int caretPos) {
 
-		IDocument doc = fText.getDocument();
+		IDocument doc = mText.getDocument();
 		int startPos, endPos;
 
 		try {
@@ -186,6 +187,6 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 	private void selectRange(int startPos, int stopPos) {
 		int offset = startPos + 1;
 		int length = stopPos - offset;
-		fText.setSelectedRange(offset, length);
+		mText.setSelectedRange(offset, length);
 	}
 }

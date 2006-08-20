@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:56 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -64,11 +64,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.openoffice.ide.eclipse.core.editors.Colors;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImageManager;
-import org.openoffice.ide.eclipse.core.i18n.Translator;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
@@ -89,43 +88,40 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	/**
 	 * Plugin home relative path for the ooo configuration file
 	 */
-	public final static String OOO_CONFIG = ".ooo_config";
+	public final static String OOO_CONFIG = ".ooo_config"; //$NON-NLS-1$
 	
 	/**
 	 * ooeclipseintegration plugin id
 	 */
-	public static final String OOECLIPSE_PLUGIN_ID = "org.openoffice.ide.eclipse.core";
+	public static final String OOECLIPSE_PLUGIN_ID = "org.openoffice.ide.eclipse.core"; //$NON-NLS-1$
 	
 	/**
 	 * uno nature id
 	 */
 	// HELP The nature id is the natures extension point id appened to the plugin id
-	public static final String UNO_NATURE_ID = OOECLIPSE_PLUGIN_ID + ".unonature";
+	public static final String UNO_NATURE_ID = OOECLIPSE_PLUGIN_ID + ".unonature"; //$NON-NLS-1$
 	
 	/**
 	 * Uno idl editor ID
 	 */
-	public static final String UNO_EDITOR_ID = OOECLIPSE_PLUGIN_ID + ".editors.UnoidlEditor";
+	public static final String UNO_EDITOR_ID = OOECLIPSE_PLUGIN_ID + ".editors.UnoidlEditor"; //$NON-NLS-1$
 	
 	/**
 	 * Log level preference key. Used to store the preferences
 	 */
-	public static final String LOGLEVEL_PREFERENCE_KEY 	 = "loglevel";
+	public static final String LOGLEVEL_PREFERENCE_KEY 	 = "loglevel"; //$NON-NLS-1$
 
 	// The shared instance.
-	private static OOEclipsePlugin plugin;
-	
-	// An instance of the translator
-	private Translator translator;
+	private static OOEclipsePlugin sPlugin;
 	
 	// An instance of the imageManager
-	private ImageManager imageManager;
+	private ImageManager mImageManager;
 	
 	/**
 	 * The constructor.
 	 */
 	public OOEclipsePlugin() {
-		plugin = this;
+		sPlugin = this;
 	}
 
 	/**
@@ -136,7 +132,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		setDefaultPreferences();
 		
 		// Creates the SDK container
-		SDKContainer.getSDKContainer();
+		SDKContainer.getInstance();
 		
 		// Load the projects manager
 		ProjectsManager.getInstance();
@@ -152,7 +148,11 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		plugin = null;
+		sPlugin = null;
+		
+		OOoContainer.getInstance().dispose();
+		SDKContainer.getInstance().dispose();
+		ProjectsManager.getInstance().dispose();
 		
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
@@ -161,41 +161,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 * Returns the shared instance.
 	 */
 	public static OOEclipsePlugin getDefault() {
-		return plugin;
-	}
-
-	/**
-	 * Returns the translator. If the translator is null, this method will
-	 * create it before returning it.
-	 * 
-	 * @return the translator
-	 */
-	protected Translator getTranslator(){
-		
-		// HELP Do not access to the translator directly, even if it is
-	    //      supposed to be non-null: it could cause strange errors
-		//      such as Bundle errors from eclipse...
-		if (null == translator){
-			translator = new Translator();
-		}
-		
-		return translator;
-	}
-	
-	/**
-	 * This method uses internationalization files. They should be placed in the i18n
-	 * directory of the plugin. Their name is contitued by <strong>OOEclipsePlugin_
-	 * <em>contry</em>.lang</strong> where <em>country</em> corresponds to the two 
-	 * letters designing the country or the word default (for the default translation file).
-	 * 
-	 * The default file UnoPlugin_us.lang should be provided. If no key is found in the 
-	 * locale corresponding file, the key is returned instead of the internationalized 
-	 * message.
-	 * 
-	 * @param key Asked entry in the internationalization file.
-	 */
-	public static String getTranslationString(String key) {
-		return getDefault().getTranslator().getString(key);
+		return sPlugin;
 	}
 	
 	/**
@@ -205,11 +171,11 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 * @return the image manager
 	 */
 	protected ImageManager getImageManager(){
-		if (null == imageManager){
-			imageManager = new ImageManager();
+		if (null == mImageManager){
+			mImageManager = new ImageManager();
 		}
 		
-		return imageManager;
+		return mImageManager;
 	}
 	
 	/**
@@ -318,7 +284,6 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	
 	//	----------------- Utilities provided to run an sdk tools
 	
-	
 	/**
 	 * Create a process for the given shell command. This process will 
 	 * be created with the project parameters such as it's SDK and 
@@ -332,6 +297,24 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 */
 	public static Process runTool(IUnoidlProject project, 
 			String shellCommand, IProgressMonitor monitor){
+		return runToolWithEnv(project, shellCommand, new String[0], monitor);
+	}
+	
+	
+	/**
+	 * Create a process for the given shell command. This process will 
+	 * be created with the project parameters such as it's SDK and 
+	 * location path
+	 * 
+	 * @param project the UNO-IDL project on which to run the tool
+	 * @param shellCommand the shell command to execute the tool
+	 * @param env tool environement variable
+	 * @param monitor a process monitor to watch the tool launching
+	 * 
+	 * @return the process executing the tool
+	 */
+	public static Process runToolWithEnv(IUnoidlProject project, 
+			String shellCommand, String[] env, IProgressMonitor monitor){
 		
 		Process process = null;
 		
@@ -344,79 +327,79 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 				// Get local references to the SDK used members
 				String sdkHome = sdk.getHome();
 				
-				String pathSeparator = System.getProperty("path.separator");
+				String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
 				
 				String binPath = null;
-				String[] vars = null;
+				String[] vars = env;
 				String[] command = new String[3];;
 				
 				// Fetch the OS family
-				String osName = System.getProperty("os.name").toLowerCase();
+				String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 				
 				
 				// Create the exec parameters depending on the OS
-				if (osName.startsWith("windows")){
+				if (osName.startsWith("windows")){ //$NON-NLS-1$
 					String sdkWinHome = new Path(sdkHome).toOSString();
 					
-					binPath = sdkWinHome + "\\windows\\bin\\"; 
+					binPath = sdkWinHome + "\\windows\\bin\\";  //$NON-NLS-1$
 					
 					// Definining path variables
-					vars = new String[1];
 					Path oooLibsPath = new Path(ooo.getLibsPath());
-					vars[0] = "PATH=" + binPath + pathSeparator + oooLibsPath.toOSString();
+					vars = addEnv(env, "PATH", binPath + pathSeparator +  //$NON-NLS-1$
+							oooLibsPath.toOSString(), pathSeparator);
 					
 					// Defining the command
 					
-					if (osName.startsWith("windows 9")){
-						command[0] = "command.com";
+					if (osName.startsWith("windows 9")){ //$NON-NLS-1$
+						command[0] = "command.com"; //$NON-NLS-1$
 					} else {
-						command[0] = "cmd.exe";
+						command[0] = "cmd.exe"; //$NON-NLS-1$
 					}
 					
-					command[1] = "/C";
+					command[1] = "/C"; //$NON-NLS-1$
 					command[2] = shellCommand;
 					
 					
-				} else if (osName.equals("linux") || osName.equals("solaris") || 
-						osName.equals("sun os")) {
+				} else if (osName.equals("linux") || osName.equals("solaris") ||  //$NON-NLS-1$ //$NON-NLS-2$
+						osName.equals("sun os")) { //$NON-NLS-1$
 					
 					// An UN*X platform
 					
 					// Determine the platform
 					String platform = null;
 					
-					if (osName.equals("linux")){
-						platform = "/linux";
+					if (osName.equals("linux")){ //$NON-NLS-1$
+						platform = "/linux"; //$NON-NLS-1$
 					} else {
-						String osArch = System.getProperty("os.arch");
-						if (osArch.equals("sparc")) {
-							platform = "/solsparc";
+						String osArch = System.getProperty("os.arch"); //$NON-NLS-1$
+						if (osArch.equals("sparc")) { //$NON-NLS-1$
+							platform = "/solsparc"; //$NON-NLS-1$
 							
-						} else if (osArch.equals("x86")) {
-							platform = "/solintel";
+						} else if (osArch.equals("x86")) { //$NON-NLS-1$
+							platform = "/solintel"; //$NON-NLS-1$
 						}
 					}
 					
 					if (null != platform){
 						
 						// The platform is one supported by a SDK
-						binPath = sdkHome + platform + "/bin";
-						
-						vars = new String[2];
-						vars[0] = "PATH=" + sdkHome + platform + "/bin";
-						vars[1] = "LD_LIBRARY_PATH=" + ooo.getLibsPath();
+						binPath = sdkHome + platform + "/bin"; //$NON-NLS-1$
+
+						String[] tmpVars = addEnv(env, "PATH",  //$NON-NLS-1$
+								sdkHome + platform + "/bin", pathSeparator); //$NON-NLS-1$
+						vars = addEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
+								ooo.getLibsPath(), pathSeparator);
 						
 						// Set the command
-						command[0] = "sh";
-						command[1] = "-c";
+						command[0] = "sh"; //$NON-NLS-1$
+						command[1] = "-c"; //$NON-NLS-1$
 						command[2] = shellCommand;
 					}
 					
 				} else {
 					// Unmanaged OS
-					PluginLogger.getInstance().error(
-							OOEclipsePlugin.getTranslationString(I18nConstants.SDK_INVALID_OS), 
-							null);
+					PluginLogger.error(
+							Messages.getString("OOEclipsePlugin.InvalidSdkError"), null); //$NON-NLS-1$
 				}
 				
 				// Run only if the OS and ARCH are valid for the SDK
@@ -433,17 +416,12 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 			
 			MessageDialog dialog = new MessageDialog(
 					OOEclipsePlugin.getDefault().getWorkbench().
-					getActiveWorkbenchWindow().getShell(),
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.UNO_PLUGIN_ERROR),
-							null,
-							OOEclipsePlugin.getTranslationString(
-									I18nConstants.PROCESS_ERROR),
-									MessageDialog.ERROR,
-									new String[]{
-						OOEclipsePlugin.getTranslationString(
-								I18nConstants.OK)},
-								0);
+						getActiveWorkbenchWindow().getShell(),
+					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
+					null,
+					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
+					MessageDialog.ERROR,
+					new String[]{Messages.getString("OOEclipsePlugin.Ok")}, 0); //$NON-NLS-1$
 			dialog.setBlockOnOpen(true);
 			dialog.create();
 			dialog.open();
@@ -454,20 +432,50 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 			MessageDialog dialog = new MessageDialog(
 					OOEclipsePlugin.getDefault().getWorkbench().
 							getActiveWorkbenchWindow().getShell(),
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.UNO_PLUGIN_ERROR),
+					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
 					null,
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.PROCESS_ERROR),
+					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
 					MessageDialog.ERROR,
-					new String[]{OOEclipsePlugin.getTranslationString(
-							I18nConstants.OK)},
-					0);
+					new String[]{Messages.getString("OOEclipsePlugin.Ok")},	0); //$NON-NLS-1$
 			dialog.setBlockOnOpen(true);
 			dialog.create();
 			dialog.open();
 		}
 		
 		return process;
+	}
+	
+	private static String[] addEnv(String[] env, String name, String value,
+			String separator) {
+		
+		String[] result = new String[1];  
+		
+		if (env != null) { 
+			int i = 0;
+			boolean found = false;
+			
+			while (!found && i < env.length) {
+				if (env[i].startsWith(name+"=")) { //$NON-NLS-1$
+					found = true;
+				} else {
+					i++;
+				}
+			}
+			
+			if (found) {
+				result = new String[env.length];
+				System.arraycopy(env, 0, result, 0, env.length);
+				result[i] = env[i] + separator + value;
+				
+			} else {
+				result = new String[env.length + 1];
+				System.arraycopy(env, 0, result, 0, env.length);
+				result[result.length-1] = name + "=" + value; //$NON-NLS-1$
+			}
+		} else {
+			result [0] = name + "=" + value; //$NON-NLS-1$
+		}
+		
+		return result;
 	}
 }

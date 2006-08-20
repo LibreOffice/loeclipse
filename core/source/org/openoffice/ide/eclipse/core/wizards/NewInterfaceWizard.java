@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizard.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -48,6 +48,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
@@ -58,7 +62,10 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**
  * Interface creation wizard. This class uses a {@link NewInterfaceWizardPage}
@@ -69,7 +76,7 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 public class NewInterfaceWizard extends BasicNewResourceWizard implements
 		INewWizard {
 
-	private NewInterfaceWizardPage page;
+	private NewInterfaceWizardPage mPage;
 	
 	/**
 	 * Creates the wizard
@@ -77,7 +84,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 	public NewInterfaceWizard() {
 		super();
 		
-		activePage = OOEclipsePlugin.getActivePage();
+		mActivePage = OOEclipsePlugin.getActivePage();
 	}
 
 	/*
@@ -85,11 +92,40 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		IFile file = page.createInterface();
 		
-		// Reveal the project main service file	
-		selectAndReveal(file);
-		openResource(file);
+		final UnoFactoryData data = mPage.fillData(new UnoFactoryData());
+		
+		Job serviceJob = new Job(Messages.getString("NewInterfaceWizard.JobName")) { //$NON-NLS-1$
+
+			protected IStatus run(IProgressMonitor monitor) {
+				
+				monitor.beginTask(Messages.getString("NewInterfaceWizard.TaskName"), 1); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.OK,
+						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+						IStatus.OK, "", null); //$NON-NLS-1$
+				try {
+					IUnoidlProject prj = mPage.mUnoProject;
+					UnoFactory.createInterface(data, prj, mActivePage, monitor);
+				
+					// Releasing the data informations
+					data.dispose();
+					monitor.worked(1);
+				} catch (Exception e) {
+					 status = new Status(IStatus.CANCEL,
+								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+								IStatus.OK, 
+								Messages.getString("NewInterfaceWizard.InterfaceCreationError"), e); //$NON-NLS-1$
+					 monitor.setCanceled(true);
+				}
+				
+				monitor.done();
+				return status;
+			}
+			
+		};
+		
+		serviceJob.setPriority(Job.INTERACTIVE);
+		serviceJob.schedule();
 		
 		return true;
 	}
@@ -125,17 +161,17 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 					UnoidlProject unoProject = (UnoidlProject)project.getNature(
 							OOEclipsePlugin.UNO_NATURE_ID);
 					
-					page = new NewInterfaceWizardPage("newiface", unoProject);
+					mPage = new NewInterfaceWizardPage("newiface", unoProject); //$NON-NLS-1$
 					
-					addPage(page);
+					addPage(mPage);
 				}
 			} catch (CoreException e){
-				PluginLogger.getInstance().debug(e.getMessage());
+				PluginLogger.debug(e.getMessage());
 			}
 		}
 	}
 	
-	private IWorkbenchPage activePage;
+	private IWorkbenchPage mActivePage;
 	
 	/**
 	 * Method opening a file in an UNO-IDL editor
@@ -144,15 +180,15 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 	 */
 	protected void openResource(final IFile resource) {
 		
-		if (activePage != null) {
+		if (mActivePage != null) {
 			final Display display = getShell().getDisplay();
 			if (display != null) {
 				display.asyncExec(new Runnable() {
 					public void run() {
 						try {
-							IDE.openEditor(activePage, resource, true);
+							IDE.openEditor(mActivePage, resource, true);
 						} catch (PartInitException e) {
-							PluginLogger.getInstance().debug(e.getMessage());
+							PluginLogger.debug(e.getMessage());
 						}
 					}
 				});

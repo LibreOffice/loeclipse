@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcErrorReader.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,9 +57,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 
 /**
  * Class reading the idlc error output to transform the errors into markers
@@ -74,18 +72,19 @@ public class IdlcErrorReader {
 	 * <p><em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find 
 	 * include file &lt;missing include&gt;</em></p>
 	 */
-	private final static String R_IDLCPP_ERROR = "cpp: (\\S+):([0-9]+)(.*:[0-9]+)? (.*)";
+	private final static String R_IDLCPP_ERROR = "cpp: (\\S+):([0-9]+)(.*:[0-9]+)? (.*)"; //$NON-NLS-1$
 	
 	/**
 	 * <p>Syntax error expression:</p> 
 	 * <p><em>&lt;file&gt; (&lt;line number&gt;) : &lt;message&gt;</em></p>
 	 */
-	private final static String R_IDLC_ERROR  = "(.*)\\(([0-9]+)\\) : (WARNING, )?(.*)";
+	private final static String R_IDLC_ERROR  = "(.*)\\(([0-9]+)\\) : (WARNING, )?(.*)"; //$NON-NLS-1$
 	
 	/**
 	 * Stream from which the reader extract the errors
 	 */
-	private LineNumberReader reader;
+	private LineNumberReader mReader;
+	private InputStreamReader mIn;
 	
 	/**
 	 * File which compilation has been asked
@@ -93,7 +92,8 @@ public class IdlcErrorReader {
 	private IFile compiledFile;
 	
 	public IdlcErrorReader (InputStream stream, IFile file){
-		reader = new LineNumberReader(new InputStreamReader(stream));
+		mIn = new InputStreamReader(stream);
+		mReader = new LineNumberReader(mIn);
 		compiledFile = file;
 	}
 	
@@ -105,11 +105,11 @@ public class IdlcErrorReader {
 		try {
 			// Cleans the idlc error previously added
 			compiledFile.deleteMarkers(
-					IdlcBuilder.IDLERROR_MARKER_ID, true, 
+					IMarker.PROBLEM, true, 
 					IResource.DEPTH_INFINITE);
 			
 			// Read each line until the stream end (null line)
-			String line = reader.readLine();
+			String line = mReader.readLine();
 			
 			// Mark only the file errors. The changed files will be compiled too
 			
@@ -123,10 +123,7 @@ public class IdlcErrorReader {
 				} 
 				
 				if (null == marker) {
-					// Nothing to do
-					if (null != System.getProperties().getProperty("DEBUG")){
-						System.out.println(line); // Only whilst debugging
-					}
+					PluginLogger.debug("Error line: " + line); //$NON-NLS-1$
 					
 				} else {
 					
@@ -141,19 +138,20 @@ public class IdlcErrorReader {
 					}
 				}
 				
-				line = reader.readLine();
+				line = mReader.readLine();
 			}
 		} catch (IOException e) {
-			PluginLogger.getInstance().error(
-				OOEclipsePlugin.getTranslationString(
-					I18nConstants.ERROR_OUTPUT_UNREADABLE), e);
+			PluginLogger.error(
+				Messages.getString("IdlcErrorReader.ErrorReadingError"), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.MARKER_CREATION_FAILED)
-								+ compiledFile.getProjectRelativePath().
-								toString(),
-					e);
+			PluginLogger.error(
+					Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
+						+ compiledFile.getProjectRelativePath().toString(), e);
+		} finally {
+			try { 
+				mReader.close(); 
+				mIn.close();
+			} catch (IOException e) {}
 		}
 	}
 	
@@ -172,7 +170,7 @@ public class IdlcErrorReader {
 		Pattern pSyntax = Pattern.compile(R_IDLC_ERROR); 
 		Matcher mSyntax = pSyntax.matcher(line);
 		
-		if (!line.startsWith("idlc:") && mSyntax.matches()){
+		if (!line.startsWith("idlc:") && mSyntax.matches()){ //$NON-NLS-1$
 			IProject project = compiledFile.getProject();
 			
 			boolean error = false;
@@ -194,7 +192,7 @@ public class IdlcErrorReader {
 			
 			IFile file = project.getFile(filePath);
 			try {
-				marker = file.createMarker(IdlcBuilder.IDLERROR_MARKER_ID);
+				marker = file.createMarker(IMarker.PROBLEM);
 				marker.setAttribute(IMarker.SEVERITY, 
 							error?IMarker.SEVERITY_ERROR: 
 								IMarker.SEVERITY_WARNING);
@@ -217,11 +215,9 @@ public class IdlcErrorReader {
 //				marker.setAttribute(IMarker.CHAR_END,  ((Integer)positions.get(IMarker.CHAR_END)).intValue());
 				
 			} catch (CoreException e) {
-				PluginLogger.getInstance().error(
-						OOEclipsePlugin.getTranslationString(
-								I18nConstants.MARKER_CREATION_FAILED)
-									+ file.getProjectRelativePath().toString(),
-						e);
+				PluginLogger.error(
+						Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
+							+ file.getProjectRelativePath().toString(), e);
 			}
 		}
 		
@@ -250,7 +246,7 @@ public class IdlcErrorReader {
 			
 				IFile errorFile;
 				
-				if (errorFilePath.startsWith(".")){
+				if (errorFilePath.startsWith(".")){ //$NON-NLS-1$
 					// A project local file, that means that the error is in a dependent file
 					errorFile = project.getFile(errorFilePath);
 					
@@ -259,11 +255,10 @@ public class IdlcErrorReader {
 					errorFile = compiledFile;	
 				}
 				
-				String message = "idlcpp error: " + badIncludePath;
+				String message = "idlcpp error: " + badIncludePath; //$NON-NLS-1$
 				
 				try {
-					marker = errorFile.createMarker(
-							IdlcBuilder.IDLERROR_MARKER_ID);
+					marker = errorFile.createMarker(IMarker.PROBLEM);
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 					marker.setAttribute(IMarker.MESSAGE, message);
 					marker.setAttribute(IMarker.LINE_NUMBER, lineNo);

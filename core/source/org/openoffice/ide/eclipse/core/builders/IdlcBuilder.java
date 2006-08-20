@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuilder.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,21 +43,14 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.builders;
 
-import java.util.Map;
-import java.util.Vector;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -73,75 +66,28 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
  * @author cbosdonnat
  *
  */
-public class IdlcBuilder extends IncrementalProjectBuilder {
+public class IdlcBuilder {
 	
 	/**
-	 * Identifier defined in the <code>plugin.xml</code> file for the 
-	 * marker associated with this builder errors.
+	 * Runs the full build
+	 * 
+	 * @param project the uno project to build
+	 * @param monitor a monitor to watch the progress
+	 * @throws CoreException if anything wrong happened
 	 */
-	public final static String IDLERROR_MARKER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".idlcerrormarker";
-	
-	/**
-	 * UNOI-IDL project handled. This is a quick access to the project nature 
-	 */
-	private IUnoidlProject unoidlProject;
-	
-	/**
-	 * Vector of the urd files to delete after the deletion of their idl file reference
-	 */
-	private Vector urdToDelete = new Vector();
-	
-	/**
-	 * Constructor for the idlc builder
-	 *
-	 */
-	public IdlcBuilder(IUnoidlProject project) {
-		super();
-		
-		unoidlProject = project;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+	public static void build(IUnoidlProject project, IProgressMonitor monitor)
 			throws CoreException {
 		
-		// Removes the urd to delete
-		for (int i=0, length=urdToDelete.size(); i<length; i++){
-			IResource resource = (IResource)urdToDelete.get(i);
-			if (resource.exists()){
-				resource.delete(true, monitor);
-			}
-		}
-		urdToDelete.clear();
-			
-		fullBuild(monitor);
-
-		return null;
-	}
-
-	/**
-	 * Method that perform the full build of the project. 
-	 * 
-	 * <p>It launches the {@link IdlcBuildVisitor} on the idl
-	 * folder to build every <code>.idl</code> file.</p>
-	 * 
-	 * @param monitor progress monitor
-	 */
-	private void fullBuild(IProgressMonitor monitor) {
-
+		// Build each idlc file
 		try {
 			// compile each idl file
-			IFolder idlFolder = unoidlProject.getFolder(
-					unoidlProject.getRootModulePath());
+			IFolder idlFolder = project.getFolder(
+					project.getRootModulePath());
 			idlFolder.accept(new IdlcBuildVisitor(monitor));
 			
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.IDLC_ERROR), e);
+			PluginLogger.error(
+					Messages.getString("IdlcBuilder.IdlcError"), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -171,10 +117,10 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 					file.getProjectRelativePath().removeLastSegments(1).
 					removeFirstSegments(segmentCount));
 			
-			String command = "idlc -O " + outputLocation.toOSString() +
-				" -I " + sdkPath.append("idl").toOSString() +
-				" -I " + project.getIdlPath().toOSString() + 
-				" " + file.getProjectRelativePath().toString(); 
+			String command = "idlc -O " + outputLocation.toOSString() + //$NON-NLS-1$
+				" -I " + sdkPath.append("idl").toOSString() + //$NON-NLS-1$ //$NON-NLS-2$
+				" -I " + project.getIdlPath().toOSString() +  //$NON-NLS-1$
+				" " + file.getProjectRelativePath().toString();  //$NON-NLS-1$
 			
 			Process process = OOEclipsePlugin.runTool(
 					project, command, monitor);
@@ -182,9 +128,6 @@ public class IdlcBuilder extends IncrementalProjectBuilder {
 			IdlcErrorReader errorReader = new IdlcErrorReader(
 					process.getErrorStream(), file);
 			errorReader.readErrors();
-			
-			// Do not forget to destroy the process
-			process.destroy();
 		}
 	}
 }

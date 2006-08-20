@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDocumentProvider.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,7 +61,7 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
  */
 public class UnoidlDocumentProvider extends FileDocumentProvider{
 
-	private static UnoidlPartitionScanner scanner = null;
+	private static UnoidlPartitionScanner sScanner = null;
 	
 	/**
 	 * The scannable partitions in the idl text. Each one should have an
@@ -108,9 +108,9 @@ public class UnoidlDocumentProvider extends FileDocumentProvider{
 	 * Creates the IDL partition scanner if it's not alread created
 	 */
 	private UnoidlPartitionScanner getIDLPartitionScanner(){
-		if (scanner == null){
-			scanner = new UnoidlPartitionScanner();
+		if (sScanner == null){
+			sScanner = new UnoidlPartitionScanner();
 		}
-		return scanner;
+		return sScanner;
 	}
 }

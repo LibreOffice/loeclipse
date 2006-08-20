@@ -2,9 +2,9 @@
  *
  * $RCSfile: BooleanRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Label;
  */
 public class BooleanRow extends LabeledRow {
 	
-	private boolean value;
+	private boolean mValue;
 	
 	/**
 	 * Creates a new boolean raw. The parent composite should have a grid layout
@@ -89,7 +89,7 @@ public class BooleanRow extends LabeledRow {
 	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#setLabel(java.lang.String)
 	 */
 	public void setLabel(String newLabel){
-		((Label)field).setText(newLabel);
+		((Label)mField).setText(newLabel);
 	}
 	
 	/**
@@ -98,8 +98,8 @@ public class BooleanRow extends LabeledRow {
 	 * @param aValue the new value
 	 */
 	public void setValue(boolean aValue){
-		if (value != aValue){
-			((Button)label).setSelection(aValue);
+		if (mValue != aValue){
+			((Button)mLabel).setSelection(aValue);
 			toggleValue();
 		}
 	}
@@ -108,15 +108,15 @@ public class BooleanRow extends LabeledRow {
 	 * Changes the value of the raw
 	 */
 	public void toggleValue(){
-		value = !value;
-		fireFieldChangedEvent(new FieldEvent(property, getValue()));
+		mValue = !mValue;
+		fireFieldChangedEvent(new FieldEvent(mProperty, getValue()));
 	}
 	
 	/**
 	 * Returns the value of the raw as a boolean
 	 */
 	public boolean getBooleanValue(){
-		return value;
+		return mValue;
 	}
 	
 	/*
@@ -124,7 +124,7 @@ public class BooleanRow extends LabeledRow {
 	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
 	 */
 	public String getValue() {
-		return Boolean.toString(value);
+		return Boolean.toString(mValue);
 	}
 
 	/*
@@ -132,6 +132,6 @@ public class BooleanRow extends LabeledRow {
 	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
-		((Button)label).setEnabled(enabled);
+		((Button)mLabel).setEnabled(enabled);
 	}
 }

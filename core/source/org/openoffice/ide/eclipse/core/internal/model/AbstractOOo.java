@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,9 +47,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.Image;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
@@ -63,12 +61,12 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public abstract class AbstractOOo implements IOOo, ITableElement {
 
-	public static final String NAME = "__ooo_name";
+	public static final String NAME = "__ooo_name"; //$NON-NLS-1$
 	
-	public static final String PATH = "__ooo_path";
+	public static final String PATH = "__ooo_path"; //$NON-NLS-1$
 
-	private String home;
-	private String name;
+	private String mHome;
+	private String mName;
 	
 	/**
 	 * Creating a new OOo or URE instance specifying its home directory
@@ -96,27 +94,25 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 		
 		/* Checks if the directory exists */
 		if (!homeFile.isDirectory() || !homeFile.canRead()) {
-			home = null;
+			mHome = null;
 			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_EXISTING_DIR) + 
-							homeFile.getAbsolutePath(), 
-					InvalidConfigException.INVALID_OOO_HOME);
+				Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
+						homeFile.getAbsolutePath(), 
+				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
-		home = aHome;
+		mHome = aHome;
 			
 		/* Checks if URE_HOME/share/java is a directory */
 		Path javaPath = new Path(getClassesPath());
 		File javaDir = javaPath.toFile();
 		
 		if (!javaDir.isDirectory() || !javaDir.canRead()) {
-			home = null;
+			mHome = null;
 			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_EXISTING_DIR) + 
-							javaDir.getAbsolutePath(), 
-					InvalidConfigException.INVALID_OOO_HOME);
+				Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
+						javaDir.getAbsolutePath(), 
+				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
 		/* Checks if URE_HOME/share/misc/types.rdb is a readable file */
@@ -124,12 +120,11 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 		File typesFile = typesPath.toFile();
 		
 		if (!typesFile.isFile() || !typesFile.canRead()) {
-			home = null;
+			mHome = null;
 			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_EXISTING_FILE) + 
-							typesFile.getAbsolutePath(), 
-					InvalidConfigException.INVALID_OOO_HOME);
+				Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+						typesFile.getAbsolutePath(), 
+				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
 		/* Checks if URE_HOME/share/misc/services.rdb is a readable file */
@@ -137,12 +132,11 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 		File servicesFile = servicesPath.toFile();
 		
 		if (!servicesFile.isFile() || !servicesFile.canRead()) {
-			home = null;
+			mHome = null;
 			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_EXISTING_FILE) + 
-							typesFile.getAbsolutePath(), 
-					InvalidConfigException.INVALID_OOO_HOME);
+				Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+						typesFile.getAbsolutePath(), 
+				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
 		/* Checks if URE_HOME/lib/unorc is a readable file */
@@ -150,12 +144,11 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 		File unorcFile = unorcPath.toFile();
 		
 		if (!unorcFile.isFile() || !unorcFile.canRead()) {
-			home = null;
+			mHome = null;
 			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_EXISTING_FILE) + 
-							unorcFile.getAbsolutePath(), 
-					InvalidConfigException.INVALID_OOO_HOME);
+				Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+						unorcFile.getAbsolutePath(), 
+				InvalidConfigException.INVALID_OOO_HOME);
 		}
 	}
 
@@ -166,8 +159,8 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 	 * @param aName the name to set
 	 */
 	protected void setName(String aName) {
-		if (aName != null && !aName.equals("")) {
-			name = OOoContainer.getOOoContainer().getUniqueName(aName);
+		if (aName != null && !aName.equals("")) { //$NON-NLS-1$
+			mName = OOoContainer.getInstance().getUniqueName(aName);
 		}
 	}
 	
@@ -175,7 +168,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getHome()
 	 */
 	public String getHome() {
-		return home;
+		return mHome;
 	}
 	
 	/*
@@ -183,51 +176,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getName()
 	 */
 	public String getName() {
-		return name;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#createUnoCommand(java.lang.String, java.lang.String, java.lang.String[])
-	 */
-	public String createUnoCommand(String implementationName, 
-			String libLocation, String[] registriesPath, String[] args) {
-		
-		String command = "";
-		
-		// Put the args into one string
-		String sArgs = "";
-		for (int i=0; i<args.length; i++) {
-			sArgs += args[i];
-			
-			if (i < args.length -1) {
-				sArgs += " ";
-			}
-		}
-		
-		// Transform the registries into a string to give to UNO
-		String additionnalRegistries = "";
-		for (int i=0; i<registriesPath.length; i++) {
-			additionnalRegistries += "-ro " + registriesPath[i];
-			
-			if (i < registriesPath.length -1) {
-				additionnalRegistries += " ";
-			}
-		}
-		
-		// Get the paths to OOo instance types and services registries
-		Path typesPath = new Path(getTypesPath());
-		Path servicesPath = new Path(getServicesPath());
-		
-		command = getUnoPath() +
-			" -c " + implementationName + 
-			" -l " + libLocation + 
-			" -ro file:///" + typesPath.toOSString() +
-			" -ro file:///" + servicesPath.toOSString() + 
-			" " + additionnalRegistries + 
-			" -- " + sArgs; 
-		
-		return command;
+		return mName;
 	}
 	
 	//-------------------------------------------- ITableElement Implementation
@@ -245,7 +194,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getLabel(java.lang.String)
 	 */
 	public String getLabel(String property) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		if (property.equals(NAME)) {
 			result = getName();
 		} else if (property.equals(PATH)) {

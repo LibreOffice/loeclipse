@@ -29,7 +29,7 @@ public class LanguagesHelper {
 		result = new String[languages.length];
 		
 		for (int i=0; i<languages.length; i++)  {
-			result[i] = languages[i].getAttribute("name");
+			result[i] = languages[i].getAttribute("name"); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -51,10 +51,10 @@ public class LanguagesHelper {
 		
 		while (name == null && i < languages.length) {
 			IConfigurationElement languagei = languages[i];
-			if (languagei.getAttribute("class").equals(
+			if (languagei.getAttribute("class").equals( //$NON-NLS-1$
 					language.getClass().getName())) {
 				
-				name = languagei.getAttribute("name");
+				name = languagei.getAttribute("name"); //$NON-NLS-1$
 			}
 			i++;
 		}
@@ -81,10 +81,10 @@ public class LanguagesHelper {
 		
 		while (language == null && i < languages.length) {
 			IConfigurationElement languagei = languages[i];
-			if (languagei.getAttribute("name").equals(name)) {
+			if (languagei.getAttribute("name").equals(name)) { //$NON-NLS-1$
 				try {
 					Object oLanguage = languagei.
-						createExecutableExtension("class");
+						createExecutableExtension("class"); //$NON-NLS-1$
 					
 					if (oLanguage instanceof ILanguage) {
 						language = (ILanguage)oLanguage;
@@ -111,7 +111,7 @@ public class LanguagesHelper {
 		
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(
-				"org.openoffice.ide.eclipse.core.language");
+				"org.openoffice.ide.eclipse.core.language"); //$NON-NLS-1$
 		if (point != null){
 			
 			IExtension[] extensions = point.getExtensions();
@@ -124,7 +124,7 @@ public class LanguagesHelper {
 			
 				for (int j=0; j<elements.length; j++) {
 					IConfigurationElement elementj = elements[j];
-					if (elementj.getName().equals("language")){
+					if (elementj.getName().equals("language")){ //$NON-NLS-1$
 						languages.add(elementj);
 					}
 				}
@@ -134,6 +134,9 @@ public class LanguagesHelper {
 			for (int i=0, length=languages.size(); i<length; i++) {
 				result[i] = (IConfigurationElement)languages.get(i);
 			}
+			
+			// clean the vector
+			languages.clear();
 		}
 		
 		return result;

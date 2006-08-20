@@ -2,9 +2,9 @@
  *
  * $RCSfile: NonRuleBasedDamagerRepairer.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -67,10 +67,15 @@ import org.eclipse.swt.custom.StyleRange;
 public class NonRuleBasedDamagerRepairer
 	implements IPresentationDamager, IPresentationRepairer {
 
-	/** The document this object works on */
-	protected IDocument fDocument;
-	/** The default text attribute if non is returned as data by the current token */
-	protected TextAttribute fDefaultTextAttribute;
+	/** 
+	 * The document this object works on 
+	 */
+	protected IDocument mDocument;
+	
+	/** 
+	 * The default text attribute if non is returned as data by the current token 
+	 */
+	protected TextAttribute mDefaultTextAttribute;
 	
 	/**
 	 * Default constructor
@@ -78,7 +83,7 @@ public class NonRuleBasedDamagerRepairer
 	public NonRuleBasedDamagerRepairer(TextAttribute defaultTextAttribute) {
 		Assert.isNotNull(defaultTextAttribute);
 
-		fDefaultTextAttribute = defaultTextAttribute;
+		mDefaultTextAttribute = defaultTextAttribute;
 	}
 
 	/*
@@ -86,7 +91,7 @@ public class NonRuleBasedDamagerRepairer
 	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
-		fDocument = document;
+		mDocument = document;
 	}
 
 	/**
@@ -100,16 +105,16 @@ public class NonRuleBasedDamagerRepairer
 	 */
 	protected int endOfLineOf(int offset) throws BadLocationException {
 
-		IRegion info = fDocument.getLineInformationOfOffset(offset);
+		IRegion info = mDocument.getLineInformationOfOffset(offset);
 		if (offset <= info.getOffset() + info.getLength())
 			return info.getOffset() + info.getLength();
 
-		int line = fDocument.getLineOfOffset(offset);
+		int line = mDocument.getLineOfOffset(offset);
 		try {
-			info = fDocument.getLineInformation(line + 1);
+			info = mDocument.getLineInformation(line + 1);
 			return info.getOffset() + info.getLength();
 		} catch (BadLocationException x) {
-			return fDocument.getLength();
+			return mDocument.getLength();
 		}
 	}
 
@@ -125,7 +130,7 @@ public class NonRuleBasedDamagerRepairer
 			try {
 
 				IRegion info =
-					fDocument.getLineInformationOfOffset(event.getOffset());
+					mDocument.getLineInformationOfOffset(event.getOffset());
 				int start = Math.max(partition.getOffset(), info.getOffset());
 
 				int end =
@@ -165,7 +170,7 @@ public class NonRuleBasedDamagerRepairer
 			presentation,
 			region.getOffset(),
 			region.getLength(),
-			fDefaultTextAttribute);
+			mDefaultTextAttribute);
 	}
 
 	/**

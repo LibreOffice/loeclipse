@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -68,7 +68,7 @@ import org.eclipse.swt.widgets.Label;
  */
 public class ChoiceRow extends LabeledRow implements ModifyListener{
 	
-    private Hashtable translations;
+    private Hashtable mTranslations;
         
     /**
      * Create a new choice row. The parent composite should have a grid layout
@@ -96,7 +96,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		
 		super(property);
 
-        translations = new Hashtable();
+        mTranslations = new Hashtable();
         
 		Label aLabel = new Label(parent, SWT.NONE);
 		aLabel.setText(label);
@@ -114,8 +114,8 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @param listener the browse action listener
 	 */
 	public void setBrowseSelectionListener(SelectionListener listener){
-		if (null != browse){
-			browse.addSelectionListener(listener);
+		if (null != mBrowse){
+			mBrowse.addSelectionListener(listener);
 		}
 	}
 	
@@ -128,7 +128,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 */
 	public void addAll(String[] items){
 		for (int i=0; i<items.length; i++){
-			((Combo)field).add(items[i]);
+			((Combo)mField).add(items[i]);
 		}
 	}
 	
@@ -141,12 +141,12 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
      * nothing will be done.</p>
      */
     public void add(String text, String value, int index){
-        if (!translations.containsKey(text)) {
-            translations.put(text, value);
+        if (!mTranslations.containsKey(text)) {
+            mTranslations.put(text, value);
             if (index >= 0) {
-                ((Combo)field).add(text, index);
+                ((Combo)mField).add(text, index);
             } else {
-                ((Combo)field).add(text);
+                ((Combo)mField).add(text);
             }
         }
     }
@@ -190,8 +190,8 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#remove(java.lang.String)
 	 */
 	public void remove(String text){
-        translations.remove(text);
-		((Combo)field).remove(text);
+        mTranslations.remove(text);
+		((Combo)mField).remove(text);
 	}
 	
 	/**
@@ -224,8 +224,8 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#removeAll()
 	 */
 	public void removeAll(){
-        translations.clear();
-		((Combo)field).removeAll();
+        mTranslations.clear();
+		((Combo)mField).removeAll();
 	}
 	
 	/**
@@ -235,10 +235,10 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#select(int)
 	 */
 	public void select(int index){
-		((Combo)field).select(index);
+		((Combo)mField).select(index);
 		
 		// Fire a modification event to the listener 
-		FieldEvent fe = new FieldEvent(this.property, getValue());
+		FieldEvent fe = new FieldEvent(this.mProperty, getValue());
 		fireFieldChangedEvent(fe);
 	}
 	
@@ -251,7 +251,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	public void select(String value){
 		int result = -1;
 		
-		Combo cField = ((Combo)field);
+		Combo cField = ((Combo)mField);
 		int i = 0;
 	    while (i < cField.getItemCount() && -1 == result){
 			if (getValue(i).equals(value)){
@@ -271,7 +271,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
      *     <code>getValue()</code> to get the selected value.
 	 */
 	public String getItem(int index){
-		return ((Combo)field).getItem(index);
+		return ((Combo)mField).getItem(index);
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @see Combo#getItemCount()
 	 */
 	public int getItemCount(){
-		return ((Combo)field).getItemCount();
+		return ((Combo)mField).getItemCount();
 	}
 	
 	/**
@@ -290,7 +290,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 * @param e modification event
 	 */
 	public void modifyText(ModifyEvent e) {
-		FieldEvent fe = new FieldEvent(this.property, getValue());
+		FieldEvent fe = new FieldEvent(this.mProperty, getValue());
 		fireFieldChangedEvent(fe);
 	}
 
@@ -303,7 +303,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	public String getValue() {
 		String result = null; 
 		
-		int selectedId = ((Combo)field).getSelectionIndex();
+		int selectedId = ((Combo)mField).getSelectionIndex();
 		if (-1 != selectedId) {
 			result = getValue(selectedId);
 		}
@@ -321,10 +321,10 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		String result = null;
 		
 		if (i >= 0 && i < getItemCount()){
-			String text = ((Combo)field).getItem(i);
+			String text = ((Combo)mField).getItem(i);
 			result = text;
 			
-			String value = (String)translations.get(text);
+			String value = (String)mTranslations.get(text);
 			if (value != null) {
 				result = value;
 			}

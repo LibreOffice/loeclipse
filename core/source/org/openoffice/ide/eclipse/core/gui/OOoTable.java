@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -66,7 +66,6 @@ import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.FileRow;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.model.AbstractOOo;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
@@ -90,7 +89,7 @@ public class OOoTable extends AbstractTable {
 	/**
 	 * Temporary OOo for storing the values fetched from the dialog
 	 */
-	private AbstractOOo tmpooo;
+	private AbstractOOo mTmpOOo;
 		
 	/**
 	 * Main constructor of the OOo Table. It's style can't be configured like 
@@ -101,10 +100,10 @@ public class OOoTable extends AbstractTable {
 	 */
 	public OOoTable(Composite parent) {
 		super(parent, 
-			  OOEclipsePlugin.getTranslationString(I18nConstants.OOOS_LIST),
+			  Messages.getString("OOoTable.Title"), //$NON-NLS-1$
 			  new String[] {
-					OOEclipsePlugin.getTranslationString(I18nConstants.NAME),
-					OOEclipsePlugin.getTranslationString(I18nConstants.OOO_HOME_PATH)
+					Messages.getString("OOoTable.NameTitle"), //$NON-NLS-1$
+					Messages.getString("OOoTable.PathTitle") //$NON-NLS-1$
 				},
 			  new int[] {100, 200},
 			  new String[] {
@@ -112,15 +111,15 @@ public class OOoTable extends AbstractTable {
 				OOo.PATH
 		      });
 		
-		tableViewer.setInput(OOoContainer.getOOoContainer());
-		tableViewer.setContentProvider(new OOoContentProvider());
+		mTableViewer.setInput(OOoContainer.getInstance());
+		mTableViewer.setContentProvider(new OOoContentProvider());
 	}
 	
 	/**
 	 * Fill the table with the preferences from the OOOS_CONFIG file
 	 */
 	public void getPreferences(){
-		OOoContainer.getOOoContainer();
+		OOoContainer.getInstance();
 	}
 	
 	/**
@@ -129,7 +128,7 @@ public class OOoTable extends AbstractTable {
 	 */
 	public void savePreferences(){
 		
-		OOoContainer.getOOoContainer().saveOOos();
+		OOoContainer.getInstance().saveOOos();
 	}
 	
 	/*
@@ -139,7 +138,7 @@ public class OOoTable extends AbstractTable {
 	protected ITableElement addLine() {
 		
 		AbstractOOo ooo = openDialog(null);
-		OOoContainer.getOOoContainer().addOOo(ooo);
+		OOoContainer.getInstance().addOOo(ooo);
 		return ooo;
 	}
 	
@@ -151,7 +150,7 @@ public class OOoTable extends AbstractTable {
 		
 		ITableElement o = super.removeLine();
 		if (null != o && o instanceof IOOo) {
-			OOoContainer.getOOoContainer().delOOo((IOOo)o);
+			OOoContainer.getInstance().delOOo((IOOo)o);
 		}
 		return o;
 	}
@@ -168,7 +167,7 @@ public class OOoTable extends AbstractTable {
 			
 			// Launch the dialog
 			ooo = openDialog(ooo);
-			OOoContainer.getOOoContainer().updateOOo(ooo.getName(), ooo);
+			OOoContainer.getInstance().updateOOo(ooo.getName(), ooo);
 		}
 	}
 	
@@ -191,15 +190,15 @@ public class OOoTable extends AbstractTable {
 		OOoDialog dialog = new OOoDialog(shell, ooo);
 		if (OOoDialog.OK == dialog.open()){
 			// The user validates his choice, perform the changes
-			AbstractOOo newOOo = tmpooo;
-			tmpooo = null;
+			AbstractOOo newOOo = mTmpOOo;
+			mTmpOOo = null;
 			
 			if (null != ooo){
 				// Only an existing OOo modification
 				try {
 					ooo.setHome(newOOo.getHome());
 				} catch (InvalidConfigException e) {
-					PluginLogger.getInstance().error(
+					PluginLogger.error(
 							e.getLocalizedMessage(), e); 
 					// localized in OOo class
 				}
@@ -225,8 +224,8 @@ public class OOoTable extends AbstractTable {
 		 * Crates a content provider using the OOo container
 		 */
 		public OOoContentProvider() {
-			if (null == OOoContainer.getOOoContainer()){
-				OOoContainer.getOOoContainer();
+			if (null == OOoContainer.getInstance()){
+				OOoContainer.getInstance();
 			}
 		}
 
@@ -235,7 +234,7 @@ public class OOoTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return OOoContainer.getOOoContainer().toArray();
+			return OOoContainer.getInstance().toArray();
 		}
 
 		/*
@@ -243,7 +242,7 @@ public class OOoTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			OOoContainer.getOOoContainer().removeListener(this);
+			OOoContainer.getInstance().removeListener(this);
 		}
 
 		/*
@@ -266,10 +265,10 @@ public class OOoTable extends AbstractTable {
 		 */
 		public void ConfigAdded(Object element) {
 			if (element instanceof OOo){
-				tableViewer.add(element);
+				mTableViewer.add(element);
 				
 				// This redrawing order is necessary to avoid having strange columns
-				table.redraw();
+				mTable.redraw();
 			}
 		}
 
@@ -280,21 +279,21 @@ public class OOoTable extends AbstractTable {
 		public void ConfigRemoved(Object element) {
 			if (null != element && element instanceof IOOo){
 				// Only one OOo to remove
-				tableViewer.remove(element);
+				mTableViewer.remove(element);
 			} else {
 				// All the OOo have been removed
-				if (null != tableViewer){
+				if (null != mTableViewer){
 					int i = 0;
-					IOOo oooi = (IOOo)tableViewer.getElementAt(i);
+					IOOo oooi = (IOOo)mTableViewer.getElementAt(i);
 					
 					while (null != oooi){
-						tableViewer.remove(oooi);
+						mTableViewer.remove(oooi);
 					}
 				}
 			}
 			
 			// This redrawing order is necessary to avoid having strange columns
-			table.redraw();
+			mTable.redraw();
 		}
 
 		/*
@@ -305,7 +304,7 @@ public class OOoTable extends AbstractTable {
 			if (element instanceof OOo) {
 				// Note that we can do this only because the OOo Container guarantees
 				// that the reference of the ooo will not change during an update
-				tableViewer.update(element, null);
+				mTableViewer.update(element, null);
 			}
 		}
 	}
@@ -317,14 +316,14 @@ public class OOoTable extends AbstractTable {
 	 */
 	class OOoDialog extends StatusDialog implements IFieldChangedListener{
 		
-		private static final String P_OOO_PATH    = "__ooo_path";
-		private static final String P_OOO_NAME    = "__ooo_name";
+		private static final String P_OOO_PATH    = "__ooo_path"; //$NON-NLS-1$
+		private static final String P_OOO_NAME    = "__ooo_name"; //$NON-NLS-1$
 
-		private FileRow ooopathRow;
+		private FileRow mOOopathRow;
 		
-		private TextRow nameRow;
+		private TextRow mNameRow;
 		
-		private AbstractOOo ooo;
+		private AbstractOOo mOOo;
 		
 		/**
 		 * Create the OOo dialog without any OOo instance
@@ -344,11 +343,10 @@ public class OOoTable extends AbstractTable {
 		protected OOoDialog(Shell parentShell, AbstractOOo ooo) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.ooo = ooo;
+			this.mOOo = ooo;
 			
 			setBlockOnOpen(true); // This dialog is a modal one
-			setTitle(OOEclipsePlugin.getTranslationString(
-					I18nConstants.OOO_CONFIG_DIALOG_TITLE));
+			setTitle(Messages.getString("OOoTable.DialogTitle")); //$NON-NLS-1$
 		}
 		
 		/*
@@ -369,22 +367,22 @@ public class OOoTable extends AbstractTable {
 			image.setLayoutData(gd);
 			
 			// Creates each line of the dialog
-			ooopathRow = new FileRow(body, P_OOO_PATH, 
-					OOEclipsePlugin.getTranslationString(I18nConstants.OOO_HOME_PATH), true);
-			ooopathRow.setFieldChangedListener(this);
+			mOOopathRow = new FileRow(body, P_OOO_PATH, 
+					Messages.getString("OOoTable.PathTitle"), true); //$NON-NLS-1$
+			mOOopathRow.setFieldChangedListener(this);
 			
 			// put the value of the edited OOo in the fields
-			if (null != ooo){
-				ooopathRow.setValue(ooo.getHome());
+			if (null != mOOo){
+				mOOopathRow.setValue(mOOo.getHome());
 			}
 			
-			nameRow = new TextRow(body, P_OOO_NAME, 
-					OOEclipsePlugin.getTranslationString(I18nConstants.NAME));
-			nameRow.setFieldChangedListener(this);
+			mNameRow = new TextRow(body, P_OOO_NAME, 
+					Messages.getString("OOoTable.NameTitle")); //$NON-NLS-1$
+			mNameRow.setFieldChangedListener(this);
 			
-			if (null != ooo && null != ooo.getName()) {
-				nameRow.setValue(ooo.getName());
-				nameRow.setEnabled(false);
+			if (null != mOOo && null != mOOo.getName()) {
+				mNameRow.setValue(mOOo.getName());
+				mNameRow.setEnabled(false);
 			}
 			
 			// activate the OK button only if the OOo is correct
@@ -405,14 +403,14 @@ public class OOoTable extends AbstractTable {
 			// If there is one field missing, print an error line at the bottom
 			// of the dialog.
 			
-			if (!ooopathRow.getValue().equals("")) {
+			if (!mOOopathRow.getValue().equals("")) { //$NON-NLS-1$
 				isValid(null);
 				super.okPressed();
 			} else {
 				updateStatus(new Status(Status.ERROR, 
 					     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 						 Status.ERROR,
-						 OOEclipsePlugin.getTranslationString(I18nConstants.ALL_FIELDS_FILLED),
+						 Messages.getString("OOoTable.MissingFieldError"), //$NON-NLS-1$
 						 null));
 			}
 		}
@@ -442,19 +440,18 @@ public class OOoTable extends AbstractTable {
 				
 				// checks if the name is unique and toggle a warning
 				if (e.getProperty().equals(P_OOO_NAME)) {
-					boolean unique = !OOoContainer.getOOoContainer().
+					boolean unique = !OOoContainer.getInstance().
 						containsName(e.getValue());
 					
 					if (unique) {
 						updateStatus(new Status(Status.OK,
 					    		OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-					    		Status.OK, "", null));
+					    		Status.OK, "", null)); //$NON-NLS-1$
 					} else {
 						updateStatus(new Status(Status.WARNING, 
 							     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 								 Status.WARNING,
-								 OOEclipsePlugin.getTranslationString(
-										 I18nConstants.NOT_UNIQUE_OOO_NAME),
+								 Messages.getString("OOoTable.NameExistsError"), //$NON-NLS-1$
 								 null));
 					}
 				}
@@ -473,15 +470,15 @@ public class OOoTable extends AbstractTable {
 				
 			// Try to create an OOo
 			try {
-				tmpooo = new OOo (ooopathRow.getValue(), nameRow.getValue()); 
+				mTmpOOo = new OOo (mOOopathRow.getValue(), mNameRow.getValue()); 
 
-				if (null != tmpooo.getName()) {
-					nameRow.setValue(tmpooo.getName());
+				if (null != mTmpOOo.getName()) {
+					mNameRow.setValue(mTmpOOo.getName());
 				}
 				
 				updateStatus(new Status(Status.OK,
 			    		OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-			    		Status.OK, "", null));
+			    		Status.OK, "", null)); //$NON-NLS-1$
 				
 				result = true;
 				
@@ -489,14 +486,14 @@ public class OOoTable extends AbstractTable {
 
 				try {
 					
-					tmpooo = new URE(ooopathRow.getValue(), nameRow.getValue());
-					if (null != tmpooo.getName()) {
-						nameRow.setValue(tmpooo.getName());
+					mTmpOOo = new URE(mOOopathRow.getValue(), mNameRow.getValue());
+					if (null != mTmpOOo.getName()) {
+						mNameRow.setValue(mTmpOOo.getName());
 					}
 					
 					updateStatus(new Status(Status.OK,
 				    		OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-				    		Status.OK, "", null));
+				    		Status.OK, "", null)); //$NON-NLS-1$
 					
 					result = true;
 					
@@ -504,7 +501,7 @@ public class OOoTable extends AbstractTable {
 					updateStatus(new Status(Status.ERROR, 
 						     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							 Status.ERROR,
-							 OOEclipsePlugin.getTranslationString(I18nConstants.INVALID_OOO_PATH),
+							 Messages.getString("OOoTable.InvalidPathError"), //$NON-NLS-1$
 							 ex));
 				}
 			} 

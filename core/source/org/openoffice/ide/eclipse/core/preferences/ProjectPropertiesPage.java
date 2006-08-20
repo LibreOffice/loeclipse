@@ -2,9 +2,9 @@
  *
  * $RCSfile: ProjectPropertiesPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:56 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -63,7 +63,6 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
@@ -78,7 +77,7 @@ public class ProjectPropertiesPage extends PropertyPage
 								   implements IWorkbenchPropertyPage, 
 								   		   IConfigListener {
 
-	private UnoidlProject project;
+	private UnoidlProject mProject;
 	
 	/**
 	 * Default constructor setting configuration listeners
@@ -87,8 +86,8 @@ public class ProjectPropertiesPage extends PropertyPage
 		super();
 		
 		noDefaultAndApplyButton();
-		SDKContainer.getSDKContainer().addListener(this);
-		OOoContainer.getOOoContainer().addListener(this);
+		SDKContainer.getInstance().addListener(this);
+		OOoContainer.getInstance().addListener(this);
 	}
 	
 	/*
@@ -97,19 +96,19 @@ public class ProjectPropertiesPage extends PropertyPage
 	 */
 	public void dispose() {
 		
-		SDKContainer.getSDKContainer().removeListener(this);
-		OOoContainer.getOOoContainer().removeListener(this);
+		SDKContainer.getInstance().removeListener(this);
+		OOoContainer.getInstance().removeListener(this);
 		
 		super.dispose();
 	}
 
 	//------------------------------------------------------- Content managment
 	
-	private ChoiceRow sdkRow;
-	private ChoiceRow oooRow;
+	private ChoiceRow mSdkRow;
+	private ChoiceRow mOOoRow;
 	
-	private static final String SDK = "__sdk";
-	private static final String OOO = "__ooo";
+	private static final String SDK = "__sdk"; //$NON-NLS-1$
+	private static final String OOO = "__ooo"; //$NON-NLS-1$
 	
 	/*
 	 *  (non-Javadoc)
@@ -119,11 +118,11 @@ public class ProjectPropertiesPage extends PropertyPage
 		super.setElement(element);
 		
 		try {
-			project = (UnoidlProject)((IProject)getElement()).
+			mProject = (UnoidlProject)((IProject)getElement()).
 								getNature(OOEclipsePlugin.UNO_NATURE_ID);
 			
 		} catch (CoreException e) {
-			PluginLogger.getInstance().debug(e.getMessage());
+			PluginLogger.debug(e.getMessage());
 		}
 	}
 	
@@ -137,10 +136,10 @@ public class ProjectPropertiesPage extends PropertyPage
 		body.setLayout(new GridLayout(3, false));
 		
 		// Add the SDK choice field
-		sdkRow = new ChoiceRow(body, SDK,
-						OOEclipsePlugin.getTranslationString(I18nConstants.USED_SDK),
-						OOEclipsePlugin.getTranslationString(I18nConstants.SDKS));
-		sdkRow.setBrowseSelectionListener(new SelectionAdapter(){
+		mSdkRow = new ChoiceRow(body, SDK,
+						Messages.getString("ProjectPropertiesPage.UsedSdk"), //$NON-NLS-1$
+						Messages.getString("ProjectPropertiesPage.SdksBrowse")); //$NON-NLS-1$
+		mSdkRow.setBrowseSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				
@@ -156,10 +155,10 @@ public class ProjectPropertiesPage extends PropertyPage
 		
 		
 		// Add the OOo choice field
-		oooRow = new ChoiceRow(body, OOO,
-						OOEclipsePlugin.getTranslationString(I18nConstants.USED_OOO),
-						OOEclipsePlugin.getTranslationString(I18nConstants.OOOS));
-		oooRow.setBrowseSelectionListener(new SelectionAdapter(){
+		mOOoRow = new ChoiceRow(body, OOO,
+						Messages.getString("ProjectPropertiesPage.UsedOOo"), //$NON-NLS-1$
+						Messages.getString("ProjectPropertiesPage.OOoBrowse")); //$NON-NLS-1$
+		mOOoRow.setBrowseSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				
@@ -189,14 +188,14 @@ public class ProjectPropertiesPage extends PropertyPage
 	 * configuration file.
 	 */
 	private void saveValues(){
-		if (!sdkRow.getValue().equals("")) {
-			ISdk sdk = SDKContainer.getSDKContainer().getSDK(sdkRow.getValue());
-			project.setSdk(sdk);
+		if (!mSdkRow.getValue().equals("")) { //$NON-NLS-1$
+			ISdk sdk = SDKContainer.getInstance().getSDK(mSdkRow.getValue());
+			mProject.setSdk(sdk);
 		}
 		
-		if (!oooRow.getValue().equals("")){
-			IOOo ooo = OOoContainer.getOOoContainer().getOOo(oooRow.getValue());
-			project.setOOo(ooo);
+		if (!mOOoRow.getValue().equals("")){ //$NON-NLS-1$
+			IOOo ooo = OOoContainer.getInstance().getOOo(mOOoRow.getValue());
+			mProject.setOOo(ooo);
 		}
 	}
 	
@@ -205,22 +204,23 @@ public class ProjectPropertiesPage extends PropertyPage
 	 */
 	private void fillSDKRow (){
 		
-		if (null != sdkRow){
+		if (null != mSdkRow){
 			// Adding the SDK names to the combo box 
-			SDKContainer sdkContainer = SDKContainer.getSDKContainer();
+			SDKContainer sdkContainer = SDKContainer.getInstance();
 			String[] sdks = new String[sdkContainer.getSDKCount()];
 			Vector sdkKeys = sdkContainer.getSDKKeys();
 			for (int i=0, length=sdkContainer.getSDKCount(); i<length; i++){
 				sdks[i] = (String)sdkKeys.get(i);
 			}
+			sdkKeys.clear();
 			
-			sdkRow.removeAll();
-			sdkRow.addAll(sdks);
+			mSdkRow.removeAll();
+			mSdkRow.addAll(sdks);
 			
-			if (null != project.getSdk()){
-				sdkRow.select(project.getSdk().getId());
+			if (null != mProject.getSdk()){
+				mSdkRow.select(mProject.getSdk().getId());
 			} else {
-				sdkRow.select(0);
+				mSdkRow.select(0);
 			}
 		}
 	}
@@ -230,22 +230,23 @@ public class ProjectPropertiesPage extends PropertyPage
 	 */
 	private void fillOOoRow(){
 		
-		if (null != oooRow){
+		if (null != mOOoRow){
 			
 			// Adding the OOo names to the combo box 
-			OOoContainer oooContainer = OOoContainer.getOOoContainer();
+			OOoContainer oooContainer = OOoContainer.getInstance();
 			String[] ooos = new String[oooContainer.getOOoCount()];
 			Vector oooKeys = oooContainer.getOOoKeys();
 			for (int i=0, length=oooContainer.getOOoCount(); i<length; i++){
 				ooos[i] = (String)oooKeys.get(i);
 			}
+			oooKeys.clear();
 			
-			oooRow.removeAll();
-			oooRow.addAll(ooos);
-			if (null != project.getOOo()){
-				oooRow.select(project.getOOo().getName());
+			mOOoRow.removeAll();
+			mOOoRow.addAll(ooos);
+			if (null != mProject.getOOo()){
+				mOOoRow.select(mProject.getOOo().getName());
 			} else {
-				oooRow.select(0);
+				mOOoRow.select(0);
 			}
 		}
 	}
@@ -258,22 +259,20 @@ public class ProjectPropertiesPage extends PropertyPage
 	 */
 	private class TableDialog extends Dialog {
 		
-		private boolean editSDK = true;
+		private boolean mEditSdk = true;
 		
-		private Object table;
+		private Object mTable;
 		
 		TableDialog (Shell parentShell, boolean editSDK){
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.editSDK = editSDK;
+			this.mEditSdk = editSDK;
 			
 			setBlockOnOpen(true); // This dialog is a modal one
 			if (editSDK) {
-				setTitle(OOEclipsePlugin.getTranslationString(
-						I18nConstants.SDKS));
+				setTitle(Messages.getString("ProjectPropertiesPage.SdksBrowse")); //$NON-NLS-1$
 			} else {
-				setTitle(OOEclipsePlugin.getTranslationString(
-						I18nConstants.OOOS));
+				setTitle(Messages.getString("ProjectPropertiesPage.OOoBrowse")); //$NON-NLS-1$
 			}
 		}
 		
@@ -283,12 +282,12 @@ public class ProjectPropertiesPage extends PropertyPage
 		 */
 		protected Control createDialogArea(Composite parent) {
 			
-			if (editSDK){
-				table = new SDKTable(parent);
-				((SDKTable)table).getPreferences();
+			if (mEditSdk){
+				mTable = new SDKTable(parent);
+				((SDKTable)mTable).getPreferences();
 			} else {
-				table = new OOoTable(parent);
-				((OOoTable)table).getPreferences();
+				mTable = new OOoTable(parent);
+				((OOoTable)mTable).getPreferences();
 			}
 				
 			return parent;
@@ -301,10 +300,10 @@ public class ProjectPropertiesPage extends PropertyPage
 		protected void okPressed() {
 			super.okPressed();
 			
-			if (editSDK){
-				((SDKTable)table).savePreferences();
+			if (mEditSdk){
+				((SDKTable)mTable).savePreferences();
 			} else {
-				((OOoTable)table).savePreferences();
+				((OOoTable)mTable).savePreferences();
 			}
 		}
 	}

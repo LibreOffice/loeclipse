@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFileWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -59,9 +59,9 @@ import org.eclipse.ui.IWorkbench;
  */
 public class NewUnoFileWizard extends Wizard implements INewWizard {
 
-	private NewUnoFilePage page;
+	private NewUnoFilePage mPage;
 	
-	private IWorkbench workbench;
+	private IWorkbench mWorkbench;
 	
 	/**
 	 * Default constructor
@@ -76,10 +76,10 @@ public class NewUnoFileWizard extends Wizard implements INewWizard {
 	 */
 	public boolean performFinish() {
 		
-		IPath parentPath = page.getContainerFullPath();
+		IPath parentPath = mPage.getContainerFullPath();
 		IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(parentPath);
 		
-		return NewUnoFilePage.createUnoidlFile(folder, page.getFileName(), workbench);
+		return NewUnoFilePage.createUnoidlFile(folder, mPage.getFileName(), mWorkbench);
 	}
 
 	/*
@@ -88,10 +88,9 @@ public class NewUnoFileWizard extends Wizard implements INewWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		
-		this.workbench = workbench;
-		
-		page = new NewUnoFilePage("configuration", selection);
+		mWorkbench = workbench;
+		mPage = new NewUnoFilePage("configuration", selection); //$NON-NLS-1$
 
-		addPage(page);
+		addPage(mPage);
 	}
 }

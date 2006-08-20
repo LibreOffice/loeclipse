@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -66,7 +67,6 @@ import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.FileRow;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.model.SDK;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
@@ -87,7 +87,7 @@ public class SDKTable extends AbstractTable {
 	/**
 	 * Temporary SDK for storing the values fetched from the dialog
 	 */
-	private SDK tmpsdk;
+	private SDK mTmpSdk;
 		
 	/**
 	 * Main constructor of the SDK Table. It's style can't be configured like
@@ -98,10 +98,10 @@ public class SDKTable extends AbstractTable {
 	 */
 	public SDKTable(Composite parent) {
 		super(parent, 
-				  OOEclipsePlugin.getTranslationString(I18nConstants.SDKS_LIST),
+				  Messages.getString("SDKTable.Title"), //$NON-NLS-1$
 				  new String[] {
-						OOEclipsePlugin.getTranslationString(I18nConstants.BUILID),
-						OOEclipsePlugin.getTranslationString(I18nConstants.SDK_PATH)
+						Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
+						Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
 					},
 				  new int[] {100, 200},
 				  new String[] {
@@ -109,15 +109,15 @@ public class SDKTable extends AbstractTable {
 					SDK.PATH
 			      });
 			
-			tableViewer.setInput(SDKContainer.getSDKContainer());
-			tableViewer.setContentProvider(new SDKContentProvider());
+			mTableViewer.setInput(SDKContainer.getInstance());
+			mTableViewer.setContentProvider(new SDKContentProvider());
 	}
 	
 	/**
 	 * Fill the table with the preferences from the SDKS_CONFIG file
 	 */
 	public void getPreferences(){
-		SDKContainer.getSDKContainer();
+		SDKContainer.getInstance();
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class SDKTable extends AbstractTable {
 	 */
 	public void savePreferences(){
 		
-		SDKContainer.getSDKContainer().saveSDKs();
+		SDKContainer.getInstance().saveSDKs();
 	}
 
 	/*
@@ -141,7 +141,7 @@ public class SDKTable extends AbstractTable {
 			
 			// Launch the dialog
 			sdk = openDialog(sdk, true);
-			SDKContainer.getSDKContainer().updateSDK(sdk.getId(), sdk);
+			SDKContainer.getInstance().updateSDK(sdk.getId(), sdk);
 		}
 	}
 	
@@ -152,7 +152,7 @@ public class SDKTable extends AbstractTable {
 	protected ITableElement addLine() {
 		// Launch add SDK dialog
 		SDK sdk = openDialog(null, false);
-		SDKContainer.getSDKContainer().addSDK(sdk);
+		SDKContainer.getInstance().addSDK(sdk);
 		return sdk;
 	}
 	
@@ -163,7 +163,7 @@ public class SDKTable extends AbstractTable {
 	protected ITableElement removeLine() {
 		ITableElement o = super.removeLine();
 		if (null != o && o instanceof SDK) {
-			SDKContainer.getSDKContainer().delSDK((SDK)o);
+			SDKContainer.getInstance().delSDK((SDK)o);
 		}
 		
 		return o;
@@ -189,15 +189,15 @@ public class SDKTable extends AbstractTable {
 		SDKDialog dialog = new SDKDialog(shell, sdk);
 		if (SDKDialog.OK == dialog.open()){
 			// The user validates his choice, perform the changes
-			SDK newSDK = tmpsdk;
-			tmpsdk = null;
+			SDK newSDK = mTmpSdk;
+			mTmpSdk = null;
 			
 			if (null != sdk){
 				// Only an existing SDK modification
 				try {
 					sdk.setHome(newSDK.getHome());
 				} catch (InvalidConfigException e) {
-					PluginLogger.getInstance().error(
+					PluginLogger.error(
 							e.getLocalizedMessage(), e); 
 					// localized in SDK class
 				}
@@ -222,8 +222,8 @@ public class SDKTable extends AbstractTable {
 	class SDKContentProvider implements IStructuredContentProvider, IConfigListener {
 		
 		public SDKContentProvider() {
-			if (null == SDKContainer.getSDKContainer()){
-				SDKContainer.getSDKContainer();
+			if (null == SDKContainer.getInstance()){
+				SDKContainer.getInstance();
 			}
 		}
 
@@ -232,7 +232,7 @@ public class SDKTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return SDKContainer.getSDKContainer().toArray();
+			return SDKContainer.getInstance().toArray();
 		}
 
 		/*
@@ -240,7 +240,7 @@ public class SDKTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			SDKContainer.getSDKContainer().removeListener(this);
+			SDKContainer.getInstance().removeListener(this);
 		}
 
 		/*
@@ -263,10 +263,10 @@ public class SDKTable extends AbstractTable {
 		 */
 		public void ConfigAdded(Object element) {
 			if (element instanceof SDK){
-				tableViewer.add(element);
+				mTableViewer.add(element);
 				
 				// This redrawing order is necessary to avoid having strange columns
-				table.redraw();
+				mTable.redraw();
 			}
 		}
 
@@ -277,21 +277,21 @@ public class SDKTable extends AbstractTable {
 		public void ConfigRemoved(Object element) {
 			if (null != element && element instanceof SDK){
 				// Only one SDK to remove
-				tableViewer.remove(element);
+				mTableViewer.remove(element);
 			} else {
 				// All the SDK have been removed
-				if (null != tableViewer){
+				if (null != mTableViewer){
 					int i = 0;
-					SDK sdki = (SDK)tableViewer.getElementAt(i);
+					SDK sdki = (SDK)mTableViewer.getElementAt(i);
 					
 					while (null != sdki){
-						tableViewer.remove(sdki);
+						mTableViewer.remove(sdki);
 					}
 				}
 			}
 			
 			// This redrawing order is necessary to avoid having strange columns
-			table.redraw();
+			mTable.redraw();
 		}
 
 		/*
@@ -302,7 +302,7 @@ public class SDKTable extends AbstractTable {
 			if (element instanceof SDK) {
 				// Note that we can do this only because the SDK Container guarantees
 				// that the reference of the sdk will not change during an update
-				tableViewer.update(element, null);
+				mTableViewer.update(element, null);
 			}
 		}
 	}
@@ -314,13 +314,13 @@ public class SDKTable extends AbstractTable {
 	 */
 	class SDKDialog extends StatusDialog implements IFieldChangedListener{
 		
-		private static final String P_SDK_PATH    = "__sdk_path";
+		private static final String P_SDK_PATH    = "__sdk_path"; //$NON-NLS-1$
 
-		private FileRow sdkpathRow;
+		private FileRow mSdkpathRow;
 		
-		private TextRow buidlidRow; 
+		private TextRow mBuidlidRow; 
 		
-		private SDK sdk;
+		private SDK mSdk;
 		
 		/**
 		 * Create the SDK dialog without any SDK instance
@@ -340,10 +340,10 @@ public class SDKTable extends AbstractTable {
 		protected SDKDialog(Shell parentShell, SDK sdk) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.sdk = sdk;
+			this.mSdk = sdk;
 			
 			setBlockOnOpen(true); // This dialog is a modal one
-			setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.SDK_CONFIG_DIALOG_TITLE));
+			setTitle(Messages.getString("SDKTable.DialogTitle")); //$NON-NLS-1$
 		}
 		
 		/*
@@ -364,21 +364,21 @@ public class SDKTable extends AbstractTable {
 			image.setLayoutData(gd);
 			
 			// Creates each line of the dialog
-			sdkpathRow = new FileRow(body, P_SDK_PATH, 
-					OOEclipsePlugin.getTranslationString(I18nConstants.SDK_PATH), true);
-			sdkpathRow.setFieldChangedListener(this);
+			mSdkpathRow = new FileRow(body, P_SDK_PATH, 
+					Messages.getString("SDKTable.PathTitle"), true); //$NON-NLS-1$
+			mSdkpathRow.setFieldChangedListener(this);
 			
 			// put the value of the edited SDK in the fields
-			if (null != sdk){
-				sdkpathRow.setValue(sdk.getHome());
+			if (null != mSdk){
+				mSdkpathRow.setValue(mSdk.getHome());
 			}
 			
-			buidlidRow = new TextRow(body, "", 
-					OOEclipsePlugin.getTranslationString(I18nConstants.BUILID));
-			buidlidRow.setEnabled(false);   // This line is only to show the value
+			mBuidlidRow = new TextRow(body, "",  //$NON-NLS-1$
+					Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
+			mBuidlidRow.setEnabled(false);   // This line is only to show the value
 			
-			if (null != sdk && null != sdk.getId()){
-				buidlidRow.setValue(sdk.getId());
+			if (null != mSdk && null != mSdk.getId()){
+				mBuidlidRow.setValue(mSdk.getId());
 			}
 			
 			// activate the OK button only if the SDK is correct
@@ -399,14 +399,14 @@ public class SDKTable extends AbstractTable {
 			// If there is one field missing, print an error line at the bottom
 			// of the dialog.
 			
-			if (!sdkpathRow.getValue().equals("")) {
+			if (!mSdkpathRow.getValue().equals("")) { //$NON-NLS-1$
 				isValid(null);
 				super.okPressed();
 			} else {
 				updateStatus(new Status(Status.ERROR, 
 					     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 						 Status.ERROR,
-						 OOEclipsePlugin.getTranslationString(I18nConstants.ALL_FIELDS_FILLED),
+						 Messages.getString("SDKTable.MissingFieldError"), //$NON-NLS-1$
 						 null));
 			}
 		}
@@ -426,7 +426,7 @@ public class SDKTable extends AbstractTable {
 		 */
 		public void fieldChanged(FieldEvent e) {
 			// The result doesn't matter: we only want to update the status of the windows
-
+			
 			Button okButton = getButton(IDialogConstants.OK_ID);
 			if (null != okButton){
 				okButton.setEnabled(isValid(e.getProperty()));
@@ -445,15 +445,25 @@ public class SDKTable extends AbstractTable {
 				
 			// Try to create an SDK
 			try {
-				tmpsdk = new SDK (sdkpathRow.getValue()); 
+				mTmpSdk = new SDK (mSdkpathRow.getValue()); 
 
-				if (null != tmpsdk.getId()) {
-					buidlidRow.setValue(tmpsdk.getId());
+				if (null != mTmpSdk.getId()) {
+					mBuidlidRow.setValue(mTmpSdk.getId());
 				}
 				
-				updateStatus(new Status(Status.OK,
-			    		OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-			    		Status.OK, "", null));
+				if (Platform.getOS().equals(Platform.OS_WIN32) && 
+						mSdkpathRow.getValue().contains(" ")) { //$NON-NLS-1$
+					
+					updateStatus(new Status(Status.WARNING,
+				    		OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+				    		Status.WARNING, 
+				    		Messages.getString("SDKTable.SpacesSdkPathWarning"),  //$NON-NLS-1$
+				    		null));
+				} else {
+					updateStatus(new Status(Status.OK,
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							Status.OK, "", null)); //$NON-NLS-1$
+				}
 				
 				result = true;
 				
@@ -462,13 +472,13 @@ public class SDKTable extends AbstractTable {
 					updateStatus(new Status(Status.ERROR, 
 						     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							 Status.ERROR,
-							 OOEclipsePlugin.getTranslationString(I18nConstants.INVALID_SDK_PATH),
+							 Messages.getString("SDKTable.InvalidPathError"), //$NON-NLS-1$
 							 e));
 				} else {
 					updateStatus(new Status(Status.OK,
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							Status.OK,
-							"",
+							"", //$NON-NLS-1$
 							e));
 				}
 			} 

@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -70,12 +70,12 @@ import org.eclipse.swt.widgets.Layout;
  */
 public abstract class LabeledRow {
 		
-	protected Control label;
-	protected Control field;
-	protected Button  browse;
-	protected String  property;
+	protected Control mLabel;
+	protected Control mField;
+	protected Button  mBrowse;
+	protected String  mProperty;
 
-	protected IFieldChangedListener listener;
+	protected IFieldChangedListener mListener;
 	
 	/**
 	 * Simple constructor only defining the property. This constructor should
@@ -84,7 +84,7 @@ public abstract class LabeledRow {
 	 * @param property property value given in the field changed event.
 	 */
 	public LabeledRow(String property){
-		this.property = property;
+		this.mProperty = property;
 	}
 	
 	/**
@@ -100,7 +100,7 @@ public abstract class LabeledRow {
 	 */
 	public LabeledRow(Composite parent, String property, Control label,
 			          Control field, String browseText){
-		this.property = property;
+		this.mProperty = property;
 		createContent(parent, label, field, browseText);
 	}
 	
@@ -110,9 +110,9 @@ public abstract class LabeledRow {
 	 * @param newLabel New label to use
 	 */
 	public void setLabel(String newLabel){
-		((Label)label).setText(newLabel);
-		label.pack(true);
-		label.getParent().layout(true);
+		((Label)mLabel).setText(newLabel);
+		mLabel.pack(true);
+		mLabel.getParent().layout(true);
 	}
 	
 	/**
@@ -120,11 +120,11 @@ public abstract class LabeledRow {
 	 */
 	protected void createContent(Composite parent, Control label,
 	          Control field, String browseText){
-		this.label = label;
-		this.field = field;
+		this.mLabel = label;
+		this.mField = field;
 		if (null != browseText){
-			browse = new Button(parent, SWT.PUSH);
-			browse.setText(browseText);
+			mBrowse = new Button(parent, SWT.PUSH);
+			mBrowse.setText(browseText);
 		}
 		fillRow(parent);
 	}
@@ -133,7 +133,7 @@ public abstract class LabeledRow {
 	 * Property getter
 	 */
 	public String getProperty(){
-		return this.property;
+		return this.mProperty;
 	}
 	
 	/**
@@ -154,19 +154,19 @@ public abstract class LabeledRow {
 			// Supposes that the parent layout is a Grid one  
 			int span = ((GridLayout)layout).numColumns - 1;
 			
-			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+			mLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 			
-			int fspan = browse != null ? span -1 : span;
+			int fspan = mBrowse != null ? span -1 : span;
 
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = fspan;
 			gd.grabExcessHorizontalSpace = (1 == fspan);
 			gd.verticalAlignment = GridData.VERTICAL_ALIGN_CENTER;
 			gd.widthHint = 10;
-			field.setLayoutData(gd);
+			mField.setLayoutData(gd);
 			
-			if (browse != null){
-				browse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL |
+			if (mBrowse != null){
+				mBrowse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL |
 						GridData.VERTICAL_ALIGN_CENTER));
 			}
 		}
@@ -179,14 +179,14 @@ public abstract class LabeledRow {
 	 * @param listener field changes listener
 	 */
 	public void setFieldChangedListener(IFieldChangedListener listener){
-		this.listener = listener;
+		this.mListener = listener;
 	}
 	
 	/**
 	 * Removes the field changes listener.
 	 */
 	public void  removeFieldChangedlistener(){
-		listener = null;
+		mListener = null;
 	}
 	
 	/**
@@ -195,8 +195,8 @@ public abstract class LabeledRow {
 	 * @param e the event to throw for the change
 	 */
 	protected void fireFieldChangedEvent(FieldEvent e){
-		if (null != listener){
-			listener.fieldChanged(e);
+		if (null != mListener){
+			mListener.fieldChanged(e);
 		}
 	}
 	
@@ -208,24 +208,24 @@ public abstract class LabeledRow {
 	 */
 	public void setVisible(boolean visible){
 		
-		GridData gd = (GridData)label.getLayoutData();
+		GridData gd = (GridData)mLabel.getLayoutData();
 		gd.exclude = !visible;
-		label.setLayoutData(gd);
+		mLabel.setLayoutData(gd);
 		
-		gd = (GridData)field.getLayoutData();
+		gd = (GridData)mField.getLayoutData();
 		gd.exclude = !visible;
-		field.setLayoutData(gd);
+		mField.setLayoutData(gd);
 		
-		if (null != browse){
-			gd = (GridData)browse.getLayoutData();
+		if (null != mBrowse){
+			gd = (GridData)mBrowse.getLayoutData();
 			gd.exclude = !visible;
-			browse.setLayoutData(gd);
+			mBrowse.setLayoutData(gd);
 		}
 
-		label.setVisible(visible);
-		field.setVisible(visible);
-		if (browse != null){
-			browse.setVisible(visible);
+		mLabel.setVisible(visible);
+		mField.setVisible(visible);
+		if (mBrowse != null){
+			mBrowse.setVisible(visible);
 		}
 	}
 	
@@ -237,9 +237,9 @@ public abstract class LabeledRow {
 	 *                row is desactivated
 	 */
 	public void setEnabled(boolean enabled){
-		field.setEnabled(enabled);
-		if (null != browse){
-			browse.setEnabled(enabled);
+		mField.setEnabled(enabled);
+		if (null != mBrowse){
+			mBrowse.setEnabled(enabled);
 		}
 	}
 }

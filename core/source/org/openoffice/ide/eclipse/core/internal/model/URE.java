@@ -3,6 +3,7 @@
  */
 package org.openoffice.ide.eclipse.core.internal.model;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
@@ -35,8 +36,8 @@ public class URE extends AbstractOOo {
 	protected void setName(String aName) {
 		
 		String name = aName;
-		if (name == null || name.equals("")) {
-			name = "URE";
+		if (name == null || name.equals("")) { //$NON-NLS-1$
+			name = "URE"; //$NON-NLS-1$
 		}
 		
 		super.setName(name);
@@ -46,14 +47,24 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getClassesPath()
 	 */
 	public String getClassesPath() {
-		return getHome() + "/share/java";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String jars = getHome() + sep + "share" + sep + "java"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			jars = getHome() + sep + "java"; //$NON-NLS-1$
+		}
+		return jars;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getLibsPath()
 	 */
 	public String getLibsPath() {
-		return getHome() + "/lib";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String libs = getHome() + sep + "lib"; //$NON-NLS-1$
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			libs = getHome() + sep + "bin"; //$NON-NLS-1$
+		}
+		return libs;
 	}
 
 	/*
@@ -61,7 +72,12 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getTypesPath()
 	 */
 	public String getTypesPath() {
-		return getHome() + "/share/misc/types.rdb";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String types = getHome() + sep + "share" + sep + "misc" + sep + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			types = getHome() + sep + "misc" + sep + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return types;
 	}
 
 	/*
@@ -69,7 +85,12 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getServicesPath()
 	 */
 	public String getServicesPath() {
-		return getHome() + "/share/misc/services.rdb";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String services = getHome() + sep + "share" + sep + "misc" + sep + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			services = getHome() + sep + "misc" + sep + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return services;
 	}
 
 	/*
@@ -77,11 +98,10 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnorcPath()
 	 */
 	public String getUnorcPath() {
-		String path = getHome() + "/lib/uno";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String path = getHome() + sep + "lib" + sep + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			path += ".ini";
-		} else {
-			path += "rc";
+			path = getHome() + sep + "bin" + sep + "uno.ini"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return path;
 	}
@@ -91,6 +111,67 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnoPath()
 	 */
 	public String getUnoPath() {
-		return getHome() + "/bin/uno";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String uno = getHome() + sep + "bin" + sep + "uno"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			uno += ".exe";  //$NON-NLS-1$
+		}
+		return uno;
+	}
+	
+	public String toString() {
+		return "URE " + getName(); //$NON-NLS-1$
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#createUnoCommand(java.lang.String, java.lang.String, java.lang.String[], java.lang.String[])
+	 */
+	public String createUnoCommand(String implementationName, 
+			String libLocation, String[] registriesPath, String[] args) {
+		
+		String command = ""; //$NON-NLS-1$
+		
+		// Put the args into one string
+		String sArgs = ""; //$NON-NLS-1$
+		for (int i=0; i<args.length; i++) {
+			sArgs += args[i];
+			
+			if (i < args.length -1) {
+				sArgs += " "; //$NON-NLS-1$
+			}
+		}
+		
+		// Transform the registries into a string to give to UNO
+		String additionnalRegistries = ""; //$NON-NLS-1$
+		for (int i=0; i<registriesPath.length; i++) {
+			additionnalRegistries += "-ro " + registriesPath[i]; //$NON-NLS-1$
+			
+			if (i < registriesPath.length -1) {
+				additionnalRegistries += " "; //$NON-NLS-1$
+			}
+		}
+		
+		// Get the paths to OOo instance types and services registries
+		Path typesPath = new Path(getTypesPath());
+		Path servicesPath = new Path(getServicesPath());
+		
+		String sTypesPath = typesPath.toString().replace(" ", "%20");  //$NON-NLS-1$ //$NON-NLS-2$
+		String sServicesPath = servicesPath.toString().replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		String unoPath = getUnoPath();
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			unoPath = "\"" + unoPath + "\"";  // escape spaces in windows names //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		command = unoPath +
+			" -c " + implementationName +  //$NON-NLS-1$
+			" -l " + libLocation +  //$NON-NLS-1$
+			" -ro file:///" + sTypesPath + //$NON-NLS-1$
+			" -ro file:///" + sServicesPath +  //$NON-NLS-1$
+			" " + additionnalRegistries +  //$NON-NLS-1$
+			" -- " + sArgs;  //$NON-NLS-1$
+		
+		return command;
 	}
 }

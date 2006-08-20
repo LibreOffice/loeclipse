@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizard.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,31 +43,34 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 public class NewServiceWizard extends BasicNewResourceWizard implements INewWizard {
 
-	private NewServiceWizardPage page;
+	private NewServiceWizardPage mPage;
+	private IWorkbenchPage mActivePage;
 	
 	public NewServiceWizard() {
 		super();
-		
-		activePage = OOEclipsePlugin.getActivePage();
+		mActivePage = OOEclipsePlugin.getActivePage();
 	}
 
 	/*
@@ -76,17 +79,34 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 	 */
 	public boolean performFinish() {
 		
-		final String packageName = page.getPackage();
-		final String name = page.getElementName();
-		final String ifaceName = page.getInheritanceName().replace(".", "::");
-		final boolean published = page.isPublished();
+		Job serviceJob = new Job(Messages.getString("NewServiceWizard.JobName")) { //$NON-NLS-1$
+
+			protected IStatus run(IProgressMonitor monitor) {
+				
+				IStatus status = new Status(IStatus.OK,
+						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+						IStatus.OK, "", null); //$NON-NLS-1$
+				try {
+					IUnoidlProject prj = mPage.mUnoProject;
+					UnoFactoryData data = mPage.fillData(new UnoFactoryData());
+					UnoFactory.createService(data, prj, mActivePage, monitor);
+				
+					// Releasing the data informations
+					data.dispose();
+				} catch (Exception e) {
+					 status = new Status(IStatus.CANCEL,
+								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+								IStatus.OK, 
+								Messages.getString("NewServiceWizard.CreateServiceError") , e); //$NON-NLS-1$
+				}
+				
+				return status;
+			}
+			
+		};
 		
-		IFile file = page.createService(
-				packageName, name, ifaceName, published);
-		
-		// Reveal the project main service file	
-		selectAndReveal(file);
-		openResource(file);
+		serviceJob.setPriority(Job.INTERACTIVE);
+		serviceJob.schedule();
 		
 		return true;
 	}
@@ -110,27 +130,6 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 		}
 	}
 	
-	
-	private IWorkbenchPage activePage;
-	
-	protected void openResource(final IFile resource) {
-		
-		if (activePage != null) {
-			final Display display = getShell().getDisplay();
-			if (display != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						try {
-							IDE.openEditor(activePage, resource, true);
-						} catch (PartInitException e) {
-							PluginLogger.getInstance().debug(e.getMessage());
-						}
-					}
-				});
-			}
-		}
-	}
-	
 	private void createPages(IProject project){
 		if (null != project){
 			try {
@@ -138,12 +137,12 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 					UnoidlProject unoProject = (UnoidlProject)project.getNature(
 							OOEclipsePlugin.UNO_NATURE_ID);
 					
-					page = new NewServiceWizardPage("newservice", unoProject);
+					mPage = new NewServiceWizardPage("newservice", unoProject); //$NON-NLS-1$
 					
-					addPage(page);
+					addPage(mPage);
 				}
 			} catch (CoreException e){
-				PluginLogger.getInstance().debug(e.getMessage());
+				PluginLogger.debug(e.getMessage());
 			}
 		}
 	}

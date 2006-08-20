@@ -2,9 +2,9 @@
  *
  * $RCSfile: TextRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -67,7 +67,8 @@ import org.eclipse.swt.widgets.Text;
 public class TextRow extends LabeledRow
 					 implements FocusListener, KeyListener {
 	
-	private String value = new String();
+	private String mValue = new String();
+	private String mOldValue;
 	
 	public TextRow(Composite parent, String property, String label){
 		super(property);
@@ -77,10 +78,10 @@ public class TextRow extends LabeledRow
 		Text aField = new Text(parent, SWT.BORDER);
 		
 		createContent(parent, aLabel, aField, null);
-		field.addFocusListener(this);
-		field.addKeyListener(this);
+		mField.addFocusListener(this);
+		mField.addKeyListener(this);
 	}
-
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
@@ -96,19 +97,17 @@ public class TextRow extends LabeledRow
 	 * @param e FocusEvent recu
 	 */
 	public void focusLost(FocusEvent e) {
-		if (!((Text)field).getText().equals(value)){
-			setValue(((Text)field).getText());
+		if (!((Text)mField).getText().equals(mValue)){
+			setValue(((Text)mField).getText());
 		}
 	}
-	
-	private String oldValue;
 	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 	 */
 	public void keyPressed(KeyEvent e) {
-		oldValue = ((Text)field).getText();
+		mOldValue = ((Text)mField).getText();
 	}
 
 	/*
@@ -116,10 +115,10 @@ public class TextRow extends LabeledRow
 	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 	 */
 	public void keyReleased(KeyEvent e) {
-		if (e.getSource().equals(field)) {
-			if (!((Text)field).getText().equals(oldValue)){
-				if (!((Text)field).getText().equals(value)){
-					setValue(((Text)field).getText());
+		if (e.getSource().equals(mField)) {
+			if (!((Text)mField).getText().equals(mOldValue)){
+				if (!((Text)mField).getText().equals(mValue)){
+					setValue(((Text)mField).getText());
 				}
 			}
 		}
@@ -130,27 +129,27 @@ public class TextRow extends LabeledRow
 	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
 	 */
 	public String getValue() {
-		return value;
+		return mValue;
 	}
 	
 	public void setValue(String aValue){
 		String newText = aValue;
 		if (null == aValue){
-			newText = "";
+			newText = ""; //$NON-NLS-1$
 		}
 		
-		if (!((Text)field).getText().equals(newText)){
-			((Text)field).setText(newText);
+		if (!((Text)mField).getText().equals(newText)){
+			((Text)mField).setText(newText);
 		}
 		
-		value = newText;
+		mValue = newText;
 		FieldEvent fe = new FieldEvent(getProperty(), getValue());
 		fireFieldChangedEvent(fe);
 	}
 	
 	public void setFocus(){
 		
-		Text textField = ((Text)field);
+		Text textField = ((Text)mField);
 		textField.setFocus();
 		
 		// Makes the cursor to go at the end of the text

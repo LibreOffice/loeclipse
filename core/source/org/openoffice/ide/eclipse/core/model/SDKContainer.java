@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKContainer.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:08 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:58 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,17 +62,17 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public class SDKContainer { 
 	
-	private static SDKContainer container;
+	private static SDKContainer sInstance;
 	
 	/**
 	 * Vector of the SDK container listeners
 	 */
-	private Vector listeners;
+	private Vector mListeners;
 
 	/**
 	 * HashMap containing the sdk lines referenced by their name
 	 */
-	private HashMap elements;
+	private HashMap mElements;
 	
 	
 	/* Methods to manage the listeners */
@@ -84,7 +84,7 @@ public class SDKContainer {
 	 */
 	public void addListener(IConfigListener listener){
 		if (null != listener){
-			listeners.add(listener);
+			mListeners.add(listener);
 		}
 	}
 	
@@ -95,7 +95,7 @@ public class SDKContainer {
 	 */
 	public void removeListener(IConfigListener listener){
 		if (null != listener){
-			listeners.remove(listener);
+			mListeners.remove(listener);
 		}
 	}
 	
@@ -105,7 +105,11 @@ public class SDKContainer {
 	 * Returns the sdks elements in an array
 	 */
 	public Object[] toArray(){
-		return toVector().toArray(); 
+		Vector vElements = toVector();
+		Object[] elements = vElements.toArray();
+		
+		vElements.clear();
+		return elements;
 	}
 	
 	/**
@@ -122,19 +126,19 @@ public class SDKContainer {
 		 */ 
 		
 		if (null != sdk){
-			if (!elements.containsKey(sdk.getId())){
-				elements.put(sdk.getId(), sdk);
+			if (!mElements.containsKey(sdk.getId())){
+				mElements.put(sdk.getId(), sdk);
 				fireSDKAdded(sdk);
 			} else {
-				ISdk sdkref = (ISdk)elements.get(sdk.getId());
+				ISdk sdkref = (ISdk)mElements.get(sdk.getId());
 				updateSDK(sdkref.getId(), sdk);
 			}
 		}
 	}
 	
 	private void fireSDKAdded(ISdk sdk) {
-		for (int i=0, length=listeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)listeners.get(i);
+		for (int i=0, length=mListeners.size(); i<length; i++){
+			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
 			listeneri.ConfigAdded(sdk);
 		}
 	}
@@ -147,8 +151,8 @@ public class SDKContainer {
 	 */
 	public void delSDK(ISdk sdk){
 		if (null != sdk){
-			if (elements.containsKey(sdk.getId())){
-				elements.remove(sdk.getId());
+			if (mElements.containsKey(sdk.getId())){
+				mElements.remove(sdk.getId());
 				fireSDKRemoved(sdk);
 			}
 		}
@@ -159,7 +163,7 @@ public class SDKContainer {
 	 *
 	 */
 	public void clear(){
-		elements.clear();
+		mElements.clear();
 		fireSDKRemoved(null);
 	}
 	
@@ -169,13 +173,13 @@ public class SDKContainer {
 	 * @return names of the contained SDKs
 	 */
 	public Vector getSDKKeys(){
-		Set names = elements.keySet();
+		Set names = mElements.keySet();
 		return new Vector(names);
 	}
 	
 	private void fireSDKRemoved(ISdk sdk) {
-		for (int i=0, length=listeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)listeners.get(i);
+		for (int i=0, length=mListeners.size(); i<length; i++){
+			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
 			listeneri.ConfigRemoved(sdk);
 		}
 	}
@@ -187,27 +191,27 @@ public class SDKContainer {
 	 * @param sdk new value for the SDK
 	 */
 	public void updateSDK(String sdkkey, ISdk sdk){
-		if (elements.containsKey(sdkkey) && null != sdk){
+		if (mElements.containsKey(sdkkey) && null != sdk){
 			
-			ISdk sdkref = (ISdk)elements.get(sdkkey);
+			ISdk sdkref = (ISdk)mElements.get(sdkkey);
 			
 			// update the attributes
 			try {
 				sdkref.setHome(sdk.getHome());
 			} catch (InvalidConfigException e){
-				PluginLogger.getInstance().error(e.getLocalizedMessage(), e);  
+				PluginLogger.error(e.getLocalizedMessage(), e);  
 				// This message is localized by the SDK class
 			}
 			
 			// Reassign the element in the hashmap
-			elements.put(sdkkey, sdkref);
+			mElements.put(sdkkey, sdkref);
 			fireSDKUpdated(sdk);
 		}
 	}
 	
 	private void fireSDKUpdated(ISdk sdk) {
-		for (int i=0, length=listeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)listeners.get(i);
+		for (int i=0, length=mListeners.size(); i<length; i++){
+			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
 			listeneri.ConfigUpdated(sdk);
 		}
 	}
@@ -221,8 +225,8 @@ public class SDKContainer {
 	public ISdk getSDK(String sdkkey){
 		ISdk sdk = null;
 		
-		if (elements.containsKey(sdkkey)){
-			sdk = (ISdk)elements.get(sdkkey);
+		if (mElements.containsKey(sdkkey)){
+			sdk = (ISdk)mElements.get(sdkkey);
 		} 
 		return sdk;
 	}
@@ -233,7 +237,7 @@ public class SDKContainer {
 	 * @return number of SDK in the list
 	 */
 	public int getSDKCount(){
-		return elements.size();
+		return mElements.size();
 	}
 		
 	/**
@@ -241,22 +245,22 @@ public class SDKContainer {
 	 *
 	 */
 	public void dispose() {
-		listeners.clear();
-		elements.clear();
+		mListeners.clear();
+		mElements.clear();
 	}
 
 	/**
 	 * Singleton accessor, named <code>getInstance</code> in many other
 	 * singleton pattern implementations
 	 */
-	public static SDKContainer getSDKContainer() {
+	public static SDKContainer getInstance() {
 		
-		if (null == container){
-			container = new SDKContainer();
-			container.loadSDKs();
+		if (null == sInstance){
+			sInstance = new SDKContainer();
+			sInstance.loadSDKs();
 		}
 		
-		return container;
+		return sInstance;
 	}
 	
 	/**
@@ -285,6 +289,9 @@ public class SDKContainer {
 			sdks[i] = (ISdk)vElements.get(i);
 		}
 		
+		// vector cleaning
+		vElements.clear();
+		
 		PropertiesManager.saveSDKs(sdks);
 	}
 	
@@ -295,8 +302,8 @@ public class SDKContainer {
 	private SDKContainer(){
 		
 		// Initialize the members
-		elements = new HashMap();
-		listeners = new Vector();
+		mElements = new HashMap();
+		mListeners = new Vector();
 	}
 	
 	/**
@@ -306,7 +313,7 @@ public class SDKContainer {
 	 */
 	private Vector toVector(){
 		Vector result = new Vector();
-		Set entries = elements.entrySet();
+		Set entries = mElements.entrySet();
 		Iterator iter = entries.iterator();
 		
 		while (iter.hasNext()){

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlScanner.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -65,7 +65,7 @@ import org.openoffice.ide.eclipse.core.editors.Colors;
  */
 public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax{
 	
-	private ColorProvider provider;
+	private ColorProvider mColorProvider;
 
 	/**
 	 * Default constructor, initializing the rules to apply in the uno-idl
@@ -74,36 +74,36 @@ public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax{
 	 * @param cp a color provider to colorize the resulting tokens
 	 */
 	public UnoidlScanner(ColorProvider cp) {
-		provider = cp;
+		mColorProvider = cp;
 		
 		// Tokens' definitions
 		IToken keyword = new Token(
-			new TextAttribute(provider.getColor(Colors.C_KEYWORD),
+			new TextAttribute(mColorProvider.getColor(Colors.C_KEYWORD),
 				null,
 				SWT.BOLD));
 				
 		IToken type = new Token(
 			new TextAttribute(
-				provider.getColor(Colors.C_TYPE),
+				mColorProvider.getColor(Colors.C_TYPE),
 				null,
 				SWT.BOLD));
 		
 		IToken modifier = new Token(
-			new TextAttribute(provider.getColor(Colors.C_MODIFIER)));
+			new TextAttribute(mColorProvider.getColor(Colors.C_MODIFIER)));
 		
 		IToken string = new Token(
-			new TextAttribute(provider.getColor(Colors.C_STRING)));
+			new TextAttribute(mColorProvider.getColor(Colors.C_STRING)));
 		
 		IToken other = new Token(
-			new TextAttribute(provider.getColor(Colors.C_TEXT)));
+			new TextAttribute(mColorProvider.getColor(Colors.C_TEXT)));
 		
 		setDefaultReturnToken(other);
 		
 		IRule[] rules = new IRule[4];
 		
 		//Add rules for strings and character constants
-		rules[0] = new SingleLineRule("\"","\"", string, '\\');
-		rules[1] = new SingleLineRule("'","'", string, '\\');
+		rules[0] = new SingleLineRule("\"","\"", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[1] = new SingleLineRule("'","'", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Add generic whitespace rule
 		rules[2] = new WhitespaceRule(new UnoidlWhiteSpaceDetector());

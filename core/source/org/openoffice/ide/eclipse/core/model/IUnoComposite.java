@@ -52,6 +52,10 @@ public interface IUnoComposite {
 	 */
 	public static final int COMPOSITE_TYPE_TEXT = 2;
 	
+	/**
+	 * Release the references held by the object
+	 */
+	public void dispose();
 	
     //------------------------------------------------- Tree structural methods
 	

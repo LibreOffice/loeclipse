@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,7 +61,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  */
 public class IdlcBuildVisitor implements IResourceVisitor {
 	
-	private IProgressMonitor progressMonitor;
+	private IProgressMonitor mProgressMonitor;
 	
 	/**
 	 * Default constructor
@@ -69,7 +69,7 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 	 * @param monitor progress monitor
 	 */
 	public IdlcBuildVisitor(IProgressMonitor monitor) {
-		progressMonitor = monitor;
+		mProgressMonitor = monitor;
 	}
 	
 	/*
@@ -83,10 +83,10 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 		if (IResource.FILE == resource.getType()){
 			
 			// Try to compile the file if it is an idl file
-			if (resource.getFileExtension().equals("idl")){
+			if (resource.getFileExtension().equals("idl")){ //$NON-NLS-1$
 				
-				IdlcBuilder.runIdlcOnFile((IFile)resource, progressMonitor);
-				progressMonitor.worked(1);
+				IdlcBuilder.runIdlcOnFile((IFile)resource, mProgressMonitor);
+				if (mProgressMonitor != null) mProgressMonitor.worked(1);
 			}
 			
 		} else if (resource instanceof IContainer){
@@ -100,6 +100,9 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 				visitChildren = true;
 			}
 		}
+		
+		// cleaning
+		mProgressMonitor = null;
 		
 		return visitChildren;
 	}

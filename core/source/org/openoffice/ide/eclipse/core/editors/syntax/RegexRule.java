@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegexRule.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,11 +57,11 @@ import org.eclipse.jface.text.rules.Token;
  */
 public class RegexRule implements IRule {
 
-    private IToken token;
-    private String regex;
+    private IToken mToken;
+    private String mRegex;
     
-    private int charReadNb = 0;
-    private char[][] delimiters;
+    private int mCharReadNb = 0;
+    private char[][] mDelimiters;
     
     /**
      * Constructor, initializing the token to return and the regex to
@@ -71,8 +71,8 @@ public class RegexRule implements IRule {
      * @param aToken the token to associate
      */
     public RegexRule(String aRegex, IToken aToken){
-        token = aToken;
-        regex = aRegex;
+        mToken = aToken;
+        mRegex = aRegex;
     }
     
     /*
@@ -80,9 +80,9 @@ public class RegexRule implements IRule {
      * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
      */
     public IToken evaluate(ICharacterScanner scanner) {
-    	charReadNb = 0;
+    	mCharReadNb = 0;
         IToken result = Token.UNDEFINED;
-        delimiters = scanner.getLegalLineDelimiters();
+        mDelimiters = scanner.getLegalLineDelimiters();
         
         // Reads the characters and test the pattern matching
         String line = new String();
@@ -93,31 +93,31 @@ public class RegexRule implements IRule {
          do {
         	c = scanner.read();
             line = line + new Character((char)c);
-            charReadNb++;
+            mCharReadNb++;
             
             if (!isEOL(c)){
-                if (Pattern.matches(regex, line)){
+                if (Pattern.matches(mRegex, line)){
                     matchingBegun = true;
                 } else {
                 	if (matchingBegun){
                 		matchingDone = true;
                 		scanner.unread(); // Unread the bad character
-                		result = token;
+                		result = mToken;
                 		line = line.substring(0, line.length()-2);
                 	}
                 }
             } else {
             	if (matchingBegun){
             		matchingDone = true;
-            		result = token;
+            		result = mToken;
                 	//scanner.unread();
             	}
             }
         }while (!isEOL(c) && !matchingDone);
         
         // Unread all the line except the first character if the line is not valid
-        if (result != token){
-	        for (int i=0; i<charReadNb; i++){
+        if (result != mToken){
+	        for (int i=0; i<mCharReadNb; i++){
 	            scanner.unread();
 	        }
         }
@@ -129,7 +129,7 @@ public class RegexRule implements IRule {
      * Returns the associated token
      */
     protected IToken getToken(){
-    	return token;
+    	return mToken;
     }
     
     /**
@@ -138,8 +138,8 @@ public class RegexRule implements IRule {
      */
     protected boolean isEOL (int c){
  
-        for (int i= 0; i < delimiters.length; i++) {
-			if (c == delimiters[i][0] || isEOF(c)) {
+        for (int i= 0; i < mDelimiters.length; i++) {
+			if (c == mDelimiters[i][0] || isEOF(c)) {
 				return true;
 			}
 		}
@@ -157,5 +157,4 @@ public class RegexRule implements IRule {
         }
         return result;
     }
-   
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,20 +43,14 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.TypeRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
-import org.openoffice.ide.eclipse.core.model.IUnoComposite;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.UnoFactory;
-import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**
  * Service creation wizard page. This page is based on the 
@@ -96,16 +90,14 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getProvidedTypes()
 	 */
 	public int getProvidedTypes() {
-		return UnoTypeProvider.INTERFACE;
+		return IUnoFactoryConstants.INTERFACE;
 	}
 
 	//-------------------------------------------------- Page content managment
 	
-	private final static String P_IFACE_INHERITANCE = "__iface_inheritance"; 
-	private final static String P_PUBLISHED			= "__published";
+	private final static String P_IFACE_INHERITANCE = "__iface_inheritance"; //$NON-NLS-1$
 	
-	private TypeRow ifaceInheritanceRow;
-	private BooleanRow publishedRow;
+	private TypeRow mIfaceInheritanceRow;
 	
 	/*
 	 *  (non-Javadoc)
@@ -113,19 +105,12 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 */
 	public void createSpecificControl(Composite parent) {
 		
-		ifaceInheritanceRow = new TypeRow(parent, 
+		mIfaceInheritanceRow = new TypeRow(parent, 
 				P_IFACE_INHERITANCE, 
-				"Inherited interface",
-				typesProvider,
-				UnoTypeProvider.INTERFACE);
-		ifaceInheritanceRow.setValue("com.sun.star.uno.XInterface"); // TODO Configure
-		ifaceInheritanceRow.setFieldChangedListener(this);
-		
-		
-		publishedRow = new BooleanRow(parent, P_PUBLISHED,
-				OOEclipsePlugin.getTranslationString(
-						I18nConstants.PUBLISHED));
-		publishedRow.setFieldChangedListener(this);
+				Messages.getString("NewServiceWizardPage.InheritedInterface"), //$NON-NLS-1$
+				IUnoFactoryConstants.INTERFACE);
+		mIfaceInheritanceRow.setValue("com.sun.star.uno.XInterface"); // TODO Configure //$NON-NLS-1$
+		mIfaceInheritanceRow.setFieldChangedListener(this);
 	}
 	
 	/*
@@ -133,8 +118,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
 	 */
 	public String getTitle() {
-		return OOEclipsePlugin.getTranslationString(
-				I18nConstants.NEW_SERVICE_TITLE);
+		return Messages.getString("NewServiceWizardPage.Title"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -142,7 +126,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
 	 */
 	public String getDescription() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	/*
@@ -150,7 +134,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getTypeLabel()
 	 */
 	protected String getTypeLabel() {
-		return OOEclipsePlugin.getTranslationString(I18nConstants.SERVICE_NAME);
+		return Messages.getString("NewServiceWizardPage.Type"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -166,34 +150,20 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 * Gets the name of the exported interface
 	 */
 	public String getInheritanceName() {
-		return ifaceInheritanceRow.getValue();
+		return mIfaceInheritanceRow.getValue();
 	}
 	
-	/**
-	 * Returns whether the service is published or not
-	 */
-	public boolean isPublished() {
-		return publishedRow.getBooleanValue();
-	}
+	
 	
 	/**
 	 * Sets the name of the exported interface
 	 */
 	public void setInheritanceName(String value, boolean forced) {
 		
-		if (value.matches("[a-zA-Z0-9_]+(.[a-zA-Z0-9_])*")) {
-			ifaceInheritanceRow.setValue(value);
-			ifaceInheritanceRow.setEnabled(!forced);	
+		if (value.matches("[a-zA-Z0-9_]+(.[a-zA-Z0-9_])*")) { //$NON-NLS-1$
+			mIfaceInheritanceRow.setValue(value);
+			mIfaceInheritanceRow.setEnabled(!forced);	
 		}
-	}
-	
-	/**
-	 * Sets whether the service is published or not
-	 */
-	public void setPublished(boolean value, boolean forced) {
-		
-		publishedRow.setValue(value);
-		publishedRow.setEnabled(!forced);
 	}
 
 	/*
@@ -204,9 +174,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		boolean result = super.isPageComplete(); 
 		
 		try {
-			if (ifaceInheritanceRow.getValue().equals("")) {
-				result = false;
-			}
+			result &= !mIfaceInheritanceRow.getValue().equals(""); //$NON-NLS-1$
 		} catch (NullPointerException e) {
 			result = false;
 		}
@@ -215,80 +183,20 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	}
 	
 	/**
-	 * Create a service
-	 * 
-	 * @param packageName the name of the container
-	 * @param name the name of the service
-	 * @param inheritanceName the name of the exported interface
-	 * @param published <code>true</code> if the service is published
-	 * 
-	 * @return the handle on the created file containing the service
+	 * @return the given data with the completed properties, <code>null</code>
+	 *   if the provided data is <code>null</code>
 	 */
-	public IFile createService(String packageName, String name,
-			String inheritanceName, boolean published){
+	public UnoFactoryData fillData(UnoFactoryData data) {
 		
-		IFile serviceFile = null;
+		data = super.fillData(data);
 		
-		try {
-			
-			String path = unoProject.getRootModule();
-
-			if (!getPackage().equals("")) {
-				path = path + "::" + packageName;
-			}
-			
-			// Create the necessary modules
-			UnoidlProjectHelper.createModules(path, unoProject, null);
-			
-			String typepath = path +"::" + name;
-			
-			// Create the file node
-			IUnoComposite file = UnoFactory.createTypeFile(typepath, unoProject);
-			
-			// Create the file content skeleton
-			IUnoComposite fileContent = UnoFactory.createFileContent(typepath);
-			file.addChild(fileContent);
-			
-			// Add the include line for the inheritance interface
-			IUnoComposite include = UnoFactory.createInclude(
-					inheritanceName);
-			fileContent.addChild(include);
-			
-			// Create the module node using the cascading method
-			IUnoComposite topModule = UnoFactory.createModulesSpaces(path);
-			fileContent.addChild(topModule);
-			
-			IUnoComposite currentModule = topModule;
-			while (currentModule.getChildren().length > 0) {
-			
-				// Remain that there should be only zero or one module
-				IUnoComposite[] children = currentModule.getChildren();
-				if (children.length == 1) {
-					currentModule = children[0];
-				}
-			}
-			
-			// Create the service
-			IUnoComposite service = UnoFactory.createService(name,
-					published, inheritanceName);
-			currentModule.addChild(service);
-			
-			// Create all the stuffs
-			file.create(true);
-			
-			// Return the IFile to the generated file
-			String filename = typepath.replace("::", "/") + ".idl";
-			
-			UnoidlProjectHelper.refreshProject(unoProject, null);
-			
-			serviceFile = unoProject.getFile(
-					unoProject.getIdlPath().append(filename));
-			
-		} catch (Exception e) {
-			PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
-					I18nConstants.SERVICE_CREATION_FAILED), e);
+		if (data != null) {
+			data.setProperty(IUnoFactoryConstants.TYPE, 
+					Integer.valueOf(IUnoFactoryConstants.SERVICE));
+			data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
+					new String[]{getInheritanceName().replace(".", "::")}); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		return serviceFile;
+		return data;
 	}
 }

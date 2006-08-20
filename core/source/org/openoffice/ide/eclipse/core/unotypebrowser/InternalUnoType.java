@@ -2,9 +2,9 @@
  *
  * $RCSfile: InternalUnoType.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,6 +46,8 @@ package org.openoffice.ide.eclipse.core.unotypebrowser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
+
 /**
  * Class describing a UNO-Type. Only used with the {@link UnoTypeProvider}.
  * A Uno type is described by its name, a boolean field defining if it's a
@@ -57,30 +59,30 @@ import java.util.regex.Pattern;
  */
 public class InternalUnoType {
 
-	private static final String LOCAL_TAG = "L";
-	private static final String EXTERNAL_TAG= "E";
+	private static final String LOCAL_TAG = "L"; //$NON-NLS-1$
+	private static final String EXTERNAL_TAG= "E"; //$NON-NLS-1$
 	
-	private String path;
-	private int type;
-	private boolean local = false;
+	private String mPath;
+	private int mType;
+	private boolean mLocal = false;
 	
 	public InternalUnoType(String typeString) {
 		if (null != typeString) {
 			Matcher typeMatcher = Pattern.compile(
-					"(" + EXTERNAL_TAG + "|" + LOCAL_TAG +
-					") ([^\\s]*) ([0-9]+)").matcher(typeString);
+					"(" + EXTERNAL_TAG + "|" + LOCAL_TAG + //$NON-NLS-1$ //$NON-NLS-2$
+					") ([^\\s]*) ([0-9]+)").matcher(typeString); //$NON-NLS-1$
 			if (typeMatcher.matches() && 3 == typeMatcher.groupCount()){
 				setLocal(typeMatcher.group(1));
 				setType(Integer.parseInt(typeMatcher.group(3)));
-				path = typeMatcher.group(2);
+				mPath = typeMatcher.group(2);
 			}
 		}
 	}
 	
 	public InternalUnoType(String completeName, int aType, boolean isLocal) {
-		local = isLocal;
+		mLocal = isLocal;
 		setType(aType);
-		path = completeName;
+		mPath = completeName;
 	}
 	
 	/**
@@ -88,9 +90,9 @@ public class InternalUnoType {
 	 * <code>com.sun.star.uno.XInterface</code>
 	 */
 	public String getName() {
-		String name = "";
+		String name = ""; //$NON-NLS-1$
 		
-		String[] splittedPath = path.split("\\.");
+		String[] splittedPath = mPath.split("\\."); //$NON-NLS-1$
 		if (splittedPath.length > 0) {
 			name = splittedPath[splittedPath.length - 1];
 		}
@@ -103,24 +105,24 @@ public class InternalUnoType {
 	 * com.sun.star.uno.XInterface</code>
 	 */
 	public String getFullName(){
-		return path;
+		return mPath;
 	}
 	
 	/**
-	 * Returns the type of the type, ie {@link UnoTypeProvider#INTERFACE} for 
-	 * <code>com.sun.star.uno.XInterface</code>
+	 * Returns the type of the type, ie {@link IUnoFactoryConstants#INTERFACE} 
+	 * for <code>com.sun.star.uno.XInterface</code>
 	 * 
 	 * @return one of the types defined in {@link UnoTypeProvider}
 	 */
 	public int getType(){
-		return type;
+		return mType;
 	}
 	
 	/**
 	 * Returns whether the type is defined in an external project or not.
 	 */
 	public boolean isLocalType(){
-		return local;
+		return mLocal;
 	}
 
 	/*
@@ -134,20 +136,20 @@ public class InternalUnoType {
 			sLocal = LOCAL_TAG;
 		}
 		
-		return sLocal + " " + getFullName() + " " + getType();
+		return sLocal + " " + getFullName() + " " + getType(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void setType(int aType) {
 		if (aType >= 0 && aType < 1024) {
-			type = aType;
+			mType = aType;
 		}
 	}
 	
 	private void setLocal(String tag){
 		if (tag.equals(LOCAL_TAG)) {
-			local = true;
+			mLocal = true;
 		} else {
-			local = false;
+			mLocal = false;
 		}
 	}
 }

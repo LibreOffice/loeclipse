@@ -21,15 +21,24 @@ import org.openoffice.ide.eclipse.core.model.IUnoComposite;
  */
 public class UnoComposite implements IUnoComposite {
 
-	private Vector children = new Vector();
+	private Vector mChildren = new Vector();
 	
-	private int type = COMPOSITE_TYPE_NOTSET;
+	private int mType = COMPOSITE_TYPE_NOTSET;
 	
-	private Hashtable properties;
-	private String template;
-	private String filename;
+	private Hashtable mProperties;
+	private String mTemplate;
+	private String mFilename;
 	
-	private boolean indentation = false;
+	private boolean mIndentation = false;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoComposite#dispose()
+	 */
+	public void dispose() {
+		removeAll();
+		if (mProperties != null) mProperties.clear();
+	}
 	
 	/*
 	 *  (non-Javadoc)
@@ -37,9 +46,9 @@ public class UnoComposite implements IUnoComposite {
 	 */
 	public IUnoComposite[] getChildren() {
 		
-		IUnoComposite[] composites = new IUnoComposite[children.size()];
-		for (int i=0, length=children.size(); i<length; i++) {
-			composites[i] = (IUnoComposite)children.get(i);
+		IUnoComposite[] composites = new IUnoComposite[mChildren.size()];
+		for (int i=0, length=mChildren.size(); i<length; i++) {
+			composites[i] = (IUnoComposite)mChildren.get(i);
 		}
 		
 		return composites;
@@ -52,7 +61,7 @@ public class UnoComposite implements IUnoComposite {
 	public void addChild(IUnoComposite aChild) {
 		
 		if (aChild != null){
-			children.add(aChild);
+			mChildren.add(aChild);
 		}
 	}
 	
@@ -66,8 +75,8 @@ public class UnoComposite implements IUnoComposite {
 		
 		for (int i=0; i<composites.length; i++){
 			IUnoComposite compositei = composites[i];
-			compositei.removeAll();
-			children.removeElement(compositei);
+			compositei.dispose();
+			mChildren.removeElement(compositei);
 		}
 	}
 	
@@ -77,12 +86,12 @@ public class UnoComposite implements IUnoComposite {
 	 */
 	public void setType(int aType) {
 		
-		if (type == COMPOSITE_TYPE_NOTSET && 
+		if (mType == COMPOSITE_TYPE_NOTSET && 
 				(aType == COMPOSITE_TYPE_FILE ||
 			     aType == COMPOSITE_TYPE_FOLDER ||
 			     aType == COMPOSITE_TYPE_TEXT)) {
 			
-			type = aType;
+			mType = aType;
 		}
 	}
 	
@@ -91,7 +100,7 @@ public class UnoComposite implements IUnoComposite {
 	 * @see unotest.IUnoComposite#getType()
 	 */
 	public int getType() {
-		return type;
+		return mType;
 	}
 	
 	/*
@@ -100,25 +109,25 @@ public class UnoComposite implements IUnoComposite {
 	 */
 	public void configure(Hashtable aProperties, String aTemplate) {
 		
-		template = aTemplate;
+		mTemplate = aTemplate;
 		String[] parts = splitTemplate();
-		properties = new Hashtable();
+		mProperties = new Hashtable();
 		
 		// Get the variable parts and their name
 		for (int i=0; i<parts.length; i++) {
 			
 			String parti = parts[i];
-			Matcher matcher = Pattern.compile("\\$\\{(\\w+)\\}").matcher(parti);
+			Matcher matcher = Pattern.compile("\\$\\{(\\w+)\\}").matcher(parti); //$NON-NLS-1$
 			
 			// If the part is "${children}", it's not a property
-			if (!parti.equals("${children}") && matcher.matches()){
+			if (!parti.equals("${children}") && matcher.matches()){ //$NON-NLS-1$
 				
 				String namei = matcher.group(1);
 				if (aProperties.containsKey(namei)){
-					properties.put(namei, aProperties.get(namei));
+					mProperties.put(namei, aProperties.get(namei));
 				} else {
 					// The property isn't described in the vector.
-					properties.put(namei, "");
+					mProperties.put(namei, ""); //$NON-NLS-1$
 				}
 			}
 		}
@@ -130,8 +139,8 @@ public class UnoComposite implements IUnoComposite {
 	 */
 	public void configure(String aFilename) {
 		
-		if (type == COMPOSITE_TYPE_FILE || type == COMPOSITE_TYPE_FOLDER) {
-			filename = aFilename;
+		if (mType == COMPOSITE_TYPE_FILE || mType == COMPOSITE_TYPE_FOLDER) {
+			mFilename = aFilename;
 		}
 	}
 	
@@ -140,8 +149,8 @@ public class UnoComposite implements IUnoComposite {
 	 * @see org.openoffice.ide.eclipse.core.model.IUnoComposite#setIndented(boolean)
 	 */
 	public void setIndented(boolean toIndent) {
-		if (type == COMPOSITE_TYPE_TEXT){
-			indentation = toIndent;
+		if (mType == COMPOSITE_TYPE_TEXT){
+			mIndentation = toIndent;
 		}
 	}
 	
@@ -152,9 +161,9 @@ public class UnoComposite implements IUnoComposite {
 	public void create(boolean force) throws Exception {
 		
 		File file;
-		if (type == COMPOSITE_TYPE_FILE || type == COMPOSITE_TYPE_FOLDER) {
+		if (mType == COMPOSITE_TYPE_FILE || mType == COMPOSITE_TYPE_FOLDER) {
 		
-			file = new File(filename);
+			file = new File(mFilename);
 			
 			// Create the parent directories
 			if (file.getParentFile() != null){
@@ -163,7 +172,7 @@ public class UnoComposite implements IUnoComposite {
 				
 			// if the file exists and the force flag is up
 			if ((file.exists() && force) || !file.exists()) {
-				if (type == COMPOSITE_TYPE_FILE) {
+				if (mType == COMPOSITE_TYPE_FILE) {
 					file.createNewFile();
 					
 					// Write the children toString() in the file
@@ -191,7 +200,7 @@ public class UnoComposite implements IUnoComposite {
 		
 		
 		String result = new String();
-		if (type == COMPOSITE_TYPE_TEXT) {
+		if (mType == COMPOSITE_TYPE_TEXT) {
 			
 			// String reconstitution
 			String[] parts = splitTemplate();
@@ -199,7 +208,7 @@ public class UnoComposite implements IUnoComposite {
 			for (int i=0; i<parts.length; i++) {
 				String parti = parts[i];
 				
-				if (parti.equals("${children}")) {
+				if (parti.equals("${children}")) { //$NON-NLS-1$
 					
 					IUnoComposite[] composites = getChildren();
 					for (int j=0; j<composites.length; j++){
@@ -210,9 +219,9 @@ public class UnoComposite implements IUnoComposite {
 					
 				} else {
 				
-					Matcher matcher = Pattern.compile("\\$\\{(\\w+)\\}").matcher(parti);
+					Matcher matcher = Pattern.compile("\\$\\{(\\w+)\\}").matcher(parti); //$NON-NLS-1$
 					if (matcher.matches()){
-						result =  result + properties.get(matcher.group(1));
+						result =  result + mProperties.get(matcher.group(1));
 					} else {
 						result = result + parti;
 					}
@@ -221,7 +230,7 @@ public class UnoComposite implements IUnoComposite {
 			
 			// Indentation management
 			// Do not add a \t between \n\n or \n$
-			if (indentation) {
+			if (mIndentation) {
 				
 				for (int i=0; i<result.length(); i++){
 					
@@ -230,12 +239,12 @@ public class UnoComposite implements IUnoComposite {
 						if ((i != result.length()-1) && 
 								result.charAt(i+1) != '\n') {
 							
-							result = result.substring(0, i+1) + "\t" + 
+							result = result.substring(0, i+1) + "\t" +  //$NON-NLS-1$
 								result.substring(i+1);
 						}
 					}
 				}
-				result = "\t" + result;
+				result = "\t" + result; //$NON-NLS-1$
 			}
 			
 		} else {
@@ -252,7 +261,7 @@ public class UnoComposite implements IUnoComposite {
 	 */
 	private String[] splitTemplate() {
 		
-		String templateCopy = new String(template);
+		String templateCopy = new String(mTemplate);
 		Vector parts = new Vector();
 		
 		/* The state machine has two states: TEXT_STATE or VARIABLE_STATE
@@ -281,13 +290,13 @@ public class UnoComposite implements IUnoComposite {
 			
 			// Find the position of the next substring
 			if (state == TEXT_STATE) {
-				pos = templateCopy.indexOf("${");
+				pos = templateCopy.indexOf("${"); //$NON-NLS-1$
 				if (pos != -1) {
 					state = VARIABLE_STATE;
 				}
 			} else {
 				// The "}" character has to be included with the variable part
-				pos = templateCopy.indexOf("}");
+				pos = templateCopy.indexOf("}"); //$NON-NLS-1$
 				if (pos != -1){
 					pos++;
 					state = TEXT_STATE;
@@ -299,17 +308,17 @@ public class UnoComposite implements IUnoComposite {
 				templateCopy = templateCopy.substring(pos);
 			}
 			
-		} while (pos != -1 && !templateCopy.equals(""));
+		} while (pos != -1 && !templateCopy.equals("")); //$NON-NLS-1$
 		
 		// manages the last part
-		if (state == VARIABLE_STATE && !templateCopy.equals("")) {
-			if (!templateCopy.endsWith("}")) {
-				templateCopy += "}";
+		if (state == VARIABLE_STATE && !templateCopy.equals("")) { //$NON-NLS-1$
+			if (!templateCopy.endsWith("}")) { //$NON-NLS-1$
+				templateCopy += "}"; //$NON-NLS-1$
 			}
 		}
 		
 		// Adds the last part
-		if (!templateCopy.equals("")) {
+		if (!templateCopy.equals("")) { //$NON-NLS-1$
 			parts.add(templateCopy);
 		}
 		

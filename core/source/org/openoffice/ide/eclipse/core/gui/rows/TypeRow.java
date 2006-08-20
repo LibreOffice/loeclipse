@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeRow.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,26 +51,21 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 public class TypeRow extends TextRow {
 
-	private InternalUnoType selectedType;
-	private UnoTypeProvider typesProvider;
-	private int type = 0;
+	private InternalUnoType mSelectedType;
+	private int mType = 0;
 	
-	public TypeRow(Composite parent, String property, String label, 
-			   UnoTypeProvider aTypeProvider, int aType) {
+	public TypeRow(Composite parent, String property, String label, int aType) {
 		super(parent, property, label);
 		
 		if (aType >=0 && aType < 512) {
-			type = aType;
+			mType = aType;
 		}
-		typesProvider = aTypeProvider;
 	}
 	
 	/*
@@ -80,26 +75,27 @@ public class TypeRow extends TextRow {
 	protected void createContent(Composite parent, Control label, 
 			Control field, String browseText) {
 
-		super.createContent(parent, label, field, 
-				OOEclipsePlugin.getTranslationString(I18nConstants.BROWSE));
+		super.createContent(parent, label, field, Messages.getString("TypeRow.Browse")); //$NON-NLS-1$
 		
 		final Shell shell = parent.getShell();
 		
-		((Button)browse).addSelectionListener(new SelectionAdapter(){
+		((Button)mBrowse).addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				
+				UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+				
 				int oldType = typesProvider.getTypes();
-				typesProvider.setTypes(type);
+				typesProvider.setTypes(mType);
 				
 				UnoTypeBrowser browser = new UnoTypeBrowser(
 						shell, typesProvider);
-				browser.setSelectedType(selectedType);
+				browser.setSelectedType(mSelectedType);
 				
 				if (UnoTypeBrowser.OK == browser.open()) {
-					selectedType = browser.getSelectedType();
-					if (null != selectedType){
-						setValue(selectedType.getFullName());
+					mSelectedType = browser.getSelectedType();
+					if (null != mSelectedType){
+						setValue(mSelectedType.getFullName());
 					}
 				}
 				
@@ -107,10 +103,10 @@ public class TypeRow extends TextRow {
 			}
 		});
 		
-		((Button)browse).addDisposeListener(new DisposeListener(){
+		((Button)mBrowse).addDisposeListener(new DisposeListener(){
 
 			public void widgetDisposed(DisposeEvent e) {
-				typesProvider.dispose();
+				UnoTypeProvider.getInstance().stopProvider();
 			}
 			
 		});

@@ -126,6 +126,16 @@
       </builder>
    </extension>
    <extension
+         id="services"
+         name="%builders.services"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            isConfigurable="false">
+         <run class="org.openoffice.ide.eclipse.core.builders.ServicesBuilder"/>
+      </builder>
+   </extension>
+   <extension
          point="org.eclipse.ui.decorators">
       <decorator
             adaptable="true"

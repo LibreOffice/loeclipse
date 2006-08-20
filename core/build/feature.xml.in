@@ -54,7 +54,7 @@ MA 02111-1307 USA
    </license>
 
    <url>
-      <discovery label="OpenOffice.org Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
+      <update label="OpenOffice.org Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
    </url>
 
    <plugin

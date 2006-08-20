@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlPreprocessorScanner.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -67,17 +67,17 @@ public class UnoidlPreprocessorScanner extends RuleBasedScanner {
 	 * The preprocessor commands to match
 	 */
 	public static final String[] PREPROC_COMMANDS = {
-		"include",
-		"ifdef",
-		"ifndef",
-		"endif",
-		"elif",
-		"else",
-		"define",
-		"undef",
-		"line",
-		"error",
-		"pragma"
+		"include", //$NON-NLS-1$
+		"ifdef", //$NON-NLS-1$
+		"ifndef", //$NON-NLS-1$
+		"endif", //$NON-NLS-1$
+		"elif", //$NON-NLS-1$
+		"else", //$NON-NLS-1$
+		"define", //$NON-NLS-1$
+		"undef", //$NON-NLS-1$
+		"line", //$NON-NLS-1$
+		"error", //$NON-NLS-1$
+		"pragma" //$NON-NLS-1$
 	};
 	
 	/**
@@ -108,9 +108,9 @@ public class UnoidlPreprocessorScanner extends RuleBasedScanner {
 		
 		// FIXME Create adapted rules for the #ifdef, #ifndef and #define 
 		
-		rules[0] = new SingleLineRule("<", ">", path);
-		rules[1] = new SingleLineRule("\"", "\"", path);
-		rules[2] = new RegexRule("\\p{Blank}+[a-zA-Z]+$", condition);
+		rules[0] = new SingleLineRule("<", ">", path); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[1] = new SingleLineRule("\"", "\"", path); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[2] = new RegexRule("\\p{Blank}+[a-zA-Z]+$", condition); //$NON-NLS-1$
 		rules[3] = new EqualityNameRule(definition);
 		
 		WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);

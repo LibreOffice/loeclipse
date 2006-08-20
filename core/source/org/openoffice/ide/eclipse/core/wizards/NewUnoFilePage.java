@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFilePage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:10:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,37 +51,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
-import org.openoffice.ide.eclipse.core.model.UnoFactory;
+import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 
 public class NewUnoFilePage extends WizardNewFileCreationPage {
-
-	/**
-	 * Specific error message label. <code>setErrorMessage()</code> will
-	 * use this row instead of the standard one.
-	 */
-	private Label messageLabel;
-	private Label messageIcon;
 	
 	public NewUnoFilePage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		
-		setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.NEW_FILE_TITLE));
-		setDescription(OOEclipsePlugin.getTranslationString(I18nConstants.NEW_FILE_MESSAGE));
+		setTitle(Messages.getString("NewUnoFilePage.Title")); //$NON-NLS-1$
+		setDescription(Messages.getString("NewUnoFilePage.Message")); //$NON-NLS-1$
 		setImageDescriptor(OOEclipsePlugin.getImageDescriptor(ImagesConstants.NEWFILE_WIZ));
 		
 	}
@@ -104,51 +91,6 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 			
 		return result;
 	}
-
-	//--------------------- Adding a message line at the bottom of the page
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		//Inherits the parents control
-		super.createControl(parent);
-		Composite control = (Composite)getControl();
-		
-		// Add an error message label
-		Composite messageComposite = new Composite(control, SWT.NONE);
-		messageComposite.setLayout(new GridLayout(2, false));
-		messageComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		messageIcon = new Label(messageComposite, SWT.LEFT);
-		messageIcon.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING |
-											   GridData.VERTICAL_ALIGN_END));
-		messageIcon.setImage(OOEclipsePlugin.getImage(ImagesConstants.ERROR));
-		messageIcon.setVisible(false);
-		
-		messageLabel = new Label(messageComposite, SWT.LEFT);
-		messageLabel.setLayoutData(new GridData(GridData.FILL_BOTH |
-				                                GridData.VERTICAL_ALIGN_END));
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
-	 */
-	public void setErrorMessage(String newMessage) {
-		if (null != messageLabel){
-			if (null == newMessage){
-				messageLabel.setText("");
-				messageIcon.setVisible(false);
-				messageLabel.setVisible(false);
-			} else {
-				messageLabel.setText(newMessage);
-				messageIcon.setVisible(true);
-				messageLabel.setVisible(true);
-			}
-		}
-	}
 	
 	//--------------- Wolrdwide available unoidl file creation methods
 	
@@ -163,15 +105,15 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 			UnoidlProject unoProject = (UnoidlProject)file.getProject().
 					getNature(OOEclipsePlugin.UNO_NATURE_ID);
 			
-			IUnoComposite composite = UnoFactory.createFile(file);
+			IUnoComposite composite = CompositeFactory.createFile(file);
 			composite.create(true);
+			composite.dispose();
 			
 			unoProject.getProject().refreshLocal(IProject.DEPTH_INFINITE, null);
 			
 		} catch (Exception e) {
-			PluginLogger.getInstance().error(
-				OOEclipsePlugin.getTranslationString(
-					I18nConstants.NOT_UNO_PROJECT), e);
+			PluginLogger.error(
+				Messages.getString("NewUnoFilePage.UnoProjectError"), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -210,9 +152,9 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 				String idlfolder = folder.getPersistentProperty(new QualifiedName(
 						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, UnoidlProject.IDL_FOLDER));
 				
-				if (null != idlfolder && idlfolder.equals("true")){
+				if (null != idlfolder && idlfolder.equals("true")){ //$NON-NLS-1$
 					
-					if (null != filename && filename.endsWith(".idl")){
+					if (null != filename && filename.endsWith(".idl")){ //$NON-NLS-1$
 						IFile file = folder.getFile(filename);
 						createFileContent(file);
 						
@@ -226,17 +168,17 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 						
 						performed = true;
 					} else {
-						PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
-								I18nConstants.NOT_IDL_EXTENSION), null); 
+						PluginLogger.error(
+							Messages.getString("NewUnoFilePage.WrongExtensionError"), null);  //$NON-NLS-1$
 					}
 				} else {
-					PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_IDL_CAPABLE), null);
+					PluginLogger.error(
+							Messages.getString("NewUnoFilePage.NoIdlFolderError"), null); //$NON-NLS-1$
 				}
 				
 			} catch (CoreException e) {
-				PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
-						I18nConstants.NOT_IDL_CAPABLE), e);
+				PluginLogger.error(
+						Messages.getString("NewUnoFilePage.NoIdlFolderError"), e); //$NON-NLS-1$
 			}
 		}
 		return performed;
@@ -259,23 +201,20 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
 				String idlfolder = folder.getPersistentProperty(new QualifiedName(
 						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, UnoidlProject.IDL_FOLDER));
 				
-				if (null != idlfolder && idlfolder.equals("true")){
+				if (null != idlfolder && idlfolder.equals("true")){ //$NON-NLS-1$
 					
-					if (null != filename && filename.endsWith(".idl")){
+					if (null != filename && filename.endsWith(".idl")){ //$NON-NLS-1$
 						
 						creatable = true;
 					} else {
-						setErrorMessage(OOEclipsePlugin.getTranslationString(
-								I18nConstants.NOT_IDL_EXTENSION));
+						setErrorMessage(Messages.getString("NewUnoFilePage.WrongExtensionError")); //$NON-NLS-1$
 					}
 				} else {
-					setErrorMessage(OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_IDL_CAPABLE));
+					setErrorMessage(Messages.getString("NewUnoFilePage.NoIdlFolderError")); //$NON-NLS-1$
 				}
 				
 			} catch (CoreException e) {
-				setErrorMessage(OOEclipsePlugin.getTranslationString(
-						I18nConstants.NOT_IDL_CAPABLE));
+				setErrorMessage(Messages.getString("NewUnoFilePage.NoIdlFolderError")); //$NON-NLS-1$
 			}
 		}
 		

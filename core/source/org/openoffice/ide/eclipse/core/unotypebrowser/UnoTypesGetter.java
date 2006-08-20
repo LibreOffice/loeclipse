@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypesGetter.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,7 +43,10 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unotypebrowser;
 
+import java.io.File;
 import java.util.Vector;
+
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 
 import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.comp.loader.FactoryHelper;
@@ -69,12 +72,12 @@ import com.sun.star.uno.XComponentContext;
  */
 public class UnoTypesGetter implements XMain {
 
-	private String root;
-	private Vector localRegistries;
-    private Vector externalRegistries;
-	private int typesMask = 1023;
+	private String mRoot;
+	private Vector mLocalRegistries;
+    private Vector mExternalRegistries;
+	private int mTypesMask = 1023;
 	
-	private XComponentContext xCtx;
+	private XComponentContext mCtx;
     
     /**
      * Hook launched when this class is used as URE starter component
@@ -146,36 +149,51 @@ public class UnoTypesGetter implements XMain {
 
             Vector localRegistries = new Vector();
             Vector externalRegistries = new Vector();
-            typesMask = 1023;
-            String root = "";
+            mTypesMask = 1023;
+            String root = ""; //$NON-NLS-1$
             
 			// Gets the optional arguments that defines the types to search.
 			for (int i=0, length=args.length; i<length; i++){
 
-                
-				if (args[i].startsWith("-L")) {
+				if (args[i].startsWith("-L")) { //$NON-NLS-1$
 					// Local registry option
-					localRegistries.add(args[i].substring(2));
+					String localregistry = args[i].substring(2);
 					
-				} else if (args[i].startsWith("-E")) {
+					// First, test if the file exists...
+					if (localregistry.startsWith("file:///")) { //$NON-NLS-1$
+						String path = localregistry.replace("%20", " "); //$NON-NLS-1$ //$NON-NLS-2$
+						path = path.substring("file:///".length()); //$NON-NLS-1$
+						File regFile = new File(path);
+						
+						if (regFile.exists()) {
+							localRegistries.add(args[i].substring(2));
+						}
+					}
+					
+				} else if (args[i].startsWith("-E")) { //$NON-NLS-1$
 					// External registry option
 					externalRegistries.add(args[i].substring(2));
 					
-				} else if (args[i].startsWith("-B")) {
+				} else if (args[i].startsWith("-B")) { //$NON-NLS-1$
 					// Root name option
 					root = args[i].substring(2);
 					
-				} else if (args[i].startsWith("-T")) {
-					typesMask = Integer.parseInt(args[i].substring(2));
+				} else if (args[i].startsWith("-T")) { //$NON-NLS-1$
+					mTypesMask = Integer.parseInt(args[i].substring(2));
 				}
 			}
 			
 			if ((localRegistries.size() + externalRegistries.size()) > 0) {
-                initialize(localRegistries, externalRegistries, root, typesMask);
+                initialize(localRegistries, externalRegistries, root, mTypesMask);
 
                 Vector unoTypes = queryTypes();
                 printTypes(unoTypes);
+                
+                unoTypes.clear();
 			}
+			
+			localRegistries.clear();
+			externalRegistries.clear();
 		}
     }
         
@@ -183,7 +201,7 @@ public class UnoTypesGetter implements XMain {
      * Default constructor used by the URE
      */
     public UnoTypesGetter(XComponentContext xCtx) {
-        this.xCtx = xCtx;
+        this.mCtx = xCtx;
     }
     
     /**
@@ -192,19 +210,19 @@ public class UnoTypesGetter implements XMain {
     public void initialize (Vector aLocalRegistries, Vector aExternalRegistries, 
                     String aRoot, int aTypesMask) {
 		
-	    localRegistries = aLocalRegistries;
-        externalRegistries = aExternalRegistries;
+	    mLocalRegistries = aLocalRegistries;
+        mExternalRegistries = aExternalRegistries;
         
 		// Sets the root to a quite correct value
-		if (aRoot.equals("/")) {
-			root = "";
+		if (aRoot.equals("/")) { //$NON-NLS-1$
+			mRoot = ""; //$NON-NLS-1$
 		} else {
-			root = aRoot;
+			mRoot = aRoot;
 		}
 		
 		// Sets the typesMask
 		if (aTypesMask >= 0 && 1024 > aTypesMask) {			
-			typesMask = aTypesMask;
+			mTypesMask = aTypesMask;
 		}
 	}
 
@@ -215,13 +233,13 @@ public class UnoTypesGetter implements XMain {
             
         Vector results = new Vector();
 		
-        for (int i=0, length=localRegistries.size(); i<length; i++)	{
-            String registryPath = (String)localRegistries.get(i);
+        for (int i=0, length=mLocalRegistries.size(); i<length; i++)	{
+            String registryPath = (String)mLocalRegistries.get(i);
             results.addAll(getTypesFromRegistry(registryPath, true));
         }
 
-        for (int i=0, length=externalRegistries.size(); i<length; i++) {
-            String registryPath = (String)externalRegistries.get(i);
+        for (int i=0, length=mExternalRegistries.size(); i<length; i++) {
+            String registryPath = (String)mExternalRegistries.get(i);
             results.addAll(getTypesFromRegistry(registryPath, true));
         }
 
@@ -237,22 +255,22 @@ public class UnoTypesGetter implements XMain {
 	    
         Vector result = new Vector();
                 
-        if (null != registryPath && registryPath.startsWith("file:///")) {
+        if (null != registryPath && registryPath.startsWith("file:///")) { //$NON-NLS-1$
 				
             // Get the UNO Type enumeration access    
-			XMultiComponentFactory xMCF = xCtx.getServiceManager();
+			XMultiComponentFactory xMCF = mCtx.getServiceManager();
 			XSimpleRegistry xReg = (XSimpleRegistry)UnoRuntime.queryInterface(
 					XSimpleRegistry.class,
                     xMCF.createInstanceWithContext(
-                        "com.sun.star.registry.SimpleRegistry", xCtx));
+                        "com.sun.star.registry.SimpleRegistry", mCtx)); //$NON-NLS-1$
 				
 			xReg.open(registryPath, true, false);
 			
 			Object[] seqArgs = { xReg };
 				
 			Object oTDMgr = xMCF.createInstanceWithArgumentsAndContext(
-					"com.sun.star.reflection.TypeDescriptionProvider",
-					seqArgs, xCtx);
+					"com.sun.star.reflection.TypeDescriptionProvider", //$NON-NLS-1$
+					seqArgs, mCtx);
 				
 			// Set the local Type Description Manager
 			XTypeDescriptionEnumerationAccess localTDMgr = 
@@ -263,7 +281,7 @@ public class UnoTypesGetter implements XMain {
             // Query the types from the enumeration access
 			XTypeDescriptionEnumeration xLocalTypeEnum = localTDMgr.
 					createTypeDescriptionEnumeration(
-							root,
+							mRoot,
 							convertToTypeClasses(),
 							TypeDescriptionSearchDepth.INFINITE);
 
@@ -303,25 +321,25 @@ public class UnoTypesGetter implements XMain {
         // Creates the TypeClass[] array from the given types names
 		Vector typeClasses = new Vector();
 			
-		if (isOfType(typesMask, UnoTypeProvider.MODULE)) {
+		if (isOfType(mTypesMask, IUnoFactoryConstants.MODULE)) {
 			typeClasses.add(TypeClass.MODULE);
-		} else if (isOfType(typesMask, UnoTypeProvider.INTERFACE)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.INTERFACE)) {
 			typeClasses.add(TypeClass.INTERFACE);
-		} else if (isOfType(typesMask, UnoTypeProvider.SERVICE)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.SERVICE)) {
 			typeClasses.add(TypeClass.SERVICE);
-		} else if (isOfType(typesMask, UnoTypeProvider.STRUCT)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.STRUCT)) {
 			typeClasses.add(TypeClass.STRUCT);
-		} else if (isOfType(typesMask, UnoTypeProvider.ENUM)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.ENUM)) {
 			typeClasses.add(TypeClass.ENUM);
-		} else if (isOfType(typesMask, UnoTypeProvider.EXCEPTION)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.EXCEPTION)) {
 			typeClasses.add(TypeClass.EXCEPTION);
-		} else if (isOfType(typesMask, UnoTypeProvider.TYPEDEF)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.TYPEDEF)) {
 			typeClasses.add(TypeClass.TYPEDEF);
-		} else if (isOfType(typesMask, UnoTypeProvider.CONSTANT)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.CONSTANT)) {
 			typeClasses.add(TypeClass.CONSTANT);
-		} else if (isOfType(typesMask, UnoTypeProvider.CONSTANTS)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.CONSTANTS)) {
 			typeClasses.add(TypeClass.CONSTANTS);
-		} else if (isOfType(typesMask, UnoTypeProvider.SINGLETON)) {
+		} else if (isOfType(mTypesMask, IUnoFactoryConstants.SINGLETON)) {
 			typeClasses.add(TypeClass.SINGLETON);
 		}
 		
@@ -329,6 +347,7 @@ public class UnoTypesGetter implements XMain {
 		for (int i=0, length=typeClasses.size(); i<length; i++){
 			types[i] = (TypeClass)typeClasses.get(i);
 		}
+		typeClasses.clear();
 
         return types;
     }
@@ -349,43 +368,43 @@ public class UnoTypesGetter implements XMain {
 		switch (typeClass.getValue()) {
 			
 			case TypeClass.MODULE_value:
-				type = UnoTypeProvider.MODULE;
+				type = IUnoFactoryConstants.MODULE;
 				break;
 					
 			case TypeClass.INTERFACE_value:
-				type = UnoTypeProvider.INTERFACE;
+				type = IUnoFactoryConstants.INTERFACE;
 				break;
 					
 			case TypeClass.SERVICE_value:
-				type = UnoTypeProvider.SERVICE;
+				type = IUnoFactoryConstants.SERVICE;
 				break;
 						
 			case TypeClass.STRUCT_value:
-				type = UnoTypeProvider.STRUCT;
+				type = IUnoFactoryConstants.STRUCT;
 				break;
 						
 			case TypeClass.ENUM_value:
-				type = UnoTypeProvider.ENUM;
+				type = IUnoFactoryConstants.ENUM;
 				break;
 						
 			case TypeClass.EXCEPTION_value:
-				type = UnoTypeProvider.EXCEPTION;
+				type = IUnoFactoryConstants.EXCEPTION;
 				break;
 						
 			case TypeClass.TYPEDEF_value:
-				type = UnoTypeProvider.TYPEDEF;
+				type = IUnoFactoryConstants.TYPEDEF;
 				break;
 						
 			case TypeClass.CONSTANT_value:
-				type = UnoTypeProvider.CONSTANT;
+				type = IUnoFactoryConstants.CONSTANT;
 				break;
 						
 			case TypeClass.CONSTANTS_value:
-				type = UnoTypeProvider.CONSTANTS;
+				type = IUnoFactoryConstants.CONSTANTS;
 				break;
 				
 			case TypeClass.SINGLETON_value:
-				type = UnoTypeProvider.SINGLETON;
+				type = IUnoFactoryConstants.SINGLETON;
 				break;
 		}
 			
@@ -407,7 +426,7 @@ public class UnoTypesGetter implements XMain {
 	}
 	
 	private static String __serviceName = 
-		"org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter";
+		"org.openoffice.ide.eclipse.unotypebrowser.UnoTypesGetter"; //$NON-NLS-1$
 	
 	public static XSingleServiceFactory __getServiceFactory(
 			String implName, XMultiServiceFactory multiFactory, 

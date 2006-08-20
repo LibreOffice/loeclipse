@@ -2,9 +2,9 @@
  *
  * $RCSfile: MainPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -54,7 +54,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
@@ -68,10 +67,10 @@ import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
  */
 public class MainPage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private static final String LOGLEVEL = "__log_level";
-    private IFieldChangedListener __listener = new loglevelListener();
+    private static final String LOGLEVEL = "__log_level"; //$NON-NLS-1$
+    private IFieldChangedListener mListener = new loglevelListener();
 
-    private ChoiceRow loglevel;
+    private ChoiceRow mLoglevel;
     
     /*
      *  (non-Javadoc)
@@ -83,21 +82,21 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
 		body.setLayout(new GridLayout(2, false));
 		body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        loglevel = new ChoiceRow(body, LOGLEVEL, 
-                OOEclipsePlugin.getTranslationString(I18nConstants.LOGLEVEL));
-        loglevel.add(OOEclipsePlugin.getTranslationString(I18nConstants.ERROR),
+        mLoglevel = new ChoiceRow(body, LOGLEVEL, 
+                Messages.getString("MainPage.LogLevel")); //$NON-NLS-1$
+        mLoglevel.add(Messages.getString("MainPage.Error"), //$NON-NLS-1$
                 PluginLogger.ERROR);
-        loglevel.add(OOEclipsePlugin.getTranslationString(I18nConstants.WARNING),
+        mLoglevel.add(Messages.getString("MainPage.Warning"), //$NON-NLS-1$
                 PluginLogger.WARNING);
-        loglevel.add(OOEclipsePlugin.getTranslationString(I18nConstants.INFO),
+        mLoglevel.add(Messages.getString("MainPage.Info"), //$NON-NLS-1$
                 PluginLogger.INFO);
-        loglevel.add(OOEclipsePlugin.getTranslationString(I18nConstants.DEBUG),
+        mLoglevel.add(Messages.getString("MainPage.Debug"), //$NON-NLS-1$
                 PluginLogger.DEBUG);
         
         IPreferenceStore store = getPreferenceStore();
-        loglevel.select(store.getString(
+        mLoglevel.select(store.getString(
         		OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
-        loglevel.setFieldChangedListener(__listener);
+        mLoglevel.setFieldChangedListener(mListener);
             
 		return body;
 	}
@@ -127,7 +126,7 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
     	
     	IPreferenceStore store = getPreferenceStore();
     	store.setValue(OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY, 
-    			loglevel.getValue());
+    			mLoglevel.getValue());
     	
     	return result;
     }
@@ -140,7 +139,7 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
     	super.performDefaults();
     	
     	IPreferenceStore store = getPreferenceStore();
-    	loglevel.select(store.getDefaultString(
+    	mLoglevel.select(store.getDefaultString(
     			OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
     }
     
@@ -155,7 +154,7 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
     	public void fieldChanged(FieldEvent e) {
             if (e.getProperty().equals(LOGLEVEL)) {
                 // set the new logger level
-                PluginLogger.getInstance().setLevel(e.getValue());
+                PluginLogger.setLevel(e.getValue());
             }
         }
     }

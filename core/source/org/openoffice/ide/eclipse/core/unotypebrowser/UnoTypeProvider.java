@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unotypebrowser;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -51,16 +50,12 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 
@@ -72,65 +67,52 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
  *
  */
 public class UnoTypeProvider {
-
-	public final static int MODULE = 1;
 	
-	public final static int INTERFACE = 2;
+	private static UnoTypeProvider sInstance = new UnoTypeProvider();
 	
-	public final static int SERVICE = 4;
+	public static UnoTypeProvider getInstance() {
+		return sInstance;
+	}
 	
-	public final static int STRUCT = 8;
-	
-	public final static int ENUM = 16;
-	
-	public final static int EXCEPTION = 32;
-	
-	public final static int TYPEDEF = 64;
-	
-	public final static int CONSTANT = 128;
-	
-	public final static int CONSTANTS = 256;
-	
-	public final static int SINGLETON = 512;
+	private UnoTypeProvider() {
+	}
 	
 	/**
-	 * Creates a UNO type provider from a UNO project.
+	 * Initializes the type provider from a UNO project.
 	 * 
 	 * @param aProject the UNO project to query (with its OOo parameter)
 	 * @param aTypes the types to get
 	 */
-	public UnoTypeProvider(IUnoidlProject aProject, int aTypes) {
+	public void initialize(IUnoidlProject aProject, int aTypes) {
 		setTypes(aTypes);
 		setProject(aProject);
 	}
 	
 	/**
-	 * Creates a UNO type provider from an OpenOffice.org instance
+	 * Initializes the UNO type provider from an OpenOffice.org instance
 	 * 
 	 * @param aOOoInstance the OOo instance to query
 	 * @param aTypes the types to get
 	 */
-	public UnoTypeProvider(IOOo aOOoInstance, int aTypes) {
+	public void initialize(IOOo aOOoInstance, int aTypes) {
 		setTypes(aTypes);
 		setOOoInstance(aOOoInstance);
 	}
 	
 	/**
-	 * Dispose the type provider
+	 * Stop the type provider
 	 */
-	public void dispose(){
+	public void stopProvider(){
 		removeAllTypes();
 		
-		internalTypes = null;
+		mInternalTypes = null;
 		oooInstance = null;
 		pathToRegister = null;
 		
-		if (null != getTypesJob){
-			if (!getTypesJob.cancel()) { // Not sure it stops when running
-				process.destroy();
-			}
-			getTypesJob = null;
-			process = null;
+		if (getTypesThread != null && getTypesThread.isAlive()){
+			getTypesThread.shutdown(); // Not sure it stops when running
+			getTypesThread = null;
+			PluginLogger.debug("UnoTypeProvider stopped"); //$NON-NLS-1$
 		}
 	}
 	
@@ -139,16 +121,16 @@ public class UnoTypeProvider {
 	private int types = 1023;
 	
 	private static int[] allowedTypes = {
-		MODULE,
-		INTERFACE,
-		SERVICE,
-		STRUCT,
-		ENUM,
-		EXCEPTION,
-		TYPEDEF,
-		CONSTANT,
-		CONSTANTS,
-		SINGLETON
+		IUnoFactoryConstants.MODULE,
+		IUnoFactoryConstants.INTERFACE,
+		IUnoFactoryConstants.SERVICE,
+		IUnoFactoryConstants.STRUCT,
+		IUnoFactoryConstants.ENUM,
+		IUnoFactoryConstants.EXCEPTION,
+		IUnoFactoryConstants.TYPEDEF,
+		IUnoFactoryConstants.CONSTANT,
+		IUnoFactoryConstants.CONSTANTS,
+		IUnoFactoryConstants.SINGLETON
 	};
 	
 	/**
@@ -219,10 +201,10 @@ public class UnoTypeProvider {
 	public boolean contains(String scopedName) {
 		
 		boolean result = false;
-		scopedName = scopedName.replaceAll("::", ".");
+		scopedName = scopedName.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (isInitialized()) {
-			Iterator iter = internalTypes.iterator();
+			Iterator iter = mInternalTypes.iterator();
 			while (iter.hasNext() && !result) {
 				InternalUnoType type = (InternalUnoType)iter.next();
 				if (type.getFullName().equals(scopedName)) {
@@ -248,16 +230,20 @@ public class UnoTypeProvider {
 	 * 
 	 * @param aProject the project for which to launch the type query 
 	 */
-	public void setProject(IUnoidlProject aProject){
+	private void setProject(IUnoidlProject aProject){
 		
 		if (null != aProject) {
-			if (null != getTypesJob) {
-				getTypesJob.cancel();
-			}
+			
+			// Stop the provider before everything
+			stopProvider();
+			mInternalTypes = new Vector();
 			
 			oooInstance = aProject.getOOo();
 			pathToRegister = (aProject.getFile(
 					aProject.getTypesPath()).getLocation()).toOSString();
+			
+			PluginLogger.debug(
+					"UnoTypeProvider initialized with " + aProject); //$NON-NLS-1$
 			
 			initialized = false;
 			askUnoTypes();
@@ -269,16 +255,17 @@ public class UnoTypeProvider {
 	 * 
 	 *  @param aOOoInstance OpenOffice.org instance to bootstrap
 	 */
-	public void setOOoInstance(IOOo aOOoInstance) {
+	private void setOOoInstance(IOOo aOOoInstance) {
 		
-		if (!(null != oooInstance && oooInstance.equals(aOOoInstance))) {
+		if (null != aOOoInstance && !aOOoInstance.equals(oooInstance)) {
 			
-			// Stops the current job if there is already one.
-			if (null != getTypesJob) {
-				getTypesJob.cancel();
-			}
+			// Stop the provider before everything
+			stopProvider();
+			mInternalTypes = new Vector();
 			
 			oooInstance = aOOoInstance;
+			PluginLogger.debug(
+					"UnoTypeProvider initialized with " + aOOoInstance); //$NON-NLS-1$
 			
 			initialized = false;
 			askUnoTypes();
@@ -298,158 +285,70 @@ public class UnoTypeProvider {
 		String command = null;
 		
 		if (null != oooInstance) {
-			// Defines OS specific constants
-			String pathSeparator = System.getProperty("path.separator");
-			String fileSeparator = System.getProperty("file.separator");
-			
-			// Constitute the classpath for OOo Boostrapping
-			String classpath = "-cp ";
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				classpath = classpath + "\"";
-			}
-			
-			String oooClassesPath = oooInstance.getClassesPath();
-			File oooClasses = new File(oooClassesPath);
-			String[] content = oooClasses.list();
-			
-			for (int i=0, length=content.length; i<length; i++){
-				String contenti = content[i];
-				if (contenti.endsWith(".jar")) {
-					classpath = classpath + oooClassesPath + fileSeparator + 
-									contenti + pathSeparator;
-				}
-			}
-			
-			// Add the UnoTypeGetter jar to the classpath
-			URL pluginURL = Platform.find(
-					OOEclipsePlugin.getDefault().getBundle(), 
-					new Path("/."));
-			
-			String path = Platform.asLocalURL(pluginURL).getFile();
-			path = path + "UnoTypesGetter.jar";
-			
-			if (Platform.getOS().equals(Platform.WS_WIN32)){
-				path = path.substring(1).replaceAll("/", "\\\\");
-			}
-			
-			classpath = classpath + path;
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				classpath = classpath + "\"";
-			}
-			classpath = classpath + " ";
-			
+			// Compute the library location (UnoTypesGetter.jar file)
+			URL pluginURL = OOEclipsePlugin.getDefault().getBundle().getEntry("/."); //$NON-NLS-1$
+			URL libURL = FileLocator.toFileURL(pluginURL);
+
 			// Compute the types mask argument
-			String typesMask = "-T" + types;
+			String typesMask = "-T" + types; //$NON-NLS-1$
 			
 			// Get the OOo types.rdb registry path as external registry
-			String typesPath = oooInstance.getTypesPath();
-			typesPath = "-Efile:///" + typesPath.replace(" ", "%20");
+			String typesPath = new Path(oooInstance.getTypesPath()).toString();
+			typesPath = "-Efile:///" + typesPath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			// Add the local registry path
-			String localRegistryPath = "";
+			String localRegistryPath = ""; //$NON-NLS-1$
 			// If the path to the registry isn't set, don't take
 			// it into account in the command build
 			if (null != pathToRegister) {
-				localRegistryPath = " -Lfile:///" + 
-					pathToRegister.replace(" ", "%20");
+				localRegistryPath = " -Lfile:///" +  //$NON-NLS-1$
+					pathToRegister.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+				localRegistryPath = localRegistryPath.replace('\\', '/');
 			}
+			
+			// compute the arguments array
+			String[] args = new String[] {
+					typesPath,
+					localRegistryPath,
+					typesMask
+			};
 			
 			// Computes the command to execute if oooInstance isn't the URE
 			if (oooInstance instanceof OOo) {
-				command = "java " + classpath + 
-						"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter " + 
-						typesPath + " " + localRegistryPath + " " + typesMask;
-			} else {
 				
-				// compute the arguments array
-				String[] args = new String[] {
-						typesPath,
-						localRegistryPath,
-						typesMask
-				};
+				String libPath = new Path(libURL.getPath()).toOSString();
+				libPath = libPath + "UnoTypesGetter.jar"; //$NON-NLS-1$
 				
 				command = oooInstance.createUnoCommand(
-						"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter", 
-						"file:///"+path, new String[]{}, args);
+						"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter",  //$NON-NLS-1$
+						libPath, new String[0], args);
+			} else {
+
+				String libPath = new Path(libURL.getPath()).toString();
+				libPath = libPath + "UnoTypesGetter.jar"; //$NON-NLS-1$
+				libPath = libPath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				command = oooInstance.createUnoCommand(
+						"org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter",  //$NON-NLS-1$
+						"file:///"+libPath, new String[]{}, args); //$NON-NLS-1$
 			}
 		}
 		return command;
 	}
 	
-	private Job getTypesJob;
-	private Process process;
+	private UnoTypesGetterThread getTypesThread = new UnoTypesGetterThread();
 	
 	/**
 	 * Launches the UNO type query process
 	 */
-	public void askUnoTypes() {
+	private void askUnoTypes() {
 		
-		if (null == getTypesJob || Job.RUNNING != getTypesJob.getState()) {
-			getTypesJob = new Job(OOEclipsePlugin.getTranslationString(
-					I18nConstants.FETCHING_TYPES)) {
-				
-				protected IStatus run(IProgressMonitor monitor) {
-					
-					IStatus status = new Status(IStatus.OK,
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							IStatus.OK,
-							"",
-							null);
-					
-					try {
-						monitor.beginTask(
-								OOEclipsePlugin.getTranslationString(
-										I18nConstants.FETCHING_TYPES),
-								2);
-						removeAllTypes();
-						
-						String command = computeGetterCommand();
-						
-						// Computes the environment variables
-						
-						process = Runtime.getRuntime().exec(command);
-						
-						// Reads the types and add them to the list
-						LineNumberReader reader = new LineNumberReader(
-									new InputStreamReader(
-											process.getInputStream()));
-						
-						String line = reader.readLine();
-						monitor.worked(1);
-						
-						while (null != line) {
-							InternalUnoType internalType = new InternalUnoType(line);
-							addType(internalType);
-							line = reader.readLine();
-						}
-						
-						monitor.worked(1);
-						setInitialized();
-						
-					} catch (IOException e) {
-						monitor.worked(0);
-						status = new Status(IStatus.ERROR,
-								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-								IStatus.ERROR,
-								"",
-								e);
-						
-						PluginLogger.getInstance().debug(e.getMessage());
-					} catch (Exception e) {
-						PluginLogger.getInstance().error(e.getMessage(), e);
-						monitor.worked(0);
-						cancel();
-					}
-					
-					return status;
-				}
-			};
+		if (null == getTypesThread || !getTypesThread.isAlive()) {
 			
-			getTypesJob.setSystem(true);
-			getTypesJob.setPriority(Job.INTERACTIVE);
+			mInternalTypes = new Vector();
 			
-			// Execute the job asynchronously
-			getTypesJob.schedule();
+			getTypesThread = new UnoTypesGetterThread();
+			getTypesThread.start();
 		}
 	}
 	
@@ -482,7 +381,7 @@ public class UnoTypeProvider {
 
 	//---------------------------------------------------- Collection managment
 	
-	private Vector internalTypes = new Vector();
+	private Vector mInternalTypes = new Vector();
 	
 	/**
 	 * Get a type from its path
@@ -493,7 +392,7 @@ public class UnoTypeProvider {
 	 */
 	public InternalUnoType getType(String typePath) {
 		
-		Iterator iter = internalTypes.iterator();
+		Iterator iter = mInternalTypes.iterator();
 		InternalUnoType result = null;
 		
 		while (null == result && iter.hasNext()) {
@@ -510,22 +409,77 @@ public class UnoTypeProvider {
 	 * Returns the types list as an array
 	 */
 	protected Object[] toArray() {
-		return internalTypes.toArray();
+		Object[] types = new Object[0];
+		if (mInternalTypes != null) {
+			types = mInternalTypes.toArray();
+		}
+		return types;
 	}
 	
 	/**
 	 * Add a type to the list
 	 */
 	protected void addType(InternalUnoType internalType) {
-		internalTypes.add(internalType);
+		mInternalTypes.add(internalType);
 	}
 
 	/**
 	 * purge the types list
 	 */
 	protected void removeAllTypes() {
-		if (internalTypes != null) {
-			internalTypes.clear();
+		if (mInternalTypes != null) {
+			mInternalTypes.clear();
+		}
+	}
+	
+	private class UnoTypesGetterThread extends Thread {
+
+		private Process mProcess;
+		private boolean mStop = false;
+		
+		public void shutdown() {
+			if (mProcess != null) {
+				mProcess.destroy();
+			}
+			mProcess = null;
+			mStop = true;
+		}
+
+		public void run() {
+			try {
+				removeAllTypes();
+				String command = computeGetterCommand();
+
+				// Computes the environment variables
+
+				mProcess = Runtime.getRuntime().exec(command);
+
+				if (!mStop) {
+					// Reads the types and add them to the list
+					InputStreamReader in = new InputStreamReader(mProcess.getInputStream());
+					LineNumberReader reader = new LineNumberReader(in);
+
+					try {
+						String line = reader.readLine();
+
+						while (null != line) {
+							InternalUnoType internalType = new InternalUnoType(line);
+							addType(internalType);
+							line = reader.readLine();
+						}
+					} finally {
+						reader.close();
+						in.close();
+					}
+					setInitialized();
+					PluginLogger.debug("Types fetched"); //$NON-NLS-1$
+				}
+
+			} catch (IOException e) {				
+				PluginLogger.error(Messages.getString("UnoTypeProvider.IOError"), e); //$NON-NLS-1$
+			} catch (Exception e) {
+				PluginLogger.error(Messages.getString("UnoTypeProvider.UnexpectedError"), e); //$NON-NLS-1$
+			}
 		}
 	}
 }

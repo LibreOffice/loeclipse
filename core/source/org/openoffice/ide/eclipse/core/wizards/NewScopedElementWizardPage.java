@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,15 +49,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
-import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
@@ -71,11 +70,9 @@ import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 public abstract class NewScopedElementWizardPage extends WizardPage
 												 implements IFieldChangedListener{
 
-	protected IUnoidlProject unoProject;
-	private String rootName;
-	private String elementName;
-	
-	protected UnoTypeProvider typesProvider;
+	protected IUnoidlProject mUnoProject;
+	private String mRootName;
+	private String mElementName;
 	
 	/**
 	 * Default constructor to use when neither the project nor the
@@ -84,7 +81,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * @param aName wizard page name
 	 */
 	public NewScopedElementWizardPage(String aName) {
-		this (aName, "", "");
+		this (aName, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -95,7 +92,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 */
 	public NewScopedElementWizardPage(
 			String pageName, IUnoidlProject unoProject) {
-		this(pageName, unoProject, "", "");
+		this(pageName, unoProject, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -112,10 +109,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 			String aRootName, String aElementName) {
 		
 		this(pageName, aRootName, aElementName);
-		
-		unoProject = project;
-		typesProvider = new UnoTypeProvider(project, getProvidedTypes());
-
+		setUnoidlProject(project);
 	}
 	
 	/**
@@ -123,7 +117,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * path and type name.
 	 */
 	public NewScopedElementWizardPage(String aPageName, IOOo aOOoInstance) {
-		this(aPageName, "", "", aOOoInstance);
+		this(aPageName, "", "", aOOoInstance); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -139,8 +133,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 			String aRootName, String aElementName, IOOo aOOoInstance) {
 		
 		this(aPageName, aRootName, aElementName);
-		typesProvider = new UnoTypeProvider(aOOoInstance, getProvidedTypes());
-		
+		setOOoInstance(aOOoInstance);
 	}
 	
 	/**
@@ -161,8 +154,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		setDescription(getDescription());
 		setImageDescriptor(getImageDescriptor());
 		
-		rootName = null != aRootName ? aRootName: "";
-		elementName = null != aElementName ? aElementName : "";
+		mRootName = null != aRootName ? aRootName: ""; //$NON-NLS-1$
+		mElementName = null != aElementName ? aElementName : ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -196,11 +189,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * @param aOOoInstance OOo instance to use.
 	 */
 	public void setOOoInstance(IOOo aOOoInstance) {
-		
-		if (null == typesProvider) {
-			typesProvider = new UnoTypeProvider(aOOoInstance, getProvidedTypes());
-		} else {
-			typesProvider.setOOoInstance(aOOoInstance);
+		if (aOOoInstance != null) {
+			UnoTypeProvider.getInstance().initialize(aOOoInstance, getProvidedTypes());
 		}
 	}
 	
@@ -208,7 +198,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * Sets the Uno project in which to create the scoped name type
 	 */
 	public void setUnoidlProject(IUnoidlProject aUnoProject) {
-		unoProject = aUnoProject;
+		mUnoProject = aUnoProject;
+		UnoTypeProvider.getInstance().initialize(mUnoProject, getProvidedTypes());
 	}
 	
 	/**
@@ -216,14 +207,30 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * package root and the package. This method returns the second part.
 	 */
 	public String getPackage() {
-		return packageRow.getValue();
+		String packageName = mUnoProject != null ? mUnoProject.getRootModule() : ""; //$NON-NLS-1$
+		
+
+		if (!mRootName.equals("")) { //$NON-NLS-1$
+			if (!packageName.equals("")) { //$NON-NLS-1$
+				packageName += "::"; //$NON-NLS-1$
+			}
+			packageName += mRootName.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		if (!mPackageRow.getValue().equals("")) { //$NON-NLS-1$
+			if (!packageName.equals("")) { //$NON-NLS-1$
+				packageName += "::"; //$NON-NLS-1$
+			}
+			packageName += mPackageRow.getValue();
+		}
+		return packageName;
 	}
 	
 	/**
 	 * Get the name of the element to create
 	 */
 	public String getElementName() {
-		return nameRow.getValue();
+		return mNameRow.getValue();
 	}
 	
 	/**
@@ -231,10 +238,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * package root and the package. This method sets the first part.
 	 */
 	public void setPackageRoot(String value) {
-		String packageLabel = OOEclipsePlugin.getTranslationString(
-				I18nConstants.PACKAGE_COLON) + value;
+		String packageLabel = Messages.getString("NewScopedElementWizardPage.Package") + value; //$NON-NLS-1$
+		mRootName = value;
 		
-		packageRow.setLabel(packageLabel);
+		if (mPackageRow != null) mPackageRow.setLabel(packageLabel);
 	}
 	
 	/**
@@ -247,9 +254,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * 			package is empty or <code>null</code>. 
 	 */
 	public void setPackage(String value, boolean forced) {
-		
-		packageRow.setValue(value);
-		packageRow.setEnabled(!forced);	
+		if (mPackageRow != null) {
+			mPackageRow.setValue(value);
+			mPackageRow.setEnabled(!forced);
+		}
 	}
 	
 	/**
@@ -262,8 +270,27 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 */
 	public void setName(String value, boolean forced) {
 		
-		nameRow.setValue(value);
-		nameRow.setEnabled(!forced);
+		mElementName = value;
+		if (mNameRow != null) {
+			mNameRow.setValue(value);
+			mNameRow.setEnabled(!forced);
+		}
+	}
+	
+	/**
+	 * Returns whether the service is published or not
+	 */
+	public boolean isPublished() {
+		return mPublishedRow.getBooleanValue();
+	}
+	
+	/**
+	 * Sets whether the service is published or not
+	 */
+	public void setPublished(boolean value, boolean forced) {
+		
+		mPublishedRow.setValue(value);
+		mPublishedRow.setEnabled(!forced);
 	}
 	
 	/*
@@ -272,11 +299,12 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 */
 	public void dispose() {
 		try {
-			packageRow.removeFieldChangedlistener();
-			nameRow.removeFieldChangedlistener();
-			typesProvider.dispose();
+			mPackageRow.removeFieldChangedlistener();
+			mNameRow.removeFieldChangedlistener();
+			mPublishedRow.removeFieldChangedlistener();
+			UnoTypeProvider.getInstance().stopProvider();
 		} catch (NullPointerException e) {
-			PluginLogger.getInstance().debug(e.getMessage());
+			PluginLogger.debug(e.getMessage());
 		}
 		
 		super.dispose();
@@ -284,18 +312,13 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	
 	//--------------------------------------------------- Page content managment
 	
-	private final static String P_PACKAGE           = "__package";
-	private final static String P_NAME              = "__name";
+	private final static String P_PACKAGE           = "__package"; //$NON-NLS-1$
+	private final static String P_NAME              = "__name"; //$NON-NLS-1$
+	private final static String P_PUBLISHED			= "__published"; //$NON-NLS-1$
 	
-	private TextRow packageRow;
-	private TextRow nameRow;
-	
-	/**
-	 * Specific error message label. <code>setErrorMessage()</code> will
-	 * use this row instead of the standard one.
-	 */
-	private Label messageLabel;
-	private Label messageIcon;
+	private TextRow mPackageRow;
+	private TextRow mNameRow;
+	private BooleanRow mPublishedRow;
 	
 	/*
 	 *  (non-Javadoc)
@@ -307,62 +330,29 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		body.setLayout(new GridLayout(3, false));
 		body.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		mPublishedRow = new BooleanRow(body, P_PUBLISHED,
+				Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
+		mPublishedRow.setFieldChangedListener(this);
+		
 		// Creates the package row
-		String packageLabel = OOEclipsePlugin.getTranslationString(
-				I18nConstants.PACKAGE_COLON);
-		if (null != unoProject) {
-			packageLabel = packageLabel + unoProject.getRootModule();
+		String packageLabel = Messages.getString("NewScopedElementWizardPage.Package"); //$NON-NLS-1$
+		if (null != mUnoProject) {
+			packageLabel = packageLabel + mUnoProject.getRootModule();
 		}
 		
-		packageRow = new TextRow(body, P_PACKAGE, packageLabel);
-		packageRow.setFieldChangedListener(this);
-		packageRow.setValue(rootName);
+		mPackageRow = new TextRow(body, P_PACKAGE, packageLabel);
+		mPackageRow.setFieldChangedListener(this);
+		mPackageRow.setValue(mRootName);
 		
-		nameRow = new TextRow(body, P_NAME, getTypeLabel());
-		nameRow.setFieldChangedListener(this);
-		nameRow.setValue(elementName);
-
+		mNameRow = new TextRow(body, P_NAME, getTypeLabel());
+		mNameRow.setFieldChangedListener(this);
+		mNameRow.setValue(mElementName);
+		
 		createSpecificControl(body);
-		
-		// Message controls
-		Composite messageComposite = new Composite(body, SWT.NONE);
-		messageComposite.setLayout(new GridLayout(2, false));
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		messageComposite.setLayoutData(gd);
-		
-		
-		messageIcon = new Label(messageComposite, SWT.LEFT);
-		messageIcon.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING |
-											   GridData.VERTICAL_ALIGN_END));
-		messageIcon.setImage(OOEclipsePlugin.getImage(ImagesConstants.ERROR));
-		messageIcon.setVisible(false);
-		
-		messageLabel = new Label(messageComposite, SWT.LEFT);
-		messageLabel.setLayoutData(new GridData(GridData.FILL_BOTH |
-				                                GridData.VERTICAL_ALIGN_END));
 		
 		setPageComplete(isPageComplete());
 		
 		setControl(body);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
-	 */
-	public void setErrorMessage(String newMessage) {
-		if (null != messageLabel){
-			if (null == newMessage){
-				messageLabel.setText("");
-				messageIcon.setVisible(false);
-				messageLabel.setVisible(false);
-			} else {
-				messageLabel.setText(newMessage);
-				messageIcon.setVisible(true);
-				messageLabel.setVisible(true);
-			}
-		}
 	}
 
 	/*
@@ -371,10 +361,22 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		
-		if (visible) {
-			typesProvider.askUnoTypes();
+	}
+	
+	/**
+	 * @return the given data with the completed properties, <code>null</code>
+	 *   if the provided data is <code>null</code>
+	 */
+	public UnoFactoryData fillData(UnoFactoryData data) {
+		if (data != null) {
+			data.setProperty(IUnoFactoryConstants.TYPE, 
+					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+			data.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
+			data.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
+			data.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
+					Boolean.valueOf(isPublished()));
 		}
+		return data;
 	}
 	
 	/*
@@ -385,21 +387,19 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		try {
 			if (e.getProperty().equals(P_PACKAGE)) {
 				// Change the label of the package row
-				String text = OOEclipsePlugin.getTranslationString(
-								I18nConstants.PACKAGE_COLON)+
-							  unoProject.getRootModule();
+				String text = Messages.getString("NewScopedElementWizardPage.Package")+ mUnoProject.getRootModule(); //$NON-NLS-1$
 				
-				if (null != e.getValue() && !e.getValue().equals("")){
-					text = text + ".";
+				if (null != e.getValue() && !e.getValue().equals("")){ //$NON-NLS-1$
+					text = text + "."; //$NON-NLS-1$
 				}
-				packageRow.setLabel(text);
+				mPackageRow.setLabel(text);
 	
 			} else if (e.getProperty().equals(P_NAME)) {
 				// Test if there is the scoped name already exists
-				boolean exists = typesProvider.contains(e.getValue());
+				boolean exists = UnoTypeProvider.getInstance().
+					contains(e.getValue());
 				if (exists) {
-					setErrorMessage(OOEclipsePlugin.getTranslationString(
-							I18nConstants.NAME_EXISTS));
+					setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
 				} else {
 					setErrorMessage(null);
 				}
@@ -418,12 +418,10 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
-		boolean result = false; 
+		boolean result = true; 
 		
 		try {
-			result = messageLabel.getText().equals("");
-			
-			if (nameRow.getValue().equals("")) {
+			if (mNameRow.getValue().equals("")) { //$NON-NLS-1$
 				result = false;
 			}
 		} catch (NullPointerException e) {

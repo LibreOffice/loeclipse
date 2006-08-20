@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,38 +43,52 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards;
 
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
-import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -91,62 +105,69 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 							      		  IConfigListener{
 	
 	/* Constants defining the field properties used to react to field change events */
-	private static final String PREFIX = "__prefix";
-	private static final String OUTPUT_EXT = "__output_ext";
-	private static final String SDK = "__sdk";
-	private static final String OOO = "__ooo";
-	private static final String LANGUAGE = "__language";
+	private static final String PREFIX = "__prefix"; //$NON-NLS-1$
+	private static final String OUTPUT_EXT = "__output_ext"; //$NON-NLS-1$
+	private static final String SDK = "__sdk"; //$NON-NLS-1$
+	private static final String OOO = "__ooo"; //$NON-NLS-1$
+	private static final String LANGUAGE = "__language"; //$NON-NLS-1$
 	
 	/**
 	 * Prefix field object
 	 */
-	private TextRow prefixRow;
+	private TextRow mPrefixRow;
 	
 	/**
 	 * Implementation extension field object
 	 */
-	private TextRow outputExt;
+	private TextRow mOutputExt;
 	
 	/**
 	 * SDK used for the project selection row
 	 */
-	private ChoiceRow sdkRow;
+	private ChoiceRow mSdkRow;
 	
 	/**
 	 * OOo used for the project selection row
 	 */
-	private ChoiceRow oooRow;
+	private ChoiceRow mOOoRow;
 	
 	/**
 	 * Programming language to use for code generation 
 	 */
-	private ChoiceRow languageRow;
+	private ChoiceRow mLanguageRow;
 	
 	/**
-	 * Specific error message label. <code>setErrorMessage()</code> will
-	 * use this row instead of the standard one.
+	 * Listener listening on the super class Text fields modifications
 	 */
-	private Label messageLabel;
-	private Label messageIcon;
+	private ModifyListener mModifListener = new ModifyListener() {
+
+		public void modifyText(ModifyEvent e) {
+			checkWhiteSpaces();
+		}
+	};
+	
+	/**
+	 * The list of the listened Text field of the super class
+	 */
+	private Vector mListenedTexts = new Vector();
+	
+	private IProject newProject;
 	
 	/**
 	 * Default constructor
 	 */
-	public NewUnoProjectPage() {
-		super(OOEclipsePlugin.getTranslationString(
-				I18nConstants.NEW_PROJECT_TITLE));
+	public NewUnoProjectPage(String pageName) {
+		super(pageName);
 		
-		setTitle(OOEclipsePlugin.getTranslationString(
-				I18nConstants.NEW_PROJECT_TITLE));
+		setTitle(Messages.getString("NewUnoProjectPage.Title")); //$NON-NLS-1$
 		
-		setDescription(OOEclipsePlugin.getTranslationString(
-				I18nConstants.NEW_PROJECT_MESSAGE));
+		setDescription(Messages.getString("NewUnoProjectPage.Message")); //$NON-NLS-1$
 		
 		setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
 				ImagesConstants.NEWPROJECT_WIZ));
 		
-		OOoContainer.getOOoContainer().addListener(this);
-		SDKContainer.getSDKContainer().addListener(this);
+		OOoContainer.getInstance().addListener(this);
+		SDKContainer.getInstance().addListener(this);
 	}
 	
 	/*
@@ -154,10 +175,17 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
+		
+		for (int i=0, length=mListenedTexts.size(); i<length; i++) {
+			Text field = (Text)mListenedTexts.get(i);
+			if (!field.isDisposed()) field.removeModifyListener(mModifListener);
+		}
+		mListenedTexts.clear();
+		
 		super.dispose();
 		
-		OOoContainer.getOOoContainer().removeListener(this);
-		SDKContainer.getSDKContainer().removeListener(this);
+		OOoContainer.getInstance().removeListener(this);
+		SDKContainer.getInstance().removeListener(this);
 	}
 	
 	/**
@@ -166,9 +194,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * @return company prefix entered
 	 */
 	public String getPrefix(){
-		String prefix = "";
-		if (null != prefixRow) {
-			prefix = prefixRow.getValue();
+		String prefix = ""; //$NON-NLS-1$
+		if (null != mPrefixRow) {
+			prefix = mPrefixRow.getValue();
 		}
 		return prefix;
 	}
@@ -179,9 +207,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * @return ouput extension entered
 	 */
 	public String getOutputExt(){
-		String output = "";
-		if (null != outputExt) {
-			output = outputExt.getValue();
+		String output = ""; //$NON-NLS-1$
+		if (null != mOutputExt) {
+			output = mOutputExt.getValue();
 		}
 		return output;
 	}
@@ -192,9 +220,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * @return SDK name selected
 	 */
 	public String getSDKName(){
-		String sdkName = "";
-		if (null != sdkRow) {
-			sdkName = sdkRow.getValue();
+		String sdkName = ""; //$NON-NLS-1$
+		if (null != mSdkRow) {
+			sdkName = mSdkRow.getValue();
 		}
 		return sdkName;
 	}
@@ -205,9 +233,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * @return OOo name selected
 	 */
 	public String getOOoName(){
-		String oooName = "";
-		if (null != oooRow) {
-			oooName = oooRow.getValue();
+		String oooName = ""; //$NON-NLS-1$
+		if (null != mOOoRow) {
+			oooName = mOOoRow.getValue();
 		}
 		return oooName;
 	}
@@ -216,9 +244,113 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * Returns the chosen implementation language
 	 */
 	public ILanguage getChosenLanguage(){
-		 String value = languageRow.getValue();
-		 return LanguagesHelper.getLanguageFromName(value);
+		ILanguage language = null;
+		if (mLanguageRow != null) {
+			String value = mLanguageRow.getValue();
+			language = LanguagesHelper.getLanguageFromName(value);
+		}
+		return language;
 	}
+	
+    /**
+     * Creates a new project resource with the selected name.
+     * <p>
+     * In normal usage, this method is invoked after the user has pressed Finish
+     * on the wizard; the enablement of the Finish button implies that all
+     * controls on the pages currently contain valid values.
+     * </p>
+     * <p>
+     * Note that this wizard caches the new project once it has been
+     * successfully created; subsequent invocations of this method will answer
+     * the same project resource without attempting to create it again.
+     * </p>
+     * 
+     * @return the created project resource, or <code>null</code> if the
+     *         project was not created
+     */
+    private IProject createNewProject() {
+        if (newProject != null) {
+			return newProject;
+		}
+
+        // get a project handle
+        final IProject newProjectHandle = getProjectHandle();
+
+        // get a project descriptor
+        URI location = null;
+        if (!useDefaults()) {
+			location = getLocationURI();
+		}
+
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        final IProjectDescription description = workspace
+                .newProjectDescription(newProjectHandle.getName());
+        description.setLocationURI(location);
+        
+
+        // create the new project operation
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+            protected void execute(IProgressMonitor monitor)
+                    throws CoreException {
+                createProject(description, newProjectHandle, monitor);
+            }
+        };
+
+        // run the new project creation operation
+        try {
+            getContainer().run(true, true, op);
+        } catch (InterruptedException e) {
+            return null;
+        } catch (InvocationTargetException e) {
+            // ie.- one of the steps resulted in a core exception
+            Throwable t = e.getTargetException();
+            PluginLogger.error(t.toString(), t);
+            ErrorDialog.openError(getShell(), 
+            		"Error during the project folder creation",
+            		null, // no special message
+            		((CoreException) t).getStatus());
+            return null;
+        }
+
+        newProject = newProjectHandle;
+
+        return newProject;
+    }
+    
+    /**
+     * Creates a project resource given the project handle and description.
+     * 
+     * @param description
+     *            the project description to create a project resource for
+     * @param projectHandle
+     *            the project handle to create a project resource for
+     * @param monitor
+     *            the progress monitor to show visual progress with
+     * 
+     * @exception CoreException
+     *                if the operation fails
+     * @exception OperationCanceledException
+     *                if the operation is canceled
+     */
+    void createProject(IProjectDescription description, IProject projectHandle,
+            IProgressMonitor monitor) throws CoreException,
+            OperationCanceledException {
+        try {
+            monitor.beginTask("", 2000);//$NON-NLS-1$
+
+            projectHandle.create(description, new SubProgressMonitor(monitor,
+                    1000));
+
+            if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+
+            projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
+
+        } finally {
+            monitor.done();
+        }
+    }
 	
 	/*
 	 *  (non-Javadoc)
@@ -226,33 +358,34 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 */
 	public void createControl(Composite parent) {
 		// Inherits the parents control
-		
 		super.createControl(parent);
+		
 		Composite control = (Composite)getControl();
 		
-		
+		// Listens to name and directory changes
+		addTextListener(control);
 		
 		Composite body = new Composite(control, SWT.NONE);
 		body.setLayout(new GridLayout(3, false));
 		body.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		// Add the company prefix field
-		prefixRow = new TextRow(body, PREFIX, 
-						OOEclipsePlugin.getTranslationString(I18nConstants.COMPANY_PREFIX));
-		prefixRow.setFieldChangedListener(this);
+		mPrefixRow = new TextRow(body, PREFIX, 
+						Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
+		mPrefixRow.setFieldChangedListener(this);
 		
 		// Add the output directory field
-		outputExt = new TextRow(body, OUTPUT_EXT,
-						OOEclipsePlugin.getTranslationString(I18nConstants.OUTPUT_EXT));
-		outputExt.setValue("comp"); // Setting default value
-		outputExt.setFieldChangedListener(this);
+		mOutputExt = new TextRow(body, OUTPUT_EXT,
+						Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
+		mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
+		mOutputExt.setFieldChangedListener(this);
 		
 		// Add the SDK choice field
-		sdkRow = new ChoiceRow(body, SDK,
-						OOEclipsePlugin.getTranslationString(I18nConstants.USED_SDK),
-						OOEclipsePlugin.getTranslationString(I18nConstants.SDKS));
-		sdkRow.setFieldChangedListener(this);
-		sdkRow.setBrowseSelectionListener(new SelectionAdapter(){
+		mSdkRow = new ChoiceRow(body, SDK,
+						Messages.getString("NewUnoProjectPage.UsedSdk"), //$NON-NLS-1$
+						Messages.getString("NewUnoProjectPage.SdkBrowse")); //$NON-NLS-1$
+		mSdkRow.setFieldChangedListener(this);
+		mSdkRow.setBrowseSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				
@@ -268,11 +401,11 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		
 		
 		// Add the OOo choice field
-		oooRow = new ChoiceRow(body, OOO,
-						OOEclipsePlugin.getTranslationString(I18nConstants.USED_OOO),
-						OOEclipsePlugin.getTranslationString(I18nConstants.OOOS));
-		oooRow.setFieldChangedListener(this);
-		oooRow.setBrowseSelectionListener(new SelectionAdapter(){
+		mOOoRow = new ChoiceRow(body, OOO,
+						Messages.getString("NewUnoProjectPage.UsedOOo"), //$NON-NLS-1$
+						Messages.getString("NewUnoProjectPage.OOoBrowse")); //$NON-NLS-1$
+		mOOoRow.setFieldChangedListener(this);
+		mOOoRow.setBrowseSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				
@@ -286,71 +419,79 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		fillOOoRow();
 		
 		
-		
 		// Adding the programming language row 
-		languageRow = new ChoiceRow(body, LANGUAGE,
-						OOEclipsePlugin.getTranslationString(I18nConstants.PROG_LANGUAGE));
+		mLanguageRow = new ChoiceRow(body, LANGUAGE,
+						Messages.getString("NewUnoProjectPage.Language")); //$NON-NLS-1$
 		
 		// Sets the available programming languages
 		String[] languages = LanguagesHelper.getAvailableLanguageNames();
 		for (int i=0; i<languages.length; i++) {
-			languageRow.add(languages[i]);
+			mLanguageRow.add(languages[i]);
 		}
-		languageRow.select(0);
-		languageRow.setFieldChangedListener(this);
-		
-		// Add an error message label
-		Composite messageComposite = new Composite(control, SWT.NONE);
-		messageComposite.setLayout(new GridLayout(2, false));
-		messageComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		messageIcon = new Label(messageComposite, SWT.LEFT);
-		messageIcon.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING |
-											   GridData.VERTICAL_ALIGN_END));
-		messageIcon.setImage(OOEclipsePlugin.getImage(ImagesConstants.ERROR));
-		messageIcon.setVisible(false);
-		
-		messageLabel = new Label(messageComposite, SWT.LEFT);
-		messageLabel.setLayoutData(new GridData(GridData.FILL_BOTH |
-				                                GridData.VERTICAL_ALIGN_END));
+		mLanguageRow.select(0);
+		mLanguageRow.setFieldChangedListener(this);
 	}
 	
 	private void fillSDKRow (){
 		
-		if (null != sdkRow){
+		if (null != mSdkRow){
 			// Adding the SDK names to the combo box 
-			SDKContainer sdkContainer = SDKContainer.getSDKContainer();
+			SDKContainer sdkContainer = SDKContainer.getInstance();
 			String[] sdks = new String[sdkContainer.getSDKCount()];
 			Vector sdkKeys = sdkContainer.getSDKKeys();
 			for (int i=0, length=sdkContainer.getSDKCount(); i<length; i++){
 				sdks[i] = (String)sdkKeys.get(i);
 			}
 			
-			sdkRow.removeAll();
-			sdkRow.addAll(sdks);
-			sdkRow.select(0);   // The default SDK is randomly the first one
+			mSdkRow.removeAll();
+			mSdkRow.addAll(sdks);
+			mSdkRow.select(0);   // The default SDK is randomly the first one
 		}
 	}
 
 	private void fillOOoRow(){
 		
-		if (null != oooRow){
+		if (null != mOOoRow){
 			
 			// Adding the OOo names to the combo box 
-			OOoContainer oooContainer = OOoContainer.getOOoContainer();
+			OOoContainer oooContainer = OOoContainer.getInstance();
 			String[] ooos = new String[oooContainer.getOOoCount()];
 			Vector oooKeys = oooContainer.getOOoKeys();
 			for (int i=0, length=oooContainer.getOOoCount(); i<length; i++){
 				ooos[i] = (String)oooKeys.get(i);
 			}
 			
-			oooRow.removeAll();
-			oooRow.addAll(ooos);
-			oooRow.select(0);   // The default OOo is randomly the first one
+			mOOoRow.removeAll();
+			mOOoRow.addAll(ooos);
+			mOOoRow.select(0);   // The default OOo is randomly the first one
 		}
 	}
 	
-	private boolean isChanging = false;
+	private void checkWhiteSpaces () {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			if (getLocationPath().toOSString().contains(" ")) {
+				setMessage("It is not recommended to have any whitespace in the project path:\nthe project might fail to build",
+					WARNING);
+			}
+		}
+	}
+	
+	private void addTextListener(Control control) {
+		
+		if (control instanceof Composite) {
+			Control[] children = ((Composite)control).getChildren();
+			for (int i=0; i<children.length; i++) {
+				Control child = children[i];
+				addTextListener(child);
+			}
+		} else if (control instanceof Text) {
+			Text text = (Text)control;
+			if (!text.isDisposed()) {
+				text.addModifyListener(mModifListener);
+				mListenedTexts.add(text);
+			}	
+		}
+	}
 	
 	/*
 	 *  (non-Javadoc)
@@ -358,41 +499,28 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 */
 	public void fieldChanged(FieldEvent e) {
 		
-		if (!isChanging){
-			
-			setPageComplete(validatePage());
-			
-			// Check the prefix correctness
-			if (e.getProperty().equals(PREFIX)){
-				
-				String newCompanyPrefix = e.getValue();
+		setPageComplete(validatePage());
+
+		// Check the prefix correctness
+		if (e.getProperty().equals(PREFIX)){
+
+			String newCompanyPrefix = e.getValue();
+			/**
+			 * <p>The company prefix is a package like name used by the project
+			 * to build the idl file path and the implementation path.</p>
+			 */
+			if (!newCompanyPrefix.matches(
+			"([a-zA-Z][a-zA-Z0-9]*)(.[a-zA-Z][a-zA-Z0-9]*)*")){ //$NON-NLS-1$
 				/**
-				 * <p>The company prefix is a package like name used by the project
-				 * to build the idl file path and the implementation path.</p>
+				 * <p>If the new company prefix is invalid, an error message
+				 * is set.</p>
 				 */
-				
-				if (!newCompanyPrefix.matches(
-						"([a-zA-Z][a-zA-Z0-9]*)(.[a-zA-Z][a-zA-Z0-9]*)*")){
-					/**
-					 * <p>If the new company prefix is invalid, an error message
-					 * is set.</p>
-					 */
-					
-					setErrorMessage(OOEclipsePlugin.getTranslationString(
-							I18nConstants.COMPANY_PREFIX_ERROR));
-					
-					setPageComplete(false);
-				} else {
-					setErrorMessage(null);
-					
-					IWizardPage nextPage = getWizard().getNextPage(this);
-					if (nextPage instanceof NewScopedElementWizardPage) {
-						NewScopedElementWizardPage aNextScoped = 
-							(NewScopedElementWizardPage) nextPage;
-						aNextScoped.setPackageRoot(getPrefix());
-						aNextScoped.setPackage("", true);
-					}
-				}
+				setErrorMessage(Messages.getString("NewUnoProjectPage.InvalidPrefixError")); //$NON-NLS-1$
+
+				setPageComplete(false);
+			} else {
+				setErrorMessage(null);
+				checkWhiteSpaces();
 			}
 			
 			// Check the implementation extension correctness
@@ -403,49 +531,24 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				 * contain numbers. It have to begin with a letter.</p> 
 				 */
 				
-				if (!newOuputExt.matches("[a-zA-Z][a-zA-Z0-9]*")){
+				if (!newOuputExt.matches("[a-zA-Z][a-zA-Z0-9]*")){ //$NON-NLS-1$
 					/**
 					 * <p>If the new implementation extension is invalid, it is set to
 					 * the empty string with an error message.</p>
 					 */
 					
-					setErrorMessage(OOEclipsePlugin.getTranslationString(
-										I18nConstants.OUTPUT_EXT_ERROR));
+					setErrorMessage(Messages.getString("NewUnoProjectPage.InvalidCompError")); //$NON-NLS-1$
 					setPageComplete(false);
 				} else {
 					setErrorMessage(null);
+					if (Platform.getOS().equals(Platform.OS_WIN32)) {
+						setMessage("It is not recommended to have any whitespace inthe project path:\nthe project might fail to build",
+							WARNING);
+					}
 				}
 			}
 			
-			if (e.getProperty().equals(OOO)) {
-				IWizardPage next = getWizard().getNextPage(this);
-				if (next instanceof NewScopedElementWizardPage) {
-					NewScopedElementWizardPage aNext = 
-						(NewScopedElementWizardPage) next;
-					
-					aNext.setOOoInstance(
-							OOoContainer.getOOoContainer().getOOo(getOOoName()));
-				}
-			}
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
-	 */
-	public void setErrorMessage(String newMessage) {
-		
-		if (null != messageLabel){
-			if (null == newMessage){
-				messageLabel.setText("");
-				messageIcon.setVisible(false);
-				messageLabel.setVisible(false);
-			} else {
-				messageLabel.setText(newMessage);
-				messageIcon.setVisible(true);
-				messageLabel.setVisible(true);
-			}
+			((NewUnoProjectWizard)getWizard()).pageChanged(this);
 		}
 	}
 	
@@ -495,9 +598,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	protected boolean validatePage() {
 		boolean result = super.validatePage();
 		
-		boolean constraint = !(null == getSDKName() || getSDKName().equals("") ||
-				null == getPrefix() || getPrefix().equals("") ||
-				 null == getOutputExt() || getOutputExt().equals(""));
+		boolean constraint = !(null == getSDKName() || getSDKName().equals("") || //$NON-NLS-1$
+				null == getPrefix() || getPrefix().equals("") || //$NON-NLS-1$
+				 null == getOutputExt() || getOutputExt().equals("")); //$NON-NLS-1$
 		
 		result = result && constraint;
 		
@@ -519,59 +622,39 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		return result;
 	}
 	
-	private IUnoidlProject unoProject = null;
+	/**
+	 * @param force forces the project creation. 
+	 * 	 Otherwise, project handle won't be set
+	 * 
+	 * @return the given data with the completed properties, <code>null</code>
+	 *   if the provided data is <code>null</code>
+	 */
+	public UnoFactoryData fillData(UnoFactoryData data, boolean force) {
+		
+		if (data != null) {
+			if (force) {
+				try {
+					data.setProperty(IUnoFactoryConstants.PROJECT_HANDLE, createNewProject());
+				} catch (Exception e) { }
+			}
+			data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, getPrefix());
+			data.setProperty(IUnoFactoryConstants.PROJECT_COMP, getOutputExt());
+			data.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());
+			data.setProperty(IUnoFactoryConstants.PROJECT_SDK, getSDKName());
+			data.setProperty(IUnoFactoryConstants.PROJECT_OOO, getOOoName());
+		}
+		
+		return data;
+	}
+	
+	private IUnoidlProject mUnoProject = null;
 	
 	/**
 	 * Returns the reference to the unoidl project
 	 * @return the underlying UnoIdl project
 	 */
 	public IUnoidlProject getUnoidlProject() {
-		return unoProject;
-	}
-	
-	/**
-	 * Create the uno idl projet
-	 * 
-	 * @param project the created project handle
-	 * @param prefix the company prefix
-	 * @param outputExt the code output extension
-	 * @param language the implemntation language
-	 * @param sdkname the SDK name
-	 * @param oooname the OOo name
-	 * @param monitor a progress monitor
-	 */
-	protected void createUnoidlProject(
-			IProject project,
-			String prefix,
-			String outputExt,
-			ILanguage language,
-			String sdkname,
-			String oooname,
-			IProgressMonitor monitor) {
-					
-		// Creates the new project whithout it's builders
-		UnoidlProjectHelper.createProject(project, monitor);
-		
-		// Create the ouput and idl packages
-		unoProject = ProjectsManager.getInstance().getProject(
-				project.getName());
-		
-		unoProject.setCompanyPrefix(prefix);
-		unoProject.setOutputExtension(outputExt);
-		unoProject.setLanguage(language);
-		unoProject.setSdk(
-				SDKContainer.getSDKContainer().getSDK(sdkname));
-		unoProject.setOOo(
-				OOoContainer.getOOoContainer().getOOo(oooname));
-		
-		// Creation of the unoidl package
-		UnoidlProjectHelper.createUnoidlPackage(unoProject, monitor);
-		
-		// Creation of the Code Packages
-		UnoidlProjectHelper.createCodePackage(unoProject, monitor);
-		
-		// Creation of the urd output directory
-		UnoidlProjectHelper.createUrdDir(unoProject, monitor);
+		return mUnoProject;
 	}
 	
 	/**
@@ -581,20 +664,20 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 */
 	private class TableDialog extends Dialog {
 		
-		private boolean editSDK = true;
+		private boolean mEditSdk = true;
 		
-		private Object table;
+		private Object mTable;
 		
 		TableDialog (Shell parentShell, boolean editSDK){
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.editSDK = editSDK;
+			mEditSdk = editSDK;
 			
 			setBlockOnOpen(true); // This dialog is a modal one
 			if (editSDK) {
-				setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.SDKS));
+				setTitle(Messages.getString("NewUnoProjectPage.SdkBrowse")); //$NON-NLS-1$
 			} else {
-				setTitle(OOEclipsePlugin.getTranslationString(I18nConstants.OOOS));
+				setTitle(Messages.getString("NewUnoProjectPage.OOoBrowse")); //$NON-NLS-1$
 			}
 		}
 		
@@ -604,12 +687,12 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		 */
 		protected Control createDialogArea(Composite parent) {
 			
-			if (editSDK){
-				table = new SDKTable(parent);
-				((SDKTable)table).getPreferences();
+			if (mEditSdk){
+				mTable = new SDKTable(parent);
+				((SDKTable)mTable).getPreferences();
 			} else {
-				table = new OOoTable(parent);
-				((OOoTable)table).getPreferences();
+				mTable = new OOoTable(parent);
+				((OOoTable)mTable).getPreferences();
 			}
 				
 			return parent;
@@ -622,10 +705,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		protected void okPressed() {
 			super.okPressed();
 			
-			if (editSDK){
-				((SDKTable)table).savePreferences();
+			if (mEditSdk){
+				((SDKTable)mTable).savePreferences();
 			} else {
-				((OOoTable)table).savePreferences();
+				((OOoTable)mTable).savePreferences();
 			}
 		}
 	}

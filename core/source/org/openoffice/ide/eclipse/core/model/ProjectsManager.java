@@ -10,7 +10,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 
 /**
@@ -21,20 +20,29 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
  */
 public class ProjectsManager implements IResourceChangeListener {
 
-	private Hashtable projects;
+	private Hashtable mProjects;
 	
-	private static ProjectsManager __instance;
+	private static ProjectsManager sInstance;
 	
 	/**
 	 * Gets the instance of the ProjectsManager singleton
 	 */
 	public static ProjectsManager getInstance() {
 		
-		if(__instance == null){
-			__instance = new ProjectsManager();
+		if(sInstance == null){
+			sInstance = new ProjectsManager();
 		}
 		
-		return __instance;
+		return sInstance;
+	}
+	
+	/**
+	 * This method will release all the stored project references. There
+	 * is no need to call this method in any other place than the plugin
+	 * stop method.
+	 */
+	public void dispose() {
+		mProjects.clear();
 	}
 	
 	/**
@@ -47,8 +55,8 @@ public class ProjectsManager implements IResourceChangeListener {
 	public IUnoidlProject getProject(String name){
 		
 		IUnoidlProject result = null;
-		if(projects.containsKey(name)){
-			result = (IUnoidlProject)projects.get(name);
+		if(mProjects.containsKey(name)){
+			result = (IUnoidlProject)mProjects.get(name);
 		}
 		return result;
 	}
@@ -60,18 +68,9 @@ public class ProjectsManager implements IResourceChangeListener {
 	 * @param project
 	 */
 	public void addProject(IUnoidlProject project) {
-		if(project != null && !projects.containsKey(project.getName())){
-			projects.put(project.getName(), project);
+		if(project != null && !mProjects.containsKey(project.getName())){
+			mProjects.put(project.getName(), project);
 		}
-	}
-	
-	/**
-	 * This method will release all the stored project references. There
-	 * is no need to call this method in any other place than the plugin
-	 * stop method.
-	 */
-	public void clear(){
-		projects.clear();
 	}
 	
 	/**
@@ -80,7 +79,7 @@ public class ProjectsManager implements IResourceChangeListener {
 	 *
 	 */
 	private ProjectsManager(){
-		projects = new Hashtable();
+		mProjects = new Hashtable();
 		
 		/* Load all the existing unoidl projects */
 		IProject[] projects = ResourcesPlugin.getWorkspace().
@@ -100,10 +99,9 @@ public class ProjectsManager implements IResourceChangeListener {
 					addProject(unoproject);
 				}
 			} catch (CoreException e) {
-				PluginLogger.getInstance().error(
-						OOEclipsePlugin.getTranslationString(
-								I18nConstants.LOAD_PROJECT_ERROR) + 
-						project.getName(), e);
+				PluginLogger.error(
+					Messages.getString("ProjectsManager.LoadProjectError") +  //$NON-NLS-1$
+					project.getName(), e);
 			}
 		}
 		
@@ -119,8 +117,9 @@ public class ProjectsManager implements IResourceChangeListener {
 		
 		// detect UNO IDL project about to be deleted
 		IResource removed = event.getResource();
-		if (projects.containsKey(removed.getName())) {
-			projects.remove(removed.getName());
+		if (mProjects.containsKey(removed.getName())) {
+			((UnoidlProject)mProjects.get(removed.getName())).dispose();
+			mProjects.remove(removed.getName());
 		}
 	}
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: Colors.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,14 +49,14 @@ package org.openoffice.ide.eclipse.core.editors;
  * @author cbosdonnat
  */
 public interface Colors {
-	public static final String C_KEYWORD = "keywordColor";
-	public static final String C_BACKGROUND = "backgroundColor";
-	public static final String C_TEXT = "textColor";
-	public static final String C_STRING = "stringColor";
-	public static final String C_TYPE = "typeColor";
-	public static final String C_COMMENT = "commentColor";
-	public static final String C_AUTODOC_COMMENT = "docCommentColor";
-	public static final String C_PREPROCESSOR = "preprocessorColor";
-	public static final String C_XML_TAG = "xmltagColor";
-	public static final String C_MODIFIER = "modifierColor";
+	public static final String C_KEYWORD = "keywordColor"; //$NON-NLS-1$
+	public static final String C_BACKGROUND = "backgroundColor"; //$NON-NLS-1$
+	public static final String C_TEXT = "textColor"; //$NON-NLS-1$
+	public static final String C_STRING = "stringColor"; //$NON-NLS-1$
+	public static final String C_TYPE = "typeColor"; //$NON-NLS-1$
+	public static final String C_COMMENT = "commentColor"; //$NON-NLS-1$
+	public static final String C_AUTODOC_COMMENT = "docCommentColor"; //$NON-NLS-1$
+	public static final String C_PREPROCESSOR = "preprocessorColor"; //$NON-NLS-1$
+	public static final String C_XML_TAG = "xmltagColor"; //$NON-NLS-1$
+	public static final String C_MODIFIER = "modifierColor"; //$NON-NLS-1$
 }

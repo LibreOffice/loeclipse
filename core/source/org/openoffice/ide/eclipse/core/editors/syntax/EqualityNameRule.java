@@ -2,9 +2,9 @@
  *
  * $RCSfile: EqualityNameRule.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,7 +62,7 @@ import org.eclipse.jface.text.rules.IToken;
 public class EqualityNameRule extends RegexRule {
 
 	public EqualityNameRule(IToken aToken) {
-		super("[a-zA-Z]+\\p{Blank}?=", aToken);
+		super("[a-zA-Z]+\\p{Blank}?=", aToken); //$NON-NLS-1$
 	}
 	
 	/*

@@ -1,3 +1,46 @@
+/*************************************************************************
+ *
+ * $RCSfile: TypesBuilder.java,v $
+ *
+ * $Revision: 1.4 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
+ *
+ * The Contents of this file are made available subject to the terms of
+ * either of the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
+ *
+ ************************************************************************/
 package org.openoffice.ide.eclipse.core.builders;
 
 import java.util.Map;
@@ -36,7 +79,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	/**
 	 * The builder ID as set in the <code>plugin.xml</code> file
 	 */
-	public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID+".types";
+	public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID+".types"; //$NON-NLS-1$
 
 	/*
 	 *  (non-Javadoc)
@@ -51,16 +94,10 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 		// Clears the registries before beginning
 		removeAllRegistries(unoproject);
 		
-		IdlcBuilder idlcBuilder = new IdlcBuilder(unoproject);
-		idlcBuilder.build(FULL_BUILD, args, monitor);
-		
-		// Workspace refreshing needed for the next tool
+		IdlcBuilder.build(unoproject, monitor);
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		
-		RegmergeBuilder regmergeBuilder = new RegmergeBuilder(unoproject);
-		regmergeBuilder.build(FULL_BUILD, args, monitor);
-
-		// Workspace refreshing needed for the next tool
+		RegmergeBuilder.build(unoproject, monitor);
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
 		IFile typesFile = unoproject.getFile(unoproject.getTypesPath());
@@ -104,7 +141,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 			}
 			
 		} catch (CoreException e) {
-			PluginLogger.getInstance().debug(e.getMessage());
+			PluginLogger.debug(e.getMessage());
 		}
 	}
 }

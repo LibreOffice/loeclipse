@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,7 +45,6 @@ package org.openoffice.ide.eclipse.core.wizards;
 
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -54,15 +53,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.InterfacesTable;
-import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
-import org.openoffice.ide.eclipse.core.model.IUnoComposite;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.UnoFactory;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 public class NewInterfaceWizardPage extends NewScopedElementWizardPage 
@@ -83,8 +78,8 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 */
 	public void dispose() {
 		
-		interfaceInheritances.removeSelectionChangedListener(this);
-		interfaceInheritances = null;
+		mInterfaceInheritances.removeSelectionChangedListener(this);
+		mInterfaceInheritances = null;
 		
 		super.dispose();
 	}
@@ -94,15 +89,13 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getProvidedTypes()
 	 */
 	public int getProvidedTypes() {
-		return UnoTypeProvider.INTERFACE;
+		return IUnoFactoryConstants.INTERFACE;
 	}
 
 	
 	//--------------------------------------------------- Page content managment
 
-	private final static String P_PUBLISHED = "__published";
-	private BooleanRow publishedRow;
-	private InterfacesTable interfaceInheritances;
+	private InterfacesTable mInterfaceInheritances;
 	
 	/*
 	 *  (non-Javadoc)
@@ -110,22 +103,19 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 */
 	protected void createSpecificControl(Composite parent) {
 		
-		publishedRow = new BooleanRow(parent, P_PUBLISHED,
-				OOEclipsePlugin.getTranslationString(
-						I18nConstants.PUBLISHED));
-		publishedRow.setFieldChangedListener(this);
-		
 		Composite tableParent = new Composite(parent, SWT.NORMAL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		tableParent.setLayoutData(gd);
 		tableParent.setLayout(new GridLayout(1, false));
 		
-		interfaceInheritances = new InterfacesTable(tableParent,
-				 new UnoTypeProvider(unoProject, UnoTypeProvider.INTERFACE));
-		interfaceInheritances.addInterface(
-				"com.sun.star.uno.XInterface", false); // TODO configuration
-		interfaceInheritances.addSelectionChangedListener(this);
+		UnoTypeProvider.getInstance().initialize(mUnoProject, 
+				IUnoFactoryConstants.INTERFACE);
+		
+		mInterfaceInheritances = new InterfacesTable(tableParent);
+		mInterfaceInheritances.addInterface(
+				"com.sun.star.uno.XInterface", false); // TODO configuration //$NON-NLS-1$
+		mInterfaceInheritances.addSelectionChangedListener(this);
 	}
 	
 	/*
@@ -133,8 +123,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
 	 */
 	public String getTitle() {
-		return OOEclipsePlugin.getTranslationString(
-				I18nConstants.NEW_INTERFACE_TITLE);
+		return Messages.getString("NewInterfaceWizardPage.Title"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -142,7 +131,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
 	 */
 	public String getDescription() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	/*
@@ -150,7 +139,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getTypeLabel()
 	 */
 	protected String getTypeLabel() {
-		return OOEclipsePlugin.getTranslationString(I18nConstants.INTERFACE_NAME);
+		return Messages.getString("NewInterfaceWizardPage.Label"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -169,8 +158,14 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
-		return super.isPageComplete() && 
-			interfaceInheritances.getLines().size() >= 1;
+		boolean complete = super.isPageComplete();
+		
+		try {
+			complete &= mInterfaceInheritances.getLines().size() >= 1;
+		} catch (Exception e) {
+			complete = false;
+		}
+		return complete;
 	}
 
 	/*
@@ -184,102 +179,52 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	}
 	
 	/**
-	 * Create the interface from the page fields
-	 * 
-	 * @return the file handle of the created interface
+	 * @return the given data with the completed properties, <code>null</code>
+	 *   if the provided data is <code>null</code>
 	 */
-	public IFile createInterface() {
-		
-		IFile interfaceFile = null;
-		
-		try {
-			
-			String path = unoProject.getRootModule();
-
-			if (!getPackage().equals("")) {
-				path = path + "::" + getPackage();
-			}
-			
-			// Create the necessary modules
-			UnoidlProjectHelper.createModules(path, unoProject, null);
-			
-			String typepath = path +"::" + getElementName();
-			
-			// Create the file node
-			IUnoComposite file = UnoFactory.createTypeFile(typepath, unoProject);
-			
-			// Create the file content skeleton
-			IUnoComposite fileContent = UnoFactory.createFileContent(typepath);
-			file.addChild(fileContent);
+	public UnoFactoryData fillData(UnoFactoryData data) {
+		data = super.fillData(data);
+		if (data != null) {
+			data.setProperty(IUnoFactoryConstants.TYPE, 
+					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
 			
 			// Vector containing the interface inheritance paths "::" separated
 			Vector optionalIntf = new Vector();
 			Vector mandatoryIntf = new Vector();
 			
 			// Separate the optional and mandatory interface inheritances			
-			Vector lines = interfaceInheritances.getLines();
+			Vector lines = mInterfaceInheritances.getLines();
 			for (int i=0, length=lines.size(); i<length; i++) {
 				InterfacesTable.InheritanceLine line = 
 					(InterfacesTable.InheritanceLine)lines.get(i);
 				
 				if (line.isOptional()) {
-					optionalIntf.add(line.getInterfaceName().replace(".", "::"));
+					optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					mandatoryIntf.add(line.getInterfaceName().replace(".", "::"));
-				}
-				
-				// Create the includes nodes for each inherited interface
-				fileContent.addChild(UnoFactory.createInclude(
-						line.getInterfaceName().replace(".", "::")));
-			}
-			
-			// Create the module node using the cascading method
-			IUnoComposite topModule = UnoFactory.createModulesSpaces(path);
-			fileContent.addChild(topModule);
-			
-			IUnoComposite currentModule = topModule;
-			while (currentModule.getChildren().length > 0) {
-			
-				// Remain that there should be only zero or one module
-				IUnoComposite[] children = currentModule.getChildren();
-				if (children.length == 1) {
-					currentModule = children[0];
+					mandatoryIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
+			lines.clear();
 			
-			// Create the interface with its mandatory inheritances
+			// Get the mandatory inheritances
 			String[] interfaces = new String[mandatoryIntf.size()];
 			for (int i=0, length=mandatoryIntf.size(); i<length; i++) {
 				interfaces[i] = (String)mandatoryIntf.get(i);
 			}
+			data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
+					interfaces);
 			
-			IUnoComposite intf = UnoFactory.createInterface(getElementName(),
-					publishedRow.getBooleanValue(), interfaces);
-			currentModule.addChild(intf);
-			
-			// Create the optional inheritances
+			// Get the optional inheritances
+			String[] opt_interfaces = new String[optionalIntf.size()];
 			for (int i=0, length=optionalIntf.size(); i<length; i++) {
-				IUnoComposite inherit = UnoFactory.createInterfaceInheritance(
-						(String)optionalIntf.get(i), true);
-				intf.addChild(inherit);
+				opt_interfaces[i] = (String)optionalIntf.get(i);
 			}
+			data.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, 
+					opt_interfaces);
 			
-			// Generate all the stuffs
-			file.create(true);
-			
-			// Returns the IFile to the generated file
-			String filename = typepath.replace("::", "/") + ".idl";
-			
-			UnoidlProjectHelper.refreshProject(unoProject, null);
-	
-			interfaceFile = unoProject.getFile(
-					unoProject.getIdlPath().append(filename));
-			
-		} catch (Exception e) {
-			PluginLogger.getInstance().error(OOEclipsePlugin.getTranslationString(
-					I18nConstants.SERVICE_CREATION_FAILED), e);
+			optionalIntf.clear();
+			mandatoryIntf.clear();
 		}
-
-		return interfaceFile;
+		return data;
 	}
 }

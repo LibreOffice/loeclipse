@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoSDKConfigPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -60,8 +60,8 @@ import org.openoffice.ide.eclipse.core.gui.SDKTable;
 public class UnoSDKConfigPage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	
-	private SDKTable sdkTable;
-	private OOoTable oooTable;
+	private SDKTable mSdkTable;
+	private OOoTable mOOoTable;
 
 	/*
 	 *  (non-Javadoc)
@@ -70,11 +70,11 @@ public class UnoSDKConfigPage extends PreferencePage implements
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		
-		sdkTable = new SDKTable(parent);
-		sdkTable.getPreferences();
+		mSdkTable = new SDKTable(parent);
+		mSdkTable.getPreferences();
 		
-		oooTable = new OOoTable(parent);
-		oooTable.getPreferences();
+		mOOoTable = new OOoTable(parent);
+		mOOoTable.getPreferences();
 		
 		return parent;
 	}
@@ -84,8 +84,8 @@ public class UnoSDKConfigPage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		sdkTable.savePreferences();
-		oooTable.savePreferences();
+		mSdkTable.savePreferences();
+		mOOoTable.savePreferences();
 		
 		return true;
 	}
@@ -95,8 +95,8 @@ public class UnoSDKConfigPage extends PreferencePage implements
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
-		sdkTable.dispose();
-		oooTable.dispose();
+		mSdkTable.dispose();
+		mOOoTable.dispose();
 		super.dispose();
 	}
 	

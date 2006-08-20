@@ -11,7 +11,6 @@ import java.util.Vector;
 
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.internal.model.SDK;
 import org.openoffice.ide.eclipse.core.internal.model.URE;
@@ -32,14 +31,14 @@ public class PropertiesManager {
 	/**
 	 * OOo SDK path preference key. Used to store the preferences
 	 */
-	private static final String SDKPATH_PREFERENCE_KEY    = "sdkpath";
+	private static final String SDKPATH_PREFERENCE_KEY    = "sdkpath"; //$NON-NLS-1$
 	
 	/**
 	 * OOo path preference key. Used to store the preferences
 	 */
-	private static final String OOOPATH_PREFERENCE_KEY    = "ooopath";
+	private static final String OOOPATH_PREFERENCE_KEY    = "ooopath"; //$NON-NLS-1$
 	
-	private static final String OOONAME_PREFERENCE_KEY	  = "oooname";
+	private static final String OOONAME_PREFERENCE_KEY	  = "oooname"; //$NON-NLS-1$
 	
 	/**
 	 * Loads the SDK properties
@@ -72,7 +71,7 @@ public class PropertiesManager {
 						SDK sdk = new SDK(path);
 						sdks.add(sdk);
 					} catch (InvalidConfigException e){
-						PluginLogger.getInstance().error(
+						PluginLogger.error(
 								e.getLocalizedMessage(), e); 
 						// This message is localized in SDK class
 					}
@@ -86,11 +85,12 @@ public class PropertiesManager {
 				result[j] = (ISdk)sdks.get(j);
 			}
 			
+			// clean the vector
+			sdks.clear();
+			
 		} catch (IOException e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_READABLE_FILE)+
-							OOEclipsePlugin.OOO_CONFIG, e);
+			PluginLogger.error(
+					Messages.getString("PropertiesManager.UnreadableFileError") + OOEclipsePlugin.OOO_CONFIG, e); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -125,16 +125,21 @@ public class PropertiesManager {
 			
 			String sdks_config_url = OOEclipsePlugin.getDefault().
 					getStateLocation().toString();
-			File file = new File(sdks_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
+			File file = new File(sdks_config_url+"/"+OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
 			if (!file.exists()){
 				file.createNewFile();
 			}
 			
-			sdksProperties.store(new FileOutputStream(file), "");
+			FileOutputStream out = new FileOutputStream(file);
+			try {
+				sdksProperties.store(out, ""); //$NON-NLS-1$
+			} finally {
+				try { out.close(); } catch (IOException e) {}
+			}
 		} catch (FileNotFoundException e) {
-			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
+			PluginLogger.error(e.getLocalizedMessage(), e);
 		} catch (IOException e){
-			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
+			PluginLogger.error(e.getLocalizedMessage(), e);
 		}
 	}
 	
@@ -178,7 +183,7 @@ public class PropertiesManager {
 							ooos.add(ure);
 						}
 						catch (InvalidConfigException ex) {
-							PluginLogger.getInstance().error(
+							PluginLogger.error(
 									e.getLocalizedMessage(), ex);
 						}
 					}
@@ -192,11 +197,12 @@ public class PropertiesManager {
 				result[j] = (IOOo)ooos.get(j);
 			}
 			
+			// Clean the vector
+			ooos.clear();
+			
 		} catch (IOException e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_READABLE_FILE)+
-							OOEclipsePlugin.OOO_CONFIG, e);
+			PluginLogger.error(
+				Messages.getString("PropertiesManager.UnreadableFileError") + OOEclipsePlugin.OOO_CONFIG, e); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -233,16 +239,21 @@ public class PropertiesManager {
 			
 			String ooos_config_url = OOEclipsePlugin.getDefault().
 						getStateLocation().toString();
-			File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
+			File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
 			if (!file.exists()){
 				file.createNewFile();
 			}
 			
-			ooosProperties.store(new FileOutputStream(file), "");
+			FileOutputStream out = new FileOutputStream(file);
+			try {
+				ooosProperties.store(out, ""); //$NON-NLS-1$
+			} finally {
+				try { out.close(); } catch (IOException e) {}
+			}
 		} catch (FileNotFoundException e) {
-			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
+			PluginLogger.error(e.getLocalizedMessage(), e);
 		} catch (IOException e){
-			PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
+			PluginLogger.error(e.getLocalizedMessage(), e);
 		}
 	}
 	
@@ -258,14 +269,19 @@ public class PropertiesManager {
 		// Loads the ooos config file into a properties object
 		String ooos_config_url = OOEclipsePlugin.getDefault().
 				getStateLocation().toString();
-		File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG);
+		File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
 		if (!file.exists()){
 			file.createNewFile();
 		}
 		
 		Properties ooosProperties = new Properties();
 	
-		ooosProperties.load(new FileInputStream(file));
+		FileInputStream in = new FileInputStream(file);
+		try {
+			ooosProperties.load(in);
+		} finally {
+			try { in.close(); } catch (IOException e) {}
+		}
 		
 		return ooosProperties;
 	}

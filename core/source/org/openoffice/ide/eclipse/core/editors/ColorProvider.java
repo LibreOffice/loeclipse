@@ -2,9 +2,9 @@
  *
  * $RCSfile: ColorProvider.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -63,12 +63,12 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
  *
  */
 public class ColorProvider {
-	protected Map fColorTable = new HashMap();
-	private IPreferenceStore store;
+	protected Map mColorTable = new HashMap();
+	private IPreferenceStore mStore;
 	
-	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+	private final IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
-			fColorTable.clear();
+			mColorTable.clear();
 		}
 	};
 	
@@ -77,20 +77,20 @@ public class ColorProvider {
 	 */
 	public ColorProvider() {
 		OOEclipsePlugin.getDefault().getPreferenceStore()
-			.addPropertyChangeListener(propertyListener);
-	    store = OOEclipsePlugin.getDefault().getPreferenceStore();
+			.addPropertyChangeListener(mPropertyListener);
+	    mStore = OOEclipsePlugin.getDefault().getPreferenceStore();
 	}
 	
 	/**
 	 * Disposing the color provider
 	 */
 	public void dispose() {
-		Iterator e = fColorTable.values().iterator();
+		Iterator e = mColorTable.values().iterator();
 		while (e.hasNext()){
 		    ( (Color) e.next() ).dispose();
 		}
 		OOEclipsePlugin.getDefault().getPreferenceStore()
-			.removePropertyChangeListener(propertyListener);
+			.removePropertyChangeListener(mPropertyListener);
 	}
 	
 	/**
@@ -101,11 +101,11 @@ public class ColorProvider {
 	 */
 	public Color getColor(String color_string){
 		
-	    Color color = (Color)fColorTable.get(color_string);
+	    Color color = (Color)mColorTable.get(color_string);
 		if (color == null){
 			color = new Color(Display.getCurrent(), 
-					PreferenceConverter.getColor(store, color_string));
-			fColorTable.put(color_string, color);
+					PreferenceConverter.getColor(mStore, color_string));
+			mColorTable.put(color_string, color);
 		}
 		return color;
 	}

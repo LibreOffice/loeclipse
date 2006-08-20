@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:08 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:57 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -65,17 +65,17 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public class OOoContainer { 
 	
-	private static OOoContainer container;
+	private static OOoContainer sInstance;
 	
 	/**
 	 * Vector of the config container listeners
 	 */
-	private Vector listeners;
+	private Vector mListeners;
 
 	/**
 	 * HashMap containing the ooo lines referenced by their path
 	 */
-	private HashMap elements;
+	private HashMap mElements;
 	
 	
 	/* Methods to manage the listeners */
@@ -87,7 +87,7 @@ public class OOoContainer {
 	 */
 	public void addListener(IConfigListener listener){
 		if (null != listener){
-			listeners.add(listener);
+			mListeners.add(listener);
 		}
 	}
 	
@@ -98,7 +98,7 @@ public class OOoContainer {
 	 */
 	public void removeListener(IConfigListener listener){
 		if (null != listener){
-			listeners.remove(listener);
+			mListeners.remove(listener);
 		}
 	}
 	
@@ -108,7 +108,11 @@ public class OOoContainer {
 	 * Returns the ooos elements in an array
 	 */
 	public Object[] toArray(){
-		return toVector().toArray();
+		Vector vElements = toVector();
+		Object[] elements = vElements.toArray();
+		
+		vElements.clear();
+		return elements;
 	}
 	
 	/**
@@ -125,19 +129,19 @@ public class OOoContainer {
 		 */ 
 		
 		if (null != ooo){
-			if (!elements.containsKey(ooo.getName())){
-				elements.put(ooo.getName(), ooo);
+			if (!mElements.containsKey(ooo.getName())){
+				mElements.put(ooo.getName(), ooo);
 				fireOOoAdded(ooo);
 			} else {
-				IOOo oooref = (IOOo)elements.get(ooo.getName());
+				IOOo oooref = (IOOo)mElements.get(ooo.getName());
 				updateOOo(oooref.getName(), ooo);
 			}
 		}
 	}
 	
 	private void fireOOoAdded(IOOo ooo) {
-		for (int i=0, length=listeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)listeners.get(i);
+		for (int i=0, length=mListeners.size(); i<length; i++){
+			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
 			listeneri.ConfigAdded(ooo);
 		}
 	}
@@ -150,8 +154,8 @@ public class OOoContainer {
 	 */
 	public void delOOo(IOOo ooo){
 		if (null != ooo){
-			if (elements.containsKey(ooo.getName())){
-				elements.remove(ooo.getName());
+			if (mElements.containsKey(ooo.getName())){
+				mElements.remove(ooo.getName());
 				fireOOoRemoved(ooo);
 			}
 		}
@@ -162,7 +166,7 @@ public class OOoContainer {
 	 *
 	 */
 	public void clear(){
-		elements.clear();
+		mElements.clear();
 		fireOOoRemoved(null);
 	}
 	
@@ -172,7 +176,7 @@ public class OOoContainer {
 	 * @return names of the contained OOos
 	 */
 	public Vector getOOoKeys(){
-		Set paths = elements.keySet();
+		Set paths = mElements.keySet();
 		return new Vector(paths);
 	}
 	
@@ -184,7 +188,7 @@ public class OOoContainer {
 	 * 		<code>false</code> otherwise.
 	 */
 	public boolean containsName(String name) {
-		return elements.containsKey(name);
+		return mElements.containsKey(name);
 	}
 	
 	/**
@@ -197,7 +201,7 @@ public class OOoContainer {
 		
 		String newName = name;
 		if (containsName(newName)) {
-			Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName);
+			Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName); //$NON-NLS-1$
 			
 			// initialise as if the name contains no #i at its end
 			int number = 0;
@@ -211,15 +215,15 @@ public class OOoContainer {
 			// Check for the last number
 			do {
 				number += 1;
-				newName = nameRoot + " #" + number;
+				newName = nameRoot + " #" + number; //$NON-NLS-1$
 			} while (containsName(newName));
 		}
 		return newName;
 	}
 	
 	private void fireOOoRemoved(IOOo ooo) {
-		for (int i=0, length=listeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)listeners.get(i);
+		for (int i=0, length=mListeners.size(); i<length; i++){
+			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
 			listeneri.ConfigRemoved(ooo);
 		}
 	}
@@ -231,26 +235,26 @@ public class OOoContainer {
 	 * @param ooo new value for the OOo
 	 */
 	public void updateOOo(String oookey, IOOo ooo){
-		if (elements.containsKey(oookey) && null != ooo){
+		if (mElements.containsKey(oookey) && null != ooo){
 			
-			IOOo oooref = (IOOo)elements.get(oookey);
+			IOOo oooref = (IOOo)mElements.get(oookey);
 			
 			// update the attributes
 			try {
 				oooref.setHome(ooo.getHome());
 			} catch (InvalidConfigException e) {
-				PluginLogger.getInstance().error(e.getLocalizedMessage(), e);
+				PluginLogger.error(e.getLocalizedMessage(), e);
 			}
 			
 			// Reassign the element in the hashmap
-			elements.put(oookey, oooref);
+			mElements.put(oookey, oooref);
 			fireOOoUpdated(ooo);
 		}
 	}
 	
 	private void fireOOoUpdated(IOOo ooo) {
-		for (int i=0, length=listeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)listeners.get(i);
+		for (int i=0, length=mListeners.size(); i<length; i++){
+			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
 			listeneri.ConfigUpdated(ooo);
 		}
 	}
@@ -264,8 +268,8 @@ public class OOoContainer {
 	public IOOo getOOo(String oookey){
 		IOOo ooo = null;
 		
-		if (elements.containsKey(oookey)){
-			ooo = (IOOo)elements.get(oookey);
+		if (mElements.containsKey(oookey)){
+			ooo = (IOOo)mElements.get(oookey);
 		} 
 		return ooo;
 	}
@@ -276,7 +280,7 @@ public class OOoContainer {
 	 * @return number of OOo in the list
 	 */
 	public int getOOoCount(){
-		return elements.size();
+		return mElements.size();
 	}
 		
 	/**
@@ -284,22 +288,22 @@ public class OOoContainer {
 	 *
 	 */
 	public void dispose() {
-		listeners.clear();
-		elements.clear();
+		mListeners.clear();
+		mElements.clear();
 	}
 
 	/**
 	 * Singleton accessor, named <code>getInstance</code> in many other
 	 * singleton pattern implementations
 	 */
-	public static OOoContainer getOOoContainer() {
+	public static OOoContainer getInstance() {
 		
-		if (null == container){
-			container = new OOoContainer();
-			container.loadOOos();
+		if (null == sInstance){
+			sInstance = new OOoContainer();
+			sInstance.loadOOos();
 		}
 		
-		return container;
+		return sInstance;
 	}
 	
 	/**
@@ -328,6 +332,9 @@ public class OOoContainer {
 			ooos[i] = (IOOo)vElements.get(i);
 		}
 		
+		// clean vector
+		vElements.clear();
+		
 		PropertiesManager.saveOOos(ooos);
 	}
 	
@@ -337,8 +344,8 @@ public class OOoContainer {
 	private OOoContainer(){
 		
 		// Initialize the members
-		elements = new HashMap();
-		listeners = new Vector();
+		mElements = new HashMap();
+		mListeners = new Vector();
 	}
 	
 	/**
@@ -348,7 +355,7 @@ public class OOoContainer {
 	 */
 	private Vector toVector(){
 		Vector result = new Vector();
-		Set entries = elements.entrySet();
+		Set entries = mElements.entrySet();
 		Iterator iter = entries.iterator();
 		
 		while (iter.hasNext()){

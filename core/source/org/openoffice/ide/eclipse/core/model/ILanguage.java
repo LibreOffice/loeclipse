@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
+import org.openoffice.ide.eclipse.core.wizards.LanguageWizardPage;
 
 /**
  * This interface has to be implemented to add a new supported language 
@@ -30,9 +31,11 @@ public interface ILanguage {
 	public void addProjectNature(IProject project);
 	
 	/**
-	 * Add the language specific build to the project.
+	 * Adds the language specific things of the uno project. The projet handle
+	 * has to be contained in the provided data.
 	 */
-	public void addLanguageBuilder(IProject project);
+	public void configureProject(UnoFactoryData data)
+		throws Exception;
 	
 	/**
 	 * <p>Generates the language specific interfaces corresponding
@@ -81,4 +84,33 @@ public interface ILanguage {
 	 * @param project the project from which to remove the dependencies
 	 */
 	public void removeOOoDependencies(IOOo ooo, IProject project);
+	
+	/**
+	 * Creates the library containing the component.
+	 * 
+	 * @param unoProject the project to build into a library
+	 * @return the created library path
+	 * @throws Exception if anything wrong happened
+	 */
+	public String createLibrary(IUnoidlProject unoProject) throws Exception;
+	
+	/**
+	 * Computes the environment variables needed to build the library.
+	 * 
+	 * @param unoProject the uno project of the library
+	 * @param project the underlying eclipse project
+	 * @return an array containing all the environment variables under
+	 * 		the form <code>NAME=VALUE</code>
+	 */
+	public String[] getBuildEnv(IUnoidlProject unoProject, IProject project);
+	
+	/**
+	 * Returns the wizard page to insert after the new UNO project page. This
+	 * page should contains language specific properties.
+	 * 
+	 * @param data data representing the project informations
+	 * @return the page or <code>null</code> if there is no need of any language
+	 * 		page. 
+	 */
+	public LanguageWizardPage getWizardPage(UnoFactoryData data);
 }

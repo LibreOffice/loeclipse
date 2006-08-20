@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectAction.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:09 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -65,7 +65,8 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 	 * Default constructor just initializing the action.
 	 */
 	public NewUnoProjectAction() {
-		init(OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow());
+		init(OOEclipsePlugin.getDefault().getWorkbench().
+				getActiveWorkbenchWindow());
 	}
 	
 	/*

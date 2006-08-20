@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfacesTable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,8 +49,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
@@ -64,8 +64,6 @@ import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
  */
 public class InterfacesTable extends AbstractTable {
 
-
-	private UnoTypeProvider typesProvider;
 	
 	/**
 	 * Simplified constructor for this kind of table. It uses a types provider
@@ -73,27 +71,21 @@ public class InterfacesTable extends AbstractTable {
 	 * This way it avoids a too long UI freeze time.
 	 * 
 	 * @param parent the parent composite where to put the table
-	 * @param aTypesProvider a UNO type provider to initialize the Type browser 
 	 */
-	public InterfacesTable(Composite parent, UnoTypeProvider aTypesProvider) {
+	public InterfacesTable(Composite parent) {
 		super(
 				parent, 
-				OOEclipsePlugin.getTranslationString(
-						I18nConstants.INHERITED_INTERFACE), 
+				Messages.getString("InterfacesTable.Title"),  //$NON-NLS-1$
 				new String[] {
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.OPT_TITLE),
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.INTERFACE_NAME_TITLE)
+					Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
+					Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
 				},
 				new int[] {20, 200}, 
 				new String[] {
 					InheritanceLine.OPTIONAL,
 					InheritanceLine.NAME
 				}
-		); 
-		
-		typesProvider = aTypesProvider;
+		);
 	}
 
 	/**
@@ -131,10 +123,11 @@ public class InterfacesTable extends AbstractTable {
 		ITableElement line = null;
 		
 		// Saving the current types filtering
+		UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
 		int oldType = typesProvider.getTypes();
 		
 		// Ask for interfaces only
-		typesProvider.setTypes(UnoTypeProvider.INTERFACE);
+		typesProvider.setTypes(IUnoFactoryConstants.INTERFACE);
 		
 		// Launching the UNO Type Browser
 		UnoTypeBrowser browser = new UnoTypeBrowser(getShell(), typesProvider);
@@ -168,8 +161,8 @@ public class InterfacesTable extends AbstractTable {
 	 */
 	public class InheritanceLine implements ITableElement {
 		
-		public static final String OPTIONAL = "__optional";
-		public static final String NAME = "__name";
+		public static final String OPTIONAL = "__optional"; //$NON-NLS-1$
+		public static final String NAME = "__name"; //$NON-NLS-1$
 		
 		private String interfaceName;
 		private boolean optional = false;

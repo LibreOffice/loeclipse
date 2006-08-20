@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,9 +51,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.Image;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
@@ -65,20 +63,20 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public class SDK implements ISdk, ITableElement {
 	
-	public static final String NAME = "__sdk_name";
+	public static final String NAME = "__sdk_name"; //$NON-NLS-1$
 	
-	public static final String PATH = "__sdk_path";
+	public static final String PATH = "__sdk_path"; //$NON-NLS-1$
 	
 	/**
 	 * private constant that holds the sdk build id key in the dk.mk file
 	 */
-	private static final String K_SDK_BUILDID = "BUILDID";
+	private static final String K_SDK_BUILDID = "BUILDID"; //$NON-NLS-1$
 	
 	/**
 	 * private constant that hold the name of the sdk config file (normaly dk.mk)
 	 * This is set to easily change if there are future sdk organization changes
 	 */
-	private static final String F_DK_CONFIG = "dk.mk";
+	private static final String F_DK_CONFIG = "dk.mk"; //$NON-NLS-1$
 
 	
 	
@@ -121,18 +119,18 @@ public class SDK implements ISdk, ITableElement {
 				 */
 				
 				// test for the idl directory
-				File idlFile = new File(homeFile, "idl");
+				File idlFile = new File(homeFile, "idl"); //$NON-NLS-1$
 				if (! (idlFile.exists() && idlFile.isDirectory()) ) {
 					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.IDL_DIR_MISSING), 
+							Messages.getString("SDK.NoIdlDirError"),  //$NON-NLS-1$
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
 				// test for the settings directory
-				File settingsFile = new File(homeFile, "settings");
+				File settingsFile = new File(homeFile, "settings"); //$NON-NLS-1$
 				if (! (settingsFile.exists() && settingsFile.isDirectory()) ) {
 					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.SETTINGS_DIR_MISSING),
+							Messages.getString("SDK.NoSettingsDirError"), //$NON-NLS-1$
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
@@ -144,7 +142,7 @@ public class SDK implements ISdk, ITableElement {
 				
 			} else {
 				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+home,
+						Messages.getString("SDK.NoDirectoryError") + home, //$NON-NLS-1$
 						InvalidConfigException.INVALID_SDK_HOME);
 			}
 		} catch (Throwable e) {
@@ -158,7 +156,7 @@ public class SDK implements ISdk, ITableElement {
 				
 				// Unexpected exception thrown
 				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.UNEXPECTED_EXCEPTION), 
+						Messages.getString("SDK.UnexpectedError"),  //$NON-NLS-1$
 						InvalidConfigException.INVALID_SDK_HOME, e);
 			}
 		}
@@ -171,7 +169,7 @@ public class SDK implements ISdk, ITableElement {
 	public String getId(){
 		String result = null;
 		
-		String[] splits = buildId.split("\\(.*\\)");
+		String[] splits = buildId.split("\\(.*\\)"); //$NON-NLS-1$
 		if (splits.length > 0){
 			result = splits[0];
 		}
@@ -202,7 +200,7 @@ public class SDK implements ISdk, ITableElement {
 	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getLabel(java.lang.String)
 	 */
 	public String getLabel(String property) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		if (property.equals(NAME)) {
 			result = getId();
 		} else if (property.equals(PATH)) {
@@ -275,23 +273,23 @@ public class SDK implements ISdk, ITableElement {
 					buildId = dkProperties.getProperty(K_SDK_BUILDID);
 				} else {
 					throw new InvalidConfigException(
-							OOEclipsePlugin.getTranslationString(I18nConstants.KEYS_NOT_SET) + K_SDK_BUILDID,
+							Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID, //$NON-NLS-1$
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
 			} catch (FileNotFoundException e) {
 				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_FILE)+ "settings/" + F_DK_CONFIG , 
+						Messages.getString("SDK.NoFileError")+ "settings/" + F_DK_CONFIG ,  //$NON-NLS-1$ //$NON-NLS-2$
 						InvalidConfigException.INVALID_SDK_HOME);
 			} catch (IOException e) {
 				throw new InvalidConfigException(
-						OOEclipsePlugin.getTranslationString(I18nConstants.NOT_READABLE_FILE) + "settings/" + F_DK_CONFIG, 
+						Messages.getString("SDK.NoReadableFileError") + "settings/" + F_DK_CONFIG,  //$NON-NLS-1$ //$NON-NLS-2$
 						InvalidConfigException.INVALID_SDK_HOME);
 			}
 			
 		} else {
 			throw new InvalidConfigException(
-					OOEclipsePlugin.getTranslationString(I18nConstants.NOT_EXISTING_DIR)+ settingsFile.getAbsolutePath(),
+					Messages.getString("SDK.NoDirectoryError")+ settingsFile.getAbsolutePath(), //$NON-NLS-1$
 					InvalidConfigException.INVALID_SDK_HOME);
 		}
 	}

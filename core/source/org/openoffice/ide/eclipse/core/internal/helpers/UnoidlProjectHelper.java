@@ -11,12 +11,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
+import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.model.UnoFactory;
+import org.openoffice.ide.eclipse.core.model.CompositeFactory;
+import org.openoffice.ide.eclipse.core.model.SDKContainer;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * Helper class for UNO-IDL project handling.
@@ -29,65 +35,73 @@ public class UnoidlProjectHelper {
 	/**
 	 * Project relative path to the build directory
 	 */
-	public static final String BUILD_BASIS = "build";
+	public static final String BUILD_BASIS = "build"; //$NON-NLS-1$
 	
 	/**
 	 * Project relative path to the source directory
 	 */
-	public static final String SOURCE_BASIS = "source";
+	public static final String SOURCE_BASIS = "source"; //$NON-NLS-1$
 	
 	/**
 	 * Project relative path to the urd output folder.
 	 */
-	public static final String URD_BASIS = BUILD_BASIS + "/urd";
+	public static final String URD_BASIS = BUILD_BASIS + "/urd"; //$NON-NLS-1$
 	
 	/**
 	 * Project relative path to the idl root folder
 	 */
-	public static final String IDL_BASIS = "idl";
+	public static final String IDL_BASIS = "idl"; //$NON-NLS-1$
 	
-	/**
-	 * This method creates and opens the project with the Java and Uno natures
-	 * 
-	 * @param project project to create
-	 * @param monitor monitor used to report the creation state
-	 */
-	public static void createProject(IProject project, 
-			IProgressMonitor monitor) {
-		try {
-			if (!project.exists()){
-				project.create(monitor);
-				PluginLogger.getInstance().debug("Project resource created: " + 
-						project.getName());
-			}
-			
-			if (!project.isOpen()){
-				project.open(monitor);
-				PluginLogger.getInstance().debug("Project is opened: " + 
-						project.getName());
-			}
-			
-			IProjectDescription description = project.getDescription();
-			String[] natureIds = description.getNatureIds();
-			String[] newNatureIds = new String[natureIds.length+1];
-			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
-			
-			// Adding the Uno Nature
-			newNatureIds[natureIds.length] = OOEclipsePlugin.UNO_NATURE_ID;
-			
-			description.setNatureIds(newNatureIds);
-			project.setDescription(description, monitor);
-			PluginLogger.getInstance().debug("UNO-IDL nature set");
-			
-			UnoidlProject unoProject = (UnoidlProject)project.getNature(
-					OOEclipsePlugin.UNO_NATURE_ID);
-			ProjectsManager.getInstance().addProject(unoProject);
-			
-		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-				OOEclipsePlugin.getTranslationString(
-					I18nConstants.NATURE_SET_FAILED), e);
-		}
+	public static IUnoidlProject createStructure(UnoFactoryData data, 
+			IProgressMonitor monitor) throws Exception {
+		
+		IUnoidlProject unoProject = null;
+		
+		// Creates the new project whithout it's builders
+		IProject project = (IProject)data.getProperty(
+				IUnoFactoryConstants.PROJECT_HANDLE);
+		createProject(project, monitor);
+		unoProject = ProjectsManager.getInstance().getProject(
+				project.getName());
+
+		// Set the company prefix
+		String prefix = (String)data.getProperty(
+				IUnoFactoryConstants.PROJECT_PREFIX);
+		unoProject.setCompanyPrefix(prefix);
+
+		// Set the output extension
+		String comp = (String)data.getProperty(
+				IUnoFactoryConstants.PROJECT_COMP);
+		unoProject.setOutputExtension(comp);
+
+		// Set the language
+		ILanguage language = (ILanguage)data.getProperty(
+				IUnoFactoryConstants.PROJECT_LANGUAGE);
+		unoProject.setLanguage(language);
+
+		// Set the SDK
+		String sdkname = (String)data.getProperty(
+				IUnoFactoryConstants.PROJECT_SDK);
+		ISdk sdk = SDKContainer.getInstance().getSDK(sdkname);
+		unoProject.setSdk(sdk);
+
+		// Set the OOo runtime
+		String oooname = (String)data.getProperty(
+				IUnoFactoryConstants.PROJECT_OOO);
+		IOOo ooo = OOoContainer.getInstance().getOOo(oooname);
+		unoProject.setOOo(ooo);
+
+
+		// Creation of the unoidl package
+		createUnoidlPackage(unoProject, monitor);
+
+		// Creation of the Code Packages
+		createCodePackage(unoProject, monitor);
+
+		// Creation of the urd output directory
+		createUrdDir(unoProject, monitor);
+		
+		return unoProject;
 	}
 	
 	/**
@@ -118,9 +132,8 @@ public class UnoidlProjectHelper {
 			// Initial build of the project 
 			project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.NOT_UNO_PROJECT), e);
+			PluginLogger.error(
+				Messages.getString("UnoidlProjectHelper.NotUnoProjectError"), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -150,17 +163,18 @@ public class UnoidlProjectHelper {
 	public static void createModules(String fullName, IUnoidlProject unoproject,
 						IProgressMonitor monitor) throws Exception {
 		
-		if (fullName != null && !fullName.equals("")) {
+		if (fullName != null && !fullName.equals("")) { //$NON-NLS-1$
 			// Create the directories
-			IUnoComposite moduleDir = UnoFactory.createModuleDir(
+			IUnoComposite moduleDir = CompositeFactory.createModuleDir(
 					fullName, unoproject);
 			moduleDir.create(true);
+			moduleDir.dispose();
 			
 			((UnoidlProject)unoproject).getProject().refreshLocal(
 					IProject.DEPTH_INFINITE, monitor);
 			
 			// Get all the folders for the modules
-			String[] modules = fullName.split("::");
+			String[] modules = fullName.split("::"); //$NON-NLS-1$
 			IFolder currentFolder = unoproject.getFolder(unoproject.getIdlPath());
 			
 			for (int i=0; i<modules.length; i++) {
@@ -171,13 +185,11 @@ public class UnoidlProjectHelper {
 					currentFolder.setPersistentProperty(
 							new QualifiedName(
 									OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-									IUnoidlProject.IDL_FOLDER), "true");
+									IUnoidlProject.IDL_FOLDER), "true"); //$NON-NLS-1$
 				}
 			}
 		} else {
-			throw new Exception(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FOLDER_CREATION_FAILED));
+			throw new IllegalArgumentException(Messages.getString("UnoidlProjectHelper.BadFullnameError")); //$NON-NLS-1$
 		}
 	}
 	
@@ -193,31 +205,30 @@ public class UnoidlProjectHelper {
 			IProgressMonitor monitor) {
 		
 		try {
-			if (null != unoproject.getRootModule().replaceAll("::", ".")){
+			if (null != unoproject.getRootModule().replaceAll("::", ".")){ //$NON-NLS-1$ //$NON-NLS-2$
 
-				PluginLogger.getInstance().debug("Creating unoidl packages");
+				PluginLogger.debug("Creating unoidl packages"); //$NON-NLS-1$
 				
 				IFolder basis = unoproject.getFolder(unoproject.getIdlPath());
 				if (!basis.exists()) {
 					basis.create(true, true, monitor);
-					PluginLogger.getInstance().debug(
-							"Unoidl base directory created");
+					PluginLogger.debug(
+							"Unoidl base directory created"); //$NON-NLS-1$
 				}
 				
 				// Adds the idl capable property
 				basis.setPersistentProperty(
 						new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-								IUnoidlProject.IDL_FOLDER), "true");
+								IUnoidlProject.IDL_FOLDER), "true"); //$NON-NLS-1$
 				
 				createModules(unoproject.getRootModule(), unoproject, monitor);
-				PluginLogger.getInstance().debug(
-						"All the modules dir have been created");
+				PluginLogger.debug(
+						"All the modules dir have been created"); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FOLDER_CREATION_FAILED)+
-							unoproject.getRootModulePath().toString(),
+			PluginLogger.error(
+					Messages.getString("UnoidlProjectHelper.FolderCreationError") + //$NON-NLS-1$
+						unoproject.getRootModulePath().toString(),
 					e);
 		}
 	}
@@ -232,43 +243,42 @@ public class UnoidlProjectHelper {
 			IProgressMonitor monitor) {
 
 		try {
-			PluginLogger.getInstance().debug("Creating source directories");
+			PluginLogger.debug("Creating source directories"); //$NON-NLS-1$
 			// Create the sources directory
 			IFolder codeFolder = unoproject.getFolder(SOURCE_BASIS);
 			if (!codeFolder.exists()){
 				codeFolder.create(true, true, monitor);
-				PluginLogger.getInstance().debug(
-					"source folder created");
+				PluginLogger.debug(
+					"source folder created"); //$NON-NLS-1$
 			}
 			
 			// Create the implementation directory
 			IPath implementationPath = unoproject.getImplementationPath();
-			String tmpPath = "";
+			String tmpPath = ""; //$NON-NLS-1$
 			
 			for (int i=0, length=implementationPath.segmentCount(); i<length; i++){
-				tmpPath = tmpPath + "/" + implementationPath.segment(i);
+				tmpPath = tmpPath + "/" + implementationPath.segment(i); //$NON-NLS-1$
 				IFolder folder = unoproject.getFolder(tmpPath);
 				
 				// create the folder
 				if (!folder.exists()){
 					folder.create(true, true, monitor);
-					PluginLogger.getInstance().debug(
-						folder.getName() + " folder created");
+					PluginLogger.debug(
+						folder.getName() + " folder created"); //$NON-NLS-1$
 				}
 			}
 			
 			unoproject.getLanguage().addLanguageDependencies(unoproject,
 					((UnoidlProject)unoproject).getProject(), monitor);
-			PluginLogger.getInstance().debug("Language dependencies added");
+			PluginLogger.debug("Language dependencies added"); //$NON-NLS-1$
 			
 			unoproject.getLanguage().addOOoDependencies(unoproject.getOOo(),
 					((UnoidlProject)unoproject).getProject());
-			PluginLogger.getInstance().debug("OOo dependencies added");
+			PluginLogger.debug("OOo dependencies added"); //$NON-NLS-1$
 			
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FOLDER_CREATION_FAILED) + SOURCE_BASIS,
+			PluginLogger.error(
+					Messages.getString("UnoidlProjectHelper.FolderCreationError") + SOURCE_BASIS, //$NON-NLS-1$
 					e);
 		}
 		
@@ -283,31 +293,30 @@ public class UnoidlProjectHelper {
 			IProgressMonitor monitor){
 		
 		try {
-			PluginLogger.getInstance().debug("Creating ouput directories");
+			PluginLogger.debug("Creating ouput directories"); //$NON-NLS-1$
 			IFolder urdFolder = unoproject.getFolder(URD_BASIS);
 			if (!urdFolder.exists()){
 				
-				String[] basis_dirs = URD_BASIS.split("/");
-				String path = "";
+				String[] basis_dirs = URD_BASIS.split("/"); //$NON-NLS-1$
+				String path = ""; //$NON-NLS-1$
 				int i = 0;
 				while (i < basis_dirs.length){
 					
-					path = path + basis_dirs[i] + "/";
+					path = path + basis_dirs[i] + "/"; //$NON-NLS-1$
 					IFolder tmpFolder = unoproject.getFolder(path);
 					
 					if (!tmpFolder.exists()) {
 						tmpFolder.create(true, true, monitor);
 						tmpFolder.setDerived(true);
-						PluginLogger.getInstance().debug(
-								tmpFolder.getName() + " folder created");
+						PluginLogger.debug(
+								tmpFolder.getName() + " folder created"); //$NON-NLS-1$
 					}
 					i++;
 				}
 			}
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-				OOEclipsePlugin.getTranslationString(
-					I18nConstants.FOLDER_CREATION_FAILED)+ URD_BASIS, e);
+			PluginLogger.error(
+				Messages.getString("UnoidlProjectHelper.FolderCreationError") + URD_BASIS, e); //$NON-NLS-1$
 		}
 	}
 	
@@ -377,7 +386,7 @@ public class UnoidlProjectHelper {
 								new QualifiedName(
 										OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
 										IUnoidlProject.IDL_FOLDER),
-							    "true");
+							    "true"); //$NON-NLS-1$
 						
 						// Recurse
 						recurseSetIdlProperty(folder, unoproject);
@@ -385,10 +394,57 @@ public class UnoidlProjectHelper {
 				}
 			}
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(
-					 OOEclipsePlugin.getTranslationString(
-							 I18nConstants.GET_CHILDREN_FAILED) + 
-							 container.getName(), e);
+			PluginLogger.error(
+				Messages.getString("UnoidlProjectHelper.ReadFolderError") +  //$NON-NLS-1$
+					container.getName(), e);
+		}
+	}
+	
+	
+	//---------------------------------------------------------- Private methods
+	
+	
+	
+	/**
+	 * This method creates and opens the project with the Java and Uno natures
+	 * 
+	 * @param project project to create
+	 * @param monitor monitor used to report the creation state
+	 */
+	private static void createProject(IProject project, 
+			IProgressMonitor monitor) {
+		try {
+			if (!project.exists()){
+				project.create(monitor);
+				PluginLogger.debug("Project resource created: " +  //$NON-NLS-1$
+						project.getName());
+			}
+			
+			if (!project.isOpen()){
+				project.open(monitor);
+				PluginLogger.debug("Project is opened: " +  //$NON-NLS-1$
+						project.getName());
+			}
+			
+			IProjectDescription description = project.getDescription();
+			String[] natureIds = description.getNatureIds();
+			String[] newNatureIds = new String[natureIds.length+1];
+			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
+			
+			// Adding the Uno Nature
+			newNatureIds[natureIds.length] = OOEclipsePlugin.UNO_NATURE_ID;
+			
+			description.setNatureIds(newNatureIds);
+			project.setDescription(description, monitor);
+			PluginLogger.debug("UNO-IDL nature set"); //$NON-NLS-1$
+			
+			UnoidlProject unoProject = (UnoidlProject)project.getNature(
+					OOEclipsePlugin.UNO_NATURE_ID);
+			ProjectsManager.getInstance().addProject(unoProject);
+			
+		} catch (CoreException e) {
+			PluginLogger.error(
+				Messages.getString("UnoidlProjectHelper.NatureSetError"), e); //$NON-NLS-1$
 		}
 	}
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,39 +43,37 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
+import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
-import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
+import org.openoffice.ide.eclipse.core.model.OOoContainer;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 	
-	private NewUnoProjectPage mainPage;
-	private NewServiceWizardPage servicePage;
+	private NewUnoProjectPage mMainPage;
+	private LanguageWizardPage mLanguagePage;
+	private NewServiceWizardPage mServicePage;
 	
-	private IWorkbenchPage activePage;
+	private IWorkbenchPage mActivePage;
 
 	public NewUnoProjectWizard() {
 		
 		super();
-		activePage = OOEclipsePlugin.getActivePage();
+		mActivePage = OOEclipsePlugin.getActivePage();
 		setForcePreviousAndNextButtons(false);
 	}
 	
@@ -84,11 +82,103 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
 	public void addPages() {
-		mainPage = new NewUnoProjectPage();
-		addPage(mainPage);
+		mMainPage = new NewUnoProjectPage("mainpage"); //$NON-NLS-1$
+		addPage(mMainPage);
 		
-		servicePage = new NewServiceWizardPage("service", null);
-		addPage(servicePage);
+		mServicePage = new NewServiceWizardPage("service", null); //$NON-NLS-1$
+		addPage(mServicePage);
+	}
+	
+	public void setLanguagePage(LanguageWizardPage page) {
+		if (page != null) {
+			if (mLanguagePage == null || 
+					!mLanguagePage.getClass().equals(page.getClass())) {
+				mLanguagePage = page;
+				addPage(mLanguagePage);
+			}
+		} else {
+			if (mLanguagePage != null) mLanguagePage.dispose();
+			mLanguagePage = null;
+		}
+	}
+	
+	/**
+	 * This method should be called by included pages to notify any change that
+	 * could have an impact on other pages.
+	 * 
+	 * TODO use this method
+	 * 
+	 * @param page the page which has changed.
+	 */
+	public void pageChanged(IWizardPage page) {
+		
+		if (mMainPage.equals(page)) {
+			
+			// Create/Remove the language page if needed
+			ILanguage lang = mMainPage.getChosenLanguage();
+			if (lang != null) {
+				UnoFactoryData data = new UnoFactoryData();
+				setLanguagePage(lang.getWizardPage(
+						mMainPage.fillData(data, false)));
+				
+				// Cleaning
+				data.dispose();
+			} else {
+				setLanguagePage(null);
+			}
+			
+			// change the language page if possible
+			if (mLanguagePage != null) { 
+				UnoFactoryData data = new UnoFactoryData();
+				mLanguagePage.setProjectInfos(
+						mMainPage.fillData(data, false));
+				
+				// cleaning
+				data.dispose();
+			}
+		
+			// Change the service page
+			mServicePage.setPackageRoot(mMainPage.getPrefix());
+			mServicePage.setPackage("", true); //$NON-NLS-1$
+			mServicePage.setOOoInstance(OOoContainer.getInstance().
+					getOOo(mMainPage.getOOoName()));
+		} 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public IWizardPage getNextPage(IWizardPage page) {
+		IWizardPage next = super.getNextPage(page);
+		
+		if (mLanguagePage != null) {
+			if (mMainPage.equals(page)) {
+				next = mLanguagePage;
+			} else if (mLanguagePage.equals(page)) {
+				next = mServicePage;
+			} else if (mServicePage.equals(page)) {
+				next = null;
+			}
+		}
+		return next;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		IWizardPage previous = super.getPreviousPage(page);
+		
+		if (mLanguagePage != null) {
+			if (mLanguagePage.equals(page)) {
+				previous = mMainPage;
+			} else if (mServicePage.equals(page)) {
+				previous = mLanguagePage;
+			}
+		}
+		return previous;
 	}
 	
 	/*
@@ -97,96 +187,15 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	 */
 	public boolean performFinish() {
 		
-		// First create the UNO project, then create the service.
+		// First gather the data
+		UnoFactoryData data = new UnoFactoryData();
+		data = mMainPage.fillData(data, true);
+		if (mLanguagePage != null) data = mLanguagePage.fillData(data);
+		data.addInnerData(mServicePage.fillData(new UnoFactoryData()));
 		
-		final String packageName = servicePage.getPackage();
-		final String name = servicePage.getElementName();
-		final String ifaceName = servicePage.getInheritanceName();
-		final boolean published = servicePage.isPublished();
-		
-		final IProject project = mainPage.getProjectHandle();
-		final String prefix = mainPage.getPrefix();
-		final String outputExt = mainPage.getOutputExt();
-		final ILanguage language = mainPage.getChosenLanguage();
-		final String sdkname = mainPage.getSDKName();
-		final String oooname = mainPage.getOOoName();
-		
-		// Instantiation of a new thread with a Progress monitor to do the job.
-		IRunnableWithProgress op = new IRunnableWithProgress (){
-
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				
-				mainPage.createUnoidlProject(
-						project, prefix, outputExt, language, 
-						sdkname, oooname, monitor);
-				
-				IUnoidlProject unoProject = mainPage.getUnoidlProject();
-				
-				servicePage.setUnoidlProject(unoProject);
-				
-				IFile file = servicePage.createService(
-						packageName, name, ifaceName.replace(".", "::"), published);
-				
-				// Reveal the project main service file	
-				selectAndReveal(file);
-				openResource(file);
-
-				UnoidlProjectHelper.setProjectBuilders(unoProject, monitor);
-			}
-		};
-		
-		
-		try {
-			getContainer().run(true, true, op);
-		} catch (InvocationTargetException e) {
-			
-			PluginLogger.getInstance().debug(e.getMessage());
-			
-			MessageDialog dialog = new MessageDialog(
-					getShell(),
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.UNO_PLUGIN_ERROR),
-					null,
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.PROJECT_CREATION_FAILED),
-					MessageDialog.ERROR,
-					new String[]{OOEclipsePlugin.getTranslationString(
-							I18nConstants.OK)},
-					0);
-			dialog.setBlockOnOpen(true);
-			dialog.create();
-			dialog.open();
-		
-			try {
-				mainPage.getProjectHandle().delete(true, true, null);
-			} catch (CoreException ex) {
-				PluginLogger.getInstance().debug(
-						"Impossible to delete the project");
-			}
-			
-		} catch (InterruptedException e) {
-			PluginLogger.getInstance().debug("Cancel pressed");
-		}
+		new ProjectCreationJob(data).schedule();
 		
 		return true;
-	}
-	
-	protected void openResource(final IFile resource) {
-		
-		if (activePage != null) {
-			final Display display = getShell().getDisplay();
-			if (display != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						try {
-							IDE.openEditor(activePage, resource, true);
-						} catch (PartInitException e) {
-							PluginLogger.getInstance().debug(e.getMessage());
-						}
-					}
-				});
-			}
-		}
 	}
 	
 	/*
@@ -195,5 +204,58 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	 */
 	public IWorkbench getWorkbench() {
 		return OOEclipsePlugin.getDefault().getWorkbench();
+	}
+	
+	private class ProjectCreationJob extends Job {
+		
+		private UnoFactoryData mData;
+		
+		public ProjectCreationJob(UnoFactoryData data) {
+			super(Messages.getString("NewUnoProjectWizard.JobName")); //$NON-NLS-1$
+			setPriority(Job.INTERACTIVE);
+			
+			mData = data;
+		}
+
+		protected IStatus run(IProgressMonitor monitor) {
+			
+			IStatus status = new Status(IStatus.OK, 
+					OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+					IStatus.OK, "", null); //$NON-NLS-1$
+			
+			// Create the projet folder structure
+			try {
+				UnoFactory.createProject(mData, mActivePage, monitor);
+			} catch (Exception e) {
+				
+				Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
+				if (o instanceof IProject) {
+					rollback(e, (IProject)o);
+				}
+				
+				PluginLogger.error(
+						Messages.getString("NewUnoProjectWizard.CreateProjectError"), e); //$NON-NLS-1$
+				
+				status = new Status(IStatus.OK, 
+						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+						IStatus.OK, 
+						Messages.getString("NewUnoProjectWizard.CreateProjectError"),  //$NON-NLS-1$
+						e);
+			}
+			
+			if (mData != null) mData.dispose();
+			mData = null;
+			
+			return status;
+		}
+		
+		private void rollback(Exception e, IProject project) {
+			try {
+				project.delete(true, true, null);
+			} catch (CoreException ex) {
+				PluginLogger.debug(
+						Messages.getString("NewUnoProjectWizard.DeleteProjectError")); //$NON-NLS-1$
+			}
+		}
 	}
 }

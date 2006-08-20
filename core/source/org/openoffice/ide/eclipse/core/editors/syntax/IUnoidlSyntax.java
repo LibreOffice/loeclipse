@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoidlSyntax.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -63,70 +63,70 @@ public interface IUnoidlSyntax {
 	 * The UNO-IDL reserved words: they will be rendered as keywords
 	 */
 	public static final String[] RESERVED_WORDS = {
-		"published",      // new with the OpenOffice.org 2.0 SDK 
-		"get",            // new with the OpenOffice.org 2.0 SDK 
-		"set",			  // new with the OpenOffice.org 2.0 SDK
-		"service",
-		"singleton",
-		"type",
-        "module",
-        "interface",
-        "struct",
-        "const",
-        "constants",
-        "exception",
-        "enum",
-        "raises",
-        "typedef"
+		"published",      // new with the OpenOffice.org 2.0 SDK  //$NON-NLS-1$
+		"get",            // new with the OpenOffice.org 2.0 SDK  //$NON-NLS-1$
+		"set",			  // new with the OpenOffice.org 2.0 SDK //$NON-NLS-1$
+		"service", //$NON-NLS-1$
+		"singleton", //$NON-NLS-1$
+		"type", //$NON-NLS-1$
+        "module", //$NON-NLS-1$
+        "interface", //$NON-NLS-1$
+        "struct", //$NON-NLS-1$
+        "const", //$NON-NLS-1$
+        "constants", //$NON-NLS-1$
+        "exception", //$NON-NLS-1$
+        "enum", //$NON-NLS-1$
+        "raises", //$NON-NLS-1$
+        "typedef" //$NON-NLS-1$
 	};
 	
 	/**
 	 * UNO-IDL modifiers, usually written in brackets
 	 */
 	public static final String[] MODIFIERS = {
-		"bound",
-		"constrained",
-		"maybeambiguous",
-		"maybedefault",
-		"maybevoid",
-        "oneway",
-		"optional",
-        "readonly",
-        "in", "out", "inout",
-        "attribute",
-		"transient",
-		"removable"
+		"bound", //$NON-NLS-1$
+		"constrained", //$NON-NLS-1$
+		"maybeambiguous", //$NON-NLS-1$
+		"maybedefault", //$NON-NLS-1$
+		"maybevoid", //$NON-NLS-1$
+        "oneway", //$NON-NLS-1$
+		"optional", //$NON-NLS-1$
+        "readonly", //$NON-NLS-1$
+        "in", "out", "inout", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        "attribute", //$NON-NLS-1$
+		"transient", //$NON-NLS-1$
+		"removable" //$NON-NLS-1$
 	};
 
 	/**
 	 * UNO-IDL constants
 	 */
 	public static final String[] CONSTANTS = {
-		"TRUE",
-		"True",
-		"FALSE",
-		"False"
+		"TRUE", //$NON-NLS-1$
+		"True", //$NON-NLS-1$
+		"FALSE", //$NON-NLS-1$
+		"False" //$NON-NLS-1$
 	};
 	
 	/**
 	 * UNO-IDL types
 	 */
 	public static final String[] TYPES = {
-        "string",
-        "short",
-        "long",
-        "byte",
-        "hyper",
-        "float",
-        "boolean",
-        "any",
-        "char",
-        "double",
-        "long",
-        "void",
-        "sequence",
-        "unsigned",
-        "...",
-        "any..."       // in the uno idl grammar, there could be a space, or not
+        "string", //$NON-NLS-1$
+        "short", //$NON-NLS-1$
+        "long", //$NON-NLS-1$
+        "byte", //$NON-NLS-1$
+        "hyper", //$NON-NLS-1$
+        "float", //$NON-NLS-1$
+        "boolean", //$NON-NLS-1$
+        "any", //$NON-NLS-1$
+        "char", //$NON-NLS-1$
+        "double", //$NON-NLS-1$
+        "long", //$NON-NLS-1$
+        "void", //$NON-NLS-1$
+        "sequence", //$NON-NLS-1$
+        "unsigned", //$NON-NLS-1$
+        "...", //$NON-NLS-1$
+        "any..."       // in the uno idl grammar, there could be a space, or not //$NON-NLS-1$
 	};
 }

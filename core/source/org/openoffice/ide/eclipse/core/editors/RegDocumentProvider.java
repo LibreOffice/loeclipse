@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegDocumentProvider.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,7 +56,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
@@ -85,8 +84,7 @@ public class RegDocumentProvider extends FileDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		// create a document from the output of the regview execution
 		
-		IDocument document = new Document(
-				OOEclipsePlugin.getTranslationString(I18nConstants.DOCUMENT_ERROR)); 
+		IDocument document = new Document(Messages.getString("RegDocumentProvider.DocumentCreationError"));  //$NON-NLS-1$
 		
 		if (element instanceof IFileEditorInput){
 		
@@ -96,38 +94,39 @@ public class RegDocumentProvider extends FileDocumentProvider {
 			
 			// Try to run regview on the file
 		
-			String command = "regview " + file.getProjectRelativePath().toOSString(); 
+			String command = "regview " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
 					
 			Process process = OOEclipsePlugin.runTool(unoproject, command, null);
 						
 			// Get the process ouput to fill the document with
-			LineNumberReader reader = new LineNumberReader(
-						new InputStreamReader(process.getInputStream()));
+			InputStreamReader in = new InputStreamReader(process.getInputStream());
+			LineNumberReader reader = new LineNumberReader(in);
 			
 			try {
-				String output = "";
+				String output = ""; //$NON-NLS-1$
 				String tmpLine = reader.readLine();
 				
 				while (null != tmpLine){
 					// The two first lines of the output are not interesting 
 					
 					if (reader.getLineNumber() > 2){
-						output = output + tmpLine + "\r\n";
+						output = output + tmpLine + "\r\n"; //$NON-NLS-1$
 					}
 					tmpLine = reader.readLine();
 				}
 				
 				document = new Document(output);
 				
-				// Do not forget to destroy the process
-				process.destroy();
-				
 			} catch (IOException e){ 
-				document = new Document(
-						OOEclipsePlugin.getTranslationString(I18nConstants.REGVIEW_READ_ERROR));
+				document = new Document(Messages.getString("RegDocumentProvider.RegviewError")); //$NON-NLS-1$
 				
 				// Do not forget to destroy the process, even after an error 
 				process.destroy();
+			} finally {
+				try {
+					reader.close();
+					in.close();
+				} catch (IOException e) {}
 			}
 		}
 			

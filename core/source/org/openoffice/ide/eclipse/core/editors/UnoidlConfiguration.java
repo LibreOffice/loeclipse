@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlConfiguration.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -69,18 +69,18 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlScanner;
  */
 public class UnoidlConfiguration extends SourceViewerConfiguration {
 	
-	private UnoidlDoubleClickStrategy doubleClickStrategy;
-	private UnoidlScanner scanner;
-	private UnoidlDocScanner docScanner;
-	private UnoidlPreprocessorScanner preprocScanner;
-	private ColorProvider colorManager;
+	private UnoidlDoubleClickStrategy mDoubleClickStrategy;
+	private UnoidlScanner mScanner;
+	private UnoidlDocScanner mDocScanner;
+	private UnoidlPreprocessorScanner mPreprocScanner;
+	private ColorProvider mColorManager;
 
 	/**
 	 * Default constructor using a color manager.
 	 * @param colorManager the color manager to colorize the syntax elements
 	 */
 	public UnoidlConfiguration(ColorProvider colorManager) {
-		this.colorManager = colorManager;
+		this.mColorManager = colorManager;
 	}
 	
 	//----------------------------------------- Text editing facilities support
@@ -92,9 +92,9 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 	public ITextDoubleClickStrategy getDoubleClickStrategy(
 		ISourceViewer sourceViewer,
 		String contentType) {
-		if (doubleClickStrategy == null)
-			doubleClickStrategy = new UnoidlDoubleClickStrategy();
-		return doubleClickStrategy;
+		if (mDoubleClickStrategy == null)
+			mDoubleClickStrategy = new UnoidlDoubleClickStrategy();
+		return mDoubleClickStrategy;
 	}
 	
 	/*
@@ -141,7 +141,7 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 		NonRuleBasedDamagerRepairer ndr =
             new NonRuleBasedDamagerRepairer(
                 new TextAttribute(
-                    colorManager.getColor(Colors.C_COMMENT)));
+                    mColorManager.getColor(Colors.C_COMMENT)));
         
         reconciler.setDamager(ndr, UnoidlPartitionScanner.IDL_COMMENT);
         reconciler.setRepairer(ndr, UnoidlPartitionScanner.IDL_COMMENT);
@@ -163,28 +163,28 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 	 * Creates the code scanner if it's not already created.
 	 */
 	protected UnoidlScanner getCodeScanner() {
-		if (scanner == null) {
-			scanner = new UnoidlScanner(colorManager);
-			scanner.setDefaultReturnToken(
+		if (mScanner == null) {
+			mScanner = new UnoidlScanner(mColorManager);
+			mScanner.setDefaultReturnToken(
 				new Token(
 					new TextAttribute(
-						colorManager.getColor(Colors.C_TEXT))));
+						mColorManager.getColor(Colors.C_TEXT))));
 		}
-		return scanner;
+		return mScanner;
 	}
 	
 	/**
 	 * Return the comments scanner if it's not already created
 	 */
 	protected UnoidlDocScanner getDocScanner(){
-		if (docScanner == null) {
-			docScanner = new UnoidlDocScanner(colorManager);
-			docScanner.setDefaultReturnToken(
+		if (mDocScanner == null) {
+			mDocScanner = new UnoidlDocScanner(mColorManager);
+			mDocScanner.setDefaultReturnToken(
 				new Token(
 					new TextAttribute(
-						colorManager.getColor(Colors.C_AUTODOC_COMMENT))));
+						mColorManager.getColor(Colors.C_AUTODOC_COMMENT))));
 		}
-		return docScanner;
+		return mDocScanner;
 	}
 	
 	/**
@@ -192,13 +192,13 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 	 * created.
 	 */
 	protected UnoidlPreprocessorScanner getPreprocScanner(){
-		if (preprocScanner == null) {
-			preprocScanner = new UnoidlPreprocessorScanner(colorManager);
-			preprocScanner.setDefaultReturnToken(
+		if (mPreprocScanner == null) {
+			mPreprocScanner = new UnoidlPreprocessorScanner(mColorManager);
+			mPreprocScanner.setDefaultReturnToken(
 				new Token(
 					new TextAttribute(
-						colorManager.getColor(Colors.C_PREPROCESSOR))));
+						mColorManager.getColor(Colors.C_PREPROCESSOR))));
 		}
-		return preprocScanner;
+		return mPreprocScanner;
 	}
 }

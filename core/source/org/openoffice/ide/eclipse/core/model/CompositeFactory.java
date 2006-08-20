@@ -20,7 +20,7 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoComposite;
  * @author cbosdonnat
  *
  */
-public final class UnoFactory {
+public final class CompositeFactory {
 	
 	
 	/**
@@ -40,8 +40,8 @@ public final class UnoFactory {
 		
 		IUnoComposite file = null;
 		
-		if (fullName != null && !fullName.equals("")) {
-			String fileName = fullName.replace("::", "/") + ".idl";
+		if (fullName != null && !fullName.equals("")) { //$NON-NLS-1$
+			String fileName = fullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			IFile filehandle = project.getFile(
 					project.getIdlPath().append(fileName));
@@ -94,19 +94,19 @@ public final class UnoFactory {
 		
 		IUnoComposite content = null;
 		
-		if (fullname != null && !fullname.equals("")) {
+		if (fullname != null && !fullname.equals("")) { //$NON-NLS-1$
 			content = new UnoComposite();
 			content.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			
 			Hashtable properties = new Hashtable();
-			String define = fullname.replace("::", "_");
-			define = "__" + define + "_idl__";
-			properties.put("define", define.toLowerCase());
+			String define = fullname.replace("::", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+			define = "__" + define + "_idl__"; //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("define", define.toLowerCase()); //$NON-NLS-1$
 			
-			String template = "#ifndef ${define}\n"+
-			                  "#define ${define}\n" + 
-			                  "\n${children}\n" +
-							  "#endif\n";
+			String template = "#ifndef ${define}\n"+ //$NON-NLS-1$
+			                  "#define ${define}\n" +  //$NON-NLS-1$
+			                  "\n${children}\n" + //$NON-NLS-1$
+							  "#endif\n"; //$NON-NLS-1$
 			
 			content.configure(properties, template);
 		}
@@ -131,14 +131,14 @@ public final class UnoFactory {
 		
 		IUnoComposite include = null;
 		
-		if (fullName != null && !fullName.equals("")) {
-			String fileName = fullName.replace("::", "/") + ".idl";
+		if (fullName != null && !fullName.equals("")) { //$NON-NLS-1$
+			String fileName = fullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			include = new UnoComposite();
 			include.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			Hashtable properties = new Hashtable();
-			properties.put("file", fileName);
-			String template = "#include <${file}>\n";
+			properties.put("file", fileName); //$NON-NLS-1$
+			String template = "#include <${file}>\n"; //$NON-NLS-1$
 			include.configure(properties, template);
 		}
 		
@@ -160,7 +160,7 @@ public final class UnoFactory {
 		
 		UnoComposite module = new UnoComposite();
 		module.setType(IUnoComposite.COMPOSITE_TYPE_FOLDER);
-		String path = fullName.replace("::", "/");
+		String path = fullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		IFolder filehandle = project.getFolder(
 				project.getIdlPath().append(path));
@@ -186,8 +186,8 @@ public final class UnoFactory {
 		UnoComposite module = new UnoComposite();
 		module.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 		Hashtable properties = new Hashtable();
-		properties.put("name", name);
-		String template = "module ${name} { ${children} };"; 
+		properties.put("name", name); //$NON-NLS-1$
+		String template = "module ${name} { ${children} };";  //$NON-NLS-1$
 		module.configure(properties, template);
 		
 		return module;
@@ -205,8 +205,8 @@ public final class UnoFactory {
 		
 		IUnoComposite topModule = null;
 		
-		if (fullName != null && !fullName.equals("")){
-			String[] modules = fullName.split("::");
+		if (fullName != null && !fullName.equals("")){ //$NON-NLS-1$
+			String[] modules = fullName.split("::"); //$NON-NLS-1$
 			
 			if (modules.length > 0) {
 				
@@ -249,27 +249,27 @@ public final class UnoFactory {
 		
 		IUnoComposite service = null;
 		
-		if (name != null && !name.equals("")){
+		if (name != null && !name.equals("")){ //$NON-NLS-1$
 			service = new UnoComposite();
 			service.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			service.setIndented(true);  // A non indented service is unreadable
 			Hashtable properties = new Hashtable();
-			properties.put("name", name);
+			properties.put("name", name); //$NON-NLS-1$
 			
-			if (interfaceFullName != null && !interfaceFullName.equals("")){
-				properties.put("interface", ": " + interfaceFullName + " ");
+			if (interfaceFullName != null && !interfaceFullName.equals("")){ //$NON-NLS-1$
+				properties.put("interface", ": " + interfaceFullName + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
-				properties.put("interface", "");
+				properties.put("interface", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			if (isPublished) {
-				properties.put("published", "published ");
+				properties.put("published", "published "); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				properties.put("published", "");
+				properties.put("published", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
-			String template = "\n\n${published}service ${name} ${interface}{\n"+
-							  "${children}\n};\n\n";
+			String template = "\n\n${published}service ${name} ${interface}{\n"+ //$NON-NLS-1$
+							  "${children}\n};\n\n"; //$NON-NLS-1$
 			
 			service.configure(properties, template);
 		}
@@ -356,25 +356,25 @@ public final class UnoFactory {
 		
 		IUnoComposite intf = null;
 		
-		if (name != null && !name.equals("")) {
+		if (name != null && !name.equals("")) { //$NON-NLS-1$
 			intf = new UnoComposite();
 			intf.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			intf.setIndented(true);
 			
 			Hashtable properties = new Hashtable();
-			properties.put("name", name);
+			properties.put("name", name); //$NON-NLS-1$
 			if (parentIntfNames.length == 1) {
-				properties.put("interface", ": " + parentIntfNames[0] + " ");
+				properties.put("interface", ": " + parentIntfNames[0] + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
-				properties.put("interface", "");
+				properties.put("interface", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (isPublished) {
-				properties.put("published", "published ");
+				properties.put("published", "published "); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				properties.put("published", "");
+				properties.put("published", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			String template = "\n\n${published}interface ${name} ${interface}{\n" +
-				"${children}\n};\n\n";
+			String template = "\n\n${published}interface ${name} ${interface}{\n" + //$NON-NLS-1$
+				"${children}\n};\n\n"; //$NON-NLS-1$
 			intf.configure(properties, template);
 			
 			// Adds the interfaces if more than 1
@@ -407,14 +407,14 @@ public final class UnoFactory {
 			String name, boolean optional){
 		
 		IUnoComposite intf = null;
-		if (name != null && !name.equals("")) {
+		if (name != null && !name.equals("")) { //$NON-NLS-1$
 			intf = new UnoComposite();
 			intf.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			
 			Hashtable properties = new Hashtable();
-			properties.put("name", name);
-			properties.put("optional", optional?"[optional] ":"");
-			String template = "\t${optional}interface ${name};\n";
+			properties.put("name", name); //$NON-NLS-1$
+			properties.put("optional", optional?"[optional] ":""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String template = "\t${optional}interface ${name};\n"; //$NON-NLS-1$
 			intf.configure(properties, template);
 		}
 		return intf;

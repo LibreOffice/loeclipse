@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeBrowser.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -64,6 +64,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -73,8 +74,8 @@ import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 
 /**
  * A dialog to browse UNO types. This class doesn't launch the types query:
@@ -88,8 +89,8 @@ public class UnoTypeBrowser extends StatusDialog
 							implements IFieldChangedListener,
 							 		   IInitListener {
 
-	private UnoTypeProvider typesProvider;
-	private InternalUnoType selectedType;
+	private UnoTypeProvider mTypesProvider;
+	private InternalUnoType mSelectedType;
 	
 	/**
 	 * Creates a new browser dialog. The browser, waits for the type provider
@@ -103,22 +104,20 @@ public class UnoTypeBrowser extends StatusDialog
 		
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setBlockOnOpen(true);
-		setTitle(OOEclipsePlugin.getTranslationString(
-				I18nConstants.UNO_BROWSER_TITLE));
+		setTitle(Messages.getString("UnoTypeBrowser.Title")); //$NON-NLS-1$
 		
 		// Initialize the Type Browser
 		if (null != aUnoTypesProvider) {
-			typesProvider = aUnoTypesProvider;
-			typesProvider.addInitListener(this);
+			mTypesProvider = aUnoTypesProvider;
+			mTypesProvider.addInitListener(this);
 			
-			if (!typesProvider.isInitialized()){
+			if (!mTypesProvider.isInitialized()){
 				// changes the status to warn the user
 				
 				updateStatus(new Status(IStatus.INFO,
 						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 						IStatus.INFO,
-						OOEclipsePlugin.getTranslationString(
-								I18nConstants.WAITING_4_UNOTYPES),
+						Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
 						null));
 			}
 		}
@@ -126,41 +125,41 @@ public class UnoTypeBrowser extends StatusDialog
 	
 	//---------------------------------------------------- UI creation & control 
 	
-	private TextRow inputRow;
-	private TableViewer typesList;
+	private TextRow mInputRow;
+	private TableViewer mTypesList;
 	
-	private BooleanRow moduleFilterRow;
-	private BooleanRow interfaceFilterRow;
-	private BooleanRow serviceFilterRow;
-	private BooleanRow structFilterRow;
-	private BooleanRow enumFilterRow;
-	private BooleanRow exceptionFilterRow;
-	private BooleanRow typedefFilterRow;
-	private BooleanRow constantFilterRow;
-	private BooleanRow constantsFilterRow;
-	private BooleanRow singletonFilterRow;
+	private BooleanRow mModuleFilterRow;
+	private BooleanRow mInterfaceFilterRow;
+	private BooleanRow mServiceFilterRow;
+	private BooleanRow mStructFilterRow;
+	private BooleanRow mEnumFilterRow;
+	private BooleanRow mExceptionFilterRow;
+	private BooleanRow mTypedefFilterRow;
+	private BooleanRow mConstantFilterRow;
+	private BooleanRow mConstantsFilterRow;
+	private BooleanRow mSingletonFilterRow;
 	
-	private static final String F_INPUT = "__input";
+	private static final String F_INPUT = "__input"; //$NON-NLS-1$
 	
-	private static final String F_MODULE = "__module";
+	private static final String F_MODULE = "__module"; //$NON-NLS-1$
 	
-	private static final String F_INTERFACE = "__interface";
+	private static final String F_INTERFACE = "__interface"; //$NON-NLS-1$
 	
-	private final static String F_SERVICE = "__service";
+	private final static String F_SERVICE = "__service"; //$NON-NLS-1$
 	
-	private final static String F_STRUCT = "__struct";
+	private final static String F_STRUCT = "__struct"; //$NON-NLS-1$
 	
-	private final static String F_ENUM = "__enum";
+	private final static String F_ENUM = "__enum"; //$NON-NLS-1$
 	
-	private final static String F_EXCEPTION = "__exception";
+	private final static String F_EXCEPTION = "__exception"; //$NON-NLS-1$
 	
-	private final static String F_TYPEDEF = "__typedef";
+	private final static String F_TYPEDEF = "__typedef"; //$NON-NLS-1$
 	
-	private final static String F_CONSTANT = "__contant";
+	private final static String F_CONSTANT = "__contant"; //$NON-NLS-1$
 	
-	private final static String F_CONSTANTS = "__constants";
+	private final static String F_CONSTANTS = "__constants"; //$NON-NLS-1$
 	
-	private final static String F_SINGLETON = "__singleton";
+	private final static String F_SINGLETON = "__singleton"; //$NON-NLS-1$
 	
 	/*
 	 *  (non-Javadoc)
@@ -180,24 +179,23 @@ public class UnoTypeBrowser extends StatusDialog
 		gdLabel.horizontalSpan = 2;
 		gdLabel.heightHint = 20;
 		titleLabel.setLayoutData(gdLabel);
-		titleLabel.setText(OOEclipsePlugin.getTranslationString(
-				I18nConstants.SELECT_TYPE_MESSAGE));
+		titleLabel.setText(Messages.getString("UnoTypeBrowser.TitleTitle")); //$NON-NLS-1$
 		
 		// create the input text row
-		inputRow = new TextRow(body, F_INPUT, 
-				OOEclipsePlugin.getTranslationString(I18nConstants.TYPE_NAME));
-		inputRow.setFieldChangedListener(this);
+		mInputRow = new TextRow(body, F_INPUT, 
+				Messages.getString("UnoTypeBrowser.TypeName")); //$NON-NLS-1$
+		mInputRow.setFieldChangedListener(this);
 		
 		createList(body);
 		createFilterRows(body);
-		filter = typesProvider.getTypes();
+		mFilter = mTypesProvider.getTypes();
 
-		typesList.setInput(typesProvider);
-		if (!typesProvider.isInitialized()) {
+		mTypesList.setInput(mTypesProvider);
+		if (!mTypesProvider.isInitialized()) {
 			activateFields(false);
 		}
 		
-		inputRow.setFocus();
+		mInputRow.setFocus();
 		
 		return body;
 	}
@@ -211,19 +209,20 @@ public class UnoTypeBrowser extends StatusDialog
 		Runnable run = new Runnable(){
 
 			public void run() {
-				
-				typesList.refresh();
-				activateFields(true);
-				
-				updateStatus(new Status(IStatus.INFO,
-						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-						IStatus.INFO,
-						"",
-						null));
+				if (!mTypesList.getTable().isDisposed()) {
+					mTypesList.refresh();
+					activateFields(true);
+
+					updateStatus(new Status(IStatus.INFO,
+							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+							IStatus.INFO,
+							"", //$NON-NLS-1$
+							null));
+				}
 			}
 		};
 	
-		getContents().getDisplay().asyncExec(run);
+		Display.getDefault().asyncExec(run);
 	}
 	
 	/**
@@ -242,37 +241,36 @@ public class UnoTypeBrowser extends StatusDialog
 		TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setWidth(300);
 		
-		typesList = new TableViewer(table);
-		typesList.setUseHashlookup(true);
-		typesList.setLabelProvider(new TypeLabelProvider());
-		typesList.setContentProvider(new InternalTypesProvider());
-		typesList.addFilter(new UnoTypesFilter());
-		typesList.setSorter(new ViewerSorter());
-		typesList.addSelectionChangedListener(new ISelectionChangedListener() {
+		mTypesList = new TableViewer(table);
+		mTypesList.setUseHashlookup(true);
+		mTypesList.setLabelProvider(new TypeLabelProvider());
+		mTypesList.setContentProvider(new InternalTypesProvider());
+		mTypesList.addFilter(new UnoTypesFilter());
+		mTypesList.setSorter(new ViewerSorter());
+		mTypesList.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (event.getSelection().isEmpty()){
 					updateStatus(new Status(Status.ERROR,
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							Status.ERROR,
-							OOEclipsePlugin.getTranslationString(
-									I18nConstants.EMPTY_SELECTION),
+							Messages.getString("UnoTypeBrowser.EmptySelectionError"), //$NON-NLS-1$
 							null));
-					selectedType = null;
+					mSelectedType = null;
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
 					
 				} else {
 					updateStatus(new Status(Status.OK,
 							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							Status.OK,
-							"",
+							"", //$NON-NLS-1$
 							null));
 					getButton(IDialogConstants.OK_ID).setEnabled(true);
 					
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-					selectedType = (InternalUnoType)selection.getFirstElement();
+					mSelectedType = (InternalUnoType)selection.getFirstElement();
 					
-					typesList.refresh(selectedType, true);
+					mTypesList.refresh(mSelectedType, true);
 				}
 			}			
 		});
@@ -287,94 +285,84 @@ public class UnoTypeBrowser extends StatusDialog
 		
 		// Create the necessary filter rows depending on the needed types
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.MODULE) &&
-				typesProvider.getTypes() != UnoTypeProvider.MODULE){
-			moduleFilterRow = new BooleanRow(parent, F_MODULE, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_MODULES));
-			moduleFilterRow.setValue(true);
-			moduleFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.MODULE) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.MODULE){
+			mModuleFilterRow = new BooleanRow(parent, F_MODULE, 
+					Messages.getString("UnoTypeBrowser.FilterModule")); //$NON-NLS-1$
+			mModuleFilterRow.setValue(true);
+			mModuleFilterRow.setFieldChangedListener(this);
 		}
 
-		if (typesProvider.isTypeSet(UnoTypeProvider.INTERFACE) &&
-				typesProvider.getTypes() != UnoTypeProvider.INTERFACE) {
-			interfaceFilterRow = new BooleanRow(parent, F_INTERFACE, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_INTERFACES));
-			interfaceFilterRow.setValue(true);
-			interfaceFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.INTERFACE) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.INTERFACE) {
+			mInterfaceFilterRow = new BooleanRow(parent, F_INTERFACE, 
+					Messages.getString("UnoTypeBrowser.FilterInterface")); //$NON-NLS-1$
+			mInterfaceFilterRow.setValue(true);
+			mInterfaceFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.SERVICE) &&
-				typesProvider.getTypes() != UnoTypeProvider.SERVICE){
-			serviceFilterRow = new BooleanRow(parent, F_SERVICE, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_SERVICES));
-			serviceFilterRow.setValue(true);
-			serviceFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.SERVICE) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.SERVICE){
+			mServiceFilterRow = new BooleanRow(parent, F_SERVICE, 
+					Messages.getString("UnoTypeBrowser.FilterService")); //$NON-NLS-1$
+			mServiceFilterRow.setValue(true);
+			mServiceFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.STRUCT) &&
-				typesProvider.getTypes() != UnoTypeProvider.STRUCT){
-			structFilterRow = new BooleanRow(parent, F_STRUCT, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_STRUCTS));
-			structFilterRow.setValue(true);
-			structFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.STRUCT) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.STRUCT){
+			mStructFilterRow = new BooleanRow(parent, F_STRUCT, 
+					Messages.getString("UnoTypeBrowser.FilterStruct")); //$NON-NLS-1$
+			mStructFilterRow.setValue(true);
+			mStructFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.ENUM) &&
-				typesProvider.getTypes() != UnoTypeProvider.ENUM){
-			enumFilterRow = new BooleanRow(parent, F_ENUM, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_ENUMS));
-			enumFilterRow.setValue(true);
-			enumFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.ENUM) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.ENUM){
+			mEnumFilterRow = new BooleanRow(parent, F_ENUM, 
+					Messages.getString("UnoTypeBrowser.FilterEnum")); //$NON-NLS-1$
+			mEnumFilterRow.setValue(true);
+			mEnumFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.EXCEPTION) &&
-				typesProvider.getTypes() != UnoTypeProvider.EXCEPTION){
-			exceptionFilterRow = new BooleanRow(parent, F_EXCEPTION, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_EXCEPTIONS));
-			exceptionFilterRow.setValue(true);
-			exceptionFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.EXCEPTION) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.EXCEPTION){
+			mExceptionFilterRow = new BooleanRow(parent, F_EXCEPTION, 
+					Messages.getString("UnoTypeBrowser.FilterException")); //$NON-NLS-1$
+			mExceptionFilterRow.setValue(true);
+			mExceptionFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.TYPEDEF) &&
-				typesProvider.getTypes() != UnoTypeProvider.TYPEDEF){
-			typedefFilterRow = new BooleanRow(parent, F_TYPEDEF, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_TYPEDEFS));
-			typedefFilterRow.setValue(true);
-			typedefFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.TYPEDEF) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.TYPEDEF){
+			mTypedefFilterRow = new BooleanRow(parent, F_TYPEDEF, 
+					Messages.getString("UnoTypeBrowser.FilterTypedef")); //$NON-NLS-1$
+			mTypedefFilterRow.setValue(true);
+			mTypedefFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.CONSTANT) &&
-				typesProvider.getTypes() != UnoTypeProvider.CONSTANT){
-			constantFilterRow = new BooleanRow(parent, F_CONSTANT, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_CONSTANTS));
-			constantFilterRow.setValue(true);
-			constantFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.CONSTANT) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.CONSTANT){
+			mConstantFilterRow = new BooleanRow(parent, F_CONSTANT, 
+					Messages.getString("UnoTypeBrowser.FilterConstant")); //$NON-NLS-1$
+			mConstantFilterRow.setValue(true);
+			mConstantFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.CONSTANTS) &&
-				typesProvider.getTypes() != UnoTypeProvider.CONSTANTS){
-			constantsFilterRow = new BooleanRow(parent, F_CONSTANTS, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_CONSTANTSS));
-			constantsFilterRow.setValue(true);
-			constantsFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.CONSTANTS) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.CONSTANTS){
+			mConstantsFilterRow = new BooleanRow(parent, F_CONSTANTS, 
+					Messages.getString("UnoTypeBrowser.FilterConstants")); //$NON-NLS-1$
+			mConstantsFilterRow.setValue(true);
+			mConstantsFilterRow.setFieldChangedListener(this);
 		}
 		
-		if (typesProvider.isTypeSet(UnoTypeProvider.SINGLETON) &&
-				typesProvider.getTypes() != UnoTypeProvider.SINGLETON){
-			singletonFilterRow = new BooleanRow(parent, F_SINGLETON, 
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.FILTER_SINGLETONS));
-			singletonFilterRow.setValue(true);
-			singletonFilterRow.setFieldChangedListener(this);
+		if (mTypesProvider.isTypeSet(IUnoFactoryConstants.SINGLETON) &&
+				mTypesProvider.getTypes() != IUnoFactoryConstants.SINGLETON){
+			mSingletonFilterRow = new BooleanRow(parent, F_SINGLETON, 
+					Messages.getString("UnoTypeBrowser.FilterSingleton")); //$NON-NLS-1$
+			mSingletonFilterRow.setValue(true);
+			mSingletonFilterRow.setFieldChangedListener(this);
 		}
 	}
 	
@@ -382,47 +370,47 @@ public class UnoTypeBrowser extends StatusDialog
 	 * Method to activate or unactivate the dialog fields
 	 */
 	public void activateFields(boolean activate) {
-		inputRow.setEnabled(activate);
-		typesList.getTable().setEnabled(activate);
+		mInputRow.setEnabled(activate);
+		mTypesList.getTable().setEnabled(activate);
 		
-		if (null != moduleFilterRow) {
-			moduleFilterRow.setEnabled(activate);
+		if (null != mModuleFilterRow) {
+			mModuleFilterRow.setEnabled(activate);
 		}
 		
-		if (null != interfaceFilterRow) {
-			interfaceFilterRow.setEnabled(activate);
+		if (null != mInterfaceFilterRow) {
+			mInterfaceFilterRow.setEnabled(activate);
 		}
 		
-		if (null != serviceFilterRow) {
-			serviceFilterRow.setEnabled(activate);
+		if (null != mServiceFilterRow) {
+			mServiceFilterRow.setEnabled(activate);
 		}
 		
-		if (null != structFilterRow) {
-			structFilterRow.setEnabled(activate);
+		if (null != mStructFilterRow) {
+			mStructFilterRow.setEnabled(activate);
 		}
 		
-		if (null != enumFilterRow) {
-			enumFilterRow.setEnabled(activate);
+		if (null != mEnumFilterRow) {
+			mEnumFilterRow.setEnabled(activate);
 		}
 		
-		if (null != exceptionFilterRow) {
-			exceptionFilterRow.setEnabled(activate);
+		if (null != mExceptionFilterRow) {
+			mExceptionFilterRow.setEnabled(activate);
 		}
 		
-		if (null != typedefFilterRow) {
-			typedefFilterRow.setEnabled(activate);
+		if (null != mTypedefFilterRow) {
+			mTypedefFilterRow.setEnabled(activate);
 		}
 		
-		if (null != constantFilterRow) {
-			constantFilterRow.setEnabled(activate);
+		if (null != mConstantFilterRow) {
+			mConstantFilterRow.setEnabled(activate);
 		}
 		
-		if (null != constantsFilterRow) {
-			constantsFilterRow.setEnabled(activate);
+		if (null != mConstantsFilterRow) {
+			mConstantsFilterRow.setEnabled(activate);
 		}
 		
-		if (null != singletonFilterRow) {
-			singletonFilterRow.setEnabled(activate);
+		if (null != mSingletonFilterRow) {
+			mSingletonFilterRow.setEnabled(activate);
 		}
 		
 		Button okButton = getButton(IDialogConstants.OK_ID);
@@ -453,9 +441,9 @@ public class UnoTypeBrowser extends StatusDialog
 			if (element instanceof InternalUnoType) {
 				int type = ((InternalUnoType)element).getType();
 				
-				if (UnoTypeProvider.SERVICE == type) {
+				if (IUnoFactoryConstants.SERVICE == type) {
 					result = OOEclipsePlugin.getImage(ImagesConstants.SERVICE);
-				} else if (UnoTypeProvider.INTERFACE == type) {
+				} else if (IUnoFactoryConstants.INTERFACE == type) {
 					result = OOEclipsePlugin.getImage(ImagesConstants.INTERFACE);
 				}
 				
@@ -468,18 +456,18 @@ public class UnoTypeBrowser extends StatusDialog
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
-			String result = "";
+			String result = ""; //$NON-NLS-1$
 			
 			if (element instanceof InternalUnoType){
 				InternalUnoType type = (InternalUnoType)element;
 				result = type.getName();
 				
-				if (!typesList.getSelection().isEmpty()){
+				if (!mTypesList.getSelection().isEmpty()){
 					IStructuredSelection selection = (IStructuredSelection)
-								typesList.getSelection();
+								mTypesList.getSelection();
 					
 					if (selection.getFirstElement().equals(type)){
-						result = result + " - " + type.getFullName();
+						result = result + " - " + type.getFullName(); //$NON-NLS-1$
 					}
 				}
 			}
@@ -499,15 +487,14 @@ public class UnoTypeBrowser extends StatusDialog
 		 * resulting data.
 		 */
 		
-		if (typesList.getSelection().isEmpty()) {
+		if (mTypesList.getSelection().isEmpty()) {
 			updateStatus(new Status(Status.ERROR,
 					OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 					Status.ERROR,
-					OOEclipsePlugin.getTranslationString(
-							I18nConstants.EMPTY_SELECTION), 
+					Messages.getString("UnoTypeBrowser.EmptySelectionError"),  //$NON-NLS-1$
 					null));
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
-			typesProvider.removeInitListener(this);
+			mTypesProvider.removeInitListener(this);
 		} else {
 			super.okPressed();
 		}
@@ -515,7 +502,7 @@ public class UnoTypeBrowser extends StatusDialog
 
 	//------------------------------------------------- React on field changing
 	
-	private int filter;
+	private int mFilter;
 	
 	/**
 	 * Refreshes the dialog
@@ -523,7 +510,7 @@ public class UnoTypeBrowser extends StatusDialog
 	private void refresh(){
 		
 		activateFields(false);
-		typesList.refresh();
+		mTypesList.refresh();
 		activateFields(true);
 	}
 	
@@ -538,78 +525,78 @@ public class UnoTypeBrowser extends StatusDialog
 			refresh();
 			
 		} else if (e.getProperty().equals(F_MODULE)) {
-			boolean newValue = moduleFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.MODULE);
-			filter = newValue ? filter & inv | UnoTypeProvider.MODULE : filter & inv;
+			boolean newValue = mModuleFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.MODULE);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.MODULE : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_INTERFACE)) {
-			boolean newValue = interfaceFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.INTERFACE);
-			filter = newValue ? filter & inv | UnoTypeProvider.INTERFACE : filter & inv;
+			boolean newValue = mInterfaceFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.INTERFACE);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.INTERFACE : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_SERVICE)) {
-			boolean newValue = serviceFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.SERVICE);
-			filter = newValue ? filter & inv | UnoTypeProvider.SERVICE : filter & inv;
+			boolean newValue = mServiceFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.SERVICE);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.SERVICE : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_STRUCT)) {
-			boolean newValue = structFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.STRUCT);
-			filter = newValue ? filter & inv | UnoTypeProvider.STRUCT : filter & inv;
+			boolean newValue = mStructFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.STRUCT);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.STRUCT : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_ENUM)) {
-			boolean newValue = enumFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.ENUM);
-			filter = newValue ? filter & inv | UnoTypeProvider.ENUM : filter & inv;
+			boolean newValue = mEnumFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.ENUM);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.ENUM : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_EXCEPTION)) {
-			boolean newValue = exceptionFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.EXCEPTION);
-			filter = newValue ? filter & inv | UnoTypeProvider.EXCEPTION : filter & inv;
+			boolean newValue = mExceptionFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.EXCEPTION);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.EXCEPTION : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_TYPEDEF)) {
-			boolean newValue = typedefFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.TYPEDEF);
-			filter = newValue ? filter & inv | UnoTypeProvider.TYPEDEF : filter & inv;
+			boolean newValue = mTypedefFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.TYPEDEF);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.TYPEDEF : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_CONSTANT)) {
-			boolean newValue = constantFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.CONSTANT);
-			filter = newValue ? filter & inv | UnoTypeProvider.CONSTANT : filter & inv;
+			boolean newValue = mConstantFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.CONSTANT);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.CONSTANT : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_CONSTANTS)) {
-			boolean newValue = constantsFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.CONSTANTS);
-			filter = newValue ? filter & inv | UnoTypeProvider.CONSTANTS : filter & inv;
+			boolean newValue = mConstantsFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.CONSTANTS);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.CONSTANTS : mFilter & inv;
 			
 			refresh();
 			
 		} else if (e.getProperty().equals(F_SINGLETON)) {
-			boolean newValue = singletonFilterRow.getBooleanValue();
-			int inv = UnoTypeProvider.invertTypeBits(UnoTypeProvider.SINGLETON);
-			filter = newValue ? filter & inv | UnoTypeProvider.SINGLETON : filter & inv;
+			boolean newValue = mSingletonFilterRow.getBooleanValue();
+			int inv = UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.SINGLETON);
+			mFilter = newValue ? mFilter & inv | IUnoFactoryConstants.SINGLETON : mFilter & inv;
 			
 			refresh();
 			
 		}
 		
-		inputRow.setFocus();
+		mInputRow.setFocus();
 	}
 	
 	//---------------------------------------- Filters the elements in the list
@@ -631,9 +618,9 @@ public class UnoTypeBrowser extends StatusDialog
 			
 			if (element instanceof InternalUnoType){
 				InternalUnoType type = (InternalUnoType)element;
-				if ((filter & type.getType()) != 0) {
+				if ((mFilter & type.getType()) != 0) {
 					// The type is correct, check the name
-					if (type.getName().startsWith(inputRow.getValue())){
+					if (type.getName().startsWith(mInputRow.getValue())){
 						select = true;
 					}
 				}
@@ -648,18 +635,18 @@ public class UnoTypeBrowser extends StatusDialog
 	 * Returns the selected {@link InternalUnoType}
 	 */
 	public InternalUnoType getSelectedType(){
-		return selectedType;
+		return mSelectedType;
 	}
 	
 	public void setSelectedType(InternalUnoType type) {
-		selectedType = type;
-		if (null != typesList){
+		mSelectedType = type;
+		if (null != mTypesList){
 			IStructuredSelection selection = StructuredSelection.EMPTY;
-			if (null != selectedType) {
-				selection = new StructuredSelection(selectedType);
+			if (null != mSelectedType) {
+				selection = new StructuredSelection(mSelectedType);
 			}
 			
-			typesList.setSelection(selection);
+			mTypesList.setSelection(selection);
 		}
 	}
 	
@@ -676,7 +663,7 @@ public class UnoTypeBrowser extends StatusDialog
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return typesProvider.toArray();
+			return mTypesProvider.toArray();
 		}
 
 		/*

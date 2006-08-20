@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlEditor.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -68,7 +68,7 @@ public class UnoidlEditor extends TextEditor {
 	/**
 	 * Member that listens to the preferences porperty changes 
 	 */
-	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+	private IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			getSourceViewer().invalidateTextPresentation();
 			
@@ -78,7 +78,7 @@ public class UnoidlEditor extends TextEditor {
 	/**
 	 * The color manager providing the colors for the editor
 	 */
-	private ColorProvider colorManager;
+	private ColorProvider mColorManager;
 	
 	/**
 	 * Default constructor setting the correct document provider and viewer
@@ -87,10 +87,10 @@ public class UnoidlEditor extends TextEditor {
 	public UnoidlEditor() {
 		super();
 		
-		colorManager = new ColorProvider();
-		setSourceViewerConfiguration(new UnoidlConfiguration(colorManager));
+		mColorManager = new ColorProvider();
+		setSourceViewerConfiguration(new UnoidlConfiguration(mColorManager));
 		setDocumentProvider(new UnoidlDocumentProvider());
-		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyListener);
+		OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(mPropertyListener);
 	}
 	
 	/*
@@ -106,8 +106,8 @@ public class UnoidlEditor extends TextEditor {
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		colorManager.dispose();
-		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyListener);
+		mColorManager.dispose();
+		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(mPropertyListener);
 		super.dispose();
 	}
 	

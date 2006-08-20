@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -70,7 +70,7 @@ public class OOo extends AbstractOOo {
 	/**
 	 * private constant that holds the ooo name key in the bootstraprc file
 	 */
-	private static final String  K_PRODUCTKEY = "ProductKey";
+	private static final String  K_PRODUCTKEY = "ProductKey"; //$NON-NLS-1$
 	
 	/**
 	 * Creating a new OOo instance specifying its home directory
@@ -94,7 +94,8 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.preferences.IOOo#getClassesPath()
 	 */
 	public String getClassesPath(){
-		return getHome() + "/program/classes";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		return getHome() + sep + "program" + sep + "classes"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/*
@@ -102,7 +103,8 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getLibsPath()
 	 */
 	public String getLibsPath() {
-		return getHome() + "/program";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		return getHome() + sep + "program"; //$NON-NLS-1$
 	}
 	
 	/*
@@ -110,7 +112,8 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getTypesPath()
 	 */
 	public String getTypesPath() {
-		return getHome() + "/program/types.rdb";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		return getHome() + sep + "program" + sep +"types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -118,7 +121,8 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getServicesPath()
 	 */
 	public String getServicesPath() {
-		return getHome() + "/program/services.rdb";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		return getHome() + sep + "program" + sep + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -126,11 +130,12 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnorcPath()
 	 */
 	public String getUnorcPath() {
-		String path = getHome() + "/program/bootstrap";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String path = getHome() + sep + "program" + sep + "bootstrap"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			path += ".ini";
+			path += ".ini"; //$NON-NLS-1$
 		} else {
-			path += "rc";
+			path += "rc"; //$NON-NLS-1$
 		}
 		return path;
 	}
@@ -140,7 +145,8 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnoPath()
 	 */
 	public String getUnoPath() {
-		return getHome() + "/program/uno";
+		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
+		return getHome() + sep + "program" + sep + "uno"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/*
@@ -150,7 +156,7 @@ public class OOo extends AbstractOOo {
 	protected void setName(String aName) {
 		
 		String name = aName;
-		if (name == null || name.equals("")) {
+		if (name == null || name.equals("")) { //$NON-NLS-1$
 			name = getOOoName();
 		}
 		
@@ -187,5 +193,59 @@ public class OOo extends AbstractOOo {
 		}
 		
 		return oooname;
+	}
+	
+	public String toString() {
+		return "OOo " + getName(); //$NON-NLS-1$
+	}
+	
+	public String createUnoCommand(String implementationName, String libLocation,
+			String[] registriesPaths, String[] args) {
+		
+		String command = ""; //$NON-NLS-1$
+		
+		if (libLocation != null && !libLocation.equals("")) { //$NON-NLS-1$
+			// Put the args into one string
+			String sArgs = ""; //$NON-NLS-1$
+			for (int i=0; i<args.length; i++) {
+				sArgs += args[i];
+
+				if (i < args.length -1) {
+					sArgs += " "; //$NON-NLS-1$
+				}
+			}
+
+			// Defines OS specific constants
+			String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
+			String fileSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
+
+			// Constitute the classpath for OOo Boostrapping
+			String classpath = "-cp "; //$NON-NLS-1$
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				classpath += "\""; //$NON-NLS-1$
+			}
+
+			String oooClassesPath = getClassesPath();
+			File oooClasses = new File(oooClassesPath);
+			String[] content = oooClasses.list();
+
+			for (int i=0, length=content.length; i<length; i++){
+				String contenti = content[i];
+				if (contenti.endsWith(".jar")) { //$NON-NLS-1$
+					classpath += oooClassesPath + 
+						fileSeparator + contenti + pathSeparator;
+				}
+			}
+
+			classpath += libLocation;
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				classpath += "\""; //$NON-NLS-1$
+			}
+
+			command = "java " + classpath + " " + //$NON-NLS-1$ //$NON-NLS-2$
+				implementationName + " " + sArgs; //$NON-NLS-1$
+		}
+			
+		return command;
 	}
 }

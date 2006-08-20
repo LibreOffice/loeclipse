@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlEditorPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -50,15 +50,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.editors.Colors;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 
 /**
  * Preference page to change the UNO-IDL editor colors
  *  
  * @author cbosdonnat
  */
-public class UnoidlEditorPage
-	extends FieldEditorPreferencePage
+public class UnoidlEditorPage extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
 
 	/**
@@ -68,8 +66,7 @@ public class UnoidlEditorPage
 	public UnoidlEditorPage() {
 		super(GRID);
 		setPreferenceStore(OOEclipsePlugin.getDefault().getPreferenceStore());
-		setDescription(OOEclipsePlugin.getTranslationString(
-				I18nConstants.EDITOR_COLORS_PREF));
+		setDescription(Messages.getString("UnoidlEditorPage.Title")); //$NON-NLS-1$
 	}
 
 	/*
@@ -78,26 +75,26 @@ public class UnoidlEditorPage
 	 */
 	public void createFieldEditors() {
 		addField(new ColorFieldEditor(Colors.C_TEXT, 
-				 OOEclipsePlugin.getTranslationString(I18nConstants.TEXT), getFieldEditorParent()));
+				 Messages.getString("UnoidlEditorPage.Text"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(Colors.C_KEYWORD, 
-				 OOEclipsePlugin.getTranslationString(I18nConstants.KEYWORD), getFieldEditorParent()));
+				 Messages.getString("UnoidlEditorPage.Keyword"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(Colors.C_MODIFIER,
-				 OOEclipsePlugin.getTranslationString(I18nConstants.MODIFIER),
+				 Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
 				 getFieldEditorParent()));
 		addField(new ColorFieldEditor(Colors.C_STRING, 
-				 OOEclipsePlugin.getTranslationString(I18nConstants.STRING), getFieldEditorParent()));
+				 Messages.getString("UnoidlEditorPage.String"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(Colors.C_TYPE, 
-				 OOEclipsePlugin.getTranslationString(I18nConstants.TYPE), getFieldEditorParent()));
+				 Messages.getString("UnoidlEditorPage.Type"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(Colors.C_COMMENT, 
-				 OOEclipsePlugin.getTranslationString(I18nConstants.COMMENT), getFieldEditorParent()));
+				 Messages.getString("UnoidlEditorPage.Comment"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT,
-				 OOEclipsePlugin.getTranslationString(I18nConstants.AUTODOC_COMMENT), 
+				 Messages.getString("UnoidlEditorPage.AutodocComment"),  //$NON-NLS-1$
 				 getFieldEditorParent()));
 		addField(new ColorFieldEditor(Colors.C_XML_TAG,
-				 OOEclipsePlugin.getTranslationString(I18nConstants.XML_TAG),
+				 Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
 				 getFieldEditorParent()));
 		addField(new ColorFieldEditor(Colors.C_PREPROCESSOR, 
-				 OOEclipsePlugin.getTranslationString(I18nConstants.PREPROCESSOR_COMMAND), 
+				 Messages.getString("UnoidlEditorPage.PreprocessorCommand"),  //$NON-NLS-1$
 				 getFieldEditorParent()));
 	}
 	

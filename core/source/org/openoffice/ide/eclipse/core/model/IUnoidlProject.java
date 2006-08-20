@@ -3,6 +3,7 @@ package org.openoffice.ide.eclipse.core.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.QualifiedName;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
@@ -13,7 +14,7 @@ public interface IUnoidlProject {
 	 * persistent folder property that determines whether the
 	 * folder can contain unoidl files or not. 
 	 */
-	public static final String IDL_FOLDER = "idlfolder";
+	public static final String IDL_FOLDER = "idlfolder"; //$NON-NLS-1$
 	
 	//---------------------------------------------------- Properties accessors
 
@@ -54,6 +55,25 @@ public interface IUnoidlProject {
 	 * Sets the selected SDK
 	 */
 	public void setSdk(ISdk aSdk);
+	
+	/**
+	 * Add a new persistent property to the project. This can be used by
+	 * plugins to set their own properties on the project.
+	 * 
+	 * @param name the property qualified name
+	 * @param value the property value
+	 */
+	public void addProperty(QualifiedName name, String value);
+	
+	/**
+	 * Get a project's persistent property. This can be used by
+	 * plugins to get their own properties from the project.
+	 * 
+	 * @param name the property name
+	 * @return the value of the property or <code>null</code> if it doesn't
+	 * 		exists
+	 */
+	public String getProperty(QualifiedName name);
 	
 	//-------------------------------------------------------- Config accessors
 	
@@ -111,17 +131,22 @@ public interface IUnoidlProject {
 	public IPath getProjectPath();
 	
 	/**
-	 * Returns the path to the sources directory: that is "source".
+	 * @return the path to the sources directory: that is "source".
 	 */
 	public IPath getSourcePath();
 	
 	/**
-	 * Returns the path to the project <code>types.rdb</code> file.
+	 * @return the path to the project <code>types.rdb</code> file.
 	 */
 	public IPath getTypesPath();
 	
 	/**
-	 * Returns the path to the project directory containing the generated 
+	 * @return the path to the project <code>services.rdb</code> file.
+	 */
+	public IPath getServicesPath();
+	
+	/**
+	 * @return the path to the project directory containing the generated 
 	 * urd files.
 	 */
 	public IPath getUrdPath();

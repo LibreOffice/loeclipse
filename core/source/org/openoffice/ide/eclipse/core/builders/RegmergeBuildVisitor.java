@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuildVisitor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -65,7 +65,7 @@ public class RegmergeBuildVisitor implements IResourceVisitor {
 	/**
 	 * Progress monitor used during all the visits
 	 */
-	private IProgressMonitor progressMonitor; 
+	private IProgressMonitor mProgressMonitor; 
 	
 	/**
 	 * Default constructor
@@ -74,7 +74,7 @@ public class RegmergeBuildVisitor implements IResourceVisitor {
 	 */
 	public RegmergeBuildVisitor(IProgressMonitor monitor) {
 		super();
-		progressMonitor = monitor;
+		mProgressMonitor = monitor;
 	}
 
 	/*
@@ -88,11 +88,11 @@ public class RegmergeBuildVisitor implements IResourceVisitor {
 		if (IResource.FILE == resource.getType()){
 			
 			// Try to compile the file if it is an idl file
-			if (resource.getFileExtension().equals("urd")){
+			if (resource.getFileExtension().equals("urd")){ //$NON-NLS-1$
 				
 				RegmergeBuilder.runRegmergeOnFile(
-						(IFile)resource, progressMonitor);
-				progressMonitor.worked(1);
+						(IFile)resource, mProgressMonitor);
+				if (mProgressMonitor != null) mProgressMonitor.worked(1);
 			}
 			
 		} else if (resource instanceof IContainer){
@@ -106,8 +106,11 @@ public class RegmergeBuildVisitor implements IResourceVisitor {
 				visitChildren = true;
 			}
 		} else {
-			PluginLogger.getInstance().debug("Non handled resource");
+			PluginLogger.debug("Non handled resource"); //$NON-NLS-1$
 		}
+		
+		// helps cleaning
+		mProgressMonitor = null;
 		
 		return visitChildren;
 	}

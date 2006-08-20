@@ -19,7 +19,9 @@ Require-Bundle: org.eclipse.ui,
  org.junit
 Eclipse-AutoStart: true
 Export-Package: org.openoffice.ide.eclipse.core,
+ org.openoffice.ide.eclipse.core.gui.rows,
  org.openoffice.ide.eclipse.core.i18n,
  org.openoffice.ide.eclipse.core.model,
- org.openoffice.ide.eclipse.core.preferences
+ org.openoffice.ide.eclipse.core.preferences,
+ org.openoffice.ide.eclipse.core.wizards
 Bundle-Vendor: OpenOffice.org
