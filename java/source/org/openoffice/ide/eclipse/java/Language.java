@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -23,12 +24,14 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.i18n.I18nConstants;
 import org.openoffice.ide.eclipse.core.model.ILanguage;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
+import org.openoffice.ide.eclipse.core.wizards.LanguageWizardPage;
 
 /**
  * Implementation for the Java language
@@ -36,6 +39,11 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
  * @author cbosdonnat
  */
 public class Language implements ILanguage {
+	
+	private final static QualifiedName P_REGISTRATION_CLASSNAME = new QualifiedName(
+			OOoJavaPlugin.PLUGIN_ID, "regclassname");  //$NON-NLS-1$
+	private final static QualifiedName P_JAVA_VERSION = new QualifiedName(
+			OOoJavaPlugin.PLUGIN_ID, "javaversion");  //$NON-NLS-1$
 	
 	/*
 	 *  (non-Javadoc)
@@ -45,13 +53,13 @@ public class Language implements ILanguage {
 		try {
 			if (!project.exists()){
 				project.create(null);
-				PluginLogger.getInstance().debug(
+				PluginLogger.debug(
 						"Project created during language specific operation"); //$NON-NLS-1$
 			}
 			
 			if (!project.isOpen()){
 				project.open(null);
-				PluginLogger.getInstance().debug("Project opened"); //$NON-NLS-1$
+				PluginLogger.debug("Project opened"); //$NON-NLS-1$
 			}
 			
 			IProjectDescription description = project.getDescription();
@@ -64,37 +72,49 @@ public class Language implements ILanguage {
 			
 			description.setNatureIds(newNatureIds);
 			project.setDescription(description, null);
-			PluginLogger.getInstance().debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
+			PluginLogger.debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
 			
 		} catch (CoreException e) {
-			PluginLogger.getInstance().error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
+			PluginLogger.error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
 		}
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.model.ILanguage#addLanguageBuilder(org.eclipse.core.resources.IProject)
-	 */
-	public void addLanguageBuilder(IProject project) {
+	public void configureProject(UnoFactoryData data) 
+		throws Exception {
 		
-		try {
-			IProjectDescription descr = project.getDescription();
-			ICommand[] oldCommands = descr.getBuildSpec();
-			ICommand[] newCommands = new ICommand[oldCommands.length+1];
+		// Get the project from data
+		IProject prj = (IProject)data.getProperty(
+				IUnoFactoryConstants.PROJECT_HANDLE);
+		IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(
+				prj.getName());
 		
-			System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
-			
-			ICommand typesbuilderCommand = descr.newCommand();
-			typesbuilderCommand.setBuilderName(JavaCore.BUILDER_ID);
-			newCommands[oldCommands.length] = typesbuilderCommand;
-			
-			descr.setBuildSpec(newCommands);
-			project.setDescription(descr, null);
-			
-		} catch(CoreException e) {
-			PluginLogger.getInstance().error(
-					Messages.getString("Language.JavaBuilderAddFailed")); //$NON-NLS-1$
-		}
+		// Add Java builder
+		IProjectDescription descr = prj.getDescription();
+		ICommand[] oldCommands = descr.getBuildSpec();
+		ICommand[] newCommands = new ICommand[oldCommands.length+1];
+
+		System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
+
+		ICommand typesbuilderCommand = descr.newCommand();
+		typesbuilderCommand.setBuilderName(JavaCore.BUILDER_ID);
+		newCommands[oldCommands.length] = typesbuilderCommand;
+
+		descr.setBuildSpec(newCommands);
+		prj.setDescription(descr, null);
+		
+		// Set some properties on the project
+		
+		// Registration class name
+		String regclass = (String)data.getProperty(
+				JavaWizardPage.REGISTRATION_CLASS_NAME);
+		unoprj.addProperty(P_REGISTRATION_CLASSNAME,
+				regclass);
+		
+		// Java version
+		String javaversion = (String)data.getProperty(
+				JavaWizardPage.JAVA_VERSION);
+		unoprj.addProperty(P_JAVA_VERSION,
+				javaversion);
 	}
 	
 	/*
@@ -134,7 +154,7 @@ public class Language implements ILanguage {
 							new InputStreamReader(process.getErrorStream()));
 					
 					// Only for debugging purpose
-					if (PluginLogger.getInstance().isLevel(PluginLogger.DEBUG)){ //$NON-NLS-1$
+					if (PluginLogger.isLevel(PluginLogger.DEBUG)){ //$NON-NLS-1$
 					
 						String line = lineReader.readLine();
 						while (null != line){
@@ -146,13 +166,11 @@ public class Language implements ILanguage {
 					process.waitFor();
 				}
 			} catch (InterruptedException e) {
-				PluginLogger.getInstance().error(
-						OOEclipsePlugin.getTranslationString(
-								I18nConstants.CODE_GENERATION_FAILED), e);
+				PluginLogger.error(
+						Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
 			} catch (IOException e) {
-				PluginLogger.getInstance().warning(
-						OOEclipsePlugin.getTranslationString(
-								I18nConstants.ERROR_OUTPUT_UNREADABLE));
+				PluginLogger.warning(
+						Messages.getString("Language.UnreadableOutputError")); //$NON-NLS-1$
 			}
 		}
 	}
@@ -211,7 +229,7 @@ public class Language implements ILanguage {
 				
 				javaProject.setRawClasspath(entries, null);
 			} catch (JavaModelException e){
-				PluginLogger.getInstance().error(
+				PluginLogger.error(
 						Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
 			}
 		}
@@ -245,7 +263,7 @@ public class Language implements ILanguage {
 			javaProject.setRawClasspath(result, null);
 			
 		} catch (JavaModelException e) {
-			PluginLogger.getInstance().error(
+			PluginLogger.error(
 					Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
 		}
 	}
@@ -307,5 +325,59 @@ public class Language implements ILanguage {
 		}
 		return isKept;
 	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.ILanguage#createLibrary(org.openoffice.ide.eclipse.core.model.IUnoidlProject)
+	 */
+	public String createLibrary(IUnoidlProject unoProject) throws Exception {
+		// TODO Run jar and create projectname.jar
+		
+		return null;
+	}
+
+	/*
+	 *  (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.ILanguage#getBuildEnv(org.openoffice.ide.eclipse.core.model.IUnoidlProject, org.eclipse.core.resources.IProject)
+	 */
+	public String[] getBuildEnv(IUnoidlProject unoProject, IProject project) {
+		String[] env = new String[1];
+		
+		// compute the classpath for the project's OOo instance
+		String classpath = "CLASSPATH="; //$NON-NLS-1$
+		String sep = System.getProperty("path.separator"); //$NON-NLS-1$
+		
+		// Compute the classpath for the project dependencies
+		IJavaProject javaProject = JavaCore.create(project);
+		if (javaProject != null) {
+			try {
+				IClasspathEntry[] cpEntry = javaProject.getResolvedClasspath(true);
+				for (int i=0; i<cpEntry.length; i++) {
+					IClasspathEntry entry = cpEntry[i];
+					
+					// Transform into the correct path for the entry.
+					classpath += entry.getPath().toOSString();
+					if (i < cpEntry.length - 1) {
+						classpath += sep;
+					}
+				}
+			} catch (JavaModelException e) {
+				PluginLogger.error(
+						Messages.getString("Language.GetClasspathError"), e); //$NON-NLS-1$
+			}
+		}
+		
+		env[0] = classpath;
+		
+		return env;
+	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.ILanguage#getWizardPage(java.lang.String, java.lang.String)
+	 */
+	public LanguageWizardPage getWizardPage(UnoFactoryData data) {
+//		return new JavaWizardPage(data);
+		return null; // TODO just for fixing release
+	}
 }

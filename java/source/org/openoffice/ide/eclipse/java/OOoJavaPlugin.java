@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
  */
 public class OOoJavaPlugin extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "org.openoffice.ide.eclipse.java";
+	public static final String PLUGIN_ID = "org.openoffice.ide.eclipse.java"; //$NON-NLS-1$
 	
 	//The shared instance.
 	private static OOoJavaPlugin plugin;
@@ -51,6 +51,6 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.openoffice.ide.eclipse.java", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 }
