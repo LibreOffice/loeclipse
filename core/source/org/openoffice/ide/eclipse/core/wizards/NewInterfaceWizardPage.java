@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -113,8 +113,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 				IUnoFactoryConstants.INTERFACE);
 		
 		mInterfaceInheritances = new InterfacesTable(tableParent);
-		mInterfaceInheritances.addInterface(
-				"com.sun.star.uno.XInterface", false); // TODO configuration //$NON-NLS-1$
+		mInterfaceInheritances.setToolTipText("Set the optional and mandatory interfaces from \nwhich the new interface will inherit.\nIf there are only optional interfaces, the first one\nwill be considered as mandatory.");
 		mInterfaceInheritances.addSelectionChangedListener(this);
 	}
 	
@@ -131,7 +130,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
 	 */
 	public String getDescription() {
-		return ""; //$NON-NLS-1$
+		return Messages.getString("NewInterfaceWizardPage.InterfaceDescription"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -149,23 +148,6 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	protected ImageDescriptor getImageDescriptor() {
 		return OOEclipsePlugin.getImageDescriptor(
 				ImagesConstants.NEW_INTERFACE_IMAGE);
-	}
-
-	/*
-	 * 	Override isPageComplete to be sure to have at least one inheritance
-	 *  
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
-	 */
-	public boolean isPageComplete() {
-		boolean complete = super.isPageComplete();
-		
-		try {
-			complete &= mInterfaceInheritances.getLines().size() >= 1;
-		} catch (Exception e) {
-			complete = false;
-		}
-		return complete;
 	}
 
 	/*

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:54 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -50,8 +50,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
@@ -287,7 +287,8 @@ public class UnoTypeProvider {
 		if (null != oooInstance) {
 			// Compute the library location (UnoTypesGetter.jar file)
 			URL pluginURL = OOEclipsePlugin.getDefault().getBundle().getEntry("/."); //$NON-NLS-1$
-			URL libURL = FileLocator.toFileURL(pluginURL);
+			// NOTE not replaced by FileLocator to avoid dependency on Eclipse 3.2 
+			URL libURL = Platform.resolve(pluginURL);
 
 			// Compute the types mask argument
 			String typesMask = "-T" + types; //$NON-NLS-1$

@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.openoffice.ide.eclipse.core.model.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 
 /**
  * Helper class for implementation languages handling

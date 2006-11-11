@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuilder.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -120,7 +120,7 @@ public class IdlcBuilder {
 			String command = "idlc -O " + outputLocation.toOSString() + //$NON-NLS-1$
 				" -I " + sdkPath.append("idl").toOSString() + //$NON-NLS-1$ //$NON-NLS-2$
 				" -I " + project.getIdlPath().toOSString() +  //$NON-NLS-1$
-				" " + file.getProjectRelativePath().toString();  //$NON-NLS-1$
+				" " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
 			
 			Process process = OOEclipsePlugin.runTool(
 					project, command, monitor);

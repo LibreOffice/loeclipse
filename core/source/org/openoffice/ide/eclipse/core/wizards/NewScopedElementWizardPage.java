@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -330,10 +330,6 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		body.setLayout(new GridLayout(3, false));
 		body.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		mPublishedRow = new BooleanRow(body, P_PUBLISHED,
-				Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
-		mPublishedRow.setFieldChangedListener(this);
-		
 		// Creates the package row
 		String packageLabel = Messages.getString("NewScopedElementWizardPage.Package"); //$NON-NLS-1$
 		if (null != mUnoProject) {
@@ -343,12 +339,24 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		mPackageRow = new TextRow(body, P_PACKAGE, packageLabel);
 		mPackageRow.setFieldChangedListener(this);
 		mPackageRow.setValue(mRootName);
+		mPackageRow.setTooltip("Defines the sub-modules name which will contain the new type,\neg: \"sub::module\". This value is optional.");
 		
 		mNameRow = new TextRow(body, P_NAME, getTypeLabel());
 		mNameRow.setFieldChangedListener(this);
 		mNameRow.setValue(mElementName);
+		mNameRow.setTooltip("Defines the name of the new type, eg: XFoo for a Foo interface.\nThis value is mandatory.");
 		
 		createSpecificControl(body);
+		
+		Composite publishedParent = new Composite(body, SWT.NONE);
+		publishedParent.setLayout(new GridLayout(2, false));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
+		publishedParent.setLayoutData(gd);
+		
+		mPublishedRow = new BooleanRow(publishedParent, P_PUBLISHED,
+				Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
+		mPublishedRow.setFieldChangedListener(this);
 		
 		setPageComplete(isPageComplete());
 		
@@ -369,14 +377,37 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 */
 	public UnoFactoryData fillData(UnoFactoryData data) {
 		if (data != null) {
-			data.setProperty(IUnoFactoryConstants.TYPE, 
-					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
 			data.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
 			data.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
 			data.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
 					Boolean.valueOf(isPublished()));
 		}
 		return data;
+	}
+	
+	public static UnoFactoryData getTypeData(UnoFactoryData data) {
+		UnoFactoryData typeData = new UnoFactoryData();
+		
+		if (data != null) {
+			try {
+			String name = (String)data.getProperty(
+					IUnoFactoryConstants.PROJECT_NAME);
+			name = name.substring(0, 1).toUpperCase() + name.substring(1);
+			
+			String packageName = (String)data.getProperty(
+					IUnoFactoryConstants.PROJECT_PREFIX);
+			packageName = packageName.replace(".", "::"); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			// put the properties in the data
+			typeData.setProperty(IUnoFactoryConstants.TYPE_NAME, name);
+			typeData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, packageName);
+			typeData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
+					Boolean.FALSE);
+			} catch (Exception e) {
+				typeData = null;
+			}
+		}
+		return typeData;
 	}
 	
 	/*

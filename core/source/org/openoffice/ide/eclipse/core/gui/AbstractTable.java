@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractTable.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -145,6 +145,14 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 	 */
 	public Vector getLines(){
 		return mLines;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setToolTipText(java.lang.String)
+	 */
+	public void setToolTipText(String string) {
+		mTableViewer.getTable().setToolTipText(string);
 	}
 	
 	/**

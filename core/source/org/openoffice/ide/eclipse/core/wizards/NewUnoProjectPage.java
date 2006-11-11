@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,7 +44,6 @@
 package org.openoffice.ide.eclipse.core.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -53,13 +52,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -83,12 +82,12 @@ import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
-import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -277,17 +276,26 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         final IProject newProjectHandle = getProjectHandle();
 
         // get a project descriptor
-        URI location = null;
+//        URI location = null;
+//        if (!useDefaults()) {
+//			location = getLocationURI();
+//		}
+//
+//        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//        final IProjectDescription description = workspace
+//                .newProjectDescription(newProjectHandle.getName());
+//        description.setLocationURI(location);
+
+        IPath location = null;
         if (!useDefaults()) {
-			location = getLocationURI();
-		}
-
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        final IProjectDescription description = workspace
-                .newProjectDescription(newProjectHandle.getName());
-        description.setLocationURI(location);
+        	location = getLocationPath();
+        }
         
-
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        final IProjectDescription description= workspace.
+        	newProjectDescription(newProjectHandle.getName());
+        description.setLocation(location);
+        
         // create the new project operation
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             protected void execute(IProgressMonitor monitor)
@@ -306,7 +314,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
             Throwable t = e.getTargetException();
             PluginLogger.error(t.toString(), t);
             ErrorDialog.openError(getShell(), 
-            		"Error during the project folder creation",
+            		Messages.getString("NewUnoProjectPage.ProjectCreationError"), //$NON-NLS-1$
             		null, // no special message
             		((CoreException) t).getStatus());
             return null;
@@ -373,12 +381,14 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		mPrefixRow = new TextRow(body, PREFIX, 
 						Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
 		mPrefixRow.setFieldChangedListener(this);
+		mPrefixRow.setTooltip("Defines the vendor package name for the project,\neg: org.openoffice. Do not change it manually in the files.");
 		
 		// Add the output directory field
 		mOutputExt = new TextRow(body, OUTPUT_EXT,
 						Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
 		mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
 		mOutputExt.setFieldChangedListener(this);
+		mOutputExt.setTooltip("Defines the extension package name, usually comp.\nIt means that the implementation classes should\nbe in the <root.package>.comp package");
 		
 		// Add the SDK choice field
 		mSdkRow = new ChoiceRow(body, SDK,
@@ -398,6 +408,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		});
 		
 		fillSDKRow();
+		mSdkRow.setTooltip("Defines the SDK to use for the project devevelopment.");
 		
 		
 		// Add the OOo choice field
@@ -417,11 +428,13 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		});
 		
 		fillOOoRow();
+		mOOoRow.setTooltip("Defines the OOo or URE instance for which the project is for.");
 		
 		
 		// Adding the programming language row 
 		mLanguageRow = new ChoiceRow(body, LANGUAGE,
 						Messages.getString("NewUnoProjectPage.Language")); //$NON-NLS-1$
+		mLanguageRow.setTooltip("Defines the implementation language.");
 		
 		// Sets the available programming languages
 		String[] languages = LanguagesHelper.getAvailableLanguageNames();
@@ -469,8 +482,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	
 	private void checkWhiteSpaces () {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			if (getLocationPath().toOSString().contains(" ")) {
-				setMessage("It is not recommended to have any whitespace in the project path:\nthe project might fail to build",
+			if (getLocationPath().toOSString().contains(" ")) { //$NON-NLS-1$
+				setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesWarning"), //$NON-NLS-1$
 					WARNING);
 			}
 		}
@@ -542,7 +555,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				} else {
 					setErrorMessage(null);
 					if (Platform.getOS().equals(Platform.OS_WIN32)) {
-						setMessage("It is not recommended to have any whitespace inthe project path:\nthe project might fail to build",
+						setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesWarning"), //$NON-NLS-1$
 							WARNING);
 					}
 				}
@@ -591,37 +604,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 	};
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewProjectCreationPage#validatePage()
-	 */
-	protected boolean validatePage() {
-		boolean result = super.validatePage();
-		
-		boolean constraint = !(null == getSDKName() || getSDKName().equals("") || //$NON-NLS-1$
-				null == getPrefix() || getPrefix().equals("") || //$NON-NLS-1$
-				 null == getOutputExt() || getOutputExt().equals("")); //$NON-NLS-1$
-		
-		result = result && constraint;
-		
-		if (result) {
-			IWizardPage next = getWizard().getNextPage(this);
-			if (next instanceof NewScopedElementWizardPage) {
-				NewScopedElementWizardPage aScopedNext = 
-					(NewScopedElementWizardPage) next;
-				
-				// Sets the project name as the service name default value
-				String serviceName = getProjectName().trim().toLowerCase();
-				String firstLetter = serviceName.substring(0, 1).toUpperCase();
-				serviceName = firstLetter + serviceName.substring(1);
-				
-				aScopedNext.setName(serviceName, false);
-			}
-		}
-		
-		return result;
-	}
-	
 	/**
 	 * @param force forces the project creation. 
 	 * 	 Otherwise, project handle won't be set
@@ -637,6 +619,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 					data.setProperty(IUnoFactoryConstants.PROJECT_HANDLE, createNewProject());
 				} catch (Exception e) { }
 			}
+			
+			data.setProperty(IUnoFactoryConstants.PROJECT_PATH, getLocationPath());
+			data.setProperty(IUnoFactoryConstants.PROJECT_NAME, getProjectName());
+			
 			data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, getPrefix());
 			data.setProperty(IUnoFactoryConstants.PROJECT_COMP, getOutputExt());
 			data.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());

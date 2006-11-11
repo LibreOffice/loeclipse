@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,7 +43,11 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.model;
 
+import java.io.InputStream;
+import java.io.StringWriter;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
@@ -52,14 +56,16 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.CompositeFactory;
-import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 /**
  * This class is a factory creating UNO projects and types from data sets
@@ -88,23 +94,105 @@ public final class UnoFactory {
 			switch (type.intValue()) {
 				// TODO This switch has to be extended to support other types
 				case IUnoFactoryConstants.SERVICE:
-					createService(inner, prj, page, monitor);
+					createService(inner, prj, page, monitor, false);
 					break;
 			}
 		}
 		
-		UnoidlProjectHelper.setProjectBuilders(prj, monitor);
+		UnoidlProjectHelper.forceBuild(prj, monitor);
 		
 		// create the language-specific part
 		ILanguage language = (ILanguage)data.getProperty(
 				IUnoFactoryConstants.PROJECT_LANGUAGE);
-		language.configureProject(data);
+		language.getProjectHandler().configureProject(data);
 		
-		// TODO generate the implementation skeleton
+		// generate the implementation skeleton
+		makeSkeleton(data, prj, page, monitor);
+		
+		UnoidlProjectHelper.setProjectBuilders(prj, monitor);
+	}
+	
+	public static void makeSkeleton(UnoFactoryData data, IUnoidlProject prj, 
+			IWorkbenchPage activePage, IProgressMonitor monitor) throws Exception {
+		
+		IProjectHandler langProjectHandler = ((ILanguage)data.getProperty(
+				IUnoFactoryConstants.PROJECT_LANGUAGE)).getProjectHandler();
+		String languageOption = langProjectHandler.getSkeletonMakerLanguage(data);
+		
+		if (languageOption != null) {
+			
+			// Get the registries
+			String oooTypes = prj.getOOo().getTypesPath();
+			oooTypes = oooTypes.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			oooTypes = oooTypes.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+			oooTypes = "file:///" + oooTypes; //$NON-NLS-1$
+			
+			String prjTypes = prj.getTypesPath().toString();
+			String typesReg = "-l " + oooTypes + " -l " + prjTypes; //$NON-NLS-1$ //$NON-NLS-2$
+
+			// Get the unorc file
+			String unorc = "-env:BOOTSTRAPINI=\"" + prj.getOOo().getUnorcPath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+
+			UnoFactoryData[] inner =  data.getInnerData();
+			String types = " "; //$NON-NLS-1$
+			for (int i=0; i<inner.length; i++) {
+				try {
+					String name = (String)inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
+					String module = (String)inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+					
+					String fullname = module + "::" + name; //$NON-NLS-1$
+					fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
+					
+					types += "-t " + fullname; // $NON-NLS-1$ //$NON-NLS-1$
+				} finally {}
+			}
+			
+			String implementationName = langProjectHandler.getImplementationName(data);
+			
+			String command = "uno-skeletonmaker" +    //$NON-NLS-1$
+			" " + unorc +  //$NON-NLS-1$
+			" component " + languageOption +  //$NON-NLS-1$
+			" -o ./" + prj.getSourcePath().toOSString() +  // Works even on windows //$NON-NLS-1$
+			" " + typesReg + //$NON-NLS-1$
+			" -n " + implementationName + //$NON-NLS-1$
+			types;
+
+			Process process = OOEclipsePlugin.runTool(prj, command, monitor);
+	
+			InputStream err = process.getErrorStream();
+			StringWriter writer = new StringWriter();
+			
+			try {
+				int c = err.read();
+				while (c != -1) {
+					writer.write(c);
+					c = err.read();
+				}
+			} finally {
+				try {
+					err.close();
+					String error = writer.toString();
+					if (!error.equals(""))  //$NON-NLS-1$
+						PluginLogger.error(error);
+					else
+						PluginLogger.info(Messages.getString("UnoFactory.SkeletonGeneratedMessage") +  //$NON-NLS-1$
+								langProjectHandler.getImplementationName(data));
+				} catch (java.io.IOException e) { }
+			}
+			
+			UnoidlProjectHelper.refreshProject(prj, null);
+
+			// opens the generated files
+			IPath implementationPath = langProjectHandler.getImplementationFile(implementationName);
+			implementationPath = prj.getSourcePath().append(implementationPath);
+			IFile implementationFile = prj.getFile(implementationPath);
+
+			showFile(implementationFile, activePage);
+		}
 	}
 	
 	/**
-	 * Creates a service from its factory data.
+	 * Creates a service from its factory data and opens the created file.
 	 * 
 	 * @param data the data describing the service
 	 * @param prj the uno project that will contain the service
@@ -114,6 +202,22 @@ public final class UnoFactory {
 	 */
 	public static void createService(UnoFactoryData data, IUnoidlProject prj, 
 			IWorkbenchPage activePage, IProgressMonitor monitor) throws Exception {
+		createService(data, prj, activePage, monitor, true);
+	}
+	
+	/**
+	 * Creates a service from its factory data. the created file can be opened
+	 * if <code>openFile</code> is set to <code>true</code>.
+	 * 
+	 * @param data the data describing the service
+	 * @param prj the uno project that will contain the service
+	 * @param activePage the page in which to open the created file
+	 * @param monitor the progress monitor to report the operation progress
+	 * @param openFile opens the cerated file if set to <code>true</code>
+	 * @throws Exception is thrown if anything wrong happens
+	 */
+	public static void createService(UnoFactoryData data, IUnoidlProject prj, 
+			IWorkbenchPage activePage, IProgressMonitor monitor, boolean openFile) throws Exception {
 
 		// Extract the data
 		String path = (String)data.getProperty(
@@ -172,10 +276,12 @@ public final class UnoFactory {
 
 		UnoidlProjectHelper.refreshProject(prj, null);
 
-		IFile serviceFile = prj.getFile(
-				prj.getIdlPath().append(filename));
+		if (openFile) {
+			IFile serviceFile = prj.getFile(
+					prj.getIdlPath().append(filename));
 
-		showFile(serviceFile, activePage);
+			showFile(serviceFile, activePage);
+		}
 	}
 	
 	public static void createInterface(UnoFactoryData data, IUnoidlProject prj, 
@@ -193,6 +299,18 @@ public final class UnoFactory {
 				IUnoFactoryConstants.OPT_INHERITED_INTERFACES);
 		boolean published = ((Boolean)data.getProperty(
 				IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
+		
+		if (0 == interfaces.length && 0 == opt_interfaces.length) {
+			interfaces = new String[]{"com::sun::star::uno::XInterface"};
+		} else if (0 == interfaces.length && 0 < opt_interfaces.length) {
+			interfaces = new String[]{opt_interfaces[0]};
+			
+			// Remove the first optional interface
+			String[] new_opt_interfaces = new String[opt_interfaces.length - 1];
+			System.arraycopy(opt_interfaces, 1, 
+					new_opt_interfaces, 0, new_opt_interfaces.length);
+			opt_interfaces = new_opt_interfaces;
+		}
 		
 		// Create the necessary modules
 		UnoidlProjectHelper.createModules(path, prj, null);

@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoFactoryConstants.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model;
 
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
@@ -61,6 +62,10 @@ public interface IUnoFactoryConstants {
 	 * The object should be an instance of <code>IProject</code>
 	 */
 	public final static String PROJECT_HANDLE = "project_handle"; //$NON-NLS-1$
+	
+	public final static String PROJECT_PATH = "project_path"; //$NON-NSL-1$ //$NON-NLS-1$
+	
+	public final static String PROJECT_NAME = "project_name"; //$NON-NSL-1$ //$NON-NLS-1$
 	
 	/**
 	 * The object should be a dot-separated string 

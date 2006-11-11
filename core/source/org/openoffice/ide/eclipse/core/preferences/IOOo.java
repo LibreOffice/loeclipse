@@ -1,5 +1,9 @@
 package org.openoffice.ide.eclipse.core.preferences;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.ILaunch;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+
 /**
  * Interface for an OpenOffice.org configuration instance. This can even
  * be implemented as an URE instance.
@@ -75,6 +79,8 @@ public interface IOOo {
 	 */
 	public String getUnoPath();
 	
+	public String getJavaldxPath();
+	
 	/**
 	 * Returns a command to execute a UNO component
 	 * 
@@ -85,4 +91,7 @@ public interface IOOo {
 	 */
 	public String createUnoCommand(String implementationName, 
 			String libLocation, String[] registriesPaths, String[] args);
+	
+	public void runUno(IUnoidlProject prj, String main, String args, 
+			ILaunch launch, IProgressMonitor monitor);
 }

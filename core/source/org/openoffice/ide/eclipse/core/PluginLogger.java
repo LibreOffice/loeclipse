@@ -11,10 +11,10 @@ import org.eclipse.core.runtime.Status;
  */
 public class PluginLogger {
 
-    public static final String ERROR    = "error";
-    public static final String WARNING  = "warning";
-    public static final String INFO     = "info";
-    public static final String DEBUG    = "debug";
+    public static final String ERROR    = "error"; //$NON-NLS-1$
+    public static final String WARNING  = "warning"; //$NON-NLS-1$
+    public static final String INFO     = "info"; //$NON-NLS-1$
+    public static final String DEBUG    = "debug"; //$NON-NLS-1$
 
     private static String sLevel = DEBUG;
     

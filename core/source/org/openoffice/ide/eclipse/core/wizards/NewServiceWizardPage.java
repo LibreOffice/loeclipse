@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -109,8 +109,8 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 				P_IFACE_INHERITANCE, 
 				Messages.getString("NewServiceWizardPage.InheritedInterface"), //$NON-NLS-1$
 				IUnoFactoryConstants.INTERFACE);
-		mIfaceInheritanceRow.setValue("com.sun.star.uno.XInterface"); // TODO Configure //$NON-NLS-1$
 		mIfaceInheritanceRow.setFieldChangedListener(this);
+		mIfaceInheritanceRow.setTooltip("Defines the interface which will define all the capabilities of the new service.");
 	}
 	
 	/*
@@ -126,7 +126,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
 	 */
 	public String getDescription() {
-		return ""; //$NON-NLS-1$
+		return Messages.getString("NewServiceWizardPage.ServiceDescription"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -165,22 +165,6 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 			mIfaceInheritanceRow.setEnabled(!forced);	
 		}
 	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
-	 */
-	public boolean isPageComplete() {
-		boolean result = super.isPageComplete(); 
-		
-		try {
-			result &= !mIfaceInheritanceRow.getValue().equals(""); //$NON-NLS-1$
-		} catch (NullPointerException e) {
-			result = false;
-		}
-		
-		return result;
-	}
 	
 	/**
 	 * @return the given data with the completed properties, <code>null</code>
@@ -198,5 +182,18 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		}
 		
 		return data;
+	}
+	
+	public static UnoFactoryData getTypeData(UnoFactoryData data, 
+			String mServiceIfaceName) {
+		UnoFactoryData typeData = NewScopedElementWizardPage.getTypeData(data);
+		
+		if (typeData != null) {
+			typeData.setProperty(IUnoFactoryConstants.TYPE, 
+					Integer.valueOf(IUnoFactoryConstants.SERVICE));
+			typeData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
+					new String[]{mServiceIfaceName});
+		}
+		return typeData;
 	}
 }

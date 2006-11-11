@@ -112,11 +112,12 @@ public class URE extends AbstractOOo {
 	 */
 	public String getUnoPath() {
 		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String uno = getHome() + sep + "bin" + sep + "uno"; //$NON-NLS-1$ //$NON-NLS-2$
+		String uno = "uno.bin"; //$NON-NLS-1$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			uno += ".exe";  //$NON-NLS-1$
+			uno = "uno.exe";  //$NON-NLS-1$
 		}
-		return uno;
+		
+		return getHome() + sep + "bin" + sep + uno; //$NON-NLS-1$
 	}
 	
 	public String toString() {
@@ -173,5 +174,14 @@ public class URE extends AbstractOOo {
 			" -- " + sArgs;  //$NON-NLS-1$
 		
 		return command;
+	}
+	
+	public String getJavaldxPath() {
+		String javaldx = null;
+		
+		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			javaldx = getHome() + "/bin/javaldx"; //$NON-NLS-1$
+		}
+		return  javaldx; 
 	}
 }

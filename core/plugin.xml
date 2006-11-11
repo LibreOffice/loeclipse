@@ -52,7 +52,11 @@
             icon="icons/newunofile.gif"
             id="org.openoffice.ide.eclipse.core.newunofile"
             name="%wizards.unoidlfile"
-            project="false"/>
+            project="false">
+         <description>
+            Create a new UNO specification file. Please use this wizard with care: you should better run the type-specific wizards if they exists.
+         </description>
+      </wizard>
       <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
@@ -61,7 +65,11 @@
             icon="icons/newunoproject.gif"
             id="org.openoffice.ide.eclipse.core.newunoproject"
             name="%wizards.unoidlproject"
-            project="true"/>
+            project="true">
+         <description>
+            Create an empty UNO component with a service and it's implementation.
+         </description>
+      </wizard>
       <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
@@ -70,7 +78,11 @@
             icon="icons/newservice.gif"
             id="org.openoffice.ide.eclipse.core.newservice"
             name="%wizards.service"
-            project="false"/>
+            project="false">
+         <description>
+            Creates a new 'new-styled' UNO service. A service will export one interface and define some constructors.
+         </description>
+      </wizard>
       <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
@@ -79,7 +91,24 @@
             icon="icons/newinterface.gif"
             id="org.openoffice.ide.eclipse.core.newinterface"
             name="%wizards.interface"
-            project="false"/>
+            project="false">
+         <description>
+            Create an new UNO interface. An interface is a set of related methods and properties that will be used by a service.
+         </description>
+      </wizard>
+      <wizard
+            canFinishEarly="true"
+            category="org.openoffice.ide.eclipse.core"
+            class="org.openoffice.ide.eclipse.core.wizards.NewUreAppWizard"
+            hasPages="true"
+            icon="icons/newunoproject.gif"
+            id="org.openoffice.ide.eclipse.core.newureapp"
+            name="New URE based Application"
+            project="true">
+         <description>
+            Create an URE based application. This wizard will create the basic skeleton to run an application featuring UNO component model.
+         </description>
+      </wizard>
    </extension>
    <extension
          id="unonature"
@@ -123,16 +152,6 @@
             hasNature="true"
             isConfigurable="false">
          <run class="org.openoffice.ide.eclipse.core.builders.TypesBuilder"/>
-      </builder>
-   </extension>
-   <extension
-         id="services"
-         name="%builders.services"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true"
-            isConfigurable="false">
-         <run class="org.openoffice.ide.eclipse.core.builders.ServicesBuilder"/>
       </builder>
    </extension>
    <extension
@@ -212,5 +231,56 @@
                name="nature"
                value="org.openoffice.ide.eclipse.core.unonature"/>
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            id="org.openoffice.ide.eclipse.core.exports"
+            name="Uno-Idl"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="org.openoffice.ide.eclipse.core.objectContribution2"
+            objectClass="org.eclipse.core.resources.IProject">
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="org.openoffice.ide.eclipse.core.unonature"/>
+               <objectState
+                     name="open"
+                     value="true"/>
+            </and>
+         </visibility>
+         <action
+               class="org.openoffice.ide.eclipse.core.actions.CreateServicesAction"
+               id="org.openoffice.ide.eclipse.core.actions.services"
+               label="Create Services.rdb"
+               />
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.openoffice.ide.eclipse.core.launch.UreLaunchDelegate"
+            id="org.openoffice.ide.eclipse.core.launchUreApplication"
+            modes="run"
+            name="URE Application"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.openoffice.ide.eclipse.core.launch.LaunchConfigurationTabs"
+            id="org.openoffice.ide.eclipse.core.launchConfigurationTabGroup1"
+            type="org.openoffice.ide.eclipse.core.launchUreApplication"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.openoffice.ide.eclipse.core.launchUreApplication"
+            icon="icons/ure_app.gif"
+            id="org.openoffice.ide.eclipse.core.UreLaunchIcon"/>
    </extension>
 </plugin>

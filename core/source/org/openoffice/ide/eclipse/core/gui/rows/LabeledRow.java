@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -102,6 +102,10 @@ public abstract class LabeledRow {
 			          Control field, String browseText){
 		this.mProperty = property;
 		createContent(parent, label, field, browseText);
+	}
+	
+	public void setTooltip(String tooltip) {
+		mField.setToolTipText(tooltip);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package org.openoffice.ide.eclipse.core.model;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IProject;
@@ -71,6 +72,20 @@ public class ProjectsManager implements IResourceChangeListener {
 		if(project != null && !mProjects.containsKey(project.getName())){
 			mProjects.put(project.getName(), project);
 		}
+	}
+	
+	/**
+	 * @return an array containing all the defined UNO projects
+	 */
+	public IUnoidlProject[] getProjects() {
+		IUnoidlProject[] projects = new IUnoidlProject[mProjects.size()];
+		
+		ArrayList values = new ArrayList(mProjects.values());
+		for (int i=0; i<projects.length; i++) {
+			projects[i] = (IUnoidlProject)values.get(i);
+		}
+		
+		return projects;
 	}
 	
 	/**

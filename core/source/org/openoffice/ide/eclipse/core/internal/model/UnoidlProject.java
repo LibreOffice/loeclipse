@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -60,10 +60,10 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
-import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -163,7 +163,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 				if (element == getOOo()){
 					
 					// Removes OOo dependencies
-					getLanguage().removeOOoDependencies(getOOo(), getProject());
+					getLanguage().getProjectHandler().removeOOoDependencies(getOOo(), getProject());
 					
 					// Sets the selected OOo to null, it will tag the project as invalid
 					setOOo(null);
@@ -182,8 +182,10 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 					// from the classpath and the new ones
 					
 					// Removes OOo dependencies
-					getLanguage().removeOOoDependencies(getOOo(), getProject());
-					getLanguage().addOOoDependencies(getOOo(), getProject());
+					getLanguage().getProjectHandler().removeOOoDependencies(
+							getOOo(), getProject());
+					getLanguage().getProjectHandler().addOOoDependencies(
+							getOOo(), getProject());
 				}
 			}
 		}
@@ -271,7 +273,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		
 		if (mLanguage == null && newLanguage != null){
 			mLanguage = newLanguage; 
-			mLanguage.addProjectNature(getProject());
+			mLanguage.getProjectHandler().addProjectNature(getProject());
 			PluginLogger.debug("Language specific nature added"); //$NON-NLS-1$
 			
 			try {
@@ -643,11 +645,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		
 			// Set the types builder
 			IProjectDescription descr = getProject().getDescription();
-			ICommand[] newCommands = new ICommand[1];
+			ICommand[] builders = descr.getBuildSpec();
+			ICommand[] newCommands = new ICommand[builders.length + 1];
 		
 			ICommand typesbuilderCommand = descr.newCommand();
 			typesbuilderCommand.setBuilderName(TypesBuilder.BUILDER_ID);
 			newCommands[0] = typesbuilderCommand;
+			
+			System.arraycopy(builders, 0, newCommands, 1, builders.length);
 			
 			descr.setBuildSpec(newCommands);
 			getProject().setDescription(descr, null);

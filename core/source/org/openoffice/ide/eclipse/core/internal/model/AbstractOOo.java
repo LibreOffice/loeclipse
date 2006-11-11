@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,10 +44,20 @@
 package org.openoffice.ide.eclipse.core.internal.model;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.swt.graphics.Image;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
@@ -233,5 +243,51 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 	 */
 	public void setValue(String property, Object value) {
 		// Nothing to do
+	}
+	
+	public void runUno(IUnoidlProject prj, String main, String args, 
+			ILaunch launch, IProgressMonitor monitor) {
+		
+		String libpath = prj.getLanguage().getProjectHandler().getLibraryPath(prj);
+		libpath = libpath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		libpath = libpath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+		libpath = "file:///" + libpath; //$NON-NLS-1$
+		
+		String unoPath = getUnoPath();
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			/* uno is already in the PATH variable, so don't worry */
+			unoPath = "uno";
+		}
+		
+		String command = unoPath +  //$NON-NLS-1$
+			" -c " + main + //$NON-NLS-1$
+			" -l " + libpath +  //$NON-NLS-1$
+			" -- " + args; //$NON-NLS-1$
+		
+		String[] env = prj.getLanguage().getLanguageBuidler().getBuildEnv(prj, 
+				UnoidlProjectHelper.getProject(prj));
+		
+		if (getJavaldxPath() != null) {
+			Process p = OOEclipsePlugin.runToolWithEnv(prj, getJavaldxPath(), env, monitor);
+			InputStream out = p.getInputStream();
+			StringWriter writer = new StringWriter();
+			
+			try {
+				int c = out.read();
+				while (c != -1) {
+					writer.write(c);
+					c = out.read();
+				}
+			} catch (IOException e) {			
+			}
+			
+			String libPath = writer.getBuffer().toString();
+			env = OOEclipsePlugin.addEnv(env, "LD_LIBRARY_PATH", libPath.trim(),  //$NON-NLS-1$
+					System.getProperty("path.separator")); //$NON-NLS-1$
+			env = OOEclipsePlugin.addEnv(env, "DISPLAY", ":0", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		
+		Process p = OOEclipsePlugin.runToolWithEnv(prj, command, env, monitor);
+		DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.UreProcessName")  + main); //$NON-NLS-1$
 	}
 }

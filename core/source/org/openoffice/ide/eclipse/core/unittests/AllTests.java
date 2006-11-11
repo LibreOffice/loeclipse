@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
 public class AllTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for UnoCompositeTest project");
+		TestSuite suite = new TestSuite("Test for UnoCompositeTest project"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTestSuite(CompositeTest.class);
 		suite.addTestSuite(UnoFactoryTest.class);

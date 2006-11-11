@@ -4,15 +4,14 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
-import org.openoffice.ide.eclipse.core.model.ILanguage;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -21,6 +20,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
@@ -118,6 +118,18 @@ public class UnoidlProjectHelper {
 		}
 	}
 	
+	public static void forceBuild(IUnoidlProject unoProject, 
+			IProgressMonitor monitor) {
+		
+		UnoidlProject project = (UnoidlProject)unoProject;
+		try {
+			TypesBuilder.build(project.getProject(), monitor);
+		} catch (CoreException e) {
+			PluginLogger.error(
+					Messages.getString("UnoidlProjectHelper.NotUnoProjectError"), e); //$NON-NLS-1$
+		}
+	}
+	
 	/**
 	 * Set the project builders and run the build
 	 */
@@ -128,9 +140,6 @@ public class UnoidlProjectHelper {
 		try {
 			// Add the project builders
 			project.setBuilders();
-			
-			// Initial build of the project 
-			project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 		} catch (CoreException e) {
 			PluginLogger.error(
 				Messages.getString("UnoidlProjectHelper.NotUnoProjectError"), e); //$NON-NLS-1$
@@ -252,28 +261,12 @@ public class UnoidlProjectHelper {
 					"source folder created"); //$NON-NLS-1$
 			}
 			
-			// Create the implementation directory
-			IPath implementationPath = unoproject.getImplementationPath();
-			String tmpPath = ""; //$NON-NLS-1$
-			
-			for (int i=0, length=implementationPath.segmentCount(); i<length; i++){
-				tmpPath = tmpPath + "/" + implementationPath.segment(i); //$NON-NLS-1$
-				IFolder folder = unoproject.getFolder(tmpPath);
-				
-				// create the folder
-				if (!folder.exists()){
-					folder.create(true, true, monitor);
-					PluginLogger.debug(
-						folder.getName() + " folder created"); //$NON-NLS-1$
-				}
-			}
-			
-			unoproject.getLanguage().addLanguageDependencies(unoproject,
-					((UnoidlProject)unoproject).getProject(), monitor);
+			unoproject.getLanguage().getProjectHandler().addLanguageDependencies(
+					unoproject, ((UnoidlProject)unoproject).getProject(), monitor);
 			PluginLogger.debug("Language dependencies added"); //$NON-NLS-1$
 			
-			unoproject.getLanguage().addOOoDependencies(unoproject.getOOo(),
-					((UnoidlProject)unoproject).getProject());
+			unoproject.getLanguage().getProjectHandler().addOOoDependencies(
+					unoproject.getOOo(), ((UnoidlProject)unoproject).getProject());
 			PluginLogger.debug("OOo dependencies added"); //$NON-NLS-1$
 			
 		} catch (CoreException e) {
