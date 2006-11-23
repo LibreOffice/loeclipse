@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:40:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -139,7 +139,7 @@ public class UnoTypeProvider {
 	 * on the interesting bytes for the types.
 	 * 
 	 * @param aType
-	 * @return
+	 * @return the negated type
 	 */
 	public static int invertTypeBits(int aType){
 		int result = 0;

@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:40:27 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,6 +57,7 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 
 /**
  * <p>Main builder of the UNO-IDL projects, it computes the language specific
@@ -66,7 +67,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  *     <li>{@link IdlcBuilder} generating the urd files from the idl ones</li>
  *     <li>{@link RegmergeBuilder} merging the urd files into the types 
  *     	   registry</li>
- *     <li>{@link org.openoffice.ide.eclipse.core.model.language.ILanguage#generateFromTypes(ISdk, IOOo, IFile, IFolder, String, IProgressMonitor)}
+ *     <li>{@link ILanguageBuilder#generateFromTypes(org.openoffice.ide.eclipse.core.preferences.ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, IFile, IFolder, String, IProgressMonitor)}
  *     	   generating the language specific type files</li>
  *   </ul>
  * </p>

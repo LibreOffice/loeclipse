@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMembersTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:40:26 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -67,11 +67,11 @@ public class InterfaceMembersTable extends AbstractTable {
 	private static final String OPTIONS = "__options"; //$NON-NLS-1$
 	
 	/**
-	 * @param parent
-	 * @param aTitle
-	 * @param colTitles
-	 * @param colWidths
-	 * @param colProperties
+	 * Creates a table to add/edit/remove the attributes and methods of an
+	 * interface
+	 * 
+	 * @param parent the parent composite where to create the table. Its layout
+	 * 			should be a Grid Layout with one column 
 	 */
 	public InterfaceMembersTable(Composite parent) {
 		super(	parent, 
