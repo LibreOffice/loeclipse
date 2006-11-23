@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -116,11 +116,12 @@ public class UnoTypeProvider {
 		}
 	}
 	
-	//---------------------------------------------------------- Type managment
+	//---------------------------------------------------------- Type management
 	
-	private int types = 1023;
+	private int types = 2047;
 	
 	private static int[] allowedTypes = {
+		IUnoFactoryConstants.BASICS,
 		IUnoFactoryConstants.MODULE,
 		IUnoFactoryConstants.INTERFACE,
 		IUnoFactoryConstants.SERVICE,
@@ -140,13 +141,13 @@ public class UnoTypeProvider {
 	 * @param aType
 	 * @return
 	 */
-	static int invertTypeBits(int aType){
+	public static int invertTypeBits(int aType){
 		int result = 0;
 		
 		String sInv = Integer.toBinaryString(aType);
 		int length = allowedTypes.length - sInv.length();
 		
-		if (length <= 10){
+		if (length <= 11){
 			
 			for (int i=0; i<length; i++) {
 				sInv = '0' + sInv;
@@ -169,8 +170,13 @@ public class UnoTypeProvider {
 	public void setTypes(int aTypes) {
 		
 		// Only 10 bits available
-		if (aTypes >= 0 && aTypes < 1024) {
-			types = aTypes;
+		if (aTypes >= 0 && aTypes <= InternalUnoType.ALL_TYPES) {
+			if (types != aTypes) {
+				types = aTypes;
+				IOOo ooo = oooInstance;
+				oooInstance = null;
+				setOOoInstance(ooo);
+			}
 		}
 	}
 	
@@ -236,7 +242,7 @@ public class UnoTypeProvider {
 			
 			// Stop the provider before everything
 			stopProvider();
-			mInternalTypes = new Vector();
+			mInternalTypes = new Vector<InternalUnoType>();
 			
 			oooInstance = aProject.getOOo();
 			pathToRegister = (aProject.getFile(
@@ -261,7 +267,7 @@ public class UnoTypeProvider {
 			
 			// Stop the provider before everything
 			stopProvider();
-			mInternalTypes = new Vector();
+			mInternalTypes = new Vector<InternalUnoType>();
 			
 			oooInstance = aOOoInstance;
 			PluginLogger.debug(
@@ -346,14 +352,14 @@ public class UnoTypeProvider {
 		
 		if (null == getTypesThread || !getTypesThread.isAlive()) {
 			
-			mInternalTypes = new Vector();
+			mInternalTypes = new Vector<InternalUnoType>();
 			
 			getTypesThread = new UnoTypesGetterThread();
 			getTypesThread.start();
 		}
 	}
 	
-	private Vector listeners = new Vector(); 
+	private Vector<IInitListener> listeners = new Vector<IInitListener>(); 
 	
 	/**
 	 * Register the given listener
@@ -382,7 +388,7 @@ public class UnoTypeProvider {
 
 	//---------------------------------------------------- Collection managment
 	
-	private Vector mInternalTypes = new Vector();
+	private Vector<InternalUnoType> mInternalTypes = new Vector<InternalUnoType>();
 	
 	/**
 	 * Get a type from its path

@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -68,5 +68,12 @@ public class ImagesConstants {
 	public static final String ABOUT_BANNER = "ABOUT_BANNER"; //$NON-NLS-1$
 	public static final String NEW_INTERFACE_IMAGE = "NEW_INTERFACE_IMAGE"; //$NON-NLS-1$
 	public static final String URE_APP = "URE_APP"; //$NON-NLS-1$
+	public static final String ATTRIBUTE = "ATTRIBUTE"; //$NON-NLS-1$
+	public static final String METHOD = "METHOD"; //$NON-NLS-1$
+	public static final String STRUCT = "STRUCT"; //$NON-NLS-1$
+	public static final String ENUM = "ENUM"; //$NON-NLS-1$
+	public static final String EXCEPTION = "EXCEPTION"; //$NON-NLS-1$
+	public static final String CONSTANTS = "CONSTANTS"; //$NON-NLS-1$
+	public static final String TYPEDEF = "TYPEDEF"; //$NON-NLS-1$
 
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,6 +46,7 @@ package org.openoffice.ide.eclipse.core.wizards;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.TypeRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
@@ -98,6 +99,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	private final static String P_IFACE_INHERITANCE = "__iface_inheritance"; //$NON-NLS-1$
 	
 	private TypeRow mIfaceInheritanceRow;
+	private boolean mCreated = false;
 	
 	/*
 	 *  (non-Javadoc)
@@ -110,7 +112,8 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 				Messages.getString("NewServiceWizardPage.InheritedInterface"), //$NON-NLS-1$
 				IUnoFactoryConstants.INTERFACE);
 		mIfaceInheritanceRow.setFieldChangedListener(this);
-		mIfaceInheritanceRow.setTooltip("Defines the interface which will define all the capabilities of the new service.");
+		mIfaceInheritanceRow.setTooltip(Messages.getString("NewServiceWizardPage.InheritanceTooltip")); //$NON-NLS-1$
+		mCreated = true;
 	}
 	
 	/*
@@ -146,6 +149,20 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 				ImagesConstants.NEW_SERVICE_IMAGE);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
+	 */
+	public void fieldChanged(FieldEvent e) {
+		super.fieldChanged(e);
+		
+		if (mCreated) {
+			if (getWizard() instanceof NewUnoProjectWizard) {
+				((NewUnoProjectWizard)getWizard()).pageChanged(this);
+			}
+		}
+	}
+	
 	/**
 	 * Gets the name of the exported interface
 	 */
@@ -153,16 +170,14 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		return mIfaceInheritanceRow.getValue();
 	}
 	
-	
-	
 	/**
 	 * Sets the name of the exported interface
 	 */
 	public void setInheritanceName(String value, boolean forced) {
 		
-		if (value.matches("[a-zA-Z0-9_]+(.[a-zA-Z0-9_])*")) { //$NON-NLS-1$
+		if (value.matches("([a-zA-Z][a-zA-Z0-9]*)(.[a-zA-Z][a-zA-Z0-9]*)*")) { //$NON-NLS-1$
 			mIfaceInheritanceRow.setValue(value);
-			mIfaceInheritanceRow.setEnabled(!forced);	
+			mIfaceInheritanceRow.setEnabled(!forced);
 		}
 	}
 	
@@ -175,7 +190,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		data = super.fillData(data);
 		
 		if (data != null) {
-			data.setProperty(IUnoFactoryConstants.TYPE, 
+			data.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
 					Integer.valueOf(IUnoFactoryConstants.SERVICE));
 			data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
 					new String[]{getInheritanceName().replace(".", "::")}); //$NON-NLS-1$ //$NON-NLS-2$
@@ -189,7 +204,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		UnoFactoryData typeData = NewScopedElementWizardPage.getTypeData(data);
 		
 		if (typeData != null) {
-			typeData.setProperty(IUnoFactoryConstants.TYPE, 
+			typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
 					Integer.valueOf(IUnoFactoryConstants.SERVICE));
 			typeData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
 					new String[]{mServiceIfaceName});

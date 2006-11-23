@@ -2,9 +2,9 @@
  *
  * $RCSfile: ZipContent.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:35 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:29 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -107,7 +107,7 @@ public class ZipContent {
 		
 		ZipContent[] contents = new ZipContent[0];
 		
-		ArrayList result = new ArrayList();
+		ArrayList<ZipContent> result = new ArrayList<ZipContent>();
 		File[] files = file.listFiles();
 		if (files != null) {
 			for (int i=0; i<files.length; i++) {
@@ -118,7 +118,7 @@ public class ZipContent {
 					String relativePath = filePath.substring(
 							rootDir.getAbsolutePath().length() + 1);
 					if (Platform.getOS().equals(Platform.OS_WIN32)) {
-						relativePath = relativePath.replace("\\", "/");
+						relativePath = relativePath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					ZipContent content = new ZipContent(relativePath, filei);
 
@@ -132,9 +132,7 @@ public class ZipContent {
 			}
 
 			contents = new ZipContent[result.size()];
-			for (int i=0, length=result.size(); i<length; i++) {
-				contents[i] = (ZipContent)result.get(i);
-			}
+			contents = result.toArray(contents);
 		} else {
 			PluginLogger.warning(Messages.getString("ZipContent.NotDirectoryError") + file); //$NON-NLS-1$
 		}

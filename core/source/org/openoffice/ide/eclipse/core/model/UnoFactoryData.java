@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactoryData.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -55,8 +55,8 @@ import java.util.Vector;
  */
 public class UnoFactoryData {
 
-	private HashMap mProperties = new HashMap();
-	private Vector mInnerData = new Vector();
+	private HashMap<String, Object> mProperties = new HashMap<String, Object>();
+	private Vector<UnoFactoryData> mInnerData = new Vector<UnoFactoryData>();
 	
 	/**
 	 * Add or replace the property value associated with the key. Nothing
@@ -110,6 +110,16 @@ public class UnoFactoryData {
 	public void addInnerData(UnoFactoryData data) {
 		if (data != null && !mInnerData.contains(data)) {
 			mInnerData.add(data);
+		}
+	}
+	
+	/**
+	 * Removes an inner data if it isn't <code>null</code> and already
+	 * present in the inner data
+	 */
+	public void removeInnerData(UnoFactoryData data) {
+		if (data != null && mInnerData.contains(data)) {
+			mInnerData.remove(data);
 		}
 	}
 	

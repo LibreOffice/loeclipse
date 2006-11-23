@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -86,7 +86,7 @@ public class OOo extends AbstractOOo {
 	public OOo(String oooHome, String oooName) throws InvalidConfigException {
 		super(oooHome, oooName);
 	}
-
+		
 	//----------------------------------------------------- IOOo Implementation
 	
 	/*

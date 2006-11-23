@@ -2,9 +2,9 @@
  *
  * $RCSfile: CompositeFactory.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -138,7 +138,7 @@ public final class CompositeFactory {
 			content = new UnoComposite();
 			content.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			
-			Hashtable properties = new Hashtable();
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
 			String define = fullname.replace("::", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 			define = "__" + define + "_idl__"; //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("define", define.toLowerCase()); //$NON-NLS-1$
@@ -176,7 +176,7 @@ public final class CompositeFactory {
 			
 			include = new UnoComposite();
 			include.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
-			Hashtable properties = new Hashtable();
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
 			properties.put("file", fileName); //$NON-NLS-1$
 			String template = "#include <${file}>\n"; //$NON-NLS-1$
 			include.configure(properties, template);
@@ -225,7 +225,7 @@ public final class CompositeFactory {
 		
 		UnoComposite module = new UnoComposite();
 		module.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
-		Hashtable properties = new Hashtable();
+		Hashtable<String, Object> properties = new Hashtable<String, Object>();
 		properties.put("name", name); //$NON-NLS-1$
 		String template = "module ${name} { ${children} };";  //$NON-NLS-1$
 		module.configure(properties, template);
@@ -293,7 +293,7 @@ public final class CompositeFactory {
 			service = new UnoComposite();
 			service.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			service.setIndented(true);  // A non indented service is unreadable
-			Hashtable properties = new Hashtable();
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
 			properties.put("name", name); //$NON-NLS-1$
 			
 			if (interfaceFullName != null && !interfaceFullName.equals("")){ //$NON-NLS-1$
@@ -401,7 +401,7 @@ public final class CompositeFactory {
 			intf.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			intf.setIndented(true);
 			
-			Hashtable properties = new Hashtable();
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
 			properties.put("name", name); //$NON-NLS-1$
 			if (parentIntfNames.length == 1) {
 				properties.put("interface", ": " + parentIntfNames[0] + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -451,12 +451,88 @@ public final class CompositeFactory {
 			intf = new UnoComposite();
 			intf.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 			
-			Hashtable properties = new Hashtable();
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
 			properties.put("name", name); //$NON-NLS-1$
 			properties.put("optional", optional?"[optional] ":""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String template = "\t${optional}interface ${name};\n"; //$NON-NLS-1$
 			intf.configure(properties, template);
 		}
 		return intf;
+	}
+	
+	public static IUnoComposite createAttribute(String name, String type, String flags) {
+		
+		IUnoComposite attribute = null;
+		if (type == null) {
+			type = "void"; //$NON-NLS-1$
+		}
+		
+		if (flags == null) {
+			flags = ""; //$NON-NLS-1$
+		} else {
+			flags = flags.replace(" ", ", "); //$NON-NLS-1$ //$NON-NLS-2$
+			flags = ", " + flags; //$NON-NLS-1$
+			
+		}
+		
+		if (name != null && !name.equals("")) { //$NON-NLS-1$
+			attribute = new UnoComposite();
+			attribute.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
+			
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
+			properties.put("name", name); //$NON-NLS-1$
+			properties.put("type", type); //$NON-NLS-1$
+			properties.put("flags", flags); //$NON-NLS-1$
+			String template = "\t[attribute${flags}] ${type} ${name};\n"; //$NON-NLS-1$
+			attribute.configure(properties, template);
+		}
+		return attribute;
+	}
+	
+	public static IUnoComposite createMethod(String name, String type) {
+		
+		IUnoComposite method = null;
+		if (type == null) {
+			type = "void"; //$NON-NLS-1$
+		}
+		
+		if (name != null && !name.equals("")) { //$NON-NLS-1$
+			method = new UnoComposite();
+			method.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
+			method.setChildrenSeparator(", "); //$NON-NLS-1$
+			
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
+			properties.put("name", name); //$NON-NLS-1$
+			properties.put("type", type); //$NON-NLS-1$
+			String template = "\t${type} ${name}(${children});\n"; //$NON-NLS-1$
+			method.configure(properties, template);
+		}
+		return method;
+	}
+	
+	public static IUnoComposite createMethodArgument(String name, String type, 
+			String direction) {
+		
+		IUnoComposite argument = null;
+		if (type == null) {
+			type = "any"; //$NON-NLS-1$
+		}
+		
+		if (direction == null) {
+			direction = "inout"; //$NON-NLS-1$
+		}
+		
+		if (name != null && !name.equals("")) { //$NON-NLS-1$
+			argument = new UnoComposite();
+			argument.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
+			
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
+			properties.put("name", name); //$NON-NLS-1$
+			properties.put("type", type); //$NON-NLS-1$
+			properties.put("direction", direction); //$NON-NLS-1$
+			String template = "[${direction}] ${type} ${name}"; //$NON-NLS-1$
+			argument.configure(properties, template);
+		}
+		return argument;
 	}
 }

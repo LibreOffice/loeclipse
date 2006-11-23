@@ -2,9 +2,9 @@
  *
  * $RCSfile: ColorProvider.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -63,7 +63,7 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
  *
  */
 public class ColorProvider {
-	protected Map mColorTable = new HashMap();
+	protected Map<String, Color> mColorTable = new HashMap<String, Color>();
 	private IPreferenceStore mStore;
 	
 	private final IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {

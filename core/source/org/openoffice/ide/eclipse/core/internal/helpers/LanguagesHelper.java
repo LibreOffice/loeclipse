@@ -115,7 +115,7 @@ public class LanguagesHelper {
 		if (point != null){
 			
 			IExtension[] extensions = point.getExtensions();
-			Vector languages = new Vector();
+			Vector<IConfigurationElement> languages = new Vector<IConfigurationElement>();
 			
 			for (int i=0; i<extensions.length; i++){
 				

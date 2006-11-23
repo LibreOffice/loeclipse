@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,6 +49,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -68,7 +70,7 @@ import org.eclipse.swt.widgets.Label;
  */
 public class ChoiceRow extends LabeledRow implements ModifyListener{
 	
-    private Hashtable mTranslations;
+    private Hashtable<String, String> mTranslations;
         
     /**
      * Create a new choice row. The parent composite should have a grid layout
@@ -96,7 +98,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		
 		super(property);
 
-        mTranslations = new Hashtable();
+        mTranslations = new Hashtable<String, String>();
         
 		Label aLabel = new Label(parent, SWT.NONE);
 		aLabel.setText(label);
@@ -105,6 +107,21 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		aField.addModifyListener(this);
 		
 		createContent(parent, aLabel, aField, browse);
+	}
+	
+	public ChoiceRow(Composite parent, String property) {
+		super(property);
+		
+		mTranslations = new Hashtable<String, String>();
+
+		Combo aField = new Combo(parent, SWT.READ_ONLY);
+		aField.addModifyListener(this);
+		
+		createContent(parent, null, aField, null);
+		
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING); 
+		gd.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
+		aField.setLayoutData(gd);
 	}
 	
 	/**

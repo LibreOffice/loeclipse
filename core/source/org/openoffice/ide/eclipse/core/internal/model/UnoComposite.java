@@ -21,13 +21,14 @@ import org.openoffice.ide.eclipse.core.model.IUnoComposite;
  */
 public class UnoComposite implements IUnoComposite {
 
-	private Vector mChildren = new Vector();
+	private Vector<IUnoComposite> mChildren = new Vector<IUnoComposite>();
 	
 	private int mType = COMPOSITE_TYPE_NOTSET;
 	
-	private Hashtable mProperties;
+	private Hashtable<String, Object> mProperties;
 	private String mTemplate;
 	private String mFilename;
+	private String mSeparator;
 	
 	private boolean mIndentation = false;
 	
@@ -107,11 +108,11 @@ public class UnoComposite implements IUnoComposite {
 	 *  (non-Javadoc)
 	 * @see unotest.IUnoComposite#configure(java.util.Hashtable, java.lang.String)
 	 */
-	public void configure(Hashtable aProperties, String aTemplate) {
+	public void configure(Hashtable<String, Object> aProperties, String aTemplate) {
 		
 		mTemplate = aTemplate;
 		String[] parts = splitTemplate();
-		mProperties = new Hashtable();
+		mProperties = new Hashtable<String, Object>();
 		
 		// Get the variable parts and their name
 		for (int i=0; i<parts.length; i++) {
@@ -155,6 +156,15 @@ public class UnoComposite implements IUnoComposite {
 	}
 	
 	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoComposite#setChildrenSeparator(java.lang.String)
+	 */
+	public void setChildrenSeparator(String separator) {
+		if (separator == null) separator = ""; //$NON-NLS-1$
+		mSeparator = separator;
+	}
+	
+	/*
 	 *  (non-Javadoc)
 	 * @see unotest.IUnoComposite#create(boolean)
 	 */
@@ -191,7 +201,7 @@ public class UnoComposite implements IUnoComposite {
 			}
 		}
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see unotest.IUnoComposite#toString()
@@ -214,6 +224,10 @@ public class UnoComposite implements IUnoComposite {
 					for (int j=0; j<composites.length; j++){
 						if (composites[j].getType() == COMPOSITE_TYPE_TEXT) {
 							result = result + composites[j].toString();
+							if (j < composites.length - 1 && mSeparator != null) {
+								if (result == null) result = ""; //$NON-NLS-1$
+								result += mSeparator;
+							}
 						}
 					}
 					
@@ -262,7 +276,7 @@ public class UnoComposite implements IUnoComposite {
 	private String[] splitTemplate() {
 		
 		String templateCopy = new String(mTemplate);
-		Vector parts = new Vector();
+		Vector<String> parts = new Vector<String>();
 		
 		/* The state machine has two states: TEXT_STATE or VARIABLE_STATE
 		 * if the last string found was "${" or "}".

@@ -1,6 +1,5 @@
 package org.openoffice.ide.eclipse.core.model;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IProject;
@@ -21,7 +20,7 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
  */
 public class ProjectsManager implements IResourceChangeListener {
 
-	private Hashtable mProjects;
+	private Hashtable<String, IUnoidlProject> mProjects;
 	
 	private static ProjectsManager sInstance;
 	
@@ -80,12 +79,7 @@ public class ProjectsManager implements IResourceChangeListener {
 	public IUnoidlProject[] getProjects() {
 		IUnoidlProject[] projects = new IUnoidlProject[mProjects.size()];
 		
-		ArrayList values = new ArrayList(mProjects.values());
-		for (int i=0; i<projects.length; i++) {
-			projects[i] = (IUnoidlProject)values.get(i);
-		}
-		
-		return projects;
+		return mProjects.values().toArray(projects);
 	}
 	
 	/**
@@ -94,7 +88,7 @@ public class ProjectsManager implements IResourceChangeListener {
 	 *
 	 */
 	private ProjectsManager(){
-		mProjects = new Hashtable();
+		mProjects = new Hashtable<String, IUnoidlProject>();
 		
 		/* Load all the existing unoidl projects */
 		IProject[] projects = ResourcesPlugin.getWorkspace().

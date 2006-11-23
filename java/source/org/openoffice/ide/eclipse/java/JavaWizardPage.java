@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:35 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:29 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -146,14 +146,14 @@ public class JavaWizardPage extends LanguageWizardPage {
 		mRegclassRow = new TextRow(body, REGISTRATION_CLASS_NAME, Messages.getString("JavaWizardPage.RegistrationClassName")); //$NON-NLS-1$
 		mRegclassRow.setValue(mRegclass);
 		mRegclassRow.setFieldChangedListener(mListener);
-		mRegclassRow.setTooltip("Defines the implementation name of the service.");
+		mRegclassRow.setTooltip(Messages.getString("JavaWizardPage.RegistrationClassNameTooltip")); //$NON-NLS-1$
 		
 		mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION, Messages.getString("JavaWizardPage.JavaVersion")); //$NON-NLS-1$
 		mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java4"), "java4"); //$NON-NLS-1$ //$NON-NLS-2$
 		mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
 		mJavaVersionRow.setFieldChangedListener(mListener);
 		mJavaVersionRow.select(0);
-		mJavaVersionRow.setTooltip("Defines the minimal required java version of the project.");
+		mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
 		
 		setControl(body);
 	}

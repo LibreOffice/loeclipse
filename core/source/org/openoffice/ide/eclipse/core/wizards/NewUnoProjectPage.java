@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -142,13 +142,14 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 
 		public void modifyText(ModifyEvent e) {
 			checkWhiteSpaces();
+			((NewUnoProjectWizard)getWizard()).pageChanged(NewUnoProjectPage.this);
 		}
 	};
 	
 	/**
 	 * The list of the listened Text field of the super class
 	 */
-	private Vector mListenedTexts = new Vector();
+	private Vector<Text> mListenedTexts = new Vector<Text>();
 	
 	private IProject newProject;
 	
@@ -276,16 +277,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         final IProject newProjectHandle = getProjectHandle();
 
         // get a project descriptor
-//        URI location = null;
-//        if (!useDefaults()) {
-//			location = getLocationURI();
-//		}
-//
-//        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//        final IProjectDescription description = workspace
-//                .newProjectDescription(newProjectHandle.getName());
-//        description.setLocationURI(location);
-
         IPath location = null;
         if (!useDefaults()) {
         	location = getLocationPath();
@@ -380,15 +371,16 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		// Add the company prefix field
 		mPrefixRow = new TextRow(body, PREFIX, 
 						Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
+		mPrefixRow.setValue("org.openoffice.example"); // Setting default value //$NON-NLS-1$
 		mPrefixRow.setFieldChangedListener(this);
-		mPrefixRow.setTooltip("Defines the vendor package name for the project,\neg: org.openoffice. Do not change it manually in the files.");
+		mPrefixRow.setTooltip(Messages.getString("NewUnoProjectPage.RootPackageTooltip")); //$NON-NLS-1$
 		
 		// Add the output directory field
 		mOutputExt = new TextRow(body, OUTPUT_EXT,
 						Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
 		mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
 		mOutputExt.setFieldChangedListener(this);
-		mOutputExt.setTooltip("Defines the extension package name, usually comp.\nIt means that the implementation classes should\nbe in the <root.package>.comp package");
+		mOutputExt.setTooltip(Messages.getString("NewUnoProjectPage.CompExtensionTooltip")); //$NON-NLS-1$
 		
 		// Add the SDK choice field
 		mSdkRow = new ChoiceRow(body, SDK,
@@ -408,7 +400,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		});
 		
 		fillSDKRow();
-		mSdkRow.setTooltip("Defines the SDK to use for the project devevelopment.");
+		mSdkRow.setTooltip(Messages.getString("NewUnoProjectPage.SdkTooltip")); //$NON-NLS-1$
 		
 		
 		// Add the OOo choice field
@@ -428,13 +420,13 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		});
 		
 		fillOOoRow();
-		mOOoRow.setTooltip("Defines the OOo or URE instance for which the project is for.");
+		mOOoRow.setTooltip(Messages.getString("NewUnoProjectPage.OOoTooltip")); //$NON-NLS-1$
 		
 		
 		// Adding the programming language row 
 		mLanguageRow = new ChoiceRow(body, LANGUAGE,
 						Messages.getString("NewUnoProjectPage.Language")); //$NON-NLS-1$
-		mLanguageRow.setTooltip("Defines the implementation language.");
+		mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
 		
 		// Sets the available programming languages
 		String[] languages = LanguagesHelper.getAvailableLanguageNames();
@@ -535,34 +527,30 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				setErrorMessage(null);
 				checkWhiteSpaces();
 			}
-			
-			// Check the implementation extension correctness
-			if (e.getProperty().equals(OUTPUT_EXT)){
-				String newOuputExt = e.getValue();
+		} else if (e.getProperty().equals(OUTPUT_EXT)){
+			String newOuputExt = e.getValue();
+			/**
+			 * <p>The implementation extension is a single word which could 
+			 * contain numbers. It have to begin with a letter.</p> 
+			 */
+
+			if (!newOuputExt.matches("[a-zA-Z][a-zA-Z0-9]*")){ //$NON-NLS-1$
 				/**
-				 * <p>The implementation extension is a single word which could 
-				 * contain numbers. It have to begin with a letter.</p> 
+				 * <p>If the new implementation extension is invalid, it is set to
+				 * the empty string with an error message.</p>
 				 */
-				
-				if (!newOuputExt.matches("[a-zA-Z][a-zA-Z0-9]*")){ //$NON-NLS-1$
-					/**
-					 * <p>If the new implementation extension is invalid, it is set to
-					 * the empty string with an error message.</p>
-					 */
-					
-					setErrorMessage(Messages.getString("NewUnoProjectPage.InvalidCompError")); //$NON-NLS-1$
-					setPageComplete(false);
-				} else {
-					setErrorMessage(null);
-					if (Platform.getOS().equals(Platform.OS_WIN32)) {
-						setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesWarning"), //$NON-NLS-1$
+
+				setErrorMessage(Messages.getString("NewUnoProjectPage.InvalidCompError")); //$NON-NLS-1$
+				setPageComplete(false);
+			} else {
+				setErrorMessage(null);
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
+					setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesWarning"), //$NON-NLS-1$
 							WARNING);
-					}
 				}
 			}
-			
-			((NewUnoProjectWizard)getWizard()).pageChanged(this);
 		}
+		((NewUnoProjectWizard)getWizard()).pageChanged(this);
 	}
 	
 	/*

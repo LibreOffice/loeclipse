@@ -2,9 +2,9 @@
  *
  * $RCSfile: UreLaunchDelegate.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:45 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -67,7 +67,7 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
 			monitor = new NullProgressMonitor();
 		}
 		
-		monitor.beginTask(MessageFormat.format("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format("{0}...", new Object[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;

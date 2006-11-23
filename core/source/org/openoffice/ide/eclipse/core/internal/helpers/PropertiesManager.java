@@ -58,7 +58,7 @@ public class PropertiesManager {
 			
 			int i=0;
 			boolean found = false;
-			Vector sdks = new Vector(); 
+			Vector<SDK> sdks = new Vector<SDK>(); 
 			
 			do {
 				String path = sdksProperties.getProperty(SDKPATH_PREFERENCE_KEY+i);
@@ -161,7 +161,7 @@ public class PropertiesManager {
 			
 			int i=0;
 			boolean found = false;
-			Vector ooos = new Vector(); 
+			Vector<IOOo> ooos = new Vector<IOOo>(); 
 			
 			do {
 				String path = ooosProperties.getProperty(

@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -256,7 +256,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 		String unoPath = getUnoPath();
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			/* uno is already in the PATH variable, so don't worry */
-			unoPath = "uno";
+			unoPath = "uno"; //$NON-NLS-1$
 		}
 		
 		String command = unoPath +  //$NON-NLS-1$

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -68,7 +68,9 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	private NewUnoProjectPage mMainPage;
 	private LanguageWizardPage mLanguagePage = null;
 	private NewServiceWizardPage mServicePage = null;
+	private NewInterfaceWizardPage mInterfacePage = null;
 	
+	private boolean mShowInterfacePage = true;
 	private String mServiceIfaceName = null; 
 	
 	private IWorkbenchPage mActivePage;
@@ -94,7 +96,9 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		
 		if (mServiceIfaceName == null || mServiceIfaceName.equals("")) { //$NON-NLS-1$
 			mServicePage = new NewServiceWizardPage("service", null); //$NON-NLS-1$
+			mInterfacePage = new NewInterfaceWizardPage("interface", null); //$NON-NLS-1$
 			addPage(mServicePage);
+			addPage(mInterfacePage);
 		}
 	}
 	
@@ -114,9 +118,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	/**
 	 * This method should be called by included pages to notify any change that
 	 * could have an impact on other pages.
-	 * 
-	 * TODO use this method
-	 * 
+	 *
 	 * @param page the page which has changed.
 	 */
 	public void pageChanged(IWizardPage page) {
@@ -152,15 +154,32 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 				mServicePage.setPackage("", true); //$NON-NLS-1$
 				mServicePage.setOOoInstance(OOoContainer.getInstance().
 						getOOo(mMainPage.getOOoName()));
-				
+
 				String serviceName = mMainPage.getProjectName().trim().toLowerCase();
 				serviceName = serviceName.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				String firstLetter = serviceName.substring(0, 1).toUpperCase();
-				serviceName = firstLetter + serviceName.substring(1);
-				
-				mServicePage.setName(serviceName, false);
+				try {
+					String firstLetter = serviceName.substring(0, 1).toUpperCase();
+					serviceName = firstLetter + serviceName.substring(1);
+
+					String ifaceName = mMainPage.getPrefix() + ".X" + serviceName; //$NON-NLS-1$
+
+					mServicePage.setName(serviceName, false);
+					mServicePage.setInheritanceName(ifaceName, false);
+
+					mInterfacePage.setPackageRoot(mMainPage.getPrefix());
+					mInterfacePage.setName("X" + serviceName, false); //$NON-NLS-1$
+				} catch (Exception e) {
+					// May be too early in the initialisation
+				}
 			}
-		} 
+		} else if (mServicePage.equals(page)) {
+			// Checks if the interface page should be shown
+			if (mServicePage.getInheritanceName().startsWith(mMainPage.getPrefix())) {
+				mShowInterfacePage = true;
+			} else {
+				mShowInterfacePage = false;
+			}
+		}
 	}
 	
 	/*
@@ -170,14 +189,22 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	public IWizardPage getNextPage(IWizardPage page) {
 		IWizardPage next = super.getNextPage(page);
 		
-		if (mLanguagePage != null) {
-			if (mMainPage.equals(page)) {
+		if (mMainPage.equals(page)) {
+			if (mLanguagePage != null) {
 				next = mLanguagePage;
-			} else if (mLanguagePage.equals(page)) {
-				next = mServicePage;
-			} else if (mServicePage != null && mServicePage.equals(page)) {
+			} else {
+				next = mServicePage; // Could be null
+			}
+		} else if (mLanguagePage.equals(page)) {
+			next = mServicePage;
+		} else if (mServicePage != null && mServicePage.equals(page)) {
+			if (mShowInterfacePage) {
+				next = mInterfacePage;
+			} else {
 				next = null;
 			}
+		} else if (mShowInterfacePage && page.equals(mInterfacePage)) {
+			next = null;
 		}
 		return next;
 	}
@@ -189,12 +216,14 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		IWizardPage previous = super.getPreviousPage(page);
 		
-		if (mLanguagePage != null) {
-			if (mLanguagePage.equals(page)) {
-				previous = mMainPage;
-			} else if (mServicePage != null && mServicePage.equals(page)) {
+		if (page.equals(mLanguagePage)) {
+			previous = mMainPage;
+		} else if (mServicePage != null && mServicePage.equals(page)) {
+			if (mLanguagePage != null) {
 				previous = mLanguagePage;
 			}
+		} else if (page.equals(mInterfacePage)) {
+			previous = mServicePage; // The service page can't be null here 
 		}
 		return previous;
 	}
@@ -214,6 +243,9 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 					NewServiceWizardPage.getTypeData(data, mServiceIfaceName));
 		} else {
 			data.addInnerData(mServicePage.fillData(new UnoFactoryData()));
+			if (mShowInterfacePage) {
+				data.addInnerData(mInterfacePage.fillData(new UnoFactoryData()));
+			}
 		}
 		
 		new ProjectCreationJob(data).schedule();

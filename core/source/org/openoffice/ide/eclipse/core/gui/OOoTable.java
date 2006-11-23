@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -57,6 +57,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -184,8 +185,7 @@ public class OOoTable extends AbstractTable {
 	protected AbstractOOo openDialog(AbstractOOo ooo){
 		
 		// Gets the shell of the active eclipse window
-		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
-						getActiveWorkbenchWindow().getShell();
+		Shell shell = Display.getDefault().getActiveShell();
 		
 		OOoDialog dialog = new OOoDialog(shell, ooo);
 		if (OOoDialog.OK == dialog.open()){
@@ -413,15 +413,6 @@ public class OOoTable extends AbstractTable {
 						 Messages.getString("OOoTable.MissingFieldError"), //$NON-NLS-1$
 						 null));
 			}
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-		 */
-		protected void cancelPressed() {
-			
-			super.cancelPressed();
 		}
 
 		/*

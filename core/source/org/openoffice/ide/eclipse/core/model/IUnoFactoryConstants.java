@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoFactoryConstants.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -121,7 +121,7 @@ public interface IUnoFactoryConstants {
 	/**
 	 * The object is an <code>Integer</code>
 	 */
-	public final static String TYPE = "type"; //$NON-NLS-1$
+	public final static String TYPE_NATURE = "type_nature"; //$NON-NLS-1$
 	
 	public final static int MODULE = 1;
 	public final static int INTERFACE = 2;
@@ -133,4 +133,38 @@ public interface IUnoFactoryConstants {
 	public final static int CONSTANT = 128;
 	public final static int CONSTANTS = 256;
 	public final static int SINGLETON = 512;
+	public final static int BASICS = 1024;
+	
+	/**
+	 * The object is a String corresponding to the returned type of a method or
+	 * the type of an attribute.
+	 */
+	public final static String TYPE = "type"; //$NON-NLS-1$
+	
+	/**
+	 * The object is an integer defining whether the data are describing an
+	 * attribute or a method
+	 */
+	public final static String MEMBER_TYPE = "member_type"; //$NON-NLS-1$
+	
+	public final static int ATTRIBUTE = 1;
+	public final static int METHOD = 2;
+	
+	
+	/**
+	 * The object is the data name
+	 */
+	public final static String NAME = "name"; //$NON-NLS-1$
+	
+	/**
+	 * The object is a string containing the different flags of attributes, 
+	 * properties and methods separated by a space.
+	 */
+	public final static String FLAGS = "flags"; //$NON-NLS-1$
+	
+	/**
+	 * The object is a string among in, out inout defining the direction of a
+	 * method parameter
+	 */
+	public final static String ARGUMENT_INOUT = "argument_inout"; //$NON-NLS-1$
 }

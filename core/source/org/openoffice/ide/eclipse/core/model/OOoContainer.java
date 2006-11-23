@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,9 +45,9 @@ package org.openoffice.ide.eclipse.core.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,12 +70,12 @@ public class OOoContainer {
 	/**
 	 * Vector of the config container listeners
 	 */
-	private Vector mListeners;
+	private Vector<IConfigListener> mListeners;
 
 	/**
 	 * HashMap containing the ooo lines referenced by their path
 	 */
-	private HashMap mElements;
+	private HashMap<String, IOOo> mElements;
 	
 	
 	/* Methods to manage the listeners */
@@ -175,9 +175,9 @@ public class OOoContainer {
 	 * 
 	 * @return names of the contained OOos
 	 */
-	public Vector getOOoKeys(){
-		Set paths = mElements.keySet();
-		return new Vector(paths);
+	public Vector<String> getOOoKeys(){
+		Set<String> paths = mElements.keySet();
+		return new Vector<String>(paths);
 	}
 	
 	/**
@@ -344,8 +344,8 @@ public class OOoContainer {
 	private OOoContainer(){
 		
 		// Initialize the members
-		mElements = new HashMap();
-		mListeners = new Vector();
+		mElements = new HashMap<String, IOOo>();
+		mListeners = new Vector<IConfigListener>();
 	}
 	
 	/**
@@ -353,13 +353,13 @@ public class OOoContainer {
 	 *  
 	 * @return vector where the elements order isn't guaranteed
 	 */
-	private Vector toVector(){
-		Vector result = new Vector();
-		Set entries = mElements.entrySet();
-		Iterator iter = entries.iterator();
+	private Vector<IOOo> toVector(){
+		Vector<IOOo> result = new Vector<IOOo>();
+		Set<Entry<String, IOOo>> entries = mElements.entrySet();
+		Iterator<Entry<String, IOOo>> iter = entries.iterator();
 		
 		while (iter.hasNext()){
-			Object value = ((Map.Entry)iter.next()).getValue();
+			IOOo value = iter.next().getValue();
 			result.add(value);
 		}
 		return result;

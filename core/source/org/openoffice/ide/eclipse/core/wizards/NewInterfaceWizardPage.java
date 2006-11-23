@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,11 +49,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.gui.InterfacesTable;
+import org.openoffice.ide.eclipse.core.gui.ITableElement;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -96,12 +97,20 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	//--------------------------------------------------- Page content managment
 
 	private InterfacesTable mInterfaceInheritances;
+	private InterfaceMembersTable mMembers;
 	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#createSpecificControl(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createSpecificControl(Composite parent) {
+		
+		// Pour avoir des tailles des tables correctes
+		Point point = getShell().getSize();
+		point.y = Math.max(point.y, 600);
+		point.x = Math.min(point.x, 600);
+		getShell().setSize(point);
+		
 		
 		Composite tableParent = new Composite(parent, SWT.NORMAL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -113,8 +122,12 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 				IUnoFactoryConstants.INTERFACE);
 		
 		mInterfaceInheritances = new InterfacesTable(tableParent);
-		mInterfaceInheritances.setToolTipText("Set the optional and mandatory interfaces from \nwhich the new interface will inherit.\nIf there are only optional interfaces, the first one\nwill be considered as mandatory.");
+		mInterfaceInheritances.setToolTipText(Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip")); //$NON-NLS-1$
 		mInterfaceInheritances.addSelectionChangedListener(this);
+		
+		mMembers = new InterfaceMembersTable(tableParent);
+		mMembers.setToolTipText(Messages.getString("NewInterfaceWizardPage.MembersTableTooltip")); //$NON-NLS-1$
+		mMembers.addSelectionChangedListener(this);
 	}
 	
 	/*
@@ -167,18 +180,18 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	public UnoFactoryData fillData(UnoFactoryData data) {
 		data = super.fillData(data);
 		if (data != null) {
-			data.setProperty(IUnoFactoryConstants.TYPE, 
+			data.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
 					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
 			
 			// Vector containing the interface inheritance paths "::" separated
-			Vector optionalIntf = new Vector();
-			Vector mandatoryIntf = new Vector();
+			Vector<String> optionalIntf = new Vector<String>();
+			Vector<String> mandatoryIntf = new Vector<String>();
 			
 			// Separate the optional and mandatory interface inheritances			
-			Vector lines = mInterfaceInheritances.getLines();
-			for (int i=0, length=lines.size(); i<length; i++) {
+			Vector<ITableElement> lines = mInterfaceInheritances.getLines();
+			for (ITableElement linei : lines) {
 				InterfacesTable.InheritanceLine line = 
-					(InterfacesTable.InheritanceLine)lines.get(i);
+					(InterfacesTable.InheritanceLine)linei;
 				
 				if (line.isOptional()) {
 					optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -190,22 +203,24 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 			
 			// Get the mandatory inheritances
 			String[] interfaces = new String[mandatoryIntf.size()];
-			for (int i=0, length=mandatoryIntf.size(); i<length; i++) {
-				interfaces[i] = (String)mandatoryIntf.get(i);
-			}
+			interfaces = mandatoryIntf.toArray(interfaces);
 			data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
 					interfaces);
 			
 			// Get the optional inheritances
 			String[] opt_interfaces = new String[optionalIntf.size()];
-			for (int i=0, length=optionalIntf.size(); i<length; i++) {
-				opt_interfaces[i] = (String)optionalIntf.get(i);
-			}
+			opt_interfaces = optionalIntf.toArray(opt_interfaces);
 			data.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, 
 					opt_interfaces);
 			
 			optionalIntf.clear();
 			mandatoryIntf.clear();
+			
+			// Get the interface members data
+			UnoFactoryData[] membersData = mMembers.getUnoFactoryData();
+			for (UnoFactoryData member : membersData) {
+				data.addInnerData(member);
+			}
 		}
 		return data;
 	}

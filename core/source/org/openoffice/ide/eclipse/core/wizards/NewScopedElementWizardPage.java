@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -339,12 +339,12 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		mPackageRow = new TextRow(body, P_PACKAGE, packageLabel);
 		mPackageRow.setFieldChangedListener(this);
 		mPackageRow.setValue(mRootName);
-		mPackageRow.setTooltip("Defines the sub-modules name which will contain the new type,\neg: \"sub::module\". This value is optional.");
+		mPackageRow.setTooltip(Messages.getString("NewScopedElementWizardPage.PackageTooltip")); //$NON-NLS-1$
 		
 		mNameRow = new TextRow(body, P_NAME, getTypeLabel());
 		mNameRow.setFieldChangedListener(this);
 		mNameRow.setValue(mElementName);
-		mNameRow.setTooltip("Defines the name of the new type, eg: XFoo for a Foo interface.\nThis value is mandatory.");
+		mNameRow.setTooltip(Messages.getString("NewScopedElementWizardPage.TypeNameTooltip")); //$NON-NLS-1$
 		
 		createSpecificControl(body);
 		

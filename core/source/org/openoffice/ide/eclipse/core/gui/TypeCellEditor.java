@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: TypeRow.java,v $
+ * $RCSfile: TypeCellEditor.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,39 +41,51 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.gui.rows;
+package org.openoffice.ide.eclipse.core.gui;
 
+import java.text.MessageFormat;
+
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
-public class TypeRow extends TextRow {
+/**
+ * Table cell editor for UNO types.
+ * 
+ * @author cedricbosdo
+ *
+ */
+public class TypeCellEditor extends TextCellEditor {
 
-	private InternalUnoType mSelectedType;
+	private Button button;
+	private boolean mDialogOpened = false;
+	
 	private int mType = 0;
 	
 	private boolean mIncludeSequences = false;
 	private boolean mIncludeSimpleTypes = false;
 	private boolean mIncludeVoid = true;
 	
-	public TypeRow(Composite parent, String property, String label, int aType) {
-		super(parent, property, label);
-		
-		if (aType >=0 && aType <= InternalUnoType.ALL_TYPES) {
-			mType = aType;
+	public TypeCellEditor(Composite parent, int aTypeMask) {
+		super(parent, SWT.None);
+		if (aTypeMask >=0 && aTypeMask <= InternalUnoType.ALL_TYPES) {
+			mType = aTypeMask;
 		}
 	}
 	
@@ -113,29 +125,59 @@ public class TypeRow extends TextRow {
 		mIncludeVoid = include;
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#createContent(org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.Control, org.eclipse.swt.widgets.Control, java.lang.String)
-	 */
-	protected void createContent(Composite parent, Control label, 
-			Control field, String browseText) {
-
-		super.createContent(parent, label, field, Messages.getString("TypeRow.Browse")); //$NON-NLS-1$
+	protected Object openDialogBox(Composite parent) {
 		
-		// Add a completion listener on the Text field
-		((Text)mField).addKeyListener(new KeyAdapter() {
-
-			/*
-			 * (non-Javadoc)
-			 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-			 */
+		Object result = getValue(); 
+		
+		UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+		
+		int oldType = typesProvider.getTypes();
+		typesProvider.setTypes(mType & 
+				UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.MODULE));
+		
+		UnoTypeBrowser browser = new UnoTypeBrowser(
+				parent.getShell(), typesProvider);
+		
+		if (UnoTypeBrowser.OK == browser.open()) {
+			InternalUnoType mSelectedType = browser.getSelectedType();
+			if (null != mSelectedType){
+				int pos = text.getCaretPosition();
+				text.insert(mSelectedType.getFullName());
+				text.setFocus();
+				text.setSelection(pos + mSelectedType.getFullName().length());
+				result = text.getText().trim();
+			}
+		}
+		
+		typesProvider.setTypes(oldType);
+		return result;
+	}
+	
+	@Override
+	protected void focusLost() {
+		if (!mDialogOpened) {
+			Control focusHolder = Display.getDefault().getFocusControl();
+			if (!text.equals(focusHolder) && !button.equals(focusHolder)) {
+				super.focusLost();
+			}
+		}
+	}
+	
+	@Override
+	protected Control createControl(Composite parent) {
+		
+		final Composite editor = new Composite(parent, SWT.NONE);
+		editor.setLayoutData(getLayoutData());
+		editor.setLayout(new DialogCellLayout());
+		
+		super.createControl(editor);
+		text.addKeyListener(new KeyAdapter(){
+			@Override
 			public void keyPressed(KeyEvent e) {
 				
 				// react on Ctrl+space
 				if (e.character == ' ' && (e.stateMask & SWT.CTRL) != 0) {
 					// if the word sequence is started, complete it
-					Text text = (Text)mField;
-
 					int pos = text.getCaretPosition();
 					String value = text.getText(0, pos);
 					
@@ -184,47 +226,74 @@ public class TypeRow extends TextRow {
 						}
 					}
 				}
+			}	
+		});
+		
+		
+		button = new Button(editor, SWT.NONE);
+		button.setText("..."); //$NON-NLS-1$
+		button.addFocusListener(new FocusAdapter(){
+			public void focusLost(FocusEvent e) {
+				TypeCellEditor.this.focusLost();
 			}
 		});
 		
-		final Shell shell = parent.getShell();
-		
-		((Button)mBrowse).addSelectionListener(new SelectionAdapter(){
+		// open the Uno Types Browser
+		button.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
+				mDialogOpened = true;
 				
-				UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+				Object newValue = openDialogBox(editor);
 				
-				int oldType = typesProvider.getTypes();
-				typesProvider.setTypes(mType & 
-						UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.MODULE));
+				mDialogOpened = false;
 				
-				UnoTypeBrowser browser = new UnoTypeBrowser(
-						shell, typesProvider);
-				browser.setSelectedType(mSelectedType);
-				
-				if (UnoTypeBrowser.OK == browser.open()) {
-					mSelectedType = browser.getSelectedType();
-					if (null != mSelectedType){
-						Text text = (Text)mField;
-						int pos = text.getCaretPosition();
-						text.insert(mSelectedType.getFullName());
-						text.setFocus();
-						text.setSelection(pos + mSelectedType.getFullName().length());
-						setValue(text.getText().trim());
-					}
-				}
-				
-				typesProvider.setTypes(oldType);
+				if (newValue != null) {
+                    boolean newValidState = isCorrect(newValue);
+                    if (newValidState) {
+                        markDirty();
+                        doSetValue(newValue);
+                    } else {
+                        // try to insert the current value into the error message.
+                        setErrorMessage(MessageFormat.format(getErrorMessage(),
+                                new Object[] { newValue.toString() }));
+                    }
+                    fireApplyEditorValue();
+                }
 			}
 		});
 		
-		((Button)mBrowse).addDisposeListener(new DisposeListener(){
-
-			public void widgetDisposed(DisposeEvent e) {
-				UnoTypeProvider.getInstance().stopProvider();
-			}
-			
-		});
+		return editor;
 	}
+	
+	/**
+     * Internal class for laying out the dialog.
+     */
+    private class DialogCellLayout extends Layout {
+        public void layout(Composite editor, boolean force) {
+            Rectangle bounds = editor.getClientArea();
+            Point size = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+            if (text != null) {
+				text.setBounds(0, 0, bounds.width - size.x, bounds.height);
+			}
+            button.setBounds(bounds.width - size.x, 0, size.x, bounds.height);
+        }
+
+        public Point computeSize(Composite editor, int wHint, int hHint,
+                boolean force) {
+            if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+				return new Point(wHint, hHint);
+			}
+            Point contentsSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+                    force);
+            Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+                    force);
+            // Just return the button width to ensure the button is not clipped
+            // if the label is long.
+            // The label will just use whatever extra width there is
+            Point result = new Point(buttonSize.x, Math.max(contentsSize.y,
+                    buttonSize.y));
+            return result;
+        }
+    }
 }

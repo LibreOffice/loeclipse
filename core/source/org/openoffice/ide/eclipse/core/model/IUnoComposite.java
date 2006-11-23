@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoComposite.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -169,7 +169,7 @@ public interface IUnoComposite {
 	 * @param template the string template used in the 
 	 *       <code>toString()</code> method.
 	 */
-	public void configure(Hashtable properties, String template);
+	public void configure(Hashtable<String, Object> properties, String template);
 	
 	/** sets the <code>COMPOSITE_TYPE_FILE</code> or 
 	 * <code>COMPOSITE_TYPE_FOLDER</code> filename.
@@ -188,6 +188,14 @@ public interface IUnoComposite {
 	 * @param toIndent <code>true</code> will add indentation.
 	 */
 	public void setIndented(boolean toIndent);
+	
+	/**
+	 * defines the string which has to be inserted between two children. If no
+	 * separator is specified, the children will siply be concatenated.
+	 *  
+	 * @param separator the separator to add between the children
+	 */
+	public void setChildrenSeparator(String separator);
 	
 	/** creates the file or folder with its non-existing parents.
 	 * 

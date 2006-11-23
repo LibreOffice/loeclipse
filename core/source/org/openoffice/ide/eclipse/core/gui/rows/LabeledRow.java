@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -158,9 +158,12 @@ public abstract class LabeledRow {
 			// Supposes that the parent layout is a Grid one  
 			int span = ((GridLayout)layout).numColumns - 1;
 			
-			mLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+			if (mLabel != null) {
+				mLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+			}
 			
 			int fspan = mBrowse != null ? span -1 : span;
+			fspan = mLabel == null ? fspan - 1 : fspan;
 
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = fspan;

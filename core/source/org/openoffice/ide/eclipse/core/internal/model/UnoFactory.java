@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -90,15 +90,19 @@ public final class UnoFactory {
 		UnoFactoryData[] inners = data.getInnerData();
 		for (int i=0; i<inners.length; i++) {
 			UnoFactoryData inner = inners[i];
-			Integer type = (Integer)inner.getProperty(IUnoFactoryConstants.TYPE);
+			Integer type = (Integer)inner.getProperty(IUnoFactoryConstants.TYPE_NATURE);
 			switch (type.intValue()) {
 				// TODO This switch has to be extended to support other types
 				case IUnoFactoryConstants.SERVICE:
 					createService(inner, prj, page, monitor, false);
 					break;
+				case IUnoFactoryConstants.INTERFACE:
+					createInterface(inner, prj, page, monitor, false);
+					break;
 			}
 		}
 		
+		UnoidlProjectHelper.refreshProject(prj, null);
 		UnoidlProjectHelper.forceBuild(prj, monitor);
 		
 		// create the language-specific part
@@ -112,6 +116,18 @@ public final class UnoFactory {
 		UnoidlProjectHelper.setProjectBuilders(prj, monitor);
 	}
 	
+	/**
+	 * Creates a new component implementation skeleton from the project factory 
+	 * data and opens the generated file. This method executes the 
+	 * uno-skeletonmaker.
+	 * 
+	 * @param data the project data for which to create the component 
+	 * 			implementation skeleton. 
+	 * @param prj the project instance
+	 * @param activePage the page in which to open the created file 
+	 * @param monitor the progress monitor to report the operation progress
+	 * @throws Exception is thrown if anything wrong happens
+	 */
 	public static void makeSkeleton(UnoFactoryData data, IUnoidlProject prj, 
 			IWorkbenchPage activePage, IProgressMonitor monitor) throws Exception {
 		
@@ -137,13 +153,16 @@ public final class UnoFactory {
 			String types = " "; //$NON-NLS-1$
 			for (int i=0; i<inner.length; i++) {
 				try {
-					String name = (String)inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
-					String module = (String)inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
-					
-					String fullname = module + "::" + name; //$NON-NLS-1$
-					fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
-					
-					types += "-t " + fullname; // $NON-NLS-1$ //$NON-NLS-1$
+					int type = ((Integer)inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
+					if (type == IUnoFactoryConstants.SERVICE) {
+						String name = (String)inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
+						String module = (String)inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+
+						String fullname = module + "::" + name; //$NON-NLS-1$
+						fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
+
+						types += " -t " + fullname; // $NON-NLS-1$ //$NON-NLS-1$
+					}
 				} finally {}
 			}
 			
@@ -206,14 +225,14 @@ public final class UnoFactory {
 	}
 	
 	/**
-	 * Creates a service from its factory data. the created file can be opened
+	 * Creates a service from its factory data. The created file can be opened
 	 * if <code>openFile</code> is set to <code>true</code>.
 	 * 
 	 * @param data the data describing the service
 	 * @param prj the uno project that will contain the service
 	 * @param activePage the page in which to open the created file
 	 * @param monitor the progress monitor to report the operation progress
-	 * @param openFile opens the cerated file if set to <code>true</code>
+	 * @param openFile opens the created file if set to <code>true</code>
 	 * @throws Exception is thrown if anything wrong happens
 	 */
 	public static void createService(UnoFactoryData data, IUnoidlProject prj, 
@@ -284,8 +303,35 @@ public final class UnoFactory {
 		}
 	}
 	
+	/**
+	 * Creates an interface from its factory data and opens the created file.
+	 * 
+	 * @param data the data describing the interface
+	 * @param prj the uno project that will contain the interface
+	 * @param activePage the page in which to open the created file
+	 * @param monitor the progress monitor to report the operation progress
+	 * @throws Exception is thrown if anything wrong happens
+	 */
 	public static void createInterface(UnoFactoryData data, IUnoidlProject prj, 
-			IWorkbenchPage activePage, IProgressMonitor monitor) throws Exception {
+			IWorkbenchPage activePage, IProgressMonitor monitor)
+		throws Exception {
+		createInterface(data, prj, activePage, monitor, true);
+	}
+	
+	/**
+	 * Creates an interface from its factory data. The created file can be opened
+	 * if <code>openFile</code> is set to <code>true</code>.
+	 * 
+	 * @param data the data describing the interface
+	 * @param prj the uno project that will contain the interface
+	 * @param activePage the page in which to open the created file
+	 * @param monitor the progress monitor to report the operation progress
+	 * @param openFile opens the created file if set to <code>true</code>
+	 * @throws Exception is thrown if anything wrong happens
+	 */
+	public static void createInterface(UnoFactoryData data, IUnoidlProject prj, 
+			IWorkbenchPage activePage, IProgressMonitor monitor, boolean openFile)
+		throws Exception {
 		
 		// Extract the data
 		String path = (String)data.getProperty(
@@ -301,7 +347,7 @@ public final class UnoFactory {
 				IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
 		
 		if (0 == interfaces.length && 0 == opt_interfaces.length) {
-			interfaces = new String[]{"com::sun::star::uno::XInterface"};
+			interfaces = new String[]{"com::sun::star::uno::XInterface"}; //$NON-NLS-1$
 		} else if (0 == interfaces.length && 0 < opt_interfaces.length) {
 			interfaces = new String[]{opt_interfaces[0]};
 			
@@ -361,16 +407,48 @@ public final class UnoFactory {
 			intf.addChild(inherit);
 		}
 
+		// Creates all the members
+		for (UnoFactoryData memberData : data.getInnerData()) {
+			
+			// Get the member type: Attribute or Method
+			try {
+				Integer memberType = (Integer)memberData.getProperty(IUnoFactoryConstants.MEMBER_TYPE);
+				if (memberType.intValue() == IUnoFactoryConstants.ATTRIBUTE) {
+					// create the method composite
+					String attrName = (String)memberData.getProperty(IUnoFactoryConstants.NAME);
+					String type = (String)memberData.getProperty(IUnoFactoryConstants.TYPE);
+					String flags = (String)memberData.getProperty(IUnoFactoryConstants.FLAGS);
+					intf.addChild(CompositeFactory.createAttribute(attrName, type, flags));
+				} else if (memberType.intValue() == IUnoFactoryConstants.METHOD) {
+					// create the attribute composite
+					String methodName = (String)memberData.getProperty(IUnoFactoryConstants.NAME);
+					String type = (String)memberData.getProperty(IUnoFactoryConstants.TYPE);
+					IUnoComposite method = CompositeFactory.createMethod(methodName, type);
+					for (UnoFactoryData argData : memberData.getInnerData()) {
+						String argName = (String)argData.getProperty(IUnoFactoryConstants.NAME);
+						String argType = (String)argData.getProperty(IUnoFactoryConstants.TYPE);
+						String direction = (String)argData.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
+						method.addChild(CompositeFactory.createMethodArgument(argName, argType, direction));
+					}
+					intf.addChild(method);
+				}
+			} catch (NullPointerException e) {
+				// just avoid the wrong member
+			}
+		}
+		
 		// Generate all the stuffs
 		file.create(true);
 		file.dispose();
 
 		// show the generated file
-		String filename = typepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		UnoidlProjectHelper.refreshProject(prj, null);
-		IFile interfaceFile = prj.getFile(prj.getIdlPath().
-				append(filename));
-		showFile(interfaceFile, activePage);
+		if (openFile) {
+			String filename = typepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UnoidlProjectHelper.refreshProject(prj, null);
+			IFile interfaceFile = prj.getFile(prj.getIdlPath().
+					append(filename));
+			showFile(interfaceFile, activePage);
+		}
 	}
 	
 	/**

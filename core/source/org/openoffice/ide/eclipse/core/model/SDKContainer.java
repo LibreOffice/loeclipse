@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKContainer.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:58 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,9 +45,9 @@ package org.openoffice.ide.eclipse.core.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.PropertiesManager;
@@ -67,12 +67,12 @@ public class SDKContainer {
 	/**
 	 * Vector of the SDK container listeners
 	 */
-	private Vector mListeners;
+	private Vector<IConfigListener> mListeners;
 
 	/**
 	 * HashMap containing the sdk lines referenced by their name
 	 */
-	private HashMap mElements;
+	private HashMap<String, ISdk> mElements;
 	
 	
 	/* Methods to manage the listeners */
@@ -172,9 +172,9 @@ public class SDKContainer {
 	 * 
 	 * @return names of the contained SDKs
 	 */
-	public Vector getSDKKeys(){
-		Set names = mElements.keySet();
-		return new Vector(names);
+	public Vector<String> getSDKKeys(){
+		Set<String> names = mElements.keySet();
+		return new Vector<String>(names);
 	}
 	
 	private void fireSDKRemoved(ISdk sdk) {
@@ -302,8 +302,8 @@ public class SDKContainer {
 	private SDKContainer(){
 		
 		// Initialize the members
-		mElements = new HashMap();
-		mListeners = new Vector();
+		mElements = new HashMap<String, ISdk>();
+		mListeners = new Vector<IConfigListener>();
 	}
 	
 	/**
@@ -311,14 +311,13 @@ public class SDKContainer {
 	 *  
 	 * @return vector where the elements order isn't guaranteed
 	 */
-	private Vector toVector(){
-		Vector result = new Vector();
-		Set entries = mElements.entrySet();
-		Iterator iter = entries.iterator();
+	private Vector<ISdk> toVector(){
+		Vector<ISdk> result = new Vector<ISdk>();
+		Set<Entry<String, ISdk>> entries = mElements.entrySet();
+		Iterator<Entry<String, ISdk>> iter = entries.iterator();
 		
 		while (iter.hasNext()){
-			Object value = ((Map.Entry)iter.next()).getValue();
-			result.add(value);
+			result.add(iter.next().getValue());
 		}
 		return result;
 	}

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypesGetter.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -76,6 +76,7 @@ public class UnoTypesGetter implements XMain {
 	private Vector mLocalRegistries;
     private Vector mExternalRegistries;
 	private int mTypesMask = 1023;
+	private TypeClass[] mTypeClasses;
 	
 	private XComponentContext mCtx;
     
@@ -147,8 +148,8 @@ public class UnoTypesGetter implements XMain {
     public void execute(String[] args) throws Exception {
 		if (1 < args.length) {
 
-            Vector localRegistries = new Vector();
-            Vector externalRegistries = new Vector();
+            Vector<String> localRegistries = new Vector<String>();
+            Vector<String> externalRegistries = new Vector<String>();
             mTypesMask = 1023;
             String root = ""; //$NON-NLS-1$
             
@@ -221,17 +222,19 @@ public class UnoTypesGetter implements XMain {
 		}
 		
 		// Sets the typesMask
+		if (aTypesMask >= 1024) aTypesMask = 1023;
 		if (aTypesMask >= 0 && 1024 > aTypesMask) {			
 			mTypesMask = aTypesMask;
+			mTypeClasses = convertToTypeClasses();
 		}
 	}
 
     /**
      * Query the types and return them in a vector of {@link InternalUnoType}.
      */
-	protected Vector queryTypes() throws Exception {
+	protected Vector<InternalUnoType> queryTypes() throws Exception {
             
-        Vector results = new Vector();
+        Vector<InternalUnoType> results = new Vector<InternalUnoType>();
 		
         for (int i=0, length=mLocalRegistries.size(); i<length; i++)	{
             String registryPath = (String)mLocalRegistries.get(i);
@@ -250,10 +253,10 @@ public class UnoTypesGetter implements XMain {
      * Get all the types from a registry and return an {@link InternalUnoType}
      * vector.
      */
-    private Vector getTypesFromRegistry(String registryPath, boolean isLocal) 
-            throws Exception {
+    private Vector<InternalUnoType> getTypesFromRegistry(String registryPath, 
+    		boolean isLocal) throws Exception {
 	    
-        Vector result = new Vector();
+        Vector<InternalUnoType> result = new Vector<InternalUnoType>();
                 
         if (null != registryPath && registryPath.startsWith("file:///")) { //$NON-NLS-1$
 				
@@ -282,7 +285,7 @@ public class UnoTypesGetter implements XMain {
 			XTypeDescriptionEnumeration xLocalTypeEnum = localTDMgr.
 					createTypeDescriptionEnumeration(
 							mRoot,
-							convertToTypeClasses(),
+							mTypeClasses,
 							TypeDescriptionSearchDepth.INFINITE);
 
             // Convert the enumeration into a Vector
@@ -306,8 +309,7 @@ public class UnoTypesGetter implements XMain {
      *      <code>false</code> otherwise.
      */
     private boolean isOfType(int mask, int type) {
-
-        return ((mask & type) == type);
+        return ((mask & type) != 0);
     }
    
     /**
@@ -319,34 +321,41 @@ public class UnoTypesGetter implements XMain {
     private TypeClass[] convertToTypeClasses() {
 			
         // Creates the TypeClass[] array from the given types names
-		Vector typeClasses = new Vector();
+		Vector<TypeClass> typeClasses = new Vector<TypeClass>();
 			
 		if (isOfType(mTypesMask, IUnoFactoryConstants.MODULE)) {
 			typeClasses.add(TypeClass.MODULE);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.INTERFACE)) {
+		} 
+		if (isOfType(mTypesMask, IUnoFactoryConstants.INTERFACE)) {
 			typeClasses.add(TypeClass.INTERFACE);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.SERVICE)) {
+		}
+		if (isOfType(mTypesMask, IUnoFactoryConstants.SERVICE)) {
 			typeClasses.add(TypeClass.SERVICE);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.STRUCT)) {
+		}
+		if (isOfType(mTypesMask, IUnoFactoryConstants.STRUCT)) {
 			typeClasses.add(TypeClass.STRUCT);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.ENUM)) {
+		} 
+		if (isOfType(mTypesMask, IUnoFactoryConstants.ENUM)) {
 			typeClasses.add(TypeClass.ENUM);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.EXCEPTION)) {
+		} 
+		if (isOfType(mTypesMask, IUnoFactoryConstants.EXCEPTION)) {
 			typeClasses.add(TypeClass.EXCEPTION);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.TYPEDEF)) {
+		}
+		if (isOfType(mTypesMask, IUnoFactoryConstants.TYPEDEF)) {
 			typeClasses.add(TypeClass.TYPEDEF);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.CONSTANT)) {
+		}
+		if (isOfType(mTypesMask, IUnoFactoryConstants.CONSTANT)) {
 			typeClasses.add(TypeClass.CONSTANT);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.CONSTANTS)) {
+		}
+		if (isOfType(mTypesMask, IUnoFactoryConstants.CONSTANTS)) {
 			typeClasses.add(TypeClass.CONSTANTS);
-		} else if (isOfType(mTypesMask, IUnoFactoryConstants.SINGLETON)) {
+		}
+		if (isOfType(mTypesMask, IUnoFactoryConstants.SINGLETON)) {
 			typeClasses.add(TypeClass.SINGLETON);
 		}
 		
 		TypeClass[] types = new TypeClass[typeClasses.size()];
-		for (int i=0, length=typeClasses.size(); i<length; i++){
-			types[i] = (TypeClass)typeClasses.get(i);
-		}
+		types = typeClasses.toArray(types);
 		typeClasses.clear();
 
         return types;

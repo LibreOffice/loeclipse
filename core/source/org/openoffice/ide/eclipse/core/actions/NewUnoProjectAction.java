@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectAction.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,6 +46,9 @@ package org.openoffice.ide.eclipse.core.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
@@ -95,7 +98,14 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 		NewUnoProjectWizard wizard = new NewUnoProjectWizard();
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		
+		dialog.setBlockOnOpen(false);
 		dialog.open();
+	
+		Point size = dialog.getShell().getSize();
+		Rectangle bounds = Display.getDefault().getClientArea();
+		dialog.getShell().setBounds((bounds.width - size.x)/2, 
+				(bounds.height - size.y)/2, size.x, size.y);
+	
 	}
 
 	/*

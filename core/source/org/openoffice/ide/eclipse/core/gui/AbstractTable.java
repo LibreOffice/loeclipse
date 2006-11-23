@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractTable.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -143,7 +143,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 	 * @return a vector containing the {@link ITableElement} objects 
 	 *			representing the lines.
 	 */
-	public Vector getLines(){
+	public Vector<ITableElement> getLines(){
 		return mLines;
 	}
 	
@@ -249,7 +249,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		mTable = new Table(this, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		
 		// The table uses two lines of the layout because of the two buttons Add and Del
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		gd.verticalSpan = 2;
 		mTable.setLayoutData(gd);
 		
@@ -339,7 +339,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 		}
 	}
 	
-	private Vector mLines = new Vector();
+	private Vector<ITableElement> mLines = new Vector<ITableElement>();
 	
 	// Components private instances
 	

@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcErrorReader.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -265,12 +265,12 @@ public class IdlcErrorReader {
 					marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 					
 					// Try to find the line or Word that causes the error
-					Map positions = getWrongWord(lineNo, message);
+					Map<String, Integer> positions = getWrongWord(lineNo, message);
 					
 					marker.setAttribute(IMarker.CHAR_START,
-							((Integer)positions.get(IMarker.CHAR_START)).intValue());
+							positions.get(IMarker.CHAR_START).intValue());
 					marker.setAttribute(IMarker.CHAR_END,  
-							((Integer)positions.get(IMarker.CHAR_END)).intValue());
+							positions.get(IMarker.CHAR_END).intValue());
 					
 				} catch (CoreException e) {
 					// Nothing to do. Do not create noise in the logs
@@ -287,8 +287,8 @@ public class IdlcErrorReader {
 	 * @param message
 	 * @return
 	 */
-	private Map getWrongWord(int line, String message){
-		HashMap map = new HashMap();
+	private Map<String, Integer> getWrongWord(int line, String message){
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		int start = 0;
 		int end = 0;
 		

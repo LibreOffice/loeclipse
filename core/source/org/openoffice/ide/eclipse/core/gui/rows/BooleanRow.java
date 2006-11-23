@@ -2,9 +2,9 @@
  *
  * $RCSfile: BooleanRow.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -90,6 +90,14 @@ public class BooleanRow extends LabeledRow {
 	 */
 	public void setLabel(String newLabel){
 		((Label)mField).setText(newLabel);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#setTooltip(java.lang.String)
+	 */
+	public void setTooltip(String tooltip) {
+		((Button)mLabel).setToolTipText(tooltip);
 	}
 	
 	/**

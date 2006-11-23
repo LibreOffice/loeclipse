@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfacesTable.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.gui;
+package org.openoffice.ide.eclipse.core.wizards;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
@@ -49,6 +49,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.gui.AbstractTable;
+import org.openoffice.ide.eclipse.core.gui.ITableElement;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
@@ -80,7 +82,7 @@ public class InterfacesTable extends AbstractTable {
 					Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
 					Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
 				},
-				new int[] {20, 200}, 
+				new int[] {25, 400}, 
 				new String[] {
 					InheritanceLine.OPTIONAL,
 					InheritanceLine.NAME
