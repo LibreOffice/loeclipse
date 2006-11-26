@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/04/25 19:03:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:38:02 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -82,8 +82,8 @@
 	<target name="help">
 		<echo>
 		This ant file has to be called with the following parameters:
-			-Dhome.openoffice=/path/to/your/ooo/
-			-Dhome.eclipse=/path/to/your/eclipse/
+			-Dopenoffice.home=/path/to/your/ooo/
+			-Declipse.home=/path/to/your/eclipse/
 			
 			These arguments can be either put in the command line or in an
 			environment variable called ANT_ARGS.
