@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDecorator.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:32:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -76,18 +76,24 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
 		Image newImage = null;
 		
 		if (isIdlFolder(element)){
-			newImage = OOEclipsePlugin.getImage(ImagesConstants.IDL_FOLDER);
+			newImage = new OverlayImageIcon(image, 
+					OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
+					OverlayImageIcon.TOP_LEFT).getImage();
 		} else if (element instanceof IProject){
 			IProject project = (IProject)element;
 			try {
 				if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)){
-					newImage = OOEclipsePlugin.getImage(ImagesConstants.UNO_PROJECT);
+					newImage = new OverlayImageIcon(image, 
+							OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
+							OverlayImageIcon.BOTTOM_RIGHT).getImage();
 				}
 			} catch (CoreException e) {
 				// Nothing to do: no uno nature found
 			}
 		} else if (isDbFolder(element)){
-			newImage = OOEclipsePlugin.getImage(ImagesConstants.DB_FOLDER);
+			newImage = new OverlayImageIcon(image, 
+					OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
+					OverlayImageIcon.TOP_LEFT).getImage();
 		}
 		
 		return newImage;

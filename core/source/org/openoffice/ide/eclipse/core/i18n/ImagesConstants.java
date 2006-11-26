@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:35:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -55,11 +55,9 @@ public class ImagesConstants {
 	public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE"; //$NON-NLS-1$
 	public static final String OOO_DIALOG_IMAGE = "OOO_DIALOG_IMAGE"; //$NON-NLS-1$
 	public static final String ERROR = "ERROR"; //$NON-NLS-1$
-	public static final String IDL_FOLDER = "IDL_FOLDER"; //$NON-NLS-1$
 	public static final String UNO_PROJECT = "UNO_PROJECT"; //$NON-NLS-1$
 	public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ"; //$NON-NLS-1$
 	public static final String NEWFILE_WIZ = "NEWFILE_WIZ"; //$NON-NLS-1$
-	public static final String DB_FOLDER = "DB_FOLDER"; //$NON-NLS-1$
 	public static final String NEW_SERVICE_IMAGE = "NEW_SERVICE_IMAGE"; //$NON-NLS-1$
 	public static final String CHECKED = "CHECKED"; //$NON-NLS-1$
 	public static final String UNCHECKED = "UNCHECKED"; //$NON-NLS-1$
@@ -75,5 +73,8 @@ public class ImagesConstants {
 	public static final String EXCEPTION = "EXCEPTION"; //$NON-NLS-1$
 	public static final String CONSTANTS = "CONSTANTS"; //$NON-NLS-1$
 	public static final String TYPEDEF = "TYPEDEF"; //$NON-NLS-1$
-
+	public static final String PRJ_MODIFIER = "PRJ_MODIFIER"; //$NON-NLS-1$
+	public static final String DB_MODIFIER = "DB_MODIFIER"; //$NON-NLS-1$
+	public static final String IDL_MODIFIER = "IDL_MODIFIER"; //$NON-NLS-1$
+	public static final String PACKAGE_EXPORT_WIZ = "PACKAGE_EXPORT_WIZ"; //$NON-NLS-1$
 }
