@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="language" name="Uno-idl project language binding Extension point" schema="schema/language.exsd"/>
+   <extension-point id="MainProvider" name="Provides XMain implementations for different languages" schema="schema/MainProvider.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -239,29 +240,6 @@
             name="Uno-Idl"/>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="true"
-            id="org.openoffice.ide.eclipse.core.objectContribution2"
-            objectClass="org.eclipse.core.resources.IProject">
-         <visibility>
-            <and>
-               <objectState
-                     name="projectNature"
-                     value="org.openoffice.ide.eclipse.core.unonature"/>
-               <objectState
-                     name="open"
-                     value="true"/>
-            </and>
-         </visibility>
-         <action
-               class="org.openoffice.ide.eclipse.core.actions.CreateServicesAction"
-               id="org.openoffice.ide.eclipse.core.actions.services"
-               label="Create Services.rdb"
-               />
-      </objectContribution>
-   </extension>
-   <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.openoffice.ide.eclipse.core.launch.UreLaunchDelegate"
@@ -282,5 +260,17 @@
             configTypeID="org.openoffice.ide.eclipse.core.launchUreApplication"
             icon="icons/ure_app.gif"
             id="org.openoffice.ide.eclipse.core.UreLaunchIcon"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            id="org.openoffice.ide.eclipse.core.uno"
+            name="UNO"/>
+      <wizard
+            category="org.openoffice.ide.eclipse.core.uno"
+            class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard"
+            icon="/icons/export_package.gif"
+            id="org.openoffice.ide.eclipse.core.export.package"
+            name="Package"/>
    </extension>
 </plugin>

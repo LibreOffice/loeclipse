@@ -19,10 +19,11 @@ Require-Bundle: org.eclipse.ui,
  org.junit,
  org.eclipse.debug.core,
  org.eclipse.debug.ui
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.gui.rows,
  org.openoffice.ide.eclipse.core.i18n,
+ org.openoffice.ide.eclipse.core.launch,
  org.openoffice.ide.eclipse.core.model,
  org.openoffice.ide.eclipse.core.model.language,
  org.openoffice.ide.eclipse.core.preferences,

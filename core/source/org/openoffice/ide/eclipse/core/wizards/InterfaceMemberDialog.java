@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:36:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -307,7 +307,7 @@ public class InterfaceMemberDialog extends StatusDialog implements
 	 * 
 	 * @param parent the composite parent in which to create the controls.
 	 */
-	protected void createAttributeControls(Composite parent) {		
+	protected void createAttributeControls(Composite parent) {
 		mReadonlyRow = new BooleanRow(parent, READONLY, Messages.getString("InterfaceMemberDialog.Readonly")); //$NON-NLS-1$
 		mReadonlyRow.setTooltip(Messages.getString("InterfaceMemberDialog.ReadonlyTooltip")); //$NON-NLS-1$
 		mReadonlyRow.setFieldChangedListener(this);
