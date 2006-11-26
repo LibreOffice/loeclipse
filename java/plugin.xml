@@ -12,5 +12,9 @@
          point="org.eclipse.core.resources.builders">
       <builder/>
    </extension>
+   <extension
+         point="org.openoffice.ide.eclipse.core.MainProvider">
+      <MainProvider class="org.openoffice.ide.eclipse.java.JavaMainProvider"/>
+   </extension>
 
 </plugin>

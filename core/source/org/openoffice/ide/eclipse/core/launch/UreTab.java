@@ -2,9 +2,9 @@
  *
  * $RCSfile: UreTab.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:46 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:35:37 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -48,6 +48,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -80,18 +81,41 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 
 		public void widgetSelected(SelectionEvent e) {
 			
-			ILabelProvider labelProvider = new UnoProjectProvider();
-			ElementListSelectionDialog dialog= new ElementListSelectionDialog(
-					getShell(), labelProvider);
-			dialog.setTitle(Messages.getString("UreTab.ProjectChooserTitle")); //$NON-NLS-1$
-			dialog.setMessage(Messages.getString("UreTab.ProjectChooserMessage")); //$NON-NLS-1$
-			dialog.setElements(ProjectsManager.getInstance().getProjects());
-			
-			if (dialog.open() == Window.OK) {
-				mProject = (IUnoidlProject)dialog.getFirstResult();
-				mProjectTxt.setText(mProject.getName());
-				setDirty(true);
-				getLaunchConfigurationDialog().updateButtons();
+			if (e.getSource().equals(mProjectBtn)) {
+				ILabelProvider labelProvider = new UnoProjectProvider();
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+						getShell(), labelProvider);
+				dialog.setTitle(Messages.getString("UreTab.ProjectChooserTitle")); //$NON-NLS-1$
+				dialog.setMessage(Messages.getString("UreTab.ProjectChooserMessage")); //$NON-NLS-1$
+				dialog.setElements(ProjectsManager.getInstance().getProjects());
+
+				if (dialog.open() == Window.OK) {
+					mProject = (IUnoidlProject)dialog.getFirstResult();
+					mProjectTxt.setText(mProject.getName());
+					setDirty(true);
+					getLaunchConfigurationDialog().updateButtons();
+				}
+			} else if (e.getSource().equals(mMainBtn)) {
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+						getShell(), new LabelProvider(){
+							@Override
+							public String getText(Object element) {
+								String label = null;
+								if (element instanceof String) {
+									label = (String)element;
+								}
+								return label;
+							}
+						});
+				dialog.setTitle("Main implementation chooser");
+				dialog.setMessage("Select the implementation of XMain to run");
+				dialog.setElements(new MainImplementationsProvider().getImplementations(mProject));
+				
+				if (dialog.open() == Window.OK) {
+					mMainTxt.setText((String)dialog.getFirstResult());
+					setDirty(true);
+					getLaunchConfigurationDialog().updateButtons();
+				}
 			}
 		}
 
@@ -119,6 +143,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 	private Text mProjectTxt;
 	private Button mProjectBtn;
 	private Text mMainTxt;
+	private Button mMainBtn;
 	private Text mArgumentsTxt;
 	
 	private ChangeListener mListener = new ChangeListener();
@@ -222,7 +247,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 	
 	private void createMainField(Composite parent) {
 		Composite field = new Composite(parent, SWT.NONE);
-		field.setLayout(new GridLayout(2, false));
+		field.setLayout(new GridLayout(3, false));
 		field.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label lbl = new Label(field, SWT.NONE);
@@ -233,7 +258,9 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 		mMainTxt.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		mMainTxt.addModifyListener(mListener);
+		
+		mMainBtn = new Button(field, SWT.PUSH);
+		mMainBtn.setText("..."); //$NON-NLS-1$
+		mMainBtn.addSelectionListener(mListener);
 	}
-	
-	
 }

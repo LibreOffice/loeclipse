@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaBuilder.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:35 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:37:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -65,7 +65,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -178,11 +177,9 @@ public class JavaBuilder implements ILanguageBuilder {
 						typesFile.getProjectRelativePath().toOSString() + " " + //$NON-NLS-1$
 						"-X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					
-					
-					Process process = OOEclipsePlugin.runTool(
-							ProjectsManager.getInstance().getProject(
-									typesFile.getProject().getName()),
-							command, monitor);
+					IUnoidlProject prj = ProjectsManager.getInstance().getProject(
+								typesFile.getProject().getName());
+					Process process = prj.getSdk().runTool(prj,command, monitor);
 					
 					LineNumberReader lineReader = new LineNumberReader(
 							new InputStreamReader(process.getErrorStream()));

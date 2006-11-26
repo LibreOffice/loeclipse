@@ -1,8 +1,8 @@
 /*************************************************************************
  *
- * $RCSfile: NewUreAppWizard.java,v $
+ * $RCSfile: IMainProvider.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
  * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:35:37 $
  *
@@ -41,11 +41,25 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.launch;
 
-public class NewUreAppWizard extends NewUnoProjectWizard {
-	
-	public NewUreAppWizard() {
-		setDisableServicePage("com::sun::star::lang::XMain"); //$NON-NLS-1$
-	}
+import java.util.Vector;
+
+import org.eclipse.core.resources.IProject;
+
+/**
+ * Provides the name of the XMain interface implementations. 
+ * 
+ * @author cedricbosdo
+ *
+ */
+public interface IMainProvider {
+
+	/**
+	 * Get the names of the XMain implementations in the project
+	 *  
+	 * @param project the UnoIdl project where to look for implementations
+	 * @return the names of the implementations found.
+	 */
+	public Vector<String> getMainNames(IProject project);
 }
