@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:32:41 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,8 +46,8 @@ package org.openoffice.ide.eclipse.core.gui.rows;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,7 +68,7 @@ import org.eclipse.swt.widgets.Label;
  * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow
  *
  */
-public class ChoiceRow extends LabeledRow implements ModifyListener{
+public class ChoiceRow extends LabeledRow {
 	
     private Hashtable<String, String> mTranslations;
         
@@ -104,7 +104,13 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		aLabel.setText(label);
 		
 		Combo aField = new Combo(parent, SWT.READ_ONLY);
-		aField.addModifyListener(this);
+		aField.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FieldEvent fe = new FieldEvent(mProperty, getValue());
+				fireFieldChangedEvent(fe);
+			}
+		});
 		
 		createContent(parent, aLabel, aField, browse);
 	}
@@ -115,7 +121,13 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		mTranslations = new Hashtable<String, String>();
 
 		Combo aField = new Combo(parent, SWT.READ_ONLY);
-		aField.addModifyListener(this);
+		aField.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FieldEvent fe = new FieldEvent(mProperty, getValue());
+				fireFieldChangedEvent(fe);
+			}
+		});
 		
 		createContent(parent, null, aField, null);
 		
@@ -136,7 +148,7 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 		}
 	}
 	
-	//------------- Méthodes de manipulation du combo box
+	//------------- Combobox handlin methods
 	
 	/**
 	 * Adds all the strings contained in items at the end of the item list.
@@ -299,16 +311,6 @@ public class ChoiceRow extends LabeledRow implements ModifyListener{
 	 */
 	public int getItemCount(){
 		return ((Combo)mField).getItemCount();
-	}
-	
-	/**
-	 * Method that recieve the events from the combo box of the row
-	 * 
-	 * @param e modification event
-	 */
-	public void modifyText(ModifyEvent e) {
-		FieldEvent fe = new FieldEvent(this.mProperty, getValue());
-		fireFieldChangedEvent(fe);
 	}
 
 	/**
