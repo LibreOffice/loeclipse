@@ -2,9 +2,9 @@
  *
  * $RCSfile: CompositeFactory.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:34:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -467,7 +467,8 @@ public final class CompositeFactory {
 			type = "void"; //$NON-NLS-1$
 		}
 		
-		if (flags == null) {
+		flags.trim();
+		if (flags == null || flags.equals("")) {
 			flags = ""; //$NON-NLS-1$
 		} else {
 			flags = flags.replace(" ", ", "); //$NON-NLS-1$ //$NON-NLS-2$
