@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -472,7 +472,7 @@ public class SDKTable extends AbstractTable {
 					updateStatus(new Status(Status.ERROR, 
 						     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 							 Status.ERROR,
-							 Messages.getString("SDKTable.InvalidPathError"), //$NON-NLS-1$
+							 e.getMessage(),
 							 e));
 				} else {
 					updateStatus(new Status(Status.OK,

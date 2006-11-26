@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,11 +47,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Image;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
+import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
@@ -134,6 +149,16 @@ public class SDK implements ISdk, ITableElement {
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
+				// test for the uno-skeletonmaker tool
+				String binName = "uno-skeletonmaker";
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
+					binName += ".exe"; 
+				}
+				if (!getBinPath(home).append(binName).toFile().exists()) {
+					throw new InvalidConfigException(
+							"SDK version has to be at least 2.0.4",
+							InvalidConfigException.INVALID_SDK_HOME);
+				}
 				
 				// If the settings and idl directory both exists, then try to fetch the name and buildId from
 				// the settings/dk.mk properties file
@@ -142,7 +167,7 @@ public class SDK implements ISdk, ITableElement {
 				
 			} else {
 				throw new InvalidConfigException(
-						Messages.getString("SDK.NoDirectoryError") + home, //$NON-NLS-1$
+						Messages.getString("SDK.NoDirectoryError"), //$NON-NLS-1$
 						InvalidConfigException.INVALID_SDK_HOME);
 			}
 		} catch (Throwable e) {
@@ -183,6 +208,182 @@ public class SDK implements ISdk, ITableElement {
 	 */
 	public String getHome(){
 		return sdkHome;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.ISdk#getBinPath()
+	 */
+	public IPath getBinPath() {
+		return getBinPath(getHome());
+	}
+	
+	private IPath getBinPath(String home) {
+		IPath path = null;
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			path = new Path(home).append("/windows/bin/"); //$NON-NLS-1$
+		} else if (Platform.getOS().equals(Platform.OS_LINUX)){
+			path = new Path(home).append("/linux/bin"); //$NON-NLS-1$
+		} else if (Platform.getOS().equals(Platform.OS_SOLARIS)){
+			if (Platform.getOSArch().equals(Platform.ARCH_SPARC)) {
+				path = new Path(home).append("/solsparc/bin"); //$NON-NLS-1$
+			} else if (Platform.getOSArch().equals(Platform.ARCH_X86)) {
+				path = new Path(home).append("/solintel/bin"); //$NON-NLS-1$
+			}
+		}
+		return path;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.ISdk#runTool(org.openoffice.ide.eclipse.core.model.IUnoidlProject, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public Process runTool(IUnoidlProject project, 
+			String shellCommand, IProgressMonitor monitor){
+		return runToolWithEnv(project, shellCommand, new String[0], monitor);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.ISdk#runToolWithEnv(org.openoffice.ide.eclipse.core.model.IUnoidlProject, java.lang.String, java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public Process runToolWithEnv(IUnoidlProject project, 
+			String shellCommand, String[] env, IProgressMonitor monitor){
+		
+		Process process = null;
+		
+		try {
+			ISdk sdk = project.getSdk();
+			IOOo ooo = project.getOOo();
+			
+			if (null != sdk && null != ooo){
+				
+				String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
+				
+				String binPath = null;
+				String[] command = new String[3];
+				
+				// Get the environement variables and copy them. Needs Java 1.5
+				Set envSet = System.getenv().entrySet();
+				String[] sysEnv = new String[envSet.size()];
+				Iterator iter = envSet.iterator();
+				int i = 0;
+				while (iter.hasNext())  {
+					Map.Entry entry = (Map.Entry)iter.next();
+					sysEnv[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
+					i++;
+				}
+				
+				// problems with PATH merging
+				String[] vars = sysEnv;
+				for (i=0; i<env.length; i++) {
+					String envi = env[i];
+					Matcher m = Pattern.compile("([^=]+)=(.*)").matcher(envi); //$NON-NLS-1$
+					if (m.matches()) {
+						String name = m.group(1);
+						String value = m.group(2);
+						String separator = null;
+						if (name.toLowerCase().equals("path") ||  //$NON-NLS-1$
+								name.toLowerCase().equals("ld_library_path")) { //$NON-NLS-1$
+							separator = pathSeparator;
+						}
+						vars = SystemHelper.addEnv(sysEnv, name, value, separator);
+					}
+				}
+				
+				
+				// Fetch the OS family
+				String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+				
+				// Create the exec parameters depending on the OS
+				if (osName.startsWith("windows")){ //$NON-NLS-1$
+					binPath = sdk.getBinPath().toOSString();
+					
+					// Definining path variables
+					Path oooLibsPath = new Path(ooo.getLibsPath());
+					vars = SystemHelper.addEnv(vars, "PATH", binPath + pathSeparator +  //$NON-NLS-1$
+							oooLibsPath.toOSString(), pathSeparator);
+					
+					// Defining the command
+					
+					if (osName.startsWith("windows 9")){ //$NON-NLS-1$
+						command[0] = "command.com"; //$NON-NLS-1$
+					} else {
+						command[0] = "cmd.exe"; //$NON-NLS-1$
+					}
+					
+					command[1] = "/C"; //$NON-NLS-1$
+					command[2] = shellCommand;
+					
+					
+				} else if (osName.equals("linux") || osName.equals("solaris") ||  //$NON-NLS-1$ //$NON-NLS-2$
+						osName.equals("sun os")) { //$NON-NLS-1$
+					
+					// An UN*X platform
+					binPath = sdk.getBinPath().toOSString();
+					
+					if (null != sdk.getBinPath()){
+
+						String[] tmpVars = SystemHelper.addEnv(vars, "PATH",  //$NON-NLS-1$
+								binPath, pathSeparator); //$NON-NLS-1$
+						vars = SystemHelper.addEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
+								ooo.getLibsPath(), pathSeparator);
+						
+						// Set the command
+						command[0] = "sh"; //$NON-NLS-1$
+						command[1] = "-c"; //$NON-NLS-1$
+						command[2] = shellCommand;
+					}
+					
+				} else {
+					// Unmanaged OS
+					PluginLogger.error(
+							Messages.getString("OOEclipsePlugin.InvalidSdkError"), null); //$NON-NLS-1$
+				}
+				
+				// Run only if the OS and ARCH are valid for the SDK
+				if (null != vars && null != command){
+					File projectFile = project.getProjectPath().toFile();
+					PluginLogger.debug("Running command: " + shellCommand +  //$NON-NLS-1$
+							" with env: " + Arrays.toString(vars) +  //$NON-NLS-1$
+							" from dir: " + projectFile.getAbsolutePath()); //$NON-NLS-1$
+					process = Runtime.getRuntime().exec(command, vars, projectFile);
+				}
+				
+			}
+			
+		} catch (IOException e) {
+			// Error while launching the process 
+			
+			MessageDialog dialog = new MessageDialog(
+					OOEclipsePlugin.getDefault().getWorkbench().
+						getActiveWorkbenchWindow().getShell(),
+					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
+					null,
+					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
+					MessageDialog.ERROR,
+					new String[]{Messages.getString("OOEclipsePlugin.Ok")}, 0); //$NON-NLS-1$
+			dialog.setBlockOnOpen(true);
+			dialog.create();
+			dialog.open();
+			
+		} catch (SecurityException e) {
+			// SubProcess creation unauthorized
+			
+			MessageDialog dialog = new MessageDialog(
+					OOEclipsePlugin.getDefault().getWorkbench().
+							getActiveWorkbenchWindow().getShell(),
+					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
+					null,
+					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
+					MessageDialog.ERROR,
+					new String[]{Messages.getString("OOEclipsePlugin.Ok")},	0); //$NON-NLS-1$
+			dialog.setBlockOnOpen(true);
+			dialog.create();
+			dialog.open();
+		}
+		
+		return process;
 	}
 	
 	//-------------------------------------------- ITableElement Implementation

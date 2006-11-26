@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoProjectProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -51,10 +51,18 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 public class UnoProjectProvider extends LabelProvider {
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+	 */
 	public Image getImage(Object element) {
 		return OOEclipsePlugin.getImage(ImagesConstants.UNO_PROJECT);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+	 */
 	public String getText(Object element) {
 		String text = null;
 		if (element instanceof IUnoidlProject) {

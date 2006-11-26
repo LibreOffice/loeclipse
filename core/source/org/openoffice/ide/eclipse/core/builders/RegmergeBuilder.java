@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,7 +47,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -130,7 +129,7 @@ public class RegmergeBuilder {
 						   existingReg + file.getProjectRelativePath().toOSString();
 		
 		// Process creation
-		Process process = OOEclipsePlugin.runTool(project, command, monitor);
+		Process process = project.getSdk().runTool(project, command, monitor);
 		
 		// Just wait for the process to end before destroying it
 		try {

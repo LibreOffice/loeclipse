@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:34:36 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,7 +56,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.CompositeFactory;
@@ -176,7 +175,7 @@ public final class UnoFactory {
 			" -n " + implementationName + //$NON-NLS-1$
 			types;
 
-			Process process = OOEclipsePlugin.runTool(prj, command, monitor);
+			Process process = prj.getSdk().runTool(prj, command, monitor);
 	
 			InputStream err = process.getErrorStream();
 			StringWriter writer = new StringWriter();

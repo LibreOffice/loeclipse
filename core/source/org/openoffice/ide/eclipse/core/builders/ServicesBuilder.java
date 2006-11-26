@@ -2,9 +2,9 @@
  *
  * $RCSfile: ServicesBuilder.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -138,7 +138,7 @@ public class ServicesBuilder extends Job{
 			"-c " + libpath; //$NON-NLS-1$
 
 		// The normal messages of regcomp are sent to the err stream :(
-		Process process = OOEclipsePlugin.runToolWithEnv(unoProject, 
+		Process process = unoProject.getSdk().runToolWithEnv(unoProject, 
 				regcompCmd, env, monitor);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				process.getErrorStream()));

@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -43,15 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbenchPage;
@@ -63,10 +54,6 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -77,8 +64,6 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -287,240 +272,5 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 				}
 			}
 		}
-	}
-	
-	//	----------------- Utilities provided to run an sdk tool
-	
-	/**
-	 * Create a process for the given shell command. This process will 
-	 * be created with the project parameters such as it's SDK and 
-	 * location path
-	 * 
-	 * @param project the UNO-IDL project on which to run the tool
-	 * @param shellCommand the shell command to execute the tool
-	 * @param monitor a process monitor to watch the tool launching
-	 * 
-	 * @return the process executing the tool
-	 */
-	public static Process runTool(IUnoidlProject project, 
-			String shellCommand, IProgressMonitor monitor){
-		return runToolWithEnv(project, shellCommand, new String[0], monitor);
-	}
-	
-	
-	/**
-	 * Create a process for the given shell command. This process will 
-	 * be created with the project parameters such as it's SDK and 
-	 * location path
-	 * 
-	 * @param project the UNO-IDL project on which to run the tool
-	 * @param shellCommand the shell command to execute the tool
-	 * @param env tool environement variable
-	 * @param monitor a process monitor to watch the tool launching
-	 * 
-	 * @return the process executing the tool
-	 */
-	public static Process runToolWithEnv(IUnoidlProject project, 
-			String shellCommand, String[] env, IProgressMonitor monitor){
-		
-		Process process = null;
-		
-		try {
-			ISdk sdk = project.getSdk();
-			IOOo ooo = project.getOOo();
-			
-			if (null != sdk && null != ooo){
-				
-				// Get local references to the SDK used members
-				String sdkHome = sdk.getHome();
-				
-				String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
-				
-				String binPath = null;
-				String[] command = new String[3];
-				
-				// Get the environement variables and copy them. Needs Java 1.5
-				Set envSet = System.getenv().entrySet();
-				String[] sysEnv = new String[envSet.size()];
-				Iterator iter = envSet.iterator();
-				int i = 0;
-				while (iter.hasNext())  {
-					Map.Entry entry = (Map.Entry)iter.next();
-					sysEnv[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
-					i++;
-				}
-				
-				// FIXME problems with PATH merging
-				String[] vars = sysEnv;
-				for (i=0; i<env.length; i++) {
-					String envi = env[i];
-					Matcher m = Pattern.compile("([^=]+)=(.*)").matcher(envi); //$NON-NLS-1$
-					if (m.matches()) {
-						String name = m.group(1);
-						String value = m.group(2);
-						String separator = null;
-						if (name.toLowerCase().equals("path") ||  //$NON-NLS-1$
-								name.toLowerCase().equals("ld_library_path")) { //$NON-NLS-1$
-							separator = pathSeparator;
-						}
-						vars = addEnv(sysEnv, name, value, separator);
-					}
-				}
-				
-				
-				// Fetch the OS family
-				String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-				
-				// Create the exec parameters depending on the OS
-				if (osName.startsWith("windows")){ //$NON-NLS-1$
-					String sdkWinHome = new Path(sdkHome).toOSString();
-					
-					binPath = sdkWinHome + "\\windows\\bin\\";  //$NON-NLS-1$
-					
-					// Definining path variables
-					Path oooLibsPath = new Path(ooo.getLibsPath());
-					vars = addEnv(vars, "PATH", binPath + pathSeparator +  //$NON-NLS-1$
-							oooLibsPath.toOSString(), pathSeparator);
-					
-					// Defining the command
-					
-					if (osName.startsWith("windows 9")){ //$NON-NLS-1$
-						command[0] = "command.com"; //$NON-NLS-1$
-					} else {
-						command[0] = "cmd.exe"; //$NON-NLS-1$
-					}
-					
-					command[1] = "/C"; //$NON-NLS-1$
-					command[2] = shellCommand;
-					
-					
-				} else if (osName.equals("linux") || osName.equals("solaris") ||  //$NON-NLS-1$ //$NON-NLS-2$
-						osName.equals("sun os")) { //$NON-NLS-1$
-					
-					// An UN*X platform
-					
-					// Determine the platform
-					String platform = null;
-					
-					if (osName.equals("linux")){ //$NON-NLS-1$
-						platform = "/linux"; //$NON-NLS-1$
-					} else {
-						String osArch = System.getProperty("os.arch"); //$NON-NLS-1$
-						if (osArch.equals("sparc")) { //$NON-NLS-1$
-							platform = "/solsparc"; //$NON-NLS-1$
-							
-						} else if (osArch.equals("x86")) { //$NON-NLS-1$
-							platform = "/solintel"; //$NON-NLS-1$
-						}
-					}
-					
-					if (null != platform){
-						
-						// The platform is one supported by a SDK
-						binPath = sdkHome + platform + "/bin"; //$NON-NLS-1$
-
-						String[] tmpVars = addEnv(vars, "PATH",  //$NON-NLS-1$
-								sdkHome + platform + "/bin", pathSeparator); //$NON-NLS-1$
-						vars = addEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
-								ooo.getLibsPath(), pathSeparator);
-						
-						// Set the command
-						command[0] = "sh"; //$NON-NLS-1$
-						command[1] = "-c"; //$NON-NLS-1$
-						command[2] = shellCommand;
-					}
-					
-				} else {
-					// Unmanaged OS
-					PluginLogger.error(
-							Messages.getString("OOEclipsePlugin.InvalidSdkError"), null); //$NON-NLS-1$
-				}
-				
-				// Run only if the OS and ARCH are valid for the SDK
-				if (null != vars && null != command){
-					File projectFile = project.getProjectPath().toFile();
-					PluginLogger.debug("Running command: " + shellCommand +  //$NON-NLS-1$
-							" with env: " + Arrays.toString(vars) +  //$NON-NLS-1$
-							" from dir: " + projectFile.getAbsolutePath()); //$NON-NLS-1$
-					process = Runtime.getRuntime().exec(command, vars, projectFile);
-				}
-				
-			}
-			
-		} catch (IOException e) {
-			// Error while launching the process 
-			
-			MessageDialog dialog = new MessageDialog(
-					OOEclipsePlugin.getDefault().getWorkbench().
-						getActiveWorkbenchWindow().getShell(),
-					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
-					null,
-					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
-					MessageDialog.ERROR,
-					new String[]{Messages.getString("OOEclipsePlugin.Ok")}, 0); //$NON-NLS-1$
-			dialog.setBlockOnOpen(true);
-			dialog.create();
-			dialog.open();
-			
-		} catch (SecurityException e) {
-			// SubProcess creation unauthorized
-			
-			MessageDialog dialog = new MessageDialog(
-					OOEclipsePlugin.getDefault().getWorkbench().
-							getActiveWorkbenchWindow().getShell(),
-					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
-					null,
-					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
-					MessageDialog.ERROR,
-					new String[]{Messages.getString("OOEclipsePlugin.Ok")},	0); //$NON-NLS-1$
-			dialog.setBlockOnOpen(true);
-			dialog.create();
-			dialog.open();
-		}
-		
-		return process;
-	}
-	
-	public static String[] addEnv(String[] env, String name, String value,
-			String separator) {
-		
-		String[] result = new String[1];  
-		
-		if (env != null) { 
-			int i = 0;
-			boolean found = false;
-			
-			while (!found && i < env.length) {
-				String tmpEnv = env[i]; 
-				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					tmpEnv = tmpEnv.toLowerCase();
-					name = name.toLowerCase();
-				}
-				if (tmpEnv.startsWith(name+"=")) { //$NON-NLS-1$
-					found = true;
-				} else {
-					i++;
-				}
-			}
-			
-			if (found) {
-				result = new String[env.length];
-				System.arraycopy(env, 0, result, 0, env.length);
-				if (null != separator) {
-					result[i] = env[i] + separator + value;
-				} else {
-					result[i] = name + "=" + value; //$NON-NLS-1$
-				}
-				
-			} else {
-				result = new String[env.length + 1];
-				System.arraycopy(env, 0, result, 0, env.length);
-				result[result.length-1] = name + "=" + value; //$NON-NLS-1$
-			}
-		} else {
-			result [0] = name + "=" + value; //$NON-NLS-1$
-		}
-		
-		return result;
 	}
 }

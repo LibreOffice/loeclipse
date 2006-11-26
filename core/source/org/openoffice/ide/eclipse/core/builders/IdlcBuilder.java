@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuilder.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,7 +49,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -122,8 +121,7 @@ public class IdlcBuilder {
 				" -I " + project.getIdlPath().toOSString() +  //$NON-NLS-1$
 				" " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
 			
-			Process process = OOEclipsePlugin.runTool(
-					project, command, monitor);
+			Process process = project.getSdk().runTool(project, command, monitor);
 			
 			IdlcErrorReader errorReader = new IdlcErrorReader(
 					process.getErrorStream(), file);

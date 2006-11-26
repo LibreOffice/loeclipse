@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -54,8 +54,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.swt.graphics.Image;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
+import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
@@ -268,7 +268,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 				UnoidlProjectHelper.getProject(prj));
 		
 		if (getJavaldxPath() != null) {
-			Process p = OOEclipsePlugin.runToolWithEnv(prj, getJavaldxPath(), env, monitor);
+			Process p = prj.getSdk().runToolWithEnv(prj, getJavaldxPath(), env, monitor);
 			InputStream out = p.getInputStream();
 			StringWriter writer = new StringWriter();
 			
@@ -282,12 +282,11 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 			}
 			
 			String libPath = writer.getBuffer().toString();
-			env = OOEclipsePlugin.addEnv(env, "LD_LIBRARY_PATH", libPath.trim(),  //$NON-NLS-1$
+			env = SystemHelper.addEnv(env, "LD_LIBRARY_PATH", libPath.trim(),  //$NON-NLS-1$
 					System.getProperty("path.separator")); //$NON-NLS-1$
-			env = OOEclipsePlugin.addEnv(env, "DISPLAY", ":0", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
-		Process p = OOEclipsePlugin.runToolWithEnv(prj, command, env, monitor);
+		Process p = prj.getSdk().runToolWithEnv(prj, command, env, monitor);
 		DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.UreProcessName")  + main); //$NON-NLS-1$
 	}
 }

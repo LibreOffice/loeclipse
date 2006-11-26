@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegDocumentProvider.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -55,7 +55,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
@@ -96,7 +95,7 @@ public class RegDocumentProvider extends FileDocumentProvider {
 		
 			String command = "regview " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
 					
-			Process process = OOEclipsePlugin.runTool(unoproject, command, null);
+			Process process = unoproject.getSdk().runTool(unoproject, command, null);
 						
 			// Get the process ouput to fill the document with
 			InputStreamReader in = new InputStreamReader(process.getInputStream());
