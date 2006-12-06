@@ -2,9 +2,9 @@
  *
  * $RCSfile: SystemHelper.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,7 +43,15 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.helpers;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Platform;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
  * Helper class for system variables handling.
@@ -106,5 +114,80 @@ public class SystemHelper {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * @return the system environement variables
+	 */
+	public static String[] getSystemEnvironement() {
+		Set envSet = System.getenv().entrySet();
+		String[] sysEnv = new String[envSet.size()];
+		Iterator iter = envSet.iterator();
+		int i = 0;
+		while (iter.hasNext())  {
+			Map.Entry entry = (Map.Entry)iter.next();
+			sysEnv[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
+			i++;
+		}
+		return sysEnv;
+	}
+	
+	/**
+	 * Run a shell command with the system environment and an optional execution 
+	 * directory.
+	 * 
+	 * @param shellCommand the command to run
+	 * @param execDir the execution directory or <code>null</code> if none
+	 * @return the process for the running command
+	 * @throws IOException if anything wrong happens during the command launch
+	 */
+	public static Process runToolWithSysEnv(String shellCommand, File execDir) throws IOException {
+		return runTool(shellCommand, getSystemEnvironement(), execDir);
+	}
+	
+	/**
+	 * Run a shell command with a given environment and an optional execution 
+	 * directory.
+	 * 
+	 * @param shellCommand the command to run
+	 * @param env the environment variables
+	 * @param execDir the execution directory or <code>null</code> if none
+	 * @return the process for the running command
+	 * @throws IOException if anything wrong happens during the command launch
+	 */
+	public static Process runTool(String shellCommand, String[] env, File execDir) throws IOException {
+		String[] command = new String[3];
+		
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+			if (osName.startsWith("windows 9")){ //$NON-NLS-1$
+				command[0] = "command.com"; //$NON-NLS-1$
+			} else {
+				command[0] = "cmd.exe"; //$NON-NLS-1$
+			}
+			
+			command[1] = "/C"; //$NON-NLS-1$
+			command[2] = shellCommand;
+		} else {
+			command[0] = "sh"; //$NON-NLS-1$
+			command[1] = "-c"; //$NON-NLS-1$
+			command[2] = shellCommand;
+		}
+		
+		String execPath = ""; //$NON-NLS-1$
+		if (execDir != null) {
+			execPath = " from dir: "; //$NON-NLS-1$
+			execPath += execDir.getAbsolutePath();
+		}
+		PluginLogger.debug("Running command: " + shellCommand +  //$NON-NLS-1$
+				" with env: " + Arrays.toString(env) +  //$NON-NLS-1$
+				execPath);
+		Process process = null;
+		if (execDir != null) {
+			process = Runtime.getRuntime().exec(command, env, execDir);
+		} else {
+			process = Runtime.getRuntime().exec(command, env);
+		}
+		return process;
 	}
 }

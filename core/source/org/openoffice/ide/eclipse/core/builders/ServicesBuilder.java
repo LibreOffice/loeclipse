@@ -2,9 +2,9 @@
  *
  * $RCSfile: ServicesBuilder.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -93,7 +93,7 @@ public class ServicesBuilder extends Job{
 			status = new Status(
 					IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 					IStatus.ERROR, 
-					Messages.getString("ServicesBuilder.NotIdlProjectError"), null);
+					Messages.getString("ServicesBuilder.NotIdlProjectError"), null); //$NON-NLS-1$
 		}
 
 		return status;
@@ -118,8 +118,7 @@ public class ServicesBuilder extends Job{
 		monitor.worked(1);
 
 		// Get the language specific arguments, eg LD_LIBRARY_PATH or CLASSPATH
-		String[] env = langBuilder.getBuildEnv(unoProject,
-				UnoidlProjectHelper.getProject(unoProject)); 
+		String[] env = langBuilder.getBuildEnv(unoProject); 
 
 		String libpath = "file:///" + libraryPath.toOSString(); //$NON-NLS-1$
 		libpath = libpath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$

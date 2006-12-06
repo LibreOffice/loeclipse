@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,11 +47,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -150,13 +146,13 @@ public class SDK implements ISdk, ITableElement {
 				}
 				
 				// test for the uno-skeletonmaker tool
-				String binName = "uno-skeletonmaker";
+				String binName = "uno-skeletonmaker"; //$NON-NLS-1$
 				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					binName += ".exe"; 
+					binName += ".exe";  //$NON-NLS-1$
 				}
 				if (!getBinPath(home).append(binName).toFile().exists()) {
 					throw new InvalidConfigException(
-							"SDK version has to be at least 2.0.4",
+							Messages.getString("SDK.MinSdkVersionError"), //$NON-NLS-1$
 							InvalidConfigException.INVALID_SDK_HOME);
 				}
 				
@@ -261,22 +257,14 @@ public class SDK implements ISdk, ITableElement {
 				String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
 				
 				String binPath = null;
-				String[] command = new String[3];
 				
 				// Get the environement variables and copy them. Needs Java 1.5
-				Set envSet = System.getenv().entrySet();
-				String[] sysEnv = new String[envSet.size()];
-				Iterator iter = envSet.iterator();
-				int i = 0;
-				while (iter.hasNext())  {
-					Map.Entry entry = (Map.Entry)iter.next();
-					sysEnv[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
-					i++;
-				}
+				
+				String[] sysEnv = SystemHelper.getSystemEnvironement();
 				
 				// problems with PATH merging
 				String[] vars = sysEnv;
-				for (i=0; i<env.length; i++) {
+				for (int i=0; i<env.length; i++) {
 					String envi = env[i];
 					Matcher m = Pattern.compile("([^=]+)=(.*)").matcher(envi); //$NON-NLS-1$
 					if (m.matches()) {
@@ -304,18 +292,6 @@ public class SDK implements ISdk, ITableElement {
 					vars = SystemHelper.addEnv(vars, "PATH", binPath + pathSeparator +  //$NON-NLS-1$
 							oooLibsPath.toOSString(), pathSeparator);
 					
-					// Defining the command
-					
-					if (osName.startsWith("windows 9")){ //$NON-NLS-1$
-						command[0] = "command.com"; //$NON-NLS-1$
-					} else {
-						command[0] = "cmd.exe"; //$NON-NLS-1$
-					}
-					
-					command[1] = "/C"; //$NON-NLS-1$
-					command[2] = shellCommand;
-					
-					
 				} else if (osName.equals("linux") || osName.equals("solaris") ||  //$NON-NLS-1$ //$NON-NLS-2$
 						osName.equals("sun os")) { //$NON-NLS-1$
 					
@@ -328,26 +304,19 @@ public class SDK implements ISdk, ITableElement {
 								binPath, pathSeparator); //$NON-NLS-1$
 						vars = SystemHelper.addEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
 								ooo.getLibsPath(), pathSeparator);
-						
-						// Set the command
-						command[0] = "sh"; //$NON-NLS-1$
-						command[1] = "-c"; //$NON-NLS-1$
-						command[2] = shellCommand;
 					}
 					
 				} else {
 					// Unmanaged OS
 					PluginLogger.error(
-							Messages.getString("OOEclipsePlugin.InvalidSdkError"), null); //$NON-NLS-1$
+							Messages.getString("SDK.InvalidSdkError"), null); //$NON-NLS-1$
+					return null;
 				}
 				
 				// Run only if the OS and ARCH are valid for the SDK
-				if (null != vars && null != command){
+				if (null != vars){
 					File projectFile = project.getProjectPath().toFile();
-					PluginLogger.debug("Running command: " + shellCommand +  //$NON-NLS-1$
-							" with env: " + Arrays.toString(vars) +  //$NON-NLS-1$
-							" from dir: " + projectFile.getAbsolutePath()); //$NON-NLS-1$
-					process = Runtime.getRuntime().exec(command, vars, projectFile);
+					process = SystemHelper.runTool(shellCommand, vars, projectFile);
 				}
 				
 			}
@@ -358,11 +327,11 @@ public class SDK implements ISdk, ITableElement {
 			MessageDialog dialog = new MessageDialog(
 					OOEclipsePlugin.getDefault().getWorkbench().
 						getActiveWorkbenchWindow().getShell(),
-					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
+					Messages.getString("SDK.PluginError"), //$NON-NLS-1$
 					null,
-					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
+					Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
 					MessageDialog.ERROR,
-					new String[]{Messages.getString("OOEclipsePlugin.Ok")}, 0); //$NON-NLS-1$
+					new String[]{Messages.getString("SDK.Ok")}, 0); //$NON-NLS-1$
 			dialog.setBlockOnOpen(true);
 			dialog.create();
 			dialog.open();
@@ -373,11 +342,11 @@ public class SDK implements ISdk, ITableElement {
 			MessageDialog dialog = new MessageDialog(
 					OOEclipsePlugin.getDefault().getWorkbench().
 							getActiveWorkbenchWindow().getShell(),
-					Messages.getString("OOEclipsePlugin.PluginError"), //$NON-NLS-1$
+					Messages.getString("SDK.PluginError"), //$NON-NLS-1$
 					null,
-					Messages.getString("OOEclipsePlugin.ProcessError"), //$NON-NLS-1$
+					Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
 					MessageDialog.ERROR,
-					new String[]{Messages.getString("OOEclipsePlugin.Ok")},	0); //$NON-NLS-1$
+					new String[]{Messages.getString("SDK.Ok")},	0); //$NON-NLS-1$
 			dialog.setBlockOnOpen(true);
 			dialog.create();
 			dialog.open();

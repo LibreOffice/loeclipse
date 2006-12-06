@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:40:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,21 +43,27 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.builders;
 
+import java.io.File;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
+import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * <p>Main builder of the UNO-IDL projects, it computes the language specific
@@ -82,6 +88,9 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	 */
 	public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".types"; //$NON-NLS-1$
 	
+	private boolean changedIdl = false;
+	static int sBuildState = -1;
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
@@ -89,7 +98,55 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		
-		build(getProject(), monitor);
+		changedIdl = false;
+		
+		if (sBuildState < 0) {
+			IResourceDelta delta = getDelta(getProject());
+			if (delta != null) {
+				delta.accept(new IResourceDeltaVisitor() {
+					public boolean visit(IResourceDelta delta) throws CoreException {
+
+						boolean visitChildren = false;
+
+						IProject prj = getProject();
+						IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(prj.getName());
+						IPath idlPath = unoprj.getIdlPath();
+						IPath resPath = delta.getResource().getProjectRelativePath();
+
+						if (delta.getResource() instanceof IContainer && 
+								resPath.segmentCount() < idlPath.segmentCount()) {
+							visitChildren = true;
+						} else if (delta.getResource() instanceof IContainer && 
+								resPath.toString().startsWith(idlPath.toString())) {
+							visitChildren = true;
+						} else if (delta.getResource() instanceof IFile) {
+							if (resPath.getFileExtension().equals("idl")) { //$NON-NLS-1$
+								visitChildren = false;
+								changedIdl = true;
+							} else if (resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
+								sBuildState = 4;
+							}
+						}
+						return visitChildren;
+					}
+				});
+			} else {
+				changedIdl = true;
+			}
+
+			if (changedIdl && sBuildState < 0) {
+				try {
+					build(getProject(), monitor);
+				} catch (CoreException e) {
+					sBuildState = -1;
+					throw e;
+				}
+				sBuildState = -1;
+			} else if (sBuildState == 4) {
+				sBuildState = -1;
+			}
+		}
+		
 		return null;
 	}
 	
@@ -100,21 +157,22 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 				prj.getName());
 		
 		// Clears the registries before beginning
+		sBuildState = 1;
 		removeAllRegistries(prj);
+		buildIdl(unoprj, monitor);
 		
-		IdlcBuilder.build(unoprj, monitor);
-		prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		
+		sBuildState = 2;
 		RegmergeBuilder.build(unoprj, monitor);
-		prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
-		IFile typesFile = unoprj.getFile(unoprj.getTypesPath());
-		IFolder buildFolder = unoprj.getFolder(unoprj.getBuildPath());
+		
+		sBuildState = 3;
+		File types = prj.getLocation().append(unoprj.getTypesPath()).toFile();
+		File build = prj.getLocation().append(unoprj.getBuildPath()).toFile();
 		
 		unoprj.getLanguage().getLanguageBuidler().generateFromTypes(
 				unoprj.getSdk(),
 				unoprj.getOOo(),
-				typesFile, buildFolder,
+				prj,
+				types, build,
 				unoprj.getRootModule(), monitor);
 		
 		prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -152,6 +210,69 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 			
 		} catch (CoreException e) {
 			PluginLogger.debug(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Runs the idl files compilation
+	 * 
+	 * @param project the uno project to build
+	 * @param monitor a monitor to watch the progress
+	 * @throws CoreException if anything wrong happened
+	 */
+	public static void buildIdl(IUnoidlProject project, IProgressMonitor monitor)
+			throws CoreException {
+
+		// Build each idlc file
+		try {
+			// compile each idl file
+			IFolder idlFolder = project.getFolder(
+					project.getRootModulePath());
+			idlFolder.accept(new IdlcBuildVisitor(monitor));
+			
+
+		} catch (CoreException e) {
+			PluginLogger.error(
+					Messages.getString("IdlcBuilder.IdlcError"), e); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Convenience method to execute the <code>idlc</code> tool on a given
+	 * file.
+	 * 
+	 * @param file the file to run <code>idlc</code> on.
+	 * @param monitor a progress monitor
+	 */
+	static void runIdlcOnFile(IFile file, IProgressMonitor monitor){
+		
+		IUnoidlProject project = ProjectsManager.getInstance().
+				getProject(file.getProject().getName());
+		
+		ISdk sdk = project.getSdk();
+		
+		if (null != sdk){
+			
+			// Get local references to the SDK used members
+			String sdkHome = sdk.getHome();
+			
+			Path sdkPath = new Path(sdkHome);
+			int segmentCount = project.getIdlPath().segmentCount();
+			
+			IPath outputLocation = project.getUrdPath().append(
+					file.getProjectRelativePath().removeLastSegments(1).
+					removeFirstSegments(segmentCount));
+			
+			String command = "idlc -O " + outputLocation.toOSString() + //$NON-NLS-1$
+				" -I " + sdkPath.append("idl").toOSString() + //$NON-NLS-1$ //$NON-NLS-2$
+				" -I " + project.getIdlPath().toOSString() +  //$NON-NLS-1$
+				" " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
+			
+			Process process = project.getSdk().runTool(project, command, monitor);
+			
+			IdlcErrorReader errorReader = new IdlcErrorReader(
+					process.getErrorStream(), file);
+			errorReader.readErrors();
 		}
 	}
 }

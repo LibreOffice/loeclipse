@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -45,10 +45,16 @@ package org.openoffice.ide.eclipse.core.internal.model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
 /**
@@ -253,6 +259,10 @@ public class OOo extends AbstractOOo {
 		return command;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getJavaldxPath()
+	 */
 	public String getJavaldxPath() {
 		String javaldx = null;
 		
@@ -260,5 +270,150 @@ public class OOo extends AbstractOOo {
 			javaldx = getHome() + "/program/javaldx"; //$NON-NLS-1$
 		}
 		return  javaldx; 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#canManagePackages()
+	 */
+	public boolean canManagePackages() {
+		return true;
+	}
+	
+	private boolean doRemovePackage = false;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#updatePackage(java.io.File)
+	 */
+	public void updatePackage(File packageFile) {
+		
+		// Check if there is already a package with the same name
+		try {
+			if (containsPackage(packageFile.getName())) {
+				doRemovePackage = false;
+				Display.getDefault().syncExec(new Runnable(){
+					public void run() {
+						doRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), 
+								Messages.getString("OOo.PackageExportTitle"),  //$NON-NLS-1$
+								Messages.getString("OOo.PackageAlreadyInstalled")); //$NON-NLS-1$
+					}
+				});
+				if (doRemovePackage) {
+					// remove it
+					removePackage(packageFile.getName());
+				}
+			}
+
+			// Add the package
+			addPackage(packageFile);
+
+		} catch (Exception e) {
+			Display.getDefault().asyncExec(new Runnable(){
+				public void run() {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), 
+							Messages.getString("OOo.PackageExportTitle"),  //$NON-NLS-1$
+							Messages.getString("OOo.DeploymentError"));	 //$NON-NLS-1$
+				}
+			});
+			PluginLogger.error(Messages.getString("OOo.DeploymentError"), e); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Add a Uno package to the OOo user packages
+	 * 
+	 * @param packageFile the package file to add
+	 * @throws Exception if anything wrong happens
+	 */
+	private void addPackage(File packageFile) throws Exception {
+		String path = packageFile.getAbsolutePath();
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			path = "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		String shellCommand = "unopkg add " + path; //$NON-NLS-1$
+		
+		String[] env = SystemHelper.getSystemEnvironement();
+		String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
+		env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		Process process = SystemHelper.runTool(shellCommand, env, null);
+		
+		InputStreamReader in = new InputStreamReader(process.getInputStream());
+		LineNumberReader reader = new LineNumberReader(in);
+
+		String line = reader.readLine();
+		boolean failed = false;
+		while (null != line && !failed) {
+			if (line.contains("failed")) { //$NON-NLS-1$
+				failed = true;
+			}
+			line = reader.readLine();
+		}
+		
+		try {
+			reader.close();
+			in.close();
+		} catch (Exception e) {
+		}
+		
+		if (failed) {
+			throw new Exception(Messages.getString("OOo.PackageAddError") + packageFile.getAbsolutePath()); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Remove the named package from the OOo packages.
+	 * @param name the name of the package to remove
+	 * @throws Exception if anything wrong happens
+	 */
+	private void removePackage(String name) throws Exception {
+		String shellCommand = "unopkg remove " + name; //$NON-NLS-1$
+		
+		String[] env = SystemHelper.getSystemEnvironement();
+		String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
+		env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		SystemHelper.runTool(shellCommand, env, null);
+	}
+	
+	/**
+	 * Check if the named package is already installed on OOo
+	 * @param name the package name to look for
+	 * @return <code>true</code> if the package is installed, 
+	 * 			<code>false</code> otherwise
+	 * @throws Exception if anything wrong happens
+	 */
+	private boolean containsPackage(String name) throws Exception {
+		boolean contained = false;
+		
+		String shellCommand = "unopkg list"; //$NON-NLS-1$
+		
+		String[] env = SystemHelper.getSystemEnvironement();
+		String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
+		String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
+		env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		Process process = SystemHelper.runTool(shellCommand, env, null);
+		InputStreamReader in = new InputStreamReader(process.getInputStream());
+		LineNumberReader reader = new LineNumberReader(in);
+
+		String line = reader.readLine();
+		while (null != line && !contained) {
+			if (line.endsWith(name)) {
+				contained = true;
+			}
+			line = reader.readLine();
+		}
+		
+		try {
+			reader.close();
+			in.close();
+		} catch (Exception e) {
+		}
+		
+		return contained;
 	}
 }

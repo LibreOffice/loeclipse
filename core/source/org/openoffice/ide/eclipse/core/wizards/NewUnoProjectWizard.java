@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,7 +49,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -195,7 +197,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 			} else {
 				next = mServicePage; // Could be null
 			}
-		} else if (mLanguagePage.equals(page)) {
+		} else if (mLanguagePage != null && mLanguagePage.equals(page)) {
 			next = mServicePage;
 		} else if (mServicePage != null && mServicePage.equals(page)) {
 			if (mShowInterfacePage) {
@@ -288,6 +290,13 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 					rollback(e, (IProject)o);
 				}
 				
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						MessageDialog.openError(Display.getDefault().getActiveShell(), 
+								Messages.getString("NewUnoProjectWizard.ProjectCreationErrorTitle"),  //$NON-NLS-1$
+								Messages.getString("NewUnoProjectWizard.ProjectCreationErrorMessage")); //$NON-NLS-1$
+					}
+				});
 				PluginLogger.error(
 						Messages.getString("NewUnoProjectWizard.CreateProjectError"), e); //$NON-NLS-1$
 				

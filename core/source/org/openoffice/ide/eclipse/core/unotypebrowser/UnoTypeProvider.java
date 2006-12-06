@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:36:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:25 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -292,7 +292,7 @@ public class UnoTypeProvider {
 		
 		if (null != oooInstance) {
 			// Compute the library location (UnoTypesGetter.jar file)
-			URL pluginURL = OOEclipsePlugin.getDefault().getBundle().getEntry("/."); //$NON-NLS-1$
+			URL pluginURL = OOEclipsePlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 			// NOTE not replaced by FileLocator to avoid dependency on Eclipse 3.2 
 			URL libURL = FileLocator.toFileURL(pluginURL);
 

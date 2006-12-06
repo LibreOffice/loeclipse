@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuildVisitor.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,15 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.builders;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
+import java.io.File;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Class visiting each child of the urd folder to merge it with the common
@@ -60,51 +58,50 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  * @author cbosdonnat
  *
  */
-public class RegmergeBuildVisitor implements IResourceVisitor {
+public class RegmergeBuildVisitor implements IFileVisitor {
 
 	/**
 	 * Progress monitor used during all the visits
 	 */
 	private IProgressMonitor mProgressMonitor; 
+	private IUnoidlProject mUnoprj;
 	
 	/**
 	 * Default constructor
 	 * 
 	 * @param monitor progress monitor
 	 */
-	public RegmergeBuildVisitor(IProgressMonitor monitor) {
+	public RegmergeBuildVisitor(IUnoidlProject unoprj, IProgressMonitor monitor) {
 		super();
 		mProgressMonitor = monitor;
+		mUnoprj = unoprj;
 	}
 
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
 	 */
-	public boolean visit(IResource resource) throws CoreException {
+	public boolean visit(File resource) {
 		
 		boolean visitChildren = false;
 		
-		if (IResource.FILE == resource.getType()){
+		if (resource.isFile()){
 			
 			// Try to compile the file if it is an idl file
-			if (resource.getFileExtension().equals("urd")){ //$NON-NLS-1$
+			if (resource.getName().endsWith("urd")){ //$NON-NLS-1$
 				
-				RegmergeBuilder.runRegmergeOnFile(
-						(IFile)resource, mProgressMonitor);
+				RegmergeBuilder.runRegmergeOnFile(resource, mUnoprj, mProgressMonitor);
 				if (mProgressMonitor != null) mProgressMonitor.worked(1);
 			}
 			
-		} else if (resource instanceof IContainer){
-			
-			IUnoidlProject project = ProjectsManager.getInstance().getProject(
-					resource.getProject().getName());
-
-			if (resource.getProjectRelativePath().toString().startsWith(
-					project.getUrdPath().segment(0))){
-				
-				visitChildren = true;
+		} else if (resource.isDirectory()){
+			String urdBasis = UnoidlProjectHelper.URD_BASIS;
+			if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				urdBasis = urdBasis.replace("/", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			if (resource.getAbsolutePath().contains(urdBasis));	
+				visitChildren = true;
+			
 		} else {
 			PluginLogger.debug("Non handled resource"); //$NON-NLS-1$
 		}

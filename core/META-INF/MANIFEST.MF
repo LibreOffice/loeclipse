@@ -27,5 +27,6 @@ Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.model,
  org.openoffice.ide.eclipse.core.model.language,
  org.openoffice.ide.eclipse.core.preferences,
+ org.openoffice.ide.eclipse.core.utils,
  org.openoffice.ide.eclipse.core.wizards
 Bundle-Vendor: OpenOffice.org

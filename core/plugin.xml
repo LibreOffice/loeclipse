@@ -180,6 +180,8 @@
       <super type="org.eclipse.core.resources.textmarker"/>
       <persistent value="true"/>
    </extension>
+   
+ <!-- Uncomment when the cheatsheet will be reworked
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
@@ -195,6 +197,8 @@
          </description>
       </cheatsheet>
    </extension>
+ -->
+ 
    <extension
          point="org.eclipse.help.toc">
       <toc
@@ -271,6 +275,6 @@
             class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard"
             icon="/icons/export_package.gif"
             id="org.openoffice.ide.eclipse.core.export.package"
-            name="Package"/>
+            name="OpenOffice.org package"/>
    </extension>
 </plugin>

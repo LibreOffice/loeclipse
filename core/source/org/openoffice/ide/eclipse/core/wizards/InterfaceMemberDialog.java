@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:36:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,7 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards;
 
-import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -91,7 +92,7 @@ import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
  * @author cedricbosdo
  *
  */
-public class InterfaceMemberDialog extends StatusDialog implements
+public class InterfaceMemberDialog extends TitleAreaDialog implements
 		IFieldChangedListener {
 
 	private static final String MEMBER_TYPE = "__member_type"; //$NON-NLS-1$
@@ -117,15 +118,20 @@ public class InterfaceMemberDialog extends StatusDialog implements
 	private Composite mSpecificPanel;
 	private boolean mShowAttribute;
 	
+	private String mTitle = ""; //$NON-NLS-1$
+	private String mMessage = ""; //$NON-NLS-1$
+	
 	/**
 	 * Default constructor to use for member creation.
 	 */
 	public InterfaceMemberDialog() {
 		super(Display.getDefault().getActiveShell());
+	
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		setBlockOnOpen(true); // This dialog is a modal one
-		setTitle(Messages.getString("InterfaceMemberDialog.CreationDialogTitle")); //$NON-NLS-1$
+		mTitle = Messages.getString("InterfaceMemberDialog.CreationDialogTitle"); //$NON-NLS-1$
+		mMessage = Messages.getString("InterfaceMemberDialog.NewMemberDescription"); //$NON-NLS-1$
 		mData = new UnoFactoryData(); 
 	}
 	
@@ -144,9 +150,11 @@ public class InterfaceMemberDialog extends StatusDialog implements
 		try {
 			int type = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
 			if (type == IUnoFactoryConstants.METHOD) {
-				setTitle(Messages.getString("InterfaceMemberDialog.MethodDialogTitle")); //$NON-NLS-1$
+				mTitle = Messages.getString("InterfaceMemberDialog.MethodDialogTitle"); //$NON-NLS-1$
+				mMessage = Messages.getString("InterfaceMemberDialog.EditMethodDescription"); //$NON-NLS-1$
 			} else if (type == IUnoFactoryConstants.ATTRIBUTE) {
-				setTitle(Messages.getString("InterfaceMemberDialog.AttributeDialogTitle")); //$NON-NLS-1$
+				mTitle = Messages.getString("InterfaceMemberDialog.AttributeDialogTitle"); //$NON-NLS-1$
+				mMessage = Messages.getString("InterfaceMemberDialog.EditAttributeDescription"); //$NON-NLS-1$
 			}
 		} catch (NullPointerException e) {
 			// No need to log this. 
@@ -162,7 +170,7 @@ public class InterfaceMemberDialog extends StatusDialog implements
 		
 		// Just set the correct size of the dialog and center it on the screen
 		Rectangle bounds = Display.getDefault().getClientArea();
-		shell.setBounds((bounds.width - 500)/2, (bounds.height - 450)/2, 500, 450);
+		shell.setBounds((bounds.width - 500)/2, (bounds.height - 480)/2, 500, 480);
 	}
 	
 	/**
@@ -184,6 +192,9 @@ public class InterfaceMemberDialog extends StatusDialog implements
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		
+		setTitle(mTitle);
+		setMessage(mMessage);
 		
 		Composite body = new Composite(parent, SWT.None);
 		body.setLayout(new GridLayout(3, false));
@@ -243,7 +254,9 @@ public class InterfaceMemberDialog extends StatusDialog implements
 		}
 		mNameRow.setFieldChangedListener(this);
 		
-		mTypeRow = new TypeRow(body, TYPE, Messages.getString("InterfaceMemberDialog.Type"), InternalUnoType.ALL_TYPES); //$NON-NLS-1$
+		mTypeRow = new TypeRow(body, TYPE, 
+				Messages.getString("InterfaceMemberDialog.Type"), //$NON-NLS-1$ 
+				InternalUnoType.ALL_TYPES);
 		mTypeRow.includeSequences(true);
 		mTypeRow.includeSimpleTypes(true);
 		mTypeRow.setFieldChangedListener(this);
@@ -334,11 +347,18 @@ public class InterfaceMemberDialog extends StatusDialog implements
 	 * 
 	 */
 	protected void createMethodControls(Composite parent) {
-		// create an arguments table
-		Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		
+		Group group = new Group(parent, SWT.SHADOW_NONE);
+		group.setText(Messages.getString("InterfaceMemberDialog.ArgumentsTitle")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
-		table.setLayoutData(gd);
+		group.setLayoutData(gd);
+		group.setLayout(new GridLayout());
+		
+		// create an arguments table
+		Table table = new Table(group, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(false);
 		table.setHeaderVisible(true);
 		table.setToolTipText(Messages.getString("InterfaceMemberDialog.ArgumentTableTooltip")); //$NON-NLS-1$
@@ -349,7 +369,7 @@ public class InterfaceMemberDialog extends StatusDialog implements
 		column.setWidth(200);
 		column = new TableColumn(table, SWT.RESIZE | SWT.LEFT);
 		column.setText(Messages.getString("InterfaceMemberDialog.ArgumentTypeColumnTitle")); //$NON-NLS-1$
-		column.setWidth(200);
+		column.setWidth(170);
 		column = new TableColumn(table, SWT.RESIZE | SWT.LEFT);
 		column.setWidth(60);
 		column.setText(Messages.getString("InterfaceMemberDialog.ArgumentDirectionColumnTitle")); //$NON-NLS-1$
@@ -376,7 +396,7 @@ public class InterfaceMemberDialog extends StatusDialog implements
 		mArgumentTableViewer.setInput(mData);
 		
 		// Create the Add-Edit / Remove buttons
-		Composite buttonComposite = new Composite(parent, SWT.None);
+		Composite buttonComposite = new Composite(group, SWT.None);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		gd.horizontalSpan = 3;
 		buttonComposite.setLayoutData(gd);

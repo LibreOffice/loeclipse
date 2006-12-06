@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeCellEditor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -208,11 +208,12 @@ public class TypeCellEditor extends TextCellEditor {
 									"any", //$NON-NLS-1$
 									"void", //$NON-NLS-1$
 									"char", //$NON-NLS-1$
-									"type" //$NON-NLS-1$
+									"type", //$NON-NLS-1$
+									"boolean" //$NON-NLS-1$
 							};
 
 							for (String type : simpleTypes) {
-								if (type.equals("void") && mIncludeVoid) { //$NON-NLS-1$
+								if (!type.equals("void") || mIncludeVoid) { //$NON-NLS-1$
 									if (type.startsWith(value.substring(i, pos))) {
 										String toadd = type.substring(pos-i);
 										text.insert(toadd);

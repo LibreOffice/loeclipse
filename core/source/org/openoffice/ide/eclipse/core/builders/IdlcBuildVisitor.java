@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -48,6 +48,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -79,31 +80,32 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 	public boolean visit(IResource resource) throws CoreException {
 		
 		boolean visitChildren = false;
+		if (TypesBuilder.sBuildState == 1) {
+			if (IResource.FILE == resource.getType()){
 
-		if (IResource.FILE == resource.getType()){
-			
-			// Try to compile the file if it is an idl file
-			if (resource.getFileExtension().equals("idl")){ //$NON-NLS-1$
-				
-				IdlcBuilder.runIdlcOnFile((IFile)resource, mProgressMonitor);
-				if (mProgressMonitor != null) mProgressMonitor.worked(1);
-			}
-			
-		} else if (resource instanceof IContainer){
-			
-			IUnoidlProject project = ProjectsManager.getInstance().getProject(
-					resource.getProject().getName());
+				// Try to compile the file if it is an idl file
+				if (resource.getFileExtension().equals("idl")){ //$NON-NLS-1$
 
-			if (resource.getProjectRelativePath().toString().startsWith(
-					project.getRootModulePath().segment(0))){
-				
-				visitChildren = true;
+					TypesBuilder.runIdlcOnFile((IFile)resource, mProgressMonitor);
+					if (mProgressMonitor != null) mProgressMonitor.worked(1);
+				}
+
+			} else if (resource instanceof IContainer){
+
+				IUnoidlProject project = ProjectsManager.getInstance().getProject(
+						resource.getProject().getName());
+				IPath resPath = resource.getProjectRelativePath();
+				IPath idlPath = project.getIdlPath();
+
+				if (resPath.segmentCount() < idlPath.segmentCount() ||
+						resPath.toString().startsWith(idlPath.toString())){
+					visitChildren = true;
+				}
 			}
+
+			// cleaning
+			mProgressMonitor = null;
 		}
-		
-		// cleaning
-		mProgressMonitor = null;
-		
 		return visitChildren;
 	}
 }

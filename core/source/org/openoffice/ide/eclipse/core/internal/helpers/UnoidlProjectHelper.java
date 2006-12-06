@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
@@ -262,7 +264,7 @@ public class UnoidlProjectHelper {
 			}
 			
 			unoproject.getLanguage().getProjectHandler().addLanguageDependencies(
-					unoproject, ((UnoidlProject)unoproject).getProject(), monitor);
+					unoproject, monitor);
 			PluginLogger.debug("Language dependencies added"); //$NON-NLS-1$
 			
 			unoproject.getLanguage().getProjectHandler().addOOoDependencies(
@@ -270,6 +272,13 @@ public class UnoidlProjectHelper {
 			PluginLogger.debug("OOo dependencies added"); //$NON-NLS-1$
 			
 		} catch (CoreException e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), 
+							Messages.getString("UnoidlProjectHelper.CreationErrorTitle"),  //$NON-NLS-1$
+							Messages.getString("UnoidlProjectHelper.CreationErrorMessage")); //$NON-NLS-1$
+				}
+			});
 			PluginLogger.error(
 					Messages.getString("UnoidlProjectHelper.FolderCreationError") + SOURCE_BASIS, //$NON-NLS-1$
 					e);

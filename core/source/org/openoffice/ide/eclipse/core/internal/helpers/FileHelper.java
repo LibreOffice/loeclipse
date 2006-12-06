@@ -2,9 +2,9 @@
  *
  * $RCSfile: FileHelper.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -165,5 +165,25 @@ public class FileHelper {
 		}
 		
 		if (toThrow != null) throw toThrow;
+	}
+
+	/**
+	 * Removes a file or directory
+	 * 
+	 * @param file the file or directory to remove
+	 */
+	public static void remove(File file) {
+		if (file.isFile()) {
+			file.delete();
+		} else {
+			String[] children = file.list();
+			for (String child : children) {
+				if (!child.equals(".") && !child.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+					File childFile = new File(file, child);
+					remove(childFile);
+				}
+			}
+			file.delete();
+		}
 	}
 }

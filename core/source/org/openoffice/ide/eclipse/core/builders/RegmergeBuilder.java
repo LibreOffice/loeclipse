@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,13 +43,18 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.builders;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.FileHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Builder for the URD files generating the <code>types.rdb</code> registry.
@@ -76,29 +81,30 @@ public class RegmergeBuilder {
 	 * {@link IUnoidlProject#getTypesPath()}. This methods simply launches the
 	 * {@link RegmergeBuildVisitor} on the urd folder.
 	 * 
-	 * @param project the project to build
+	 * @param unoprj the project to build
 	 * @param monitor a monitor to watch the build progress
 	 * @throws CoreException is thrown is anything wrong happens
 	 */
-	public static void build(IUnoidlProject project, IProgressMonitor monitor)
+	public static void build(IUnoidlProject unoprj, IProgressMonitor monitor)
 			throws CoreException {
 		
 		try {
-			// The registry file is placed in the root of the project as announced 
-			// to the api-dev mailing-list
-			IFolder urdFolder = project.getFolder(
-					project.getUrdPath());
+			IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoprj.getName());
 			
-			
-			IFile mergeFile = project.getFile(project.getTypesPath());
-			if (mergeFile.exists()){
-				mergeFile.delete(true, monitor);
+			IFile typesFile = unoprj.getFile(unoprj.getTypesPath());
+			File mergeFile = prj.getLocation().append(typesFile.getProjectRelativePath()).toFile();
+			if (mergeFile != null && mergeFile.exists()) {
+				FileHelper.remove(mergeFile);
 			}
 			
-			// compile each idl file
-			urdFolder.accept(new RegmergeBuildVisitor(monitor));
+			// merge each urd file
+			IFolder urdFolder = unoprj.getFolder(unoprj.getUrdPath());
+			IPath urdPath = prj.getLocation().append(urdFolder.getProjectRelativePath());
+			File urdFile = urdPath.toFile();
+			VisitableFile visitableUrd = new VisitableFile(urdFile);
+			visitableUrd.accept(new RegmergeBuildVisitor(unoprj, monitor));
 			
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			PluginLogger.error(
 					Messages.getString("RegmergeBuilder.RegmergeError"), e); //$NON-NLS-1$
 		}
@@ -111,14 +117,11 @@ public class RegmergeBuilder {
 	 * @param file the file to run <code>regmerge</code> on.
 	 * @param monitor a progress monitor
 	 */
-	static void runRegmergeOnFile(IFile file, IProgressMonitor monitor){
-		
-		IUnoidlProject project = ProjectsManager.getInstance().getProject(
-				file.getProject().getName());
+	static void runRegmergeOnFile(File file, IUnoidlProject unoprj, IProgressMonitor monitor){
 		
 		// The registry file is placed in the root of the project as announced 
 		// to the api-dev mailing-list
-		IFile mergeFile = project.getFile(project.getTypesPath());
+		IFile mergeFile = unoprj.getFile(unoprj.getTypesPath());
 		
 		String existingReg = ""; //$NON-NLS-1$
 		if (mergeFile.exists()){
@@ -126,10 +129,10 @@ public class RegmergeBuilder {
 		}
 		
 		String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
-						   existingReg + file.getProjectRelativePath().toOSString();
+						   existingReg + file.getAbsolutePath();
 		
 		// Process creation
-		Process process = project.getSdk().runTool(project, command, monitor);
+		Process process = unoprj.getSdk().runTool(unoprj, command, monitor);
 		
 		// Just wait for the process to end before destroying it
 		try {

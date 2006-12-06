@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,7 +56,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.swt.graphics.Image;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
 import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
@@ -264,8 +263,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 			" -l " + libpath +  //$NON-NLS-1$
 			" -- " + args; //$NON-NLS-1$
 		
-		String[] env = prj.getLanguage().getLanguageBuidler().getBuildEnv(prj, 
-				UnoidlProjectHelper.getProject(prj));
+		String[] env = prj.getLanguage().getLanguageBuidler().getBuildEnv(prj);
 		
 		if (getJavaldxPath() != null) {
 			Process p = prj.getSdk().runToolWithEnv(prj, getJavaldxPath(), env, monitor);

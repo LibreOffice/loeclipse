@@ -2,9 +2,9 @@
  *
  * $RCSfile: CompositeFactory.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:34:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -468,7 +468,7 @@ public final class CompositeFactory {
 		}
 		
 		flags.trim();
-		if (flags == null || flags.equals("")) {
+		if (flags == null || flags.equals("")) { //$NON-NLS-1$
 			flags = ""; //$NON-NLS-1$
 		} else {
 			flags = flags.replace(" ", ", "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -493,7 +493,7 @@ public final class CompositeFactory {
 	public static IUnoComposite createMethod(String name, String type) {
 		
 		IUnoComposite method = null;
-		if (type == null) {
+		if (type == null || type.trim().equals("")) { //$NON-NLS-1$
 			type = "void"; //$NON-NLS-1$
 		}
 		

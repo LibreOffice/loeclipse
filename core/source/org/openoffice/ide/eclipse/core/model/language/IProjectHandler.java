@@ -2,9 +2,9 @@
  *
  * $RCSfile: IProjectHandler.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -99,12 +99,11 @@ public interface IProjectHandler {
 	 * the sources path. 
 	 * 
 	 * @param unoproject the uno project on which to add the dependencies
-	 * @param project the underlying project handle
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there is any problem during the operation
 	 */
-	public void addLanguageDependencies(IUnoidlProject unoproject, 
-			IProject project, IProgressMonitor monitor) throws CoreException;
+	public void addLanguageDependencies(IUnoidlProject unoproject,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Extracts the language option name to give to the 

@@ -3,6 +3,8 @@
  */
 package org.openoffice.ide.eclipse.core.internal.model;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
@@ -176,6 +178,10 @@ public class URE extends AbstractOOo {
 		return command;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getJavaldxPath()
+	 */
 	public String getJavaldxPath() {
 		String javaldx = null;
 		
@@ -183,5 +189,20 @@ public class URE extends AbstractOOo {
 			javaldx = getHome() + "/bin/javaldx"; //$NON-NLS-1$
 		}
 		return  javaldx; 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#canManagePackages()
+	 */
+	public boolean canManagePackages() {
+		return false;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#updatePackage(java.io.File)
+	 */
+	public void updatePackage(File packageFile) {	
 	}
 }

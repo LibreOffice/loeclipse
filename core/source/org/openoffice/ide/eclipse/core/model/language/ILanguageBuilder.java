@@ -2,9 +2,9 @@
  *
  * $RCSfile: ILanguageBuilder.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,12 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.language;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
+import java.io.File;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
@@ -65,11 +66,10 @@ public interface ILanguageBuilder {
 	 * Computes the environment variables needed to build the library.
 	 * 
 	 * @param unoProject the uno project of the library
-	 * @param project the underlying eclipse project
 	 * @return an array containing all the environment variables under
 	 * 		the form <code>NAME=VALUE</code>
 	 */
-	public String[] getBuildEnv(IUnoidlProject unoProject, IProject project);
+	public String[] getBuildEnv(IUnoidlProject unoProject);
 
 	/**
 	 * Creates the library containing the component.
@@ -95,7 +95,14 @@ public interface ILanguageBuilder {
 	 * @param rootModule the project root module (eg: <code>foo::bar</code>)
 	 * @param monitor the progress monitor
 	 */
-	public void generateFromTypes(ISdk sdk, IOOo ooo, IFile typesFile, 
-			IFolder buildFolder, String rootModule, IProgressMonitor monitor);
+	public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile, 
+			File buildFolder, String rootModule, IProgressMonitor monitor);
 
+	/**
+	 * Adds all the language specific libraries to the uno package. 
+	 * 
+	 * @param unoPackage the uno package to complete
+	 * @param prj the project to package
+	 */
+	public void fillUnoPackage(UnoPackage unoPackage, IUnoidlProject prj);
 }

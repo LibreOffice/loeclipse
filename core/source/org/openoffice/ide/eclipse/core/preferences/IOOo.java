@@ -1,5 +1,7 @@
 package org.openoffice.ide.eclipse.core.preferences;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -92,6 +94,27 @@ public interface IOOo {
 	public String createUnoCommand(String implementationName, 
 			String libLocation, String[] registriesPaths, String[] args);
 	
+	/**
+	 * Run the uno executable with the given Main implementation, the arguments
+	 * and the launcher.
+	 * 
+	 * @param prj the project to run
+	 * @param main the main implementation
+	 * @param args the argument to pass to the main implementation
+	 * @param launch the launcher
+	 * @param monitor a monitor to follow the progress
+	 */
 	public void runUno(IUnoidlProject prj, String main, String args, 
 			ILaunch launch, IProgressMonitor monitor);
+	
+	/**
+	 * @return <code>true</code> if the OOo instance has a package manager.
+	 */
+	public boolean canManagePackages();
+	
+	/**
+	 * Update a package in the OOo instance if it can manages packages.
+	 * @param packageFile the package to add or update
+	 */
+	public void updatePackage(File packageFile);
 }

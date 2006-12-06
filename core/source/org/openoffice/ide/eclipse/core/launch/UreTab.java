@@ -2,9 +2,9 @@
  *
  * $RCSfile: UreTab.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:35:37 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:25 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -107,8 +107,8 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 								return label;
 							}
 						});
-				dialog.setTitle("Main implementation chooser");
-				dialog.setMessage("Select the implementation of XMain to run");
+				dialog.setTitle(Messages.getString("UreTab.MainImplementationChooserTitle")); //$NON-NLS-1$
+				dialog.setMessage(Messages.getString("UreTab.MainImplementationChooserMessage")); //$NON-NLS-1$
 				dialog.setElements(new MainImplementationsProvider().getImplementations(mProject));
 				
 				if (dialog.open() == Window.OK) {

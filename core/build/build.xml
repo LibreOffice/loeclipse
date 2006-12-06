@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:36:40 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -124,7 +124,7 @@
 		<mkdir dir="${out.path}/plugins" />
 		<mkdir dir="${out.path}/plugin" />
 		<javac srcdir="${prj.path}/source" destdir="${out.path}/plugin"
-			target="1.5" source="1.5"
+			target="1.5" source="1.5" debug="${debug}"
 			classpathref="dependencies.path" 
 			excludes="**/unittests/**,**/UnoTypesGetter*"/>
 		
@@ -146,9 +146,21 @@
 	    		<include name="**/*"/>
 	    	</fileset>
 		</copy>
+
+		<copy todir="${out.path}/plugin/schema">
+			<fileset dir="${prj.path}/schema">
+				<include name="**/*"/>
+			</fileset>
+		</copy>		
 		
-		<copy todir="${out.path}/plugin/" 
+		<copy todir="${out.path}/plugin/"
 			file="${prj.path}/UnoTypesGetter.jar" />
+
+		<copy todir="${out.path}/plugin/">
+			<fileset dir="${prj.path}">
+				<include name="about.*"/>
+			</fileset>
+		</copy>
 		
 		<copy file="${prj.path}/META-INF/MANIFEST.MF.in"
 			tofile="${out.path}/plugin/META-INF/MANIFEST.MF" />

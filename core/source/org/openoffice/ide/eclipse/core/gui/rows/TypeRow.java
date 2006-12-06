@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeRow.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:22 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -44,8 +44,6 @@
 package org.openoffice.ide.eclipse.core.gui.rows;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -170,7 +168,7 @@ public class TypeRow extends TextRow {
 							};
 
 							for (String type : simpleTypes) {
-								if (type.equals("void") && mIncludeVoid) { //$NON-NLS-1$
+								if (!type.equals("void") || mIncludeVoid) { //$NON-NLS-1$
 									if (type.startsWith(value.substring(i, pos))) {
 										String toadd = type.substring(pos-i);
 										text.insert(toadd);
@@ -217,14 +215,6 @@ public class TypeRow extends TextRow {
 				
 				typesProvider.setTypes(oldType);
 			}
-		});
-		
-		((Button)mBrowse).addDisposeListener(new DisposeListener(){
-
-			public void widgetDisposed(DisposeEvent e) {
-				UnoTypeProvider.getInstance().stopProvider();
-			}
-			
 		});
 	}
 }
