@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaBuilder.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:46:43 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 08:55:10 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -184,8 +184,8 @@ public class JavaBuilder implements ILanguageBuilder {
 					
 					String command = "javamaker -T" + firstModule +  //$NON-NLS-1$
 						".* -nD -Gc -BUCR " +  //$NON-NLS-1$
-						"-O " + buildFolder.getAbsolutePath() + " " + //$NON-NLS-1$
-						typesFile.getAbsolutePath() + " " + //$NON-NLS-1$
+						"-O \"" + buildFolder.getAbsolutePath() + "\" \"" + //$NON-NLS-1$
+						typesFile.getAbsolutePath() + "\" " + //$NON-NLS-1$
 						"-X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					
 					IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(prj.getName());

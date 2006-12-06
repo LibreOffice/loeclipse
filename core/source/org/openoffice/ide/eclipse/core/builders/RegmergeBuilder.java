@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 08:55:14 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -129,7 +129,7 @@ public class RegmergeBuilder {
 		}
 		
 		String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
-						   existingReg + file.getAbsolutePath();
+						   existingReg + "\"" + file.getAbsolutePath() + "\"";
 		
 		// Process creation
 		Process process = unoprj.getSdk().runTool(unoprj, command, monitor);
