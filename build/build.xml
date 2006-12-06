@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:38:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:50 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -47,6 +47,11 @@
     </description>
 
 	<property name="out.path" value="site" />
+	<condition property="debug" value="false">
+		<not>
+			<isset property="debug"/>
+		</not>
+	</condition>
 
 	<target name="clean">
 		
@@ -105,9 +110,13 @@
 			 directories, and its default target builds the site
 		-->
 		
-		<ant dir="core/build/" inheritall="false" />
+		<ant dir="core/build/" inheritall="false">
+			<property name="debug" value="${debug}"/>
+		</ant>
 
-		<ant dir="java/build/" inheritall="false" />
+		<ant dir="java/build/" inheritall="false">
+			<property name="debug" value="${debug}"/>
+		</ant>
 		
 		<!-- Gathering plugins infos into a site -->
 		
