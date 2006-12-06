@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: ZipContent.java,v $
+ * $RCSfile: ZipContentHelper.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:46:42 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,17 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.utils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.utils.ZipContent;
 
 /**
  * This class is a small structure containing the data to zip for one file
@@ -61,43 +57,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
  * @author cedricbosdo
  *
  */
-public class ZipContent {
-
-	protected File mFile;
-	
-	protected String mEntryName;
-	
-	public ZipContent(String entryName, File file) {
-		mFile = file;
-		mEntryName = entryName;
-	}
-	
-	public void writeContentToZip(ZipOutputStream out) {
-		
-		BufferedInputStream origin = null;
-		try {
-			FileInputStream fi = new FileInputStream(mFile);
-			 origin = new BufferedInputStream(fi, 2048);
-
-			ZipEntry entry = new ZipEntry(mEntryName);
-			out.putNextEntry(entry);
-
-			int count;
-			byte data[] = new byte[2048];
-
-			while((count = origin.read(data, 0, 2048)) != -1) {
-				out.write(data, 0, count);
-			}
-			
-			out.closeEntry();
-			
-		} catch (IOException e) {
-			PluginLogger.warning(Messages.getString("ZipContent.AddToJarError") + mEntryName); //$NON-NLS-1$
-		} finally {
-			// Close the file entry stream
-			try { if (origin != null) origin.close(); } catch (IOException e) {}
-		}
-	}
+public class ZipContentHelper {
 	
 	public static ZipContent[] getFiles(File file) {
 		return getInternalFiles(file, file);
@@ -134,7 +94,7 @@ public class ZipContent {
 			contents = new ZipContent[result.size()];
 			contents = result.toArray(contents);
 		} else {
-			PluginLogger.warning(Messages.getString("ZipContent.NotDirectoryError") + file); //$NON-NLS-1$
+			PluginLogger.warning(Messages.getString("ZipContentHelper.NotDirectoryError") + file); //$NON-NLS-1$
 		}
 		return contents;
 	}

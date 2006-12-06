@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:37:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:46:43 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -50,11 +50,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
+import java.util.Vector;
 import java.util.jar.JarOutputStream;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -68,10 +68,12 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
-import org.openoffice.ide.eclipse.java.utils.ZipContent;
+import org.openoffice.ide.eclipse.core.utils.ZipContent;
+import org.openoffice.ide.eclipse.java.utils.ZipContentHelper;
 
 public class JavaBuilder implements ILanguageBuilder {
 
@@ -88,11 +90,23 @@ public class JavaBuilder implements ILanguageBuilder {
 	public IPath createLibrary(IUnoidlProject unoProject) throws Exception {
 
 		// Create the manifest file
+		String classpath = ""; //$NON-NLS-1$
+		IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
+		Vector<File> libs = getLibs(JavaCore.create(prj));
+		String prjPath = prj.getLocation().toOSString();
+		for (File lib : libs) {
+			String relPath = lib.getPath().substring(prjPath.length()+1);
+			classpath += relPath + " "; //$NON-NLS-1$
+		}
+		if (!classpath.equals("")) {
+			classpath = "Class-Path: " + classpath + "\r\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		
 		String classname = ((JavaProjectHandler)mLanguage.getProjectHandler()).
 			getRegistrationClassName(unoProject);
 		String content = "ManifestVersion: 1.0\r\n" +  //$NON-NLS-1$
-						 "RegistrationClassName: " + classname + "\r\n"; //$NON-NLS-1$ //$NON-NLS-2$
+						 "RegistrationClassName: " + classname + "\r\n" + //$NON-NLS-1$ //$NON-NLS-2$
+						 classpath;
 		
 		
 		File manifestFile = new File(unoProject.getFile("MANIFEST.MF"). //$NON-NLS-1$
@@ -127,11 +141,11 @@ public class JavaBuilder implements ILanguageBuilder {
 		// Get all the files to write
 		File bin = new File(unoProject.getFolder("bin"). //$NON-NLS-1$
 				getLocation().toOSString());
-		ZipContent[] binContent = ZipContent.getFiles(bin);  // JDT dependent
+		ZipContent[] binContent = ZipContentHelper.getFiles(bin);  // JDT dependent
 		
 		File build = new File(unoProject.getFolder(unoProject.getBuildPath()).
 				getLocation().toOSString());
-		ZipContent[] javamakerContent = ZipContent.getFiles(build);
+		ZipContent[] javamakerContent = ZipContentHelper.getFiles(build);
 		
 		// write the content of the bin directory to the Jar
 		for (int i=0; i<binContent.length; i++) {
@@ -152,10 +166,10 @@ public class JavaBuilder implements ILanguageBuilder {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder#generateFromTypes(org.openoffice.ide.eclipse.core.preferences.ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFolder, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder#generateFromTypes(org.openoffice.ide.eclipse.core.preferences.ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, org.eclipse.core.resources.IProject, java.io.File, java.io.File, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void generateFromTypes(ISdk sdk, IOOo ooo, IFile typesFile,
-			IFolder buildFolder, String rootModule, IProgressMonitor monitor) {
+	public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile,
+			File buildFolder, String rootModule, IProgressMonitor monitor) {
 		
 		if (typesFile.exists()){
 			
@@ -168,18 +182,14 @@ public class JavaBuilder implements ILanguageBuilder {
 					// TODO What if the user creates other root modules ?
 					String firstModule = rootModule.split("::")[0]; //$NON-NLS-1$
 					
-					// HELP quotes are placed here to prevent Windows path 
-					// names with spaces
 					String command = "javamaker -T" + firstModule +  //$NON-NLS-1$
 						".* -nD -Gc -BUCR " +  //$NON-NLS-1$
-						"-O ." + System.getProperty("file.separator") +  //$NON-NLS-1$ //$NON-NLS-2$
-						buildFolder.getProjectRelativePath().toOSString() + " " + //$NON-NLS-1$
-						typesFile.getProjectRelativePath().toOSString() + " " + //$NON-NLS-1$
+						"-O " + buildFolder.getAbsolutePath() + " " + //$NON-NLS-1$
+						typesFile.getAbsolutePath() + " " + //$NON-NLS-1$
 						"-X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 					
-					IUnoidlProject prj = ProjectsManager.getInstance().getProject(
-								typesFile.getProject().getName());
-					Process process = prj.getSdk().runTool(prj,command, monitor);
+					IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(prj.getName());
+					Process process = sdk.runTool(unoprj,command, monitor);
 					
 					LineNumberReader lineReader = new LineNumberReader(
 							new InputStreamReader(process.getErrorStream()));
@@ -210,7 +220,10 @@ public class JavaBuilder implements ILanguageBuilder {
 	 * (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder#getBuildEnv(org.openoffice.ide.eclipse.core.model.IUnoidlProject, org.eclipse.core.resources.IProject)
 	 */
-	public String[] getBuildEnv(IUnoidlProject unoProject, IProject project) {
+	public String[] getBuildEnv(IUnoidlProject unoProject) {
+		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
+		
 		String[] env = new String[2];
 		
 		// compute the classpath for the project's OOo instance
@@ -261,5 +274,64 @@ public class JavaBuilder implements ILanguageBuilder {
 		
 		return env;
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder#fillUnoPackage(org.openoffice.ide.eclipse.core.builders.UnoPackage, org.openoffice.ide.eclipse.core.model.IUnoidlProject)
+	 */
+	public void fillUnoPackage(UnoPackage unoPackage, IUnoidlProject unoPrj) {
+				
+		// Add the component Jar file
+		JavaProjectHandler handler = (JavaProjectHandler)mLanguage.getProjectHandler();
+		unoPackage.addComponentFile(handler.getJarFile(unoPrj), "Java");
+		
+		// Add all the jar dependencies
+		IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoPrj.getName());
+		IJavaProject javaPrj = JavaCore.create(prj);
+		Vector<File> libs = getLibs(javaPrj);
+		for (File lib : libs) {
+			unoPackage.addTypelibraryFile(lib, "Java");
+		}
+	}
+	
+	/**
+	 * Get the libraries in the classpath that are located in the project
+	 * directory or one of its subfolder. 
+	 * 
+	 * @param javaPrj the project from which to extract the libraries
+	 * @return a list of all the File pointing to the libraries.
+	 */
+	private Vector<File> getLibs(IJavaProject javaPrj) {
+		Vector<File> libs = new Vector<File>();
+		IPath prjPath = javaPrj.getProject().getLocation();
+		
+		try {
+			IClasspathEntry[] entries = javaPrj.getResolvedClasspath(true);
+			for (IClasspathEntry entry : entries) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+					/*
+					 * At first, add only the libraries located in the project
+					 * or one of its children. All others libraries have to be
+					 * managed y the user.
+					 */
+					IPath path = entry.getPath();
+					if (!new File(path.toOSString()).exists() && path.isAbsolute()) {
+						// This is a workspace relative path
+						if (path.toString().startsWith("/" + javaPrj.getProject().getName())) {
+							// Relative to the project
+							File libFile = prjPath.append(path.removeFirstSegments(1)).toFile();
+							if (libFile.isFile()) {
+								libs.add(libFile);
+							}
+						}
+					}
+				}
+			}
+			
+		} catch (JavaModelException e) {
+			// Enable to add some missing library
+		}
+		
+		return libs;
+	}
 }
