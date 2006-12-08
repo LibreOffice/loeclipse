@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -143,5 +143,16 @@ public class ImageManager {
 		}
 		
 		return imageDescr;
+	}
+	
+	public ImageDescriptor getImageDescriptorFromPath(String path) {
+		
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		
+		return AbstractUIPlugin.imageDescriptorFromPlugin(
+				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+				path);
 	}
 }

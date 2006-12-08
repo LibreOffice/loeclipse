@@ -61,12 +61,14 @@
       <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
-            class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard"
             hasPages="true"
             icon="icons/newunoproject.gif"
             id="org.openoffice.ide.eclipse.core.newunoproject"
             name="%wizards.unoidlproject"
             project="true">
+         <class class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard">
+         	<parameter name="unoproject" value="true"/>
+         </class>
          <description>
             Create an empty UNO component with a service and it's implementation.
          </description>
@@ -74,12 +76,14 @@
       <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
-            class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard"
             hasPages="true"
             icon="icons/newservice.gif"
             id="org.openoffice.ide.eclipse.core.newservice"
             name="%wizards.service"
             project="false">
+         <class class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard">
+         	<parameter name="unotype" value="true"/>
+         </class>
          <description>
             Creates a new 'new-styled' UNO service. A service will export one interface and define some constructors.
          </description>
@@ -87,12 +91,14 @@
       <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
-            class="org.openoffice.ide.eclipse.core.wizards.NewInterfaceWizard"
             hasPages="true"
             icon="icons/newinterface.gif"
             id="org.openoffice.ide.eclipse.core.newinterface"
             name="%wizards.interface"
             project="false">
+         <class class="org.openoffice.ide.eclipse.core.wizards.NewInterfaceWizard">
+         	<parameter name="unotype" value="true"/>
+         </class>
          <description>
             Create an new UNO interface. An interface is a set of related methods and properties that will be used by a service.
          </description>
@@ -100,12 +106,14 @@
       <wizard
             canFinishEarly="true"
             category="org.openoffice.ide.eclipse.core"
-            class="org.openoffice.ide.eclipse.core.wizards.NewUreAppWizard"
             hasPages="true"
-            icon="icons/newunoproject.gif"
+            icon="icons/new_ure_app.gif"
             id="org.openoffice.ide.eclipse.core.newureapp"
             name="New URE based Application"
             project="true">
+         <class class="org.openoffice.ide.eclipse.core.wizards.NewUreAppWizard">
+         	<parameter name="unoproject" value="true"/>
+         </class>
          <description>
             Create an URE based application. This wizard will create the basic skeleton to run an application featuring UNO component model.
          </description>
@@ -128,13 +136,22 @@
             label="%newactions.name"
             visible="true">
          <action
-               class="org.openoffice.ide.eclipse.core.actions.NewUnoProjectAction"
+               class="org.openoffice.ide.eclipse.core.actions.UnoProjectPulldownAction"
                icon="icons/newunoproject.gif"
                id="org.openoffice.ide.eclipse.core.newactions.newproject"
                label="%newactions.newproject.name"
-               style="push"
+               style="pulldown"
                toolbarPath="uno"
                tooltip="%newactions.newproject.tooltip"/>
+         <action
+               class="org.openoffice.ide.eclipse.core.actions.UnoTypePulldownAction"
+               icon="icons/newservice.gif"
+               id="org.openoffice.ide.eclipse.core.newactions.newtype"
+               label="New Uno Service"
+               style="pulldown"
+               toolbarPath="uno"
+               tooltip="Create a UNO Service"/>
+         <!--
          <action
                class="org.openoffice.ide.eclipse.core.actions.NewUnoFileAction"
                icon="icons/newunofile.gif"
@@ -143,6 +160,7 @@
                style="push"
                toolbarPath="uno"
                tooltip="%newactions.newfile.tooltip"/>
+         -->
       </actionSet>
    </extension>
    <extension
@@ -236,12 +254,6 @@
                name="nature"
                value="org.openoffice.ide.eclipse.core.unonature"/>
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.exportWizards">
-      <category
-            id="org.openoffice.ide.eclipse.core.exports"
-            name="Uno-Idl"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">

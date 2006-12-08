@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -67,7 +67,7 @@ import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 	
-	private NewUnoProjectPage mMainPage;
+	protected NewUnoProjectPage mMainPage;
 	private LanguageWizardPage mLanguagePage = null;
 	private NewServiceWizardPage mServicePage = null;
 	private NewInterfaceWizardPage mInterfacePage = null;

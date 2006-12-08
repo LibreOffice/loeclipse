@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectAction.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:14 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,8 +61,9 @@ import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
  *
  */
 public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
-
+	
 	private IWorkbenchWindow window;
+
 	
 	/**
 	 * Default constructor just initializing the action.

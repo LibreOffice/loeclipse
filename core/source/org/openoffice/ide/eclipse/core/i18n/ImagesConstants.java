@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:35:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -77,4 +77,5 @@ public class ImagesConstants {
 	public static final String DB_MODIFIER = "DB_MODIFIER"; //$NON-NLS-1$
 	public static final String IDL_MODIFIER = "IDL_MODIFIER"; //$NON-NLS-1$
 	public static final String PACKAGE_EXPORT_WIZ = "PACKAGE_EXPORT_WIZ"; //$NON-NLS-1$
+	public static final String URE_APP_WIZ = "URE_APP_WIZ"; //$NON-NLS-1$
 }

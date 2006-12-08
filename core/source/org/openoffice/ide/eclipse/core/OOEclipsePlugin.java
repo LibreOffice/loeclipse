@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -162,7 +162,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	 * 
 	 * @return the image manager
 	 */
-	protected ImageManager getImageManager(){
+	public ImageManager getImageManager(){
 		if (null == mImageManager){
 			mImageManager = new ImageManager();
 		}
