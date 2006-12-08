@@ -47,7 +47,7 @@ MA 02111-1307 USA
    </url>
 
    <requires>
-      <import feature="org.openoffice.ide.eclipse.core" version="1.0.3.a"/>
+      <import feature="org.openoffice.ide.eclipse.core" version="1.1.0"/>
    </requires>
 
    <plugin
