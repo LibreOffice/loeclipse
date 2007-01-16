@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Creating the application</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title="Creating a URE application">
+<link rel="up" href="index.html" title="Creating a URE application">
+<link rel="prev" href="index.html" title="Creating a URE application">
+<link rel="next" href="ar01s03.html"
+	title="Public Documentation License Notice ">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2516711"></a>Creating
+the application</h2>
+</div>
+</div>
+</div>
+<p>An URE application is only a UNO component implementing the <code
+	class="literal">com:sun:star:lang:XMain</code> interface. For an easier
+comparison, this interface is to UNO what the static main method is to
+C/C++ or Java. Running an URE application is telling UNO which <code
+	class="literal">Xmain:run()</code> method to run, then your application
+is started and you can do your job.</p>
+<p>The OpenOffice.org Eclipse integration provides a simple wizard
+to create a URE application: this helps you to remember which interface
+has to be implemented and how to register it to the URE. It provides an
+easy way to run your URE applications in the Eclipse fashion.</p>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2516743"></a>Creating the main
+component</h3>
+</div>
+</div>
+</div>
+<p>To launch the URE application creation wizard, you can either
+select <span class="strong"><strong>File &gt; New &gt;
+Project Wizard</strong></span> and then choose <span class="strong"><strong>UNO
+&gt; New URE based Application</strong></span> or click on the arrow on the right of the
+new UNO component icon in the tool bar. Then you will have only the
+first page of the new UNO component creation wizard. (<a href="../javatuto/ar01s02.html"><span
+	class="emphasis"><em>See Java Component Tutorial</em></span></a>).</p>
+<p>After having terminated the wizard, you will have a new service
+exporting the <code class="literal">XMain</code> interface and a
+skeleton for its implementation. The only thing you need to do is to
+place your code in the <code class="literal">run()</code> method. For
+example, you could change the opened file into the following:</p>
+<pre class="programlisting">// com.sun.star.lang.XMain:
+public int run(String[] aArguments)
+{
+     System.out.println( "Here is a postcard from the URE world !" );
+     return 0;
+}</pre></div>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2472853"></a>Running the application</h3>
+</div>
+</div>
+</div>
+<p>To run your newly created application, open the <span
+	class="strong"><strong>Run
+&gt; Run...</strong></span> menu, select <span class="emphasis"><em>&#8220;URE Application&#8221;</em></span> in the
+left list and click on the button <span	class="strong"><strong>New</strong></span> on the top. Then, give a
+name to the launch configuration, select the UNO project corresponding
+to the URE application to run and then the name of the <code
+	class="literal">XMain</code> implementation class. Note that you will
+have no classes to select if the selected project contains no class
+implementing <code class="literal">XMain</code>. You can even use the
+arguments field to pass the command line arguments expected by your
+application. Then save the launch configuration and run it: your
+application will be executed. In our case, we will simply see the
+&#8220;Here is a postcard from the URE world !&#8221; text in the
+Eclipse console.</p>
+<p>Now introduced to the URE world, don't hesitate to develop more
+complex applications and submit us any feedback.</p>
+</div>
+</div>
+</body>
+</html>

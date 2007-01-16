@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="Creating a URE application">
+	<topic label="Creating a URE application" href="doc/help/html/userdoc/uretuto/index.html">
+		<topic label="Introduction" href="doc/help/html/userdoc/uretuto/index.html#id2499930"/>
+		<topic label="Creating the application" href="doc/help/html/userdoc/uretuto/ar01s02.html">
+			<topic label="Creating the main component" href="doc/help/html/userdoc/uretuto/ar01s02.html#id2516743"/>
+			<topic label="Running the application" href="doc/help/html/userdoc/uretuto/ar01s02.html#id2472853"/>
+		</topic>
+		<topic label="Public Documentation License Notice " href="doc/help/html/userdoc/uretuto/ar01s03.html"/>
+	</topic>
+</toc>
