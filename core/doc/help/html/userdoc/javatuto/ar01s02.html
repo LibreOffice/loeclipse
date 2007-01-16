@@ -1,0 +1,448 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Creating a new component</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html"
+	title="UNO Java component creation explained">
+<link rel="up" href="index.html"
+	title="UNO Java component creation explained">
+<link rel="prev" href="index.html"
+	title="UNO Java component creation explained">
+<link rel="next" href="ar01s03.html"
+	title="Packaging and testing the component">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2474063"></a>Creating
+a new component</h2>
+</div>
+</div>
+</div>
+<p>For the Eclipse plugin, a UNO component is a UNO project. This
+tutorial will explain how to easily create a new UNO component using the
+Eclipse plugin. We will now assume that you have very simple needs: the
+component that will be created is a &#8220;Hello world&#8221; service
+and its implementation. Creating a component defining and implementing
+more services is a bit more complex and need advanced Java UNO
+knowledge.</p>
+<p>There are several ways to create a UNO component project using
+the plugin:</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<div class="figure"><a name="refIllustration5"></a>
+	<p class="title"><b>Figure 6. : New UNO-IDL project item</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="141">
+		<tr style="height: 44px">
+			<td><img src="img/img005.png" height="44"
+				alt=": New UNO-IDL project item"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+	<p>the first one is the <span class="strong"><strong>File
+	&gt; New &gt; Project</strong></span> menu entry and choose the <span class="strong"><strong>UNO
+	&gt; UNO-IDL Project</strong></span> item as shown by the illustration <a
+		href="ar01s02.html#refIllustration5"
+		title="Figure 6. : New UNO-IDL project item">6</a>.</p>
+	</li>
+	<li>
+	<p>the second one is the icon in the toolbar representing a blue
+	folder with a star as shown by the illustration <a
+		href="ar01s02.html#refIllustration6"
+		title="Figure 7. : New UNO-IDL project icon">7</a>.</p>
+	</li>
+</ul>
+</div>
+<div class="figure"><a name="refIllustration6"></a>
+<p class="title"><b>Figure 7. : New UNO-IDL project icon</b></p>
+<div class="mediaobject">
+<table border="0" summary="manufactured viewport for HTML img"
+	cellspacing="0" cellpadding="0" width="22">
+	<tr style="height: 22px">
+		<td><img src="img/img006.png" width="22"
+			alt=": New UNO-IDL project icon"></td>
+	</tr>
+</table>
+</div>
+</div>
+<p>Then you only have to follow the wizard to create your UNO
+component project, its specification and a skeleton of implementation.
+This wizard is composed of several pages:</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<p>The main configuration page to define the general project
+	properties</p>
+	</li>
+	<li>
+	<p>The implementation language configuration page.</p>
+	</li>
+	<li>
+	<p>The service configuration page</p>
+	</li>
+	<li>
+	<p>The interface configuration page</p>
+	</li>
+</ul>
+</div>
+<p>After all these steps you can get a running component... doing
+nothing. The next sections will describe the different wizard pages and
+where to place your code.</p>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2474236"></a>The project configuration
+page</h3>
+</div>
+</div>
+</div>
+<p>The first page in the project wizard is the only page containing
+fields that need to be filled. All the others have default values to
+help you through the component creation. In our case, we will need all
+the pages to explain them all and define some mew methods and attributes
+in our component.</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<div class="figure"><a name="refIllustration7"></a>
+	<p class="title"><b>Figure 8. : New UNO-IDL project wizard page</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="332">
+		<tr style="height: 225px">
+			<td><img src="img/img007.png" width="332"
+				alt=": New UNO-IDL project wizard page"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+	<p><span class="strong"><strong>Project name:</strong></span> is
+	the component name, in our case, it will be &#8220;<span
+		class="emphasis"><em>Helloworld</em></span>&#8221;</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Location:</strong></span> is the
+	directory on your computer where the project will be created. You can
+	change the default one by deselecting the <span class="strong"><strong>Use
+	default</strong></span> check box. The default location of each Eclipse project is a
+	directory with your project name in the current Eclipse workspace. <span
+		class="strong"><strong>Please avoid spaces in this
+	path on Windows: it could prevent your component to be built.</strong></span></p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Root package:</strong></span> is
+	the name of the first module of your component. It generally composed
+	of two parts: the vendor name (here <code class="literal">org.openoffice</code>)
+	and the project name (here <code class="literal">helloworld</code>).</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Used SDK:</strong></span> selects
+	the OpenOffice.org SDK which will be used to develop the component. You
+	generally will have only one SDK in the list, but you can add others in
+	the preferences or by clicking on the <span class="strong"><strong>Configure
+	SDKs</strong></span> button.</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Used OOo:</strong></span> selects
+	the version of OpenOffice.org to use to develop the component. As for
+	the SDK, you will generally have only one entry in the list, but you
+	can add others in the preferences or by clicking on the OOo
+	Installations button.</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Programming
+	language:</strong></span> selects the programming language for the component
+	implementation. For the moment, there is only Java available, however
+	C++ and python are planned.</p>
+	</li>
+</ul>
+</div>
+</div>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2488076"></a>The implementation
+language configuration page</h3>
+</div>
+</div>
+</div>
+<p>This page depends on the chosen language. For Java, the default
+values should be kept: they define which class is the main class of the
+component. The component's main class contains some code mapping the
+services to their implementation.</p>
+</div>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2488091"></a>The service configuration
+page</h3>
+</div>
+</div>
+</div>
+<div class="figure"><a name="refIllustration8"></a>
+<p class="title"><b>Figure 9. : Service configuration page</b></p>
+<div class="mediaobject">
+<table border="0" summary="manufactured viewport for HTML img"
+	cellspacing="0" cellpadding="0" width="333">
+	<tr style="height: 154px">
+		<td><img src="img/img008.png" height="154"
+			alt=": Service configuration page"></td>
+	</tr>
+</table>
+</div>
+</div>
+<p></p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<p><span class="strong"><strong>Module:</strong></span> corresponds
+	to the UNO-IDL module where to add the interface. If the text field is
+	left empty, the interface will be added in the root module of the
+	component (filled in the project wizard).</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Service name:</strong></span> is
+	the service name. By keeping the default value, you will be able to
+	define your own interface using the interface configuration page.
+	Otherwise, you can reuse an existing interface.</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Published</strong></span>:
+	specifies if the interface is published or not. The published notion is
+	translated into a keyword in UNO-IDL language. Declaring a UNO-IDL type
+	as published means that it will not change in future releases: we will
+	keep it unchecked because our component is really far from being a
+	stable API.</p>
+	</li>
+</ul>
+</div>
+</div>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2488175"></a>The interface
+configuration page</h3>
+</div>
+</div>
+</div>
+<div class="figure"><a name="refIllustration9"></a>
+<p class="title"><b>Figure 10. : Interface configuration page</b></p>
+<div class="mediaobject">
+<table border="0" summary="manufactured viewport for HTML img"
+	cellspacing="0" cellpadding="0" width="436">
+	<tr style="height: 302px">
+		<td><img src="img/img009.png" width="436"
+			alt=": Interface configuration page"></td>
+	</tr>
+</table>
+</div>
+</div>
+<p></p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<p><span class="strong"><strong>Module:</strong></span> corresponds
+	to the UNO-IDL module where to add the interface. If the text field is
+	left empty, the interface will be added in the root module of the
+	component (filled in the project wizard).</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Interface name:</strong></span> is
+	the interface name. By convention, we generally name a interface
+	beginning with an &#8220;X&#8221;. In this tutorial case, the interface
+	will be named <code class="literal">Xhelloworld</code>.</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Inherited
+	interfaces:</strong></span> is a list of all the interfaces from which the one that is
+	about to be created will inherit. This is one of the changes in UNO-IDL
+	between OpenOffice.org 1.1.x and 2.0: that is why the plugin does not
+	support OpenOffice.org version prior to 2.0. All the UNO-IDL interfaces
+	are inheriting more or less directly from the <code class="literal">com::sun::star::uno::XInterface</code>
+	type. As the <code class="literal">XHelloworld</code> interface is very
+	easy, no super interface will be added: that will implicitly define <code
+		class="literal">XInterface</code> as the only parent for the new
+	interface.</p>
+	<div class="itemizedlist">
+	<ul type="circle">
+		<li>
+		<p><span class="strong"><strong>&#8220;?&#8221;
+		column:</strong></span> specifies if the interface inheritance is mandatory or not. If
+		the box is checked, thus the interface inheritance is optional and may
+		not be implemented.</p>
+		</li>
+		<li>
+		<p><span class="strong"><strong>&#8220;Add&#8221;
+		and &#8220;</strong></span><span class="strong"><strong>Del</strong></span><span
+			class="strong"><strong>&#8221; buttons:</strong></span> allows to add
+		an interface to the inherited ones or removing the selected interface.</p>
+		</li>
+	</ul>
+	</div>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Members:</strong></span> is a list
+	of all the methods and properties of the interface. See the
+	explanations about the members some lines below. In this tutorial, just
+	create one <code class="literal">string sayHello([in] boolean
+	isBadBoy)</code> method and a <code class="literal">LadyName</code> property.</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Published:</strong></span>
+	specifies if the interface is published or not. The published notion is
+	translated into a keyword in UNO-IDL language. Declaring a UNO-IDL type
+	as published means that it will not change in future releases: we will
+	keep it unchecked because our component is really far from being a
+	stable API.</p>
+	</li>
+</ul>
+</div>
+<p>A UNO interface can contain two kind of members: methods and
+properties. When clicking on the <span class="strong"><strong>Add</strong></span>
+button near the members' list, the following window will be shown. When
+double-clicking on a line in the members' list, you will edit the
+corresponding member through the same window.</p>
+<p>When the window is opened to create a new member, you can choose
+whether the member will be a property or a method. The name and returned
+type fields are always present, but the lower part of the dialog is
+different for a method and a property.</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<div class="figure"><a name="refIllustration10"></a>
+	<p class="title"><b>Figure 11. : Interface member creation
+	dialog</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="341">
+		<tr style="height: 344px">
+			<td><img src="img/img010.png" width="341"
+				alt=": Interface member creation dialog"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+	<p><span class="strong"><strong>The arguments list:</strong></span>
+	defines the name, type and direction of the parameters of the method.
+	Simply click on the cell to edit it.</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>Read-only and Bound
+	check boxes:</strong></span> selecting these boxes sets the corresponding IDL flag on
+	the property.</p>
+	</li>
+</ul>
+</div>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Note</h3>
+You can use <code class="literal">Ctrl+Space</code> to complete the type
+name in the <span class="strong"><strong>Return type</strong></span>
+field and <span class="strong"><strong>Type</strong></span> column.</div>
+</div>
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2488466"></a>Writing the
+implementation</h3>
+</div>
+</div>
+</div>
+<p>After having completed the wizard, you need to write the
+component implementation. Hopefully a skeleton has been generated and
+opened: you just need to complete the code where there are some TODOS.
+The generated project contains the following directories and files to
+know:</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<p><span class="strong"><strong>source:</strong></span> directory
+	containing your Java implementation classes</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>build:</strong></span> directory
+	containing all the generated temporary files, such as the results of
+	the specification files (<code class="literal">.idl</code> files)
+	compilation (<code class="literal">.urd</code> files) or the class
+	files corresponding to the specifications (<code class="literal">.class</code>
+	files)</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>idl:</strong></span> directory
+	containing the specifications of the component</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>types.rdb:</strong></span>
+	generated UNO types registry from which the classes files will be
+	generated</p>
+	</li>
+	<li>
+	<p><span class="strong"><strong>JRE and the jars:</strong></span>
+	are describing the classpath of the component. They are visible only in
+	the Java package explorer. The OpenOffice.org jars are changed if the
+	OpenOffice.org version associated to the project is changed. <span
+		class="emphasis"><em>In a future version, they will be
+	packed in a user library to take less space in the tree.</em></span></p>
+	</li>
+</ul>
+</div>
+<p>The generated skeleton already contains the methods for the
+implementation registration. The only things to modify are:</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<p>Change the code of the setters and getters for the defined
+	properties</p>
+	</li>
+	<li>
+	<p>Change the code of the defined methods.</p>
+	</li>
+</ul>
+</div>
+<p>The Eclipse integration even manages the libraries needed by your
+implementation. Let us imagine, that we want to use the <code
+	class="literal">Fraction</code> class from the Apache <code
+	class="literal">common-math</code> jar. Download this jar from the
+Apache website, and import the <code class="literal">common-math-1.1.jar</code>
+file into your component project: for example in a <code class="literal">lib</code>
+directory. Add the jar to the project build path in the same way than in
+any other Eclipse Java project and use it:</p>
+<pre class="programlisting">// org.openoffice.helloworld.XHelloworld:
+private String mLadyName = "";
+           
+public String getLadyName()
+{
+    return mLadyName;
+}
+public void setLadyName(String the_value)
+{
+    mLadyName = the_value;
+}
+public String sayHello(boolean isBadBoy)
+{
+    String hello = "Hello Mrs. " + getLadyName();
+    if (isBadBoy) {
+        Fraction f = new Fraction(1, 3);
+        hello = "A third is " + f.doubleValue();
+    }
+    return hello;
+}</pre>
+<p>The above code show you what could be an implementation of our
+component. Now, there is only to package it properly and test it.</p>
+</div>
+</div>
+</body>
+</html>

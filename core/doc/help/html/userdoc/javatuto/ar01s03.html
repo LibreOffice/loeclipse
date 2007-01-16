@@ -1,0 +1,65 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Packaging and testing the component</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html"
+	title="UNO Java component creation explained">
+<link rel="up" href="index.html"
+	title="UNO Java component creation explained">
+<link rel="prev" href="ar01s02.html" title="Creating a new component">
+<link rel="next" href="ar01s04.html" title="Going further">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2488652"></a>Packaging
+and testing the component</h2>
+</div>
+</div>
+</div>
+<p>The next lines will show you how to export your component into an
+OpenOffice.org package. There is quite nothing to do apart from
+following these small steps:</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+	<p>Select the <span class="strong"><strong>File
+	&gt; Export</strong></span> menu. Then choose the <span class="strong"><strong>UNO
+	&gt; OpenOffice.org</strong></span> package export type.</p>
+	</li>
+	<li>
+	<p>The next page of the wizard, asks for the UNO project to export
+	(already selected), the directory where to export the package and the
+	OpenOffice.org minimum compatibility version for the package. Depending
+	of the selected OpenOffice.org version, the package will get a
+	different name and a different structure.</p>
+	</li>
+	<li>
+	<p>Then click on the Finish button. The wizard will ask you whether
+	to deploy to package or not and asks for the old package removal if
+	needed.</p>
+	</li>
+</ul>
+</div>
+<p>Then we will suppose that the package is deployed on the
+OpenOffice.org installation and we will test it using the following <code
+	class="literal">OooBasic</code> macro.</p>
+<pre class="programlisting">Sub testHelloworld
+    oHelloworld = createUnoService( "org.openoffice.helloworld.Helloworld" )
+    oHelloworld.LadyName = "Robinson"
+    print oHelloworld.sayHello( false )
+    print oHelloworld.sayHello( True )
+End Sub</pre>
+<p>This macro should open two message windows with <span
+	class="emphasis"><em>&#8220;Hello Mrs. Robinson&#8221;</em></span> and
+<span class="emphasis"><em>&#8220;A third is
+0.3333333&#8221;</em></span>. Your first UNO component is now running, enjoy doing
+others.</p>
+</div>
+</body>
+</html>

@@ -1,24 +1,25 @@
-<toc label="Java component tutorial">
-
-	<topic label="Java component tutorial" href="doc/help/html/userdoc/javatuto/index.html">
-	    <topic label="Introduction" href="doc/help/html/userdoc/javatuto/intro.html">
-		    <topic label="UNO components" href="doc/help/html/userdoc/javatuto/unocomp.html" />
-	        <topic label="Installation" href="doc/help/html/userdoc/javatuto/install.html" />
-	    </topic>
-		     
-	    <topic label="Creating a UNO component" href="doc/help/html/userdoc/javatuto/newcomp.html">
-	     	<topic label="Creating a project" href="doc/help/html/userdoc/javatuto/newproject.html" />
-	    	<topic label="Writing UNO specifications" href="doc/help/html/userdoc/javatuto/specs.html" />
-	    	<topic label="Implementing a component" href="doc/help/html/userdoc/javatuto/impl.html" />
-	    </topic>
-		     
-	    <topic label="Testing a UNO component" href="doc/help/html/userdoc/javatuto/testing.html">
-		   	<topic label="Packaging a component" href="doc/help/html/userdoc/javatuto/packaging.html" />
-	    	<topic label="Testing using a macro" href="doc/help/html/userdoc/javatuto/macro.html" />
-	    </topic>
-		     
-	    <topic label="Going further" href="doc/help/html/userdoc/javatuto/further.html" />
-	    <topic label="Licence" href="doc/help/html/userdoc/javatuto/licence.html" />
-	 </topic>  
-	  
- </toc>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="UNO Java component creation explained">
+  <topic label="UNO Java component creation explained" href="doc/help/html/userdoc/javatuto/index.html">
+		<topic label="Introduction" href="doc/help/html/userdoc/javatuto/index.html#id2495076">
+			<topic label="UNO Components" href="doc/help/html/userdoc/javatuto/index.html#id2501774">
+				<topic label="Components anatomy" href="doc/help/html/userdoc/javatuto/index.html#id2500105"/>
+				<topic label="Components creation process" href="doc/help/html/userdoc/javatuto/index.html#id2516729"/>
+			</topic>
+			<topic label="Installing the development platform" href="doc/help/html/userdoc/javatuto/index.html#id2473547">
+				<topic label="OpenOffice.org" href="doc/help/html/userdoc/javatuto/index.html#id2473592"/>
+				<topic label="Eclipse and the plugin" href="doc/help/html/userdoc/javatuto/index.html#id2473631"/>
+			</topic>
+		</topic>
+		<topic label="Creating a new component" href="doc/help/html/userdoc/javatuto/ar01s02.html">
+			<topic label="The project configuration page" href="doc/help/html/userdoc/javatuto/ar01s02.html#id2474236"/>
+			<topic label="The implementation language configuration page" href="doc/help/html/userdoc/javatuto/ar01s02.html#id2488076"/>
+			<topic label="The service configuration page" href="doc/help/html/userdoc/javatuto/ar01s02.html#id2488091"/>
+			<topic label="The interface configuration page" href="doc/help/html/userdoc/javatuto/ar01s02.html#id2488175"/>
+			<topic label="Writing the implementation" href="doc/help/html/userdoc/javatuto/ar01s02.html#id2488466"/>
+		</topic>
+		<topic label="Packaging and testing the component" href="doc/help/html/userdoc/javatuto/ar01s03.html"/>
+		<topic label="Going further" href="doc/help/html/userdoc/javatuto/ar01s04.html"/>
+		<topic label="Public Documentation License Notice " href="doc/help/html/userdoc/javatuto/ar01s05.html"/>
+	</topic>
+</toc>
