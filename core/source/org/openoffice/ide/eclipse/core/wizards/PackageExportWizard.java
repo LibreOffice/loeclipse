@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizard.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -59,10 +59,10 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.builders.ServicesBuilder;
-import org.openoffice.ide.eclipse.core.internal.helpers.FileHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
+import org.openoffice.ide.eclipse.core.utils.FileHelper;
 
 /**
  * A wizard to export the project as a UNO package.

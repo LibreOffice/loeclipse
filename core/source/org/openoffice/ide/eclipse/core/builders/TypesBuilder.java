@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -70,10 +70,9 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
  * type files and types registry from the <code>idl</code> files. In order
  * to split the work, the different tasks have been split into several builders:
  *   <ul>
- *     <li>{@link IdlcBuilder} generating the urd files from the idl ones</li>
  *     <li>{@link RegmergeBuilder} merging the urd files into the types 
  *     	   registry</li>
- *     <li>{@link ILanguageBuilder#generateFromTypes(org.openoffice.ide.eclipse.core.preferences.ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, IFile, IFolder, String, IProgressMonitor)}
+ *     <li>{@link ILanguageBuilder#generateFromTypes(ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, IProject, File, File, String, IProgressMonitor)}
  *     	   generating the language specific type files</li>
  *   </ul>
  * </p>

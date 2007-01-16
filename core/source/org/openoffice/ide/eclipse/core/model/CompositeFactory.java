@@ -2,9 +2,9 @@
  *
  * $RCSfile: CompositeFactory.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -465,6 +465,10 @@ public final class CompositeFactory {
 		IUnoComposite attribute = null;
 		if (type == null) {
 			type = "void"; //$NON-NLS-1$
+		}
+		
+		if (flags == null) {
+			flags = ""; //$NON-NLS-1$
 		}
 		
 		flags.trim();

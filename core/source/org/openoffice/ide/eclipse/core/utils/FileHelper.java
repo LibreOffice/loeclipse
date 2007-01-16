@@ -2,9 +2,9 @@
  *
  * $RCSfile: FileHelper.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,12 +41,14 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.internal.helpers;
+package org.openoffice.ide.eclipse.core.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.openoffice.ide.eclipse.core.internal.helpers.Messages;
 
 /**
  * Utility class for file handling

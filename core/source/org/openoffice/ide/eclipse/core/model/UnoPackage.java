@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoPackage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -53,7 +53,7 @@ import java.util.Vector;
 import java.util.zip.ZipOutputStream;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.internal.helpers.FileHelper;
+import org.openoffice.ide.eclipse.core.utils.FileHelper;
 import org.openoffice.ide.eclipse.core.utils.ZipContent;
 
 /**
