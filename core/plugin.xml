@@ -223,11 +223,17 @@
             file="doc/help/toc.xml"
             primary="true"/>
       <toc
+            file="doc/help/html/devdoc/starting/toc.xml"
+            primary="true"/>
+      <toc
             file="doc/help/html/devdoc/extending/toc.xml"
             primary="true"/>
       <toc
             file="doc/help/html/userdoc/javatuto/toc.xml"
-            primary="true"/>      
+            primary="true"/>
+      <toc
+            file="doc/help/html/userdoc/uretuto/toc.xml"
+            primary="true"/>
             
    </extension>
    <extension
