@@ -4,10 +4,12 @@
 <toc label="OpenOffice.org plugin help">
 
   <topic label="User documentation" href="doc/help/html/userdoc/index.html">
-	  <link toc="doc/help/html/userdoc/javatuto/toc.xml"/>
+	<link toc="doc/help/html/userdoc/javatuto/toc.xml"/>
+	<link toc="doc/help/html/userdoc/uretuto/toc.xml"/>
   </topic>
   
   <topic label="Developer manual" href="doc/help/html/devdoc/index.html"> 
+  	<link toc="doc/help/html/devdoc/starting/toc.xml" />
   	<link toc="doc/help/html/devdoc/extending/toc.xml" />
   </topic>
   

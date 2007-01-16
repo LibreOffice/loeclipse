@@ -18,17 +18,16 @@ FEATURES
   - New UNO file wizard
   - New UNO service wizard
   - New UNO interface wizard
-  - A first cheat sheet for project creation
-
-COMING MORE OR LESS SOON
- 
-  - Code and on-line documentation
-  - Addind C++ language support
   - Skeleton-maker integration for basic components creation
   - URE configuration
   - New URE application wizard
-  - New UNO exception wizard
-  - Ant file automatic creation
-  - Makefile automatic creation
+  - Automatic component build and packaging
+
+COMING MORE OR LESS SOON
+ 
+  - Cheat sheets to improve the user experience
+  - Addind C++ language support
+  - New UNO wizard for other IDL types
+  - Easy support of several services implementations in a component
   - Outline view for UNOIDL file
   - Addind Python language support
