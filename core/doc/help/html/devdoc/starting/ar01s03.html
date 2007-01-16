@@ -1,0 +1,179 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Overview of the code organisation</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title="">
+<link rel="up" href="index.html" title="">
+<link rel="prev" href="ar01s02.html" title="The development environment">
+<link rel="next" href="ar01s04.html" title="Using Eclipse features">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+<div class="sect1" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2473758"></a>Overview
+of the code organisation</h2>
+</div>
+</div>
+</div>
+<p>Now that the sources are ready for use, the main problem of
+getting introduced to a new project is to understand the existing source
+code and its logical organisation. This section will give a small
+description on the packages content. The other directories and files
+will be explained too.</p>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2473769"></a>The projects</h3>
+</div>
+</div>
+</div>
+<p>The sources are split into two plugins projects and a build one.
+There may be other plugins providing new features in the future. For
+more informations on the Eclipse plugin principles, refer to the Eclipse
+developer's guide.</p>
+<div class="orderedlist">
+<ul>
+	<li>
+	<p><code class="literal">org.openoffice.ide.eclipse.core</code>: This plugin provides all the
+	UNO related features of the Eclipse integration. It also defines
+	several extension points used by the language plugins.</p>
+	</li>
+	<li>
+	<p><code class="literal">org.openoffice.ide.eclipse.java</code>: This plugin provides the Java
+	UNO features for the Eclipse integration. This kind of plugin can even
+	be named &#8220;language plugin&#8221; in some documents.</p>
+	</li>
+	<li>
+	<p><code class="literal">org.openoffice.ide.eclipse.build</code>: This project does not define
+	any plugin, but it contains the main build scripts to generate the
+	update site as explained later.</p>
+	</li>
+</ul>
+</div>
+</div>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2473819"></a>The core plugin packages</h3>
+</div>
+</div>
+</div>
+<p>All the packages names are formed in a simple way:
+<code class="literal">name.of.the.plugin.package</code>. In the next lines, the plugin name will not
+be repeated but will be implied.</p>
+<div class="orderedlist">
+<ul>
+	<li>
+	<p><code class="literal">org.openoffice.ide.eclipse.core</code>: contains the main plugin class
+	and the logger</p>
+	</li>
+	<li>
+	<p><code class="literal">actions</code>: contains the actions classes for the GUI</p>
+	</li>
+	<li>
+	<p><code class="literal">builders</code>: contains all the classes to use for the UNO files
+	build</p>
+	</li>
+	<li>
+	<p><code class="literal">editors</code>: contains all the classes related to the UNO file
+	editors</p>
+	</li>
+	<li>
+	<p><code class="literal">editors.syntax</code>: contains the class used for the IDL syntax
+	highlighting</p>
+	</li>
+	<li>
+	<p><code class="literal">gui</code>: contains all the Graphical User Interface useful classes</p>
+	</li>
+	<li>
+	<p><code class="literal">gui.rows</code>: classes defining often used rows for the dialogs</p>
+	</li>
+	<li>
+	<p><code class="literal">i18n</code>: previously contained the internationalization classes, it
+	only contains the image access classes and bundles</p>
+	</li>
+	<li>
+	<p><code class="literal">internal</code>: this package and all its children should not be
+	exposed to other plugins</p>
+	</li>
+	<li>
+	<p><code class="literal">internal.helpers</code>: some useful classes that should be kept
+	internal</p>
+	</li>
+	<li>
+	<p><code class="literal">internal.model</code>: the model object implementations</p>
+	</li>
+	<li>
+	<p><code class="literal">launch</code>: contains the classes for the URE launch feature</p>
+	</li>
+	<li>
+	<p><code class="literal">model</code>: contains the classes defining the data objects classes.
+	They are often interface</p>
+	</li>
+	<li>
+	<p><code class="literal">language</code>: contains the classes and interfaces to implement in
+	the language plugins</p>
+	</li>
+	<li>
+	<p><code class="literal">preferences</code>: contains the preferences and project properties
+	pages implementations</p>
+	</li>
+	<li>
+	<p><code class="literal">unittests</code>: contains some unit tests, may be not enough</p>
+	</li>
+	<li>
+	<p><code class="literal">unotypebrowser</code>: contains the classes for the Uno types browser
+	dialog</p>
+	</li>
+	<li>
+	<p><code class="literal">utils</code>: some utilities classes</p>
+	</li>
+	<li>
+	<p><code class="literal">wizards</code>: contains the wizards implementations</p>
+	</li>
+</ul>
+</div>
+</div>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2472979"></a>The other important files</h3>
+</div>
+</div>
+</div>
+<p>Like every other Eclipse plugin, the core and java plugins
+contains the following files for the plugin definition:</p>
+<div class="orderedlist">
+<ul>
+	<li>
+	<p><code class="literal">plugin.xml</code>: defines all the extensions and extension points of
+	the plugin</p>
+	</li>
+	<li>
+	<p><code class="literal">build.properties</code>: this file should be used for the build process
+	but is not.</p>
+	</li>
+	<li>
+	<p><code class="literal">META-INF/MANIFEST.MF</code>: contains several informations on the
+	plugin like its version, author, etc.</p>
+	</li>
+</ul>
+</div>
+<p>The core plugin although includes directories containing the
+icons, the documentation and the extensions points schemas. The build
+directory contains all the files needed by the build project to generate
+the update site. Do not forget to update the <code class="literal">MANIFEST.MF.in</code> file
+according to the <code class="literal">META-INF/MANIFEST.MF</code> file before building the update
+site.</p>
+</div>
+</div>
+</body>
+</html>

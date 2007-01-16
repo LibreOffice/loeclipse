@@ -1,0 +1,108 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Using Eclipse features</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title="">
+<link rel="up" href="index.html" title="">
+<link rel="prev" href="ar01s03.html"
+	title="Overview of the code organisation">
+<link rel="next" href="ar01s05.html"
+	title="Public Documentation License Notice ">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+<div class="sect1" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2478039"></a>Using
+Eclipse features</h2>
+</div>
+</div>
+</div>
+<p>The OpenOffice.org Eclipse integration development uses some
+interesting features. The most important are detailed below: running a
+new Eclipse instance for debug sessions and update site mechanism for
+the plugins installation.</p>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2478050"></a>Tests and debug sessions</h3>
+</div>
+</div>
+</div>
+<p>To debug and test during the development stage it is possible to
+launch a new Eclipse instance as a new application to debug. First, keep
+in mind, that there are often different problems in real installations
+tests. This kind of test is not sufficient to validate a release of the
+plugins. To run a new Eclipse instance select <span class="strong"><strong>Run &gt; Run As &gt;
+Eclipse Application</strong></span>. The developed plugins running in this instance can
+be debugged like any other Java program in Eclipse. This is often useful
+to track errors.</p>
+<p>Before running a new Eclipse instance, be sure to have updated
+the <code class="literal">UnoTypesGetter.jar</code> using the internals target of the
+<code class="literal">org.openoffice.ide.eclipse.core/build/build.xml</code> file. Running this
+target may fail if the javadoc binary is not contained in the system
+path or if the <code class="literal">JAVA_HOME</code> environment variable is not defined. This
+target should be run with the same arguments as the update site
+generation target (see next section).</p>
+</div>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2478079"></a>Update site generation</h3>
+</div>
+</div>
+</div>
+<p>In order to deliver or test the plugins in a normal Eclipse
+installation, it is necessary to generate an update site containing the
+plugins to install or update. Eclipse provides update site and features
+projects, but these should not be used for the OpenOffice.org Eclipse
+integration. To generate the update site use the build project as
+follow :</p>
+<div class="orderedlist">
+<ul>
+	<li>
+	<p>Open the Ant view</p>
+	</li>
+	<li>
+	<p>Add the <code class="literal">org.openoffice.ide.eclipse.build/build.xml</code> file to the
+	Ant view</p>
+	</li>
+	<li>
+	<p>Right click on the added file and select the <span class="strong"><strong>Run As &gt;
+	External Tools...</strong></span> menu</p>
+	<div class="orderedlist">
+	<ul>
+		<li>
+		<p>Create a new Ant build</p>
+		</li>
+		<li>
+		<p>Select the build file</p>
+		</li>
+		<li>
+		<p>Add <code class="literal">-Dopenoffice.home=/path/to/you/ooo
+		-Declipse.home=/path/to/your/eclipse</code> in the arguments. Do not forget
+		to place the path inside quotes on windows.</p>
+		</li>
+	</ul>
+	</div>
+	</li>
+	<li>
+	<p>Run the ant build.</p>
+	</li>
+</ul>
+</div>
+<p>This script generates a site directory and
+<code class="literal">ooeclipseintegration_site.zip</code> file which are the update site in an
+uncompressed and compressed form. To generate a debug update site, just
+add the <code class="literal">-Ddebug=true</code> argument to the ant launch configuration : this is
+useful when testing the plugins on a fresh Eclipse installation.</p>
+</div>
+</div>
+</body>
+</html>

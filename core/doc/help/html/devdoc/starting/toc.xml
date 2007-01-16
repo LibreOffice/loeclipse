@@ -1,0 +1,19 @@
+<toc label="Starting to contribute">
+	<topic label="Starting to contribute" href="doc/help/html/devdoc/starting/index.html">
+		<topic label="Introduction" href="doc/help/html/devdoc/starting/index.html#id2509428" />
+		<topic label="The development environment" href="doc/help/html/devdoc/starting/ar01s02.html">
+			<topic label="Installing the tools" href="doc/help/html/devdoc/starting/ar01s02.html#id2509500" />
+			<topic label="Get the sources" href="doc/help/html/devdoc/starting/ar01s02.html#id2473711" />
+		</topic>
+		<topic label="Overview of the code organisation" href="doc/help/html/devdoc/starting/ar01s03.html">
+			<topic label="The projects" href="doc/help/html/devdoc/starting/ar01s03.html#id2473769" />
+			<topic label="The core plugin packages" href="doc/help/html/devdoc/starting/ar01s03.html#id2473819" />
+			<topic label="The other important files" href="doc/help/html/devdoc/starting/ar01s03.html#id2472979" />
+		</topic>
+		<topic label="Using Eclipse features" href="doc/help/html/devdoc/starting/ar01s04.html">
+			<topic label="Tests and debug sessions" href="doc/help/html/devdoc/starting/ar01s04.html#id2478050" />
+			<topic label="Update site generation" href="doc/help/html/devdoc/starting/ar01s04.html#id2478079" />
+		</topic>
+		<topic label="Public Documentation License Notice " href="doc/help/html/devdoc/starting/ar01s05.html" />
+	</topic>
+</toc>

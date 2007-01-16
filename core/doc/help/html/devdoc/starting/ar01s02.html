@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>The development environment</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title="">
+<link rel="up" href="index.html" title="">
+<link rel="prev" href="index.html" title="">
+<link rel="next" href="ar01s03.html"
+	title="Overview of the code organisation">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+
+<div class="sect1" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2509442"></a>The
+development environment</h2>
+</div>
+</div>
+</div>
+<p>The very first step is to install the needed tools to work. The
+OpenOffice.org Eclipse integration development needs:</p>
+<div class="orderedlist">
+<ul type="1">
+	<li>
+	<p>Eclipse 3.2</p>
+	</li>
+	<li>
+	<p>OpenOffice.org 2.0</p>
+	</li>
+	<li>
+	<p>OpenOffice.org SDK 2.0.4</p>
+	</li>
+	<li>
+	<p>Java JDK 1.5</p>
+	</li>
+	<li>
+	<p>Uno Runtime Environment (optional)</p>
+	</li>
+</ul>
+</div>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2509500"></a>Installing the tools</h3>
+</div>
+</div>
+</div>
+<p>The only important thin to recall is to be sure that the
+OpenOffice.org SDK will path will not contain any white space on the
+windows platform. For more details on the different tools installations,
+please refer to their official documentation.</p>
+<p>After having installed Eclipse and OpenOffice.org, make sure to
+define the <code class="literal">OOO_CLASSES_PATH</code> as a build variable in the Eclipse
+installation. For this, simply select the <span class="strong"><strong>Window &gt; Preferences</strong></span> menu
+in Eclipse and open the <span class="strong"><strong>Java &gt; Build path &gt; Classpath variable</strong></span>
+configuration page. Then add the <code class="literal">OOO_CLASSES_PATH</code> pointing to
+<code class="literal">/the/openoffice/install/path/program/classes</code> directory in the list of
+variables. This is necessary in order to correctly build the sources.</p>
+<p>If several JDKs are installed on the computer, please make sure
+that the 1.5 one is used for the OpenOffice.org Eclipse integration
+projects.</p>
+</div>
+<div class="sect2" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2473711"></a>Get the sources</h3>
+</div>
+</div>
+</div>
+<p>The next step is to get the plugins sources as Eclipse projects.
+First check the sources from the OpenOffice.org CVS, module
+<code class="literal">api/ooeclipseintegration</code>. For more informations on how to check out
+sources from OpenOffice.org CVS, please refer to <a
+	href="http://api.openoffice.org/servlets/ProjectSource#cmdlinecvs"
+	target="_top">this page</a>. Be sure to prune the empty directories to
+have only the needed ones: the others comes from an old project
+organization.</p>
+<p>The second step is to import the sources as Eclipse projects. For
+this open the <span class="strong"><strong>File &gt; Import</strong></span> menu and choose 
+<span class="strong"><strong>General &gt; Existing
+projects into workspace</strong></span>. Then choose the directory where the sources
+have been extracted. Three projects should appear in the list as shown
+by the next illustration. Select them all and click on Finish: the projects are
+imported in the workspace.</p>
+<div class="mediaobject">
+<table border="0" summary="manufactured viewport for HTML img"
+	cellspacing="0" cellpadding="0" width="253">
+	<tr style="height: 264px">
+		<td><img src="img/import.png" width="253"></td>
+	</tr>
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>
