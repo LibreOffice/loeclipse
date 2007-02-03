@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -254,8 +254,12 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
 		}
 		mNameRow.setFieldChangedListener(this);
 		
-		mTypeRow = new TypeRow(body, TYPE, 
-				Messages.getString("InterfaceMemberDialog.Type"), //$NON-NLS-1$ 
+		String typeLabel = Messages.getString("InterfaceMemberDialog.Type"); //$NON-NLS-1$
+		if (mShowAttribute) {
+			typeLabel = Messages.getString("InterfaceMemberDialog.ReturnType"); //$NON-NLS-1$
+		}
+		
+		mTypeRow = new TypeRow(body, TYPE, typeLabel,
 				InternalUnoType.ALL_TYPES);
 		mTypeRow.includeSequences(true);
 		mTypeRow.includeSimpleTypes(true);
@@ -321,6 +325,9 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
 	 * @param parent the composite parent in which to create the controls.
 	 */
 	protected void createAttributeControls(Composite parent) {
+		
+		mTypeRow.setLabel(Messages.getString("InterfaceMemberDialog.Type")); //$NON-NLS-1$
+		
 		mReadonlyRow = new BooleanRow(parent, READONLY, Messages.getString("InterfaceMemberDialog.Readonly")); //$NON-NLS-1$
 		mReadonlyRow.setTooltip(Messages.getString("InterfaceMemberDialog.ReadonlyTooltip")); //$NON-NLS-1$
 		mReadonlyRow.setFieldChangedListener(this);
@@ -347,6 +354,8 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
 	 * 
 	 */
 	protected void createMethodControls(Composite parent) {
+		
+		mTypeRow.setLabel(Messages.getString("InterfaceMemberDialog.ReturnType")); //$NON-NLS-1$
 		
 		Group group = new Group(parent, SWT.SHADOW_NONE);
 		group.setText(Messages.getString("InterfaceMemberDialog.ArgumentsTitle")); //$NON-NLS-1$

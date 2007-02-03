@@ -19,6 +19,13 @@
             icon="icons/db_file.gif"
             id="org.openoffice.ide.eclipse.core.editors.regvieweditor"
             name="%regeditor.name"/>
+      <editor
+            class="org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor"
+            default="true"
+            filenames="package.properties"
+            icon="icons/build_exec.gif"
+            id="org.openoffice.ide.eclipse.core.editors.extproperties"
+            name="Extension properties editor"/>
    </extension>
    
    <extension

@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: ZipContent.java,v $
+ * $RCSfile: IPackageChangeListener.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,62 +41,25 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.utils;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import org.openoffice.ide.eclipse.core.PluginLogger;
+package org.openoffice.ide.eclipse.core.model;
 
 /**
- * This class is a small structure containing the data to zip for one file
- * 
  * @author cedricbosdo
+ * 
+ * @see PackagePropertiesModel for the use of this listener interface
  *
  */
-public class ZipContent {
-
-	protected File mFile;
+public interface IPackageChangeListener {
 	
-	protected String mEntryName;
+	/**
+	 * Method called each time the listened package properties model has changed
+	 *
+	 */
+	public void packagePropertiesChanged();
 	
-	public ZipContent(String entryName, File file) {
-		mFile = file;
-		mEntryName = entryName;
-	}
-	
-	public File getFile() {
-		return mFile;
-	}
-	
-	public void writeContentToZip(ZipOutputStream out) {
-		
-		BufferedInputStream origin = null;
-		try {
-			FileInputStream fi = new FileInputStream(mFile);
-			 origin = new BufferedInputStream(fi, 2048);
-
-			ZipEntry entry = new ZipEntry(mEntryName);
-			out.putNextEntry(entry);
-
-			int count;
-			byte data[] = new byte[2048];
-
-			while((count = origin.read(data, 0, 2048)) != -1) {
-				out.write(data, 0, count);
-			}
-			
-			out.closeEntry();
-			
-		} catch (IOException e) {
-			PluginLogger.warning("Problem when writing file to zip: " + mEntryName); //$NON-NLS-1$
-		} finally {
-			// Close the file entry stream
-			try { if (origin != null) origin.close(); } catch (IOException e) {}
-		}
-	}
+	/**
+	 * Method called each time the listened package properties model is saved
+	 *
+	 */
+	public void packagePropertiesSaved();
 }

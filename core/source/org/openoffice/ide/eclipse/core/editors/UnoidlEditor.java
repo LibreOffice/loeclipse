@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlEditor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -109,13 +108,5 @@ public class UnoidlEditor extends TextEditor {
 		mColorManager.dispose();
 		OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(mPropertyListener);
 		super.dispose();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void doSave(IProgressMonitor progressMonitor) {
-		super.doSave(progressMonitor);
 	}
 }

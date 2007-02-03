@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,6 +58,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -78,6 +79,7 @@ public class PackageExportWizardPage extends WizardPage {
 
 	private static final String DESTDIR = "__destdir";
 	private static final String OOVERSION = "__oooversion";
+	public static final String LAST_EXPORT_DIR = "__last_export_dir";
 
 	public PackageExportWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName);
@@ -110,6 +112,8 @@ public class PackageExportWizardPage extends WizardPage {
 	}
 	
 	File getOutputPath() {
+		IPreferenceStore store = OOEclipsePlugin.getDefault().getPreferenceStore();
+		store.setValue(LAST_EXPORT_DIR, mOutputdirRow.getValue());
 		return new File(mOutputdirRow.getValue());
 	}
 	
@@ -163,6 +167,16 @@ public class PackageExportWizardPage extends WizardPage {
 		
 		mOutputdirRow = new FileRow(body, DESTDIR, "Destination directory", true);
 		mOutputdirRow.setTooltip("Directory where the package archive will be created");
+		
+		// Set the user dir or the latest dir if any
+		IPreferenceStore store = OOEclipsePlugin.getDefault().getPreferenceStore();
+		String lastDir = store.getString(LAST_EXPORT_DIR);
+		if ("".equals(lastDir)) {
+			// Get the user home
+			lastDir = System.getProperty("user.home");
+		}
+		mOutputdirRow.setValue(lastDir);
+		
 		mOutputdirRow.setFieldChangedListener(new IFieldChangedListener() {
 			public void fieldChanged(FieldEvent e) {
 				checkPageComplete();

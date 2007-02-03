@@ -1,5 +1,7 @@
 package org.openoffice.ide.eclipse.core.internal.helpers;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -22,6 +24,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -448,5 +451,16 @@ public class UnoidlProjectHelper {
 			PluginLogger.error(
 				Messages.getString("UnoidlProjectHelper.NatureSetError"), e); //$NON-NLS-1$
 		}
+	}
+	
+	public static UnoPackage createMinimalUnoPackage(IUnoidlProject prj, File dest, File dir) {
+
+		UnoPackage unoPackage = new UnoPackage(dest, dir);
+		
+		// Add content to the package
+		unoPackage.addTypelibraryFile(new File(dir, "types.rdb"), "RDB"); //$NON-NLS-1$ //$NON-NLS-2$
+		prj.getLanguage().getLanguageBuidler().fillUnoPackage(unoPackage, prj);
+		
+		return unoPackage;
 	}
 }

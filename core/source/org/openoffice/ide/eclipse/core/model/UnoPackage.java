@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoPackage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,13 +46,20 @@ package org.openoffice.ide.eclipse.core.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.utils.FileHelper;
 import org.openoffice.ide.eclipse.core.utils.ZipContent;
 
@@ -106,6 +113,18 @@ public class UnoPackage {
 		
 		mDestination = out;
 		mOrigin = dir;
+	}
+	
+	/**
+	 * Cleans up the data structure. There is no need to call this method if the
+	 * package has been closed using {@link #close()}
+	 */
+	public void dispose() {
+		mDestination = null;
+		mOrigin = null;
+		mManifestEntries.clear();
+		mZipEntries.clear();
+		mTemporaryFiles.clear();
 	}
 	
 	/**
@@ -248,24 +267,17 @@ public class UnoPackage {
 	/**
 	 * Add a localized description of the package.
 	 * 
-	 * @param description the localized description
+	 * @param descriptionFile the file containing the description for that locale
 	 * @param locale the locale of the description. Can be <code>null</code>.
 	 */
-	public void addPackageDescription(String description, Locale locale) {
+	public void addPackageDescription(File descriptionFile, Locale locale) {
 		try {
 			// write the description to a file
 			String localeString = ""; //$NON-NLS-1$
 			if (locale != null) {
 				localeString = locale.toString();
-				localeString.replace("_", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+				localeString = localeString.replace("_", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
-			File descriptionFile = new File(mOrigin, "readme" + localeString + ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
-			FileWriter out = new FileWriter(descriptionFile);
-			out.append(description);
-			out.close();
-			
-			mTemporaryFiles.add(descriptionFile);
 
 			// Add the file entry to the manifest
 			String mediaType = "application/vnd.sun.star.package-bundle-description"; //$NON-NLS-1$
@@ -354,15 +366,97 @@ public class UnoPackage {
 			}
 			
 			result = mDestination;
-			
-			// cleans up the data structure
-			mDestination = null;
-			mOrigin = null;
-			mManifestEntries.clear();
-			mZipEntries.clear();
-			mTemporaryFiles.clear();
+	
+			dispose();
 		}
 		return result;
+	}
+	
+	/**
+	 * @return a list of the files that are already queued for addition 
+	 * 		to the package.
+	 */
+	public List<File> getContainedFiles() {
+		ArrayList<File> files = new ArrayList<File>(mZipEntries.size());
+		for (ZipContent content : mZipEntries.values()) {
+			files.add(content.getFile());
+		}
+		return files;
+	}
+	
+	/**
+	 * Checks if the resource is contained in the UNO package
+	 * @param res the resource to check
+	 * @return <code>true</code> if the resource is contained in the package
+	 */
+	public static boolean isContainedInPackage(IResource res) {
+		boolean contained = false;
+		
+		String prjName = res.getProject().getName();
+		IUnoidlProject prj = ProjectsManager.getInstance().getProject(prjName); 
+		
+		if (prj != null) {
+			
+			File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
+			
+			IPath prjPath = prj.getProjectPath();
+			File dir = new File(prjPath.toOSString());
+			File dest = new File(outputDir, prj.getName() + ".zip"); //$NON-NLS-1$
+			UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(prj, dest, dir);
+			
+			List<File> files = unoPackage.getContainedFiles();
+			String path = res.getLocation().toString();
+			int i = 0;
+			while (i < files.size() && !contained) {
+				File file = files.get(i);
+				if (file.getPath().equals(path)) {
+					contained = true;
+				}
+				i++;
+			}
+			unoPackage.dispose();
+		}
+		
+		return contained;
+	}
+	
+	/**
+	 * Checks if the resource is contained in the UNO package
+	 * @param res the resource to check
+	 * @return <code>true</code> if the resource is contained in the package
+	 */
+	public static List<IResource> getContainedFile(IProject prj) {
+		ArrayList<IResource> resources = new ArrayList<IResource>();
+		
+		String prjName = prj.getName();
+		IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(prjName); 
+		
+		if (unoprj != null) {
+			
+			File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
+			
+			IPath prjPath = unoprj.getProjectPath();
+			File dir = new File(prjPath.toOSString());
+			File dest = new File(outputDir, prj.getName() + ".zip"); //$NON-NLS-1$
+			UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(unoprj, dest, dir);
+			
+			List<File> files = unoPackage.getContainedFiles();
+			
+			// Convert the Files into IResources
+			for (File file : files) {
+				String relPath = unoPackage.getOriginRelativePath(file);
+				IFile iFile = prj.getFile(relPath);
+				if (iFile.exists()) {
+					resources.add(iFile);
+				} else if (prj.getFolder(relPath).exists()) {
+					resources.add(prj.getFolder(relPath));
+				}
+			}
+			
+			unoPackage.dispose();
+		}
+		
+		return resources;
 	}
 	
 	/**
