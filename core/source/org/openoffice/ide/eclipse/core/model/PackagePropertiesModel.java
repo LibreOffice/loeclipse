@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackagePropertiesModel.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -73,10 +73,10 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
  */
 public class PackagePropertiesModel {
 
-	private static final String CONTENTS = "contents";
-	private static final String BASICLIBS = "basicLibs";
-	private static final String DIALOGLIBS = "dialogLibs";
-	private static final String DESCRIPTION = "description";
+	private static final String CONTENTS = "contents"; //$NON-NLS-1$
+	private static final String BASICLIBS = "basicLibs"; //$NON-NLS-1$
+	private static final String DIALOGLIBS = "dialogLibs"; //$NON-NLS-1$
+	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	
 	private IFile mPropertiesFile;
 	private Properties mProperties = new Properties();
@@ -101,14 +101,14 @@ public class PackagePropertiesModel {
 			mPropertiesFile = file;
 		} catch (FileNotFoundException e) {
 			mPropertiesFile = null;
-			throw new IllegalArgumentException("Package properties file can't be null");
+			throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NullFileException")); //$NON-NLS-1$
 		}
 		
 		try {
 			mProperties.load(is);
 		} catch (IOException e) {
 			try { is.close(); } catch (IOException ex){ } ;
-			PluginLogger.warning("Can't read file: " + file.getLocation());
+			PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException") + file.getLocation()); //$NON-NLS-1$
 		}
 	}
 	
@@ -156,7 +156,7 @@ public class PackagePropertiesModel {
 				mPropertiesFile.getLocation().toFile());
 		try {
 			mProperties.store(os, 
-				"Written by the OOEclipseIntegration");
+				Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
 			firePackageSaved();
 		} catch (IOException e) {
 			os.close();
@@ -188,12 +188,12 @@ public class PackagePropertiesModel {
 	 * 		as it would have been written to the file.
 	 */
 	public String writeToString() {
-		String fileContent = "";
+		String fileContent = ""; //$NON-NLS-1$
 		Set<Entry<Object, Object>> entries = mProperties.entrySet();
 		Iterator<Entry<Object, Object>> iter = entries.iterator();
 		while (iter.hasNext()) {
 			Entry<Object, Object> entry = iter.next();
-			fileContent += (String)entry.getKey() + "=" + (String)entry.getValue() + "\n";
+			fileContent += (String)entry.getKey() + "=" + (String)entry.getValue() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		return fileContent;
@@ -210,16 +210,16 @@ public class PackagePropertiesModel {
 		
 		String libs = mProperties.getProperty(BASICLIBS);
 		if (libs == null) {
-			libs = ""; 
+			libs = "";  //$NON-NLS-1$
 		}
 		
 		try {
-			if (!libs.equals("")) libs += ", ";
+			if (!libs.equals("")) libs += ", "; //$NON-NLS-1$ //$NON-NLS-2$
 			libs += libFolder.getProjectRelativePath().toString();
 		} catch (Exception e) {
 			throw new IllegalArgumentException();
 		}
-		mProperties.setProperty("basicLibs", libs);
+		mProperties.setProperty(BASICLIBS, libs);
 		firePackageChanged();
 	}
 	
@@ -233,16 +233,16 @@ public class PackagePropertiesModel {
 	public void addDialogLibrary(IFolder libFolder) throws IllegalArgumentException {
 		String libs = mProperties.getProperty(DIALOGLIBS);
 		if (libs == null) {
-			libs = ""; 
+			libs = "";  //$NON-NLS-1$
 		}
 		
 		try {
-			if (!libs.equals("")) libs += ", ";
+			if (!libs.equals("")) libs += ", "; //$NON-NLS-1$ //$NON-NLS-2$
 			libs += libFolder.getProjectRelativePath().toString();
 		} catch (Exception e) {
 			throw new IllegalArgumentException();
 		}
-		mProperties.setProperty("dialogLibs", libs);
+		mProperties.setProperty(DIALOGLIBS, libs);
 		firePackageChanged();
 	}
 	
@@ -257,8 +257,8 @@ public class PackagePropertiesModel {
 			String libs = mProperties.getProperty(DIALOGLIBS);
 			IProject prj = mPropertiesFile.getProject();
 
-			if (libs != null && !libs.equals("")) {
-				String[] fileNames = libs.split(",");
+			if (libs != null && !libs.equals("")) { //$NON-NLS-1$
+				String[] fileNames = libs.split(","); //$NON-NLS-1$
 				for (String fileName : fileNames) {
 					fileName = fileName.trim();
 					result.add(prj.getFolder(fileName));
@@ -280,8 +280,8 @@ public class PackagePropertiesModel {
 			String libs = mProperties.getProperty(BASICLIBS);
 			IProject prj = mPropertiesFile.getProject();
 
-			if (libs != null && !libs.equals("")) {
-				String[] fileNames = libs.split(",");
+			if (libs != null && !libs.equals("")) { //$NON-NLS-1$
+				String[] fileNames = libs.split(","); //$NON-NLS-1$
 				for (String fileName : fileNames) {
 					fileName = fileName.trim();
 					result.add(prj.getFolder(fileName));
@@ -297,7 +297,7 @@ public class PackagePropertiesModel {
 	 * Removes all the basic libraries from the package properties
 	 */
 	public void clearBasicLibraries() {
-		mProperties.setProperty(BASICLIBS, "");
+		mProperties.setProperty(BASICLIBS, ""); //$NON-NLS-1$
 		firePackageChanged();
 	}
 	
@@ -305,7 +305,7 @@ public class PackagePropertiesModel {
 	 * Removes all the dialog libraries from the package properties
 	 */
 	public void clearDialogLibraries() {
-		mProperties.setProperty(DIALOGLIBS, "");
+		mProperties.setProperty(DIALOGLIBS, ""); //$NON-NLS-1$
 		firePackageChanged();
 	}
 	
@@ -321,11 +321,11 @@ public class PackagePropertiesModel {
 	public void addContent(IResource res) throws IllegalArgumentException {
 		String libs = mProperties.getProperty(CONTENTS);
 		if (libs == null) {
-			libs = ""; 
+			libs = "";  //$NON-NLS-1$
 		}
 		
 		try {
-			if (!libs.equals("")) libs += ", ";
+			if (!libs.equals("")) libs += ", "; //$NON-NLS-1$ //$NON-NLS-2$
 			libs += res.getProjectRelativePath().toString();
 		} catch (Exception e) {
 			throw new IllegalArgumentException();
@@ -346,8 +346,8 @@ public class PackagePropertiesModel {
 			String libs = mProperties.getProperty(CONTENTS);
 			IProject prj = mPropertiesFile.getProject();
 
-			if (libs != null && !libs.equals("")) {
-				String[] fileNames = libs.split(",");
+			if (libs != null && !libs.equals("")) { //$NON-NLS-1$
+				String[] fileNames = libs.split(","); //$NON-NLS-1$
 				for (String fileName : fileNames) {
 					fileName = fileName.trim();
 					if (prj.getFolder(fileName).exists()) {
@@ -368,7 +368,7 @@ public class PackagePropertiesModel {
 	 * has been added using {@link #addContent(IResource)}.
 	 */
 	public void clearContents() {
-		mProperties.setProperty(CONTENTS, "");
+		mProperties.setProperty(CONTENTS, ""); //$NON-NLS-1$
 		firePackageChanged();
 	}
 	
@@ -385,19 +385,19 @@ public class PackagePropertiesModel {
 	public void addDescriptionFile(IFile description, Locale locale) throws IllegalArgumentException {
 		
 		if (locale == null) {
-			throw new IllegalArgumentException("The locale has to be defined for each package description");
+			throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoLocaleException")); //$NON-NLS-1$
 		}
 		
 		if (description == null || !description.exists()) {
-			throw new IllegalArgumentException("No existing description file to add");
+			throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoDescriptionFileException")); //$NON-NLS-1$
 		}
 		
-		String countryName = "";
-		if (locale.getCountry() != "") {
-			countryName = "_" + locale.getCountry();
+		String countryName = ""; //$NON-NLS-1$
+		if (locale.getCountry() != "") { //$NON-NLS-1$
+			countryName = "_" + locale.getCountry(); //$NON-NLS-1$
 		}
 		
-		String propertyName = DESCRIPTION + "-" + locale.getLanguage() + countryName;
+		String propertyName = DESCRIPTION + "-" + locale.getLanguage() + countryName; //$NON-NLS-1$
 		mProperties.setProperty(propertyName, description.getProjectRelativePath().toString());
 		firePackageChanged();
 	}
@@ -413,7 +413,7 @@ public class PackagePropertiesModel {
 		Iterator<Object> keys = mProperties.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
-			String regex = DESCRIPTION + "-([a-zA-Z]{2})(?:_([a-zA-Z]{2}))?";
+			String regex = DESCRIPTION + "-([a-zA-Z]{2})(?:_([a-zA-Z]{2}))?"; //$NON-NLS-1$
 			Matcher matcher = Pattern.compile(regex).matcher(key);
 			if (matcher.matches()) {
 				String language = matcher.group(1);
@@ -443,7 +443,7 @@ public class PackagePropertiesModel {
 		Iterator<Object> keys = ((Properties)mProperties.clone()).keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
-			String regex = DESCRIPTION + "-([a-zA-Z]{2})(?:_([a-zA-Z]{2}))?";
+			String regex = DESCRIPTION + "-([a-zA-Z]{2})(?:_([a-zA-Z]{2}))?"; //$NON-NLS-1$
 			Matcher matcher = Pattern.compile(regex).matcher(key);
 			if (matcher.matches()) {
 				mProperties.remove(key);

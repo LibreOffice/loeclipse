@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypePulldownAction.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:25:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -75,7 +75,7 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
 public class UnoTypePulldownAction extends AbstractPulldownAction {
 
 	public UnoTypePulldownAction() {
-		super("unotype");
+		super("unotype"); //$NON-NLS-1$
 	}
 	
 	/*

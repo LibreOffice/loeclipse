@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 08:55:15 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -273,7 +273,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		mElementName = value;
 		if (mNameRow != null) {
 			
-			value = value.replace(" ", "");
+			value = value.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			mNameRow.setValue(value);
 			mNameRow.setEnabled(!forced);
@@ -396,7 +396,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 			String name = (String)data.getProperty(
 					IUnoFactoryConstants.PROJECT_NAME);
 			name = name.substring(0, 1).toUpperCase() + name.substring(1);
-			name = name.replace(" ", "");
+			name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			String packageName = (String)data.getProperty(
 					IUnoFactoryConstants.PROJECT_PREFIX);

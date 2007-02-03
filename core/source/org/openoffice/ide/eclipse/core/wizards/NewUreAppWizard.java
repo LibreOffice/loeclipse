@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUreAppWizard.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -56,8 +56,8 @@ public class NewUreAppWizard extends NewUnoProjectWizard {
 	public void addPages() {
 		super.addPages();
 		
-		mMainPage.setDescription("Create a new URE based application.");
-		mMainPage.setTitle("New URE Application wizard");
+		mMainPage.setDescription(Messages.getString("NewUreAppWizard.Description")); //$NON-NLS-1$
+		mMainPage.setTitle(Messages.getString("NewUreAppWizard.Title")); //$NON-NLS-1$
 		mMainPage.setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
 				ImagesConstants.URE_APP_WIZ));
 	}

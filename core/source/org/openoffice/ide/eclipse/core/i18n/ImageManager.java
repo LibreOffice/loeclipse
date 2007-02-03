@@ -2,9 +2,9 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -147,8 +147,8 @@ public class ImageManager {
 	
 	public ImageDescriptor getImageDescriptorFromPath(String path) {
 		
-		if (!path.startsWith("/")) {
-			path = "/" + path;
+		if (!path.startsWith("/")) { //$NON-NLS-1$
+			path = "/" + path; //$NON-NLS-1$
 		}
 		
 		return AbstractUIPlugin.imageDescriptorFromPlugin(

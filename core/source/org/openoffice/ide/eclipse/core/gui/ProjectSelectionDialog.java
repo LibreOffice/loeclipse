@@ -2,9 +2,9 @@
  *
  * $RCSfile: ProjectSelectionDialog.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -104,7 +104,7 @@ public class ProjectSelectionDialog extends Dialog {
 		
 		newShell.setBounds(x, y, width, height);
 		super.configureShell(newShell);
-		newShell.setText("Project content chooser");
+		newShell.setText(Messages.getString("ProjectSelectionDialog.Title")); //$NON-NLS-1$
 	}
 	
 	public void setShowOnlyFolders(boolean onlyFolders) {
@@ -145,7 +145,7 @@ public class ProjectSelectionDialog extends Dialog {
 					if (!mFoldersOnly) {
 						IFile file = (IFile)adaptable.getAdapter(IFile.class);
 						if (file != null) {
-							select = !file.getName().startsWith(".");
+							select = !file.getName().startsWith("."); //$NON-NLS-1$
 						}
 					}
 					

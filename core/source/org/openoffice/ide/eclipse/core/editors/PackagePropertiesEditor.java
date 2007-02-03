@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackagePropertiesEditor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -79,11 +79,11 @@ public class PackagePropertiesEditor extends FormEditor {
 		
 		try {
 			// Add the form page with the tree
-			mFormPage = new PackagePropertiesFormPage(this, "package");
+			mFormPage = new PackagePropertiesFormPage(this, "package"); //$NON-NLS-1$
 			addPage(mFormPage);
 			
 			// Add the text page
-			mSourcePage = new SourcePage(this, "source", "package.properties");
+			mSourcePage = new SourcePage(this, "source", "package.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			mSourcePage.init(getEditorSite(), getEditorInput());
 			mSourcePage.getDocumentProvider().addElementStateListener(new IElementStateListener() {
 

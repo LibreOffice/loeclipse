@@ -2,9 +2,9 @@
  *
  * $RCSfile: LibsSection.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -87,8 +87,8 @@ import org.openoffice.ide.eclipse.core.model.UnoPackage;
  */
 public class LibsSection extends SectionPart {
 
-	private static final String P_LIBTYPE = "__p_libtype";
-	private static final String P_NAME = "__p_name";
+	private static final String P_LIBTYPE = "__p_libtype"; //$NON-NLS-1$
+	private static final String P_NAME = "__p_name"; //$NON-NLS-1$
 	private static final Integer BASIC_LIB = new Integer(0);
 	private static final Integer DIALOG_LIB = new Integer(1);
 	
@@ -173,7 +173,7 @@ public class LibsSection extends SectionPart {
 		
 		Section section = getSection();
 		
-		section.setText("Basic and Dialog libraries");
+		section.setText(Messages.getString("LibsSection.Title")); //$NON-NLS-1$
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		
@@ -190,7 +190,7 @@ public class LibsSection extends SectionPart {
 		mTableViewer.setCellEditors(new CellEditor[]{
 				null,
 				new ComboBoxCellEditor(mTableViewer.getTable(),
-						new String[]{"Basic library", "Dialog library"})
+						new String[]{Messages.getString("LibsSection.BasicLibrary"), Messages.getString("LibsSection.DialogLibrary")}) //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		mTableViewer.setCellModifier(new LibsCellModifier());
 		mTableViewer.setColumnProperties(new String[]{P_NAME, P_LIBTYPE});
@@ -211,7 +211,7 @@ public class LibsSection extends SectionPart {
 		buttons.setLayout(new GridLayout(2, true));
 		
 		Button addBtn = mPage.getManagedForm().getToolkit().createButton(
-				buttons, "Add", SWT.PUSH);
+				buttons, Messages.getString("LibsSection.AddButton"), SWT.PUSH); //$NON-NLS-1$
 		addBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | 
 				GridData.GRAB_HORIZONTAL));
 		addBtn.addSelectionListener(new SelectionAdapter() {
@@ -222,12 +222,12 @@ public class LibsSection extends SectionPart {
 				PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
 				
 				ProjectSelectionDialog dlg = new ProjectSelectionDialog(prj, 
-						"Select the library directory");
+						Messages.getString("LibsSection.AddDescription")); //$NON-NLS-1$
 				dlg.setShowOnlyFolders(true);
 				
 				ArrayList<IResource> hiddenResources = new ArrayList<IResource>();
-				hiddenResources.add(prj.getFolder("build"));
-				hiddenResources.add(prj.getFolder("bin"));
+				hiddenResources.add(prj.getFolder("build")); //$NON-NLS-1$
+				hiddenResources.add(prj.getFolder("bin")); //$NON-NLS-1$
 				hiddenResources.addAll(editor.getModel().getBasicLibraries());
 				hiddenResources.addAll(editor.getModel().getDialogLibraries());
 				hiddenResources.addAll(editor.getModel().getContents());
@@ -245,7 +245,7 @@ public class LibsSection extends SectionPart {
 		});
 		
 		Button delBtn = mPage.getManagedForm().getToolkit().createButton(
-				buttons, "Del", SWT.PUSH);
+				buttons, Messages.getString("LibsSection.DelButton"), SWT.PUSH); //$NON-NLS-1$
 		delBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING |
 				GridData.GRAB_HORIZONTAL));
 		delBtn.addSelectionListener(new SelectionAdapter() {
@@ -369,9 +369,9 @@ public class LibsSection extends SectionPart {
 				label = ((IFolder)element).getProjectRelativePath().toOSString();
 			} else if (columnIndex == 1){
 				if (mLibs.get(element).equals(BASIC_LIB)) {
-					label = "Basic library";
+					label = Messages.getString("LibsSection.BasicLibrary"); //$NON-NLS-1$
 				} else {
-					label = "Dialog library";
+					label = Messages.getString("LibsSection.DialogLibrary"); //$NON-NLS-1$
 				}
 			}
 			return label;

@@ -2,9 +2,9 @@
  *
  * $RCSfile: LocaleCellProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -114,12 +114,12 @@ public class LocaleCellProvider extends CellEditor {
 		String[] countriesDisplay = new String[countriesISO.length+1];
 		if (countries == null) countries = new Vector<String>();
 		countries.clear();
-		countriesDisplay[0] = "";
-		countries.add("");
+		countriesDisplay[0] = ""; //$NON-NLS-1$
+		countries.add(""); //$NON-NLS-1$
 		// Allows the user to select no country
 		for (int i = 0; i < countriesISO.length; i++) {
 			String country = countriesISO[i];
-			Locale locale = new Locale("en", country); // $NON-NLS-1$
+			Locale locale = new Locale("en", country); // $NON-NLS-1$ //$NON-NLS-1$
 			countriesDisplay[i+1] = locale.getDisplayCountry();
 			countries.add(i+1, country);
 		}

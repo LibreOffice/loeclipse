@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -77,15 +77,15 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 public class PackageExportWizardPage extends WizardPage {
 
-	private static final String DESTDIR = "__destdir";
-	private static final String OOVERSION = "__oooversion";
-	public static final String LAST_EXPORT_DIR = "__last_export_dir";
+	private static final String DESTDIR = "__destdir"; //$NON-NLS-1$
+	private static final String OOVERSION = "__oooversion"; //$NON-NLS-1$
+	public static final String LAST_EXPORT_DIR = "__last_export_dir"; //$NON-NLS-1$
 
 	public PackageExportWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName);
 		setImageDescriptor(OOEclipsePlugin.getImageDescriptor(ImagesConstants.PACKAGE_EXPORT_WIZ));
-		setDescription("Export a UNO Project as an OpenOffice.org package");
-		setTitle("OpenOffice.org package export");
+		setDescription(Messages.getString("PackageExportWizardPage.Description")); //$NON-NLS-1$
+		setTitle(Messages.getString("PackageExportWizardPage.Title")); //$NON-NLS-1$
 		
 		if (selection.getFirstElement() instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable)selection.getFirstElement();
@@ -132,17 +132,17 @@ public class PackageExportWizardPage extends WizardPage {
 		body.setLayout(new GridLayout(3, false));
 		
 		// createProjectField(body);
-		mProjectRow = new DialogRow(body, "", "Package to export") {
+		mProjectRow = new DialogRow(body, "", Messages.getString("PackageExportWizardPage.PackageLabel")) { //$NON-NLS-1$ //$NON-NLS-2$
 			@Override
 			public String doOpenDialog() {
-				String result = "";
+				String result = ""; //$NON-NLS-1$
 				
 				// Open the project selection dialog
 				ILabelProvider labelProvider = new UnoProjectProvider();
 				ElementListSelectionDialog dialog = new ElementListSelectionDialog(
 						getShell(), labelProvider);
-				dialog.setTitle("UNO project chooser");
-				dialog.setMessage("Select the UNO project to export");
+				dialog.setTitle(Messages.getString("PackageExportWizardPage.ChooserTitle")); //$NON-NLS-1$
+				dialog.setMessage(Messages.getString("PackageExportWizardPage.ChooserDescription")); //$NON-NLS-1$
 				dialog.setElements(ProjectsManager.getInstance().getProjects());
 
 				if (dialog.open() == Window.OK) {
@@ -165,15 +165,15 @@ public class PackageExportWizardPage extends WizardPage {
 			}
 		});
 		
-		mOutputdirRow = new FileRow(body, DESTDIR, "Destination directory", true);
-		mOutputdirRow.setTooltip("Directory where the package archive will be created");
+		mOutputdirRow = new FileRow(body, DESTDIR, Messages.getString("PackageExportWizardPage.DestinationLabel"), true); //$NON-NLS-1$
+		mOutputdirRow.setTooltip(Messages.getString("PackageExportWizardPage.DestinationTooltip")); //$NON-NLS-1$
 		
 		// Set the user dir or the latest dir if any
 		IPreferenceStore store = OOEclipsePlugin.getDefault().getPreferenceStore();
 		String lastDir = store.getString(LAST_EXPORT_DIR);
-		if ("".equals(lastDir)) {
+		if ("".equals(lastDir)) { //$NON-NLS-1$
 			// Get the user home
-			lastDir = System.getProperty("user.home");
+			lastDir = System.getProperty("user.home"); //$NON-NLS-1$
 		}
 		mOutputdirRow.setValue(lastDir);
 		
@@ -183,12 +183,12 @@ public class PackageExportWizardPage extends WizardPage {
 			}
 		});
 		
-		mOOoVersion = new ChoiceRow(body, OOVERSION, "OpenOffice.org minimum version");
-		mOOoVersion.setTooltip("The minimum OOo version will define the package extension and structure");
+		mOOoVersion = new ChoiceRow(body, OOVERSION, Messages.getString("PackageExportWizardPage.OOoVersionLabel")); //$NON-NLS-1$
+		mOOoVersion.setTooltip(Messages.getString("PackageExportWizardPage.OOoVersionTooltip")); //$NON-NLS-1$
 		// TODO Check for the exact versions
-		mOOoVersion.add("1.x", "zip");
-		mOOoVersion.add("2.0", "uno.pkg");
-		mOOoVersion.add("2.0.4", "oxt");
+		mOOoVersion.add("1.x", "zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		mOOoVersion.add("2.0", "uno.pkg"); //$NON-NLS-1$ //$NON-NLS-2$
+		mOOoVersion.add("2.0.4", "oxt"); //$NON-NLS-1$ //$NON-NLS-2$
 		mOOoVersion.select(1);
 		
 		setControl(body);
@@ -199,7 +199,7 @@ public class PackageExportWizardPage extends WizardPage {
 	 */
 	private void checkPageComplete() {
 		if (mProject == null) {
-			setErrorMessage("Select a UNO project to export");
+			setErrorMessage(Messages.getString("PackageExportWizardPage.SelectProjectError")); //$NON-NLS-1$
 		}
 		
 		String outPath = mOutputdirRow.getValue();
@@ -207,11 +207,11 @@ public class PackageExportWizardPage extends WizardPage {
 		try {
 			outputExists = new File(outPath).exists();
 			if (!outputExists) {
-				setErrorMessage("Invalid or missing destination directory");
+				setErrorMessage(Messages.getString("PackageExportWizardPage.WrongDestinationError")); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
 			outputExists = false;
-			setErrorMessage("Invalid or missing destination directory");
+			setErrorMessage(Messages.getString("PackageExportWizardPage.WrongDestinationError")); //$NON-NLS-1$
 		}
 		
 		if (mProject != null && outputExists) {

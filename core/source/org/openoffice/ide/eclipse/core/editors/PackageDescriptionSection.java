@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageDescriptionSection.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -87,8 +87,8 @@ import org.openoffice.ide.eclipse.core.model.UnoPackage;
  */
 public class PackageDescriptionSection extends SectionPart {
 	
-	private static final String P_NAME = "__p_name";
-	private static final String P_LOCALE = "__p_locale";
+	private static final String P_NAME = "__p_name"; //$NON-NLS-1$
+	private static final String P_LOCALE = "__p_locale"; //$NON-NLS-1$
 	
 	private PackagePropertiesFormPage mPage;
 	private TableViewer mTableViewer;
@@ -103,7 +103,7 @@ public class PackageDescriptionSection extends SectionPart {
 		
 		Section section = getSection();
 		
-		section.setText("Package descriptions");
+		section.setText(Messages.getString("PackageDescriptionSection.Title")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		section.setLayoutData(gd);
@@ -142,7 +142,7 @@ public class PackageDescriptionSection extends SectionPart {
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		buttons.setLayout(new GridLayout());
 		
-		Button add = mPage.getManagedForm().getToolkit().createButton(buttons, "Add", SWT.PUSH);
+		Button add = mPage.getManagedForm().getToolkit().createButton(buttons, Messages.getString("PackageDescriptionSection.AddButton"), SWT.PUSH); //$NON-NLS-1$
 		add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		add.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -152,12 +152,12 @@ public class PackageDescriptionSection extends SectionPart {
 				PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
 				
 				ProjectSelectionDialog dlg = new ProjectSelectionDialog(prj, 
-						"Select the description file to add");
+						Messages.getString("PackageDescriptionSection.AddDescription")); //$NON-NLS-1$
 				
 				ArrayList<IResource> hiddenResources = new ArrayList<IResource>();
-				hiddenResources.add(prj.getFolder("build"));
-				hiddenResources.add(prj.getFolder("bin"));
-				hiddenResources.add(prj.getFile("package.properties"));
+				hiddenResources.add(prj.getFolder("build")); //$NON-NLS-1$
+				hiddenResources.add(prj.getFolder("bin")); //$NON-NLS-1$
+				hiddenResources.add(prj.getFile("package.properties")); //$NON-NLS-1$
 				hiddenResources.addAll(editor.getModel().getBasicLibraries());
 				hiddenResources.addAll(editor.getModel().getDialogLibraries());
 				hiddenResources.addAll(editor.getModel().getContents());
@@ -177,7 +177,7 @@ public class PackageDescriptionSection extends SectionPart {
 			}
 		});
 		
-		Button del = mPage.getManagedForm().getToolkit().createButton(buttons, "Del", SWT.PUSH);
+		Button del = mPage.getManagedForm().getToolkit().createButton(buttons, Messages.getString("PackageDescriptionSection.DelButton"), SWT.PUSH); //$NON-NLS-1$
 		del.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		del.addSelectionListener(new SelectionAdapter(){
 			@Override

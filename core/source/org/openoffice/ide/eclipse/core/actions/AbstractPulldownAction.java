@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractPulldownAction.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:25:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:13 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -77,7 +77,7 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
  */
 public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldownDelegate {
 	
-	private String mParameterName = "";
+	private String mParameterName = ""; //$NON-NLS-1$
 	
 	public AbstractPulldownAction(String parameterName) {
 		mParameterName = parameterName;
@@ -152,12 +152,12 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 	private Action[] getActionsFromConfig() {
 		ArrayList<Action> containers = new ArrayList<Action>();
 		
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "newWizards");
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "newWizards"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement element= elements[i];
-				if (element.getName().equals("wizard") && isCorrectWizard(element)) {
+				if (element.getName().equals("wizard") && isCorrectWizard(element)) { //$NON-NLS-1$
 					containers.add(new OpenUnoProjectWizardAction(element));
 				}
 			}
@@ -174,20 +174,20 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 	 * 			<code>false</code> otherwise.
 	 */
 	private boolean isCorrectWizard(IConfigurationElement element) {
-		IConfigurationElement[] classElements= element.getChildren("class");
+		IConfigurationElement[] classElements= element.getChildren("class"); //$NON-NLS-1$
 		if (classElements.length > 0) {
 			for (int i= 0; i < classElements.length; i++) {
-				IConfigurationElement[] paramElements= classElements[i].getChildren("parameter");
+				IConfigurationElement[] paramElements= classElements[i].getChildren("parameter"); //$NON-NLS-1$
 				for (int k = 0; k < paramElements.length; k++) {
 					IConfigurationElement curr= paramElements[k];
-					if (mParameterName.equals(curr.getAttribute("name"))) {
-						return Boolean.valueOf(curr.getAttribute("value")).booleanValue();
+					if (mParameterName.equals(curr.getAttribute("name"))) { //$NON-NLS-1$
+						return Boolean.valueOf(curr.getAttribute("value")).booleanValue(); //$NON-NLS-1$
 					}
 				}
 			}
 		}
 		// old way, deprecated
-		if (Boolean.valueOf(element.getAttribute("unoproject")).booleanValue()) {
+		if (Boolean.valueOf(element.getAttribute("unoproject")).booleanValue()) { //$NON-NLS-1$
 			return true;
 		}
 		return false;
@@ -238,7 +238,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 		 */
 		public OpenUnoProjectWizardAction(IConfigurationElement element) {
 			mConfigurationElement= element;
-			setText(element.getAttribute("name"));
+			setText(element.getAttribute("name")); //$NON-NLS-1$
 			
 			String description= getDescriptionFromConfig(mConfigurationElement);
 			setDescription(description);
@@ -253,7 +253,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 		 * @return the text of the description or <code>""</code> if not defined
 		 */
 		private String getDescriptionFromConfig(IConfigurationElement config) {
-			IConfigurationElement [] children = config.getChildren("description");
+			IConfigurationElement [] children = config.getChildren("description"); //$NON-NLS-1$
 			if (children.length>=1) {
 				return children[0].getValue();
 			}
@@ -267,7 +267,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 		 * @return the image descriptor or <code>null</code> if no icon is defined.
 		 */
 		private ImageDescriptor getIconFromConfig(IConfigurationElement config) {
-			String iconName = config.getAttribute("icon");
+			String iconName = config.getAttribute("icon"); //$NON-NLS-1$
 			if (iconName != null) {	
 				return OOEclipsePlugin.getDefault().getImageManager().getImageDescriptorFromPath(iconName);
 			}
@@ -281,7 +281,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 		 * @throws CoreException if anything wrong happens
 		 */
 		private INewWizard createWizard() throws CoreException {
-			return (INewWizard)mConfigurationElement.createExecutableExtension("class");
+			return (INewWizard)mConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 		}
 		
 		@Override

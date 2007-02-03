@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackagePropertiesFormPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -66,11 +66,11 @@ public class PackagePropertiesFormPage extends FormPage {
 	private PackageDescriptionSection mDescriptions;
 	
 	public PackagePropertiesFormPage(FormEditor editor, String id) {
-		super(editor, id, "Package");
+		super(editor, id, Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
 	}
 
 	public PackagePropertiesFormPage(String id) {
-		super(id, "Package");
+		super(id, Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
 	}
 
 	public IProject getProject() {
@@ -86,7 +86,7 @@ public class PackagePropertiesFormPage extends FormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		
-		form.setText("Package");
+		form.setText(Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
 		
 		// Create the only section with a tree representing the files 
 		// and dirs in its client area

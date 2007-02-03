@@ -2,9 +2,9 @@
  *
  * $RCSfile: ContentsSection.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -92,7 +92,7 @@ public class ContentsSection extends SectionPart {
 		
 		Section section = getSection();
 		
-		section.setText("Package content");
+		section.setText(Messages.getString("ContentsSection.Title")); //$NON-NLS-1$
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		
@@ -126,9 +126,9 @@ public class ContentsSection extends SectionPart {
 				if (element instanceof IAdaptable) {
 					IResource resource = (IResource)((IAdaptable)element).getAdapter(IResource.class);
 					if (resource != null) {
-						if (resource.getName().startsWith(".") || 
-								resource.getName().equals("build") || 
-								resource.getName().equals("bin") ||
+						if (resource.getName().startsWith(".") ||  //$NON-NLS-1$
+								resource.getName().equals("build") ||  //$NON-NLS-1$
+								resource.getName().equals("bin") || //$NON-NLS-1$
 								UnoPackage.isContainedInPackage(resource)) {
 							select = false;
 						}
