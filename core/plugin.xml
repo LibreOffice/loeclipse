@@ -302,4 +302,8 @@
             id="org.openoffice.ide.eclipse.core.export.package"
             name="OpenOffice.org package"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="org.openoffice.ide.eclipse.core.ResourceChangesHandler"/>
+   </extension>
 </plugin>

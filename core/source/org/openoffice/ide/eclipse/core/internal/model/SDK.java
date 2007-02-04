@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:28:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -174,7 +174,7 @@ public class SDK implements ISdk, ITableElement {
 				InvalidConfigException exception = (InvalidConfigException)e;
 				throw exception;
 			} else {
-				
+				PluginLogger.error("Unexpected error during SDK cration", e); //$NON-NLS-1$
 				// Unexpected exception thrown
 				throw new InvalidConfigException(
 						Messages.getString("SDK.UnexpectedError"),  //$NON-NLS-1$
@@ -226,7 +226,7 @@ public class SDK implements ISdk, ITableElement {
 			} else if (Platform.getOSArch().equals(Platform.ARCH_X86)) {
 				path = new Path(home).append("/solintel/bin"); //$NON-NLS-1$
 			}
-		} else if (Platform.getOSArch().equals(Platform.OS_MACOSX)) {
+		} else if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			path = new Path(home).append("/macosx/bin"); //$NON-NLS-1$
 		}
 		return path;

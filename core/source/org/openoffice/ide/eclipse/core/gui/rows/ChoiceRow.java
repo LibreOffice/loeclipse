@@ -2,9 +2,9 @@
  *
  * $RCSfile: ChoiceRow.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:32:41 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
 * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -343,7 +343,7 @@ public class ChoiceRow extends LabeledRow {
 			String text = ((Combo)mField).getItem(i);
 			result = text;
 			
-			String value = (String)mTranslations.get(text);
+			String value = mTranslations.get(text);
 			if (value != null) {
 				result = value;
 			}

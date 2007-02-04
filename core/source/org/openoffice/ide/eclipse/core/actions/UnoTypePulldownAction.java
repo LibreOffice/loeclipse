@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypePulldownAction.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -96,7 +96,7 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
 				if (adaptable.getAdapter(IResource.class) != null) {
 					IResource res = (IResource)adaptable.getAdapter(IResource.class);
 					IProject prj = (res).getProject();
-					if (null != ProjectsManager.getInstance().getProject(prj.getName())) {
+					if (null != ProjectsManager.getProject(prj.getName())) {
 						isValid = true;
 					}
 				}

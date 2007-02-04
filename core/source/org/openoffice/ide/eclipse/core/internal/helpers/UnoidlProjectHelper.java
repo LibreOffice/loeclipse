@@ -66,7 +66,7 @@ public class UnoidlProjectHelper {
 		IProject project = (IProject)data.getProperty(
 				IUnoFactoryConstants.PROJECT_HANDLE);
 		createProject(project, monitor);
-		unoProject = ProjectsManager.getInstance().getProject(
+		unoProject = ProjectsManager.getProject(
 				project.getName());
 
 		// Set the company prefix
@@ -87,13 +87,13 @@ public class UnoidlProjectHelper {
 		// Set the SDK
 		String sdkname = (String)data.getProperty(
 				IUnoFactoryConstants.PROJECT_SDK);
-		ISdk sdk = SDKContainer.getInstance().getSDK(sdkname);
+		ISdk sdk = SDKContainer.getSDK(sdkname);
 		unoProject.setSdk(sdk);
 
 		// Set the OOo runtime
 		String oooname = (String)data.getProperty(
 				IUnoFactoryConstants.PROJECT_OOO);
-		IOOo ooo = OOoContainer.getInstance().getOOo(oooname);
+		IOOo ooo = OOoContainer.getOOo(oooname);
 		unoProject.setOOo(ooo);
 
 
@@ -138,8 +138,7 @@ public class UnoidlProjectHelper {
 	/**
 	 * Set the project builders and run the build
 	 */
-	public static void setProjectBuilders(IUnoidlProject unoProject,
-			IProgressMonitor monitor){
+	public static void setProjectBuilders(IUnoidlProject unoProject){
 		
 		UnoidlProject project = (UnoidlProject)unoProject;
 		try {
@@ -445,7 +444,7 @@ public class UnoidlProjectHelper {
 			
 			UnoidlProject unoProject = (UnoidlProject)project.getNature(
 					OOEclipsePlugin.UNO_NATURE_ID);
-			ProjectsManager.getInstance().addProject(unoProject);
+			ProjectsManager.addProject(unoProject);
 			
 		} catch (CoreException e) {
 			PluginLogger.error(

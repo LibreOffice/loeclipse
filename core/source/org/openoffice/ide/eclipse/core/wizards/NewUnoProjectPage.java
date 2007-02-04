@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -166,8 +166,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
 				ImagesConstants.NEWPROJECT_WIZ));
 		
-		OOoContainer.getInstance().addListener(this);
-		SDKContainer.getInstance().addListener(this);
+		OOoContainer.addListener(this);
+		SDKContainer.addListener(this);
 	}
 	
 	/*
@@ -177,15 +177,15 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	public void dispose() {
 		
 		for (int i=0, length=mListenedTexts.size(); i<length; i++) {
-			Text field = (Text)mListenedTexts.get(i);
+			Text field = mListenedTexts.get(i);
 			if (!field.isDisposed()) field.removeModifyListener(mModifListener);
 		}
 		mListenedTexts.clear();
 		
 		super.dispose();
 		
-		OOoContainer.getInstance().removeListener(this);
-		SDKContainer.getInstance().removeListener(this);
+		OOoContainer.removeListener(this);
+		SDKContainer.removeListener(this);
 	}
 	
 	/**
@@ -441,10 +441,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		
 		if (null != mSdkRow){
 			// Adding the SDK names to the combo box 
-			SDKContainer sdkContainer = SDKContainer.getInstance();
-			String[] sdks = new String[sdkContainer.getSDKCount()];
-			Vector sdkKeys = sdkContainer.getSDKKeys();
-			for (int i=0, length=sdkContainer.getSDKCount(); i<length; i++){
+			String[] sdks = new String[SDKContainer.getSDKCount()];
+			Vector sdkKeys = SDKContainer.getSDKKeys();
+			for (int i=0, length=SDKContainer.getSDKCount(); i<length; i++){
 				sdks[i] = (String)sdkKeys.get(i);
 			}
 			
@@ -459,10 +458,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		if (null != mOOoRow){
 			
 			// Adding the OOo names to the combo box 
-			OOoContainer oooContainer = OOoContainer.getInstance();
-			String[] ooos = new String[oooContainer.getOOoCount()];
-			Vector oooKeys = oooContainer.getOOoKeys();
-			for (int i=0, length=oooContainer.getOOoCount(); i<length; i++){
+			String[] ooos = new String[OOoContainer.getOOoCount()];
+			Vector oooKeys = OOoContainer.getOOoKeys();
+			for (int i=0, length=OOoContainer.getOOoCount(); i<length; i++){
 				ooos[i] = (String)oooKeys.get(i);
 			}
 			

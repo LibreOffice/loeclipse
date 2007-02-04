@@ -2,9 +2,9 @@
  *
  * $RCSfile: ServicesBuilder.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -83,7 +83,7 @@ public class ServicesBuilder extends Job{
 		Status status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 				IStatus.OK, "", null); //$NON-NLS-1$
 		
-		IUnoidlProject unoProject = ProjectsManager.getInstance().getProject(
+		IUnoidlProject unoProject = ProjectsManager.getProject(
 				mProject.getName());
 		
 		if (unoProject != null) {

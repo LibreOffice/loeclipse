@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeRow.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:52:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -48,7 +48,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -188,7 +187,7 @@ public class TypeRow extends TextRow {
 		
 		final Shell shell = parent.getShell();
 		
-		((Button)mBrowse).addSelectionListener(new SelectionAdapter(){
+		mBrowse.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				

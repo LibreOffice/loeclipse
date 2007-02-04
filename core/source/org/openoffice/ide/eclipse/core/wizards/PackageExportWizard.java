@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizard.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -54,6 +54,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -70,6 +71,7 @@ import org.openoffice.ide.eclipse.core.builders.ServicesBuilder;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
+import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.utils.FileHelper;
 
@@ -103,8 +105,25 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		mSelection = selection;
-		mPage = new PackageExportWizardPage("main", mSelection); //$NON-NLS-1$
-		addPage(mPage);
+		
+		boolean canExport = false;
+		
+		Iterator iter = mSelection.iterator();
+		while (iter.hasNext()) {
+			Object o = iter.next();
+			if (o instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable)o;
+				IResource res = (IResource)adaptable.getAdapter(IResource.class);
+				if (res != null && ProjectsManager.getProject(res.getProject().getName()) != null) {
+					canExport = true;
+				}
+			}
+		}
+		
+		if (canExport) {
+			mPage = new PackageExportWizardPage("main", mSelection); //$NON-NLS-1$
+			addPage(mPage);
+		}
 	}
 
 	/**

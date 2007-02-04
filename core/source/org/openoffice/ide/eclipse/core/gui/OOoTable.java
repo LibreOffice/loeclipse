@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoTable.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:15 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -129,7 +129,7 @@ public class OOoTable extends AbstractTable {
 	 */
 	public void savePreferences(){
 		
-		OOoContainer.getInstance().saveOOos();
+		OOoContainer.saveOOos();
 	}
 	
 	/*
@@ -139,7 +139,7 @@ public class OOoTable extends AbstractTable {
 	protected ITableElement addLine() {
 		
 		AbstractOOo ooo = openDialog(null);
-		OOoContainer.getInstance().addOOo(ooo);
+		OOoContainer.addOOo(ooo);
 		return ooo;
 	}
 	
@@ -151,7 +151,7 @@ public class OOoTable extends AbstractTable {
 		
 		ITableElement o = super.removeLine();
 		if (null != o && o instanceof IOOo) {
-			OOoContainer.getInstance().delOOo((IOOo)o);
+			OOoContainer.delOOo((IOOo)o);
 		}
 		return o;
 	}
@@ -168,7 +168,7 @@ public class OOoTable extends AbstractTable {
 			
 			// Launch the dialog
 			ooo = openDialog(ooo);
-			OOoContainer.getInstance().updateOOo(ooo.getName(), ooo);
+			OOoContainer.updateOOo(ooo.getName(), ooo);
 		}
 	}
 	
@@ -234,7 +234,7 @@ public class OOoTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return OOoContainer.getInstance().toArray();
+			return OOoContainer.toArray();
 		}
 
 		/*
@@ -242,7 +242,7 @@ public class OOoTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			OOoContainer.getInstance().removeListener(this);
+			OOoContainer.removeListener(this);
 		}
 
 		/*
@@ -250,13 +250,6 @@ public class OOoTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (null != oldInput){
-				((OOoContainer)oldInput).removeListener(this);
-			}
-			
-			if (null != newInput){
-				((OOoContainer)newInput).addListener(this);
-			}
 		}
 
 		/*
@@ -431,8 +424,7 @@ public class OOoTable extends AbstractTable {
 				
 				// checks if the name is unique and toggle a warning
 				if (e.getProperty().equals(P_OOO_NAME)) {
-					boolean unique = !OOoContainer.getInstance().
-						containsName(e.getValue());
+					boolean unique = !OOoContainer.containsName(e.getValue());
 					
 					if (unique) {
 						updateStatus(new Status(Status.OK,

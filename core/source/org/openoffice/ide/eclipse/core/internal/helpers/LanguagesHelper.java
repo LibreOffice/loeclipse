@@ -132,7 +132,7 @@ public class LanguagesHelper {
 			
 			result = new IConfigurationElement[languages.size()];
 			for (int i=0, length=languages.size(); i<length; i++) {
-				result[i] = (IConfigurationElement)languages.get(i);
+				result[i] = languages.get(i);
 			}
 			
 			// clean the vector

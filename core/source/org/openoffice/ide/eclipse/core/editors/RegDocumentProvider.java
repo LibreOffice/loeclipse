@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegDocumentProvider.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -88,7 +88,7 @@ public class RegDocumentProvider extends FileDocumentProvider {
 		if (element instanceof IFileEditorInput){
 		
 			IFile file = ((IFileEditorInput)element).getFile();
-			IUnoidlProject unoproject = ProjectsManager.getInstance().getProject(
+			IUnoidlProject unoproject = ProjectsManager.getProject(
 					file.getProject().getName());
 			
 			// Try to run regview on the file

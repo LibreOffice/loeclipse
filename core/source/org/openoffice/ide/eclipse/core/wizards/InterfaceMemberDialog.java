@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -560,7 +560,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
 				
 				if (property.equals(PARAM_NAME)) {
 					// get the value of the name
-					value = (String)data.getProperty(IUnoFactoryConstants.NAME);
+					value = data.getProperty(IUnoFactoryConstants.NAME);
 				} else if (property.equals(PARAM_TYPE)) {
 					// get the value of the type
 					value = data.getProperty(IUnoFactoryConstants.TYPE);

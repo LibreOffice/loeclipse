@@ -17,6 +17,11 @@ public interface IUnoidlProject {
 	 */
 	public static final String IDL_FOLDER = "idlfolder"; //$NON-NLS-1$
 	
+	/**
+	 * Cleans up the project before destroying it
+	 */
+	public void dispose();
+	
 	//---------------------------------------------------- Properties accessors
 
 	/**

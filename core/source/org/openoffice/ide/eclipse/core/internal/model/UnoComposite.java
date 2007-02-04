@@ -49,7 +49,7 @@ public class UnoComposite implements IUnoComposite {
 		
 		IUnoComposite[] composites = new IUnoComposite[mChildren.size()];
 		for (int i=0, length=mChildren.size(); i<length; i++) {
-			composites[i] = (IUnoComposite)mChildren.get(i);
+			composites[i] = mChildren.get(i);
 		}
 		
 		return composites;
@@ -339,7 +339,7 @@ public class UnoComposite implements IUnoComposite {
 		// Convert the parts vector into a String array
 		String[] strings = new String[parts.size()];
 		for (int i=0; i<strings.length; i++) {
-			strings[i] = (String)parts.get(i);
+			strings[i] = parts.get(i);
 		}
 		
 		return strings;

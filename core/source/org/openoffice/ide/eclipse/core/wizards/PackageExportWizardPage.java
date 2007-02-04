@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -93,7 +93,7 @@ public class PackageExportWizardPage extends WizardPage {
 			
 			try {
 				String prjName = res.getProject().getName();
-				IUnoidlProject project = ProjectsManager.getInstance().getProject(prjName);
+				IUnoidlProject project = ProjectsManager.getProject(prjName);
 				if (project != null) {
 					mProject = project;
 				}
@@ -135,7 +135,7 @@ public class PackageExportWizardPage extends WizardPage {
 		mProjectRow = new DialogRow(body, "", Messages.getString("PackageExportWizardPage.PackageLabel")) { //$NON-NLS-1$ //$NON-NLS-2$
 			@Override
 			public String doOpenDialog() {
-				String result = ""; //$NON-NLS-1$
+				String result = getValue();
 				
 				// Open the project selection dialog
 				ILabelProvider labelProvider = new UnoProjectProvider();
@@ -143,7 +143,7 @@ public class PackageExportWizardPage extends WizardPage {
 						getShell(), labelProvider);
 				dialog.setTitle(Messages.getString("PackageExportWizardPage.ChooserTitle")); //$NON-NLS-1$
 				dialog.setMessage(Messages.getString("PackageExportWizardPage.ChooserDescription")); //$NON-NLS-1$
-				dialog.setElements(ProjectsManager.getInstance().getProjects());
+				dialog.setElements(ProjectsManager.getProjects());
 
 				if (dialog.open() == Window.OK) {
 					mProject = (IUnoidlProject)dialog.getFirstResult();
@@ -158,7 +158,7 @@ public class PackageExportWizardPage extends WizardPage {
 		}
 		mProjectRow.setFieldChangedListener(new IFieldChangedListener() {
 			public void fieldChanged(FieldEvent e) {
-				IUnoidlProject project = ProjectsManager.getInstance().getProject(e.getValue());
+				IUnoidlProject project = ProjectsManager.getProject(e.getValue());
 				mProject = project;
 					
 				checkPageComplete();

@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKContainer.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,7 +62,7 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public class SDKContainer { 
 	
-	private static SDKContainer sInstance;
+	private static SDKContainer sInstance = new SDKContainer();
 	
 	/**
 	 * Vector of the SDK container listeners
@@ -82,9 +82,9 @@ public class SDKContainer {
 	 * 
 	 *  @param listener sdk listener to add 
 	 */
-	public void addListener(IConfigListener listener){
+	public static void addListener(IConfigListener listener){
 		if (null != listener){
-			mListeners.add(listener);
+			sInstance.mListeners.add(listener);
 		}
 	}
 	
@@ -93,9 +93,9 @@ public class SDKContainer {
 	 * 
 	 * @param listener sdk listener to remove
 	 */
-	public void removeListener(IConfigListener listener){
+	public static void removeListener(IConfigListener listener){
 		if (null != listener){
-			mListeners.remove(listener);
+			sInstance.mListeners.remove(listener);
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class SDKContainer {
 	/**
 	 * Returns the sdks elements in an array
 	 */
-	public Object[] toArray(){
+	public static Object[] toArray(){
 		Vector vElements = toVector();
 		Object[] elements = vElements.toArray();
 		
@@ -118,7 +118,7 @@ public class SDKContainer {
 	 * 
 	 * @param sdk SDK to add
 	 */
-	public void addSDK(ISdk sdk){
+	public static void addSDK(ISdk sdk){
 		
 		/** 
 		 * If there already is a SDK with such an identifier, replace the values,
@@ -126,11 +126,11 @@ public class SDKContainer {
 		 */ 
 		
 		if (null != sdk){
-			if (!mElements.containsKey(sdk.getId())){
-				mElements.put(sdk.getId(), sdk);
-				fireSDKAdded(sdk);
+			if (!sInstance.mElements.containsKey(sdk.getId())){
+				sInstance.mElements.put(sdk.getId(), sdk);
+				sInstance.fireSDKAdded(sdk);
 			} else {
-				ISdk sdkref = (ISdk)mElements.get(sdk.getId());
+				ISdk sdkref = sInstance.mElements.get(sdk.getId());
 				updateSDK(sdkref.getId(), sdk);
 			}
 		}
@@ -138,7 +138,7 @@ public class SDKContainer {
 	
 	private void fireSDKAdded(ISdk sdk) {
 		for (int i=0, length=mListeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
+			IConfigListener listeneri = mListeners.get(i);
 			listeneri.ConfigAdded(sdk);
 		}
 	}
@@ -149,11 +149,11 @@ public class SDKContainer {
 	 *  
 	 * @param sdk SDK to remove
 	 */
-	public void delSDK(ISdk sdk){
+	public static void delSDK(ISdk sdk){
 		if (null != sdk){
-			if (mElements.containsKey(sdk.getId())){
-				mElements.remove(sdk.getId());
-				fireSDKRemoved(sdk);
+			if (sInstance.mElements.containsKey(sdk.getId())){
+				sInstance.mElements.remove(sdk.getId());
+				sInstance.fireSDKRemoved(sdk);
 			}
 		}
 	}
@@ -162,9 +162,9 @@ public class SDKContainer {
 	 * Removes all the SDK contained
 	 *
 	 */
-	public void clear(){
-		mElements.clear();
-		fireSDKRemoved(null);
+	public static void clear(){
+		sInstance.mElements.clear();
+		sInstance.fireSDKRemoved(null);
 	}
 	
 	/**
@@ -172,14 +172,14 @@ public class SDKContainer {
 	 * 
 	 * @return names of the contained SDKs
 	 */
-	public Vector<String> getSDKKeys(){
-		Set<String> names = mElements.keySet();
+	public static Vector<String> getSDKKeys(){
+		Set<String> names = sInstance.mElements.keySet();
 		return new Vector<String>(names);
 	}
 	
 	private void fireSDKRemoved(ISdk sdk) {
 		for (int i=0, length=mListeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
+			IConfigListener listeneri = mListeners.get(i);
 			listeneri.ConfigRemoved(sdk);
 		}
 	}
@@ -190,10 +190,10 @@ public class SDKContainer {
 	 * @param sdkkey position of the sdk to update
 	 * @param sdk new value for the SDK
 	 */
-	public void updateSDK(String sdkkey, ISdk sdk){
-		if (mElements.containsKey(sdkkey) && null != sdk){
+	public static void updateSDK(String sdkkey, ISdk sdk){
+		if (sInstance.mElements.containsKey(sdkkey) && null != sdk){
 			
-			ISdk sdkref = (ISdk)mElements.get(sdkkey);
+			ISdk sdkref = sInstance.mElements.get(sdkkey);
 			
 			// update the attributes
 			try {
@@ -204,14 +204,14 @@ public class SDKContainer {
 			}
 			
 			// Reassign the element in the hashmap
-			mElements.put(sdkkey, sdkref);
-			fireSDKUpdated(sdk);
+			sInstance.mElements.put(sdkkey, sdkref);
+			sInstance.fireSDKUpdated(sdk);
 		}
 	}
 	
 	private void fireSDKUpdated(ISdk sdk) {
 		for (int i=0, length=mListeners.size(); i<length; i++){
-			IConfigListener listeneri = (IConfigListener)mListeners.get(i);
+			IConfigListener listeneri = mListeners.get(i);
 			listeneri.ConfigUpdated(sdk);
 		}
 	}
@@ -222,11 +222,11 @@ public class SDKContainer {
 	 * @param sdkkey unique identifier of the wanted sdk
 	 * @return SDK which name equals the one provided
 	 */
-	public ISdk getSDK(String sdkkey){
+	public static ISdk getSDK(String sdkkey){
 		ISdk sdk = null;
 		
-		if (mElements.containsKey(sdkkey)){
-			sdk = (ISdk)mElements.get(sdkkey);
+		if (sInstance.mElements.containsKey(sdkkey)){
+			sdk = sInstance.mElements.get(sdkkey);
 		} 
 		return sdk;
 	}
@@ -236,17 +236,17 @@ public class SDKContainer {
 	 * 
 	 * @return number of SDK in the list
 	 */
-	public int getSDKCount(){
-		return mElements.size();
+	public static int getSDKCount(){
+		return sInstance.mElements.size();
 	}
 		
 	/**
 	 * Dispose the vector used
 	 *
 	 */
-	public void dispose() {
-		mListeners.clear();
-		mElements.clear();
+	public static void dispose() {
+		sInstance.mListeners.clear();
+		sInstance.mElements.clear();
 	}
 
 	/**
@@ -257,9 +257,7 @@ public class SDKContainer {
 		
 		if (null == sInstance){
 			sInstance = new SDKContainer();
-			sInstance.loadSDKs();
 		}
-		
 		return sInstance;
 	}
 	
@@ -267,7 +265,7 @@ public class SDKContainer {
 	 * Loads the SDK already configured instances from the 
 	 * preferences.
 	 */
-	protected void loadSDKs(){
+	public static void load(){
 		
 		ISdk[] sdks = PropertiesManager.loadSDKs();
 		for (int i=0; i < sdks.length; i++) {
@@ -279,15 +277,11 @@ public class SDKContainer {
 	 * Saves the SDK already configured instances to the 
 	 * preferences.
 	 */
-	public void saveSDKs(){
+	public static void saveSDKs(){
 		
 		// Saving the new SDKs 
-		Vector vElements = toVector();
-		ISdk[] sdks = new ISdk[getSDKCount()];
-		
-		for (int i=0, length=getSDKCount(); i<length; i++){
-			sdks[i] = (ISdk)vElements.get(i);
-		}
+		Vector<ISdk> vElements = toVector();
+		ISdk[] sdks = vElements.toArray(new ISdk[getSDKCount()]);
 		
 		// vector cleaning
 		vElements.clear();
@@ -311,9 +305,9 @@ public class SDKContainer {
 	 *  
 	 * @return vector where the elements order isn't guaranteed
 	 */
-	private Vector<ISdk> toVector(){
+	private static Vector<ISdk> toVector(){
 		Vector<ISdk> result = new Vector<ISdk>();
-		Set<Entry<String, ISdk>> entries = mElements.entrySet();
+		Set<Entry<String, ISdk>> entries = sInstance.mElements.entrySet();
 		Iterator<Entry<String, ISdk>> iter = entries.iterator();
 		
 		while (iter.hasNext()){

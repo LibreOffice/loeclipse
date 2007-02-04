@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -200,13 +200,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		
 		mConfigListener = new configListener();
 		
-		SDKContainer.getInstance().addListener(mConfigListener);
-		OOoContainer.getInstance().addListener(mConfigListener);
+		SDKContainer.addListener(mConfigListener);
+		OOoContainer.addListener(mConfigListener);
 	}
 	
 	public void dispose() {
-		SDKContainer.getInstance().removeListener(mConfigListener);
-		OOoContainer.getInstance().removeListener(mConfigListener);
+		SDKContainer.removeListener(mConfigListener);
+		OOoContainer.removeListener(mConfigListener);
 	}
 	
 	/**
@@ -580,11 +580,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		// Load all the persistent properties into the members
 		String sdkKey = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, SDK_NAME));
-		mSdk = SDKContainer.getInstance().getSDK(sdkKey);
+		mSdk = SDKContainer.getSDK(sdkKey);
 		
 		String oooKey = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OOO_NAME));
-		mOOo = OOoContainer.getInstance().getOOo(oooKey);
+		mOOo = OOoContainer.getOOo(oooKey);
 		
 		String idllocation = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IDL_LOCATION));

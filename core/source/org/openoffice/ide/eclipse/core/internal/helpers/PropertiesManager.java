@@ -82,7 +82,7 @@ public class PropertiesManager {
 			result = new ISdk[sdks.size()];
 			
 			for (int j=0, length=sdks.size(); j<length; j++){
-				result[j] = (ISdk)sdks.get(j);
+				result[j] = sdks.get(j);
 			}
 			
 			// clean the vector
@@ -194,7 +194,7 @@ public class PropertiesManager {
 			result = new IOOo[ooos.size()];
 			
 			for (int j=0, length=ooos.size(); j<length; j++){
-				result[j] = (IOOo)ooos.get(j);
+				result[j] = ooos.get(j);
 			}
 			
 			// Clean the vector
@@ -267,15 +267,15 @@ public class PropertiesManager {
 	 */
 	static private Properties getProperties() throws IOException{
 		// Loads the ooos config file into a properties object
+		Properties ooosProperties = new Properties();
+		
 		String ooos_config_url = OOEclipsePlugin.getDefault().
-				getStateLocation().toString();
+						getStateLocation().toString();
 		File file = new File(ooos_config_url+"/"+OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
 		if (!file.exists()){
 			file.createNewFile();
 		}
-		
-		Properties ooosProperties = new Properties();
-	
+
 		FileInputStream in = new FileInputStream(file);
 		try {
 			ooosProperties.load(in);

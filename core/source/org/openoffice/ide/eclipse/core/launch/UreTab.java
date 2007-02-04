@@ -2,9 +2,9 @@
  *
  * $RCSfile: UreTab.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -87,7 +87,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 						getShell(), labelProvider);
 				dialog.setTitle(Messages.getString("UreTab.ProjectChooserTitle")); //$NON-NLS-1$
 				dialog.setMessage(Messages.getString("UreTab.ProjectChooserMessage")); //$NON-NLS-1$
-				dialog.setElements(ProjectsManager.getInstance().getProjects());
+				dialog.setElements(ProjectsManager.getProjects());
 
 				if (dialog.open() == Window.OK) {
 					mProject = (IUnoidlProject)dialog.getFirstResult();
@@ -122,7 +122,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 		public void modifyText(ModifyEvent e) {
 			
 			if (e.getSource() == mProjectTxt) {
-				IUnoidlProject prj = ProjectsManager.getInstance().getProject(
+				IUnoidlProject prj = ProjectsManager.getProject(
 						mProjectTxt.getText().trim());
 				if (prj != null) {
 					mProject = prj;
@@ -219,7 +219,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 			} else {
 				String name = launchConfig.getAttribute(
 						IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
-				return (ProjectsManager.getInstance().getProject(name) != null);
+				return (ProjectsManager.getProject(name) != null);
 			}
 		} catch (CoreException e) {
 			return false;

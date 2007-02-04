@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -154,8 +154,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 				// Change the service page
 				mServicePage.setPackageRoot(mMainPage.getPrefix());
 				mServicePage.setPackage("", true); //$NON-NLS-1$
-				mServicePage.setOOoInstance(OOoContainer.getInstance().
-						getOOo(mMainPage.getOOoName()));
+				mServicePage.setOOoInstance(OOoContainer.getOOo(mMainPage.getOOoName()));
 
 				String serviceName = mMainPage.getProjectName().trim().toLowerCase();
 				serviceName = serviceName.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -287,7 +286,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 				
 				Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
 				if (o instanceof IProject) {
-					rollback(e, (IProject)o);
+					rollback((IProject)o);
 				}
 				
 				Display.getDefault().asyncExec(new Runnable() {
@@ -313,7 +312,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 			return status;
 		}
 		
-		private void rollback(Exception e, IProject project) {
+		private void rollback(IProject project) {
 			try {
 				project.delete(true, true, null);
 			} catch (CoreException ex) {

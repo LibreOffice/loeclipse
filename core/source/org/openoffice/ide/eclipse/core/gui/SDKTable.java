@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -126,7 +126,7 @@ public class SDKTable extends AbstractTable {
 	 */
 	public void savePreferences(){
 		
-		SDKContainer.getInstance().saveSDKs();
+		SDKContainer.saveSDKs();
 	}
 
 	/*
@@ -140,8 +140,8 @@ public class SDKTable extends AbstractTable {
 			SDK sdk = (SDK)((IStructuredSelection)event.getSelection()).getFirstElement();
 			
 			// Launch the dialog
-			sdk = openDialog(sdk, true);
-			SDKContainer.getInstance().updateSDK(sdk.getId(), sdk);
+			sdk = openDialog(sdk);
+			SDKContainer.updateSDK(sdk.getId(), sdk);
 		}
 	}
 	
@@ -151,8 +151,8 @@ public class SDKTable extends AbstractTable {
 	 */
 	protected ITableElement addLine() {
 		// Launch add SDK dialog
-		SDK sdk = openDialog(null, false);
-		SDKContainer.getInstance().addSDK(sdk);
+		SDK sdk = openDialog(null);
+		SDKContainer.addSDK(sdk);
 		return sdk;
 	}
 	
@@ -163,7 +163,7 @@ public class SDKTable extends AbstractTable {
 	protected ITableElement removeLine() {
 		ITableElement o = super.removeLine();
 		if (null != o && o instanceof SDK) {
-			SDKContainer.getInstance().delSDK((SDK)o);
+			SDKContainer.delSDK((SDK)o);
 		}
 		
 		return o;
@@ -181,7 +181,7 @@ public class SDKTable extends AbstractTable {
 	 * 
 	 * @return the modified or created SDK instance
 	 */
-	protected SDK openDialog(SDK sdk, boolean editing){
+	protected SDK openDialog(SDK sdk){
 		
 		// Gets the shell of the active eclipse window
 		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -232,7 +232,7 @@ public class SDKTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return SDKContainer.getInstance().toArray();
+			return SDKContainer.toArray();
 		}
 
 		/*
@@ -240,7 +240,7 @@ public class SDKTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			SDKContainer.getInstance().removeListener(this);
+			SDKContainer.removeListener(this);
 		}
 
 		/*
@@ -248,13 +248,6 @@ public class SDKTable extends AbstractTable {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (null != oldInput){
-				((SDKContainer)oldInput).removeListener(this);
-			}
-			
-			if (null != newInput){
-				((SDKContainer)newInput).addListener(this);
-			}
 		}
 
 		/*

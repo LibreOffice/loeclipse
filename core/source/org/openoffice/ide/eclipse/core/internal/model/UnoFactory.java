@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -116,7 +116,7 @@ public final class UnoFactory {
 		// generate the implementation skeleton
 		makeSkeleton(data, prj, page, monitor);
 		
-		UnoidlProjectHelper.setProjectBuilders(prj, monitor);
+		UnoidlProjectHelper.setProjectBuilders(prj);
 	}
 	
 	/**

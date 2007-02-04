@@ -2,9 +2,9 @@
  *
  * $RCSfile: UreLaunchDelegate.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:06 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -80,7 +80,7 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
 		String args = configuration.getAttribute(
 				IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
 		
-		IUnoidlProject prj = ProjectsManager.getInstance().getProject(prjName);
+		IUnoidlProject prj = ProjectsManager.getProject(prjName);
 		if (prj != null) {
 			
 			// creates the services.rdb file

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoPackage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -393,7 +393,7 @@ public class UnoPackage {
 		boolean contained = false;
 		
 		String prjName = res.getProject().getName();
-		IUnoidlProject prj = ProjectsManager.getInstance().getProject(prjName); 
+		IUnoidlProject prj = ProjectsManager.getProject(prjName); 
 		
 		if (prj != null) {
 			
@@ -429,7 +429,7 @@ public class UnoPackage {
 		ArrayList<IResource> resources = new ArrayList<IResource>();
 		
 		String prjName = prj.getName();
-		IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(prjName); 
+		IUnoidlProject unoprj = ProjectsManager.getProject(prjName); 
 		
 		if (unoprj != null) {
 			

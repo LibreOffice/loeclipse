@@ -2,9 +2,9 @@
  *
  * $RCSfile: ColorProvider.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -101,7 +101,7 @@ public class ColorProvider {
 	 */
 	public Color getColor(String color_string){
 		
-	    Color color = (Color)mColorTable.get(color_string);
+	    Color color = mColorTable.get(color_string);
 		if (color == null){
 			color = new Color(Display.getCurrent(), 
 					PreferenceConverter.getColor(mStore, color_string));

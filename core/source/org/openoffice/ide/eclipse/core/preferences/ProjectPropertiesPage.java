@@ -2,9 +2,9 @@
  *
  * $RCSfile: ProjectPropertiesPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:56 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:08 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -86,8 +86,8 @@ public class ProjectPropertiesPage extends PropertyPage
 		super();
 		
 		noDefaultAndApplyButton();
-		SDKContainer.getInstance().addListener(this);
-		OOoContainer.getInstance().addListener(this);
+		SDKContainer.addListener(this);
+		OOoContainer.addListener(this);
 	}
 	
 	/*
@@ -96,8 +96,8 @@ public class ProjectPropertiesPage extends PropertyPage
 	 */
 	public void dispose() {
 		
-		SDKContainer.getInstance().removeListener(this);
-		OOoContainer.getInstance().removeListener(this);
+		SDKContainer.removeListener(this);
+		OOoContainer.removeListener(this);
 		
 		super.dispose();
 	}
@@ -189,12 +189,12 @@ public class ProjectPropertiesPage extends PropertyPage
 	 */
 	private void saveValues(){
 		if (!mSdkRow.getValue().equals("")) { //$NON-NLS-1$
-			ISdk sdk = SDKContainer.getInstance().getSDK(mSdkRow.getValue());
+			ISdk sdk = SDKContainer.getSDK(mSdkRow.getValue());
 			mProject.setSdk(sdk);
 		}
 		
 		if (!mOOoRow.getValue().equals("")){ //$NON-NLS-1$
-			IOOo ooo = OOoContainer.getInstance().getOOo(mOOoRow.getValue());
+			IOOo ooo = OOoContainer.getOOo(mOOoRow.getValue());
 			mProject.setOOo(ooo);
 		}
 	}
@@ -206,10 +206,9 @@ public class ProjectPropertiesPage extends PropertyPage
 		
 		if (null != mSdkRow){
 			// Adding the SDK names to the combo box 
-			SDKContainer sdkContainer = SDKContainer.getInstance();
-			String[] sdks = new String[sdkContainer.getSDKCount()];
-			Vector sdkKeys = sdkContainer.getSDKKeys();
-			for (int i=0, length=sdkContainer.getSDKCount(); i<length; i++){
+			String[] sdks = new String[SDKContainer.getSDKCount()];
+			Vector sdkKeys = SDKContainer.getSDKKeys();
+			for (int i=0, length=SDKContainer.getSDKCount(); i<length; i++){
 				sdks[i] = (String)sdkKeys.get(i);
 			}
 			sdkKeys.clear();
@@ -233,10 +232,9 @@ public class ProjectPropertiesPage extends PropertyPage
 		if (null != mOOoRow){
 			
 			// Adding the OOo names to the combo box 
-			OOoContainer oooContainer = OOoContainer.getInstance();
-			String[] ooos = new String[oooContainer.getOOoCount()];
-			Vector oooKeys = oooContainer.getOOoKeys();
-			for (int i=0, length=oooContainer.getOOoCount(); i<length; i++){
+			String[] ooos = new String[OOoContainer.getOOoCount()];
+			Vector oooKeys = OOoContainer.getOOoKeys();
+			for (int i=0, length=OOoContainer.getOOoCount(); i<length; i++){
 				ooos[i] = (String)oooKeys.get(i);
 			}
 			oooKeys.clear();

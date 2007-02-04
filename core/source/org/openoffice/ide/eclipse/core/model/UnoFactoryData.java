@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactoryData.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -98,7 +98,7 @@ public class UnoFactoryData {
 	public UnoFactoryData[] getInnerData() {
 		UnoFactoryData[] data = new UnoFactoryData[mInnerData.size()];
 		for (int i=0, length=mInnerData.size(); i<length; i++) {
-			data[i] = (UnoFactoryData)mInnerData.get(i);
+			data[i] = mInnerData.get(i);
 		}
 		return data;
 	}
@@ -129,7 +129,7 @@ public class UnoFactoryData {
 	public void dispose() {
 		
 		for (int i=0, length=mInnerData.size(); i<length; i++) {
-			((UnoFactoryData)mInnerData.get(i)).dispose();
+			mInnerData.get(i).dispose();
 		}
 		mInnerData.clear();
 		mInnerData = null;

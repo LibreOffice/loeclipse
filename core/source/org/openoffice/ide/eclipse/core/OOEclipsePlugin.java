@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -48,19 +48,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 import org.openoffice.ide.eclipse.core.i18n.ImageManager;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
-import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
@@ -75,7 +67,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author cbosdonnat
  */
-public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChangeListener {
+public class OOEclipsePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Plugin home relative path for the ooo configuration file
@@ -115,24 +107,19 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 	public OOEclipsePlugin() {
 		sPlugin = this;
 	}
-
+	
 	/**
 	 * This method is called upon plug-in activation
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		setDefaultPreferences();
-		
-		// Creates the SDK container
-		SDKContainer.getInstance();
-		
-		// Load the projects manager
-		ProjectsManager.getInstance();
-		
-		// Add a listener to the resources changes of the workspace
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, 
-				IResourceChangeEvent.POST_CHANGE);
 
+		// Creates the SDK container
+		OOoContainer.load();
+		SDKContainer.load();
+		
+		PluginLogger.info("OOEclipseIntegration started"); //$NON-NLS-1$
 	}
 
 	/**
@@ -142,11 +129,9 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 		super.stop(context);
 		sPlugin = null;
 		
-		OOoContainer.getInstance().dispose();
-		SDKContainer.getInstance().dispose();
-		ProjectsManager.getInstance().dispose();
-		
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		OOoContainer.dispose();
+		SDKContainer.dispose();
+		ProjectsManager.dispose();
 	}
 
 	/**
@@ -239,38 +224,5 @@ public class OOEclipsePlugin extends AbstractUIPlugin implements IResourceChange
 			page = window.getActivePage();
 		}
 		return page;
-	}
-	
-	//--------------- Resources changing listener method
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-
-		if (IResourceChangeEvent.POST_CHANGE == event.getType()){
-			// Handle the addition of folders in a UNO-IDL capable folder
-			
-			// Extract all the additions among the changes
-			IResourceDelta delta = event.getDelta();
-			IResourceDelta[] added = delta.getAffectedChildren();
-						
-			// In all the added resources, process the projects
-			for (int i=0, length=added.length; i<length; i++){
-				IResourceDelta addedi = added[i];
-				
-				// Get the project
-				IResource resource = addedi.getResource();
-				IProject project = resource.getProject();
-				
-				IUnoidlProject unoproject = ProjectsManager.getInstance().
-						getProject(project.getName());
-				
-				if (unoproject != null){
-					UnoidlProjectHelper.setIdlProperty(unoproject);
-				}
-			}
-		}
 	}
 }

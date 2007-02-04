@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:21 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -92,7 +92,7 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 
 			} else if (resource instanceof IContainer){
 
-				IUnoidlProject project = ProjectsManager.getInstance().getProject(
+				IUnoidlProject project = ProjectsManager.getProject(
 						resource.getProject().getName());
 				IPath resPath = resource.getProjectRelativePath();
 				IPath idlPath = project.getIdlPath();

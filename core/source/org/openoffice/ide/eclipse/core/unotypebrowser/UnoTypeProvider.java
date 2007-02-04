@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -382,7 +382,7 @@ public class UnoTypeProvider {
 		initialized = true;
 		
 		for (int i=0, length=listeners.size(); i<length; i++) {
-			((IInitListener)listeners.get(i)).initialized();
+			listeners.get(i).initialized();
 		}
 	}
 

@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/01/16 10:06:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -108,7 +108,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 						boolean visitChildren = false;
 
 						IProject prj = getProject();
-						IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(prj.getName());
+						IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 						IPath idlPath = unoprj.getIdlPath();
 						IPath resPath = delta.getResource().getProjectRelativePath();
 
@@ -152,7 +152,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	public static void build(IProject prj, IProgressMonitor monitor) 
 			throws CoreException {
 		
-		IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(
+		IUnoidlProject unoprj = ProjectsManager.getProject(
 				prj.getName());
 		
 		// Clears the registries before beginning
@@ -186,7 +186,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	 */
 	private static void removeAllRegistries(IProject prj) {
 		
-		IUnoidlProject unoprj = ProjectsManager.getInstance().getProject(
+		IUnoidlProject unoprj = ProjectsManager.getProject(
 				prj.getName());
 		
 		try {
@@ -245,8 +245,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	 */
 	static void runIdlcOnFile(IFile file, IProgressMonitor monitor){
 		
-		IUnoidlProject project = ProjectsManager.getInstance().
-				getProject(file.getProject().getName());
+		IUnoidlProject project = ProjectsManager.getProject(file.getProject().getName());
 		
 		ISdk sdk = project.getSdk();
 		
