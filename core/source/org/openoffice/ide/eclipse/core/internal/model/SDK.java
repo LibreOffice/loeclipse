@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/06 18:26:56 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -294,7 +294,7 @@ public class SDK implements ISdk, ITableElement {
 					vars = SystemHelper.addEnv(vars, "PATH", binPath + pathSeparator +  //$NON-NLS-1$
 							oooLibsPath.toOSString(), pathSeparator);
 					
-				} else if (osName.equals("linux") || osName.equals("solaris") ||  //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (osName.equals("linux") || Platform.getOS().equals(Platform.OS_SOLARIS) ||  //$NON-NLS-1$ //$NON-NLS-2$
 						osName.equals("sun os")) { //$NON-NLS-1$
 					
 					// An UN*X platform
@@ -308,6 +308,16 @@ public class SDK implements ISdk, ITableElement {
 								ooo.getLibsPath(), pathSeparator);
 					}
 					
+				} else if (Platform.getOS().equals(Platform.OS_MACOSX)) { 
+					binPath = sdk.getBinPath().toOSString();
+					
+					if (null != sdk.getBinPath()){
+
+						String[] tmpVars = SystemHelper.addEnv(vars, "PATH",  //$NON-NLS-1$
+								binPath, pathSeparator); //$NON-NLS-1$
+						vars = SystemHelper.addEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
+								ooo.getLibsPath(), pathSeparator);
+					}
 				} else {
 					// Unmanaged OS
 					PluginLogger.error(
