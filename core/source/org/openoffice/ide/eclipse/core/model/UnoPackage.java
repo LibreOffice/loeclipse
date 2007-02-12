@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoPackage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/02/12 20:21:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -526,7 +526,7 @@ public class UnoPackage {
 		
 		if (path.startsWith(originPath)) {
 			relativePath = path.substring(originPath.length()+1);
-			relativePath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			relativePath = relativePath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return relativePath;
 	}
