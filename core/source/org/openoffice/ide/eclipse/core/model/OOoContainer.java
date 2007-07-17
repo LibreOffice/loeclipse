@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -108,7 +108,7 @@ public class OOoContainer {
 	 * Returns the ooos elements in an array
 	 */
 	public static Object[] toArray(){
-		Vector vElements = toVector();
+		Vector<IOOo> vElements = toVector();
 		Object[] elements = vElements.toArray();
 		
 		vElements.clear();
@@ -311,11 +311,11 @@ public class OOoContainer {
 	public static void saveOOos(){
 		
 		// Saving the new OOos 
-		Vector vElements = toVector();
+		Vector<IOOo> vElements = toVector();
 		IOOo[] ooos = new IOOo[getOOoCount()];
 		
 		for (int i=0, length=getOOoCount(); i<length; i++){
-			ooos[i] = (IOOo)vElements.get(i);
+			ooos[i] = vElements.get(i);
 		}
 		
 		// clean vector

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizard.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -52,21 +52,23 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
-import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 public class NewServiceWizard extends BasicNewResourceWizard implements INewWizard {
 
-	private NewServiceWizardPage mPage;
 	private IWorkbenchPage mActivePage;
+	
+	private ServiceWizardSet wizardSet;
 	
 	public NewServiceWizard() {
 		super();
@@ -87,12 +89,9 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 						IStatus.OK, "", null); //$NON-NLS-1$
 				try {
-					IUnoidlProject prj = mPage.mUnoProject;
-					UnoFactoryData data = mPage.fillData(new UnoFactoryData());
-					UnoFactory.createService(data, prj, mActivePage, monitor);
-				
-					// Releasing the data informations
-					data.dispose();
+
+					wizardSet.doFinish(monitor, mActivePage);
+					
 				} catch (Exception e) {
 					 status = new Status(IStatus.CANCEL,
 								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
@@ -111,6 +110,26 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 		return true;
 	}
 
+	@Override
+	public IWizardPage getNextPage(IWizardPage page) {
+		IWizardPage next = null;
+		try {
+			next = wizardSet.getNextPage(page);
+		} catch (NoSuchPageException e) { }
+		
+		return next;
+	}
+	
+	@Override
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		IWizardPage previous = null;
+		try {
+			previous = wizardSet.getPreviousPage(page);
+		} catch (NoSuchPageException e) { }
+		
+		return previous;
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
@@ -137,9 +156,27 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 					UnoidlProject unoProject = (UnoidlProject)project.getNature(
 							OOEclipsePlugin.UNO_NATURE_ID);
 					
-					mPage = new NewServiceWizardPage("newservice", unoProject); //$NON-NLS-1$
+					wizardSet = new ServiceWizardSet(this);
 					
-					addPage(mPage);
+					IWizardPage[] pages = wizardSet.getPages();
+					for (IWizardPage wizardPage : pages) {
+						addPage(wizardPage);
+					}
+					
+					// initializes the wizard
+					UnoFactoryData data = new UnoFactoryData();
+					data.setProperty(IUnoFactoryConstants.PROJECT_NAME, unoProject.getName());
+					data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, unoProject.getCompanyPrefix());
+					data.setProperty(IUnoFactoryConstants.PROJECT_OOO, unoProject.getOOo());
+					
+					UnoFactoryData serviceData = new UnoFactoryData();
+					serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
+					serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, "MyService");
+					
+					data.addInnerData(serviceData);
+					
+					wizardSet.initialize(data);
+					
 				}
 			} catch (CoreException e){
 				PluginLogger.debug(e.getMessage());

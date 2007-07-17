@@ -4,7 +4,7 @@
  *
  * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
@@ -56,6 +56,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * This class corresponds to the table of interface inheritances. The add

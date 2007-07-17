@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CellEditor;
@@ -82,6 +82,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.TypeRow;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Defines an interface member creation or edition dialog. To get the computed

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,9 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
+
+import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
@@ -59,6 +61,9 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
+import org.openoffice.ide.eclipse.core.wizards.utils.IListenablePage;
+import org.openoffice.ide.eclipse.core.wizards.utils.IPageListener;
 
 /**
  * Astract class for a wizard page to create a scoped element
@@ -68,10 +73,11 @@ import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
  *
  */
 public abstract class NewScopedElementWizardPage extends WizardPage
-												 implements IFieldChangedListener{
+								implements IFieldChangedListener, IListenablePage {
 
-	protected IUnoidlProject mUnoProject;
+	private IUnoidlProject mUnoProject;
 	private String mRootName;
+	private String mSubpackageName;
 	private String mElementName;
 	
 	/**
@@ -154,8 +160,16 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		setDescription(getDescription());
 		setImageDescriptor(getImageDescriptor());
 		
-		mRootName = null != aRootName ? aRootName: ""; //$NON-NLS-1$
-		mElementName = null != aElementName ? aElementName : ""; //$NON-NLS-1$
+		mRootName = (null != aRootName) ? aRootName: ""; //$NON-NLS-1$
+		mElementName = (null != aElementName) ? aElementName : ""; //$NON-NLS-1$
+		mSubpackageName = ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * @return the project which has been set to the page
+	 */
+	public IUnoidlProject getProject() {
+		return mUnoProject;
 	}
 	
 	/**
@@ -203,21 +217,27 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	}
 	
 	/**
-	 * the container name of the type to create is composed of two parts: the
-	 * package root and the package. This method returns the second part.
+	 * @return the root module where to create the UNO type.
 	 */
-	public String getPackage() {
+	public String getPackageRoot() {
 		String packageName = mUnoProject != null ? mUnoProject.getRootModule() : ""; //$NON-NLS-1$
 		
-
 		if (!mRootName.equals("")) { //$NON-NLS-1$
 			if (!packageName.equals("")) { //$NON-NLS-1$
 				packageName += "::"; //$NON-NLS-1$
 			}
-			packageName += mRootName.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
+			packageName = mRootName.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		return packageName;
+	}
+	
+	/**
+	 * @return the module containing the UNO type, separated by "::".
+	 */
+	public String getPackage() {
+		String packageName = getPackageRoot();
 		
-		if (!mPackageRow.getValue().equals("")) { //$NON-NLS-1$
+		if (mPackageRow != null && !mPackageRow.getValue().equals("")) { //$NON-NLS-1$
 			if (!packageName.equals("")) { //$NON-NLS-1$
 				packageName += "::"; //$NON-NLS-1$
 			}
@@ -230,7 +250,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * Get the name of the element to create
 	 */
 	public String getElementName() {
-		return mNameRow.getValue();
+		return (mNameRow != null) ? mNameRow.getValue() : "";
 	}
 	
 	/**
@@ -257,6 +277,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		if (mPackageRow != null) {
 			mPackageRow.setValue(value);
 			mPackageRow.setEnabled(!forced);
+		} else {
+			mSubpackageName = value;
 		}
 	}
 	
@@ -284,7 +306,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 * Returns whether the service is published or not
 	 */
 	public boolean isPublished() {
-		return mPublishedRow.getBooleanValue();
+		return (mPublishedRow != null) ? mPublishedRow.getBooleanValue() : false;
 	}
 	
 	/**
@@ -313,6 +335,34 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		super.dispose();
 	}
 	
+	//---------------------------------------------------------- IListenablePage
+	
+	private Vector<IPageListener> mListeners = new Vector<IPageListener>();
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.IListenablePage#addPageListener(org.openoffice.ide.eclipse.core.wizards.IPageListener)
+	 */
+	public void addPageListener(IPageListener listener) {
+		if (!mListeners.contains(listener))
+			mListeners.add(listener);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.IListenablePage#removePageListener(org.openoffice.ide.eclipse.core.wizards.IPageListener)
+	 */
+	public void removePageListener(IPageListener listener) {
+		if (mListeners.contains(listener))
+				mListeners.remove(listener);
+	}
+	
+	protected void firePageChanged(UnoFactoryData data) {
+		for (int i=0, length=mListeners.size(); i<length; i++) {
+			mListeners.get(i).pageChanged(data);
+		}
+	}
+	
 	//--------------------------------------------------- Page content managment
 	
 	private final static String P_PACKAGE           = "__package"; //$NON-NLS-1$
@@ -338,10 +388,13 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		if (null != mUnoProject) {
 			packageLabel = packageLabel + mUnoProject.getRootModule();
 		}
+		if (mRootName != null) {
+			packageLabel += mRootName;
+		}
 		
 		mPackageRow = new TextRow(body, P_PACKAGE, packageLabel);
 		mPackageRow.setFieldChangedListener(this);
-		mPackageRow.setValue(mRootName);
+		mPackageRow.setValue(mSubpackageName);
 		mPackageRow.setTooltip(Messages.getString("NewScopedElementWizardPage.PackageTooltip")); //$NON-NLS-1$
 		
 		mNameRow = new TextRow(body, P_NAME, getTypeLabel());
@@ -388,6 +441,13 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		return data;
 	}
 	
+	/**
+	 * Creates an empty factory data for the page UNO type
+	 * 
+	 * @return the empty Uno factory data
+	 */
+	public abstract UnoFactoryData getEmptyTypeData();
+	
 	public static UnoFactoryData getTypeData(UnoFactoryData data) {
 		UnoFactoryData typeData = new UnoFactoryData();
 		
@@ -418,36 +478,47 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
 	 */
-	public void fieldChanged(FieldEvent e) {
+	public void fieldChanged(FieldEvent event) {
+		
+		UnoFactoryData typeDelta = null;
+		
 		try {
-			if (e.getProperty().equals(P_PACKAGE)) {
+			if (event.getProperty().equals(P_PACKAGE)) {
 				// Change the label of the package row
 				String text = Messages.getString("NewScopedElementWizardPage.Package")+ mUnoProject.getRootModule(); //$NON-NLS-1$
 				
-				if (null != e.getValue() && !e.getValue().equals("")){ //$NON-NLS-1$
-					text = text + "."; //$NON-NLS-1$
+				if (null != event.getValue() && !event.getValue().equals("")){ //$NON-NLS-1$
+					text = text + "::"; //$NON-NLS-1$
 				}
 				mPackageRow.setLabel(text);
+				typeDelta = getEmptyTypeData();
+				typeDelta.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
 	
-			} else if (e.getProperty().equals(P_NAME)) {
+			} else if (event.getProperty().equals(P_NAME)) {
 				// Test if there is the scoped name already exists
-				boolean exists = UnoTypeProvider.getInstance().
-					contains(e.getValue());
+				boolean exists = UnoTypeProvider.getInstance().contains(event.getValue());
 				if (exists) {
 					setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
 				} else {
 					setErrorMessage(null);
+					typeDelta = getEmptyTypeData();
+					typeDelta.setProperty(IUnoFactoryConstants.TYPE_NAME, event.getValue());
 				}
-				
 			}
-		} catch (NullPointerException ex) {
+		} catch (NullPointerException e) {
 			// Nothing to do... this is sometimes normal
 		}
 		
 	
 		setPageComplete(isPageComplete());
+		if (typeDelta != null) {
+			UnoFactoryData delta = new UnoFactoryData();
+			delta.addInnerData(typeDelta);
+
+			firePageChanged(delta);
+		}
 	}
-	
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
@@ -464,5 +535,22 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Checks whether a type already exists or not.
+	 * 
+	 * @param typeName the name of the type to look for
+	 * @param prj the project in which the type is looked for
+	 * @return <code>true</code> if the project contains an IDL file named from
+	 * 		the given type or the type isn't in the project package. 
+	 * 		<code>false</code> is returned in any other case.
+	 */
+	public static boolean existsType(String typeName, IUnoidlProject prj) {
+		boolean exists = false;
+		
+		// TODO implementation
+		
+		return exists;
 	}
 }

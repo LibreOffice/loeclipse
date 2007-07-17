@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import java.util.Vector;
 
@@ -60,6 +60,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 public class NewInterfaceWizardPage extends NewScopedElementWizardPage 
 									implements ISelectionChangedListener{
@@ -118,7 +119,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 		tableParent.setLayoutData(gd);
 		tableParent.setLayout(new GridLayout(1, false));
 		
-		UnoTypeProvider.getInstance().initialize(mUnoProject, 
+		UnoTypeProvider.getInstance().initialize(getProject(), 
 				IUnoFactoryConstants.INTERFACE);
 		
 		mInterfaceInheritances = new InterfacesTable(tableParent);
@@ -170,6 +171,7 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
+		// TODO if the package root starts with something else than the project prefix
 		setPageComplete(isPageComplete());
 	}
 	
@@ -187,19 +189,21 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 			Vector<String> optionalIntf = new Vector<String>();
 			Vector<String> mandatoryIntf = new Vector<String>();
 			
-			// Separate the optional and mandatory interface inheritances			
-			Vector<ITableElement> lines = mInterfaceInheritances.getLines();
-			for (ITableElement linei : lines) {
-				InterfacesTable.InheritanceLine line = 
-					(InterfacesTable.InheritanceLine)linei;
-				
-				if (line.isOptional()) {
-					optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					mandatoryIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
+			// Separate the optional and mandatory interface inheritances	
+			if (mInterfaceInheritances != null) {
+				Vector<ITableElement> lines = mInterfaceInheritances.getLines();
+				for (ITableElement linei : lines) {
+					InterfacesTable.InheritanceLine line = 
+						(InterfacesTable.InheritanceLine)linei;
+
+					if (line.isOptional()) {
+						optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						mandatoryIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
+				lines.clear();
 			}
-			lines.clear();
 			
 			// Get the mandatory inheritances
 			String[] interfaces = new String[mandatoryIntf.size()];
@@ -217,11 +221,24 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
 			mandatoryIntf.clear();
 			
 			// Get the interface members data
-			UnoFactoryData[] membersData = mMembers.getUnoFactoryData();
-			for (UnoFactoryData member : membersData) {
-				data.addInnerData(member);
+			if (mMembers != null) {
+				UnoFactoryData[] membersData = mMembers.getUnoFactoryData();
+				for (UnoFactoryData member : membersData) {
+					data.addInnerData(member);
+				}
 			}
 		}
 		return data;
+	}
+	
+	@Override
+	public UnoFactoryData getEmptyTypeData() {
+		UnoFactoryData typeData = new UnoFactoryData();
+
+		if (typeData != null) {
+			typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
+					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+		}
+		return typeData;
 	}
 }

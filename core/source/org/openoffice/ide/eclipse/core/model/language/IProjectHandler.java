@@ -2,9 +2,9 @@
  *
  * $RCSfile: IProjectHandler.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -128,7 +128,7 @@ public interface IProjectHandler {
 	 * @return the implementation name
 	 * @throws Exception if anything wrong happens.
 	 */
-	public String getImplementationName(UnoFactoryData data) throws Exception;
+	public String getImplementationName(IUnoidlProject prj, String service) throws Exception;
 
 	/**
  	 * Computes the implementation file path from the implementation name.
@@ -147,4 +147,12 @@ public interface IProjectHandler {
 	 * <code>File</code> class constructor.
 	 */
 	public String getLibraryPath(IUnoidlProject prj);
+	
+	/**
+	 * Adds the necessary code for the registration of several services
+	 * implementation.
+	 * 
+	 * @param prj the project where to add the registration system
+	 */
+	public void createRegistrationSystem(IUnoidlProject prj);
 }

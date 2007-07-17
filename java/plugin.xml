@@ -16,5 +16,9 @@
          point="org.openoffice.ide.eclipse.core.MainProvider">
       <MainProvider class="org.openoffice.ide.eclipse.java.JavaMainProvider"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="org.openoffice.ide.eclipse.java.JavaUnoResourceChangeHandler"/>
+   </extension>
 
 </plugin>

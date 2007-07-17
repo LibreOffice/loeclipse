@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFileWizard.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -50,6 +50,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.openoffice.ide.eclipse.core.wizards.pages.NewUnoFilePage;
 
 /**
  * Wizard for the creation of unoidl file.

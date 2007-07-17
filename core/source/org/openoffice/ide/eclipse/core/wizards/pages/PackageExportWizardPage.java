@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizardPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,9 +41,10 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.gui.UnoProjectProvider;
@@ -55,6 +56,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -87,17 +89,22 @@ public class PackageExportWizardPage extends WizardPage {
 		setDescription(Messages.getString("PackageExportWizardPage.Description")); //$NON-NLS-1$
 		setTitle(Messages.getString("PackageExportWizardPage.Title")); //$NON-NLS-1$
 		
-		if (selection.getFirstElement() instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable)selection.getFirstElement();
-			IResource res = (IResource)adaptable.getAdapter(IResource.class);
+		Iterator iter = selection.iterator();
+		while (mProject == null && iter.hasNext()) {
+			Object o = iter.next();
 			
-			try {
-				String prjName = res.getProject().getName();
-				IUnoidlProject project = ProjectsManager.getProject(prjName);
-				if (project != null) {
-					mProject = project;
+			if (o instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable)o;
+				IResource res = (IResource)adaptable.getAdapter(IResource.class);
+				
+				try {
+					String prjName = res.getProject().getName();
+					IUnoidlProject project = ProjectsManager.getProject(prjName);
+					if (project != null) {
+						mProject = project;
+					}
+				} catch (Exception e) {
 				}
-			} catch (Exception e) {
 			}
 		}
 	}
@@ -107,17 +114,17 @@ public class PackageExportWizardPage extends WizardPage {
 	private FileRow mOutputdirRow;
 	private ChoiceRow mOOoVersion;
 	
-	IUnoidlProject getProject() {
+	public IUnoidlProject getProject() {
 		return mProject;
 	}
 	
-	File getOutputPath() {
+	public File getOutputPath() {
 		IPreferenceStore store = OOEclipsePlugin.getDefault().getPreferenceStore();
 		store.setValue(LAST_EXPORT_DIR, mOutputdirRow.getValue());
 		return new File(mOutputdirRow.getValue());
 	}
 	
-	String getPackageExtension(){
+	public String getPackageExtension(){
 		return mOOoVersion.getValue();
 	}
 	

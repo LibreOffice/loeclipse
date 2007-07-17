@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,21 +58,23 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
+import org.openoffice.ide.eclipse.core.wizards.pages.NewUnoProjectPage;
+import org.openoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 	
 	protected NewUnoProjectPage mMainPage;
 	private LanguageWizardPage mLanguagePage = null;
-	private NewServiceWizardPage mServicePage = null;
-	private NewInterfaceWizardPage mInterfacePage = null;
+	private ServiceWizardSet mServiceSet = null;
 	
-	private boolean mShowInterfacePage = true;
 	private String mServiceIfaceName = null; 
 	
 	private IWorkbenchPage mActivePage;
@@ -96,11 +98,16 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		mMainPage = new NewUnoProjectPage("mainpage"); //$NON-NLS-1$
 		addPage(mMainPage);
 		
-		if (mServiceIfaceName == null || mServiceIfaceName.equals("")) { //$NON-NLS-1$
-			mServicePage = new NewServiceWizardPage("service", null); //$NON-NLS-1$
-			mInterfacePage = new NewInterfaceWizardPage("interface", null); //$NON-NLS-1$
-			addPage(mServicePage);
-			addPage(mInterfacePage);
+		mServiceSet = new ServiceWizardSet(this);
+		IWizardPage[] pages = mServiceSet.getPages();
+		for (IWizardPage wizardPage : pages) {
+			addPage(wizardPage);
+			
+			// All the pages of the service wizard set should be hidden if
+			// the inheritance interface is fixed.
+			if (mServiceIfaceName == null || mServiceIfaceName.equals("")) { //$NON-NLS-1$
+				mServiceSet.setHidden(wizardPage, true);
+			}
 		}
 	}
 	
@@ -150,35 +157,60 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 				data.dispose();
 			}
 		
-			if (mServiceIfaceName == null || mServiceIfaceName.equals("")) { //$NON-NLS-1$
-				// Change the service page
-				mServicePage.setPackageRoot(mMainPage.getPrefix());
-				mServicePage.setPackage("", true); //$NON-NLS-1$
-				mServicePage.setOOoInstance(OOoContainer.getOOo(mMainPage.getOOoName()));
-
-				String serviceName = mMainPage.getProjectName().trim().toLowerCase();
+			try {
+				// Compute the default service name
+				String serviceName = mMainPage.getProjectName().trim();
 				serviceName = serviceName.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				try {
-					String firstLetter = serviceName.substring(0, 1).toUpperCase();
-					serviceName = firstLetter + serviceName.substring(1);
+				String firstLetter = serviceName.substring(0, 1).toUpperCase();
+				serviceName = firstLetter + serviceName.substring(1);
 
-					String ifaceName = mMainPage.getPrefix() + ".X" + serviceName; //$NON-NLS-1$
+				// Compute the default inherited interface name
+				String ifaceName = mMainPage.getPrefix() + ".X" + serviceName; //$NON-NLS-1$
 
-					mServicePage.setName(serviceName, false);
-					mServicePage.setInheritanceName(ifaceName, false);
-
-					mInterfacePage.setPackageRoot(mMainPage.getPrefix());
-					mInterfacePage.setName("X" + serviceName, false); //$NON-NLS-1$
-				} catch (Exception e) {
-					// May be too early in the initialisation
+				if (mServiceIfaceName != null && !mServiceIfaceName.equals("")) { //$NON-NLS-1$
+					// Change the default value if the service inheritance name is fixed
+					ifaceName = mServiceIfaceName;
 				}
-			}
-		} else if (mServicePage.equals(page)) {
-			// Checks if the interface page should be shown
-			if (mServicePage.getInheritanceName().startsWith(mMainPage.getPrefix())) {
-				mShowInterfacePage = true;
-			} else {
-				mShowInterfacePage = false;
+
+				UnoFactoryData data = new UnoFactoryData();
+
+				data.setProperty(IUnoFactoryConstants.PROJECT_OOO, 
+						OOoContainer.getOOo(mMainPage.getOOoName()));
+				data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, mMainPage.getPrefix());
+
+				UnoFactoryData serviceData = new UnoFactoryData();
+				serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
+				serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, serviceName);
+				serviceData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
+						new String[]{ifaceName.replaceAll("\\.", "::")});
+				serviceData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, 
+						mMainPage.getPrefix().replaceAll("\\.", "::"));
+
+				data.addInnerData(serviceData);
+
+				if (mServiceIfaceName != null && !mServiceIfaceName.equals("")) { //$NON-NLS-1$
+					// Change the default value if the service inheritance name is fixed
+					UnoFactoryData ifaceData = new UnoFactoryData();
+					ifaceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.INTERFACE);
+					
+					String[] splitted = mServiceIfaceName.split("::");
+					String packageName = splitted[0];
+					for (int i = 1; i < splitted.length-1; i++) {
+						packageName += "::" + splitted[i];
+					}
+					
+					ifaceData.setProperty(IUnoFactoryConstants.TYPE_NAME, splitted[splitted.length-1]);
+					ifaceData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, packageName);
+					
+					data.addInnerData(ifaceData);
+				}
+				
+				mServiceSet.dataChanged(data);
+
+				data.dispose();
+				data = null;
+			} catch (Exception e) {
+				// Do nothing
 			}
 		}
 	}
@@ -188,25 +220,28 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
-		IWizardPage next = super.getNextPage(page);
-		
-		if (mMainPage.equals(page)) {
-			if (mLanguagePage != null) {
-				next = mLanguagePage;
-			} else {
-				next = mServicePage; // Could be null
-			}
-		} else if (mLanguagePage != null && mLanguagePage.equals(page)) {
-			next = mServicePage;
-		} else if (mServicePage != null && mServicePage.equals(page)) {
-			if (mShowInterfacePage) {
-				next = mInterfacePage;
-			} else {
+		IWizardPage next = null;
+		try {
+			next = mServiceSet.getNextPage(page);
+		} catch (NoSuchPageException e) {
+			// Return the default next page if the page is not in the wizard set. 
+			next = super.getNextPage(page);
+
+			try {
+				if (mMainPage.equals(page)) {
+					if (mLanguagePage != null) {
+						next = mLanguagePage;
+					} else {
+						next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID); // Could be null
+					}
+				} else if (mLanguagePage != null && mLanguagePage.equals(page)) {
+					next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
+				}
+			} catch (Exception ee) {
 				next = null;
 			}
-		} else if (mShowInterfacePage && page.equals(mInterfacePage)) {
-			next = null;
 		}
+		
 		return next;
 	}
 	
@@ -215,17 +250,23 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	 * @see org.eclipse.jface.wizard.Wizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
 	public IWizardPage getPreviousPage(IWizardPage page) {
-		IWizardPage previous = super.getPreviousPage(page);
-		
-		if (page.equals(mLanguagePage)) {
-			previous = mMainPage;
-		} else if (mServicePage != null && mServicePage.equals(page)) {
-			if (mLanguagePage != null) {
-				previous = mLanguagePage;
-			}
-		} else if (page.equals(mInterfacePage)) {
-			previous = mServicePage; // The service page can't be null here 
+		IWizardPage previous = null;
+		try {
+			previous = mServiceSet.getPreviousPage(page);
+		} catch (NoSuchPageException e) {
+			// Return the default previous page if the page is not in the
+			// wizard set. 
+			previous = super.getPreviousPage(page);			
 		}
+
+		// If the page is the service page, the previous page shouldn't be null
+		if (mServiceSet != null) {
+			IWizardPage servicePage = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
+			if (previous == null && page.equals(servicePage)) {
+				previous = (mLanguagePage != null) ? mLanguagePage: mMainPage;
+			}
+		}
+		
 		return previous;
 	}
 	
@@ -238,15 +279,8 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		// First gather the data
 		UnoFactoryData data = new UnoFactoryData();
 		data = mMainPage.fillData(data, true);
-		if (mLanguagePage != null) data = mLanguagePage.fillData(data);
-		if (mServiceIfaceName != null && !mServiceIfaceName.equals("")) { //$NON-NLS-1$
-			data.addInnerData(
-					NewServiceWizardPage.getTypeData(data, mServiceIfaceName));
-		} else {
-			data.addInnerData(mServicePage.fillData(new UnoFactoryData()));
-			if (mShowInterfacePage) {
-				data.addInnerData(mInterfacePage.fillData(new UnoFactoryData()));
-			}
+		if (mLanguagePage != null) {
+			data = mLanguagePage.fillData(data);
 		}
 		
 		new ProjectCreationJob(data).schedule();
@@ -261,7 +295,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 	public IWorkbench getWorkbench() {
 		return OOEclipsePlugin.getDefault().getWorkbench();
 	}
-	
+
 	private class ProjectCreationJob extends Job {
 		
 		private UnoFactoryData mData;
@@ -269,7 +303,6 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 		public ProjectCreationJob(UnoFactoryData data) {
 			super(Messages.getString("NewUnoProjectWizard.JobName")); //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
-			
 			mData = data;
 		}
 
@@ -281,9 +314,14 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 			
 			// Create the projet folder structure
 			try {
-				UnoFactory.createProject(mData, mActivePage, monitor);
-			} catch (Exception e) {
+				IUnoidlProject prj = UnoFactory.createProject(mData, mActivePage, monitor);
 				
+				mServiceSet.mProject = prj; 
+				mServiceSet.doFinish(monitor, mActivePage);
+				
+				UnoidlProjectHelper.setProjectBuilders(prj);
+				
+			} catch (Exception e) {
 				Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
 				if (o instanceof IProject) {
 					rollback((IProject)o);

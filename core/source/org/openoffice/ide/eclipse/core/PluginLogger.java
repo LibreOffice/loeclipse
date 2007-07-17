@@ -50,13 +50,20 @@ public class PluginLogger {
 	 * Logs a warning message
 	 */
     public static void warning(String message) {
+    	warning(message, null);
+    }
+    
+    /**
+	 * Logs a warning message caused by an exception
+	 */
+    public static void warning(String message, Throwable e) {
     	if (!sLevel.equals(ERROR)) {
     		OOEclipsePlugin.getDefault().getLog().log(new Status(
     				Status.WARNING, 
     				OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
     				Status.WARNING,
     				message,
-    				null));
+    				e));
     	}
     }
     

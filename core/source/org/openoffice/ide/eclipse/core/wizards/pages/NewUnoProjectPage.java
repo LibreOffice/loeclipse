@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
@@ -91,6 +91,8 @@ import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
+import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
 /**
  * Uses the default Project wizard page and add some UNO-IDL special
@@ -442,9 +444,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		if (null != mSdkRow){
 			// Adding the SDK names to the combo box 
 			String[] sdks = new String[SDKContainer.getSDKCount()];
-			Vector sdkKeys = SDKContainer.getSDKKeys();
+			Vector<String> sdkKeys = SDKContainer.getSDKKeys();
 			for (int i=0, length=SDKContainer.getSDKCount(); i<length; i++){
-				sdks[i] = (String)sdkKeys.get(i);
+				sdks[i] = sdkKeys.get(i);
 			}
 			
 			mSdkRow.removeAll();
@@ -459,9 +461,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 			
 			// Adding the OOo names to the combo box 
 			String[] ooos = new String[OOoContainer.getOOoCount()];
-			Vector oooKeys = OOoContainer.getOOoKeys();
+			Vector<String> oooKeys = OOoContainer.getOOoKeys();
 			for (int i=0, length=OOoContainer.getOOoCount(); i<length; i++){
-				ooos[i] = (String)oooKeys.get(i);
+				ooos[i] = oooKeys.get(i);
 			}
 			
 			mOOoRow.removeAll();
@@ -606,9 +608,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 				} catch (Exception e) { }
 			}
 			
+
 			data.setProperty(IUnoFactoryConstants.PROJECT_PATH, getLocationPath());
 			data.setProperty(IUnoFactoryConstants.PROJECT_NAME, getProjectName());
-			
+
 			data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, getPrefix());
 			data.setProperty(IUnoFactoryConstants.PROJECT_COMP, getOutputExt());
 			data.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());

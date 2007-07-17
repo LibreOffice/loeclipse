@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFilePage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:53 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -61,6 +61,7 @@ import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 import org.openoffice.ide.eclipse.core.model.CompositeFactory;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 public class NewUnoFilePage extends WizardNewFileCreationPage {
 	

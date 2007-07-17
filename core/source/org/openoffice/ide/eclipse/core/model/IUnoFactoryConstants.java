@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoFactoryConstants.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -119,7 +119,8 @@ public interface IUnoFactoryConstants {
 	public final static String TYPE_PUBLISHED = "type_published"; //$NON-NLS-1$
 	
 	/**
-	 * The object is an <code>Integer</code>
+	 * The object defines which UNO type the data is describing: a module, 
+	 * an interface, a service...
 	 */
 	public final static String TYPE_NATURE = "type_nature"; //$NON-NLS-1$
 	

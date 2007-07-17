@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizard.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -66,6 +66,7 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
 
 /**
  * Interface creation wizard. This class uses a {@link NewInterfaceWizardPage}
@@ -104,7 +105,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
 						OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
 						IStatus.OK, "", null); //$NON-NLS-1$
 				try {
-					IUnoidlProject prj = mPage.mUnoProject;
+					IUnoidlProject prj = mPage.getProject();
 					UnoFactory.createInterface(data, prj, mActivePage, monitor);
 				
 					// Releasing the data informations

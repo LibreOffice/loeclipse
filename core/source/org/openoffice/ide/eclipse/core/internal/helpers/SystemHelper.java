@@ -2,9 +2,9 @@
  *
  * $RCSfile: SystemHelper.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:23 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,8 +47,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.PluginLogger;
@@ -120,13 +120,13 @@ public class SystemHelper {
 	 * @return the system environement variables
 	 */
 	public static String[] getSystemEnvironement() {
-		Set envSet = System.getenv().entrySet();
+		Set<Entry<String, String>> envSet = System.getenv().entrySet();
 		String[] sysEnv = new String[envSet.size()];
-		Iterator iter = envSet.iterator();
+		Iterator<Entry<String, String>> iter = envSet.iterator();
 		int i = 0;
 		while (iter.hasNext())  {
-			Map.Entry entry = (Map.Entry)iter.next();
-			sysEnv[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
+			Entry<String, String> entry = iter.next();
+			sysEnv[i] = entry.getKey() + "=" + entry.getValue(); //$NON-NLS-1$
 			i++;
 		}
 		return sysEnv;

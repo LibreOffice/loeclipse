@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypesGetter.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -73,8 +73,8 @@ import com.sun.star.uno.XComponentContext;
 public class UnoTypesGetter implements XMain {
 
 	private String mRoot;
-	private Vector mLocalRegistries;
-    private Vector mExternalRegistries;
+	private Vector<String> mLocalRegistries;
+    private Vector<String> mExternalRegistries;
 	private int mTypesMask = 1023;
 	private TypeClass[] mTypeClasses;
 	
@@ -187,7 +187,7 @@ public class UnoTypesGetter implements XMain {
 			if ((localRegistries.size() + externalRegistries.size()) > 0) {
                 initialize(localRegistries, externalRegistries, root, mTypesMask);
 
-                Vector unoTypes = queryTypes();
+                Vector<InternalUnoType> unoTypes = queryTypes();
                 printTypes(unoTypes);
                 
                 unoTypes.clear();
@@ -208,8 +208,9 @@ public class UnoTypesGetter implements XMain {
     /**
      * Method called to initialize the types getter with the correct parameters
      */
-    public void initialize (Vector aLocalRegistries, Vector aExternalRegistries, 
-                    String aRoot, int aTypesMask) {
+    public void initialize (Vector<String> aLocalRegistries, 
+    		Vector<String> aExternalRegistries, 
+            String aRoot, int aTypesMask) {
 		
 	    mLocalRegistries = aLocalRegistries;
         mExternalRegistries = aExternalRegistries;
@@ -237,12 +238,12 @@ public class UnoTypesGetter implements XMain {
         Vector<InternalUnoType> results = new Vector<InternalUnoType>();
 		
         for (int i=0, length=mLocalRegistries.size(); i<length; i++)	{
-            String registryPath = (String)mLocalRegistries.get(i);
+            String registryPath = mLocalRegistries.get(i);
             results.addAll(getTypesFromRegistry(registryPath, true));
         }
 
         for (int i=0, length=mExternalRegistries.size(); i<length; i++) {
-            String registryPath = (String)mExternalRegistries.get(i);
+            String registryPath = mExternalRegistries.get(i);
             results.addAll(getTypesFromRegistry(registryPath, true));
         }
 
@@ -426,9 +427,9 @@ public class UnoTypesGetter implements XMain {
      *
      * @param unoTypes vector of InternalUnoTypes to print
      */
-	private void printTypes(Vector unoTypes) {
+	private void printTypes(Vector<InternalUnoType> unoTypes) {
 	    for (int i=0, length=unoTypes.size(); i<length; i++) {
-            InternalUnoType type = (InternalUnoType)unoTypes.get(i);
+            InternalUnoType type = unoTypes.get(i);
 
             System.out.println(type.toString());
         }

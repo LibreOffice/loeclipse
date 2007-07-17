@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -62,6 +62,7 @@ import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
@@ -79,32 +80,16 @@ public final class UnoFactory {
 	 * intial types and generates the basic implementation. 
 	 * 
 	 * @param data the project description
+	 * @return the created UNO project
 	 */
-	public static void createProject(UnoFactoryData data, IWorkbenchPage page,
+	public static IUnoidlProject createProject(UnoFactoryData data, IWorkbenchPage page,
 			IProgressMonitor monitor) throws Exception {
 		
 		IUnoidlProject prj = UnoidlProjectHelper.createStructure(data, monitor);
 		
-		// Create the inner types
-		UnoFactoryData[] inners = data.getInnerData();
-		for (int i=0; i<inners.length; i++) {
-			UnoFactoryData inner = inners[i];
-			Integer type = (Integer)inner.getProperty(IUnoFactoryConstants.TYPE_NATURE);
-			switch (type.intValue()) {
-				// TODO This switch has to be extended to support other types
-				case IUnoFactoryConstants.SERVICE:
-					createService(inner, prj, page, monitor, false);
-					break;
-				case IUnoFactoryConstants.INTERFACE:
-					createInterface(inner, prj, page, monitor, false);
-					break;
-			}
-		}
-		
 		// Creates an empty package.properties file
 		prj.getFile("package.properties").getLocation().toFile().createNewFile(); // $NON-NLS-1$ //$NON-NLS-1$
-		
-		
+			
 		UnoidlProjectHelper.refreshProject(prj, null);
 		UnoidlProjectHelper.forceBuild(prj, monitor);
 		
@@ -113,29 +98,47 @@ public final class UnoFactory {
 				IUnoFactoryConstants.PROJECT_LANGUAGE);
 		language.getProjectHandler().configureProject(data);
 		
-		// generate the implementation skeleton
-		makeSkeleton(data, prj, page, monitor);
+		language.getProjectHandler().createRegistrationSystem(prj);
 		
-		UnoidlProjectHelper.setProjectBuilders(prj);
+		return prj;
 	}
 	
 	/**
-	 * Creates a new component implementation skeleton from the project factory 
-	 * data and opens the generated file. This method executes the 
-	 * uno-skeletonmaker.
+	 * Creates a new component implementation skeleton.
+	 * 
+	 * <p>Creates a new component implementation skeleton from the project 
+	 * factory data and opens the generated file. This method executes the 
+	 * uno-skeletonmaker command line tool.</p>
+	 * 
+	 * <p>The data should contain at least the following properties:
+	 * <ul>
+	 * 	<li>The projet language in {@link IUnoFactoryConstants#PROJECT_LANGUAGE}</li>
+	 * 	<li>The projet name in {@link IUnoFactoryConstants#PROJECT_NAME}</li>
+	 * 	<li>One service inner data defined by:
+	 * 	<ul>
+	 * 		<li>The service name in {@link IUnoFactoryConstants#TYPE_NAME}</li>
+	 * 		<li>The service module in {@link IUnoFactoryConstants#PACKAGE_NAME}</li>
+	 * 	</ul>
+	 *	</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param data the project data for which to create the component 
 	 * 			implementation skeleton. 
 	 * @param prj the project instance
 	 * @param activePage the page in which to open the created file 
 	 * @param monitor the progress monitor to report the operation progress
+	 * 
 	 * @throws Exception is thrown if anything wrong happens
 	 */
-	public static void makeSkeleton(UnoFactoryData data, IUnoidlProject prj, 
+	public static void makeSkeleton(UnoFactoryData data, 
 			IWorkbenchPage activePage, IProgressMonitor monitor) throws Exception {
 		
-		IProjectHandler langProjectHandler = ((ILanguage)data.getProperty(
-				IUnoFactoryConstants.PROJECT_LANGUAGE)).getProjectHandler();
+		String prjName = (String)data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+		IUnoidlProject prj = ProjectsManager.getProject(prjName);
+		
+		ILanguage lang = (ILanguage)data.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
+		IProjectHandler langProjectHandler = lang.getProjectHandler();
 		String languageOption = langProjectHandler.getSkeletonMakerLanguage(data);
 		
 		if (languageOption != null) {
@@ -153,23 +156,27 @@ public final class UnoFactory {
 			String unorc = "-env:BOOTSTRAPINI=\"" + prj.getOOo().getUnorcPath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
 			UnoFactoryData[] inner =  data.getInnerData();
-			String types = " "; //$NON-NLS-1$
-			for (int i=0; i<inner.length; i++) {
-				try {
-					int type = ((Integer)inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
-					if (type == IUnoFactoryConstants.SERVICE) {
-						String name = (String)inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
-						String module = (String)inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+			String service = ""; //$NON-NLS-1$
+			int i = 0;
+			
+			while (i < inner.length && service.equals("")) {
+				
+				int typeNature = ((Integer)inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
+				if (typeNature == IUnoFactoryConstants.SERVICE) {
+					String name = (String)inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
+					String module = (String)inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
 
-						String fullname = module + "::" + name; //$NON-NLS-1$
-						fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
+					String fullname = module + "::" + name; //$NON-NLS-1$
+					fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
-						types += " -t " + fullname; // $NON-NLS-1$ //$NON-NLS-1$
-					}
-				} finally {}
+					service = fullname; //$NON-NLS-1$
+				}
+
+				i++;
 			}
 			
-			String implementationName = langProjectHandler.getImplementationName(data);
+			String implementationName = langProjectHandler.getImplementationName(prj, service);
+			
 			
 			String command = "uno-skeletonmaker" +    //$NON-NLS-1$
 			" " + unorc +  //$NON-NLS-1$
@@ -177,7 +184,7 @@ public final class UnoFactory {
 			" -o ./" + prj.getSourcePath().toOSString() +  // Works even on windows //$NON-NLS-1$
 			" " + typesReg + //$NON-NLS-1$
 			" -n " + implementationName + //$NON-NLS-1$
-			types;
+			" -t " + service; //$NON-NLS-1$
 
 			Process process = prj.getSdk().runTool(prj, command, monitor);
 	
@@ -198,7 +205,7 @@ public final class UnoFactory {
 						PluginLogger.error(error);
 					else
 						PluginLogger.info(Messages.getString("UnoFactory.SkeletonGeneratedMessage") +  //$NON-NLS-1$
-								langProjectHandler.getImplementationName(data));
+								implementationName);
 				} catch (java.io.IOException e) { }
 			}
 			
@@ -216,6 +223,20 @@ public final class UnoFactory {
 	/**
 	 * Creates a service from its factory data and opens the created file.
 	 * 
+	 * <p>The data needed to create the service needs to be structured in the
+	 * following way:
+	 * 	<ul>
+	 * 		<li>{@link IUnoFactoryConstants#PACKAGE_NAME} the full name of the 
+	 * 			module containing the service.</li>
+	 * 		<li>{@link IUnoFactoryConstants#TYPE_NAME} the service name.</li>
+	 * 		<li> {@link IUnoFactoryConstants#INHERITED_INTERFACES} the list
+	 * 			of the inherited interfaces of the service as an array of 
+	 * 			strings.</li>
+	 * 		<li>{@link IUnoFactoryConstants#TYPE_PUBLISHED} a boolean indicating
+	 * 			whether the type is marked as published or not.</li>
+	 * 	</ul>
+	 * </p>
+	 * 
 	 * @param data the data describing the service
 	 * @param prj the uno project that will contain the service
 	 * @param activePage the page in which to open the created file
@@ -228,8 +249,24 @@ public final class UnoFactory {
 	}
 	
 	/**
-	 * Creates a service from its factory data. The created file can be opened
-	 * if <code>openFile</code> is set to <code>true</code>.
+	 * Creates a service from its factory data. 
+	 * 
+	 * <p>The data needed to create the service needs to be structured in the
+	 * following way:
+	 * 	<ul>
+	 * 		<li>{@link IUnoFactoryConstants#PACKAGE_NAME} the full name of the 
+	 * 			module containing the service.</li>
+	 * 		<li>{@link IUnoFactoryConstants#TYPE_NAME} the service name.</li>
+	 * 		<li> {@link IUnoFactoryConstants#INHERITED_INTERFACES} the list
+	 * 			of the inherited interfaces of the service as an array of 
+	 * 			strings.</li>
+	 * 		<li>{@link IUnoFactoryConstants#TYPE_PUBLISHED} a boolean indicating
+	 * 			whether the type is marked as published or not.</li>
+	 * 	</ul>
+	 * </p>
+	 * 
+	 * <p>The created file can be opened if <code>openFile</code> is set to 
+	 * <code>true</code>.</p>
 	 * 
 	 * @param data the data describing the service
 	 * @param prj the uno project that will contain the service

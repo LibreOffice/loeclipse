@@ -107,53 +107,77 @@ public interface IUnoidlProject {
 	public void setCompanyPrefix(String prefix);
 	
 	/**
+	 * Returns the company prefix used in the idl modules and implementation 
+	 * trees. For example, it could be <code>org.openoffice</code> for any code
+	 * created by the OpenOffice.org community. 
+	 * 
+	 * @return the company prefix
+	 */
+	public String getCompanyPrefix();
+	
+	/**
 	 * Sets the output extension
 	 * 
 	 * @param outputExt new output extension to set
 	 */
 	public void setOutputExtension(String outputExt);
 	
+	/**
+	 * Returns the package or namespace name used for the implementation. If
+	 * the company prefix is <code>org.openoffice</code> and the output extension
+	 * is <code>comp</code>, then the implementation namespace will be:
+	 * <code>org.openoffice.comp</code>
+	 *  
+	 * @return the implementation namespace
+	 */
+	public String getOutputExtension();
+	
 	//------------------------------------------------------------ Path getters
 
 	/**
-	 * Returns the path to the project directory containing the temporary
-	 * build files.
+	 * @return the path to the project directory containing the temporary
+	 * build files. This path is relative to the project folder.
 	 */
 	public IPath getBuildPath();
 	
 	/**
-	 * Returns the path to the project directory containing the idl files.
+	 * @return the path to the project directory containing the idl files.
+	 * This path is relative to the project folder.
 	 */
 	public IPath getIdlPath();
 	
 	/**
-	 * Returns the path to the project implementation directory
+	 * @return the path to the project implementation directory. This path is
+	 * relative to the project folder.
 	 */
 	public IPath getImplementationPath();
 	
 	/**
-	 * Returns the full path to the project 
+	 * @return the full path to the project 
 	 */
 	public IPath getProjectPath();
 	
 	/**
-	 * @return the path to the sources directory: that is "source".
+	 * @return the path to the sources directory: that is "source". This path is
+	 * relative to the project folder.
 	 */
 	public IPath getSourcePath();
 	
 	/**
-	 * @return the path to the project <code>types.rdb</code> file.
+	 * @return the path to the project <code>types.rdb</code> file. This path is
+	 * relative to the project folder.
 	 */
 	public IPath getTypesPath();
 	
 	/**
-	 * @return the path to the project <code>services.rdb</code> file.
+	 * @return the path to the project <code>services.rdb</code> file. This path
+	 * is relative to the project folder.
 	 */
 	public IPath getServicesPath();
 	
 	/**
 	 * @return the path to the project directory containing the generated 
-	 * urd files.
+	 * urd files. This path is relative to the project folder.
 	 */
 	public IPath getUrdPath();
 	

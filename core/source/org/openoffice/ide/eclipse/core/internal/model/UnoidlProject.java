@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:03 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -297,28 +297,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 */
 	public void setOOo(IOOo ooo) {
 		
-		if (null != ooo && null != getSdk()){
-			try {
-				getProject().deleteMarkers(IMarker.PROBLEM, true,
-					IResource.DEPTH_INFINITE);
-			} catch (CoreException e) {
-				PluginLogger.error(
-					Messages.getString("UnoidlProject.RemoveMarkerError"), e); //$NON-NLS-1$
-			}
-		} else if (null == ooo && null != getSdk()){
-			// Toggle ooo error marker if it doesn't exist
-			IProject prjRes = getProject();
-			try {
-				IMarker marker = prjRes.createMarker(IMarker.PROBLEM);
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-				marker.setAttribute(IMarker.MESSAGE, 
-					Messages.getString("UnoidlProject.NoOOoSdkError")); //$NON-NLS-1$
-			} catch (CoreException e){
-				PluginLogger.error(
-					Messages.getString("UnoidlProject.CreateMarkerError") +  //$NON-NLS-1$
-								getProjectPath().toString(), e);
-			}
-		}
+		setErrorMarker(null == ooo || null == getSdk());
 		
 		this.mOOo = ooo;
 		try {
@@ -329,6 +308,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		} catch (CoreException e) {
 			PluginLogger.error(
 				Messages.getString("UnoidlProject.SetOOoError")+getName(), e); //$NON-NLS-1$
+		} catch (NullPointerException e) {
+			// Nothing to log here
 		}
 	}
 	
@@ -338,29 +319,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 */
 	public void setSdk(ISdk sdk) {
 		
-		if (sdk != null && null != getOOo()) {
-			try {
-				getProject().deleteMarkers(IMarker.PROBLEM, true,
-						IResource.DEPTH_INFINITE);
-			} catch (CoreException e) {
-				PluginLogger.error(
-					Messages.getString("UnoidlProject.RemoveMarkerError"), e); //$NON-NLS-1$
-			}
-		} else if (null == sdk && null != getOOo()) {
-			// Toggle error marker if SDK doesn't exist
-			IProject prjRes = getProject();
-			try {
-				IMarker marker = prjRes.createMarker(IMarker.PROBLEM);
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-				marker.setAttribute(IMarker.MESSAGE, 
-					Messages.getString("UnoidlProject.NoOOoSdkError")); //$NON-NLS-1$
-			} catch (CoreException e){
-				PluginLogger.error(
-					Messages.getString("UnoidlProject.CreateMarkerError") +  //$NON-NLS-1$
-							getProjectPath().toString(), e);
-			}
-		}
-		
+		setErrorMarker(sdk == null || null == getOOo());
+			
 		this.mSdk = sdk;
 		try {
 			getProject().setPersistentProperty(
@@ -370,6 +330,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		} catch (CoreException e) {
 			PluginLogger.error(
 				Messages.getString("UnoidlProject.SetSdkError")+getName(), e); //$NON-NLS-1$
+		} catch (NullPointerException e) {
+			// Nothing to log here
 		}
 	}
 	
@@ -452,6 +414,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	}
 	
 	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#getCompanyPrefix()
+	 */
+	public String getCompanyPrefix() {
+		return mCompanyPrefix;
+	}
+	
+	/*
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setOutputExtension(java.lang.String)
 	 */
@@ -466,6 +436,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 			PluginLogger.error(
 				Messages.getString("UnoidlProject.SetOutputError")+getName(), e); //$NON-NLS-1$
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#getOutputExtension()
+	 */
+	public String getOutputExtension() {
+		return mOutputExtension;
 	}
 	
 	/*
@@ -580,11 +558,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		// Load all the persistent properties into the members
 		String sdkKey = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, SDK_NAME));
-		mSdk = SDKContainer.getSDK(sdkKey);
+		setSdk(SDKContainer.getSDK(sdkKey));
 		
 		String oooKey = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OOO_NAME));
-		mOOo = OOoContainer.getOOo(oooKey);
+		setOOo(OOoContainer.getOOo(oooKey));
 		
 		String idllocation = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IDL_LOCATION));
@@ -597,8 +575,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		String languageName = getProject().getPersistentProperty(new QualifiedName(
 				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, LANGUAGE));
 		setLanguage(LanguagesHelper.getLanguageFromName(languageName));
-		
-		setBuilders();
 	}
 	
 	/*
@@ -661,5 +637,31 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	public String toString() {
 		return "UNO Project " + getName(); //$NON-NLS-1$
+	}
+	
+	private void setErrorMarker(boolean set) {
+		
+		IProject prjRes = getProject();
+		
+		try {
+			if (set) {
+				IMarker marker = prjRes.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				marker.setAttribute(IMarker.MESSAGE, 
+					Messages.getString("UnoidlProject.NoOOoSdkError")); //$NON-NLS-1$
+			} else {
+				prjRes.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+			}
+		} catch (CoreException e) {
+			if (set) {
+				PluginLogger.error(
+						Messages.getString("UnoidlProject.CreateMarkerError") +  //$NON-NLS-1$
+									getProjectPath().toString(), e);
+			} else {
+				PluginLogger.error(
+						Messages.getString("UnoidlProject.RemoveMarkerError"), e); //$NON-NLS-1$
+			}
+		}
+		
 	}
 }

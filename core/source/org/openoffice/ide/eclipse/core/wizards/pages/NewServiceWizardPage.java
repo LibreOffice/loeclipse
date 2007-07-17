@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.wizards;
+package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
@@ -52,6 +52,7 @@ import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Service creation wizard page. This page is based on the 
@@ -93,13 +94,25 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	public int getProvidedTypes() {
 		return IUnoFactoryConstants.INTERFACE;
 	}
-
-	//-------------------------------------------------- Page content managment
+	
+	//--------------------------------------------------- Page content managment
 	
 	private final static String P_IFACE_INHERITANCE = "__iface_inheritance"; //$NON-NLS-1$
 	
 	private TypeRow mIfaceInheritanceRow;
-	private boolean mCreated = false;
+	private String mInheritedInterface;
+	
+	/**
+	 * Variable indicating that the inherited interface field value is being 
+	 * changed by the page API. 
+	 */
+	private boolean mChanging = false;
+	
+	/**
+	 * Variable indicating that the inherited interface has been changed by the
+	 * user since the last definition using the page API.
+	 */
+	private boolean mInheritanceChanged = false;
 	
 	/*
 	 *  (non-Javadoc)
@@ -111,9 +124,11 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 				P_IFACE_INHERITANCE, 
 				Messages.getString("NewServiceWizardPage.InheritedInterface"), //$NON-NLS-1$
 				IUnoFactoryConstants.INTERFACE);
+		if (mInheritedInterface != null) {
+			mIfaceInheritanceRow.setValue(mInheritedInterface);
+		}
 		mIfaceInheritanceRow.setFieldChangedListener(this);
 		mIfaceInheritanceRow.setTooltip(Messages.getString("NewServiceWizardPage.InheritanceTooltip")); //$NON-NLS-1$
-		mCreated = true;
 	}
 	
 	/*
@@ -156,29 +171,55 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 	public void fieldChanged(FieldEvent e) {
 		super.fieldChanged(e);
 		
-		if (mCreated) {
-			if (getWizard() instanceof NewUnoProjectWizard) {
-				((NewUnoProjectWizard)getWizard()).pageChanged(this);
-			}
+		if (e.getProperty().equals(P_IFACE_INHERITANCE) && !mChanging) {
+			mInheritanceChanged = true;
 		}
 	}
 	
 	/**
 	 * Gets the name of the exported interface
+	 * 
+	 * @return the fully qualified name of the exported interface separated with "::"  
 	 */
 	public String getInheritanceName() {
-		return mIfaceInheritanceRow.getValue();
+		return (mIfaceInheritanceRow != null) ? mIfaceInheritanceRow.getValue() : "";
 	}
 	
 	/**
-	 * Sets the name of the exported interface
+	 * Sets the name of the exported interface.
+	 * 
+	 * <p>Use thie method to impose the service to implement a particular
+	 * interface. This is the case for an URE application.</p>
+	 * 
+	 * @param value the interface fully qualified name
+	 * @param forced disables the field if <code>true</code>
 	 */
 	public void setInheritanceName(String value, boolean forced) {
 		
-		if (value.matches("([a-zA-Z][a-zA-Z0-9]*)(.[a-zA-Z][a-zA-Z0-9]*)*")) { //$NON-NLS-1$
-			mIfaceInheritanceRow.setValue(value);
-			mIfaceInheritanceRow.setEnabled(!forced);
+		if (value.matches("([a-zA-Z][a-zA-Z0-9]*)(::[a-zA-Z][a-zA-Z0-9]*)*")) { //$NON-NLS-1$
+			
+			if (mIfaceInheritanceRow != null) {
+				mChanging = true;
+				
+				mIfaceInheritanceRow.setValue(value);
+				mIfaceInheritanceRow.setEnabled(!forced);
+				mInheritanceChanged = false;
+				
+				mChanging = false;
+			} else {
+				mInheritedInterface = value;
+			}
 		}
+	}
+	
+	/**
+	 * Tells whether the user has changed the exported interface since it has last
+	 * been set using the APIs.
+	 * 
+	 * @return <code>true</code> is the has changed the exported interface.
+	 */
+	public boolean isInheritanceChanged() {
+		return mInheritanceChanged;
 	}
 	
 	/**
@@ -199,15 +240,16 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
 		return data;
 	}
 	
-	public static UnoFactoryData getTypeData(UnoFactoryData data, 
-			String mServiceIfaceName) {
-		UnoFactoryData typeData = NewScopedElementWizardPage.getTypeData(data);
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.wizards.pages.NewScopedElementWizardPage#getEmptyTypeData()
+	 */
+	public UnoFactoryData getEmptyTypeData() {
+		UnoFactoryData typeData = new UnoFactoryData();
 		
 		if (typeData != null) {
 			typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
 					Integer.valueOf(IUnoFactoryConstants.SERVICE));
-			typeData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
-					new String[]{mServiceIfaceName});
 		}
 		return typeData;
 	}

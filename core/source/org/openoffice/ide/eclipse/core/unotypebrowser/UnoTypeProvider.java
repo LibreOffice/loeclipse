@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -210,9 +210,9 @@ public class UnoTypeProvider {
 		scopedName = scopedName.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (isInitialized()) {
-			Iterator iter = mInternalTypes.iterator();
+			Iterator<InternalUnoType> iter = mInternalTypes.iterator();
 			while (iter.hasNext() && !result) {
-				InternalUnoType type = (InternalUnoType)iter.next();
+				InternalUnoType type = iter.next();
 				if (type.getFullName().equals(scopedName)) {
 					result = true;
 				}
@@ -399,11 +399,11 @@ public class UnoTypeProvider {
 	 */
 	public InternalUnoType getType(String typePath) {
 		
-		Iterator iter = mInternalTypes.iterator();
+		Iterator<InternalUnoType> iter = mInternalTypes.iterator();
 		InternalUnoType result = null;
 		
 		while (null == result && iter.hasNext()) {
-			InternalUnoType type = (InternalUnoType)iter.next();
+			InternalUnoType type = iter.next();
 			if (type.getFullName().equals(typePath)) {
 				result = type;
 			}

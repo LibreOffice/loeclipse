@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/06 18:26:56 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -175,6 +175,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 				unoprj.getRootModule(), monitor);
 		
 		prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		sBuildState = -1;
 		
 	}
 	

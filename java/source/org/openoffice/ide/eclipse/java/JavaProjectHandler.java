@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaProjectHandler.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:00:31 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -46,7 +46,6 @@ package org.openoffice.ide.eclipse.java;
 import java.io.File;
 import java.util.Vector;
 
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -68,6 +67,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
 
 public class JavaProjectHandler implements IProjectHandler {
 
@@ -115,7 +115,7 @@ public class JavaProjectHandler implements IProjectHandler {
 		
 		if (null != ooo){
 			// Find the jars in the first level of the directory
-			Vector jarPaths = findJarsFromPath(ooo);
+			Vector<Path> jarPaths = findJarsFromPath(ooo);
 			
 			try {
 				IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
@@ -125,7 +125,7 @@ public class JavaProjectHandler implements IProjectHandler {
 				System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
 				
 				for (int i=0, length=jarPaths.size(); i<length; i++){
-					IPath jarPathi = (IPath)jarPaths.get(i);
+					IPath jarPathi = jarPaths.get(i);
 					IClasspathEntry entry = JavaCore.newLibraryEntry(
 							jarPathi, null, null);
 					entries[oldEntries.length+i] = entry;
@@ -185,25 +185,10 @@ public class JavaProjectHandler implements IProjectHandler {
 				IUnoFactoryConstants.PROJECT_HANDLE);
 		IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
-		// Add Java builder
-		IProjectDescription descr = prj.getDescription();
-		ICommand[] oldCommands = descr.getBuildSpec();
-		ICommand[] newCommands = new ICommand[oldCommands.length+1];
-
-		System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
-
-		ICommand typesbuilderCommand = descr.newCommand();
-		typesbuilderCommand.setBuilderName(JavaCore.BUILDER_ID);
-		newCommands[oldCommands.length] = typesbuilderCommand;
-
-		descr.setBuildSpec(newCommands);
-		prj.setDescription(descr, null);
-
 		// Set some properties on the project
 
-		// Registration class name
-		String regclass = (String)data.getProperty(
-				JavaWizardPage.REGISTRATION_CLASS_NAME);
+		// The registration class name is always computed in the same way
+		String regclass = RegistrationHelper.getRegistrationClassName(unoprj);
 		unoprj.addProperty(P_REGISTRATION_CLASSNAME, regclass);
 
 		// Java version
@@ -216,13 +201,20 @@ public class JavaProjectHandler implements IProjectHandler {
 	 * (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#getImplementationName(org.openoffice.ide.eclipse.core.model.UnoFactoryData)
 	 */
-	public String getImplementationName(UnoFactoryData data) throws Exception {
-		// Get the project from data
-		IProject prj = (IProject)data.getProperty(
-				IUnoFactoryConstants.PROJECT_HANDLE);
-		IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+	public String getImplementationName(IUnoidlProject prj, String service) throws Exception {
+		String prefix = prj.getCompanyPrefix();
+		String comp = prj.getOutputExtension();
 		
-		return unoprj.getProperty(P_REGISTRATION_CLASSNAME);
+		String implementationName = null;
+		
+		if (service.startsWith(prefix)) {
+			String localName = service.substring(prefix.length());
+			implementationName = prefix + "." + comp + localName + "Impl";
+		} else {
+			throw new Exception("Cannot find implementation name for service: " + service);
+		}
+		
+		return implementationName;
 	}
 	
 	/*
@@ -241,9 +233,9 @@ public class JavaProjectHandler implements IProjectHandler {
 	public String getSkeletonMakerLanguage(UnoFactoryData data)
 			throws Exception {
 		// Get the project from data
-		IProject prj = (IProject)data.getProperty(
-				IUnoFactoryConstants.PROJECT_HANDLE);
-		IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+		String name = (String)data.getProperty(
+				IUnoFactoryConstants.PROJECT_NAME);
+		IUnoidlProject unoprj = ProjectsManager.getProject(name);
 		
 		return "--" + unoprj.getProperty(P_JAVA_VERSION); //$NON-NLS-1$
 	}
@@ -287,6 +279,14 @@ public class JavaProjectHandler implements IProjectHandler {
 		return getJarFile(prj).getAbsolutePath();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#createRegistrationSystem(org.openoffice.ide.eclipse.core.model.IUnoidlProject)
+	 */
+	public void createRegistrationSystem(IUnoidlProject prj) {
+		RegistrationHelper.generateFiles(prj);
+	}
+	
 	/**
 	 * Returns a handle to the project jar file. Beware that this handle
 	 * may refer to a non-existing file. Users have to create it if necessary.
