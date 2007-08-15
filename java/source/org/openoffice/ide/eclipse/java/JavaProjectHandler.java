@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaProjectHandler.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:00:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/08/15 12:27:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -295,7 +295,7 @@ public class JavaProjectHandler implements IProjectHandler {
 	 * @return a handle to the jar file of the project
 	 */
 	public File getJarFile(IUnoidlProject prj) {
-		String filename = prj.getName() + ".jar"; //$NON-NLS-1$
+		String filename = prj.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$
 		return prj.getFile(filename).getLocation().toFile();
 	}
 	

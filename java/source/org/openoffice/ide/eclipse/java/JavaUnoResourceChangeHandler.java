@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaUnoResourceChangeHandler.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:00:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/08/15 12:27:16 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -46,7 +46,6 @@ package org.openoffice.ide.eclipse.java;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IStartup;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
@@ -75,7 +74,7 @@ public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeLi
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
 			event.getDelta().accept(new JavaResourceDeltaVisitor());
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			// Do nothing
 		}
 	}
