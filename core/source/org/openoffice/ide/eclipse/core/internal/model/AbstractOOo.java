@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/09/28 07:27:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -70,6 +70,8 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public abstract class AbstractOOo implements IOOo, ITableElement {
 
+	protected static final String FILE_SEP = System.getProperty("file.separator");
+	
 	public static final String NAME = "__ooo_name"; //$NON-NLS-1$
 	
 	public static final String PATH = "__ooo_path"; //$NON-NLS-1$
@@ -112,7 +114,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 		
 		mHome = aHome;
 			
-		/* Checks if URE_HOME/share/java is a directory */
+		/* Checks if the classes path is a directory */
 		Path javaPath = new Path(getClassesPath());
 		File javaDir = javaPath.toFile();
 		
@@ -124,7 +126,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
-		/* Checks if URE_HOME/share/misc/types.rdb is a readable file */
+		/* Checks if types.rdb is a readable file */
 		Path typesPath = new Path(getTypesPath());
 		File typesFile = typesPath.toFile();
 		
@@ -136,7 +138,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
-		/* Checks if URE_HOME/share/misc/services.rdb is a readable file */
+		/* Checks if services.rdb is a readable file */
 		Path servicesPath = new Path(getServicesPath());
 		File servicesFile = servicesPath.toFile();
 		
@@ -148,7 +150,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 				InvalidConfigException.INVALID_OOO_HOME);
 		}
 		
-		/* Checks if URE_HOME/lib/unorc is a readable file */
+		/* Checks if unorc is a readable file */
 		Path unorcPath = new Path(getUnorcPath());
 		File unorcFile = unorcPath.toFile();
 		

@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 
 /**
- * @author cedric
+ * @author <a href="mailto:cedricbosdo@openofffice.org">Cedric Bosdonnat</a>
  *
  */
 public class URE extends AbstractOOo {
@@ -49,10 +49,9 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getClassesPath()
 	 */
 	public String getClassesPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String jars = getHome() + sep + "share" + sep + "java"; //$NON-NLS-1$ //$NON-NLS-2$
+		String jars = getHome() + FILE_SEP + "share" + FILE_SEP + "java"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			jars = getHome() + sep + "java"; //$NON-NLS-1$
+			jars = getHome() + FILE_SEP + "java"; //$NON-NLS-1$
 		}
 		return jars;
 	}
@@ -61,10 +60,9 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getLibsPath()
 	 */
 	public String getLibsPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String libs = getHome() + sep + "lib"; //$NON-NLS-1$
+		String libs = getHome() + FILE_SEP + "lib"; //$NON-NLS-1$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			libs = getHome() + sep + "bin"; //$NON-NLS-1$
+			libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
 		}
 		return libs;
 	}
@@ -74,10 +72,9 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getTypesPath()
 	 */
 	public String getTypesPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String types = getHome() + sep + "share" + sep + "misc" + sep + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String types = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			types = getHome() + sep + "misc" + sep + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+			types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return types;
 	}
@@ -87,10 +84,9 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getServicesPath()
 	 */
 	public String getServicesPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String services = getHome() + sep + "share" + sep + "misc" + sep + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String services = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			services = getHome() + sep + "misc" + sep + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+			services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return services;
 	}
@@ -100,10 +96,9 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnorcPath()
 	 */
 	public String getUnorcPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String path = getHome() + sep + "lib" + sep + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
+		String path = getHome() + FILE_SEP + "lib" + FILE_SEP + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			path = getHome() + sep + "bin" + sep + "uno.ini"; //$NON-NLS-1$ //$NON-NLS-2$
+			path = getHome() + FILE_SEP + "bin" + FILE_SEP + "uno.ini"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return path;
 	}
@@ -113,13 +108,12 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnoPath()
 	 */
 	public String getUnoPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
 		String uno = "uno.bin"; //$NON-NLS-1$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			uno = "uno.exe";  //$NON-NLS-1$
 		}
 		
-		return getHome() + sep + "bin" + sep + uno; //$NON-NLS-1$
+		return getHome() + FILE_SEP + "bin" + FILE_SEP + uno; //$NON-NLS-1$
 	}
 	
 	public String toString() {
@@ -183,11 +177,12 @@ public class URE extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getJavaldxPath()
 	 */
 	public String getJavaldxPath() {
-		String javaldx = null;
+		String javaldx = getHome() + FILE_SEP + "bin" + FILE_SEP + "javaldx"; //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (Platform.getOS().equals(Platform.OS_LINUX)) {
-			javaldx = getHome() + "/bin/javaldx"; //$NON-NLS-1$
-		}
+		// TODO is there any use of javaldx on windows ?
+//		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+//			
+//		}
 		return  javaldx; 
 	}
 	

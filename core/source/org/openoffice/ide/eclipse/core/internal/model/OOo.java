@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/09/28 07:27:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -68,6 +68,10 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  * 	</ul>
  * </p>
  * 
+ * <p>A MacOS installation of OpenOffice.org will have some different paths, and
+ * of course the windows installation too. This class is used to abstract the 
+ * platform OOo is installed on.</p>
+ * 
  * @author cbosdonnat
  *
  */
@@ -100,8 +104,7 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.preferences.IOOo#getClassesPath()
 	 */
 	public String getClassesPath(){
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		return getHome() + sep + "program" + sep + "classes"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getLibsPath() + FILE_SEP + "classes";  //$NON-NLS-1$
 	}
 	
 	/*
@@ -109,8 +112,11 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getLibsPath()
 	 */
 	public String getLibsPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		return getHome() + sep + "program"; //$NON-NLS-1$
+		String libs = getHome() + FILE_SEP + "program"; //$NON-NLS-1$
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			libs = getHome() + FILE_SEP + "Contents" + FILE_SEP + "MacOS";
+		}
+		return libs;
 	}
 	
 	/*
@@ -118,8 +124,7 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getTypesPath()
 	 */
 	public String getTypesPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		return getHome() + sep + "program" + sep +"types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getLibsPath() + FILE_SEP +"types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -127,8 +132,7 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getServicesPath()
 	 */
 	public String getServicesPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		return getHome() + sep + "program" + sep + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getLibsPath() + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -136,8 +140,7 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnorcPath()
 	 */
 	public String getUnorcPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
-		String path = getHome() + sep + "program" + sep + "bootstrap"; //$NON-NLS-1$ //$NON-NLS-2$
+		String path = getLibsPath() + FILE_SEP + "bootstrap"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			path += ".ini"; //$NON-NLS-1$
 		} else {
@@ -151,12 +154,11 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getUnoPath()
 	 */
 	public String getUnoPath() {
-		String sep = System.getProperty("file.separator"); //$NON-NLS-1$
 		String uno = "uno.bin"; //$NON-NLS-1$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			uno = "uno.exe"; //$NON-NLS-1$
 		}
-		return getHome() + sep + "program" + sep + uno; //$NON-NLS-1$ //$NON-NLS-2$
+		return getLibsPath() + FILE_SEP + uno; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/*
@@ -264,11 +266,12 @@ public class OOo extends AbstractOOo {
 	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getJavaldxPath()
 	 */
 	public String getJavaldxPath() {
-		String javaldx = null;
+		String javaldx = getLibsPath() + FILE_SEP + "javaldx";
 		
-		if (Platform.getOS().equals(Platform.OS_LINUX)) {
-			javaldx = getHome() + "/program/javaldx"; //$NON-NLS-1$
-		}
+		// TODO is javaldx necessary on windows platform ?
+//		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+//			
+//		}
 		return  javaldx; 
 	}
 	
@@ -334,9 +337,8 @@ public class OOo extends AbstractOOo {
 		String shellCommand = "unopkg add " + path; //$NON-NLS-1$
 		
 		String[] env = SystemHelper.getSystemEnvironement();
-		String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
 		String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
-		env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
+		env = SystemHelper.addEnv(env, "PATH", getHome() + FILE_SEP + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Process process = SystemHelper.runTool(shellCommand, env, null);
 		
