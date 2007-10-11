@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 19:00:55 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -376,7 +376,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 */
 	public void setCompanyPrefix(String prefix) {
 		mCompanyPrefix = prefix;
-		System.out.println("Prefix set to : " + mCompanyPrefix);
 	}
 	
 	/*
@@ -593,8 +592,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 */
 	public void saveAllProperties() {
 		
-		System.out.println("Saving all the properties");
-		
 		Properties properties = new Properties();
 		File configFile = getConfigFile();
 		
@@ -653,7 +650,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		String idlDir = getProperty(COMPANY_PREFIX);
 		if (idlDir != null) {
 			mCompanyPrefix = idlDir;
-			System.out.println("Prefix configured to: " + mCompanyPrefix);
 		}
 		
 		String outputExt = getProperty(OUTPUT_EXT);
