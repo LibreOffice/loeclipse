@@ -3,7 +3,6 @@ package org.openoffice.ide.eclipse.core.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.QualifiedName;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -63,23 +62,25 @@ public interface IUnoidlProject {
 	public void setSdk(ISdk aSdk);
 	
 	/**
-	 * Add a new persistent property to the project. This can be used by
-	 * plugins to set their own properties on the project.
+	 * Set a property to the project. 
 	 * 
-	 * @param name the property qualified name
+	 * <p>This can be used by plugins to set their own properties on the project.</p>
+	 * 
+	 * @param name the property name
 	 * @param value the property value
 	 */
-	public void addProperty(QualifiedName name, String value);
+	public void setProperty(String name, String value);
 	
 	/**
-	 * Get a project's persistent property. This can be used by
-	 * plugins to get their own properties from the project.
+	 * Get a project's property. 
+	 * 
+	 * <p>This can be used by plugins to get their own properties from the project.</p>
 	 * 
 	 * @param name the property name
 	 * @return the value of the property or <code>null</code> if it doesn't
 	 * 		exists
 	 */
-	public String getProperty(QualifiedName name);
+	public String getProperty(String name);
 	
 	//-------------------------------------------------------- Config accessors
 	
@@ -214,4 +215,23 @@ public interface IUnoidlProject {
 	 * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
 	 */
 	public IFolder getFolder(String path);
+
+	/**
+	 * Defines the directory containing the IDL files
+	 * 
+	 * @param idlDir the IDL directory
+	 */
+	public void setIdlDir(String idlDir);
+	
+	/**
+	 * Defines the directory containing the sources
+	 * 
+	 * @param sourcesDir the sources directory
+	 */
+	public void setSourcesDir(String sourcesDir);
+
+	/**
+	 * Saves the UNO project configuration in a hidden file.
+	 */
+	public void saveAllProperties();
 }

@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
-public class WizardPageSet {
+public abstract class WizardPageSet {
 	
 	private Vector<IWizardPage> mPages = new Vector<IWizardPage>();
 	private Vector<Boolean> mHidden = new Vector<Boolean>();
@@ -234,8 +234,7 @@ public class WizardPageSet {
 	 * 
 	 * @param data the data describing the default/initial values of the pages 
 	 */
-	public void initialize(UnoFactoryData data) {
-	}
+	public abstract void initialize(UnoFactoryData data);
 	
 	/**
 	 * Performs the actions to run at the end of the wizard for the wizard set.
@@ -258,8 +257,7 @@ public class WizardPageSet {
 	 * 			when finishing a wizard.
 	 * 
 	 */
-	public void doFinish(IProgressMonitor monitor, IWorkbenchPage activePage) {	
-	}
+	public abstract void doFinish(IProgressMonitor monitor, IWorkbenchPage activePage);
 	
 	/**
 	 * This method has to be called to ask the pages contained in the set to
@@ -270,6 +268,5 @@ public class WizardPageSet {
 	 * 
 	 * @param delta the data delta of the changed page.
 	 */
-	protected void dataChanged(UnoFactoryData delta) {
-	}
+	protected abstract void dataChanged(UnoFactoryData delta);
 }

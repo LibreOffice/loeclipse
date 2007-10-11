@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -300,6 +300,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 			mNameRow.setValue(value);
 			mNameRow.setEnabled(!forced);
 		}
+		setPageComplete(isPageComplete());
 	}
 	
 	/**
@@ -527,7 +528,9 @@ public abstract class NewScopedElementWizardPage extends WizardPage
 		boolean result = true; 
 		
 		try {
-			if (mNameRow.getValue().equals("")) { //$NON-NLS-1$
+			// An IDL identifier corresponds to the following regexp: 
+			// [A-Za-z_][A-Za-z_0-9]*
+			if (!mNameRow.getValue().matches("[A-Za-z_][A-Za-z_0-9]*")) { //$NON-NLS-1$
 				result = false;
 			}
 		} catch (NullPointerException e) {

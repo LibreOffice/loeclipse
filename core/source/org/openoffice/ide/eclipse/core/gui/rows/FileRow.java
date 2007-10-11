@@ -2,9 +2,9 @@
  *
  * $RCSfile: FileRow.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:56:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -61,16 +61,16 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
  * GUI row for a file selection. It supports only the Grid Layout
  * and can be configured to select either a file or a directory.
  * 
- * @author cbosdonnat
+ * @author Cedric Bosdonnat
  *
  */
-public class FileRow extends LabeledRow{
+public class FileRow extends LabeledRow {
 	
 	private String mValue = new String();
 	private boolean mDirectory = false;
 	
 	/**
-	 * File row contructor.
+	 * File row constructor.
 	 * 
 	 * @param parent composite parent of the row.
 	 * @param property property name used in field changing event.

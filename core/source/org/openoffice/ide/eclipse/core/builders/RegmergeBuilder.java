@@ -2,9 +2,9 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -49,10 +49,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.utils.FileHelper;
 
@@ -83,31 +81,25 @@ public class RegmergeBuilder {
 	 * 
 	 * @param unoprj the project to build
 	 * @param monitor a monitor to watch the build progress
-	 * @throws CoreException is thrown is anything wrong happens
+	 * @throws Exception is thrown is anything wrong happens
 	 */
 	public static void build(IUnoidlProject unoprj, IProgressMonitor monitor)
-			throws CoreException {
+			throws Exception {
 		
-		try {
-			IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoprj.getName());
-			
-			IFile typesFile = unoprj.getFile(unoprj.getTypesPath());
-			File mergeFile = prj.getLocation().append(typesFile.getProjectRelativePath()).toFile();
-			if (mergeFile != null && mergeFile.exists()) {
-				FileHelper.remove(mergeFile);
-			}
-			
-			// merge each urd file
-			IFolder urdFolder = unoprj.getFolder(unoprj.getUrdPath());
-			IPath urdPath = prj.getLocation().append(urdFolder.getProjectRelativePath());
-			File urdFile = urdPath.toFile();
-			VisitableFile visitableUrd = new VisitableFile(urdFile);
-			visitableUrd.accept(new RegmergeBuildVisitor(unoprj, monitor));
-			
-		} catch (Exception e) {
-			PluginLogger.error(
-					Messages.getString("RegmergeBuilder.RegmergeError"), e); //$NON-NLS-1$
+		IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoprj.getName());
+
+		IFile typesFile = unoprj.getFile(unoprj.getTypesPath());
+		File mergeFile = prj.getLocation().append(typesFile.getProjectRelativePath()).toFile();
+		if (mergeFile != null && mergeFile.exists()) {
+			FileHelper.remove(mergeFile);
 		}
+
+		// merge each urd file
+		IFolder urdFolder = unoprj.getFolder(unoprj.getUrdPath());
+		IPath urdPath = prj.getLocation().append(urdFolder.getProjectRelativePath());
+		File urdFile = urdPath.toFile();
+		VisitableFile visitableUrd = new VisitableFile(urdFile);
+		visitableUrd.accept(new RegmergeBuildVisitor(unoprj, monitor));
 	}
 
 	/**

@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -76,12 +76,14 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
+import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
@@ -112,6 +114,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	private static final String OOO = "__ooo"; //$NON-NLS-1$
 	private static final String LANGUAGE = "__language"; //$NON-NLS-1$
 	
+	private static final String CUSTOM_DIRS = "__custom_dirs"; //$NON-NLS-1$
+	private static final String CUSTOM_SRC = "__custom_src"; //$NON-NLS-1$
+	private static final String CUSTOM_IDL = "__custom_idl"; //$NON-NLS-1$
+	
 	/**
 	 * Prefix field object
 	 */
@@ -136,6 +142,16 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 	 * Programming language to use for code generation 
 	 */
 	private ChoiceRow mLanguageRow;
+	
+	/**
+	 * Checked to indicate the use of a custom project 
+	 * directory structure.
+	 */
+	private BooleanRow mCustomDirsRow;
+	
+	private TextRow mSourceRow;
+	
+	private TextRow mIdlDirRow;
 	
 	/**
 	 * Listener listening on the super class Text fields modifications
@@ -437,6 +453,26 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 		}
 		mLanguageRow.select(0);
 		mLanguageRow.setFieldChangedListener(this);
+		
+		
+		// TODO add an horizontal separator
+		
+		// Add the custom directories checkbox
+		mCustomDirsRow = new BooleanRow(body, CUSTOM_DIRS, 
+				"Use custom project directories");
+		mCustomDirsRow.setFieldChangedListener(this);
+		
+		// Add the custom source directory chooser
+		mSourceRow = new TextRow(body, CUSTOM_SRC, "Sources");
+		mSourceRow.setValue(UnoidlProjectHelper.SOURCE_BASIS);
+		mSourceRow.setEnabled(false);
+		mSourceRow.setFieldChangedListener(this);
+		
+		// Add the custom idl directory chooser
+		mIdlDirRow = new TextRow(body, CUSTOM_IDL, "IDL files");
+		mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
+		mIdlDirRow.setEnabled(false);
+		mIdlDirRow.setFieldChangedListener(this);
 	}
 	
 	private void fillSDKRow (){
@@ -508,7 +544,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 
 		// Check the prefix correctness
 		if (e.getProperty().equals(PREFIX)){
-
+			
 			String newCompanyPrefix = e.getValue();
 			/**
 			 * <p>The company prefix is a package like name used by the project
@@ -549,6 +585,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 							WARNING);
 				}
 			}
+		} else if(e.getProperty().equals(CUSTOM_DIRS)) {
+			boolean useCustom = mCustomDirsRow.getBooleanValue();
+			mSourceRow.setEnabled(useCustom);
+			mIdlDirRow.setEnabled(useCustom);
 		}
 		((NewUnoProjectWizard)getWizard()).pageChanged(this);
 	}
@@ -617,6 +657,9 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
 			data.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());
 			data.setProperty(IUnoFactoryConstants.PROJECT_SDK, getSDKName());
 			data.setProperty(IUnoFactoryConstants.PROJECT_OOO, getOOoName());
+			
+			data.setProperty(IUnoFactoryConstants.PROJECT_SRC_DIR, mSourceRow.getValue());
+			data.setProperty(IUnoFactoryConstants.PROJECT_IDL_DIR, mIdlDirRow.getValue());
 		}
 		
 		return data;

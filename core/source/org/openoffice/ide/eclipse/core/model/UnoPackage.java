@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoPackage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/12 20:21:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -125,6 +125,34 @@ public class UnoPackage {
 		mManifestEntries.clear();
 		mZipEntries.clear();
 		mTemporaryFiles.clear();
+	}
+	
+	/**
+	 * Add a file or directory to the package.
+	 * 
+	 * <p>This method doesn't know about the different languages
+	 * contributions to the <code>manifest.xml</code> file.</p>
+	 * 
+	 * @param content the file or folder to add
+	 */
+	public void addContent(File content) {
+		if (content.isFile()) {
+			if (content.getName().endsWith(".xcs")) { //$NON-NLS-1$
+				addConfigurationSchemaFile(content);
+			} else if (content.getName().endsWith(".xcu")) { //$NON-NLS-1$
+				addConfigurationDataFile(content);
+			} else if (content.getName().endsWith(".rdb")) { //$NON-NLS-1$
+				addTypelibraryFile(content, "RDB"); //$NON-NLS-1$
+			} else {
+				addOtherFile(content);
+			}
+		} else {
+			// Recurse on the directory
+			File[] children = content.listFiles();
+			for (File child : children) {
+				addContent(child);
+			}
+		}
 	}
 	
 	/**

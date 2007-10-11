@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizard.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/08/15 12:27:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -192,19 +192,7 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 				
 				List<IResource> contents = pkgModel.getContents();
 				for (IResource res : contents) {
-					if (res.getType() == IResource.FILE) {
-						if (res.getName().endsWith(".xcs")) { // $NON-NLS-1$ //$NON-NLS-1$
-							unoPackage.addConfigurationSchemaFile(res.getLocation().toFile());
-						} else if (res.getName().endsWith(".xcu")) { // $NON-NLS-1$ //$NON-NLS-1$
-							unoPackage.addConfigurationDataFile(res.getLocation().toFile());
-						} else if (res.getName().endsWith(".rdb")) { // $NON-NLS-1$ //$NON-NLS-1$
-							unoPackage.addTypelibraryFile(res.getLocation().toFile(), "RDB"); // $NON-NLS-1$ //$NON-NLS-1$
-						} else {
-							unoPackage.addOtherFile(res.getLocation().toFile());
-						}
-					} else {
-						unoPackage.addOtherFile(res.getLocation().toFile());
-					}
+					unoPackage.addContent(res.getLocation().toFile());
 				}
 				
 				Map<Locale, IFile> descriptions = pkgModel.getDescriptionFiles();

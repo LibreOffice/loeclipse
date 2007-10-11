@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -58,6 +58,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -77,7 +78,7 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
  *   </ul>
  * </p>
  * 
- * @author cbosdonnat
+ * @author Cedric Bosdonnat
  *
  */
 public class TypesBuilder extends IncrementalProjectBuilder {
@@ -136,9 +137,15 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 			if (changedIdl && sBuildState < 0) {
 				try {
 					build(getProject(), monitor);
-				} catch (CoreException e) {
+				} catch (Exception e) {
 					sBuildState = -1;
-					throw e;
+					CoreException thrown = new CoreException(new Status(
+							Status.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+							"Error during UNO types build", e));
+					if (!(e instanceof CoreException)) {
+						thrown = (CoreException)e;
+					}
+					throw thrown;
 				}
 				sBuildState = -1;
 			} else if (sBuildState == 4) {
@@ -150,8 +157,8 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	}
 	
 	public static void build(IProject prj, IProgressMonitor monitor) 
-			throws CoreException {
-		
+			throws Exception {
+
 		IUnoidlProject unoprj = ProjectsManager.getProject(
 				prj.getName());
 		
@@ -176,7 +183,6 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 		
 		prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		sBuildState = -1;
-		
 	}
 	
 	/**
@@ -218,23 +224,15 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @param project the uno project to build
 	 * @param monitor a monitor to watch the progress
-	 * @throws CoreException if anything wrong happened
+	 * @throws Exception if anything wrong happened
 	 */
 	public static void buildIdl(IUnoidlProject project, IProgressMonitor monitor)
-			throws CoreException {
-
-		// Build each idlc file
-		try {
-			// compile each idl file
-			IFolder idlFolder = project.getFolder(
-					project.getRootModulePath());
-			idlFolder.accept(new IdlcBuildVisitor(monitor));
-			
-
-		} catch (CoreException e) {
-			PluginLogger.error(
-					Messages.getString("IdlcBuilder.IdlcError"), e); //$NON-NLS-1$
-		}
+			throws Exception {
+		
+		// compile each idl file
+		IFolder idlFolder = project.getFolder(
+				project.getRootModulePath());
+		idlFolder.accept(new IdlcBuildVisitor(monitor));
 	}
 	
 	/**

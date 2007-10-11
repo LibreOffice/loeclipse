@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcErrorReader.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/23 18:27:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -302,9 +302,10 @@ public class IdlcErrorReader {
 			for (int i=0, length=line; i<length; i++){
 				String tmpLine = fileReader.readLine();
 				offset += tmpLine.length();
-				
-				// TODO Get the character offset in the line
 			}
+			
+			// TODO Get the character offset in the line
+			// The last character should be found using the next blank.
 			
 			start = offset;
 			end = offset;

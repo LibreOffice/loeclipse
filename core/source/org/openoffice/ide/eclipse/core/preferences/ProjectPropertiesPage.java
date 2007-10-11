@@ -2,9 +2,9 @@
  *
  * $RCSfile: ProjectPropertiesPage.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:18 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -197,6 +197,7 @@ public class ProjectPropertiesPage extends PropertyPage
 			IOOo ooo = OOoContainer.getOOo(mOOoRow.getValue());
 			mProject.setOOo(ooo);
 		}
+		mProject.saveAllProperties();
 	}
 	
 	/**

@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:18 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,12 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.text.MessageFormat;
+import java.util.Properties;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -54,8 +60,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
@@ -77,46 +81,56 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	
 	/**
-	 * <code>org.openoffice.ide.eclipse.idllocation</code> is a
-	 * persistent project property that stores the idl location
+	 * Project property that stores the company prefix
 	 */
-	public static final String IDL_LOCATION = "idllocation"; //$NON-NLS-1$
+	public static final String COMPANY_PREFIX = "project.prefix"; //$NON-NLS-1$
 	
 	/**
-	 * <code>org.openoffice.ide.eclipse.ouputextension</code> 
-	 * is a persistent project property that stores the output
-	 * extension
+	 * Project property that stores the output path extension.
+	 * 
+	 * <p>If the company prefix is <code>org.openoffice.sample</code> and this
+	 * property value is <code>impl</code>, the root package of the 
+	 * implementations classes is <code>org.openoffice.sample.impl</code>.</p>
 	 */
-	public static final String OUTPUT_EXT = "outputextension"; //$NON-NLS-1$
+	public static final String OUTPUT_EXT = "project.implementation"; //$NON-NLS-1$
 
 	/**
-	 * <code>org.openoffice.ide.eclipse.sdkname</code> 
-	 * is a persistent project property that stores the 
-	 * sdk name
+	 * Project property that stores the sdk name to use for  
+	 * the project build
 	 */
-	public static final String SDK_NAME = "sdkname"; //$NON-NLS-1$
+	public static final String SDK_NAME = "project.sdk"; //$NON-NLS-1$
 	
 	/**
-	 * <code>org.openoffice.ide.eclipse.oooname</code> 
-	 * is a persistent project property that stores the 
-	 * ooo name
+	 * Project property that stores the name of the OpenOffice.org instance
+	 * used to run / deploy the project.
 	 */
-	public static final String OOO_NAME = "oooname"; //$NON-NLS-1$
+	public static final String OOO_NAME = "project.ooo"; //$NON-NLS-1$
 	
 	/**
-	 * <code>org.openoffice.ide.eclipse.language</code>
-	 * is a persistent project property that stores the
-	 * language name. This will help reloading the right
-	 * class to reconfigure the project nature.
+	 * Project property that stores the language name. 
 	 */
-	public static final String LANGUAGE = "language"; //$NON-NLS-1$
+	public static final String LANGUAGE = "project.language"; //$NON-NLS-1$
 	
 	/**
-	 * <code>org.openoffice.ide.eclipse.unoproject</code> 
-	 * is a persistent project property that indicates that 
-	 * the project supports the uno nature
+	 * Project property that stores the path to the folder containing
+	 * the sources. 
 	 */
-	public final static String UNO_PROJECT = "unoproject"; //$NON-NLS-1$
+	public static final String SRC_DIRECTORY = "project.srcdir"; //$NON-NLS-1$
+	
+	/**
+	 * Property name for the idl folder
+	 */
+	public static final String IDL_DIR = "project.idl"; //$NON-NLS-1$
+
+	/**
+	 * Property name for the build directory
+	 */
+	public static final String BUILD_DIR = "project.build"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the file containing the UNO project configuration
+	 */
+	private final static String CONFIG_FILE = ".unoproject"; //$NON-NLS-1$
 	
 	private IProject mProject;
 	
@@ -129,6 +143,10 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	private IOOo mOOo;
 	
 	private ILanguage mLanguage;
+	
+	private String mIdlDir;
+	
+	private String mSourcesDir;
 	
 	private IConfigListener mConfigListener;
 	
@@ -275,19 +293,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 			mLanguage = newLanguage; 
 			mLanguage.getProjectHandler().addProjectNature(getProject());
 			PluginLogger.debug("Language specific nature added"); //$NON-NLS-1$
-			
-			try {
-				getProject().setPersistentProperty(
-						new QualifiedName(
-								OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-								LANGUAGE), 
-								LanguagesHelper.getNameFromLanguage(mLanguage));
-				PluginLogger.debug(
-						"Persistent language property set"); //$NON-NLS-1$
-			} catch (CoreException e) {
-				PluginLogger.error(
-					Messages.getString("UnoidlProject.SetOOoError")+getName(), e); //$NON-NLS-1$
-			}
 		}
 	}
 	
@@ -300,17 +305,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		setErrorMarker(null == ooo || null == getSdk());
 		
 		this.mOOo = ooo;
-		try {
-			getProject().setPersistentProperty(
-					new QualifiedName(
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							OOO_NAME), ooo.getName());
-		} catch (CoreException e) {
-			PluginLogger.error(
-				Messages.getString("UnoidlProject.SetOOoError")+getName(), e); //$NON-NLS-1$
-		} catch (NullPointerException e) {
-			// Nothing to log here
-		}
 	}
 	
 	/*
@@ -322,51 +316,31 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		setErrorMarker(sdk == null || null == getOOo());
 			
 		this.mSdk = sdk;
-		try {
-			getProject().setPersistentProperty(
-					new QualifiedName(
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							SDK_NAME), sdk.getId());
-		} catch (CoreException e) {
-			PluginLogger.error(
-				Messages.getString("UnoidlProject.SetSdkError")+getName(), e); //$NON-NLS-1$
-		} catch (NullPointerException e) {
-			// Nothing to log here
-		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#addProperty(org.eclipse.core.runtime.QualifiedName, java.lang.String)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#setIdlDir(java.lang.String)
 	 */
-	public void addProperty(QualifiedName name, String value) {
-		try {
-			if (name != null) {
-				getProject().setPersistentProperty(name, value);
-			}
-		} catch (CoreException e) {
-			PluginLogger.error(
-					Messages.getString("UnoidlProject.AddPropertyError") + name, e); //$NON-NLS-1$
-		}
+	public void setIdlDir(String idlDir) {
+		mIdlDir = idlDir;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#getProperty(org.eclipse.core.runtime.QualifiedName)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#setSourcesDir(java.lang.String)
 	 */
-	public String getProperty(QualifiedName name) {
-		
-		String value = null;
-		
-		try {
-			if (name != null) {
-				value = getProject().getPersistentProperty(name);
-			}
-		} catch (CoreException e) {
-			PluginLogger.error(
-					Messages.getString("UnoidlProject.GetPropertyError") + name, e); //$NON-NLS-1$
+	public void setSourcesDir(String sourcesDir) {
+		if (sourcesDir == null || sourcesDir.equals("")) {
+			sourcesDir = UnoidlProjectHelper.SOURCE_BASIS;
 		}
-		return value;
+		
+		// Add a / at the beginning of the path
+		if (!sourcesDir.startsWith("/")) { //$NON-NLS-1$
+			sourcesDir = "/" + sourcesDir; //$NON-NLS-1$
+		}
+		
+		mSourcesDir = sourcesDir;
 	}
 	
 	/*
@@ -400,17 +374,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setCompanyPrefix(java.lang.String)
 	 */
-	public void setCompanyPrefix(String prefix){
+	public void setCompanyPrefix(String prefix) {
 		mCompanyPrefix = prefix;
-		try {
-			getProject().setPersistentProperty(
-					new QualifiedName(
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							IDL_LOCATION), prefix);
-		} catch (CoreException e) {
-			PluginLogger.error(
-				Messages.getString("UnoidlProject.SetIdlError")+getName(), e); //$NON-NLS-1$
-		}
+		System.out.println("Prefix set to : " + mCompanyPrefix);
 	}
 	
 	/*
@@ -425,17 +391,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 *  (non-Javadoc)
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#setOutputExtension(java.lang.String)
 	 */
-	public void setOutputExtension(String outputExt){
+	public void setOutputExtension(String outputExt) {
 		mOutputExtension = outputExt;
-		try {
-			getProject().setPersistentProperty(
-					new QualifiedName(
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							OUTPUT_EXT), mOutputExtension);
-		} catch (CoreException e) {
-			PluginLogger.error(
-				Messages.getString("UnoidlProject.SetOutputError")+getName(), e); //$NON-NLS-1$
-		}
 	}
 	
 	/*
@@ -451,7 +408,12 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getBuildPath()
 	 */
 	public IPath getBuildPath(){
-		return getFolder(UnoidlProjectHelper.BUILD_BASIS).getProjectRelativePath();
+		String buildDir = getProperty(BUILD_DIR);
+		if (!buildDir.startsWith("/")) {
+			buildDir = "/" + buildDir;
+		}
+		
+		return getFolder(buildDir).getProjectRelativePath();
 	}
 	
 	/*
@@ -459,7 +421,12 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getIdlPath()
 	 */
 	public IPath getIdlPath() {
-		return getFolder(UnoidlProjectHelper.IDL_BASIS).getProjectRelativePath();
+		String idlDir = getProperty(IDL_DIR);
+		if (!idlDir.startsWith("/")) {
+			idlDir = "/" + idlDir;
+		}
+		
+		return getFolder(idlDir).getProjectRelativePath();
 	}
 	
 	/*
@@ -468,7 +435,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 */
 	public IPath getImplementationPath(){
 		String path = new String(mCompanyPrefix+"."+mOutputExtension).replace('.', '/'); //$NON-NLS-1$
-		return getFolder(UnoidlProjectHelper.SOURCE_BASIS).getProjectRelativePath().append(path);
+		return getSourcePath().append(path);
 	}
 	
 	/*
@@ -500,7 +467,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getSourcePath()
 	 */
 	public IPath getSourcePath() {
-		return getFolder(UnoidlProjectHelper.SOURCE_BASIS).getProjectRelativePath();
+		String sourcesDir = getProperty(SRC_DIRECTORY);
+		return getFolder(sourcesDir).getProjectRelativePath();
 	}
 	
 	/*
@@ -508,7 +476,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	 * @see org.openoffice.ide.eclipse.model.IUnoidlProject#getUrdPath()
 	 */
 	public IPath getUrdPath(){
-		return getFolder(UnoidlProjectHelper.URD_BASIS).getProjectRelativePath();
+		return getFolder(getBuildPath().append(UnoidlProjectHelper.URD_BASIS)).getProjectRelativePath();
 	}
 
 	/*
@@ -543,7 +511,122 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 		return getProject().getFolder(path);
 	}
 
+	/**
+	 * @return the uno project configuration file
+	 * 
+	 * @see #CONFIG_FILE for the configuration file name
+	 */
+	public File getConfigFile() {
+		return new File(getProjectPath().append(CONFIG_FILE).toOSString());
+	}
 	
+	/**
+	 * Reads a property from the Uno project configuration file.
+	 * 
+	 * <p>Returns the property corresponding to the given name. If the
+	 * configuration file doesn't exists, a default one will be created.</p>
+	 * 
+	 * @param propertyName the name of the property to get
+	 * @return the property value or <code>null</code> if not found.
+	 * 
+	 * @see #CONFIG_FILE for the configuration file name
+	 */
+	public String getProperty(String propertyName) {
+		
+		Properties properties = new Properties();
+		File configFile = getConfigFile();
+		String property = null;
+		
+		try  {
+			// Create a default configuration file if needed
+			if (!configFile.exists()) {
+				UnoidlProjectHelper.createDefaultConfig(configFile);
+			}
+		
+			FileInputStream in = new FileInputStream(configFile);
+			properties.load(in);
+			property = properties.getProperty(propertyName);
+		} catch (Exception e) {
+			PluginLogger.warning("Unreadable uno project configuration file " + CONFIG_FILE, e);
+		}
+		
+		return property;
+	}
+	
+	/**
+	 * Define a property in the uno project configuration file 
+	 * 
+	 * @param name the property name
+	 * @param value the property value
+	 */
+	public void setProperty(String name, String value) {
+		Properties properties = new Properties();
+		File configFile = getConfigFile();
+		
+		try  {
+			// Create a default configuration file if needed
+			if (!configFile.exists()) {
+				UnoidlProjectHelper.createDefaultConfig(configFile);
+			}
+		
+			FileInputStream in = new FileInputStream(configFile);
+			properties.load(in);
+		
+			properties.setProperty(name, value);
+		
+			FileOutputStream out = new FileOutputStream(configFile);
+			properties.store(out, "UNO project configuration file");
+			
+			// Refresh the configuration file
+			getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
+			
+		} catch (Exception e) {
+			String message = MessageFormat.format("Error during project property change ({0}, {1})", 
+					name, value);
+			PluginLogger.warning(message, e);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.openoffice.ide.eclipse.core.model.IUnoidlProject#saveAllProperties()
+	 */
+	public void saveAllProperties() {
+		
+		System.out.println("Saving all the properties");
+		
+		Properties properties = new Properties();
+		File configFile = getConfigFile();
+		
+		// Create a default configuration file if needed
+		if (!configFile.exists()) {
+			UnoidlProjectHelper.createDefaultConfig(configFile);
+		}
+		
+		try  {
+			FileInputStream in = new FileInputStream(configFile);
+			properties.load(in);
+		
+			properties.setProperty(LANGUAGE, LanguagesHelper.getNameFromLanguage(mLanguage));
+			properties.setProperty(OOO_NAME, mOOo.getName());
+			properties.setProperty(SDK_NAME, mSdk.getId());
+			properties.setProperty(IDL_DIR, mIdlDir);
+			properties.setProperty(SRC_DIRECTORY, mSourcesDir);
+			properties.setProperty(COMPANY_PREFIX, mCompanyPrefix);
+			properties.setProperty(OUTPUT_EXT, mOutputExtension);
+		
+			FileOutputStream out = new FileOutputStream(configFile);
+			properties.store(out, "UNO project configuration file");
+			
+			out.close();
+			
+			// Refresh the configuration file
+			getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
+			
+		} catch (Exception e) {
+			PluginLogger.warning("Error saving all the project properties", e);
+		}
+	}
 	
 	//*************************************************************************
 	// IProjectNature Implementation
@@ -556,25 +639,32 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 	public void configure() throws CoreException {
 		
 		// Load all the persistent properties into the members
-		String sdkKey = getProject().getPersistentProperty(new QualifiedName(
-				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, SDK_NAME));
-		setSdk(SDKContainer.getSDK(sdkKey));
 		
-		String oooKey = getProject().getPersistentProperty(new QualifiedName(
-				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OOO_NAME));
-		setOOo(OOoContainer.getOOo(oooKey));
+		String sdkKey = getProperty(SDK_NAME);
+		if (sdkKey != null) {
+			setSdk(SDKContainer.getSDK(sdkKey));
+		}
 		
-		String idllocation = getProject().getPersistentProperty(new QualifiedName(
-				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IDL_LOCATION));
-		mCompanyPrefix = idllocation;
+		String oooKey = getProperty(OOO_NAME);
+		if (oooKey != null) {
+			setOOo(OOoContainer.getOOo(oooKey));
+		}
 		
-		String outputExt = getProject().getPersistentProperty(new QualifiedName(
-				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, OUTPUT_EXT));
-		mOutputExtension = outputExt;
+		String idlDir = getProperty(COMPANY_PREFIX);
+		if (idlDir != null) {
+			mCompanyPrefix = idlDir;
+			System.out.println("Prefix configured to: " + mCompanyPrefix);
+		}
 		
-		String languageName = getProject().getPersistentProperty(new QualifiedName(
-				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, LANGUAGE));
-		setLanguage(LanguagesHelper.getLanguageFromName(languageName));
+		String outputExt = getProperty(OUTPUT_EXT);
+		if (outputExt != null) {
+			mOutputExtension = outputExt;
+		}
+		
+		String languageName = getProperty(LANGUAGE);
+		if (languageName != null) {
+			setLanguage(LanguagesHelper.getLanguageFromName(languageName));
+		}
 	}
 	
 	/*

@@ -1,6 +1,8 @@
 package org.openoffice.ide.eclipse.core.internal.helpers;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -9,7 +11,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
@@ -32,7 +33,7 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 /**
  * Helper class for UNO-IDL project handling.
  * 
- * @author cbosdonnat
+ * @author Cedric Bosdonnat
  *
  */
 public class UnoidlProjectHelper {
@@ -45,18 +46,46 @@ public class UnoidlProjectHelper {
 	/**
 	 * Project relative path to the source directory
 	 */
-	public static final String SOURCE_BASIS = "source"; //$NON-NLS-1$
+	public static final String SOURCE_BASIS = "/source"; //$NON-NLS-1$
 	
 	/**
 	 * Project relative path to the urd output folder.
 	 */
-	public static final String URD_BASIS = BUILD_BASIS + "/urd"; //$NON-NLS-1$
+	public static final String URD_BASIS = "/urd"; //$NON-NLS-1$
 	
 	/**
 	 * Project relative path to the idl root folder
 	 */
-	public static final String IDL_BASIS = "idl"; //$NON-NLS-1$
+	public static final String IDL_BASIS = "/idl"; //$NON-NLS-1$
 	
+	/**
+	 * Create a default configuration file for UNO-IDL projects
+	 * 
+	 * @param configFile the descriptor of the file to create
+	 */
+	public static void createDefaultConfig(File configFile) {
+		Properties properties = new Properties();
+		properties.setProperty(UnoidlProject.IDL_DIR, IDL_BASIS);
+		properties.setProperty(UnoidlProject.BUILD_DIR, BUILD_BASIS);
+		
+		try {
+			FileOutputStream out = new FileOutputStream(configFile);
+			properties.store(out, "UNO project configuration file");
+		} catch (Exception e) {
+			PluginLogger.warning("Can't create default uno configuration file", e);
+		}
+	}
+	
+	/**
+	 * Create the basic structure of a UNO-IDL project
+	 * 
+	 * @param data the data describing the uno project to create
+	 * @param monitor the progress monitor reporting the creation progress
+	 * 				in the User Interface
+	 * @return the created Uno project 
+	 * 
+	 * @throws Exception is thrown if anything wrong happens
+	 */
 	public static IUnoidlProject createStructure(UnoFactoryData data, 
 			IProgressMonitor monitor) throws Exception {
 		
@@ -65,10 +94,11 @@ public class UnoidlProjectHelper {
 		// Creates the new project whithout it's builders
 		IProject project = (IProject)data.getProperty(
 				IUnoFactoryConstants.PROJECT_HANDLE);
+		
 		createProject(project, monitor);
 		unoProject = ProjectsManager.getProject(
 				project.getName());
-
+		
 		// Set the company prefix
 		String prefix = (String)data.getProperty(
 				IUnoFactoryConstants.PROJECT_PREFIX);
@@ -97,6 +127,24 @@ public class UnoidlProjectHelper {
 		unoProject.setOOo(ooo);
 
 
+		// Set the idl directory
+		String idlDir = (String)data.getProperty(IUnoFactoryConstants.PROJECT_IDL_DIR);
+		if (idlDir == null || idlDir.equals("")) {
+			idlDir = IDL_BASIS;
+		}
+		unoProject.setIdlDir(idlDir);
+		
+		// Set the sources directory
+		String sourcesDir = (String)data.getProperty(IUnoFactoryConstants.PROJECT_SRC_DIR);
+		if (sourcesDir == null || sourcesDir.equals("")) {
+			sourcesDir = SOURCE_BASIS;
+		}
+		unoProject.setSourcesDir(sourcesDir);
+		
+		
+		// Save all the properties to the configuration file
+		unoProject.saveAllProperties();
+		
 		// Creation of the unoidl package
 		createUnoidlPackage(unoProject, monitor);
 
@@ -129,7 +177,7 @@ public class UnoidlProjectHelper {
 		UnoidlProject project = (UnoidlProject)unoProject;
 		try {
 			TypesBuilder.build(project.getProject(), monitor);
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			PluginLogger.error(
 					Messages.getString("UnoidlProjectHelper.NotUnoProjectError"), e); //$NON-NLS-1$
 		}
@@ -185,24 +233,9 @@ public class UnoidlProjectHelper {
 			
 			((UnoidlProject)unoproject).getProject().refreshLocal(
 					IProject.DEPTH_INFINITE, monitor);
-			
-			// Get all the folders for the modules
-			String[] modules = fullName.split("::"); //$NON-NLS-1$
-			IFolder currentFolder = unoproject.getFolder(unoproject.getIdlPath());
-			
-			for (int i=0; i<modules.length; i++) {
-				currentFolder = currentFolder.getFolder(modules[i]);
-				
-				// Sets the IDL Capable property
-				if (currentFolder.exists()){
-					currentFolder.setPersistentProperty(
-							new QualifiedName(
-									OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-									IUnoidlProject.IDL_FOLDER), "true"); //$NON-NLS-1$
-				}
-			}
 		} else {
-			throw new IllegalArgumentException(Messages.getString("UnoidlProjectHelper.BadFullnameError")); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					Messages.getString("UnoidlProjectHelper.BadFullnameError")); //$NON-NLS-1$
 		}
 	}
 	
@@ -211,7 +244,7 @@ public class UnoidlProjectHelper {
 	 * It assumes that the company prefix is already set, otherwise no
 	 * package will be created
 	 * 
-	 * @param unoproject the uno project on which to perform the action
+	 * @param unoproject the UNO project on which to perform the action
 	 * @param monitor progress monitor
 	 */
 	public static void createUnoidlPackage(IUnoidlProject unoproject,
@@ -222,17 +255,20 @@ public class UnoidlProjectHelper {
 
 				PluginLogger.debug("Creating unoidl packages"); //$NON-NLS-1$
 				
-				IFolder basis = unoproject.getFolder(unoproject.getIdlPath());
-				if (!basis.exists()) {
-					basis.create(true, true, monitor);
-					PluginLogger.debug(
-							"Unoidl base directory created"); //$NON-NLS-1$
-				}
+				// Create the IDL folder and all its parents
+				IPath idlPath = unoproject.getIdlPath();
+				String currentPath = "/";
 				
-				// Adds the idl capable property
-				basis.setPersistentProperty(
-						new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-								IUnoidlProject.IDL_FOLDER), "true"); //$NON-NLS-1$
+				for (int i=0, length=idlPath.segmentCount(); i<length; i++) {
+					currentPath += idlPath.segment(i) + "/";
+					IFolder folder = unoproject.getFolder(currentPath);
+					if (!folder.exists()) {
+						folder.create(true, true, monitor);
+					}
+				}
+
+				PluginLogger.debug(
+						"Unoidl base directory created"); //$NON-NLS-1$
 				
 				createModules(unoproject.getRootModule(), unoproject, monitor);
 				PluginLogger.debug(
@@ -255,10 +291,16 @@ public class UnoidlProjectHelper {
 	public static void createCodePackage(IUnoidlProject unoproject,
 			IProgressMonitor monitor) {
 
+		String sourcesDir = unoproject.getSourcePath().toPortableString();
+		if (sourcesDir == null || sourcesDir.equals("")) {
+			sourcesDir = SOURCE_BASIS;
+		}
+		
 		try {
 			PluginLogger.debug("Creating source directories"); //$NON-NLS-1$
+			
 			// Create the sources directory
-			IFolder codeFolder = unoproject.getFolder(SOURCE_BASIS);
+			IFolder codeFolder = unoproject.getFolder(sourcesDir);
 			if (!codeFolder.exists()){
 				codeFolder.create(true, true, monitor);
 				PluginLogger.debug(
@@ -282,7 +324,7 @@ public class UnoidlProjectHelper {
 				}
 			});
 			PluginLogger.error(
-					Messages.getString("UnoidlProjectHelper.FolderCreationError") + SOURCE_BASIS, //$NON-NLS-1$
+					Messages.getString("UnoidlProjectHelper.FolderCreationError") + sourcesDir, //$NON-NLS-1$
 					e);
 		}
 		
@@ -298,10 +340,10 @@ public class UnoidlProjectHelper {
 		
 		try {
 			PluginLogger.debug("Creating ouput directories"); //$NON-NLS-1$
-			IFolder urdFolder = unoproject.getFolder(URD_BASIS);
+			IFolder urdFolder = unoproject.getFolder(unoproject.getUrdPath());
 			if (!urdFolder.exists()){
 				
-				String[] basis_dirs = URD_BASIS.split("/"); //$NON-NLS-1$
+				String[] basis_dirs = unoproject.getUrdPath().segments();
 				String path = ""; //$NON-NLS-1$
 				int i = 0;
 				while (i < basis_dirs.length){
@@ -323,22 +365,6 @@ public class UnoidlProjectHelper {
 				Messages.getString("UnoidlProjectHelper.FolderCreationError") + URD_BASIS, e); //$NON-NLS-1$
 		}
 	}
-	
-	/**
-	 * Set the IDL property on the IDL folder of the project
-	 * 
-	 * @param unoproject project on which to set the IDL property
-	 */
-	public static void setIdlProperty(IUnoidlProject unoproject){
-		
-		// Get the children of the prefix company folder
-		IPath rootPath = unoproject.getRootModulePath();
-		if (null != rootPath){
-			IFolder unoidlFolder = unoproject.getFolder(rootPath);
-		
-			recurseSetIdlProperty(unoidlFolder, unoproject);
-		}
-	}
 
 	/**
 	 * Returns the UNO project underlying <code>IProject</code> resource
@@ -355,53 +381,6 @@ public class UnoidlProjectHelper {
 		}
 		
 		return project;
-	}
-	
-	/**
-	 * Recursion method to set the IDL property
-	 *  
-	 * @param container the folder on which children to set the property 
-	 * @param unoproject the containing project
-	 */
-	private static void recurseSetIdlProperty(IFolder container,
-			IUnoidlProject unoproject){
-
-		try {
-
-			if (container.exists()){
-				IResource[] children = container.members();
-				
-				for (int i=0, length=children.length; i<length; i++){
-				
-					IResource child = children[i];
-					String childPath = child.getProjectRelativePath().toString(); 
-					
-					// if the child is a folder that is not contained in the code location
-					// set it's unoidl property to true
-					// and recurse
-					if (IResource.FOLDER == child.getType() && 
-						!childPath.endsWith(SOURCE_BASIS) &&
-						!childPath.endsWith(BUILD_BASIS)){
-						
-						IFolder folder = (IFolder)child;
-						
-						// Sets the property
-						folder.setPersistentProperty(
-								new QualifiedName(
-										OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-										IUnoidlProject.IDL_FOLDER),
-							    "true"); //$NON-NLS-1$
-						
-						// Recurse
-						recurseSetIdlProperty(folder, unoproject);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			PluginLogger.error(
-				Messages.getString("UnoidlProjectHelper.ReadFolderError") +  //$NON-NLS-1$
-					container.getName(), e);
-		}
 	}
 	
 	
@@ -444,6 +423,10 @@ public class UnoidlProjectHelper {
 			
 			UnoidlProject unoProject = (UnoidlProject)project.getNature(
 					OOEclipsePlugin.UNO_NATURE_ID);
+			
+			// TODO Allow custom configuration
+			createDefaultConfig(unoProject.getConfigFile());
+			
 			ProjectsManager.addProject(unoProject);
 			
 		} catch (CoreException e) {

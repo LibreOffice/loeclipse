@@ -2,9 +2,9 @@
  *
  * $RCSfile: ResourceChangesHandler.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:16:32 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:18 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -55,8 +55,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IStartup;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
-import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
@@ -77,8 +75,6 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
 	public void resourceChanged(IResourceChangeEvent event) {
 		
 		if (IResourceChangeEvent.POST_CHANGE == event.getType()){
-			// Handle the addition of folders in a UNO-IDL capable folder
-
 			// Extract all the additions among the changes
 			IResourceDelta delta = event.getDelta();
 			IResourceDelta[] added = delta.getAffectedChildren();
@@ -94,11 +90,6 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
 				if (ProjectsManager.getProject(project.getName()) == null && project.isOpen()) {
 					ProjectAdderJob job = new ProjectAdderJob(project);
 					job.schedule();
-				}
-				IUnoidlProject unoproject = ProjectsManager.getProject(project.getName());
-
-				if (unoproject != null){
-					UnoidlProjectHelper.setIdlProperty(unoproject);
 				}
 			}
 		} else if (IResourceChangeEvent.PRE_DELETE == event.getType()) {
@@ -135,7 +126,6 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
 		public ProjectAdderJob(IProject prj) {
 			super("Project opener");
 			mPrj = prj;
-			//setRule(mPrj);
 		}
 
 		@Override

@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoFactoryConstants.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -168,4 +168,14 @@ public interface IUnoFactoryConstants {
 	 * method parameter
 	 */
 	public final static String ARGUMENT_INOUT = "argument_inout"; //$NON-NLS-1$
+
+	/**
+	 * Project property setting the directory where the sources are located
+	 */
+	public static final String PROJECT_SRC_DIR = "project_src_dir"; //$NON-NLS-1$
+	
+	/**
+	 * Project property setting the directory where the idl files are located
+	 */
+	public static final String PROJECT_IDL_DIR = "project_idl_dir"; //$NON-NLS-1$
 }

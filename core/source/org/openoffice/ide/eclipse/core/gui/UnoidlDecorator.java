@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlDecorator.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -47,7 +47,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -114,33 +114,29 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
 	}
 
 	/**
-	 * Tests if the element is a folder containing the IDL_FOLDER persistent property
+	 * Tests if the element is a folder contained in the project IDL_DIR
 	 * 
 	 * @param element element to check
-	 * @return <code>true</code> if the element if a folder a possess the IDL_FOLDER
-	 *         persistent property, <code>false</code> otherwise.
+	 * @return <code>true</code> if the element is an IDL directory, 
+	 * 			<code>false</code> otherwise.
 	 */
 	private boolean isIdlFolder(Object element){
 		boolean result = false;
 		
-		/** 
-		 * If the element is a folder that has the property
-		 * IDL_FOLDER set to <code>true</code>, apply the IDL_FOLDER icon
-         */
 		if (element instanceof IResource){
 			IResource resource = (IResource)element;
 
 			try {
 				if (IResource.FOLDER == resource.getType()){
-					String propertyValue = resource.getPersistentProperty(
-							new QualifiedName(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-										      IUnoidlProject.IDL_FOLDER)); 
+					IProject project = resource.getProject();
+					IUnoidlProject unoPrj = ProjectsManager.getProject(project.getName());
 					
-					if (null != propertyValue && propertyValue.equals("true")){ //$NON-NLS-1$
-						result = true;
-					}
+					IPath idlPath = unoPrj.getIdlPath();
+					IPath resPath = resource.getProjectRelativePath();
+					
+					result = resPath.toOSString().startsWith(idlPath.toOSString()); 
 				}
-			} catch (CoreException e){
+			} catch (Exception e){
 				result = false;
 			}
 		}

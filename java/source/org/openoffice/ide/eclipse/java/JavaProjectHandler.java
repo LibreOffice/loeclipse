@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaProjectHandler.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/08/15 12:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:22 $
  *
  * The Contents of this file are made available subject to the terms of
  * either of the GNU Lesser General Public License Version 2.1
@@ -53,7 +53,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -71,10 +70,8 @@ import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
 
 public class JavaProjectHandler implements IProjectHandler {
 
-	private final static QualifiedName P_REGISTRATION_CLASSNAME = new QualifiedName(
-			OOoJavaPlugin.PLUGIN_ID, "regclassname");  //$NON-NLS-1$
-	private final static QualifiedName P_JAVA_VERSION = new QualifiedName(
-			OOoJavaPlugin.PLUGIN_ID, "javaversion");  //$NON-NLS-1$
+	private final static String P_REGISTRATION_CLASSNAME = "regclassname";  //$NON-NLS-1$
+	private final static String P_JAVA_VERSION = "javaversion";  //$NON-NLS-1$
 	
 	/*
 	 * (non-Javadoc)
@@ -189,12 +186,12 @@ public class JavaProjectHandler implements IProjectHandler {
 
 		// The registration class name is always computed in the same way
 		String regclass = RegistrationHelper.getRegistrationClassName(unoprj);
-		unoprj.addProperty(P_REGISTRATION_CLASSNAME, regclass);
+		unoprj.setProperty(P_REGISTRATION_CLASSNAME, regclass);
 
 		// Java version
 		String javaversion = (String)data.getProperty(
 				JavaWizardPage.JAVA_VERSION);
-		unoprj.addProperty(P_JAVA_VERSION, javaversion);
+		unoprj.setProperty(P_JAVA_VERSION, javaversion);
 	}
 
 	/*
