@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoTypePulldownAction.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -62,7 +62,7 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
  *           name="%wizards.service"
  *           project="false">
  *        <class class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard">
- *        	<parameter name="unotype" value="true"/>
+ *            <parameter name="unotype" value="true"/>
  *        </class>
  *        <description>
  *           Creates a new 'new-styled' UNO service. A service will export one interface and define some constructors.
@@ -74,35 +74,38 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
  */
 public class UnoTypePulldownAction extends AbstractPulldownAction {
 
-	public UnoTypePulldownAction() {
-		super("unotype"); //$NON-NLS-1$
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		openWizard(new NewServiceWizard());
-	}
+    /**
+     * UNO type wizard pulldown action.
+     */
+    public UnoTypePulldownAction() {
+        super("unotype"); //$NON-NLS-1$
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void run(IAction pAction) {
+        openWizard(new NewServiceWizard());
+    }
 
-	@Override
-	public boolean isValidSelection(IStructuredSelection selection) {
-		
-		boolean isValid = false;
-		if (!selection.isEmpty()) {
-			if (selection.getFirstElement() instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable)selection.getFirstElement();
-				if (adaptable.getAdapter(IResource.class) != null) {
-					IResource res = (IResource)adaptable.getAdapter(IResource.class);
-					IProject prj = (res).getProject();
-					if (null != ProjectsManager.getProject(prj.getName())) {
-						isValid = true;
-					}
-				}
-			}
-		}
-		
-		return isValid;
-	}	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValidSelection(IStructuredSelection pSelection) {
+        
+        boolean isValid = false;
+        if (!pSelection.isEmpty() && pSelection.getFirstElement() instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable)pSelection.getFirstElement();
+            if (adaptable.getAdapter(IResource.class) != null) {
+                IResource res = (IResource)adaptable.getAdapter(IResource.class);
+                IProject prj = res.getProject();
+                if (null != ProjectsManager.getProject(prj.getName())) {
+                    isValid = true;
+                }
+            }
+        }
+        
+        return isValid;
+    }    
 }

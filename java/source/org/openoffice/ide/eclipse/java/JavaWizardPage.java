@@ -2,12 +2,12 @@
  *
  * $RCSfile: JavaWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:00:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,70 +53,79 @@ import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 
+/**
+ * Java configuration page of the new UNO project wizard.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class JavaWizardPage extends LanguageWizardPage {
 
-	public static final String JAVA_VERSION = "java_version"; //$NON-NLS-1$
-	
-	private ChoiceRow mJavaVersionRow;
-	
-	private String mJavaVersion;
-	
-	private IFieldChangedListener mListener = new IFieldChangedListener() {
+    public static final String JAVA_VERSION = "java_version"; //$NON-NLS-1$
+    
+    private ChoiceRow mJavaVersionRow;
+    
+    private String mJavaVersion;
+    
+    private IFieldChangedListener mListener = new IFieldChangedListener() {
 
-		public void fieldChanged(FieldEvent e) {
-				mJavaVersion = mJavaVersionRow.getValue();
-		}
-	};
-	
-	public JavaWizardPage(UnoFactoryData data) {
-		super();
-		setProjectInfos(data);
-		setImageDescriptor(OOoJavaPlugin.getDefault().getImageRegistry().
-				getDescriptor(OOoJavaPlugin.WIZBAN));
-		setTitle(Messages.getString("JavaWizardPage.PageTitle")); //$NON-NLS-1$
-		setDescription(Messages.getString("JavaWizardPage.PageDescription")); //$NON-NLS-1$
-	}
-	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.LanguageWizardPage#setProjectInfos(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void setProjectInfos(UnoFactoryData data) {
-		// default value
-		mJavaVersion = "java4"; //$NON-NLS-1$
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.LanguageWizardPage#fillData(org.openoffice.ide.eclipse.core.model.UnoFactoryData)
-	 */
-	public UnoFactoryData fillData(UnoFactoryData data) {
-		
-		if (data != null) {
-			data.setProperty(JAVA_VERSION, mJavaVersion);
-		}
-		
-		return data;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		
-		Composite body = new Composite(parent, SWT.NONE);
-		body.setLayout(new GridLayout(2, false));
-		body.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION, Messages.getString("JavaWizardPage.JavaVersion")); //$NON-NLS-1$
-		mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java4"), "java4"); //$NON-NLS-1$ //$NON-NLS-2$
-		mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
-		mJavaVersionRow.setFieldChangedListener(mListener);
-		mJavaVersionRow.select(0);
-		mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
-		
-		setControl(body);
-	}
+        public void fieldChanged(FieldEvent pEvent) {
+            mJavaVersion = mJavaVersionRow.getValue();
+        }
+    };
+    
+    /**
+     * Constructor.
+     * 
+     * @param pData the uno factory data to use to set the page.
+     */
+    public JavaWizardPage(UnoFactoryData pData) {
+        super();
+        setProjectInfos(pData);
+        setImageDescriptor(OOoJavaPlugin.getDefault().getImageRegistry().
+                getDescriptor(OOoJavaPlugin.WIZBAN));
+        setTitle(Messages.getString("JavaWizardPage.PageTitle")); //$NON-NLS-1$
+        setDescription(Messages.getString("JavaWizardPage.PageDescription")); //$NON-NLS-1$
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setProjectInfos(UnoFactoryData pData) {
+        // default value
+        mJavaVersion = "java4"; //$NON-NLS-1$
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public UnoFactoryData fillData(UnoFactoryData pData) {
+        
+        if (pData != null) {
+            pData.setProperty(JAVA_VERSION, mJavaVersion);
+        }
+        
+        return pData;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void createControl(Composite pParent) {
+        
+        Composite body = new Composite(pParent, SWT.NONE);
+        body.setLayout(new GridLayout(2, false));
+        body.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION, 
+                Messages.getString("JavaWizardPage.JavaVersion")); //$NON-NLS-1$
+        mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java4"), "java4"); //$NON-NLS-1$ //$NON-NLS-2$
+        mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
+        mJavaVersionRow.setFieldChangedListener(mListener);
+        mJavaVersionRow.select(0);
+        mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
+        
+        setControl(body);
+    }
 }

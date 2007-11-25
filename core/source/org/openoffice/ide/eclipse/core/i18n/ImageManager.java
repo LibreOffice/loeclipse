@@ -2,12 +2,12 @@
  *
  * $RCSfile: ImageManager.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -59,100 +59,106 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
  * from a key. The keys are described in the ImagesConstants class and the 
  * associated properties file is <code>ImageManager.properties</code>. 
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class ImageManager {
-	
-	/**
-	 * <p>Constant designing the icon equivalence file. This file defines the 
-	 * association between the image key and the image file. This mechanism
-	 * helps changing icons without changing the code.</p>
-	 * 
-	 * <p>For example, this file will define that the ERROR key corresponds
-	 * to the /icons/errors.gif image.</p>
-	 */
-	
-	private ResourceBundle mImageBundle;
-	
-	private ImageRegistry mRegistry = new ImageRegistry();
-	
-	/**
-	 * Default constructor
-	 */
-	public ImageManager() {
-		
-		try {
-			mImageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.core.i18n.ImageManager"); //$NON-NLS-1$
-			
-		} catch (NullPointerException e) {
-			PluginLogger.debug(
-					"Call to getBundle is incorrect: NullPointerException " + //$NON-NLS-1$
-					"caught"); //$NON-NLS-1$
-		} catch(MissingResourceException e) {
-			
-			String message = "Image file not found for locale :" //$NON-NLS-1$
-				+ Locale.getDefault().toString();
-			PluginLogger.error(message);
-		}
-	}
-	
-	/**
-	 * Method which returns the image corresponding to the provided key.
-	 * 
-	 * @param key Key corresponding to the image to find
-	 * @return image corresponding to the key, or <code>null</code> if the key
-	 *         doesn't exists or the bundle is null
-	 */
-	public Image getImage(String key){
-		
-		// Tries to load the image from the registry before looking into the bundle
-		Image image = mRegistry.get(key);
-		
-		if (null == image){
-		
-			// The registry do not contain the key, so look into the bundle
-			ImageDescriptor descr = getImageDescriptor(key);
-			
-			if (null != descr){
-				// if the descriptor isn't null, create the image
-				image = descr.createImage();
-				mRegistry.put(key, image);
-			}
-		}
-		
-		return image;
-	}
+    
+    /**
+     * <p>Constant designing the icon equivalence file. This file defines the 
+     * association between the image key and the image file. This mechanism
+     * helps changing icons without changing the code.</p>
+     * 
+     * <p>For example, this file will define that the ERROR key corresponds
+     * to the /icons/errors.gif image.</p>
+     */
+    
+    private ResourceBundle mImageBundle;
+    
+    private ImageRegistry mRegistry = new ImageRegistry();
+    
+    /**
+     * Default constructor.
+     */
+    public ImageManager() {
+        
+        try {
+            mImageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.core.i18n.ImageManager"); //$NON-NLS-1$
+            
+        } catch (NullPointerException e) {
+            PluginLogger.debug(
+                    "Call to getBundle is incorrect: NullPointerException " + //$NON-NLS-1$
+                    "caught"); //$NON-NLS-1$
+        } catch (MissingResourceException e) {
+            
+            String message = "Image file not found for locale :" //$NON-NLS-1$
+                + Locale.getDefault().toString();
+            PluginLogger.error(message);
+        }
+    }
+    
+    /**
+     * Method which returns the image corresponding to the provided key.
+     * 
+     * @param pKey Key corresponding to the image to find
+     * @return image corresponding to the key, or <code>null</code> if the key
+     *         doesn't exists or the bundle is null
+     */
+    public Image getImage(String pKey) {
+        
+        // Tries to load the image from the registry before looking into the bundle
+        Image image = mRegistry.get(pKey);
+        
+        if (null == image) {
+        
+            // The registry do not contain the key, so look into the bundle
+            ImageDescriptor descr = getImageDescriptor(pKey);
+            
+            if (null != descr) {
+                // if the descriptor isn't null, create the image
+                image = descr.createImage();
+                mRegistry.put(pKey, image);
+            }
+        }
+        
+        return image;
+    }
 
-	/**
-	 * Method which returns the image descriptor corresponding to the provided key.
-	 * 
-	 * @param key Key corresponding to the image to find
-	 * @return image descriptor corresponding to the key, or <code>null</code> 
-	 * 		   if the key doesn't exists or the bundle is null
-	 */
-	public ImageDescriptor getImageDescriptor(String key){
-		ImageDescriptor imageDescr = null;
-		
-		if (null != mImageBundle){
-			// Fetch the plugin relative path from the bundle
-			String path = mImageBundle.getString(key);
-			imageDescr = AbstractUIPlugin.imageDescriptorFromPlugin(
-									OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-									path);
-		}
-		
-		return imageDescr;
-	}
-	
-	public ImageDescriptor getImageDescriptorFromPath(String path) {
-		
-		if (!path.startsWith("/")) { //$NON-NLS-1$
-			path = "/" + path; //$NON-NLS-1$
-		}
-		
-		return AbstractUIPlugin.imageDescriptorFromPlugin(
-				OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-				path);
-	}
+    /**
+     * Method which returns the image descriptor corresponding to the provided key.
+     * 
+     * @param pKey Key corresponding to the image to find
+     * @return image descriptor corresponding to the key, or <code>null</code> 
+     *            if the key doesn't exists or the bundle is null
+     */
+    public ImageDescriptor getImageDescriptor(String pKey) {
+        ImageDescriptor imageDescr = null;
+        
+        if (null != mImageBundle) {
+            // Fetch the plugin relative path from the bundle
+            String path = mImageBundle.getString(pKey);
+            imageDescr = AbstractUIPlugin.imageDescriptorFromPlugin(
+                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+                                    path);
+        }
+        
+        return imageDescr;
+    }
+    
+    /**
+     * Finds the image descriptor from the bundle relative path of the image.
+     * 
+     * @param pPath the image path
+     * @return the image descriptor
+     */
+    public ImageDescriptor getImageDescriptorFromPath(String pPath) {
+        
+        if (!pPath.startsWith("/")) { //$NON-NLS-1$
+            pPath = "/" + pPath; //$NON-NLS-1$
+        }
+        
+        return AbstractUIPlugin.imageDescriptorFromPlugin(
+                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+                pPath);
+    }
 }

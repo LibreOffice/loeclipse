@@ -2,12 +2,12 @@
  *
  * $RCSfile: IPackageChangeListener.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -50,16 +50,16 @@ package org.openoffice.ide.eclipse.core.model;
  *
  */
 public interface IPackageChangeListener {
-	
-	/**
-	 * Method called each time the listened package properties model has changed
-	 *
-	 */
-	public void packagePropertiesChanged();
-	
-	/**
-	 * Method called each time the listened package properties model is saved
-	 *
-	 */
-	public void packagePropertiesSaved();
+    
+    /**
+     * Method called each time the listened package properties model has changed.
+     *
+     */
+    public void packagePropertiesChanged();
+    
+    /**
+     * Method called each time the listened package properties model is saved.
+     *
+     */
+    public void packagePropertiesSaved();
 }

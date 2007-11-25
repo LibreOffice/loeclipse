@@ -2,11 +2,11 @@
  *
  * $RCSfile: ResourceChangesHandler.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
- * The Contents of this file are made available subject to the terms of 
+ * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
@@ -59,79 +59,93 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * This class is responsible for all the actions to perform on resources changes.
- * To be sure that this class is started early even if the OOIntegration hasn't
- * been activated, this class implement {@link IStartup}
+ * 
+ * <p>To be sure that this class is started early even if the OOIntegration hasn't
+ * been activated, this class implement {@link IStartup}</p>
  * 
  * @author cedricbosdo
  *
  */
-public class ResourceChangesHandler implements IStartup, IResourceChangeListener{
+public class ResourceChangesHandler implements IStartup, IResourceChangeListener {
 
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		
-		if (IResourceChangeEvent.POST_CHANGE == event.getType()){
-			// Extract all the additions among the changes
-			IResourceDelta delta = event.getDelta();
-			IResourceDelta[] added = delta.getAffectedChildren();
+    /**
+     * {@inheritDoc}
+     */
+    public void resourceChanged(IResourceChangeEvent pEvent) {
+        
+        if (IResourceChangeEvent.POST_CHANGE == pEvent.getType()) {
+            // Extract all the additions among the changes
+            IResourceDelta delta = pEvent.getDelta();
+            IResourceDelta[] added = delta.getAffectedChildren();
 
-			// In all the added resources, process the projects
-			for (int i=0, length=added.length; i<length; i++){
-				IResourceDelta addedi = added[i];
+            // In all the added resources, process the projects
+            for (int i = 0, length = added.length; i < length; i++) {
+                IResourceDelta addedi = added[i];
 
-				// Get the project
-				IResource resource = addedi.getResource();
-				IProject project = resource.getProject();
+                // Get the project
+                IResource resource = addedi.getResource();
+                IProject project = resource.getProject();
 
-				if (ProjectsManager.getProject(project.getName()) == null && project.isOpen()) {
-					ProjectAdderJob job = new ProjectAdderJob(project);
-					job.schedule();
-				}
-			}
-		} else if (IResourceChangeEvent.PRE_DELETE == event.getType()) {
-			// detect UNO IDL project about to be deleted
-			IResource removed = event.getResource();
-			if (ProjectsManager.getProject(removed.getName()) != null) {
-				ProjectsManager.removeProject(removed.getName());
-			}
-		} else if (IResourceChangeEvent.PRE_CLOSE == event.getType()) {
-			IResource res = event.getResource();
-			if (res != null && ProjectsManager.getProject(res.getName()) != null) {
-				// Project about to be closed: remove for the available uno projects
-				ProjectsManager.removeProject(res.getName());
-			}
-		}
-	}
+                if (ProjectsManager.getProject(project.getName()) == null && project.isOpen()) {
+                    ProjectAdderJob job = new ProjectAdderJob(project);
+                    job.schedule();
+                }
+            }
+        } else if (IResourceChangeEvent.PRE_DELETE == pEvent.getType()) {
+            // detect UNO IDL project about to be deleted
+            IResource removed = pEvent.getResource();
+            if (ProjectsManager.getProject(removed.getName()) != null) {
+                ProjectsManager.removeProject(removed.getName());
+            }
+        } else if (IResourceChangeEvent.PRE_CLOSE == pEvent.getType()) {
+            IResource res = pEvent.getResource();
+            if (res != null && ProjectsManager.getProject(res.getName()) != null) {
+                // Project about to be closed: remove for the available uno projects
+                ProjectsManager.removeProject(res.getName());
+            }
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IStartup#earlyStartup()
-	 */
-	public void earlyStartup() {
-		// Load the projects manager
-		ProjectsManager.load();
-		
-		// Add a listener to the resources changes of the workspace
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		PluginLogger.info("Resources changes are now listened"); //$NON-NLS-1$
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void earlyStartup() {
+        // Load the projects manager
+        ProjectsManager.load();
+        
+        // Add a listener to the resources changes of the workspace
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+        PluginLogger.info("Resources changes are now listened"); //$NON-NLS-1$
+    }
 
-	private class ProjectAdderJob extends WorkspaceJob {
-		
-		private IProject mPrj;
-		
-		public ProjectAdderJob(IProject prj) {
-			super("Project opener");
-			mPrj = prj;
-		}
+    /**
+     * Job adding a project to the {@link ProjectsManager}.
+     * 
+     * @author cedricbosdo
+     *
+     */
+    private class ProjectAdderJob extends WorkspaceJob {
+        
+        private IProject mPrj;
+        
+        /**
+         * Project adder constructor.
+         * 
+         * @param pPrj the project to add
+         */
+        public ProjectAdderJob(IProject pPrj) {
+            super("Project opener");
+            mPrj = pPrj;
+        }
 
-		@Override
-		public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-			ProjectsManager.addProject(mPrj);
-			return Status.OK_STATUS;
-		}
-	}
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IStatus runInWorkspace(IProgressMonitor pMonitor) throws CoreException {
+            ProjectsManager.addProject(mPrj);
+            return Status.OK_STATUS;
+        }
+    }
 }

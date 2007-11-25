@@ -2,12 +2,12 @@
  *
  * $RCSfile: ColorProvider.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -57,56 +57,56 @@ import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
- * This class provides colors of the editor to all the other objects
+ * This class provides colors of the editor to all the other objects.
  * 
  * @author cbosdonnat
  *
  */
 public class ColorProvider {
-	protected Map<String, Color> mColorTable = new HashMap<String, Color>();
-	private IPreferenceStore mStore;
-	
-	private final IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			mColorTable.clear();
-		}
-	};
-	
-	/**
-	 * Default constructor getting the preferences.
-	 */
-	public ColorProvider() {
-		OOEclipsePlugin.getDefault().getPreferenceStore()
-			.addPropertyChangeListener(mPropertyListener);
-	    mStore = OOEclipsePlugin.getDefault().getPreferenceStore();
-	}
-	
-	/**
-	 * Disposing the color provider
-	 */
-	public void dispose() {
-		Iterator<Color> e = mColorTable.values().iterator();
-		while (e.hasNext()){
-		    e.next().dispose();
-		}
-		OOEclipsePlugin.getDefault().getPreferenceStore()
-			.removePropertyChangeListener(mPropertyListener);
-	}
-	
-	/**
-	 * Returns the color corresponding to the given name.
-	 * 
-	 * @param color_string name of the color to get
-	 * @return the color from the preferences or the eclipse default color 
-	 */
-	public Color getColor(String color_string){
-		
-	    Color color = mColorTable.get(color_string);
-		if (color == null){
-			color = new Color(Display.getCurrent(), 
-					PreferenceConverter.getColor(mStore, color_string));
-			mColorTable.put(color_string, color);
-		}
-		return color;
-	}
+    protected Map<String, Color> mColorTable = new HashMap<String, Color>();
+    private IPreferenceStore mStore;
+    
+    private final IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent pEvent) {
+            mColorTable.clear();
+        }
+    };
+    
+    /**
+     * Default constructor getting the preferences.
+     */
+    public ColorProvider() {
+        OOEclipsePlugin.getDefault().getPreferenceStore()
+            .addPropertyChangeListener(mPropertyListener);
+        mStore = OOEclipsePlugin.getDefault().getPreferenceStore();
+    }
+    
+    /**
+     * Disposing the color provider.
+     */
+    public void dispose() {
+        Iterator<Color> e = mColorTable.values().iterator();
+        while (e.hasNext()) {
+            e.next().dispose();
+        }
+        OOEclipsePlugin.getDefault().getPreferenceStore()
+            .removePropertyChangeListener(mPropertyListener);
+    }
+    
+    /**
+     * Returns the color corresponding to the given name.
+     * 
+     * @param pColorString name of the color to get
+     * @return the color from the preferences or the eclipse default color 
+     */
+    public Color getColor(String pColorString) {
+        
+        Color color = mColorTable.get(pColorString);
+        if (color == null) {
+            color = new Color(Display.getCurrent(), 
+                    PreferenceConverter.getColor(mStore, pColorString));
+            mColorTable.put(pColorString, color);
+        }
+        return color;
+    }
 }

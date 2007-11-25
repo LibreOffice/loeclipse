@@ -2,12 +2,12 @@
  *
  * $RCSfile: NewUreAppWizard.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -46,19 +46,32 @@ package org.openoffice.ide.eclipse.core.wizards;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 
+/**
+ * The new URE application wizard is simply a new UNO project wizard, with
+ * the inherited interface forced to <code>com::sun::star::lang::XMain</code>.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class NewUreAppWizard extends NewUnoProjectWizard {
-	
-	public NewUreAppWizard() {
-		setDisableServicePage("com::sun::star::lang::XMain"); //$NON-NLS-1$
-	}
-	
-	@Override
-	public void addPages() {
-		super.addPages();
-		
-		mMainPage.setDescription(Messages.getString("NewUreAppWizard.Description")); //$NON-NLS-1$
-		mMainPage.setTitle(Messages.getString("NewUreAppWizard.Title")); //$NON-NLS-1$
-		mMainPage.setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
-				ImagesConstants.URE_APP_WIZ));
-	}
+    
+    /**
+     * Constructor.
+     */
+    public NewUreAppWizard() {
+        setDisableServicePage("com::sun::star::lang::XMain"); //$NON-NLS-1$
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addPages() {
+        super.addPages();
+        
+        mMainPage.setDescription(Messages.getString("NewUreAppWizard.Description")); //$NON-NLS-1$
+        mMainPage.setTitle(Messages.getString("NewUreAppWizard.Title")); //$NON-NLS-1$
+        mMainPage.setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
+                ImagesConstants.URE_APP_WIZ));
+    }
 }

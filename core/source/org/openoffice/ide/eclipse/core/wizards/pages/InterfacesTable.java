@@ -2,12 +2,12 @@
  *
  * $RCSfile: InterfacesTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -63,207 +63,215 @@ import org.openoffice.ide.eclipse.core.wizards.Messages;
  * action launches the UNO Type browser to select one interface. This class 
  * shouldn't be subclassed. 
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class InterfacesTable extends AbstractTable {
 
-	
-	/**
-	 * Simplified constructor for this kind of table. It uses a types provider
-	 * in order to fetch the UNO types earlier than showing the UNO type browser.
-	 * This way it avoids a too long UI freeze time.
-	 * 
-	 * @param parent the parent composite where to put the table
-	 */
-	public InterfacesTable(Composite parent) {
-		super(
-				parent, 
-				Messages.getString("InterfacesTable.Title"),  //$NON-NLS-1$
-				new String[] {
-					Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
-					Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
-				},
-				new int[] {25, 400}, 
-				new String[] {
-					InheritanceLine.OPTIONAL,
-					InheritanceLine.NAME
-				}
-		);
-	}
+    
+    private static final int OPTIONAL_WIDTH = 25;
+    private static final int NAME_WIDTH = 400;
 
-	/**
-	 * Add a new interface in the table
-	 * 
-	 * @param ifaceName the name of the interface to add
-	 * @param optional <code>true</code> if the interface is optional.
-	 */
-	public void addInterface(String ifaceName, boolean optional) {
-		InheritanceLine line = new InheritanceLine();
-		line.interfaceName = ifaceName;
-		line.optional = optional;
-		
-		addLine(line);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#createCellEditors(org.eclipse.swt.widgets.Table)
-	 */
-	protected CellEditor[] createCellEditors(Table table) {
-		CellEditor[] editors = new CellEditor[] {
-			new CheckboxCellEditor(),
-			null
-		};
-				
-		return editors;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#addLine()
-	 */
-	protected ITableElement addLine() {
-		ITableElement line = null;
-		
-		// Saving the current types filtering
-		UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
-		int oldType = typesProvider.getTypes();
-		
-		// Ask for interfaces only
-		typesProvider.setTypes(IUnoFactoryConstants.INTERFACE);
-		
-		// Launching the UNO Type Browser
-		UnoTypeBrowser browser = new UnoTypeBrowser(getShell(), typesProvider);
-		if (UnoTypeBrowser.OK == browser.open()) {
-			
-			String value = null;
-			
-			InternalUnoType selectedType = browser.getSelectedType();
-			if (null != selectedType){
-				value = selectedType.getFullName();
-			}
-			
-			// Creates the line only if OK has been pressed
-			line = new InheritanceLine();
-			((InheritanceLine)line).setInterfaceName(value);
-		}
-		
-		// Restoring the old types filtering
-		typesProvider.setTypes(oldType);
-		
-		return line;
-	}
-	
-	/**
-	 * The interface names are stored in path-like strings, ie: using "::"
-	 * as separator. This class describes a line in the table and thus has 
-	 * to implement {@link ITableElement} interface
-	 * 
-	 * @author cbosdonnat
-	 *
-	 */
-	public class InheritanceLine implements ITableElement {
-		
-		public static final String OPTIONAL = "__optional"; //$NON-NLS-1$
-		public static final String NAME = "__name"; //$NON-NLS-1$
-		
-		private String interfaceName;
-		private boolean optional = false;
-		
-		//----------------------------------------------------- Member managment
-		
-		public String getInterfaceName() {
-			return interfaceName;
-		}
-		
-		public boolean isOptional() {
-			return optional;
-		}
-		
-		public void setInterfaceName(String interfaceName) {
-			this.interfaceName = interfaceName;
-		}
-		
-		public void setOptional(boolean optional) {
-			this.optional = optional;
-		}
-		
-		//----------------------------------------- ITableElement implementation
-		
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getImage(java.lang.String)
-		 */
-		public Image getImage(String property) {
-			Image image = null;
-			
-			if (property.equals(OPTIONAL)) {
-				if (isOptional()) {
-					image = OOEclipsePlugin.getImage(ImagesConstants.CHECKED);
-				} else {
-					image = OOEclipsePlugin.getImage(ImagesConstants.UNCHECKED);
-				}
-			}
-			return image;
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getLabel(java.lang.String)
-		 */
-		public String getLabel(String property) {
-			String label = null;
-			
-			if (property.equals(NAME)) {
-				label = getInterfaceName().toString();
-			}
-			return label;
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getProperties()
-		 */
-		public String[] getProperties() {
-			return new String[] {
-					OPTIONAL,
-					NAME
-			};
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#canModify(java.lang.String)
-		 */
-		public boolean canModify(String property) {
-			
-			return property.equals(OPTIONAL);
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getValue(java.lang.String)
-		 */
-		public Object getValue(String property) {
-			Object result = null;
-			
-			if (property.equals(OPTIONAL)) {
-				result = Boolean.valueOf(isOptional());
-			}
-			return result;
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#setValue(java.lang.String, java.lang.Object)
-		 */
-		public void setValue(String property, Object value) {
-			
-			if (property.equals(OPTIONAL) && value instanceof Boolean) {
-				
-				setOptional(((Boolean)value).booleanValue());
-			}
-		}
-	}
+    /**
+     * Simplified constructor for this kind of table. It uses a types provider
+     * in order to fetch the UNO types earlier than showing the UNO type browser.
+     * This way it avoids a too long UI freeze time.
+     * 
+     * @param pParent the parent composite where to put the table
+     */
+    public InterfacesTable(Composite pParent) {
+        super(
+                pParent, 
+                Messages.getString("InterfacesTable.Title"),  //$NON-NLS-1$
+                new String[] {
+                    Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
+                    Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
+                },
+                new int[] {OPTIONAL_WIDTH, NAME_WIDTH}, 
+                new String[] {
+                    InheritanceLine.OPTIONAL,
+                    InheritanceLine.NAME
+                }
+        );
+    }
+
+    /**
+     * Add a new interface in the table.
+     * 
+     * @param pIfaceName the name of the interface to add
+     * @param pOptional <code>true</code> if the interface is optional.
+     */
+    public void addInterface(String pIfaceName, boolean pOptional) {
+        InheritanceLine line = new InheritanceLine();
+        line.mInterfaceName = pIfaceName;
+        line.mOptional = pOptional;
+        
+        addLine(line);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected CellEditor[] createCellEditors(Table pTable) {
+        CellEditor[] editors = new CellEditor[] {
+            new CheckboxCellEditor(),
+            null
+        };
+                
+        return editors;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected ITableElement addLine() {
+        ITableElement line = null;
+        
+        // Saving the current types filtering
+        UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+        int oldType = typesProvider.getTypes();
+        
+        // Ask for interfaces only
+        typesProvider.setTypes(IUnoFactoryConstants.INTERFACE);
+        
+        // Launching the UNO Type Browser
+        UnoTypeBrowser browser = new UnoTypeBrowser(getShell(), typesProvider);
+        if (UnoTypeBrowser.OK == browser.open()) {
+            
+            String value = null;
+            
+            InternalUnoType selectedType = browser.getSelectedType();
+            if (null != selectedType) {
+                value = selectedType.getFullName();
+            }
+            
+            // Creates the line only if OK has been pressed
+            line = new InheritanceLine();
+            ((InheritanceLine)line).setInterfaceName(value);
+        }
+        
+        // Restoring the old types filtering
+        typesProvider.setTypes(oldType);
+        
+        return line;
+    }
+    
+    /**
+     * The interface names are stored in path-like strings, ie: using "::"
+     * as separator. This class describes a line in the table and thus has 
+     * to implement {@link ITableElement} interface
+     * 
+     * @author cedricbosdo
+     *
+     */
+    public class InheritanceLine implements ITableElement {
+        
+        public static final String OPTIONAL = "__optional"; //$NON-NLS-1$
+        public static final String NAME = "__name"; //$NON-NLS-1$
+        
+        private String mInterfaceName;
+        private boolean mOptional = false;
+        
+        //----------------------------------------------------- Member managment
+        
+        /**
+         * @return the interface name
+         */
+        public String getInterfaceName() {
+            return mInterfaceName;
+        }
+        
+        /**
+         * @return <code>true</code> if the inheritance is optional
+         */
+        public boolean isOptional() {
+            return mOptional;
+        }
+        
+        /**
+         * Set the interface name.
+         * 
+         * @param pInterfaceName the interface name of the inheritance
+         */
+        public void setInterfaceName(String pInterfaceName) {
+            this.mInterfaceName = pInterfaceName;
+        }
+        
+        /**
+         * Set whether the inheritance is optional or not.
+         * 
+         * @param pOptional <code>true</code> if the inheritance is optional.
+         */
+        public void setOptional(boolean pOptional) {
+            this.mOptional = pOptional;
+        }
+        
+        //----------------------------------------- ITableElement implementation
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Image getImage(String pProperty) {
+            Image image = null;
+            
+            if (pProperty.equals(OPTIONAL)) {
+                if (isOptional()) {
+                    image = OOEclipsePlugin.getImage(ImagesConstants.CHECKED);
+                } else {
+                    image = OOEclipsePlugin.getImage(ImagesConstants.UNCHECKED);
+                }
+            }
+            return image;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String getLabel(String pProperty) {
+            String label = null;
+            
+            if (pProperty.equals(NAME)) {
+                label = getInterfaceName().toString();
+            }
+            return label;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String[] getProperties() {
+            return new String[] { OPTIONAL, NAME };
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean canModify(String pProperty) {
+            
+            return pProperty.equals(OPTIONAL);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Object getValue(String pProperty) {
+            Object result = null;
+            
+            if (pProperty.equals(OPTIONAL)) {
+                result = Boolean.valueOf(isOptional());
+            }
+            return result;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void setValue(String pProperty, Object pValue) {
+            
+            if (pProperty.equals(OPTIONAL) && pValue instanceof Boolean) {
+                
+                setOptional(((Boolean)pValue).booleanValue());
+            }
+        }
+    }
 }

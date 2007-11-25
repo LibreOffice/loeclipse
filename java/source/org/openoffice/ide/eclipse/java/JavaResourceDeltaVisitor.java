@@ -2,11 +2,11 @@
  *
  * $RCSfile: JavaResourceDeltaVisitor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:00:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
- * The Contents of this file are made available subject to the terms of 
+ * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
@@ -70,110 +70,139 @@ import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
  */
 public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-	 */
-	public boolean visit(IResourceDelta delta) throws CoreException {
-		
-		boolean visitChildren = false;
-		
-		if (delta.getResource() instanceof IWorkspaceRoot) {
-			return true;
-		}
-		
-		IProject project = delta.getResource().getProject();
-		IUnoidlProject unoprj = ProjectsManager.getProject(project.getName());
-		if (unoprj != null) {
-			// The resource is a UNO project or is contained in a UNO project
-			visitChildren = true;
-			
-			// Check if the resource is a service implementation
-			if (delta.getKind() == IResourceDelta.ADDED) {
-				String className = isJavaServiceImpl(delta.getResource());
-				if (className != null) {
-					RegistrationHelper.addImplementation(unoprj, className);
-				}
-			} else if (delta.getKind() == IResourceDelta.REMOVED) {
-				IResource res = delta.getResource();
-				if (res.getName().endsWith(".java")) {
-					String prjPath = delta.getProjectRelativePath().toString();
-					prjPath = prjPath.replace(".java", "");
-					prjPath = prjPath.replace("/", ".");
-					
-					Vector<String> classes = RegistrationHelper.readClassesList(unoprj);
-					for (String implName : classes) {
-						if (prjPath.endsWith(implName)) {
-							RegistrationHelper.removeImplementation(unoprj, implName);
-						}
-					}
-				}
-			}
-		}
-		
-		return visitChildren;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean visit(IResourceDelta pDelta) throws CoreException {
+        
+        boolean visitChildren = false;
+        
+        if (!(pDelta.getResource() instanceof IWorkspaceRoot)) {
+            
+        
+            IProject project = pDelta.getResource().getProject();
+            IUnoidlProject unoprj = ProjectsManager.getProject(project.getName());
+            if (unoprj != null) {
+                // The resource is a UNO project or is contained in a UNO project
+                visitChildren = true;
 
-	private String isJavaServiceImpl(IResource resource) {
-		
-		String className = null;
-		if (resource.getType() == IResource.FILE && resource.getName().endsWith(".java")) {
-			/* 
-			 * For sure the resource is a Java class file.
-			 * Now the file has to be read to find out if it contains the two
-			 * following methods:
-			 * 
-			 *    + public static XSingleComponentFactory __getComponentFactory
-			 *    + public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey )
-			 */
-			FileInputStream in = null;
-			BufferedReader reader = null;
-			try {
-				File file = resource.getLocation().toFile();
-				in = new FileInputStream(file);
-				reader = new BufferedReader(new InputStreamReader(in));
-				
-				// Read the file into a string without line delimiters
-				String line = reader.readLine();
-				String fileContent = "";
-				while (line != null) {
-					fileContent = fileContent + line;
-					line = reader.readLine();
-				}
-				
-				String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory\\s+__getComponentFactory";
-				boolean containsGetFactory = fileContent.split(getFactoryRegex).length>1;
-				
-				String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo";
-				boolean containsWriteService = fileContent.split(writeServiceRegex).length>1;
-				
-				// Do not consider the RegistrationHandler class as a service implementation
-				if (containsGetFactory && containsWriteService && !resource.getName().equals("RegistrationHandler.java")) {
-					/*
-					 * Computes the class name 
-					 */
-					Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent);
-					if (m3.matches()) {
-						String packageName = m3.group(1);
+                // Check if the resource is a service implementation
+                if (pDelta.getKind() == IResourceDelta.ADDED) {
+                    addImplementation(pDelta, unoprj);
+                    
+                } else if (pDelta.getKind() == IResourceDelta.REMOVED) {
+                    removeImplementation(pDelta, unoprj);
+                }
+            }
+        }
+        
+        return visitChildren;
+    }
+
+    /**
+     * Remove the delta resource from the implementations.
+     * 
+     * @param pDelta the delta to remove
+     * @param pUnoprj the concerned UNO project
+     */
+    private void removeImplementation(IResourceDelta pDelta,
+            IUnoidlProject pUnoprj) {
+        IResource res = pDelta.getResource();
+        if (res.getName().endsWith(".java")) {
+            String prjPath = pDelta.getProjectRelativePath().toString();
+            prjPath = prjPath.replace(".java", "");
+            prjPath = prjPath.replace("/", ".");
+
+            Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
+            for (String implName : classes) {
+                if (prjPath.endsWith(implName)) {
+                    RegistrationHelper.removeImplementation(pUnoprj, implName);
+                }
+            }
+        }
+    }
+
+    /**
+     * Add the delta resource to the implementations.
+     * 
+     * @param pDelta the delta resource to add.
+     * @param pUnoProject the concerned UNO project
+     */
+    private void addImplementation(IResourceDelta pDelta, IUnoidlProject pUnoProject) {
+        String className = isJavaServiceImpl(pDelta.getResource());
+        if (className != null) {
+            RegistrationHelper.addImplementation(pUnoProject, className);
+        }
+    }
+
+    /**
+     * Check whether a resource is a UNO implementation.
+     * 
+     * @param pResource the resource to check.
+     * @return <code>true</code> if it contains the necessary static methods for Java
+     *      UNO service implementation registration.
+     */
+    private String isJavaServiceImpl(IResource pResource) {
+        
+        String className = null;
+        if (pResource.getType() == IResource.FILE && pResource.getName().endsWith(".java")) {
+            /* 
+             * For sure the resource is a Java class file.
+             * Now the file has to be read to find out if it contains the two
+             * following methods:
+             * 
+             *    + public static XSingleComponentFactory __getComponentFactory
+             *    + public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey )
+             */
+            FileInputStream in = null;
+            BufferedReader reader = null;
+            try {
+                File file = pResource.getLocation().toFile();
+                in = new FileInputStream(file);
+                reader = new BufferedReader(new InputStreamReader(in));
+                
+                // Read the file into a string without line delimiters
+                String line = reader.readLine();
+                String fileContent = "";
+                while (line != null) {
+                    fileContent = fileContent + line;
+                    line = reader.readLine();
+                }
+                
+                String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory\\s+__getComponentFactory";
+                boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
+                
+                String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo";
+                boolean containsWriteService = fileContent.split(writeServiceRegex).length > 1;
+                
+                // Do not consider the RegistrationHandler class as a service implementation
+                if (containsGetFactory && containsWriteService && 
+                        !pResource.getName().equals("RegistrationHandler.java")) {
+                    /*
+                     * Computes the class name 
+                     */
+                    Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent);
+                    if (m3.matches()) {
+                        String packageName = m3.group(1);
 
 
-						String fileName = resource.getName();
-						className = fileName.substring(0, fileName.length() - 5);
+                        String fileName = pResource.getName();
+                        className = fileName.substring(0, fileName.length() - ".java".length());
 
-						className = packageName + "." + className;
-					}
-				}
-				
-			} catch (Exception e) {
-				// nothing to log
-			} finally {
-				try {
-					reader.close();
-					in.close();
-				} catch (Exception e) { }
-			}
-		}
-		
-		return className;
-	}
-
+                        className = packageName + "." + className;
+                    }
+                }
+                
+            } catch (Exception e) {
+                // nothing to log
+            } finally {
+                try {
+                    reader.close();
+                    in.close();
+                } catch (Exception e) { }
+            }
+        }
+        
+        return className;
+    }
 }

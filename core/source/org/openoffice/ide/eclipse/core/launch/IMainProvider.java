@@ -2,12 +2,12 @@
  *
  * $RCSfile: IMainProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:35:37 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:32 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -55,11 +55,11 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IMainProvider {
 
-	/**
-	 * Get the names of the XMain implementations in the project
-	 *  
-	 * @param project the UnoIdl project where to look for implementations
-	 * @return the names of the implementations found.
-	 */
-	public Vector<String> getMainNames(IProject project);
+    /**
+     * Get the names of the XMain implementations in the project.
+     *  
+     * @param pProject the UnoIdl project where to look for implementations
+     * @return the names of the implementations found.
+     */
+    public Vector<String> getMainNames(IProject pProject);
 }

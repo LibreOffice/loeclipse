@@ -2,12 +2,12 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:00 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -60,301 +60,322 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
 /**
  * Singleton object containing the OOo configurations.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class OOoContainer { 
-	
-	private static OOoContainer sInstance = new OOoContainer();
-	
-	/**
-	 * Vector of the config container listeners
-	 */
-	private Vector<IConfigListener> mListeners;
+    
+    private static OOoContainer sInstance = new OOoContainer();
+    
+    /**
+     * Vector of the configuration container listeners.
+     */
+    private Vector<IConfigListener> mListeners;
 
-	/**
-	 * HashMap containing the ooo lines referenced by their path
-	 */
-	private HashMap<String, IOOo> mElements;
-	
-	
-	/* Methods to manage the listeners */
-	
-	/**
-	 * Add a config listener to the container
-	 * 
-	 *  @param listener config listener to add 
-	 */
-	public static void addListener(IConfigListener listener){
-		if (null != listener){
-			sInstance.mListeners.add(listener);
-		}
-	}
-	
-	/**
-	 * Removes a config listener from the container
-	 * 
-	 * @param listener config listener to remove
-	 */
-	public static void removeListener(IConfigListener listener){
-		if (null != listener){
-			sInstance.mListeners.remove(listener);
-		}
-	}
-	
-	/* Methods to manage the ooos */
-	
-	/**
-	 * Returns the ooos elements in an array
-	 */
-	public static Object[] toArray(){
-		Vector<IOOo> vElements = toVector();
-		Object[] elements = vElements.toArray();
-		
-		vElements.clear();
-		return elements;
-	}
-	
-	/**
-	 * Add the OOo given in parameter to the list of the others. Do not use 
-	 * directly the private field to handle OOos
-	 * 
-	 * @param ooo OOo to add
-	 */
-	public static void addOOo(IOOo ooo){
-		
-		/** 
-		 * If there already is a OOo with such an identifier, replace the 
-		 * values, not the object to keep the references on it
-		 */ 
-		
-		if (null != ooo){
-			if (!sInstance.mElements.containsKey(ooo.getName())){
-				sInstance.mElements.put(ooo.getName(), ooo);
-				sInstance.fireOOoAdded(ooo);
-			} else {
-				IOOo oooref = sInstance.mElements.get(ooo.getName());
-				updateOOo(oooref.getName(), ooo);
-			}
-		}
-	}
-	
-	private void fireOOoAdded(IOOo ooo) {
-		for (int i=0, length=mListeners.size(); i<length; i++){
-			IConfigListener listeneri = mListeners.get(i);
-			listeneri.ConfigAdded(ooo);
-		}
-	}
+    /**
+     * HashMap containing the ooo lines referenced by their path.
+     */
+    private HashMap<String, IOOo> mElements;
+    
+    
+    /**
+     * The SDK Container should not be created by another object.
+     */
+    private OOoContainer() {
+        
+        // Initialize the members
+        mElements = new HashMap<String, IOOo>();
+        mListeners = new Vector<IConfigListener>();
+    }
+    
+    
+    //-------------------------- Methods to manage the listeners
+    
+    /**
+     * Add a configuration listener to the container.
+     * 
+     *  @param pListener configuration listener to add 
+     */
+    public static void addListener(IConfigListener pListener) {
+        if (null != pListener) {
+            sInstance.mListeners.add(pListener);
+        }
+    }
+    
+    /**
+     * Removes a configuration listener from the container.
+     * 
+     * @param pListener configuration listener to remove
+     */
+    public static void removeListener(IConfigListener pListener) {
+        if (null != pListener) {
+            sInstance.mListeners.remove(pListener);
+        }
+    }
+    
+    /* Methods to manage the ooos */
+    
+    /**
+     * @return the ooos elements in an array.
+     */
+    public static Object[] toArray() {
+        Vector<IOOo> vElements = toVector();
+        Object[] elements = vElements.toArray();
+        
+        vElements.clear();
+        return elements;
+    }
+    
+    /**
+     * Add the OOo given in parameter to the list of the others. Do not use 
+     * directly the private field to handle OOos
+     * 
+     * @param pOoo OOo to add
+     */
+    public static void addOOo(IOOo pOoo) {
+        
+        /** 
+         * If there already is a OOo with such an identifier, replace the 
+         * values, not the object to keep the references on it
+         */ 
+        
+        if (null != pOoo) {
+            if (!sInstance.mElements.containsKey(pOoo.getName())) {
+                sInstance.mElements.put(pOoo.getName(), pOoo);
+                sInstance.fireOOoAdded(pOoo);
+            } else {
+                IOOo oooref = sInstance.mElements.get(pOoo.getName());
+                updateOOo(oooref.getName(), pOoo);
+            }
+        }
+    }
+    
+    /**
+     * Notify every listener that an OpenOffice.org instance configuration
+     * has been added.
+     * 
+     * @param pOoo the added OOo
+     */
+    private void fireOOoAdded(IOOo pOoo) {
+        for (int i = 0, length = mListeners.size(); i < length; i++) {
+            IConfigListener listeneri = mListeners.get(i);
+            listeneri.ConfigAdded(pOoo);
+        }
+    }
 
-	/**
-	 * remove the given OOo from the list. Do not use directly the private 
-	 * field to handle OOos
-	 *  
-	 * @param ooo OOo to remove
-	 */
-	public static void delOOo(IOOo ooo){
-		if (null != ooo){
-			if (sInstance.mElements.containsKey(ooo.getName())){
-				sInstance.mElements.remove(ooo.getName());
-				sInstance.fireOOoRemoved(ooo);
-			}
-		}
-	}
-	
-	/**
-	 * Removes all the OOo contained
-	 *
-	 */
-	public static void clear(){
-		sInstance.mElements.clear();
-		sInstance.fireOOoRemoved(null);
-	}
-	
-	/**
-	 * Returns a vector containing the unique identifiers of the contained OOos
-	 * 
-	 * @return names of the contained OOos
-	 */
-	public static Vector<String> getOOoKeys(){
-		Set<String> paths = sInstance.mElements.keySet();
-		return new Vector<String>(paths);
-	}
-	
-	/**
-	 * Checks whether the corresponding OOo name already exists
-	 * 
-	 * @param name the OOo Name to check
-	 * @return <code>true</code> if the name is already present, 
-	 * 		<code>false</code> otherwise.
-	 */
-	public static boolean containsName(String name) {
-		return sInstance.mElements.containsKey(name);
-	}
-	
-	/**
-	 * Computes a unique name from the given one.
-	 * 
-	 * @param name the name to render unique
-	 * @return the unique name
-	 */
-	public static String getUniqueName(String name) {
-		
-		String newName = name;
-		if (containsName(newName)) {
-			Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName); //$NON-NLS-1$
-			
-			// initialise as if the name contains no #i at its end
-			int number = 0;
-			String nameRoot = new String(newName);
-			
-			if (m.matches()) {
-				number = Integer.parseInt(m.group(2));
-				nameRoot = m.group(1);
-			}
-			
-			// Check for the last number
-			do {
-				number += 1;
-				newName = nameRoot + " #" + number; //$NON-NLS-1$
-			} while (containsName(newName));
-		}
-		return newName;
-	}
-	
-	private void fireOOoRemoved(IOOo ooo) {
-		for (int i=0, length=mListeners.size(); i<length; i++){
-			IConfigListener listeneri = mListeners.get(i);
-			listeneri.ConfigRemoved(ooo);
-		}
-	}
-	
-	/**
-	 * update the ith OOo from the list with the given OOo.
-	 * 
-	 * @param oookey position of the ooo to update
-	 * @param ooo new value for the OOo
-	 */
-	public static void updateOOo(String oookey, IOOo ooo){
-		if (sInstance.mElements.containsKey(oookey) && null != ooo){
-			
-			IOOo oooref = sInstance.mElements.get(oookey);
-			
-			// update the attributes
-			try {
-				oooref.setHome(ooo.getHome());
-			} catch (InvalidConfigException e) {
-				PluginLogger.error(e.getLocalizedMessage(), e);
-			}
-			
-			// Reassign the element in the hashmap
-			sInstance.mElements.put(oookey, oooref);
-			sInstance.fireOOoUpdated(ooo);
-		}
-	}
-	
-	private void fireOOoUpdated(IOOo ooo) {
-		for (int i=0, length=mListeners.size(); i<length; i++){
-			IConfigListener listeneri = mListeners.get(i);
-			listeneri.ConfigUpdated(ooo);
-		}
-	}
-	
-	/**
-	 * Returns the ooo that corresponds to the given ooo name and buildid.
-	 * 
-	 * @param oookey unique identifier of the wanted ooo
-	 * @return OOo which name equals the one provided
-	 */
-	public static IOOo getOOo(String oookey){
-		IOOo ooo = null;
-		
-		if (sInstance.mElements.containsKey(oookey)){
-			ooo = sInstance.mElements.get(oookey);
-		} 
-		return ooo;
-	}
-	
-	/**
-	 * Returns the number of OOo in the list
-	 * 
-	 * @return number of OOo in the list
-	 */
-	public static int getOOoCount(){
-		return sInstance.mElements.size();
-	}
-		
-	/**
-	 * Dispose the vector used
-	 *
-	 */
-	public static void dispose() {
-		sInstance.mListeners.clear();
-		sInstance.mElements.clear();
-	}
-	
-	/**
-	 * Loads the OpenOffice.org already configured instances from the 
-	 * preferences.
-	 */
-	public static void load(){
-		
-		IOOo[] ooos = PropertiesManager.loadOOos();
-		for (int i=0; i < ooos.length; i++) {
-			addOOo(ooos[i]);
-		}
-	}
-	
-	/**
-	 * Saves the OpenOffice.org already configured instances to the 
-	 * preferences.
-	 */
-	public static void saveOOos(){
-		
-		// Saving the new OOos 
-		Vector<IOOo> vElements = toVector();
-		IOOo[] ooos = new IOOo[getOOoCount()];
-		
-		for (int i=0, length=getOOoCount(); i<length; i++){
-			ooos[i] = vElements.get(i);
-		}
-		
-		// clean vector
-		vElements.clear();
-		
-		PropertiesManager.saveOOos(ooos);
-	}
-	
-	public static OOoContainer getInstance() {
-		if (sInstance == null) {
-			sInstance = new OOoContainer();
-		}
-		return sInstance;
-	}
-	
-	/**
-	 * The SDK Container should not be created by another object
-	 */
-	private OOoContainer(){
-		
-		// Initialize the members
-		mElements = new HashMap<String, IOOo>();
-		mListeners = new Vector<IConfigListener>();
-	}
-	
-	/**
-	 * Returns a unordered vector with the hashmap of the elements
-	 *  
-	 * @return vector where the elements order isn't guaranteed
-	 */
-	private static Vector<IOOo> toVector(){
-		Vector<IOOo> result = new Vector<IOOo>();
-		Set<Entry<String, IOOo>> entries = sInstance.mElements.entrySet();
-		Iterator<Entry<String, IOOo>> iter = entries.iterator();
-		
-		while (iter.hasNext()){
-			IOOo value = iter.next().getValue();
-			result.add(value);
-		}
-		return result;
-	}
+    /**
+     * remove the given OOo from the list. Do not use directly the private 
+     * field to handle OOos
+     *  
+     * @param pOoo OOo to remove
+     */
+    public static void delOOo(IOOo pOoo) {
+        if (null != pOoo) {
+            if (sInstance.mElements.containsKey(pOoo.getName())) {
+                sInstance.mElements.remove(pOoo.getName());
+                sInstance.fireOOoRemoved(pOoo);
+            }
+        }
+    }
+    
+    /**
+     * Removes all the OOo contained.
+     */
+    public static void clear() {
+        sInstance.mElements.clear();
+        sInstance.fireOOoRemoved(null);
+    }
+    
+    /**
+     * Returns a vector containing the unique identifiers of the contained OOos.
+     * 
+     * @return names of the contained OOos
+     */
+    public static Vector<String> getOOoKeys() {
+        Set<String> paths = sInstance.mElements.keySet();
+        return new Vector<String>(paths);
+    }
+    
+    /**
+     * Checks whether the corresponding OOo name already exists.
+     * 
+     * @param pName the OOo Name to check
+     * @return <code>true</code> if the name is already present, 
+     *         <code>false</code> otherwise.
+     */
+    public static boolean containsName(String pName) {
+        return sInstance.mElements.containsKey(pName);
+    }
+    
+    /**
+     * Computes a unique name from the given one.
+     * 
+     * @param pName the name to render unique
+     * @return the unique name
+     */
+    public static String getUniqueName(String pName) {
+        
+        String newName = pName;
+        if (containsName(newName)) {
+            Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName); //$NON-NLS-1$
+            
+            // initialise as if the name contains no #i at its end
+            int number = 0;
+            String nameRoot = new String(newName);
+            
+            if (m.matches()) {
+                number = Integer.parseInt(m.group(2));
+                nameRoot = m.group(1);
+            }
+            
+            // Check for the last number
+            do {
+                number += 1;
+                newName = nameRoot + " #" + number; //$NON-NLS-1$
+            } while (containsName(newName));
+        }
+        return newName;
+    }
+    
+    /**
+     * Notify all the listeners that an OpenOffice.org instance configuration
+     * has been removed.
+     * 
+     * @param pOoo the removed OpenOffice.org
+     */
+    private void fireOOoRemoved(IOOo pOoo) {
+        for (int i = 0, length = mListeners.size(); i < length; i++) {
+            IConfigListener listeneri = mListeners.get(i);
+            listeneri.ConfigRemoved(pOoo);
+        }
+    }
+    
+    /**
+     * Update the with OOo from the list with the given OOo.
+     * 
+     * @param pOookey position of the ooo to update
+     * @param pOoo new value for the OOo
+     */
+    public static void updateOOo(String pOookey, IOOo pOoo) {
+        if (sInstance.mElements.containsKey(pOookey) && null != pOoo) {
+            
+            IOOo oooref = sInstance.mElements.get(pOookey);
+            
+            // update the attributes
+            try {
+                oooref.setHome(pOoo.getHome());
+            } catch (InvalidConfigException e) {
+                PluginLogger.error(e.getLocalizedMessage(), e);
+            }
+            
+            // Reassign the element in the hashmap
+            sInstance.mElements.put(pOookey, oooref);
+            sInstance.fireOOoUpdated(pOoo);
+        }
+    }
+    
+    /**
+     * Notify every listener that an OpenOffice.org instance configuration
+     * has been updated.
+     * 
+     * @param pOoo the updated OOo
+     */
+    private void fireOOoUpdated(IOOo pOoo) {
+        for (int i = 0, length = mListeners.size(); i < length; i++) {
+            IConfigListener listeneri = mListeners.get(i);
+            listeneri.ConfigUpdated(pOoo);
+        }
+    }
+    
+    /**
+     * Returns the ooo that corresponds to the given ooo name and buildid.
+     * 
+     * @param pOookey unique identifier of the wanted ooo
+     * @return OOo which name equals the one provided
+     */
+    public static IOOo getOOo(String pOookey) {
+        IOOo ooo = null;
+        
+        if (sInstance.mElements.containsKey(pOookey)) {
+            ooo = sInstance.mElements.get(pOookey);
+        } 
+        return ooo;
+    }
+    
+    /**
+     * Returns the number of OOo in the list.
+     * 
+     * @return number of OOo in the list
+     */
+    public static int getOOoCount() {
+        return sInstance.mElements.size();
+    }
+        
+    /**
+     * Dispose the vector used.
+     *
+     */
+    public static void dispose() {
+        sInstance.mListeners.clear();
+        sInstance.mElements.clear();
+    }
+    
+    /**
+     * Loads the OpenOffice.org already configured instances from the 
+     * preferences.
+     */
+    public static void load() {
+        
+        IOOo[] ooos = PropertiesManager.loadOOos();
+        for (int i = 0; i < ooos.length; i++) {
+            addOOo(ooos[i]);
+        }
+    }
+    
+    /**
+     * Saves the OpenOffice.org already configured instances to the 
+     * preferences.
+     */
+    public static void saveOOos() {
+        
+        // Saving the new OOos 
+        Vector<IOOo> vElements = toVector();
+        IOOo[] ooos = new IOOo[getOOoCount()];
+        
+        for (int i = 0, length = getOOoCount(); i < length; i++) {
+            ooos[i] = vElements.get(i);
+        }
+        
+        // clean vector
+        vElements.clear();
+        
+        PropertiesManager.saveOOos(ooos);
+    }
+    
+    /**
+     * @return the OOoContainer singleton instance
+     */
+    public static OOoContainer getInstance() {
+        if (sInstance == null) {
+            sInstance = new OOoContainer();
+        }
+        return sInstance;
+    }
+    
+    /**
+     * Returns a unordered vector with the hash map of the elements.
+     *  
+     * @return vector where the elements order isn't guaranteed
+     */
+    private static Vector<IOOo> toVector() {
+        Vector<IOOo> result = new Vector<IOOo>();
+        Set<Entry<String, IOOo>> entries = sInstance.mElements.entrySet();
+        Iterator<Entry<String, IOOo>> iter = entries.iterator();
+        
+        while (iter.hasNext()) {
+            IOOo value = iter.next().getValue();
+            result.add(value);
+        }
+        return result;
+    }
 }

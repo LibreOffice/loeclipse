@@ -2,12 +2,12 @@
  *
  * $RCSfile: LanguageWizardPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -56,20 +56,27 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
  * @author cedricbosdo
  *
  */
-abstract public class LanguageWizardPage extends WizardPage {
+public abstract class LanguageWizardPage extends WizardPage {
 
-	public LanguageWizardPage() {
-		super("language"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Fills the page with the project creation informations.
-	 */
-	abstract public void setProjectInfos(UnoFactoryData data);
+    /**
+     * Constructor.
+     */
+    public LanguageWizardPage() {
+        super("language"); //$NON-NLS-1$
+    }
+    
+    /**
+     * Fills the page with the project creation informations.
+     * 
+     * @param pData the data describing the informations to set.
+     */
+    public abstract void setProjectInfos(UnoFactoryData pData);
 
-	/**
-	 * @return the given data with the completed properties, <code>null</code>
-	 *   if the provided data is <code>null</code>
-	 */
-	abstract public UnoFactoryData fillData(UnoFactoryData data);
+    /**
+     * @param pData to fill with the language specific data.
+     * 
+     * @return the given data with the completed properties, <code>null</code>
+     *   if the provided data is <code>null</code>
+     */
+    public abstract UnoFactoryData fillData(UnoFactoryData pData);
 }

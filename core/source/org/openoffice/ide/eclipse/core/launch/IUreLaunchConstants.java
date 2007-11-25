@@ -2,12 +2,12 @@
  *
  * $RCSfile: IUreLaunchConstants.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:45 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:32 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -43,10 +43,16 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch;
 
+/**
+ * Constants used for the URE application launch configuration.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public interface IUreLaunchConstants {
 
-	String PROJECT_NAME = "project_name"; //$NON-NLS-1$
-	String MAIN_TYPE = "main_type"; //$NON-NLS-1$
-	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
+    String PROJECT_NAME = "project_name"; //$NON-NLS-1$
+    String MAIN_TYPE = "main_type"; //$NON-NLS-1$
+    String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
 
 }

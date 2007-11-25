@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlDocScanner.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -58,33 +58,35 @@ import org.openoffice.ide.eclipse.core.editors.Colors;
  * to fully understand the editor mechanisms, please report to Eclipse 
  * plugin developer's guide.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class UnoidlDocScanner extends RuleBasedScanner {
-	
-	/**
-	 * Default constructor initializing the color manager to colorize.
-	 */
-	public UnoidlDocScanner(ColorProvider colorManager) {
-		
-		IToken body = new Token (
-				new TextAttribute(colorManager.getColor(Colors.C_AUTODOC_COMMENT)));
-		
-		IToken tag = new Token (
-				new TextAttribute(colorManager.getColor(Colors.C_AUTODOC_COMMENT),
-						          null, 
-						          SWT.BOLD));
-		IToken xmlTag = new Token (
-				new TextAttribute(colorManager.getColor(Colors.C_XML_TAG)));
+    
+    /**
+     * Default constructor initializing the color manager to colorize.
+     * 
+     * @param pColorManager the color manager used to provide the colors
+     */
+    public UnoidlDocScanner(ColorProvider pColorManager) {
+        
+        IToken body = new Token (
+                new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT)));
+        
+        IToken tag = new Token (
+                new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT),
+                                  null, 
+                                  SWT.BOLD));
+        IToken xmlTag = new Token (
+                new TextAttribute(pColorManager.getColor(Colors.C_XML_TAG)));
 
-		
-		IRule[] rules = new IRule[2];
-		rules[0] = new SingleLineRule("<", ">", xmlTag);   //$NON-NLS-1$ //$NON-NLS-2$
-		rules[1] = new RegexRule("@[a-zA-Z]+", tag); //$NON-NLS-1$
-		
-		setRules(rules);
-		
-		setDefaultReturnToken(body);
-	}
+        
+        IRule[] rules = new IRule[2];
+        rules[0] = new SingleLineRule("<", ">", xmlTag); //$NON-NLS-1$ //$NON-NLS-2$
+        rules[1] = new RegexRule("@[a-zA-Z]+", tag); //$NON-NLS-1$
+        
+        setRules(rules);
+        
+        setDefaultReturnToken(body);
+    }
 }

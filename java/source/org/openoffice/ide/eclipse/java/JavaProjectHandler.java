@@ -2,12 +2,12 @@
  *
  * $RCSfile: JavaProjectHandler.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -68,293 +68,290 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
 
+/**
+ * The Project handler implementation for Java.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class JavaProjectHandler implements IProjectHandler {
 
-	private final static String P_REGISTRATION_CLASSNAME = "regclassname";  //$NON-NLS-1$
-	private final static String P_JAVA_VERSION = "javaversion";  //$NON-NLS-1$
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#addLanguageDependencies(org.openoffice.ide.eclipse.core.model.IUnoidlProject, org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void addLanguageDependencies(IUnoidlProject unoproject,
-			IProgressMonitor monitor) throws CoreException {
-		
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				unoproject.getName());
-		
-		IJavaProject javaProject = JavaCore.create(project);
-		javaProject.open(monitor);
-		
-		IClasspathEntry[] entries = new IClasspathEntry[3]; 
-		
-		// Adds the project to the classpath
-		IClasspathEntry entry = JavaCore.newSourceEntry(
-				unoproject.getFolder(unoproject.getSourcePath()).
-					getFullPath());
-		entries[0] = entry;
-		entries[1] = JavaRuntime.getDefaultJREContainerEntry();
-		entries[2] = JavaCore.newLibraryEntry(
-				unoproject.getFolder(unoproject.getBuildPath()).getFullPath(), 
-				null, null, false);
-		
-		javaProject.setRawClasspath(entries, monitor);
-		
-	}
+    private static final String P_REGISTRATION_CLASSNAME = "regclassname";  //$NON-NLS-1$
+    private static final String P_JAVA_VERSION = "javaversion";  //$NON-NLS-1$
+    
+    private static final String[] KEPT_JARS = {
+        "unoil.jar", //$NON-NLS-1$
+        "ridl.jar", //$NON-NLS-1$
+        "juh.jar", //$NON-NLS-1$
+        "jurt.jar", //$NON-NLS-1$
+        "unoloader.jar", //$NON-NLS-1$
+        "officebean.jar" //$NON-NLS-1$
+    };
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void addLanguageDependencies(IUnoidlProject pUnoproject,
+            IProgressMonitor pMonitor) throws CoreException {
+        
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+                pUnoproject.getName());
+        
+        IJavaProject javaProject = JavaCore.create(project);
+        javaProject.open(pMonitor);
+        
+        IPath sourcePath = pUnoproject.getFolder(pUnoproject.getSourcePath()).getFullPath();
+        IPath buildPath = pUnoproject.getFolder(pUnoproject.getBuildPath()).getFullPath();
+        
+        IClasspathEntry[] entries = new IClasspathEntry[] { 
+                JavaCore.newSourceEntry(sourcePath),
+                JavaRuntime.getDefaultJREContainerEntry(),
+                JavaCore.newLibraryEntry(buildPath, null, null, false)
+        };
+        
+        javaProject.setRawClasspath(entries, pMonitor);
+        
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#addOOoDependencies(org.openoffice.ide.eclipse.core.preferences.IOOo, org.eclipse.core.resources.IProject)
-	 */
-	public void addOOoDependencies(IOOo ooo, IProject project){
+    /**
+     * {@inheritDoc}
+     */
+    public void addOOoDependencies(IOOo pOoo, IProject pProject) {
 
-		IJavaProject javaProject = JavaCore.create(project);
-		
-		if (null != ooo){
-			// Find the jars in the first level of the directory
-			Vector<Path> jarPaths = findJarsFromPath(ooo);
-			
-			try {
-				IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
-				IClasspathEntry[] entries = new IClasspathEntry[jarPaths.size()+
-				                                            oldEntries.length];
-				
-				System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
-				
-				for (int i=0, length=jarPaths.size(); i<length; i++){
-					IPath jarPathi = jarPaths.get(i);
-					IClasspathEntry entry = JavaCore.newLibraryEntry(
-							jarPathi, null, null);
-					entries[oldEntries.length+i] = entry;
-				}
-				
-				javaProject.setRawClasspath(entries, null);
-			} catch (JavaModelException e){
-				PluginLogger.error(
-						Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
-			}
-		}
-	}
+        IJavaProject javaProject = JavaCore.create(pProject);
+        
+        if (null != pOoo) {
+            // Find the jars in the first level of the directory
+            Vector<Path> jarPaths = findJarsFromPath(pOoo);
+            
+            try {
+                IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
+                IClasspathEntry[] entries = new IClasspathEntry[jarPaths.size() + oldEntries.length];
+                
+                System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
+                
+                for (int i = 0, length = jarPaths.size(); i < length; i++) {
+                    IPath jarPathi = jarPaths.get(i);
+                    IClasspathEntry entry = JavaCore.newLibraryEntry(
+                            jarPathi, null, null);
+                    entries[oldEntries.length + i] = entry;
+                }
+                
+                javaProject.setRawClasspath(entries, null);
+            } catch (JavaModelException e) {
+                PluginLogger.error(
+                        Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
+            }
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#addProjectNature(org.eclipse.core.resources.IProject)
-	 */
-	public void addProjectNature(IProject project) {
-		try {
-			if (!project.exists()){
-				project.create(null);
-				PluginLogger.debug(
-						"Project created during language specific operation"); //$NON-NLS-1$
-			}
-			
-			if (!project.isOpen()){
-				project.open(null);
-				PluginLogger.debug("Project opened"); //$NON-NLS-1$
-			}
-			
-			IProjectDescription description = project.getDescription();
-			String[] natureIds = description.getNatureIds();
-			String[] newNatureIds = new String[natureIds.length+1];
-			System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
-			
-			// Adding the nature
-			newNatureIds[natureIds.length] = JavaCore.NATURE_ID;
-			
-			description.setNatureIds(newNatureIds);
-			project.setDescription(description, null);
-			PluginLogger.debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
-			
-		} catch (CoreException e) {
-			PluginLogger.error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void addProjectNature(IProject pProject) {
+        try {
+            if (!pProject.exists()) {
+                pProject.create(null);
+                PluginLogger.debug(
+                        "Project created during language specific operation"); //$NON-NLS-1$
+            }
+            
+            if (!pProject.isOpen()) {
+                pProject.open(null);
+                PluginLogger.debug("Project opened"); //$NON-NLS-1$
+            }
+            
+            IProjectDescription description = pProject.getDescription();
+            String[] natureIds = description.getNatureIds();
+            String[] newNatureIds = new String[natureIds.length + 1];
+            System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
+            
+            // Adding the nature
+            newNatureIds[natureIds.length] = JavaCore.NATURE_ID;
+            
+            description.setNatureIds(newNatureIds);
+            pProject.setDescription(description, null);
+            PluginLogger.debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
+            
+        } catch (CoreException e) {
+            PluginLogger.error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#configureProject(org.openoffice.ide.eclipse.core.model.UnoFactoryData)
-	 */
-	public void configureProject(UnoFactoryData data) 
-		throws Exception {
+    /**
+     * {@inheritDoc}
+     */
+    public void configureProject(UnoFactoryData pData) throws Exception {
 
-		// Get the project from data
-		IProject prj = (IProject)data.getProperty(
-				IUnoFactoryConstants.PROJECT_HANDLE);
-		IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+        // Get the project from data
+        IProject prj = (IProject)pData.getProperty(
+                IUnoFactoryConstants.PROJECT_HANDLE);
+        IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
-		// Set some properties on the project
+        // Set some properties on the project
 
-		// The registration class name is always computed in the same way
-		String regclass = RegistrationHelper.getRegistrationClassName(unoprj);
-		unoprj.setProperty(P_REGISTRATION_CLASSNAME, regclass);
+        // The registration class name is always computed in the same way
+        String regclass = RegistrationHelper.getRegistrationClassName(unoprj);
+        unoprj.setProperty(P_REGISTRATION_CLASSNAME, regclass);
 
-		// Java version
-		String javaversion = (String)data.getProperty(
-				JavaWizardPage.JAVA_VERSION);
-		unoprj.setProperty(P_JAVA_VERSION, javaversion);
-	}
+        // Java version
+        String javaversion = (String)pData.getProperty(
+                JavaWizardPage.JAVA_VERSION);
+        unoprj.setProperty(P_JAVA_VERSION, javaversion);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#getImplementationName(org.openoffice.ide.eclipse.core.model.UnoFactoryData)
-	 */
-	public String getImplementationName(IUnoidlProject prj, String service) throws Exception {
-		String prefix = prj.getCompanyPrefix();
-		String comp = prj.getOutputExtension();
-		
-		String implementationName = null;
-		
-		if (service.startsWith(prefix)) {
-			String localName = service.substring(prefix.length());
-			implementationName = prefix + "." + comp + localName + "Impl";
-		} else {
-			throw new Exception("Cannot find implementation name for service: " + service);
-		}
-		
-		return implementationName;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#getImplementationFile(java.lang.String)
-	 */
-	public IPath getImplementationFile(String implementationName) {
-		
-		return new Path(implementationName.replace(".", "/") + ".java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
+        String prefix = pPrj.getCompanyPrefix();
+        String comp = pPrj.getOutputExtension();
+        
+        String implementationName = null;
+        
+        if (pService.startsWith(prefix)) {
+            String localName = pService.substring(prefix.length());
+            implementationName = prefix + "." + comp + localName + "Impl";
+        } else {
+            throw new Exception("Cannot find implementation name for service: " + pService);
+        }
+        
+        return implementationName;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IPath getImplementationFile(String pImplementationName) {
+        
+        return new Path(pImplementationName.replace(".", "/") + ".java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#getSkeletonMakerLanguage(org.openoffice.ide.eclipse.core.model.UnoFactoryData)
-	 */
-	public String getSkeletonMakerLanguage(UnoFactoryData data)
-			throws Exception {
-		// Get the project from data
-		String name = (String)data.getProperty(
-				IUnoFactoryConstants.PROJECT_NAME);
-		IUnoidlProject unoprj = ProjectsManager.getProject(name);
-		
-		return "--" + unoprj.getProperty(P_JAVA_VERSION); //$NON-NLS-1$
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
+        // Get the project from data
+        String name = (String)pData.getProperty(
+                IUnoFactoryConstants.PROJECT_NAME);
+        IUnoidlProject unoprj = ProjectsManager.getProject(name);
+        
+        return "--" + unoprj.getProperty(P_JAVA_VERSION); //$NON-NLS-1$
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#removeOOoDependencies(org.openoffice.ide.eclipse.core.preferences.IOOo, org.eclipse.core.resources.IProject)
-	 */
-	public void removeOOoDependencies(IOOo ooo, IProject project){
-		IJavaProject javaProject = JavaCore.create(project);
-		
-		try {
-			IClasspathEntry[] entries = javaProject.getRawClasspath();
-			Vector<IClasspathEntry> newEntries = new Vector<IClasspathEntry>();
+    /**
+     * {@inheritDoc}
+     */
+    public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
+        IJavaProject javaProject = JavaCore.create(pProject);
+        
+        try {
+            IClasspathEntry[] entries = javaProject.getRawClasspath();
+            Vector<IClasspathEntry> newEntries = new Vector<IClasspathEntry>();
 
-			// Copy all the sources in a new entry container
-			for (int i=0, length=entries.length; i<length; i++){
-				IClasspathEntry entry = entries[i];
+            // Copy all the sources in a new entry container
+            for (int i = 0, length = entries.length; i < length; i++) {
+                IClasspathEntry entry = entries[i];
 
-				if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE){
-					newEntries.add(entry);
-				}
-			}
-			
-			IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
-			result = newEntries.toArray(result);
-			
-			javaProject.setRawClasspath(result, null);
-			
-		} catch (JavaModelException e) {
-			PluginLogger.error(
-					Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#getLibraryPath(org.openoffice.ide.eclipse.core.model.IUnoidlProject)
-	 */
-	public String getLibraryPath(IUnoidlProject prj) {
-		return getJarFile(prj).getAbsolutePath();
-	}
+                if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
+                    newEntries.add(entry);
+                }
+            }
+            
+            IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
+            result = newEntries.toArray(result);
+            
+            javaProject.setRawClasspath(result, null);
+            
+        } catch (JavaModelException e) {
+            PluginLogger.error(
+                    Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getLibraryPath(IUnoidlProject pProject) {
+        return getJarFile(pProject).getAbsolutePath();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.IProjectHandler#createRegistrationSystem(org.openoffice.ide.eclipse.core.model.IUnoidlProject)
-	 */
-	public void createRegistrationSystem(IUnoidlProject prj) {
-		RegistrationHelper.generateFiles(prj);
-	}
-	
-	/**
-	 * Returns a handle to the project jar file. Beware that this handle
-	 * may refer to a non-existing file. Users have to create it if necessary.
-	 * 
-	 * @param prj the concerned unoproject
-	 * @return a handle to the jar file of the project
-	 */
-	public File getJarFile(IUnoidlProject prj) {
-		String filename = prj.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$
-		return prj.getFile(filename).getLocation().toFile();
-	}
-	
-	public String getRegistrationClassName(IUnoidlProject prj) {
-		return prj.getProperty(P_REGISTRATION_CLASSNAME);
-	}
-	
-//--------------------------------------------- Jar finding private methods
-	
-	private final static String[] KEPT_JARS = {
-		"unoil.jar", //$NON-NLS-1$
-		"ridl.jar", //$NON-NLS-1$
-		"juh.jar", //$NON-NLS-1$
-		"jurt.jar", //$NON-NLS-1$
-		"unoloader.jar", //$NON-NLS-1$
-		"officebean.jar" //$NON-NLS-1$
-	};
-	
-	/**
-	 * returns the path of all the kept jars contained in the folder pointed by path.
-	 * 
-	 * @param ooo the OOo instance from which to get the jars
-	 * @return a vector of Path pointing to each jar.
-	 */
-	private Vector<Path> findJarsFromPath(IOOo ooo){
-		Vector<Path> jarsPath = new Vector<Path>();
-		
-		Path folderPath = new Path(ooo.getClassesPath());
-		File programFolder = folderPath.toFile();
-		
-		String[] content = programFolder.list();
-		for (int i=0, length=content.length; i<length; i++){
-			String contenti = content[i];
-			if (isKeptJar(contenti)){
-				Path jariPath = new Path (
-						ooo.getClassesPath()+"/"+contenti); //$NON-NLS-1$
-				jarsPath.add(jariPath);
-			}
-		}
-		
-		return jarsPath;
-	}
-	
-	/**
-	 * Check if the specified jar file is one of those define in the KEPT_JARS constant
-	 * 
-	 * @param jarName name of the jar file to check
-	 * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, 
-	 *         <code>false</code> otherwise.
-	 */
-	private boolean isKeptJar(String jarName){
-		
-		int i = 0;
-		boolean isKept = false;
-		
-		while (i<KEPT_JARS.length && !isKept){
-			if (jarName.equals(KEPT_JARS[i])){
-				isKept = true;
-			} else {
-				i++;
-			}
-		}
-		return isKept;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void createRegistrationSystem(IUnoidlProject pProject) {
+        RegistrationHelper.generateFiles(pProject);
+    }
+    
+    /**
+     * Returns a handle to the project jar file. Beware that this handle
+     * may refer to a non-existing file. Users have to create it if necessary.
+     * 
+     * @param pProject the concerned UNO project
+     * @return a handle to the jar file of the project
+     */
+    public File getJarFile(IUnoidlProject pProject) {
+        String filename = pProject.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$
+        return pProject.getFile(filename).getLocation().toFile();
+    }
+    
+    /**
+     * Get the UNO registration class name of the project.
+     * 
+     * @param pProject the project for witch to get the registration class.
+     * 
+     * @return the registration class name
+     */
+    public String getRegistrationClassName(IUnoidlProject pProject) {
+        return pProject.getProperty(P_REGISTRATION_CLASSNAME);
+    }
+    
+    //--------------------------------------------- Jar finding private methods
+    
+    /**
+     * returns the path of all the kept jars contained in the folder pointed by path.
+     * 
+     * @param pOoo the OOo instance from which to get the jars
+     * @return a vector of Path pointing to each jar.
+     */
+    private Vector<Path> findJarsFromPath(IOOo pOoo) {
+        Vector<Path> jarsPath = new Vector<Path>();
+        
+        Path folderPath = new Path(pOoo.getClassesPath());
+        File programFolder = folderPath.toFile();
+        
+        String[] content = programFolder.list();
+        for (int i = 0, length = content.length; i < length; i++) {
+            String contenti = content[i];
+            if (isKeptJar(contenti)) {
+                Path jariPath = new Path (
+                        pOoo.getClassesPath() + "/" + contenti); //$NON-NLS-1$
+                jarsPath.add(jariPath);
+            }
+        }
+        
+        return jarsPath;
+    }
+    
+    /**
+     * Check if the specified jar file is one of those define in the KEPT_JARS constant.
+     * 
+     * @param pJarName name of the jar file to check
+     * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, 
+     *         <code>false</code> otherwise.
+     */
+    private boolean isKeptJar(String pJarName) {
+        
+        int i = 0;
+        boolean isKept = false;
+        
+        while (i < KEPT_JARS.length && !isKept) {
+            if (pJarName.equals(KEPT_JARS[i])) {
+                isKept = true;
+            } else {
+                i++;
+            }
+        }
+        return isKept;
+    }
 }

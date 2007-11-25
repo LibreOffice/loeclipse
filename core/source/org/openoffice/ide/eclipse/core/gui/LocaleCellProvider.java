@@ -2,12 +2,12 @@
  *
  * $RCSfile: LocaleCellProvider.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:12 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -61,109 +61,113 @@ import org.eclipse.swt.widgets.Control;
  */
 public class LocaleCellProvider extends CellEditor {
 
-	private Locale mValue;
-	private Vector<String> languages;
-	private Vector<String> countries;
-	
-	private CCombo mLanguage;
-	private CCombo mCountry;
+    private Locale mValue;
+    private Vector<String> mLanguages;
+    private Vector<String> mCountries;
+    
+    private CCombo mLanguage;
+    private CCombo mCountry;
 
-	/**
-	 * @param parent the composite containing the cell editor
-	 */
-	public LocaleCellProvider(Composite parent) {
-		super(parent);
-	}
+    /**
+     * @param pParent the composite containing the cell editor
+     */
+    public LocaleCellProvider(Composite pParent) {
+        super(pParent);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.CellEditor#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createControl(Composite parent) {
-		
-		Composite body = new Composite(parent, getStyle());
-		body.setLayout(new GridLayout(2, false));
-		
-		// Create the language Combobox
-		String[] languagesISO = Locale.getISOLanguages();
-		String[] languagesDisplay = new String[languagesISO.length];
-		if (languages == null) languages = new Vector<String>();
-		languages.clear();
-		for (int i=0; i<languagesISO.length; i++) {
-			String lang = languagesISO[i];
-			Locale locale = new Locale(lang);
-			languagesDisplay[i] = locale.getDisplayLanguage();
-			languages.add(i, lang);
-		}
-		
-		mLanguage = new CCombo(body, getStyle());
-		mLanguage.setLayoutData(new GridData());
-		mLanguage.setFont(parent.getFont());
-		mLanguage.setItems(languagesDisplay);
-		mLanguage.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String lang = languages.get(mLanguage.getSelectionIndex());
-				mValue = new Locale(lang, mValue.getCountry());
-			}
-		});
-		
-		
-		// Create the country Combobox
-		String[] countriesISO = Locale.getISOCountries();
-		String[] countriesDisplay = new String[countriesISO.length+1];
-		if (countries == null) countries = new Vector<String>();
-		countries.clear();
-		countriesDisplay[0] = ""; //$NON-NLS-1$
-		countries.add(""); //$NON-NLS-1$
-		// Allows the user to select no country
-		for (int i = 0; i < countriesISO.length; i++) {
-			String country = countriesISO[i];
-			Locale locale = new Locale("en", country); // $NON-NLS-1$ //$NON-NLS-1$
-			countriesDisplay[i+1] = locale.getDisplayCountry();
-			countries.add(i+1, country);
-		}
-		
-		mCountry = new CCombo(body, getStyle());
-		mCountry.setLayoutData(new GridData());
-		mCountry.setFont(parent.getFont());
-		mCountry.setItems(countriesDisplay);
-		mCountry.addSelectionListener(new SelectionAdapter(){
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String country = countries.get(mCountry.getSelectionIndex());
-				mValue = new Locale(mValue.getLanguage(), country);
-			}
-		});
-		
-		return body;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Control createControl(Composite pParent) {
+        
+        Composite body = new Composite(pParent, getStyle());
+        body.setLayout(new GridLayout(2, false));
+        
+        // Create the language Combobox
+        String[] languagesISO = Locale.getISOLanguages();
+        String[] languagesDisplay = new String[languagesISO.length];
+        if (mLanguages == null) {
+            mLanguages = new Vector<String>();
+        }
+        mLanguages.clear();
+        for (int i = 0; i < languagesISO.length; i++) {
+            String lang = languagesISO[i];
+            Locale locale = new Locale(lang);
+            languagesDisplay[i] = locale.getDisplayLanguage();
+            mLanguages.add(i, lang);
+        }
+        
+        mLanguage = new CCombo(body, getStyle());
+        mLanguage.setLayoutData(new GridData());
+        mLanguage.setFont(pParent.getFont());
+        mLanguage.setItems(languagesDisplay);
+        mLanguage.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent pEvent) {
+                String lang = mLanguages.get(mLanguage.getSelectionIndex());
+                mValue = new Locale(lang, mValue.getCountry());
+            }
+        });
+        
+        
+        // Create the country Combobox
+        String[] countriesISO = Locale.getISOCountries();
+        String[] countriesDisplay = new String[countriesISO.length + 1];
+        if (mCountries == null) {
+            mCountries = new Vector<String>();
+        }
+        mCountries.clear();
+        countriesDisplay[0] = ""; //$NON-NLS-1$
+        mCountries.add(""); //$NON-NLS-1$
+        // Allows the user to select no country
+        for (int i = 0; i < countriesISO.length; i++) {
+            String country = countriesISO[i];
+            Locale locale = new Locale("en", country); // $NON-NLS-1$ //$NON-NLS-1$
+            countriesDisplay[i + 1] = locale.getDisplayCountry();
+            mCountries.add(i + 1, country);
+        }
+        
+        mCountry = new CCombo(body, getStyle());
+        mCountry.setLayoutData(new GridData());
+        mCountry.setFont(pParent.getFont());
+        mCountry.setItems(countriesDisplay);
+        mCountry.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent pEvent) {
+                String country = mCountries.get(mCountry.getSelectionIndex());
+                mValue = new Locale(mValue.getLanguage(), country);
+            }
+        });
+        
+        return body;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.CellEditor#doGetValue()
-	 */
-	@Override
-	protected Object doGetValue() {
-		return mValue;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Object doGetValue() {
+        return mValue;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.CellEditor#doSetFocus()
-	 */
-	@Override
-	protected void doSetFocus() {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doSetFocus() {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.CellEditor#doSetValue(java.lang.Object)
-	 */
-	@Override
-	protected void doSetValue(Object value) {
-		if (value instanceof Locale) {
-			mValue = (Locale)value;
-			
-			mLanguage.select(languages.indexOf(mValue.getLanguage()));
-			mCountry.select(countries.indexOf(mValue.getCountry()));
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doSetValue(Object pValue) {
+        if (pValue instanceof Locale) {
+            mValue = (Locale)pValue;
+            
+            mLanguage.select(mLanguages.indexOf(mValue.getLanguage()));
+            mCountry.select(mCountries.indexOf(mValue.getCountry()));
+        }
+    }
 }

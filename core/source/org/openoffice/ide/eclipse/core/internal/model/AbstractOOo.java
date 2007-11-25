@@ -2,12 +2,12 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/09/28 07:27:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -70,223 +70,277 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  */
 public abstract class AbstractOOo implements IOOo, ITableElement {
 
-	protected static final String FILE_SEP = System.getProperty("file.separator");
-	
-	public static final String NAME = "__ooo_name"; //$NON-NLS-1$
-	
-	public static final String PATH = "__ooo_path"; //$NON-NLS-1$
+    public static final String NAME = "__ooo_name"; //$NON-NLS-1$
+    
+    public static final String PATH = "__ooo_path"; //$NON-NLS-1$
 
-	private String mHome;
-	private String mName;
-	
-	/**
-	 * Creating a new OOo or URE instance specifying its home directory
-	 * 
-	 * @param oooHome the OpenOffice.org or URE home directory
-	 * @throws InvalidConfigException is thrown if the home directory doesn't
-	 * 		contains the required files and directories
-	 */
-	public AbstractOOo(String oooHome) throws InvalidConfigException {
-		setHome(oooHome);
-	}
-	
-	public AbstractOOo(String oooHome, String aName) throws InvalidConfigException {
-		setHome(oooHome);
-		setName(aName);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#setHome(java.lang.String)
-	 */
-	public void setHome(String aHome) throws InvalidConfigException {
+    protected static final String FILE_SEP = System.getProperty("file.separator");
+    
+    private String mHome;
+    private String mName;
+    
+    /**
+     * Creating a new OOo or URE instance specifying its home directory.
+     * 
+     * @param pOooHome the OpenOffice.org or URE home directory
+     * @throws InvalidConfigException is thrown if the home directory doesn't
+     *         contains the required files and directories
+     */
+    public AbstractOOo(String pOooHome) throws InvalidConfigException {
+        setHome(pOooHome);
+    }
+    
+    /**
+     * Creating a new OOo or URE instance specifying its home directory and name.
+     * 
+     * @param pOooHome the OpenOffice.org or URE installation directory
+     * @param pName the OpenOffice.org or URE instance name
+     * 
+     * @throws InvalidConfigException if the home directory doesn't
+     *         contains the required files and directories
+     */
+    public AbstractOOo(String pOooHome, String pName) throws InvalidConfigException {
+        setHome(pOooHome);
+        setName(pName);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setHome(String pHome) throws InvalidConfigException {
 
-		Path homePath = new Path(aHome);
-		File homeFile = homePath.toFile();
-		
-		/* Checks if the directory exists */
-		if (!homeFile.isDirectory() || !homeFile.canRead()) {
-			mHome = null;
-			throw new InvalidConfigException(
-				Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
-						homeFile.getAbsolutePath(), 
-				InvalidConfigException.INVALID_OOO_HOME);
-		}
-		
-		mHome = aHome;
-			
-		/* Checks if the classes path is a directory */
-		Path javaPath = new Path(getClassesPath());
-		File javaDir = javaPath.toFile();
-		
-		if (!javaDir.isDirectory() || !javaDir.canRead()) {
-			mHome = null;
-			throw new InvalidConfigException(
-				Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
-						javaDir.getAbsolutePath(), 
-				InvalidConfigException.INVALID_OOO_HOME);
-		}
-		
-		/* Checks if types.rdb is a readable file */
-		Path typesPath = new Path(getTypesPath());
-		File typesFile = typesPath.toFile();
-		
-		if (!typesFile.isFile() || !typesFile.canRead()) {
-			mHome = null;
-			throw new InvalidConfigException(
-				Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
-						typesFile.getAbsolutePath(), 
-				InvalidConfigException.INVALID_OOO_HOME);
-		}
-		
-		/* Checks if services.rdb is a readable file */
-		Path servicesPath = new Path(getServicesPath());
-		File servicesFile = servicesPath.toFile();
-		
-		if (!servicesFile.isFile() || !servicesFile.canRead()) {
-			mHome = null;
-			throw new InvalidConfigException(
-				Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
-						typesFile.getAbsolutePath(), 
-				InvalidConfigException.INVALID_OOO_HOME);
-		}
-		
-		/* Checks if unorc is a readable file */
-		Path unorcPath = new Path(getUnorcPath());
-		File unorcFile = unorcPath.toFile();
-		
-		if (!unorcFile.isFile() || !unorcFile.canRead()) {
-			mHome = null;
-			throw new InvalidConfigException(
-				Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
-						unorcFile.getAbsolutePath(), 
-				InvalidConfigException.INVALID_OOO_HOME);
-		}
-	}
+        Path homePath = new Path(pHome);
+        File homeFile = homePath.toFile();
+        
+        /* Checks if the directory exists */
+        if (!homeFile.isDirectory() || !homeFile.canRead()) {
+            mHome = null;
+            throw new InvalidConfigException(
+                Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
+                        homeFile.getAbsolutePath(), 
+                InvalidConfigException.INVALID_OOO_HOME);
+        }
+        
+        mHome = pHome;
+            
+        /* Checks if the classes path is a directory */
+        checkClassesDir();
+        
+        /* Checks if types.rdb is a readable file */
+        checkTypesRdb();
+        
+        /* Checks if services.rdb is a readable file */
+        checkServicesRdb();
+        
+        /* Checks if unorc is a readable file */
+        checkUnoIni();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getHome() {
+        return mHome;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() {
+        return mName;
+    }
+    
+    /**
+     * Set the new name only if it's neither null nor the empty string. The name
+     * will be rendered unique and therefore may be changed.
+     * 
+     * @param pName the name to set
+     */
+    protected void setName(String pName) {
+        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+            mName = OOoContainer.getUniqueName(pName);
+        }
+    }
+    
+    /**
+     * Check if the UNO configuration file is present in the OOo
+     * installation directory.
+     * 
+     * @throws InvalidConfigException if the UNO configuration file
+     *      isn't present.
+     */
+    private void checkUnoIni() throws InvalidConfigException {
+        Path unorcPath = new Path(getUnorcPath());
+        File unorcFile = unorcPath.toFile();
+        
+        if (!unorcFile.isFile() || !unorcFile.canRead()) {
+            mHome = null;
+            throw new InvalidConfigException(
+                Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+                        unorcFile.getAbsolutePath(), 
+                InvalidConfigException.INVALID_OOO_HOME);
+        }
+    }
 
-	/**
-	 * Set the new name only if it's neither null nor the empty string. The name
-	 * will be rendered unique and therefore may be changed.
-	 * 
-	 * @param aName the name to set
-	 */
-	protected void setName(String aName) {
-		if (aName != null && !aName.equals("")) { //$NON-NLS-1$
-			mName = OOoContainer.getUniqueName(aName);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getHome()
-	 */
-	public String getHome() {
-		return mHome;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.preferences.IOOo#getName()
-	 */
-	public String getName() {
-		return mName;
-	}
-	
-	//-------------------------------------------- ITableElement Implementation
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getImage(java.lang.String)
-	 */
-	public Image getImage(String property) {
-		return null;
-	}
+    /**
+     * Check if the <code>services.rdb</code> file is present in the OOo
+     * installation directory.
+     * 
+     * @throws InvalidConfigException if the <code>services.rdb</code> file
+     *      isn't present
+     */
+    private void checkServicesRdb() throws InvalidConfigException {
+        Path servicesPath = new Path(getServicesPath());
+        File servicesFile = servicesPath.toFile();
+        
+        if (!servicesFile.isFile() || !servicesFile.canRead()) {
+            mHome = null;
+            throw new InvalidConfigException(
+                Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+                        servicesFile.getAbsolutePath(), 
+                InvalidConfigException.INVALID_OOO_HOME);
+        }
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getLabel(java.lang.String)
-	 */
-	public String getLabel(String property) {
-		String result = ""; //$NON-NLS-1$
-		if (property.equals(NAME)) {
-			result = getName();
-		} else if (property.equals(PATH)) {
-			result = getHome();
-		}
-		return result;
-	}
+    /**
+     * Check if the <code>types.rdb</code> file is present in the OOo
+     * installation directory.
+     * 
+     * @throws InvalidConfigException if the <code>types.rdb</code> file
+     *      isn't present
+     */
+    private void checkTypesRdb() throws InvalidConfigException {
+        Path typesPath = new Path(getTypesPath());
+        File typesFile = typesPath.toFile();
+        
+        if (!typesFile.isFile() || !typesFile.canRead()) {
+            mHome = null;
+            throw new InvalidConfigException(
+                Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+                        typesFile.getAbsolutePath(), 
+                InvalidConfigException.INVALID_OOO_HOME);
+        }
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getProperties()
-	 */
-	public String[] getProperties() {
-		return new String[] {NAME, PATH};
-	}
+    /**
+     * Check if the classes directory exits in the OOo installation folder.
+     * 
+     * @throws InvalidConfigException if the classes directory can't be found
+     */
+    private void checkClassesDir() throws InvalidConfigException {
+        Path javaPath = new Path(getClassesPath());
+        File javaDir = javaPath.toFile();
+        
+        if (!javaDir.isDirectory() || !javaDir.canRead()) {
+            mHome = null;
+            throw new InvalidConfigException(
+                Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
+                        javaDir.getAbsolutePath(), 
+                InvalidConfigException.INVALID_OOO_HOME);
+        }        
+    }
+    
+    //-------------------------------------------- ITableElement Implementation
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Image getImage(String pProperty) {
+        return null;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#canModify(java.lang.String)
-	 */
-	public boolean canModify(String property) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getLabel(String pProperty) {
+        String result = ""; //$NON-NLS-1$
+        if (pProperty.equals(NAME)) {
+            result = getName();
+        } else if (pProperty.equals(PATH)) {
+            result = getHome();
+        }
+        return result;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#getValue(java.lang.String)
-	 */
-	public Object getValue(String property) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getProperties() {
+        return new String[] {NAME, PATH};
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.gui.ITableElement#setValue(java.lang.String, java.lang.Object)
-	 */
-	public void setValue(String property, Object value) {
-		// Nothing to do
-	}
-	
-	public void runUno(IUnoidlProject prj, String main, String args, 
-			ILaunch launch, IProgressMonitor monitor) {
-		
-		String libpath = prj.getLanguage().getProjectHandler().getLibraryPath(prj);
-		libpath = libpath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-		libpath = libpath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
-		libpath = "file:///" + libpath; //$NON-NLS-1$
-		
-		String unoPath = getUnoPath();
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			/* uno is already in the PATH variable, so don't worry */
-			unoPath = "uno"; //$NON-NLS-1$
-		}
-		
-		String command = unoPath +  //$NON-NLS-1$
-			" -c " + main + //$NON-NLS-1$
-			" -l " + libpath +  //$NON-NLS-1$
-			" -- " + args; //$NON-NLS-1$
-		
-		String[] env = prj.getLanguage().getLanguageBuidler().getBuildEnv(prj);
-		
-		if (getJavaldxPath() != null) {
-			Process p = prj.getSdk().runToolWithEnv(prj, getJavaldxPath(), env, monitor);
-			InputStream out = p.getInputStream();
-			StringWriter writer = new StringWriter();
-			
-			try {
-				int c = out.read();
-				while (c != -1) {
-					writer.write(c);
-					c = out.read();
-				}
-			} catch (IOException e) {			
-			}
-			
-			String libPath = writer.getBuffer().toString();
-			env = SystemHelper.addEnv(env, "LD_LIBRARY_PATH", libPath.trim(),  //$NON-NLS-1$
-					System.getProperty("path.separator")); //$NON-NLS-1$
-		}
-		
-		Process p = prj.getSdk().runToolWithEnv(prj, command, env, monitor);
-		DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.UreProcessName")  + main); //$NON-NLS-1$
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canModify(String pProperty) {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getValue(String pProperty) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setValue(String pProperty, Object pValue) {
+        // Nothing to do
+    }
+    
+    /**
+     * Run a UNO application using an implementation of the <code>XMain</code>
+     * interface.
+     * 
+     * @param pPrj the UNO project to run
+     * @param pMain the fully qualified name of the main service to run
+     * @param pArgs the UNO program arguments
+     * @param pLaunch the Eclipse launch instance
+     * @param pMonitor the monitor reporting the run progress
+     */
+    public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, 
+            ILaunch pLaunch, IProgressMonitor pMonitor) {
+        
+        String libpath = pPrj.getLanguage().getProjectHandler().getLibraryPath(pPrj);
+        libpath = libpath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+        libpath = libpath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+        libpath = "file:///" + libpath; //$NON-NLS-1$
+        
+        String unoPath = getUnoPath();
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            /* uno is already in the PATH variable, so don't worry */
+            unoPath = "uno"; //$NON-NLS-1$
+        }
+        
+        String command = unoPath +  //$NON-NLS-1$
+            " -c " + pMain + //$NON-NLS-1$
+            " -l " + libpath +  //$NON-NLS-1$
+            " -- " + pArgs; //$NON-NLS-1$
+        
+        String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
+        
+        if (getJavaldxPath() != null) {
+            Process p = pPrj.getSdk().runToolWithEnv(pPrj, getJavaldxPath(), env, pMonitor);
+            InputStream out = p.getInputStream();
+            StringWriter writer = new StringWriter();
+            
+            try {
+                int c = out.read();
+                while (c != -1) {
+                    writer.write(c);
+                    c = out.read();
+                }
+            } catch (IOException e) {            
+            }
+            
+            String libPath = writer.getBuffer().toString();
+            env = SystemHelper.addEnv(env, "LD_LIBRARY_PATH", libPath.trim(),  //$NON-NLS-1$
+                    System.getProperty("path.separator")); //$NON-NLS-1$
+        }
+        
+        Process p = pPrj.getSdk().runToolWithEnv(pPrj, command, env, pMonitor);
+        DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.UreProcessName")  + pMain); //$NON-NLS-1$
+    }
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: TextRow.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -57,100 +57,110 @@ import org.eclipse.swt.widgets.Text;
  * and can be extended to manage more complex texts.
  * 
  * @see org.openoffice.ide.eclipse.core.gui.rows.FileRow
- * 		for a file row based on this class
+ *         for a file row based on this class
  * @see org.openoffice.ide.eclipse.core.gui.rows.TypeRow
- * 		for a Uno type selection row based on this class 
+ *         for a UNO type selection row based on this class 
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class TextRow extends LabeledRow
-					 implements FocusListener, KeyListener {
-	
-	private String mValue = new String();
-	private String mOldValue;
-	
-	public TextRow(Composite parent, String property, String label){
-		super(property);
-		
-		Label aLabel = new Label(parent, SWT.LEFT | SWT.SHADOW_NONE);
-		aLabel.setText(label);
-		Text aField = new Text(parent, SWT.BORDER);
-		
-		createContent(parent, aLabel, aField, null);
-		mField.addFocusListener(this);
-		mField.addKeyListener(this);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-	 */
-	public void focusGained(FocusEvent e) {
-		// Ne fait rien...
-	}
+                     implements FocusListener, KeyListener {
+    
+    private String mValue = new String();
+    private String mOldValue;
+    
+    /**
+     * Create a new text row.
+     * 
+     * @param pParent the parent composite where to create the row
+     * @param pProperty the property name of the row's value
+     * @param pLabel the label of the row
+     */
+    public TextRow(Composite pParent, String pProperty, String pLabel) {
+        super(pProperty);
+        
+        Label aLabel = new Label(pParent, SWT.LEFT | SWT.SHADOW_NONE);
+        aLabel.setText(pLabel);
+        Text aField = new Text(pParent, SWT.BORDER);
+        
+        createContent(pParent, aLabel, aField, null);
+        mField.addFocusListener(this);
+        mField.addKeyListener(this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void focusGained(FocusEvent pEvent) {
+        // Ne fait rien...
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-	 */
-	public void focusLost(FocusEvent e) {
-		if (!((Text)mField).getText().equals(mValue)){
-			setValue(((Text)mField).getText());
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-	 */
-	public void keyPressed(KeyEvent e) {
-		mOldValue = ((Text)mField).getText();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void focusLost(FocusEvent pEvent) {
+        if (!((Text)mField).getText().equals(mValue)) {
+            setValue(((Text)mField).getText());
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void keyPressed(KeyEvent pEvent) {
+        mOldValue = ((Text)mField).getText();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-	 */
-	public void keyReleased(KeyEvent e) {
-		if (e.getSource().equals(mField)) {
-			if (!((Text)mField).getText().equals(mOldValue)){
-				if (!((Text)mField).getText().equals(mValue)){
-					setValue(((Text)mField).getText());
-				}
-			}
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void keyReleased(KeyEvent pEvent) {
+        if (pEvent.getSource().equals(mField)) {
+            if (!((Text)mField).getText().equals(mOldValue)) {
+                if (!((Text)mField).getText().equals(mValue)) {
+                    setValue(((Text)mField).getText());
+                }
+            }
+        }
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
-	 */
-	public String getValue() {
-		return mValue;
-	}
-	
-	public void setValue(String aValue){
-		String newText = aValue;
-		if (null == aValue){
-			newText = ""; //$NON-NLS-1$
-		}
-		
-		if (!((Text)mField).getText().equals(newText)){
-			((Text)mField).setText(newText);
-		}
-		
-		mValue = newText;
-		FieldEvent fe = new FieldEvent(getProperty(), getValue());
-		fireFieldChangedEvent(fe);
-	}
-	
-	public void setFocus(){
-		
-		Text textField = ((Text)mField);
-		textField.setFocus();
-		
-		// Makes the cursor to go at the end of the text
-		textField.setSelection(textField.getText().length());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getValue() {
+        return mValue;
+    }
+    
+    /**
+     * Set the value of the row.
+     * 
+     * @param pValue the value to set
+     */
+    public void setValue(String pValue) {
+        String newText = pValue;
+        if (null == pValue) {
+            newText = ""; //$NON-NLS-1$
+        }
+        
+        if (!((Text)mField).getText().equals(newText)) {
+            ((Text)mField).setText(newText);
+        }
+        
+        mValue = newText;
+        FieldEvent fe = new FieldEvent(getProperty(), getValue());
+        fireFieldChangedEvent(fe);
+    }
+    
+    /**
+     * Sets the focus on the row.
+     */
+    public void setFocus() {
+        
+        Text textField = (Text)mField;
+        textField.setFocus();
+        
+        // Makes the cursor to go at the end of the text
+        textField.setSelection(textField.getText().length());
+    }
 }

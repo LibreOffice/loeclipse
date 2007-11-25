@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoProjectPulldownAction.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -48,7 +48,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Pulldown action for the uno projects. The wizard has to be defined as follows:
- * 	   <wizard
+ *        <wizard
  *           canFinishEarly="false"
  *           category="org.openoffice.ide.eclipse.core"
  *           hasPages="true"
@@ -57,7 +57,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  *           name="%wizards.unoidlproject"
  *           project="true">
  *        <class class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard">
- *        	<parameter name="unoproject" value="true"/>
+ *            <parameter name="unoproject" value="true"/>
  *        </class>
  *        <description>
  *           Create an empty UNO component with a service and it's implementation.
@@ -69,20 +69,25 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class UnoProjectPulldownAction extends AbstractPulldownAction {
 
-	public UnoProjectPulldownAction() {
-		super("unoproject"); //$NON-NLS-1$
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		new NewUnoProjectAction().run(action);
-	}
+    /**
+     * Projects pulldown actions constructor.
+     */
+    public UnoProjectPulldownAction() {
+        super("unoproject"); //$NON-NLS-1$
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void run(IAction pAction) {
+        new NewUnoProjectAction().run(pAction);
+    }
 
-	@Override
-	public boolean isValidSelection(IStructuredSelection selection) {
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValidSelection(IStructuredSelection pSelection) {
+        return true;
+    }
 }

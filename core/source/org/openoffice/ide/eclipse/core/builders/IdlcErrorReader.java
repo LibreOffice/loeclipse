@@ -2,12 +2,12 @@
  *
  * $RCSfile: IdlcErrorReader.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -60,264 +60,291 @@ import org.eclipse.core.runtime.CoreException;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
- * Class reading the idlc error output to transform the errors into markers
+ * Class reading the idlc error output to transform the errors into markers.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class IdlcErrorReader {
-	
-	/**
-	 * <p>Include error regular expression:</p>
-	 * <p><em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find 
-	 * include file &lt;missing include&gt;</em></p>
-	 */
-	private final static String R_IDLCPP_ERROR = "cpp: (\\S+):([0-9]+)(.*:[0-9]+)? (.*)"; //$NON-NLS-1$
-	
-	/**
-	 * <p>Syntax error expression:</p> 
-	 * <p><em>&lt;file&gt; (&lt;line number&gt;) : &lt;message&gt;</em></p>
-	 */
-	private final static String R_IDLC_ERROR  = "(.*)\\(([0-9]+)\\) : (WARNING, )?(.*)"; //$NON-NLS-1$
-	
-	/**
-	 * Stream from which the reader extract the errors
-	 */
-	private LineNumberReader mReader;
-	private InputStreamReader mIn;
-	
-	/**
-	 * File which compilation has been asked
-	 */
-	private IFile compiledFile;
-	
-	public IdlcErrorReader (InputStream stream, IFile file){
-		mIn = new InputStreamReader(stream);
-		mReader = new LineNumberReader(mIn);
-		compiledFile = file;
-	}
-	
-	/**
-	 * Computes the error into idl markers
-	 */
-	public void readErrors(){
-		
-		try {
-			// Cleans the idlc error previously added
-			compiledFile.deleteMarkers(
-					IMarker.PROBLEM, true, 
-					IResource.DEPTH_INFINITE);
-			
-			// Read each line until the stream end (null line)
-			String line = mReader.readLine();
-			
-			// Mark only the file errors. The changed files will be compiled too
-			
-			while (null != line){
-				
-				// Handle the error line
-				IMarker marker = analyseIdlcppError(line);
-				
-				if (null == marker){
-					marker = analyseIdlcError(line);
-				} 
-				
-				if (null == marker) {
-					PluginLogger.debug("Error line: " + line); //$NON-NLS-1$
-					
-				} else {
-					
-					// Keep only the markers for the errors concerning the 
-					// file which is compiled
-					if (IResource.FILE == marker.getResource().getType() && 
-							!marker.getResource().getProjectRelativePath().
-							toString().equals(
-									compiledFile.getProjectRelativePath().
-									toString())) {
-						marker.delete();
-					}
-				}
-				
-				line = mReader.readLine();
-			}
-		} catch (IOException e) {
-			PluginLogger.error(
-				Messages.getString("IdlcErrorReader.ErrorReadingError"), e); //$NON-NLS-1$
-		} catch (CoreException e) {
-			PluginLogger.error(
-					Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
-						+ compiledFile.getProjectRelativePath().toString(), e);
-		} finally {
-			try { 
-				mReader.close(); 
-				mIn.close();
-			} catch (IOException e) {}
-		}
-	}
-	
-	/**
-	 * <p>Method that analyses the error line and return the appropriate 
-	 * marker if it is possible.</p>
-	 * 
-	 * @param line error line to analyse 
-	 * @return the corresponding marker if the line is an idlc error line. 
-	 * 			code>null</code> if there were problems by creating the 
-	 * 			marker or if the line isn't a idlc error line.
-	 */
-	private IMarker analyseIdlcError(String line){
-		IMarker marker = null;
-		
-		Pattern pSyntax = Pattern.compile(R_IDLC_ERROR); 
-		Matcher mSyntax = pSyntax.matcher(line);
-		
-		if (!line.startsWith("idlc:") && mSyntax.matches()){ //$NON-NLS-1$
-			IProject project = compiledFile.getProject();
-			
-			boolean error = false;
-			if (null == mSyntax.group(3)){
-				error = true;
-			}
-			
-			// HELP the groups are indexed from 1. 0 is the whole string
-			String filePath = mSyntax.group(1);
-			int lineNo = Integer.parseInt(mSyntax.group(2));
-			String message = mSyntax.group(mSyntax.groupCount());
-			
-			// Get a handle on the bad file
-			// Create a project relative path
-			if (filePath.startsWith(project.getLocation().toOSString())){
-				int pos = project.getLocation().toOSString().length();
-				filePath = filePath.substring(pos);
-			}
-			
-			IFile file = project.getFile(filePath);
-			try {
-				marker = file.createMarker(IMarker.PROBLEM);
-				marker.setAttribute(IMarker.SEVERITY, 
-							error?IMarker.SEVERITY_ERROR: 
-								IMarker.SEVERITY_WARNING);
-				marker.setAttribute(IMarker.MESSAGE, message);
-				marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
-				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
-				
-				// HELP To print an icon in the editor vertical and overview rulers
-				// Set the CHAR_START and CHAR_END attributes. They are relative to the
-				// beginning or the end of the document.
-				
-				// HELP Without specifying the CHAR END and START, the line is well placed
-				// But afterwards, pay attention when the marker should be located under 
-				// the bad words
-				
-				// Try to find the line or word that causes the error
-//				Map positions = getWrongWord(lineNo, message);
-//				
-//				marker.setAttribute(IMarker.CHAR_START, ((Integer)positions.get(IMarker.CHAR_START)).intValue());
-//				marker.setAttribute(IMarker.CHAR_END,  ((Integer)positions.get(IMarker.CHAR_END)).intValue());
-				
-			} catch (CoreException e) {
-				PluginLogger.error(
-						Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
-							+ file.getProjectRelativePath().toString(), e);
-			}
-		}
-		
-		return marker;
-	}
-	
-	/**
-	 * 
-	 * @param line
-	 * @return
-	 */
-	private IMarker analyseIdlcppError(String line){
-		IMarker marker = null;
-		
-		Pattern pInclude = Pattern.compile(R_IDLCPP_ERROR);
-		Matcher mInclude = pInclude.matcher(line);
-		
-		if (mInclude.matches()){
-			IProject project = compiledFile.getProject();
+    
+    /**
+     * Include error regular expression.
+     * 
+     * <p><em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find 
+     * include file &lt;missing include&gt;</em></p>
+     */
+    private static final String R_IDLCPP_ERROR = "cpp: (\\S+):([0-9]+)(.*:[0-9]+)? (.*)"; //$NON-NLS-1$
+    
+    /**
+     * Syntax error expression.
+     *  
+     * <p><em>&lt;file&gt; (&lt;line number&gt;) : &lt;message&gt;</em></p>
+     */
+    private static final String R_IDLC_ERROR  = "(.*)\\(([0-9]+)\\) : (WARNING, )?(.*)"; //$NON-NLS-1$
 
-			String errorFilePath = mInclude.group(1);
-			int lineNo = Integer.parseInt(mInclude.group(2));
-			String badIncludePath = mInclude.group(4);
-			
-			if (null == mInclude.group(3)) {
-			
-				IFile errorFile;
-				
-				if (errorFilePath.startsWith(".")){ //$NON-NLS-1$
-					// A project local file, that means that the error is in a dependent file
-					errorFile = project.getFile(errorFilePath);
-					
-				} else {
-					// The error is in the file which was asked for compilation
-					errorFile = compiledFile;	
-				}
-				
-				String message = "idlcpp error: " + badIncludePath; //$NON-NLS-1$
-				
-				try {
-					marker = errorFile.createMarker(IMarker.PROBLEM);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-					marker.setAttribute(IMarker.MESSAGE, message);
-					marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
-					marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-					
-					// Try to find the line or Word that causes the error
-					Map<String, Integer> positions = getWrongWord(lineNo, message);
-					
-					marker.setAttribute(IMarker.CHAR_START,
-							positions.get(IMarker.CHAR_START).intValue());
-					marker.setAttribute(IMarker.CHAR_END,  
-							positions.get(IMarker.CHAR_END).intValue());
-					
-				} catch (CoreException e) {
-					// Nothing to do. Do not create noise in the logs
-				}	
-			}
-		}
-		
-		return marker;
-	}
-	
-	/**
-	 * 
-	 * @param line
-	 * @param message
-	 * @return
-	 */
-	private Map<String, Integer> getWrongWord(int line, String message){
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		int start = 0;
-		int end = 0;
-		
-		try {
-			
-			// Get the line offset.
-			LineNumberReader fileReader = new LineNumberReader(
-					new InputStreamReader(compiledFile.getContents()));
-			int offset = 0;
-			
-			for (int i=0, length=line; i<length; i++){
-				String tmpLine = fileReader.readLine();
-				offset += tmpLine.length();
-			}
-			
-			// TODO Get the character offset in the line
-			// The last character should be found using the next blank.
-			
-			start = offset;
-			end = offset;
-		} catch (Exception e) {
-			// Nothing to report: the marker will be bad placed perhaps...
-		}
-		
-		// Create the map content
-		map.put(IMarker.CHAR_START, new Integer(start));
-		map.put(IMarker.CHAR_END, new Integer(end));
-		
-		return map;
-	}
-	
+    private static final int IDLC_ERROR_MESSAGE_GROUP = 3;
+
+    private static final int IDLCPP_INCLUDE_PATH_GROUP = 4;
+
+    private static final int IDLCPP_OPTIONAL_GROUP = 3;
+    
+    /**
+     * Stream from which the reader extract the errors.
+     */
+    private LineNumberReader mReader;
+    private InputStreamReader mIn;
+    
+    /**
+     * File which compilation has been asked.
+     */
+    private IFile mCompiledFile;
+    
+    /**
+     * Constructor.
+     * 
+     * @param pStream the error stream to read
+     * @param pFile the built IDL file
+     */
+    public IdlcErrorReader (InputStream pStream, IFile pFile) {
+        mIn = new InputStreamReader(pStream);
+        mReader = new LineNumberReader(mIn);
+        mCompiledFile = pFile;
+    }
+    
+    /**
+     * Computes the error into IDL markers.
+     */
+    public void readErrors() {
+        
+        try {
+            // Cleans the idlc error previously added
+            mCompiledFile.deleteMarkers(
+                    IMarker.PROBLEM, true, 
+                    IResource.DEPTH_INFINITE);
+            
+            // Read each line until the stream end (null line)
+            String line = mReader.readLine();
+            
+            // Mark only the file errors. The changed files will be compiled too
+            
+            while (null != line) {
+                
+                // Handle the error line
+                IMarker marker = analyseIdlcppError(line);
+                
+                if (null == marker) {
+                    marker = analyseIdlcError(line);
+                } 
+                
+                if (null == marker) {
+                    PluginLogger.debug("Error line: " + line); //$NON-NLS-1$
+                    
+                } else {
+                    
+                    // Keep only the markers for the errors concerning the 
+                    // file which is compiled
+                    if (IResource.FILE == marker.getResource().getType() && 
+                            !marker.getResource().getProjectRelativePath().
+                            toString().equals(
+                                    mCompiledFile.getProjectRelativePath().
+                                    toString())) {
+                        marker.delete();
+                    }
+                }
+                
+                line = mReader.readLine();
+            }
+        } catch (IOException e) {
+            PluginLogger.error(
+                Messages.getString("IdlcErrorReader.ErrorReadingError"), e); //$NON-NLS-1$
+        } catch (CoreException e) {
+            PluginLogger.error(
+                    Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
+                        + mCompiledFile.getProjectRelativePath().toString(), e);
+        } finally {
+            try { 
+                mReader.close(); 
+                mIn.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+    
+    /**
+     * <p>Method that analyzes the error line and return the appropriate 
+     * marker if it is possible.</p>
+     * 
+     * @param pLine error line to analyse 
+     * @return the corresponding marker if the line is an <code>idlc</code> error line. 
+     *             <code>null</code> if there were problems by creating the 
+     *             marker or if the line isn't an <code>idlc</code> error line.
+     */
+    private IMarker analyseIdlcError(String pLine) {
+        IMarker marker = null;
+        
+        Pattern pSyntax = Pattern.compile(R_IDLC_ERROR); 
+        Matcher mSyntax = pSyntax.matcher(pLine);
+        
+        if (!pLine.startsWith("idlc:") && mSyntax.matches()) { //$NON-NLS-1$
+            IProject project = mCompiledFile.getProject();
+            
+            boolean error = false;
+            if (null == mSyntax.group(IDLC_ERROR_MESSAGE_GROUP)) {
+                error = true;
+            }
+            
+            // HELP the groups are indexed from 1. 0 is the whole string
+            String filePath = mSyntax.group(1);
+            int lineNo = Integer.parseInt(mSyntax.group(2));
+            String message = mSyntax.group(mSyntax.groupCount());
+            
+            // Get a handle on the bad file
+            // Create a project relative path
+            if (filePath.startsWith(project.getLocation().toOSString())) {
+                int pos = project.getLocation().toOSString().length();
+                filePath = filePath.substring(pos);
+            }
+            
+            IFile file = project.getFile(filePath);
+            try {
+                int severity  = IMarker.SEVERITY_WARNING;
+                if (error) {
+                    severity = IMarker.SEVERITY_ERROR; 
+                }
+                
+                marker = file.createMarker(IMarker.PROBLEM);
+                marker.setAttribute(IMarker.SEVERITY, 
+                            severity);
+                marker.setAttribute(IMarker.MESSAGE, message);
+                marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
+                marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+                
+                // HELP To print an icon in the editor vertical and overview rulers
+                // Set the CHAR_START and CHAR_END attributes. They are relative to the
+                // beginning or the end of the document.
+                
+                // HELP Without specifying the CHAR END and START, the line is well placed
+                // But afterwards, pay attention when the marker should be located under 
+                // the bad words
+                
+                // Try to find the line or word that causes the error
+//                Map positions = getWrongWord(lineNo, message);
+//                
+//                marker.setAttribute(IMarker.CHAR_START, ((Integer)positions.get(IMarker.CHAR_START)).intValue());
+//                marker.setAttribute(IMarker.CHAR_END,  ((Integer)positions.get(IMarker.CHAR_END)).intValue());
+                
+            } catch (CoreException e) {
+                PluginLogger.error(
+                        Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
+                            + file.getProjectRelativePath().toString(), e);
+            }
+        }
+        
+        return marker;
+    }
+    
+    /**
+     * <p>Method that analyzes the IDLC preprocessor error line and return the appropriate 
+     * marker if it is possible.</p>
+     * 
+     * @param pLine error line to analyse 
+     * @return the corresponding marker if the line is an <code>idlc</code> error line. 
+     *             <code>null</code> if there were problems by creating the 
+     *             marker or if the line isn't an <code>idlc</code> error line.
+     */
+    private IMarker analyseIdlcppError(String pLine) {
+        IMarker marker = null;
+        
+        Pattern pInclude = Pattern.compile(R_IDLCPP_ERROR);
+        Matcher mInclude = pInclude.matcher(pLine);
+        
+        if (mInclude.matches()) {
+            IProject project = mCompiledFile.getProject();
+
+            String errorFilePath = mInclude.group(1);
+            int lineNo = Integer.parseInt(mInclude.group(2));
+            String badIncludePath = mInclude.group(IDLCPP_INCLUDE_PATH_GROUP);
+            
+            if (null == mInclude.group(IDLCPP_OPTIONAL_GROUP)) {
+            
+                IFile errorFile;
+                
+                if (errorFilePath.startsWith(".")) { //$NON-NLS-1$
+                    // A project local file, that means that the error is in a dependent file
+                    errorFile = project.getFile(errorFilePath);
+                    
+                } else {
+                    // The error is in the file which was asked for compilation
+                    errorFile = mCompiledFile;    
+                }
+                
+                String message = "idlcpp error: " + badIncludePath; //$NON-NLS-1$
+                
+                try {
+                    marker = errorFile.createMarker(IMarker.PROBLEM);
+                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+                    marker.setAttribute(IMarker.MESSAGE, message);
+                    marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
+                    marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+                    
+                    // Try to find the line or Word that causes the error
+                    Map<String, Integer> positions = getWrongWord(lineNo, message);
+                    
+                    marker.setAttribute(IMarker.CHAR_START,
+                            positions.get(IMarker.CHAR_START).intValue());
+                    marker.setAttribute(IMarker.CHAR_END,  
+                            positions.get(IMarker.CHAR_END).intValue());
+                    
+                } catch (CoreException e) {
+                    // Nothing to do. Do not create noise in the logs
+                }    
+            }
+        }
+        
+        return marker;
+    }
+    
+    /**
+     * Computes the offset of the first and last characters of the word
+     * to underline.
+     * 
+     * @param pLine the number of the line where the error is located
+     * @param pMessage the error message
+     * 
+     * @return a map containing the offset of the first and last characters of the
+     *          word causing the error. 
+     */
+    private Map<String, Integer> getWrongWord(int pLine, String pMessage) {
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        int start = 0;
+        int end = 0;
+        
+        try {
+            
+            // Get the line offset.
+            LineNumberReader fileReader = new LineNumberReader(
+                    new InputStreamReader(mCompiledFile.getContents()));
+            int offset = 0;
+            
+            for (int i = 0, length = pLine; i < length; i++) {
+                String tmpLine = fileReader.readLine();
+                offset += tmpLine.length();
+            }
+            
+            // TODO Get the character offset in the line
+            // The last character should be found using the next blank.
+            
+            start = offset;
+            end = offset;
+        } catch (Exception e) {
+            // Nothing to report: the marker will be bad placed perhaps...
+        }
+        
+        // Create the map content
+        map.put(IMarker.CHAR_START, new Integer(start));
+        map.put(IMarker.CHAR_END, new Integer(end));
+        
+        return map;
+    }
+    
 }

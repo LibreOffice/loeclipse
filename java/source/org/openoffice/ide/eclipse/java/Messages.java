@@ -2,12 +2,12 @@
  *
  * $RCSfile: Messages.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:34 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -46,20 +46,37 @@ package org.openoffice.ide.eclipse.java;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * Messages for the package.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class Messages {
-	private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.java.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.java.messages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(BUNDLE_NAME);
 
-	private Messages() {
-	}
+    /**
+     * Default constructor.
+     */
+    private Messages() {
+    }
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+    /**
+     * Get the string from it's key.
+     * 
+     * @param pKey the key of the string
+     * 
+     * @return the internationalized string
+     */
+    public static String getString(String pKey) {
+        String string = '!' + pKey + '!';
+        try {
+            string =  RESOURCE_BUNDLE.getString(pKey);
+        } catch (MissingResourceException e) {
+        }
+        return string;
+    }
 }

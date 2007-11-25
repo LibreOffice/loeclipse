@@ -2,12 +2,12 @@
  *
  * $RCSfile: NonRuleBasedDamagerRepairer.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:04 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -61,139 +61,134 @@ import org.eclipse.swt.custom.StyleRange;
  * order to fully understand the editor mechanisms, please report to 
  * Eclipse plugin developer's guide. 
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class NonRuleBasedDamagerRepairer
-	implements IPresentationDamager, IPresentationRepairer {
+    implements IPresentationDamager, IPresentationRepairer {
 
-	/** 
-	 * The document this object works on 
-	 */
-	protected IDocument mDocument;
-	
-	/** 
-	 * The default text attribute if non is returned as data by the current token 
-	 */
-	protected TextAttribute mDefaultTextAttribute;
-	
-	/**
-	 * Default constructor
-	 */
-	public NonRuleBasedDamagerRepairer(TextAttribute defaultTextAttribute) {
-		Assert.isNotNull(defaultTextAttribute);
+    /** 
+     * The document this object works on .
+     */
+    protected IDocument mDocument;
+    
+    /** 
+     * The default text attribute if non is returned as data by the current token.
+     */
+    protected TextAttribute mDefaultTextAttribute;
+    
+    /**
+     * Default constructor.
+     * 
+     * @param pDefaultTextAttribute the attribute to assign to default text
+     */
+    public NonRuleBasedDamagerRepairer(TextAttribute pDefaultTextAttribute) {
+        Assert.isNotNull(pDefaultTextAttribute);
 
-		mDefaultTextAttribute = defaultTextAttribute;
-	}
+        mDefaultTextAttribute = pDefaultTextAttribute;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#setDocument(org.eclipse.jface.text.IDocument)
-	 */
-	public void setDocument(IDocument document) {
-		mDocument = document;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setDocument(IDocument pDocument) {
+        mDocument = pDocument;
+    }
 
-	/**
-	 * Returns the end offset of the line that contains the specified offset.
-	 * If the offset is inside a line delimiter, the end offset of the next line.
-	 *
-	 * @param offset the offset whose line end offset must be computed
-	 * @return the line end offset for the given offset
-	 * @exception BadLocationException if offset is invalid in the current
-	 * 			 document
-	 */
-	protected int endOfLineOf(int offset) throws BadLocationException {
+    /**
+     * Returns the end offset of the line that contains the specified offset.
+     * If the offset is inside a line delimiter, the end offset of the next line.
+     *
+     * @param pOffset the offset whose line end offset must be computed
+     * @return the line end offset for the given offset
+     * @exception BadLocationException if offset is invalid in the current
+     *              document
+     */
+    protected int endOfLineOf(int pOffset) throws BadLocationException {
+        int endOffset = mDocument.getLength();
+        
+        IRegion info = mDocument.getLineInformationOfOffset(pOffset);
+        if (pOffset <= info.getOffset() + info.getLength()) {
+            endOffset = info.getOffset() + info.getLength();
+        }
 
-		IRegion info = mDocument.getLineInformationOfOffset(offset);
-		if (offset <= info.getOffset() + info.getLength())
-			return info.getOffset() + info.getLength();
+        int line = mDocument.getLineOfOffset(pOffset);
+        try {
+            info = mDocument.getLineInformation(line + 1);
+            endOffset = info.getOffset() + info.getLength();
+        } catch (BadLocationException x) {
+            endOffset = mDocument.getLength();
+        }
+        
+        return endOffset;
+    }
 
-		int line = mDocument.getLineOfOffset(offset);
-		try {
-			info = mDocument.getLineInformation(line + 1);
-			return info.getOffset() + info.getLength();
-		} catch (BadLocationException x) {
-			return mDocument.getLength();
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public IRegion getDamageRegion(ITypedRegion pPartition,
+            DocumentEvent pEvent,
+            boolean pDocumentPartitioningChanged) {
+        
+        IRegion damaged = pPartition;
+        
+        if (!pDocumentPartitioningChanged) {
+            try {
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
-	 */
-	public IRegion getDamageRegion(
-		ITypedRegion partition,
-		DocumentEvent event,
-		boolean documentPartitioningChanged) {
-		if (!documentPartitioningChanged) {
-			try {
+                IRegion info =
+                    mDocument.getLineInformationOfOffset(pEvent.getOffset());
+                int start = Math.max(pPartition.getOffset(), info.getOffset());
 
-				IRegion info =
-					mDocument.getLineInformationOfOffset(event.getOffset());
-				int start = Math.max(partition.getOffset(), info.getOffset());
+                int length = pEvent.getLength();
+                if (pEvent.getText() == null) {
+                    length = pEvent.getText().length();
+                }
+                int end = pEvent.getOffset() + length;
 
-				int end =
-					event.getOffset()
-						+ (event.getText() == null
-							? event.getLength()
-							: event.getText().length());
+                if (info.getOffset() <= end
+                    && end <= info.getOffset() + info.getLength()) {
+                    // optimize the case of the same line
+                    end = info.getOffset() + info.getLength();
+                } else {
+                    end = endOfLineOf(end);
+                }
 
-				if (info.getOffset() <= end
-					&& end <= info.getOffset() + info.getLength()) {
-					// optimize the case of the same line
-					end = info.getOffset() + info.getLength();
-				} else
-					end = endOfLineOf(end);
+                end =
+                    Math.min(
+                        pPartition.getOffset() + pPartition.getLength(),
+                        end);
+                damaged = new Region(start, end - start);
 
-				end =
-					Math.min(
-						partition.getOffset() + partition.getLength(),
-						end);
-				return new Region(start, end - start);
+            } catch (BadLocationException x) {
+            }
+        }
 
-			} catch (BadLocationException x) {
-			}
-		}
+        return damaged;
+    }
 
-		return partition;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void createPresentation(TextPresentation pPresentation, ITypedRegion pRegion) {
+        addRange(pPresentation, pRegion.getOffset(),
+            pRegion.getLength(), mDefaultTextAttribute);
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#createPresentation(org.eclipse.jface.text.TextPresentation, org.eclipse.jface.text.ITypedRegion)
-	 */
-	public void createPresentation(
-		TextPresentation presentation,
-		ITypedRegion region) {
-		addRange(
-			presentation,
-			region.getOffset(),
-			region.getLength(),
-			mDefaultTextAttribute);
-	}
-
-	/**
-	 * Adds style information to the given text presentation.
-	 *
-	 * @param presentation the text presentation to be extended
-	 * @param offset the offset of the range to be styled
-	 * @param length the length of the range to be styled
-	 * @param attr the attribute describing the style of the range to be styled
-	 */
-	protected void addRange(
-		TextPresentation presentation,
-		int offset,
-		int length,
-		TextAttribute attr) {
-		
-		if (attr != null)
-			presentation.addStyleRange(
-				new StyleRange(
-					offset,
-					length,
-					attr.getForeground(),
-					attr.getBackground(),
-					attr.getStyle()));
-	}
+    /**
+     * Adds style information to the given text presentation.
+     *
+     * @param pPresentation the text presentation to be extended
+     * @param pOffset the offset of the range to be styled
+     * @param pLength the length of the range to be styled
+     * @param pAttr the attribute describing the style of the range to be styled
+     */
+    protected void addRange(TextPresentation pPresentation, int pOffset,
+            int pLength, TextAttribute pAttr) {
+        
+        if (pAttr != null) {
+            pPresentation.addStyleRange(
+                new StyleRange(pOffset, pLength, pAttr.getForeground(),
+                    pAttr.getBackground(), pAttr.getStyle()));
+        }
+    }
 }

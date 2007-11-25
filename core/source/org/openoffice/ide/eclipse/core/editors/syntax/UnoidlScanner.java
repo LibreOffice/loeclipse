@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlScanner.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -60,70 +60,71 @@ import org.openoffice.ide.eclipse.core.editors.Colors;
  * to fully understand the editor mechanisms, please report to Eclipse 
  * plugin developer's guide.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
-public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax{
-	
-	private ColorProvider mColorProvider;
+public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax {
+    
+    private ColorProvider mColorProvider;
 
-	/**
-	 * Default constructor, initializing the rules to apply in the uno-idl
-	 * code.
-	 *  
-	 * @param cp a color provider to colorize the resulting tokens
-	 */
-	public UnoidlScanner(ColorProvider cp) {
-		mColorProvider = cp;
-		
-		// Tokens' definitions
-		IToken keyword = new Token(
-			new TextAttribute(mColorProvider.getColor(Colors.C_KEYWORD),
-				null,
-				SWT.BOLD));
-				
-		IToken type = new Token(
-			new TextAttribute(
-				mColorProvider.getColor(Colors.C_TYPE),
-				null,
-				SWT.BOLD));
-		
-		IToken modifier = new Token(
-			new TextAttribute(mColorProvider.getColor(Colors.C_MODIFIER)));
-		
-		IToken string = new Token(
-			new TextAttribute(mColorProvider.getColor(Colors.C_STRING)));
-		
-		IToken other = new Token(
-			new TextAttribute(mColorProvider.getColor(Colors.C_TEXT)));
-		
-		setDefaultReturnToken(other);
-		
-		IRule[] rules = new IRule[4];
-		
-		//Add rules for strings and character constants
-		rules[0] = new SingleLineRule("\"","\"", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[1] = new SingleLineRule("'","'", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		//Add generic whitespace rule
-		rules[2] = new WhitespaceRule(new UnoidlWhiteSpaceDetector());
-		
-		//Add word rule for keywords, types and constants
-		WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);
-		for (int i = 0, length=RESERVED_WORDS.length; i<length; i++){
-			wordRule.addWord(RESERVED_WORDS[i], keyword);
-		}		
-		for (int i = 0, length=CONSTANTS.length; i<length; i++){
-			wordRule.addWord(CONSTANTS[i], keyword);
-		}
-		for (int i = 0, length=TYPES.length; i<length; i++){
-			wordRule.addWord(TYPES[i], type);
-		}
-		for (int i=0, length=MODIFIERS.length; i<length; i++){
-			wordRule.addWord(MODIFIERS[i], modifier);
-		}
-		
-		rules[3] = wordRule;
-		setRules(rules);
-	}
+    /**
+     * Default constructor, initializing the rules to apply in the uno-idl
+     * code.
+     *  
+     * @param pColorProvider a color provider to colorize the resulting tokens
+     */
+    public UnoidlScanner(ColorProvider pColorProvider) {
+        mColorProvider = pColorProvider;
+        
+        // Tokens' definitions
+        IToken keyword = new Token(
+            new TextAttribute(mColorProvider.getColor(Colors.C_KEYWORD),
+                null,
+                SWT.BOLD));
+                
+        IToken type = new Token(
+            new TextAttribute(
+                mColorProvider.getColor(Colors.C_TYPE),
+                null,
+                SWT.BOLD));
+        
+        IToken modifier = new Token(
+            new TextAttribute(mColorProvider.getColor(Colors.C_MODIFIER)));
+        
+        IToken string = new Token(
+            new TextAttribute(mColorProvider.getColor(Colors.C_STRING)));
+        
+        IToken other = new Token(
+            new TextAttribute(mColorProvider.getColor(Colors.C_TEXT)));
+        
+        setDefaultReturnToken(other);
+        
+        //Add word rule for keywords, types and constants
+        WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);
+        for (int i = 0, length = RESERVED_WORDS.length; i < length; i++) {
+            wordRule.addWord(RESERVED_WORDS[i], keyword);
+        }        
+        for (int i = 0, length = CONSTANTS.length; i < length; i++) {
+            wordRule.addWord(CONSTANTS[i], keyword);
+        }
+        for (int i = 0, length = TYPES.length; i < length; i++) {
+            wordRule.addWord(TYPES[i], type);
+        }
+        for (int i = 0, length = MODIFIERS.length; i < length; i++) {
+            wordRule.addWord(MODIFIERS[i], modifier);
+        }
+        
+        IRule[] rules = new IRule[]{
+        
+            // Add rules for strings and character constants
+            new SingleLineRule("\"","\"", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
+            new SingleLineRule("'","'", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
+        
+            //Add generic whitespace rule
+            new WhitespaceRule(new UnoidlWhiteSpaceDetector()),
+        
+            wordRule
+        };
+        setRules(rules);
+    }
 }

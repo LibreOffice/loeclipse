@@ -2,12 +2,12 @@
  *
  * $RCSfile: FileRow.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -61,116 +61,115 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
  * GUI row for a file selection. It supports only the Grid Layout
  * and can be configured to select either a file or a directory.
  * 
- * @author Cedric Bosdonnat
+ * @author cedricbosdo
  *
  */
 public class FileRow extends LabeledRow {
-	
-	private String mValue = new String();
-	private boolean mDirectory = false;
-	
-	/**
-	 * File row constructor.
-	 * 
-	 * @param parent composite parent of the row.
-	 * @param property property name used in field changing event.
-	 * @param label label to print on the left of the row.
-	 * @param directory if <code>true</code>, the field is a directory path, 
-	 *                  otherwise the field is a file path.
-	 */
-	public FileRow (Composite parent, String property, String label, 
-			boolean directory){
-		super(property);
-		
-		Label aLabel = new Label(parent, SWT.SHADOW_NONE | SWT.LEFT);
-		aLabel.setText(label);
-		
-		Text aField = new Text(parent, SWT.BORDER);
-			
-		createContent(parent, aLabel, aField,
-				Messages.getString("FileRow.Browse")); //$NON-NLS-1$
-		
-		mField.addFocusListener(new FocusAdapter(){
-			public void focusLost(FocusEvent e){
-				setValue(getValue());
-			}
-		});
-		
-		mBrowse.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				browse();
-			}
-		});
-		
-		mDirectory = directory;
-	}
-	
-	/**
-	 * Method called when the button browse is clicked
-	 */
-	protected void browse() {
-		BusyIndicator.showWhile(mBrowse.getDisplay(), new Runnable(){
-			public void run() {
-				doOpenFileSelectionDialog();
-			}
-		});
-	}
+    
+    private String mValue = new String();
+    private boolean mDirectory = false;
+    
+    /**
+     * File row constructor.
+     * 
+     * @param pParent composite parent of the row.
+     * @param pProperty property name used in field changing event.
+     * @param pLabel label to print on the left of the row.
+     * @param pDirectory if <code>true</code>, the field is a directory path, 
+     *                  otherwise the field is a file path.
+     */
+    public FileRow (Composite pParent, String pProperty, String pLabel, 
+            boolean pDirectory) {
+        super(pProperty);
+        
+        Label aLabel = new Label(pParent, SWT.SHADOW_NONE | SWT.LEFT);
+        aLabel.setText(pLabel);
+        
+        Text aField = new Text(pParent, SWT.BORDER);
+            
+        createContent(pParent, aLabel, aField,
+                Messages.getString("FileRow.Browse")); //$NON-NLS-1$
+        
+        mField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent pEvent) {
+                setValue(getValue());
+            }
+        });
+        
+        mBrowse.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent pEvent) {
+                browse();
+            }
+        });
+        
+        mDirectory = pDirectory;
+    }
+    
+    /**
+     * Method called when the button browse is clicked.
+     */
+    protected void browse() {
+        BusyIndicator.showWhile(mBrowse.getDisplay(), new Runnable() {
+            public void run() {
+                doOpenFileSelectionDialog();
+            }
+        });
+    }
 
-	/**
-	 * Open the File selection dialog
-	 */
-	protected void doOpenFileSelectionDialog() {
-		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
-								getActiveWorkbenchWindow().getShell();
-		
-		String newFile = null;
-		
-		if (mDirectory){
-			DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
-			
-			String file = getValue();
-			if (file != null){
-				dialog.setText(Messages.getString("FileRow.DirectoryTitle")); //$NON-NLS-1$
-				
-				newFile = dialog.open();
-			}
-			
-		} else {
-			FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-			
-			String file = getValue();
-			if (file != null){
-				dialog.setFileName(file);
-			}
-			
-			dialog.setText(Messages.getString("FileRow.FileTitle")); //$NON-NLS-1$
+    /**
+     * Open the File selection dialog.
+     */
+    protected void doOpenFileSelectionDialog() {
+        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
+                                getActiveWorkbenchWindow().getShell();
+        
+        String newFile = null;
+        
+        if (mDirectory) {
+            DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
+            
+            String file = getValue();
+            if (file != null) {
+                dialog.setText(Messages.getString("FileRow.DirectoryTitle")); //$NON-NLS-1$
+                
+                newFile = dialog.open();
+            }
+            
+        } else {
+            FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+            
+            String file = getValue();
+            if (file != null) {
+                dialog.setFileName(file);
+            }
+            
+            dialog.setText(Messages.getString("FileRow.FileTitle")); //$NON-NLS-1$
 
-			newFile = dialog.open();
-		}
-		
-		if (newFile != null) {
-			setValue(newFile);
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.rows.LabeledRow#getValue()
-	 */
-	public String getValue() {
-		return mValue;
-	}
-	
-	/**
-	 * Set a new value to the row
-	 * 
-	 * @param aValue the new value
-	 */
-	public void setValue(String aValue){
+            newFile = dialog.open();
+        }
+        
+        if (newFile != null) {
+            setValue(newFile);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getValue() {
+        return mValue;
+    }
+    
+    /**
+     * Set a new value to the row.
+     * 
+     * @param pValue the new value
+     */
+    public void setValue(String pValue) {
 
-		((Text)mField).setText(aValue);
-		mValue = aValue;
-		FieldEvent fe = new FieldEvent (getProperty(), getValue());
-		fireFieldChangedEvent(fe);
-	}
+        ((Text)mField).setText(pValue);
+        mValue = pValue;
+        FieldEvent fe = new FieldEvent (getProperty(), getValue());
+        fireFieldChangedEvent(fe);
+    }
 }

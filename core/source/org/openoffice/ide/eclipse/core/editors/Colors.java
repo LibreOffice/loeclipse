@@ -2,12 +2,12 @@
  *
  * $RCSfile: Colors.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -44,19 +44,19 @@
 package org.openoffice.ide.eclipse.core.editors;
 
 /**
- * Interface defining the Color constants for the Idl editor partitionning
+ * Interface defining the Color constants for the Idl editor partitionning.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public interface Colors {
-	public static final String C_KEYWORD = "keywordColor"; //$NON-NLS-1$
-	public static final String C_BACKGROUND = "backgroundColor"; //$NON-NLS-1$
-	public static final String C_TEXT = "textColor"; //$NON-NLS-1$
-	public static final String C_STRING = "stringColor"; //$NON-NLS-1$
-	public static final String C_TYPE = "typeColor"; //$NON-NLS-1$
-	public static final String C_COMMENT = "commentColor"; //$NON-NLS-1$
-	public static final String C_AUTODOC_COMMENT = "docCommentColor"; //$NON-NLS-1$
-	public static final String C_PREPROCESSOR = "preprocessorColor"; //$NON-NLS-1$
-	public static final String C_XML_TAG = "xmltagColor"; //$NON-NLS-1$
-	public static final String C_MODIFIER = "modifierColor"; //$NON-NLS-1$
+    public static final String C_KEYWORD = "keywordColor"; //$NON-NLS-1$
+    public static final String C_BACKGROUND = "backgroundColor"; //$NON-NLS-1$
+    public static final String C_TEXT = "textColor"; //$NON-NLS-1$
+    public static final String C_STRING = "stringColor"; //$NON-NLS-1$
+    public static final String C_TYPE = "typeColor"; //$NON-NLS-1$
+    public static final String C_COMMENT = "commentColor"; //$NON-NLS-1$
+    public static final String C_AUTODOC_COMMENT = "docCommentColor"; //$NON-NLS-1$
+    public static final String C_PREPROCESSOR = "preprocessorColor"; //$NON-NLS-1$
+    public static final String C_XML_TAG = "xmltagColor"; //$NON-NLS-1$
+    public static final String C_MODIFIER = "modifierColor"; //$NON-NLS-1$
 }

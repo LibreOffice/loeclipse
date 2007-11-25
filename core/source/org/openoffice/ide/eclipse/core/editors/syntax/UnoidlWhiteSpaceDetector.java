@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlWhiteSpaceDetector.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -49,14 +49,14 @@ import org.eclipse.jface.text.rules.IWhitespaceDetector;
 /**
  * A basic rule to detect the white spaces in the text.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class UnoidlWhiteSpaceDetector implements IWhitespaceDetector {
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.rules.IWhitespaceDetector#isWhitespace(char)
-	 */
-	public boolean isWhitespace(char c) {
-		return Character.isWhitespace(c);
-	}
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isWhitespace(char pChar) {
+        return Character.isWhitespace(pChar);
+    }
 }

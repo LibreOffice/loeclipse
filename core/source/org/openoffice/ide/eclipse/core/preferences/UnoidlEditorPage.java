@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlEditorPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -52,56 +52,53 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 
 /**
- * Preference page to change the UNO-IDL editor colors
+ * Preference page to change the UNO-IDL editor colors.
  *  
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class UnoidlEditorPage extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
+    implements IWorkbenchPreferencePage {
 
-	/**
-	 * Default constructor loading the preferences
-	 *
-	 */
-	public UnoidlEditorPage() {
-		super(GRID);
-		setPreferenceStore(OOEclipsePlugin.getDefault().getPreferenceStore());
-		setDescription(Messages.getString("UnoidlEditorPage.Title")); //$NON-NLS-1$
-	}
+    /**
+     * Default constructor loading the preferences.
+     */
+    public UnoidlEditorPage() {
+        super(GRID);
+        setPreferenceStore(OOEclipsePlugin.getDefault().getPreferenceStore());
+        setDescription(Messages.getString("UnoidlEditorPage.Title")); //$NON-NLS-1$
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
-	public void createFieldEditors() {
-		addField(new ColorFieldEditor(Colors.C_TEXT, 
-				 Messages.getString("UnoidlEditorPage.Text"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(Colors.C_KEYWORD, 
-				 Messages.getString("UnoidlEditorPage.Keyword"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(Colors.C_MODIFIER,
-				 Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
-				 getFieldEditorParent()));
-		addField(new ColorFieldEditor(Colors.C_STRING, 
-				 Messages.getString("UnoidlEditorPage.String"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(Colors.C_TYPE, 
-				 Messages.getString("UnoidlEditorPage.Type"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(Colors.C_COMMENT, 
-				 Messages.getString("UnoidlEditorPage.Comment"), getFieldEditorParent())); //$NON-NLS-1$
-		addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT,
-				 Messages.getString("UnoidlEditorPage.AutodocComment"),  //$NON-NLS-1$
-				 getFieldEditorParent()));
-		addField(new ColorFieldEditor(Colors.C_XML_TAG,
-				 Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
-				 getFieldEditorParent()));
-		addField(new ColorFieldEditor(Colors.C_PREPROCESSOR, 
-				 Messages.getString("UnoidlEditorPage.PreprocessorCommand"),  //$NON-NLS-1$
-				 getFieldEditorParent()));
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void createFieldEditors() {
+        addField(new ColorFieldEditor(Colors.C_TEXT, 
+                 Messages.getString("UnoidlEditorPage.Text"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_KEYWORD, 
+                 Messages.getString("UnoidlEditorPage.Keyword"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_MODIFIER,
+                 Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
+                 getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_STRING, 
+                 Messages.getString("UnoidlEditorPage.String"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_TYPE, 
+                 Messages.getString("UnoidlEditorPage.Type"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_COMMENT, 
+                 Messages.getString("UnoidlEditorPage.Comment"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT,
+                 Messages.getString("UnoidlEditorPage.AutodocComment"),  //$NON-NLS-1$
+                 getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_XML_TAG,
+                 Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
+                 getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR, 
+                 Messages.getString("UnoidlEditorPage.PreprocessorCommand"),  //$NON-NLS-1$
+                 getFieldEditorParent()));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void init(IWorkbench pWorkbench) {
+    }
 }

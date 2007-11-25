@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlDoubleClickStrategy.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -56,137 +56,163 @@ import org.eclipse.jface.text.ITextViewer;
  *
  */
 public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
-	
-	protected ITextViewer mText;
+    
+    protected ITextViewer mText;
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
-	 */
-	public void doubleClicked(ITextViewer part) {
-		int pos = part.getSelectedRange().x;
+    /**
+     * {@inheritDoc}
+     */
+    public void doubleClicked(ITextViewer pPart) {
+        int pos = pPart.getSelectedRange().x;
 
-		if (pos < 0)
-			return;
+        if (pos < 0) {
+            return;
+        }
 
-		mText = part;
+        mText = pPart;
 
-		if (!selectComment(pos)) {
-			selectWord(pos);
-		}
-	}
-	
-	/**
-	 * Test if the caret is positioned in a comment partition
-	 * 
-	 * @param caretPos the caret position
-	 * @return <code>true</code> if the cursor is in a comment, 
-	 * 		<code>false</code> ortherwise
-	 */
-	protected boolean selectComment(int caretPos) {
-		IDocument doc = mText.getDocument();
-		int startPos, endPos;
+        if (!selectComment(pos)) {
+            selectWord(pos);
+        }
+    }
+    
+    /**
+     * Test if the caret is positioned in a comment partition.
+     * 
+     * @param pCaretPos the caret position
+     * @return <code>true</code> if the cursor is in a comment, 
+     *         <code>false</code> otherwise
+     */
+    protected boolean selectComment(int pCaretPos) {
+        
+        boolean selected = false;
+        
+        IDocument doc = mText.getDocument();
+        int startPos, endPos;
 
-		try {
-			int pos = caretPos;
-			char c = ' ';
+        try {
+            
 
-			while (pos >= 0) {
-				c = doc.getChar(pos);
-				if (c == '\\') {
-					pos -= 2;
-					continue;
-				}
-				if (c == Character.LINE_SEPARATOR || c == '\"')
-					break;
-				--pos;
-			}
+            int pos = getCommentStartPosition(pCaretPos, doc);
+            int c = doc.getChar(pos);
+            
+            if (c == '\"') {
+                startPos = pos;
 
-			if (c != '\"')
-				return false;
+                pos = pCaretPos;
+                int length = doc.getLength();
+                c = ' ';
 
-			startPos = pos;
+                while (pos < length) {
+                    c = doc.getChar(pos);
+                    if (c == Character.LINE_SEPARATOR || c == '\"') {
+                        break;
+                    }
+                    ++pos;
+                }
 
-			pos = caretPos;
-			int length = doc.getLength();
-			c = ' ';
+                if (c == '\"') {
+                    endPos = pos;
 
-			while (pos < length) {
-				c = doc.getChar(pos);
-				if (c == Character.LINE_SEPARATOR || c == '\"')
-					break;
-				++pos;
-			}
-			if (c != '\"')
-				return false;
+                    int offset = startPos + 1;
+                    int len = endPos - offset;
+                    mText.setSelectedRange(offset, len);
+                    selected = true;
+                }
+            }
+        } catch (BadLocationException x) {
+        }
 
-			endPos = pos;
+        return selected;
+    }
+    
+    /**
+     * Get the position of the start of the current comment or the same position than the caret.
+     * 
+     * @param pCaretPos the position of the caret
+     * @param pDoc the edited document
+     * @return the start of the comment or the caret position
+     * 
+     * @throws BadLocationException if something wrong happens during the document reading
+     */
+    private int getCommentStartPosition(int pCaretPos, IDocument pDoc) throws BadLocationException {
+        int pos = pCaretPos;
+        char c = ' ';
+        
+        while (pos >= 0) {
+            c = pDoc.getChar(pos);
+            if (c == '\\') {
+                pos -= 2;
+                continue;
+            }
+            if (c == Character.LINE_SEPARATOR || c == '\"') {
+                break;
+            }
+            --pos;
+        }
+        
+        return pos;
+    }
 
-			int offset = startPos + 1;
-			int len = endPos - offset;
-			mText.setSelectedRange(offset, len);
-			return true;
-		} catch (BadLocationException x) {
-		}
+    /**
+     * Test if the caret is positioned in a word partition.
+     * 
+     * @param pCaretPos the caret position
+     * @return <code>true</code> if the cursor is in a word, 
+     *         <code>false</code> ortherwise
+     */
+    protected boolean selectWord(int pCaretPos) {
 
-		return false;
-	}
-	
-	/**
-	 * Test if the caret is positioned in a word partition
-	 * 
-	 * @param caretPos the caret position
-	 * @return <code>true</code> if the cursor is in a word, 
-	 * 		<code>false</code> ortherwise
-	 */
-	protected boolean selectWord(int caretPos) {
+        boolean selected = false;
+        
+        IDocument doc = mText.getDocument();
+        int startPos, endPos;
 
-		IDocument doc = mText.getDocument();
-		int startPos, endPos;
+        try {
 
-		try {
+            int pos = pCaretPos;
+            char c;
 
-			int pos = caretPos;
-			char c;
+            while (pos >= 0) {
+                c = doc.getChar(pos);
+                if (!Character.isJavaIdentifierPart(c)) {
+                    break;
+                }
+                --pos;
+            }
 
-			while (pos >= 0) {
-				c = doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				--pos;
-			}
+            startPos = pos;
 
-			startPos = pos;
+            pos = pCaretPos;
+            int length = doc.getLength();
 
-			pos = caretPos;
-			int length = doc.getLength();
+            while (pos < length) {
+                c = doc.getChar(pos);
+                if (!Character.isJavaIdentifierPart(c)) {
+                    break;
+                }
+                ++pos;
+            }
 
-			while (pos < length) {
-				c = doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				++pos;
-			}
+            endPos = pos;
+            selectRange(startPos, endPos);
+            selected = true;
 
-			endPos = pos;
-			selectRange(startPos, endPos);
-			return true;
+        } catch (BadLocationException x) {
+        }
 
-		} catch (BadLocationException x) {
-		}
+        return selected;
+    }
 
-		return false;
-	}
-
-	/**
-	 * Define the text selection using a range.
-	 * 
-	 * @param startPos the position of the selection start
-	 * @param stopPos the position of the selection end
-	 */
-	private void selectRange(int startPos, int stopPos) {
-		int offset = startPos + 1;
-		int length = stopPos - offset;
-		mText.setSelectedRange(offset, length);
-	}
+    /**
+     * Define the text selection using a range.
+     * 
+     * @param pStartPos the position of the selection start
+     * @param pStopPos the position of the selection end
+     */
+    private void selectRange(int pStartPos, int pStopPos) {
+        int offset = pStartPos + 1;
+        int length = pStopPos - offset;
+        mText.setSelectedRange(offset, length);
+    }
 }

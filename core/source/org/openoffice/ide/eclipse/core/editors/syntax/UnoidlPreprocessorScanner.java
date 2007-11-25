@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlPreprocessorScanner.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -59,66 +59,64 @@ import org.openoffice.ide.eclipse.core.editors.Colors;
  * In order to fully understand the editor mechanisms, please report to 
  * Eclipse plugin developer's guide.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class UnoidlPreprocessorScanner extends RuleBasedScanner {
-	
-	/**
-	 * The preprocessor commands to match
-	 */
-	public static final String[] PREPROC_COMMANDS = {
-		"include", //$NON-NLS-1$
-		"ifdef", //$NON-NLS-1$
-		"ifndef", //$NON-NLS-1$
-		"endif", //$NON-NLS-1$
-		"elif", //$NON-NLS-1$
-		"else", //$NON-NLS-1$
-		"define", //$NON-NLS-1$
-		"undef", //$NON-NLS-1$
-		"line", //$NON-NLS-1$
-		"error", //$NON-NLS-1$
-		"pragma" //$NON-NLS-1$
-	};
-	
-	/**
-	 * Constructor initializing the rules for the preprocessor command analysis.
-	 * 
-	 * @param colorManager the color manager from where to get the colors
-	 */
-	public UnoidlPreprocessorScanner(ColorProvider colorManager){
-		
-		IToken path = new Token(
-				new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR),
-						null, SWT.ITALIC));
-		
-		IToken condition = new Token(
-				new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR),
-						null, SWT.ITALIC));
-		
-		IToken definition = condition;
-		
-		IToken other = new Token(
-				new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR)));
-		
-		IToken command = new Token (
-				new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR),
-						null, SWT.BOLD));
-		
-		IRule[] rules = new IRule[5];
-		
-		// FIXME Create adapted rules for the #ifdef, #ifndef and #define 
-		
-		rules[0] = new SingleLineRule("<", ">", path); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[1] = new SingleLineRule("\"", "\"", path); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[2] = new RegexRule("\\p{Blank}+[a-zA-Z]+$", condition); //$NON-NLS-1$
-		rules[3] = new EqualityNameRule(definition);
-		
-		WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);
-		for (int i = 0; i < PREPROC_COMMANDS.length; i++){
-			wordRule.addWord(PREPROC_COMMANDS[i], command);
-		}
-		rules[4] = wordRule;
-		
-		setRules(rules);
-	}
+    
+    /**
+     * The preprocessor commands to match.
+     */
+    public static final String[] PREPROC_COMMANDS = {
+        "include", //$NON-NLS-1$
+        "ifdef", //$NON-NLS-1$
+        "ifndef", //$NON-NLS-1$
+        "endif", //$NON-NLS-1$
+        "elif", //$NON-NLS-1$
+        "else", //$NON-NLS-1$
+        "define", //$NON-NLS-1$
+        "undef", //$NON-NLS-1$
+        "line", //$NON-NLS-1$
+        "error", //$NON-NLS-1$
+        "pragma" //$NON-NLS-1$
+    };
+    
+    /**
+     * Constructor initializing the rules for the preprocessor command analysis.
+     * 
+     * @param pColorManager the color manager from where to get the colors
+     */
+    public UnoidlPreprocessorScanner(ColorProvider pColorManager) {
+        
+        IToken path = new Token(
+                new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR),
+                        null, SWT.ITALIC));
+        
+        IToken condition = new Token(
+                new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR),
+                        null, SWT.ITALIC));
+        
+        IToken definition = condition;
+        
+        IToken other = new Token(
+                new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR)));
+        
+        IToken command = new Token (
+                new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR),
+                        null, SWT.BOLD));
+        
+        
+        WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);
+        for (int i = 0; i < PREPROC_COMMANDS.length; i++) {
+            wordRule.addWord(PREPROC_COMMANDS[i], command);
+        }
+        IRule[] rules = new IRule[] {
+            new SingleLineRule("<", ">", path), //$NON-NLS-1$ //$NON-NLS-2$
+            new SingleLineRule("\"", "\"", path), //$NON-NLS-1$ //$NON-NLS-2$
+            new RegexRule("\\p{Blank}+[a-zA-Z]+$", condition), //$NON-NLS-1$
+            new EqualityNameRule(definition), 
+            wordRule
+        };
+        
+        setRules(rules);
+    }
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: OOoJavaPlugin.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:34 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -43,9 +43,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.java;
 
-import org.eclipse.ui.plugin.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -53,56 +53,65 @@ import org.osgi.framework.BundleContext;
  */
 public class OOoJavaPlugin extends AbstractUIPlugin {
 
-	public static final String PLUGIN_ID = "org.openoffice.ide.eclipse.java"; //$NON-NLS-1$
-	public static final String WIZBAN = "wizban"; //$NON-NLS-1$
-	
-	//The shared instance.
-	private static OOoJavaPlugin plugin;
-	
-	/**
-	 * The constructor.
-	 */
-	public OOoJavaPlugin() {
-		plugin = this;
-	}
+    public static final String PLUGIN_ID = "org.openoffice.ide.eclipse.java"; //$NON-NLS-1$
+    public static final String WIZBAN = "wizban"; //$NON-NLS-1$
+    
+    //The shared instance.
+    private static OOoJavaPlugin sPlugin;
+    
+    /**
+     * The constructor.
+     */
+    public OOoJavaPlugin() {
+        sPlugin = this;
+    }
 
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
+    /**
+     * This method is called upon plug-in activation.
+     * 
+     * @param pContext the bundle context
+     * @throws Exception if the plugin can't be started
+     */
+    public void start(BundleContext pContext) throws Exception {
+        super.start(pContext);
+    }
 
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		plugin = null;
-	}
+    /**
+     * This method is called when the plug-in is stopped.
+     * 
+     * @param pContext the bundle context
+     * @throws Exception if the plugin can't be stopped
+     */
+    public void stop(BundleContext pContext) throws Exception {
+        super.stop(pContext);
+        sPlugin = null;
+    }
 
-	/**
-	 * Returns the shared instance.
-	 */
-	public static OOoJavaPlugin getDefault() {
-		return plugin;
-	}
+    /**
+     * @return the shared instance.
+     */
+    public static OOoJavaPlugin getDefault() {
+        return sPlugin;
+    }
 
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
-	
-	protected ImageRegistry createImageRegistry() {	
-		ImageRegistry reg = super.createImageRegistry();
-		
-		reg.put(WIZBAN, getImageDescriptor("/icons/java_app_wiz.png")); //$NON-NLS-1$
-		return reg;
-	}
+    /**
+     * Returns an image descriptor for the image file at the given
+     * plug-in relative path.
+     *
+     * @param pPath the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor(String pPath) {
+        return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, pPath);
+    }
+    
+    /**
+     * @return the image registry of the plugin.
+     */
+    protected ImageRegistry createImageRegistry() {    
+        ImageRegistry reg = super.createImageRegistry();
+        
+        reg.put(WIZBAN, getImageDescriptor("/icons/java_app_wiz.png")); //$NON-NLS-1$
+        return reg;
+    }
 }

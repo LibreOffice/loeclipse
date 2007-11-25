@@ -2,12 +2,12 @@
  *
  * $RCSfile: ProjectPropertiesPage.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -63,6 +63,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
+import org.openoffice.ide.eclipse.core.gui.rows.LabeledRow;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
@@ -71,269 +72,266 @@ import org.openoffice.ide.eclipse.core.model.SDKContainer;
  * The project preference page. This page can be used to reconfigure the
  * project OOo and SDK.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class ProjectPropertiesPage extends PropertyPage 
-								   implements IWorkbenchPropertyPage, 
-								   		   IConfigListener {
+                                   implements IWorkbenchPropertyPage, IConfigListener {
 
-	private UnoidlProject mProject;
-	
-	/**
-	 * Default constructor setting configuration listeners
-	 */
-	public ProjectPropertiesPage() {
-		super();
-		
-		noDefaultAndApplyButton();
-		SDKContainer.addListener(this);
-		OOoContainer.addListener(this);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		
-		SDKContainer.removeListener(this);
-		OOoContainer.removeListener(this);
-		
-		super.dispose();
-	}
+    private static final String SDK = "__sdk"; //$NON-NLS-1$
+    private static final String OOO = "__ooo"; //$NON-NLS-1$
+    
+    private ChoiceRow mSdkRow;
+    private ChoiceRow mOOoRow;
+    
+    private UnoidlProject mProject;
+    
+    /**
+     * Default constructor setting configuration listeners.
+     */
+    public ProjectPropertiesPage() {
+        super();
+        
+        noDefaultAndApplyButton();
+        SDKContainer.addListener(this);
+        OOoContainer.addListener(this);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void dispose() {
+        
+        SDKContainer.removeListener(this);
+        OOoContainer.removeListener(this);
+        
+        super.dispose();
+    }
 
-	//------------------------------------------------------- Content managment
-	
-	private ChoiceRow mSdkRow;
-	private ChoiceRow mOOoRow;
-	
-	private static final String SDK = "__sdk"; //$NON-NLS-1$
-	private static final String OOO = "__ooo"; //$NON-NLS-1$
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
-	 */
-	public void setElement(IAdaptable element) {
-		super.setElement(element);
-		
-		try {
-			mProject = (UnoidlProject)((IProject)getElement()).
-								getNature(OOEclipsePlugin.UNO_NATURE_ID);
-			
-		} catch (CoreException e) {
-			PluginLogger.debug(e.getMessage());
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createContents(Composite parent) {
-		
-		Composite body = new Composite(parent, SWT.NONE);
-		body.setLayout(new GridLayout(3, false));
-		
-		// Add the SDK choice field
-		mSdkRow = new ChoiceRow(body, SDK,
-						Messages.getString("ProjectPropertiesPage.UsedSdk"), //$NON-NLS-1$
-						Messages.getString("ProjectPropertiesPage.SdksBrowse")); //$NON-NLS-1$
-		mSdkRow.setBrowseSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				
-				// Open the SDK Configuration page
-				TableDialog dialog = new TableDialog(getShell(), true);
-				dialog.create();
-				dialog.open();
-				
-			}
-		});
-		
-		fillSDKRow();
-		
-		
-		// Add the OOo choice field
-		mOOoRow = new ChoiceRow(body, OOO,
-						Messages.getString("ProjectPropertiesPage.UsedOOo"), //$NON-NLS-1$
-						Messages.getString("ProjectPropertiesPage.OOoBrowse")); //$NON-NLS-1$
-		mOOoRow.setBrowseSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				
-				// Open the OOo Configuration page
-				TableDialog dialog = new TableDialog(getShell(), false);
-				dialog.create();
-				dialog.open();
-			}
-		});
-		
-		fillOOoRow();
-		
-		return body;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		saveValues();
-		return true;
-	}
-	
-	/**
-	 * Convenience method to save the SDK and OOo values in their plugin 
-	 * configuration file.
-	 */
-	private void saveValues(){
-		if (!mSdkRow.getValue().equals("")) { //$NON-NLS-1$
-			ISdk sdk = SDKContainer.getSDK(mSdkRow.getValue());
-			mProject.setSdk(sdk);
-		}
-		
-		if (!mOOoRow.getValue().equals("")){ //$NON-NLS-1$
-			IOOo ooo = OOoContainer.getOOo(mOOoRow.getValue());
-			mProject.setOOo(ooo);
-		}
-		mProject.saveAllProperties();
-	}
-	
-	/**
-	 * Fills the SDK row with the existing values of the SDK container
-	 */
-	private void fillSDKRow (){
-		
-		if (null != mSdkRow){
-			// Adding the SDK names to the combo box 
-			String[] sdks = new String[SDKContainer.getSDKCount()];
-			Vector<String> sdkKeys = SDKContainer.getSDKKeys();
-			for (int i=0, length=SDKContainer.getSDKCount(); i<length; i++){
-				sdks[i] = sdkKeys.get(i);
-			}
-			sdkKeys.clear();
-			
-			mSdkRow.removeAll();
-			mSdkRow.addAll(sdks);
-			
-			if (null != mProject.getSdk()){
-				mSdkRow.select(mProject.getSdk().getId());
-			} else {
-				mSdkRow.select(0);
-			}
-		}
-	}
+    //------------------------------------------------------- Content managment
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setElement(IAdaptable pElement) {
+        super.setElement(pElement);
+        
+        try {
+            mProject = (UnoidlProject)((IProject)getElement()).
+                                getNature(OOEclipsePlugin.UNO_NATURE_ID);
+            
+        } catch (CoreException e) {
+            PluginLogger.debug(e.getMessage());
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected Control createContents(Composite pParent) {
+        
+        Composite body = new Composite(pParent, SWT.NONE);
+        body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
+        
+        // Add the SDK choice field
+        mSdkRow = new ChoiceRow(body, SDK,
+                        Messages.getString("ProjectPropertiesPage.UsedSdk"), //$NON-NLS-1$
+                        Messages.getString("ProjectPropertiesPage.SdksBrowse")); //$NON-NLS-1$
+        mSdkRow.setBrowseSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent pEvent) {
+                super.widgetSelected(pEvent);
+                
+                // Open the SDK Configuration page
+                TableDialog dialog = new TableDialog(getShell(), true);
+                dialog.create();
+                dialog.open();
+                
+            }
+        });
+        
+        fillSDKRow();
+        
+        
+        // Add the OOo choice field
+        mOOoRow = new ChoiceRow(body, OOO,
+                        Messages.getString("ProjectPropertiesPage.UsedOOo"), //$NON-NLS-1$
+                        Messages.getString("ProjectPropertiesPage.OOoBrowse")); //$NON-NLS-1$
+        mOOoRow.setBrowseSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent pEvent) {
+                super.widgetSelected(pEvent);
+                
+                // Open the OOo Configuration page
+                TableDialog dialog = new TableDialog(getShell(), false);
+                dialog.create();
+                dialog.open();
+            }
+        });
+        
+        fillOOoRow();
+        
+        return body;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performOk() {
+        saveValues();
+        return true;
+    }
+    
+    /**
+     * Convenience method to save the SDK and OOo values in their plugin 
+     * configuration file.
+     */
+    private void saveValues() {
+        if (!mSdkRow.getValue().equals("")) { //$NON-NLS-1$
+            ISdk sdk = SDKContainer.getSDK(mSdkRow.getValue());
+            mProject.setSdk(sdk);
+        }
+        
+        if (!mOOoRow.getValue().equals("")) { //$NON-NLS-1$
+            IOOo ooo = OOoContainer.getOOo(mOOoRow.getValue());
+            mProject.setOOo(ooo);
+        }
+        mProject.saveAllProperties();
+    }
+    
+    /**
+     * Fills the SDK row with the existing values of the SDK container.
+     */
+    private void fillSDKRow () {
+        
+        if (null != mSdkRow) {
+            // Adding the SDK names to the combo box 
+            String[] sdks = new String[SDKContainer.getSDKCount()];
+            Vector<String> sdkKeys = SDKContainer.getSDKKeys();
+            for (int i = 0, length = SDKContainer.getSDKCount(); i < length; i++) {
+                sdks[i] = sdkKeys.get(i);
+            }
+            sdkKeys.clear();
+            
+            mSdkRow.removeAll();
+            mSdkRow.addAll(sdks);
+            
+            if (null != mProject.getSdk()) {
+                mSdkRow.select(mProject.getSdk().getId());
+            } else {
+                mSdkRow.select(0);
+            }
+        }
+    }
 
-	/**
-	 * Fills the OOo row with the existing values of the OOo container
-	 */
-	private void fillOOoRow(){
-		
-		if (null != mOOoRow){
-			
-			// Adding the OOo names to the combo box 
-			String[] ooos = new String[OOoContainer.getOOoCount()];
-			Vector<String> oooKeys = OOoContainer.getOOoKeys();
-			for (int i=0, length=OOoContainer.getOOoCount(); i<length; i++){
-				ooos[i] = oooKeys.get(i);
-			}
-			oooKeys.clear();
-			
-			mOOoRow.removeAll();
-			mOOoRow.addAll(ooos);
-			if (null != mProject.getOOo()){
-				mOOoRow.select(mProject.getOOo().getName());
-			} else {
-				mOOoRow.select(0);
-			}
-		}
-	}
-	
-	/**
-	 * The dialog to configure the plugin OOos and SDKs.
-	 * 
-	 * @author cbosdonnat
-	 *
-	 */
-	private class TableDialog extends Dialog {
-		
-		private boolean mEditSdk = true;
-		
-		private Object mTable;
-		
-		TableDialog (Shell parentShell, boolean editSDK){
-			super(parentShell);
-			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.mEditSdk = editSDK;
-			
-			setBlockOnOpen(true); // This dialog is a modal one
-			if (editSDK) {
-				setTitle(Messages.getString("ProjectPropertiesPage.SdksBrowse")); //$NON-NLS-1$
-			} else {
-				setTitle(Messages.getString("ProjectPropertiesPage.OOoBrowse")); //$NON-NLS-1$
-			}
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-		 */
-		protected Control createDialogArea(Composite parent) {
-			
-			if (mEditSdk){
-				mTable = new SDKTable(parent);
-				((SDKTable)mTable).getPreferences();
-			} else {
-				mTable = new OOoTable(parent);
-				((OOoTable)mTable).getPreferences();
-			}
-				
-			return parent;
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-		 */
-		protected void okPressed() {
-			super.okPressed();
-			
-			if (mEditSdk){
-				((SDKTable)mTable).savePreferences();
-			} else {
-				((OOoTable)mTable).savePreferences();
-			}
-		}
-	}
+    /**
+     * Fills the OOo row with the existing values of the OOo container.
+     */
+    private void fillOOoRow() {
+        
+        if (null != mOOoRow) {
+            
+            // Adding the OOo names to the combo box 
+            String[] ooos = new String[OOoContainer.getOOoCount()];
+            Vector<String> oooKeys = OOoContainer.getOOoKeys();
+            for (int i = 0, length = OOoContainer.getOOoCount(); i < length; i++) {
+                ooos[i] = oooKeys.get(i);
+            }
+            oooKeys.clear();
+            
+            mOOoRow.removeAll();
+            mOOoRow.addAll(ooos);
+            if (null != mProject.getOOo()) {
+                mOOoRow.select(mProject.getOOo().getName());
+            } else {
+                mOOoRow.select(0);
+            }
+        }
+    }
+    
+    /**
+     * The dialog to configure the plugin OOos and SDKs.
+     * 
+     * @author cedricbosdo
+     *
+     */
+    private class TableDialog extends Dialog {
+        
+        private boolean mEditSdk = true;
+        
+        private Object mTable;
+        
+        /**
+         * Constructor.
+         * 
+         * @param pParentShell the shell used for the dialog creation
+         * @param pEditSDK <code>true</code> if the SDK is only edited, <code>false</code> otherwise.
+         */
+        TableDialog (Shell pParentShell, boolean pEditSDK) {
+            super(pParentShell);
+            setShellStyle(getShellStyle() | SWT.RESIZE);
+            this.mEditSdk = pEditSDK;
+            
+            // This dialog is a modal one
+            setBlockOnOpen(true);
+            if (pEditSDK) {
+                setTitle(Messages.getString("ProjectPropertiesPage.SdksBrowse")); //$NON-NLS-1$
+            } else {
+                setTitle(Messages.getString("ProjectPropertiesPage.OOoBrowse")); //$NON-NLS-1$
+            }
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected Control createDialogArea(Composite pParent) {
+            
+            if (mEditSdk) {
+                mTable = new SDKTable(pParent);
+                ((SDKTable)mTable).getPreferences();
+            } else {
+                mTable = new OOoTable(pParent);
+                ((OOoTable)mTable).getPreferences();
+            }
+                
+            return pParent;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected void okPressed() {
+            super.okPressed();
+            
+            if (mEditSdk) {
+                ((SDKTable)mTable).savePreferences();
+            } else {
+                ((OOoTable)mTable).savePreferences();
+            }
+        }
+    }
 
-	//-----------------------------------------Implementation of ConfigListener
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.ConfigListener#ConfigAdded(java.lang.Object)
-	 */
-	public void ConfigAdded(Object element) {
-		fillSDKRow();
-		fillOOoRow();
-	}
+    //-----------------------------------------Implementation of ConfigListener
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void ConfigAdded(Object pElement) {
+        fillSDKRow();
+        fillOOoRow();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.ConfigListener#ConfigRemoved(java.lang.Object)
-	 */
-	public void ConfigRemoved(Object element) {
-		fillSDKRow();
-		fillOOoRow();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void ConfigRemoved(Object pElement) {
+        fillSDKRow();
+        fillOOoRow();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.preferences.ConfigListener#ConfigUpdated(java.lang.Object)
-	 */
-	public void ConfigUpdated(Object element) {
-		fillSDKRow();
-		fillOOoRow();
-	}	
+    /**
+     * {@inheritDoc}
+     */
+    public void ConfigUpdated(Object pElement) {
+        fillSDKRow();
+        fillOOoRow();
+    }    
 
 }

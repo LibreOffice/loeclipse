@@ -2,12 +2,12 @@
  *
  * $RCSfile: SourcePage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,114 +53,125 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDE;
 
 /**
- * A Text editor to use as a tab in multipage editors.
+ * A Text editor to use as a tab in multiple page editors.
  * 
  * @author cedricbosdo
  *
  */
 public class SourcePage extends TextEditor implements IFormPage {
 
-	private FormEditor mEditor;
-	private Control mControl;
-	private int mIndex;
-	private String mId;
-	
-	public SourcePage(FormEditor formEditor, String id, String title) {
-		mId = id;
-		initialize(formEditor);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#canLeaveThePage()
-	 */
-	public boolean canLeaveThePage() {
-		return true;
-	}
+    private FormEditor mEditor;
+    private Control mControl;
+    private int mIndex;
+    private String mId;
+    
+    /**
+     * Source editor page constructor.
+     * 
+     * @param pFormEditor the editor hosting the page.
+     * @param pId the page identifier
+     * @param pTitle the page title
+     */
+    public SourcePage(FormEditor pFormEditor, String pId, String pTitle) {
+        mId = pId;
+        initialize(pFormEditor);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canLeaveThePage() {
+        return true;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#getEditor()
-	 */
-	public FormEditor getEditor() {
-		return mEditor;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public FormEditor getEditor() {
+        return mEditor;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#getId()
-	 */
-	public String getId() {
-		return mId;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getId() {
+        return mId;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#getIndex()
-	 */
-	public int getIndex() {
-		return mIndex;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public int getIndex() {
+        return mIndex;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#getManagedForm()
-	 */
-	public IManagedForm getManagedForm() {
-		// Not a form page
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public IManagedForm getManagedForm() {
+        // Not a form page
+        return null;
+    }
 
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-		Control[] children = parent.getChildren();
-		mControl = children[children.length - 1];
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#getPartControl()
-	 */
-	public Control getPartControl() {
-		return mControl;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void createPartControl(Composite pParent) {
+        super.createPartControl(pParent);
+        Control[] children = pParent.getChildren();
+        mControl = children[children.length - 1];
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Control getPartControl() {
+        return mControl;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
-	 */
-	public void initialize(FormEditor editor) {
-		mEditor = editor;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void initialize(FormEditor pEditor) {
+        mEditor = pEditor;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#isActive()
-	 */
-	public boolean isActive() {
-		return this.equals(mEditor.getActivePageInstance());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isActive() {
+        return this.equals(mEditor.getActivePageInstance());
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#isEditor()
-	 */
-	public boolean isEditor() {
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#selectReveal(java.lang.Object)
-	 */
-	public boolean selectReveal(Object object) {
-		if (object instanceof IMarker) {
-			IDE.gotoMarker(this, (IMarker)object);
-			return true;
-		}
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isEditor() {
+        return true;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean selectReveal(Object pObject) {
+        boolean reveal = false;
+        if (pObject instanceof IMarker) {
+            IDE.gotoMarker(this, (IMarker)pObject);
+            reveal = true;
+        }
+        return reveal;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
-	 */
-	public void setActive(boolean active) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setActive(boolean pActive) {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.IFormPage#setIndex(int)
-	 */
-	public void setIndex(int index) {
-		mIndex = index;
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public void setIndex(int pIndex) {
+        mIndex = pIndex;
+    }
 }

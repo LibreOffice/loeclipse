@@ -2,12 +2,12 @@
  *
  * $RCSfile: RegEditor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,29 +53,29 @@ import org.eclipse.ui.editors.text.TextEditor;
  * <code>.rdb</code> files. This editor is read-only and simply shows
  * the registry content without syntax highlighting. 
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class RegEditor extends TextEditor {
 
-	/**
-	 * Default constructor, initializing the document provider
-	 * @see RegDocumentProvider for the document provider
-	 */
-	public RegEditor() {
-		super();
-		setDocumentProvider(new RegDocumentProvider());
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
-	 */
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer sourceViewer = super.createSourceViewer(parent, ruler, styles);
-		
-		// The database viewer only shows the result of regview, thus the file isn't editable
-		sourceViewer.setEditable(false);
-		
-		return sourceViewer;
-	}
+    /**
+     * Default constructor, initializing the document provider.
+     * 
+     * @see RegDocumentProvider for the document provider
+     */
+    public RegEditor() {
+        super();
+        setDocumentProvider(new RegDocumentProvider());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected ISourceViewer createSourceViewer(Composite pParent, IVerticalRuler pRuler, int pStyles) {
+        ISourceViewer sourceViewer = super.createSourceViewer(pParent, pRuler, pStyles);
+        
+        // The database viewer only shows the result of regview, thus the file isn't editable
+        sourceViewer.setEditable(false);
+        
+        return sourceViewer;
+    }
 }

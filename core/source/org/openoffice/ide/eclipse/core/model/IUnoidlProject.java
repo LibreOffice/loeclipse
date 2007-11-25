@@ -1,3 +1,46 @@
+/*************************************************************************
+ *
+ * $RCSfile: IUnoidlProject.java,v $
+ *
+ * $Revision: 1.8 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
+ *
+ ************************************************************************/
 package org.openoffice.ide.eclipse.core.model;
 
 import org.eclipse.core.resources.IFile;
@@ -7,231 +50,264 @@ import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
+/**
+ * Interface for a UNO project.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public interface IUnoidlProject {
 
-	/**
-	 * <code>org.openoffice.ide.eclipse.idlfolder</code> is a
-	 * persistent folder property that determines whether the
-	 * folder can contain unoidl files or not. 
-	 */
-	public static final String IDL_FOLDER = "idlfolder"; //$NON-NLS-1$
-	
-	/**
-	 * Cleans up the project before destroying it
-	 */
-	public void dispose();
-	
-	//---------------------------------------------------- Properties accessors
+    /**
+     * <code>org.openoffice.ide.eclipse.idlfolder</code> is a
+     * persistent folder property that determines whether the
+     * folder can contain unoidl files or not. 
+     */
+    public static final String IDL_FOLDER = "idlfolder"; //$NON-NLS-1$
+    
+    /**
+     * Cleans up the project before destroying it.
+     */
+    public void dispose();
+    
+    //---------------------------------------------------- Properties accessors
 
-	/**
-	 * Gets the project implementation language.
-	 */
-	public ILanguage getLanguage();
-	
-	/**
-	 * Gets the project name.
-	 */
-	public String getName();
-	
-	/**
-	 * Gets the selected OOo
-	 */
-	public IOOo getOOo();
-	
-	/**
-	 * Gets the selected SDK
-	 */
-	public ISdk getSdk();
-	
-	/**
-	 * Set the language of the project implementation. This method can
-	 * be called only once on a project to avoid project nature problems.
-	 * 
-	 * @param aLanguage the new language
-	 */
-	public void setLanguage(ILanguage aLanguage);
-	
-	/**
-	 * Sets the selected OOo
-	 */
-	public void setOOo(IOOo aOOo);
-	
-	/**
-	 * Sets the selected SDK
-	 */
-	public void setSdk(ISdk aSdk);
-	
-	/**
-	 * Set a property to the project. 
-	 * 
-	 * <p>This can be used by plugins to set their own properties on the project.</p>
-	 * 
-	 * @param name the property name
-	 * @param value the property value
-	 */
-	public void setProperty(String name, String value);
-	
-	/**
-	 * Get a project's property. 
-	 * 
-	 * <p>This can be used by plugins to get their own properties from the project.</p>
-	 * 
-	 * @param name the property name
-	 * @return the value of the property or <code>null</code> if it doesn't
-	 * 		exists
-	 */
-	public String getProperty(String name);
-	
-	//-------------------------------------------------------- Config accessors
-	
-	/**
-	 * Gets the root module of the project. It corresponds to the prefix
-	 * transformed as an idl scoped name. For example, if the company
-	 * prefix is set to <code>foo.bar</code>, the root module will be
-	 * <code>foo::bar</code>.
-	 */
-	public String getRootModule();
-	
-	/**
-	 * Gets the root module path of the project. It corresponds to the path
-	 * to the root module definition. For example, if the company prefix
-	 * is set to <code>foo.bar</code>, the root module path will be
-	 * <code>idl/foo/bar</code>
-	 */
-	public IPath getRootModulePath();
-	
-	/**
-	 * Sets the company prefix
-	 * 
-	 * @param prefix new company prefix 
-	 */
-	public void setCompanyPrefix(String prefix);
-	
-	/**
-	 * Returns the company prefix used in the idl modules and implementation 
-	 * trees. For example, it could be <code>org.openoffice</code> for any code
-	 * created by the OpenOffice.org community. 
-	 * 
-	 * @return the company prefix
-	 */
-	public String getCompanyPrefix();
-	
-	/**
-	 * Sets the output extension
-	 * 
-	 * @param outputExt new output extension to set
-	 */
-	public void setOutputExtension(String outputExt);
-	
-	/**
-	 * Returns the package or namespace name used for the implementation. If
-	 * the company prefix is <code>org.openoffice</code> and the output extension
-	 * is <code>comp</code>, then the implementation namespace will be:
-	 * <code>org.openoffice.comp</code>
-	 *  
-	 * @return the implementation namespace
-	 */
-	public String getOutputExtension();
-	
-	//------------------------------------------------------------ Path getters
+    /**
+     * @return the project implementation language.
+     */
+    public ILanguage getLanguage();
+    
+    /**
+     * @return the project name.
+     */
+    public String getName();
+    
+    /**
+     * @return the selected OOo
+     */
+    public IOOo getOOo();
+    
+    /**
+     * @return the selected SDK
+     */
+    public ISdk getSdk();
+    
+    /**
+     * Set the language of the project implementation. This method can
+     * be called only once on a project to avoid project nature problems.
+     * 
+     * @param pLanguage the new language
+     */
+    public void setLanguage(ILanguage pLanguage);
+    
+    /**
+     * Sets the selected OOo.
+     * 
+     * @param pOOo the selected OpenOffice.org
+     */
+    public void setOOo(IOOo pOOo);
+    
+    /**
+     * Sets the selected SDK.
+     * 
+     * @param pSdk the selected SDK
+     */
+    public void setSdk(ISdk pSdk);
+    
+    /**
+     * Set a property to the project. 
+     * 
+     * <p>This can be used by plugins to set their own properties on the project.</p>
+     * 
+     * @param pName the property name
+     * @param pValue the property value
+     */
+    public void setProperty(String pName, String pValue);
+    
+    /**
+     * Get a project's property. 
+     * 
+     * <p>This can be used by plugins to get their own properties from the project.</p>
+     * 
+     * @param pName the property name
+     * @return the value of the property or <code>null</code> if it doesn't
+     *         exists
+     */
+    public String getProperty(String pName);
+    
+    //-------------------------------------------------------- Config accessors
+    
+    /**
+     * Gets the root module of the project. 
+     * 
+     * <p>It corresponds to the prefix transformed as an idl scoped name. For example, if 
+     * the company prefix is set to <code>foo.bar</code>, the root module will be
+     * <code>foo::bar</code>.</p>
+     * 
+     * @return the root module of the project
+     */
+    public String getRootModule();
+    
+    /**
+     * Gets the root module path of the project. 
+     * 
+     * <p>It corresponds to the path to the root module definition. For example, if 
+     * the company prefix is set to <code>foo.bar</code>, the root module path will be
+     * <code>idl/foo/bar</code>.</p>
+     * 
+     * @return the root module path of the project
+     */
+    public IPath getRootModulePath();
+    
+    /**
+     * Sets the company prefix.
+     * 
+     * @param pPrefix new company prefix 
+     */
+    public void setCompanyPrefix(String pPrefix);
+    
+    /**
+     * Returns the company prefix used in the idl modules and implementation 
+     * trees. For example, it could be <code>org.openoffice</code> for any code
+     * created by the OpenOffice.org community. 
+     * 
+     * @return the company prefix
+     */
+    public String getCompanyPrefix();
+    
+    /**
+     * Sets the output extension.
+     * 
+     * @param pOutputExt new output extension to set
+     */
+    public void setOutputExtension(String pOutputExt);
+    
+    /**
+     * Returns the package or namespace name used for the implementation. 
+     * 
+     * <p>If the company prefix is <code>org.openoffice</code> and the output 
+     * extension is <code>comp</code>, then the implementation namespace will be:
+     * <code>org.openoffice.comp</code>.</p>
+     *  
+     * @return the implementation namespace
+     */
+    public String getOutputExtension();
+    
+    //------------------------------------------------------------ Path getters
 
-	/**
-	 * @return the path to the project directory containing the temporary
-	 * build files. This path is relative to the project folder.
-	 */
-	public IPath getBuildPath();
-	
-	/**
-	 * @return the path to the project directory containing the idl files.
-	 * This path is relative to the project folder.
-	 */
-	public IPath getIdlPath();
-	
-	/**
-	 * @return the path to the project implementation directory. This path is
-	 * relative to the project folder.
-	 */
-	public IPath getImplementationPath();
-	
-	/**
-	 * @return the full path to the project 
-	 */
-	public IPath getProjectPath();
-	
-	/**
-	 * @return the path to the sources directory: that is "source". This path is
-	 * relative to the project folder.
-	 */
-	public IPath getSourcePath();
-	
-	/**
-	 * @return the path to the project <code>types.rdb</code> file. This path is
-	 * relative to the project folder.
-	 */
-	public IPath getTypesPath();
-	
-	/**
-	 * @return the path to the project <code>services.rdb</code> file. This path
-	 * is relative to the project folder.
-	 */
-	public IPath getServicesPath();
-	
-	/**
-	 * @return the path to the project directory containing the generated 
-	 * urd files. This path is relative to the project folder.
-	 */
-	public IPath getUrdPath();
-	
-	//----------------------------------------------- Project resources getters
-	
-	/**
-	 * Returns the file handle for the given project relative path. If the
-	 * file doesn't exists, the handle won't be null.
-	 * 
-	 * @see org.eclipse.core.resources.IProject#getFile(java.lang.String)
-	 */
-	public IFile getFile(IPath path);
-	
-	/**
-	 * Returns the file handle for the given project relative path. If the
-	 * file doesn't exists, the handle won't be null.
-	 * 
-	 * @see org.eclipse.core.resources.IProject#getFile(java.lang.String)
-	 */
-	public IFile getFile(String path);
-	
-	/**
-	 * Returns the folder handle for the given project relative path. If the
-	 * folder doesn't exists, the handle won't be null.
-	 * 
-	 * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
-	 */
-	public IFolder getFolder(IPath path);
-	
-	/**
-	 * Returns the folder handle for the given project relative path. If the
-	 * folder doesn't exists, the handle won't be null.
-	 * 
-	 * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
-	 */
-	public IFolder getFolder(String path);
+    /**
+     * @return the path to the project directory containing the temporary
+     * build files. This path is relative to the project folder.
+     */
+    public IPath getBuildPath();
+    
+    /**
+     * @return the path to the project directory containing the idl files.
+     * This path is relative to the project folder.
+     */
+    public IPath getIdlPath();
+    
+    /**
+     * @return the path to the project implementation directory. This path is
+     * relative to the project folder.
+     */
+    public IPath getImplementationPath();
+    
+    /**
+     * @return the full path to the project 
+     */
+    public IPath getProjectPath();
+    
+    /**
+     * @return the path to the sources directory: that is "source". This path is
+     * relative to the project folder.
+     */
+    public IPath getSourcePath();
+    
+    /**
+     * @return the path to the project <code>types.rdb</code> file. This path is
+     * relative to the project folder.
+     */
+    public IPath getTypesPath();
+    
+    /**
+     * @return the path to the project <code>services.rdb</code> file. This path
+     * is relative to the project folder.
+     */
+    public IPath getServicesPath();
+    
+    /**
+     * @return the path to the project directory containing the generated 
+     * urd files. This path is relative to the project folder.
+     */
+    public IPath getUrdPath();
+    
+    //----------------------------------------------- Project resources getters
+    
+    /**
+     * Returns the file handle for the given project relative path. If the
+     * file doesn't exists, the handle will be <code>null</code>.
+     * 
+     * @param pPath the path to the folder to get
+     * 
+     * @return the folder handle or <code>null</code>
+     * 
+     * @see org.eclipse.core.resources.IProject#getFile(java.lang.String)
+     */
+    public IFile getFile(IPath pPath);
+    
+    /**
+     * Returns the file handle for the given project relative path. If the
+     * file doesn't exists, the handle will be <code>null</code>.
+     * 
+     * @param pPath the path to the folder to get
+     * 
+     * @return the folder handle or <code>null</code>
+     * 
+     * @see org.eclipse.core.resources.IProject#getFile(java.lang.String)
+     */
+    public IFile getFile(String pPath);
+    
+    /**
+     * Returns the folder handle for the given project relative path. If the
+     * folder doesn't exists, the handle will be <code>null</code>.
+     * 
+     * @param pPath the path to the folder to get
+     * 
+     * @return the folder handle or <code>null</code>
+     * 
+     * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
+     */
+    public IFolder getFolder(IPath pPath);
+    
+    /**
+     * Returns the folder handle for the given project relative path. If the
+     * folder doesn't exists, the handle will be <code>null</code>.
+     * 
+     * @param pPath the path to the folder to get
+     * 
+     * @return the folder handle or <code>null</code>
+     * 
+     * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
+     */
+    public IFolder getFolder(String pPath);
 
-	/**
-	 * Defines the directory containing the IDL files
-	 * 
-	 * @param idlDir the IDL directory
-	 */
-	public void setIdlDir(String idlDir);
-	
-	/**
-	 * Defines the directory containing the sources
-	 * 
-	 * @param sourcesDir the sources directory
-	 */
-	public void setSourcesDir(String sourcesDir);
+    /**
+     * Defines the directory containing the IDL files.
+     * 
+     * @param pIdlDir the IDL directory
+     */
+    public void setIdlDir(String pIdlDir);
+    
+    /**
+     * Defines the directory containing the sources.
+     * 
+     * @param pSourcesDir the sources directory
+     */
+    public void setSourcesDir(String pSourcesDir);
 
-	/**
-	 * Saves the UNO project configuration in a hidden file.
-	 */
-	public void saveAllProperties();
+    /**
+     * Saves the UNO project configuration in a hidden file.
+     */
+    public void saveAllProperties();
 }

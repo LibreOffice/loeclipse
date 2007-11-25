@@ -2,12 +2,12 @@
  *
  * $RCSfile: NewUnoFileWizard.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,45 +53,43 @@ import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewUnoFilePage;
 
 /**
- * Wizard for the creation of unoidl file.
+ * Wizard for the creation of UNO-IDL file.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class NewUnoFileWizard extends Wizard implements INewWizard {
 
-	private NewUnoFilePage mPage;
-	
-	private IWorkbench mWorkbench;
-	
-	/**
-	 * Default constructor
-	 */
-	public NewUnoFileWizard() {
-		super();
-	}
+    private NewUnoFilePage mPage;
+    
+    private IWorkbench mWorkbench;
+    
+    /**
+     * Default constructor.
+     */
+    public NewUnoFileWizard() {
+        super();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
-	public boolean performFinish() {
-		
-		IPath parentPath = mPage.getContainerFullPath();
-		IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(parentPath);
-		
-		return NewUnoFilePage.createUnoidlFile(folder, mPage.getFileName(), mWorkbench);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performFinish() {
+        
+        IPath parentPath = mPage.getContainerFullPath();
+        IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(parentPath);
+        
+        return NewUnoFilePage.createUnoidlFile(folder, mPage.getFileName(), mWorkbench);
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		
-		mWorkbench = workbench;
-		mPage = new NewUnoFilePage("configuration", selection); //$NON-NLS-1$
+    /**
+     * {@inheritDoc}
+     */
+    public void init(IWorkbench pWorkbench, IStructuredSelection pSelection) {
+        
+        mWorkbench = pWorkbench;
+        mPage = new NewUnoFilePage("configuration", pSelection); //$NON-NLS-1$
 
-		addPage(mPage);
-	}
+        addPage(mPage);
+    }
 }

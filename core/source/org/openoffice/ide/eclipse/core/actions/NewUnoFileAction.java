@@ -2,12 +2,12 @@
  *
  * $RCSfile: NewUnoFileAction.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:09 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -55,46 +55,42 @@ import org.openoffice.ide.eclipse.core.wizards.NewUnoFileWizard;
  * This action is used to create a new UNO File. Please note that this class
  * should be dropped before the 1.1 version fo the plugin.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class NewUnoFileAction implements IWorkbenchWindowActionDelegate {
 
-	private IWorkbenchWindow window;
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-		// Nothing to do on dispose
-	}
+    private IWorkbenchWindow mWindow;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void dispose() {
+        // Nothing to do on dispose
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void init(IWorkbenchWindow pWindow) {
+        this.mWindow = pWindow;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		// Launch the new IDL File wizard
-		NewUnoFileWizard wizard = new NewUnoFileWizard();
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-		wizard.init(window.getWorkbench(), new StructuredSelection());
-		
-		dialog.open();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void run(IAction pAction) {
+        // Launch the new IDL File wizard
+        NewUnoFileWizard wizard = new NewUnoFileWizard();
+        WizardDialog dialog = new WizardDialog(mWindow.getShell(), wizard);
+        wizard.init(mWindow.getWorkbench(), new StructuredSelection());
+        
+        dialog.open();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		// Nothing to do on selection change
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void selectionChanged(IAction pAction, ISelection pSelection) {
+        // Nothing to do on selection change
+    }
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: InterfaceMembersTable.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -58,232 +58,229 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
- * @author cbosdonnat
+ * Table representing the interface members in the interface wizard page.
+ * 
+ * @author cedricbosdo
  *
  */
 public class InterfaceMembersTable extends AbstractTable {
-	
-	private static final String TYPE = "__type"; //$NON-NLS-1$
-	private static final String NAME = "__name"; //$NON-NLS-1$
-	private static final String OPTIONS = "__options"; //$NON-NLS-1$
-	
-	/**
-	 * Creates a table to add/edit/remove the attributes and methods of an
-	 * interface
-	 * 
-	 * @param parent the parent composite where to create the table. Its layout
-	 * 			should be a Grid Layout with one column 
-	 */
-	public InterfaceMembersTable(Composite parent) {
-		super(	parent, 
-				Messages.getString("InterfaceMembersTable.Title"),  //$NON-NLS-1$
-				new String[]{
-					Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
-					Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
-					Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
-				}, 
-				new int[]{ 100, 50, 300}, 
-				new String[] {
-					NAME,
-					TYPE,
-					OPTIONS
-				}
-		);
-	}
-	
-	/**
-	 * Returns an array of the defined {@link UnoFactoryData}.
-	 * 
-	 * @return the created factory data
-	 */
-	public UnoFactoryData[] getUnoFactoryData() {
-		Vector<ITableElement> lines = getLines();
-		int size = lines.size();
-		UnoFactoryData[] data = new UnoFactoryData[size];
-		
-		for (int i=0; i<size; i++) {
-			data[i] = ((MemberLine)lines.get(i)).mData;
-		}
-		return data;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#addLine()
-	 */
-	protected ITableElement addLine() {
-		MemberLine result = null;
-		UnoFactoryData data = openDialog(null);
-		if (data != null) {
-			result = new MemberLine(data);
-		}
-		return result;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#handleDoubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-	 */
-	protected void handleDoubleClick(DoubleClickEvent event) {
-		
-		// Open the Member dialog but freeze the member type
-		super.handleDoubleClick(event);
-		
-		if (getSelection() instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) getSelection();
-			Object o = selection.getFirstElement();
-			if (o instanceof MemberLine) {
-				MemberLine line = (MemberLine) o;
-				UnoFactoryData data = openDialog(line.mData);
-				line.mData = data;
-				mTableViewer.refresh(line);
-			}
-		}
-	}
-	
-	/**
-	 * Open the member dialog for edition or creation.
-	 * 
-	 * @param content if <code>null</code>, the dialog is opened to create a
-	 * 		new member, otherwise it reuses the given data to modify them.
-	 * 
-	 * @return the created or edited data
-	 */
-	protected UnoFactoryData openDialog(UnoFactoryData content) {
-		InterfaceMemberDialog dlg;
-		UnoFactoryData result = content;
-		
-		if (content == null) {
-			dlg = new InterfaceMemberDialog();
-		} else {
-			dlg = new InterfaceMemberDialog(content);
-		}
-		
-		if (InterfaceMemberDialog.OK == dlg.open()) {
-			result = dlg.getData();
-		} else {
-			if (content == null) {
-				dlg.disposeData();
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * This class defines the model of the member lines.
-	 * 
-	 * @author cedricbosdo
-	 * @see AbstractTable
-	 */
-	class MemberLine implements ITableElement {
+    
+    private static final String TYPE = "__type"; //$NON-NLS-1$
+    private static final String NAME = "__name"; //$NON-NLS-1$
+    private static final String OPTIONS = "__options"; //$NON-NLS-1$
+    private static final int NAME_WIDTH = 100;
+    private static final int TYPE_WIDTH = 50;
+    private static final int OPTIONS_WIDTH = 300;
+    
+    /**
+     * Creates a table to add/edit/remove the attributes and methods of an
+     * interface.
+     * 
+     * @param pParent the parent composite where to create the table. Its layout
+     *             should be a Grid Layout with one column 
+     */
+    public InterfaceMembersTable(Composite pParent) {
+        super(    pParent, 
+                Messages.getString("InterfaceMembersTable.Title"),  //$NON-NLS-1$
+                new String[]{
+                    Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
+                    Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
+                    Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
+                }, 
+                new int[]{ NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH}, 
+                new String[] {
+                    NAME,
+                    TYPE,
+                    OPTIONS
+                }
+        );
+    }
+    
+    /**
+     * Returns an array of the defined {@link UnoFactoryData}.
+     * 
+     * @return the created factory data
+     */
+    public UnoFactoryData[] getUnoFactoryData() {
+        Vector<ITableElement> lines = getLines();
+        int size = lines.size();
+        UnoFactoryData[] data = new UnoFactoryData[size];
+        
+        for (int i = 0; i < size; i++) {
+            data[i] = ((MemberLine)lines.get(i)).mData;
+        }
+        return data;
+    }
+    
+    /**
+         * {@inheritDoc}
+         */
+    protected ITableElement addLine() {
+        MemberLine result = null;
+        UnoFactoryData data = openDialog(null);
+        if (data != null) {
+            result = new MemberLine(data);
+        }
+        return result;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void handleDoubleClick(DoubleClickEvent pEvent) {
+        
+        // Open the Member dialog but freeze the member type
+        super.handleDoubleClick(pEvent);
+        
+        if (getSelection() instanceof IStructuredSelection) {
+            IStructuredSelection selection = (IStructuredSelection) getSelection();
+            Object o = selection.getFirstElement();
+            if (o instanceof MemberLine) {
+                MemberLine line = (MemberLine) o;
+                UnoFactoryData data = openDialog(line.mData);
+                line.mData = data;
+                mTableViewer.refresh(line);
+            }
+        }
+    }
+    
+    /**
+     * Open the member dialog for edition or creation.
+     * 
+     * @param pContent if <code>null</code>, the dialog is opened to create a
+     *         new member, otherwise it reuses the given data to modify them.
+     * 
+     * @return the created or edited data
+     */
+    protected UnoFactoryData openDialog(UnoFactoryData pContent) {
+        InterfaceMemberDialog dlg;
+        UnoFactoryData result = pContent;
+        
+        if (pContent == null) {
+            dlg = new InterfaceMemberDialog();
+        } else {
+            dlg = new InterfaceMemberDialog(pContent);
+        }
+        
+        if (InterfaceMemberDialog.OK == dlg.open()) {
+            result = dlg.getData();
+        } else {
+            if (pContent == null) {
+                dlg.disposeData();
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * This class defines the model of the member lines.
+     * 
+     * @author cedricbosdo
+     * @see AbstractTable
+     */
+    class MemberLine implements ITableElement {
 
-		private UnoFactoryData mData;
-		
-		/**
-		 * This constructor instanciates an UnoFactoryData, keep in mind that 
-		 * these should be disposed.
-		 */
-		public MemberLine() {
-			mData = new UnoFactoryData();
-		}
-		
-		/**
-		 * This constructor only makes a reference copy of the data, don't
-		 * dispose them too early.
-		 * 
-		 * @param data the data for the line
-		 */
-		public MemberLine(UnoFactoryData data) {
-			mData = data;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#canModify(java.lang.String)
-		 */
-		public boolean canModify(String property) {
-			return false;
-		}
+        private UnoFactoryData mData;
+        
+        /**
+         * This constructor instanciates an UnoFactoryData, keep in mind that 
+         * these should be disposed.
+         */
+        public MemberLine() {
+            mData = new UnoFactoryData();
+        }
+        
+        /**
+         * This constructor only makes a reference copy of the data, don't
+         * dispose them too early.
+         * 
+         * @param pData the data for the line
+         */
+        public MemberLine(UnoFactoryData pData) {
+            mData = pData;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean canModify(String pProperty) {
+            return false;
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getImage(java.lang.String)
-		 */
-		public Image getImage(String property) {
-			Image image = null;	
-			if (property.equals(NAME)) {
-				int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
-				if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
-					image = OOEclipsePlugin.getImage(ImagesConstants.ATTRIBUTE);
-				} else if (memberType == IUnoFactoryConstants.METHOD) {
-					image = OOEclipsePlugin.getImage(ImagesConstants.METHOD);
-				}
-			}
-			
-			return image;
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public Image getImage(String pProperty) {
+            Image image = null;    
+            if (pProperty.equals(NAME)) {
+                int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
+                if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
+                    image = OOEclipsePlugin.getImage(ImagesConstants.ATTRIBUTE);
+                } else if (memberType == IUnoFactoryConstants.METHOD) {
+                    image = OOEclipsePlugin.getImage(ImagesConstants.METHOD);
+                }
+            }
+            
+            return image;
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getLabel(java.lang.String)
-		 */
-		public String getLabel(String property) {
-			String label = null;
-			
-			if (property.equals(TYPE)) {
-				String type = (String)mData.getProperty(IUnoFactoryConstants.TYPE);
-				if (type != null) {
-					label = type;
-				}
-			} else if (property.equals(NAME)) {
-				String name = (String)mData.getProperty(IUnoFactoryConstants.NAME);
-				if (name != null) {
-					label = name;
-				}
-			} else if (property.equals(OPTIONS)) {
-				int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
-				if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
-					label = (String)mData.getProperty(IUnoFactoryConstants.FLAGS);
-					label = label == null ? "": label; //$NON-NLS-1$
-				} else if (memberType == IUnoFactoryConstants.METHOD) {
-					UnoFactoryData[] args = mData.getInnerData();
-					label = ""; //$NON-NLS-1$
-					for (int i=0; i<args.length; i++) {
-						String name = (String)args[i].getProperty(IUnoFactoryConstants.NAME);
-						if (name != null) {
-							label += name + " "; //$NON-NLS-1$
-						}
-					}
-				}
-			}
-			return label;
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public String getLabel(String pProperty) {
+            String label = null;
+            
+            if (pProperty.equals(TYPE)) {
+                String type = (String)mData.getProperty(IUnoFactoryConstants.TYPE);
+                label = type;
+            } else if (pProperty.equals(NAME)) {
+                String name = (String)mData.getProperty(IUnoFactoryConstants.NAME);
+                label = name;
+            } else if (pProperty.equals(OPTIONS)) {
+                int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
+                if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
+                    label = (String)mData.getProperty(IUnoFactoryConstants.FLAGS);
+                } else if (memberType == IUnoFactoryConstants.METHOD) {
+                    UnoFactoryData[] args = mData.getInnerData();
+                    label = ""; //$NON-NLS-1$
+                    for (int i = 0; i < args.length; i++) {
+                        String name = (String)args[i].getProperty(IUnoFactoryConstants.NAME);
+                        if (name != null) {
+                            label += name + " "; //$NON-NLS-1$
+                        }
+                    }
+                }
+            }
+            
+            if (label == null) {
+                label = ""; //$NON-NLS-1$
+            }
+            
+            return label;
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getProperties()
-		 */
-		public String[] getProperties() {
-			return new String[]{
-				TYPE,
-				NAME,
-				OPTIONS
-			};
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public String[] getProperties() {
+            return new String[]{
+                TYPE,
+                NAME,
+                OPTIONS
+            };
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#getValue(java.lang.String)
-		 */
-		public Object getValue(String property) {
-			return null;
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public Object getValue(String pProperty) {
+            return null;
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.ITableElement#setValue(java.lang.String, java.lang.Object)
-		 */
-		public void setValue(String property, Object value) {
-		}
-	}
+        /**
+         * {@inheritDoc}
+         */
+        public void setValue(String pProperty, Object pValue) {
+        }
+    }
 }

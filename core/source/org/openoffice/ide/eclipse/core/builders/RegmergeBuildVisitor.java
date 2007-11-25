@@ -2,12 +2,12 @@
  *
  * $RCSfile: RegmergeBuildVisitor.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,62 +53,65 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Class visiting each child of the urd folder to merge it with the common
- * <code>types.rdb</code> registry
+ * <code>types.rdb</code> registry.
  * 
  * @author cbosdonnat
  *
  */
 public class RegmergeBuildVisitor implements IFileVisitor {
 
-	/**
-	 * Progress monitor used during all the visits
-	 */
-	private IProgressMonitor mProgressMonitor; 
-	private IUnoidlProject mUnoprj;
-	
-	/**
-	 * Default constructor
-	 * 
-	 * @param monitor progress monitor
-	 */
-	public RegmergeBuildVisitor(IUnoidlProject unoprj, IProgressMonitor monitor) {
-		super();
-		mProgressMonitor = monitor;
-		mUnoprj = unoprj;
-	}
+    /**
+     * Progress monitor used during all the visits.
+     */
+    private IProgressMonitor mProgressMonitor; 
+    private IUnoidlProject mUnoprj;
+    
+    /**
+     * Default constructor.
+     * 
+     * @param pUnoprj the UNO project to visit
+     * @param pMonitor progress monitor for the regmerge
+     */
+    public RegmergeBuildVisitor(IUnoidlProject pUnoprj, IProgressMonitor pMonitor) {
+        super();
+        mProgressMonitor = pMonitor;
+        mUnoprj = pUnoprj;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
-	 */
-	public boolean visit(File resource) {
-		
-		boolean visitChildren = false;
-		
-		if (resource.isFile()){
-			
-			// Try to compile the file if it is an idl file
-			if (resource.getName().endsWith("urd")){ //$NON-NLS-1$
-				
-				RegmergeBuilder.runRegmergeOnFile(resource, mUnoprj, mProgressMonitor);
-				if (mProgressMonitor != null) mProgressMonitor.worked(1);
-			}
-			
-		} else if (resource.isDirectory()){
-			String urdBasis = UnoidlProjectHelper.URD_BASIS;
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				urdBasis = urdBasis.replace("/", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			if (resource.getAbsolutePath().contains(urdBasis));	
-				visitChildren = true;
-			
-		} else {
-			PluginLogger.debug("Non handled resource"); //$NON-NLS-1$
-		}
-		
-		// helps cleaning
-		mProgressMonitor = null;
-		
-		return visitChildren;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean visit(File pResource) {
+        
+        boolean visitChildren = false;
+        
+        if (pResource.isFile()) {
+            
+            // Try to compile the file if it is an idl file
+            if (pResource.getName().endsWith("urd")) { //$NON-NLS-1$
+                
+                RegmergeBuilder.runRegmergeOnFile(pResource, mUnoprj, mProgressMonitor);
+                if (mProgressMonitor != null) {
+                    mProgressMonitor.worked(1);
+                }
+            }
+            
+        } else if (pResource.isDirectory()) {
+            String urdBasis = UnoidlProjectHelper.URD_BASIS;
+            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+                urdBasis = urdBasis.replace("/", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            if (pResource.getAbsolutePath().contains(urdBasis)) {   
+                visitChildren = true;
+            }
+            
+        } else {
+            PluginLogger.debug("Non handled resource"); //$NON-NLS-1$
+        }
+        
+        // helps cleaning
+        mProgressMonitor = null;
+        
+        return visitChildren;
+    }
 }

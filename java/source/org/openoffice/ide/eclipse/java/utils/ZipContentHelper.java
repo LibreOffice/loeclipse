@@ -2,12 +2,12 @@
  *
  * $RCSfile: ZipContentHelper.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:46:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:39 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -52,50 +52,70 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.utils.ZipContent;
 
 /**
- * This class is a small structure containing the data to zip for one file
+ * This class is a small structure containing the data to zip for one file.
  * 
  * @author cedricbosdo
  *
  */
 public class ZipContentHelper {
-	
-	public static ZipContent[] getFiles(File file) {
-		return getInternalFiles(file, file);
-	}
-	
-	private static ZipContent[] getInternalFiles(File file, File rootDir) {
-		
-		ZipContent[] contents = new ZipContent[0];
-		
-		ArrayList<ZipContent> result = new ArrayList<ZipContent>();
-		File[] files = file.listFiles();
-		if (files != null) {
-			for (int i=0; i<files.length; i++) {
-				File filei = files[i];
-				if (filei.isFile() && !filei.getName().endsWith("urd")) { //$NON-NLS-1$
-					
-					String filePath = filei.getAbsolutePath();
-					String relativePath = filePath.substring(
-							rootDir.getAbsolutePath().length() + 1);
-					if (Platform.getOS().equals(Platform.OS_WIN32)) {
-						relativePath = relativePath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					ZipContent content = new ZipContent(relativePath, filei);
+    
+    /**
+     * Get all the ZipContent entries for the given file or directory.
+     * 
+     * @param pFile the file or directory from which to get all the
+     *      contents as {@link ZipContent} objects
+     * 
+     * @return the {@link ZipContent} object for the file or the directory
+     *      and its content.
+     */
+    public static ZipContent[] getFiles(File pFile) {
+        return getInternalFiles(pFile, pFile);
+    }
+    
+    /**
+     * Get all the ZipContent entries for the given file or directory.
+     * 
+     * @param pFile the file or directory from which to get all the
+     *      contents as {@link ZipContent} objects
+     * @param pRootDir the root directory to use to compute the {@link ZipContent}
+     *      relative path.
+     * 
+     * @return the {@link ZipContent} object for the file or the directory
+     *      and its content.
+     */
+    private static ZipContent[] getInternalFiles(File pFile, File pRootDir) {
+        
+        ZipContent[] contents = new ZipContent[0];
+        
+        ArrayList<ZipContent> result = new ArrayList<ZipContent>();
+        File[] files = pFile.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                File filei = files[i];
+                if (filei.isFile() && !filei.getName().endsWith("urd")) { //$NON-NLS-1$
+                    
+                    String filePath = filei.getAbsolutePath();
+                    String relativePath = filePath.substring(
+                            pRootDir.getAbsolutePath().length() + 1);
+                    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+                        relativePath = relativePath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    ZipContent content = new ZipContent(relativePath, filei);
 
-					result.add(content);
-				} else {
-					if (!filei.getName().equals("urd")) { //$NON-NLS-1$
-						ZipContent[] tmpContents = getInternalFiles(filei, rootDir);
-						result.addAll(Arrays.asList(tmpContents));
-					}
-				}
-			}
+                    result.add(content);
+                } else {
+                    if (!filei.getName().equals("urd")) { //$NON-NLS-1$
+                        ZipContent[] tmpContents = getInternalFiles(filei, pRootDir);
+                        result.addAll(Arrays.asList(tmpContents));
+                    }
+                }
+            }
 
-			contents = new ZipContent[result.size()];
-			contents = result.toArray(contents);
-		} else {
-			PluginLogger.warning(Messages.getString("ZipContentHelper.NotDirectoryError") + file); //$NON-NLS-1$
-		}
-		return contents;
-	}
+            contents = new ZipContent[result.size()];
+            contents = result.toArray(contents);
+        } else {
+            PluginLogger.warning(Messages.getString("ZipContentHelper.NotDirectoryError") + pFile); //$NON-NLS-1$
+        }
+        return contents;
+    }
 }

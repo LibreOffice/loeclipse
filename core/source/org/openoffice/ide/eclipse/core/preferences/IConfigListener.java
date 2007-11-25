@@ -2,12 +2,12 @@
  *
  * $RCSfile: IConfigListener.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:01 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -44,30 +44,30 @@
 package org.openoffice.ide.eclipse.core.preferences;
 
 /**
- * Interface describing a OOo or SDK configuration listener
+ * Interface describing a OOo or SDK configuration listener.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public interface IConfigListener {
-	
-	/**
-	 * Method fired when a config element has been added to the container
-	 * 
-	 * @param element added sdk or ooo
-	 */
-	public void ConfigAdded(Object element);
-	
-	/**
-	 * Method fired when a config element has been removed from the container
-	 * 
-	 * @param element removed sdk or ooo. <code>null</code> if the container has been cleared
-	 */
-	public void ConfigRemoved(Object element);
-	
-	/**
-	 * Method fired when a config element has been updated in the container
-	 * 
-	 * @param element new value of the sdk or ooo
-	 */
-	public void ConfigUpdated(Object element);
+    
+    /**
+     * Method fired when a config element has been added to the container.
+     * 
+     * @param pElement added sdk or ooo
+     */
+    public void ConfigAdded(Object pElement);
+    
+    /**
+     * Method fired when a config element has been removed from the container.
+     * 
+     * @param pElement removed sdk or ooo. <code>null</code> if the container has been cleared
+     */
+    public void ConfigRemoved(Object pElement);
+    
+    /**
+     * Method fired when a config element has been updated in the container.
+     * 
+     * @param pElement new value of the sdk or ooo
+     */
+    public void ConfigUpdated(Object pElement);
 }

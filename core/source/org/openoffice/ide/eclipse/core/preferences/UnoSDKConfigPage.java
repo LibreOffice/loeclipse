@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoSDKConfigPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -54,56 +54,52 @@ import org.openoffice.ide.eclipse.core.gui.SDKTable;
 /**
  * Preference page to configure the plugin available OOo and SDK instances.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class UnoSDKConfigPage extends PreferencePage implements
-		IWorkbenchPreferencePage {
-	
-	private SDKTable mSdkTable;
-	private OOoTable mOOoTable;
+        IWorkbenchPreferencePage {
+    
+    private SDKTable mSdkTable;
+    private OOoTable mOOoTable;
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createContents(Composite parent) {
-		noDefaultAndApplyButton();
-		
-		mSdkTable = new SDKTable(parent);
-		mSdkTable.getPreferences();
-		
-		mOOoTable = new OOoTable(parent);
-		mOOoTable.getPreferences();
-		
-		return parent;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		mSdkTable.savePreferences();
-		mOOoTable.savePreferences();
-		
-		return true;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		mSdkTable.dispose();
-		mOOoTable.dispose();
-		super.dispose();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected Control createContents(Composite pParent) {
+        noDefaultAndApplyButton();
+        
+        mSdkTable = new SDKTable(pParent);
+        mSdkTable.getPreferences();
+        
+        mOOoTable = new OOoTable(pParent);
+        mOOoTable.getPreferences();
+        
+        return pParent;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performOk() {
+        mSdkTable.savePreferences();
+        mOOoTable.savePreferences();
+        
+        return true;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void dispose() {
+        mSdkTable.dispose();
+        mOOoTable.dispose();
+        super.dispose();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void init(IWorkbench pWorkbench) {
+    }
 }

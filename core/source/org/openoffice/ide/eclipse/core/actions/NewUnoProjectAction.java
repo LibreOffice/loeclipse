@@ -2,12 +2,12 @@
  *
  * $RCSfile: NewUnoProjectAction.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -57,64 +57,60 @@ import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 /**
  * This action launches the New UNO Project wizard.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
-	
-	private IWorkbenchWindow window;
+    
+    private IWorkbenchWindow mWindow;
 
-	
-	/**
-	 * Default constructor just initializing the action.
-	 */
-	public NewUnoProjectAction() {
-		init(OOEclipsePlugin.getDefault().getWorkbench().
-				getActiveWorkbenchWindow());
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-		// Nothing to do on dispose
-	}
+    
+    /**
+     * Default constructor just initializing the action.
+     */
+    public NewUnoProjectAction() {
+        init(OOEclipsePlugin.getDefault().getWorkbench().
+                getActiveWorkbenchWindow());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void dispose() {
+        // Nothing to do on dispose
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void init(IWorkbenchWindow pWindow) {
+        this.mWindow = pWindow;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		
-		// Launch the new IDL Project wizard
-		NewUnoProjectWizard wizard = new NewUnoProjectWizard();
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-		
-		dialog.setBlockOnOpen(false);
-		dialog.open();
-	
-		Point size = dialog.getShell().getSize();
-		Rectangle bounds = Display.getDefault().getClientArea();
-		dialog.getShell().setBounds((bounds.width - size.x)/2, 
-				(bounds.height - size.y)/2, size.x, size.y);
-	
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void run(IAction pAction) {
+        
+        // Launch the new IDL Project wizard
+        NewUnoProjectWizard wizard = new NewUnoProjectWizard();
+        WizardDialog dialog = new WizardDialog(mWindow.getShell(), wizard);
+        
+        dialog.setBlockOnOpen(false);
+        dialog.open();
+    
+        Point size = dialog.getShell().getSize();
+        Rectangle bounds = Display.getDefault().getClientArea();
+        dialog.getShell().setBounds((bounds.width - size.x) / 2, 
+                (bounds.height - size.y) / 2, size.x, size.y);
+    
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		// Nothing to do on selection changed
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void selectionChanged(IAction pAction, ISelection pSelection) {
+        // Nothing to do on selection changed
+    }
 
 }

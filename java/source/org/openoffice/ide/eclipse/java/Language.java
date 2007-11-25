@@ -2,12 +2,12 @@
  *
  * $RCSfile: Language.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:35 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -49,33 +49,30 @@ import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 /**
- * Implementation for the Java language
+ * Implementation for the Java language.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class Language implements ILanguage {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguage#getLanguageBuidler()
-	 */
-	public ILanguageBuilder getLanguageBuidler() {
-		return new JavaBuilder(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public ILanguageBuilder getLanguageBuidler() {
+        return new JavaBuilder(this);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguage#getLanguageUI()
-	 */
-	public ILanguageUI getLanguageUI() {
-		return new JavaUI();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public ILanguageUI getLanguageUI() {
+        return new JavaUI();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguage#getProjectHandler()
-	 */
-	public IProjectHandler getProjectHandler() {
-		return new JavaProjectHandler();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public IProjectHandler getProjectHandler() {
+        return new JavaProjectHandler();
+    }
 }

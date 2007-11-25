@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlDocumentProvider.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -59,58 +59,56 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
  * 
  * @author cbosdonnat
  */
-public class UnoidlDocumentProvider extends FileDocumentProvider{
+public class UnoidlDocumentProvider extends FileDocumentProvider {
 
-	private static UnoidlPartitionScanner sScanner = null;
-	
-	/**
-	 * The scannable partitions in the idl text. Each one should have an
-	 * associated scanner in the configuration. 
-	 */
-	private final static String[] TYPES = new String[]{
-		UnoidlPartitionScanner.IDL_AUTOCOMMENT,
-		UnoidlPartitionScanner.IDL_COMMENT,
-		UnoidlPartitionScanner.IDL_PREPROCESSOR
-	};
-	
-	/**
-	 * Default constructor
-	 */
-	public UnoidlDocumentProvider(){
-		super();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
-	 */
-	protected IDocument createDocument(Object element) throws CoreException {
-		IDocument document = super.createDocument(element);
-		if (document!=null){
-			IDocumentPartitioner partitioner = createIDLPartitioner();
-			partitioner.connect(document);
-			document.setDocumentPartitioner(partitioner);
-		}
-		return document;
-	}
-	
-	/**
-	 * Creates an IDL partitioner to cut the file text into scannable
-	 * partitions.
-	 */
-	private FastPartitioner createIDLPartitioner(){
-		return new FastPartitioner(
-			getIDLPartitionScanner(), TYPES
-		);
-	}
-	
-	/**
-	 * Creates the IDL partition scanner if it's not alread created
-	 */
-	private UnoidlPartitionScanner getIDLPartitionScanner(){
-		if (sScanner == null){
-			sScanner = new UnoidlPartitionScanner();
-		}
-		return sScanner;
-	}
+    private static UnoidlPartitionScanner sScanner = null;
+    
+    /**
+     * The scannable partitions in the idl text. Each one should have an
+     * associated scanner in the configuration. 
+     */
+    private static final String[] TYPES = new String[] {
+        UnoidlPartitionScanner.IDL_AUTOCOMMENT,
+        UnoidlPartitionScanner.IDL_COMMENT,
+        UnoidlPartitionScanner.IDL_PREPROCESSOR
+    };
+    
+    /**
+     * Default constructor.
+     */
+    public UnoidlDocumentProvider() {
+        super();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected IDocument createDocument(Object pElement) throws CoreException {
+        IDocument document = super.createDocument(pElement);
+        if (document != null) {
+            IDocumentPartitioner partitioner = createIDLPartitioner();
+            partitioner.connect(document);
+            document.setDocumentPartitioner(partitioner);
+        }
+        return document;
+    }
+    
+    /**
+     * @return the IDL partitioner to cut the file text into scannable partitions.
+     */
+    private FastPartitioner createIDLPartitioner() {
+        return new FastPartitioner(
+            getIDLPartitionScanner(), TYPES
+        );
+    }
+    
+    /**
+     * @return the IDL partition scanner if it's not alread created
+     */
+    private UnoidlPartitionScanner getIDLPartitionScanner() {
+        if (sScanner == null) {
+            sScanner = new UnoidlPartitionScanner();
+        }
+        return sScanner;
+    }
 }

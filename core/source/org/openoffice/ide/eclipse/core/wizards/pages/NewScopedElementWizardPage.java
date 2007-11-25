@@ -2,12 +2,12 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -55,6 +55,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
+import org.openoffice.ide.eclipse.core.gui.rows.LabeledRow;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -66,494 +67,514 @@ import org.openoffice.ide.eclipse.core.wizards.utils.IListenablePage;
 import org.openoffice.ide.eclipse.core.wizards.utils.IPageListener;
 
 /**
- * Astract class for a wizard page to create a scoped element
+ * Abstract class for a wizard page to create a scoped element
  * such as a service or an interface.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public abstract class NewScopedElementWizardPage extends WizardPage
-								implements IFieldChangedListener, IListenablePage {
+                                implements IFieldChangedListener, IListenablePage {
 
-	private IUnoidlProject mUnoProject;
-	private String mRootName;
-	private String mSubpackageName;
-	private String mElementName;
-	
-	/**
-	 * Default constructor to use when neither the project nor the
-	 * OOo instance is known.
-	 * 
-	 * @param aName wizard page name
-	 */
-	public NewScopedElementWizardPage(String aName) {
-		this (aName, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	/**
-	 * Constructor to use when the uno project is already created
-	 * 
-	 * @param pageName name of the page
-	 * @param unoProject uno project in which to create a scoped type
-	 */
-	public NewScopedElementWizardPage(
-			String pageName, IUnoidlProject unoProject) {
-		this(pageName, unoProject, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	/**
-	 * Constructor to use when the uno project is already created, the 
-	 * scoped type name and it's path already known
-	 * 
-	 * @param pageName name of the wizard page
-	 * @param project uno project in which to create a scoped type
-	 * @param aRootName scoped name of the module containing the type 
-	 * @param aElementName name of the type, without any '.' or '::'
-	 */
-	public NewScopedElementWizardPage(
-			String pageName, IUnoidlProject project, 
-			String aRootName, String aElementName) {
-		
-		this(pageName, aRootName, aElementName);
-		setUnoidlProject(project);
-	}
-	
-	/**
-	 * Creates a default scoped name type wizard page with blank container
-	 * path and type name.
-	 */
-	public NewScopedElementWizardPage(String aPageName, IOOo aOOoInstance) {
-		this(aPageName, "", "", aOOoInstance); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	/**
-	 * Constructor to use when the uno project is already created, the 
-	 * scoped type name and it's path already known
-	 * 
-	 * @param aPageName name of the wizard page
-	 * @param aRootName scoped name of the module containing the type 
-	 * @param aElementName name of the type, without any '.' or '::'
-	 * @param aOOoInstance the reference to the OOo to use for type selection
-	 */
-	public NewScopedElementWizardPage(String aPageName,
-			String aRootName, String aElementName, IOOo aOOoInstance) {
-		
-		this(aPageName, aRootName, aElementName);
-		setOOoInstance(aOOoInstance);
-	}
-	
-	/**
-	 * Creates a default page for a scoped element like an interface or a 
-	 * service. This constructor let provide default values for the container
-	 * path and the type name. 
-	 * 
-	 * @param pageName name of the wizard page
-	 * @param aRootName scoped name of the module containing the type 
-	 * @param aElementName name of the type, without any '.' or '::'
-	 */
-	private NewScopedElementWizardPage(
-			String pageName, String aRootName, String aElementName) {
-		
-		super(pageName);
-		
-		setTitle(getTitle());
-		setDescription(getDescription());
-		setImageDescriptor(getImageDescriptor());
-		
-		mRootName = (null != aRootName) ? aRootName: ""; //$NON-NLS-1$
-		mElementName = (null != aElementName) ? aElementName : ""; //$NON-NLS-1$
-		mSubpackageName = ""; //$NON-NLS-1$
-	}
-	
-	/**
-	 * @return the project which has been set to the page
-	 */
-	public IUnoidlProject getProject() {
-		return mUnoProject;
-	}
-	
-	/**
-	 * Return the string corresponding to the type name, eg "interface"
-	 */
-	protected abstract String getTypeLabel();
-	
-	/**
-	 * Return the image descriptor to put on the top-right of the page
-	 */
-	protected abstract ImageDescriptor getImageDescriptor();
+    private static final String P_PACKAGE           = "__package"; //$NON-NLS-1$
+    private static final String P_NAME              = "__name"; //$NON-NLS-1$
+    private static final String P_PUBLISHED            = "__published"; //$NON-NLS-1$
+    
+    private IUnoidlProject mUnoProject;
+    private String mRootName;
+    private String mSubpackageName;
+    private String mElementName;
+    
+    private Vector<IPageListener> mListeners = new Vector<IPageListener>();
+    
+    private TextRow mPackageRow;
+    private TextRow mNameRow;
+    private BooleanRow mPublishedRow;
+    
+    /**
+     * Default constructor to use when neither the project nor the
+     * OOo instance is known.
+     * 
+     * @param pName wizard page name
+     */
+    public NewScopedElementWizardPage(String pName) {
+        this (pName, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * Constructor to use when the UNO project is already created.
+     * 
+     * @param pPageName name of the page
+     * @param pUnoProject UNO project in which to create a scoped type
+     */
+    public NewScopedElementWizardPage(
+            String pPageName, IUnoidlProject pUnoProject) {
+        this(pPageName, pUnoProject, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * Constructor to use when the UNO project is already created, the 
+     * scoped type name and it's path already known.
+     * 
+     * @param pPageName name of the wizard page
+     * @param pProject UNO project in which to create a scoped type
+     * @param pRootName scoped name of the module containing the type 
+     * @param pElementName name of the type, without any '.' or '::'
+     */
+    public NewScopedElementWizardPage(
+            String pPageName, IUnoidlProject pProject, 
+            String pRootName, String pElementName) {
+        
+        this(pPageName, pRootName, pElementName);
+        setUnoidlProject(pProject);
+    }
+    
+    /**
+     * Creates a default scoped name type wizard page with blank container
+     * path and type name.
+     * 
+     * @param pPageName name of the wizard page
+     * @param pOOoInstance the OOo instance to use to retrieve the types
+     */
+    public NewScopedElementWizardPage(String pPageName, IOOo pOOoInstance) {
+        this(pPageName, "", "", pOOoInstance); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * Constructor to use when the UNO project is already created, the 
+     * scoped type name and it's path already known.
+     * 
+     * @param pPageName name of the wizard page
+     * @param pRootName scoped name of the module containing the type 
+     * @param pElementName name of the type, without any '.' or '::'
+     * @param pOOoInstance the reference to the OOo to use for type selection
+     */
+    public NewScopedElementWizardPage(String pPageName,
+            String pRootName, String pElementName, IOOo pOOoInstance) {
+        
+        this(pPageName, pRootName, pElementName);
+        setOOoInstance(pOOoInstance);
+    }
+    
+    /**
+     * Creates a default page for a scoped element like an interface or a 
+     * service. This constructor let provide default values for the container
+     * path and the type name. 
+     * 
+     * @param pPageName name of the wizard page
+     * @param pRootName scoped name of the module containing the type 
+     * @param pElementName name of the type, without any '.' or '::'
+     */
+    private NewScopedElementWizardPage(String pPageName, String pRootName, String pElementName) {
+        
+        super(pPageName);
+        
+        setTitle(getTitle());
+        setDescription(getDescription());
+        setImageDescriptor(getImageDescriptor());
+        
+        mRootName = "";
+        if (null != pRootName) {
+            mRootName = pRootName; //$NON-NLS-1$
+        }
+        mElementName = "";
+        if (null != pElementName) {
+            mElementName = pElementName; //$NON-NLS-1$
+        }
+        mSubpackageName = ""; //$NON-NLS-1$
+    }
+    
+    /**
+     * @return the project which has been set to the page
+     */
+    public IUnoidlProject getProject() {
+        return mUnoProject;
+    }
+    
+    /**
+     * @return the string corresponding to the type name, e.g. "interface".
+     */
+    protected abstract String getTypeLabel();
+    
+    /**
+     * @return the image descriptor to put on the top-right of the page
+     */
+    protected abstract ImageDescriptor getImageDescriptor();
 
-	/**
-	 * Implement this method to add specific controls for the subclassing 
-	 * wizard page.
-	 * 
-	 * @param parent the composite parent where to put the controls
-	 */
-	protected abstract void createSpecificControl(Composite parent);
-	
-	/**
-	 * <p>Returns the types to get in the UNO types provider. The returned integer
-	 * is a <pre>bit or</pre> of the types defined in the {@link UnoTypeProvider} class.</p>
-	 */
-	public abstract int getProvidedTypes();
-	
-	/**
-	 * Launch or relaunch the type provider by setting 
-	 * the used OOo instance
-	 * 
-	 * @param aOOoInstance OOo instance to use.
-	 */
-	public void setOOoInstance(IOOo aOOoInstance) {
-		if (aOOoInstance != null) {
-			UnoTypeProvider.getInstance().initialize(aOOoInstance, getProvidedTypes());
-		}
-	}
-	
-	/**
-	 * Sets the Uno project in which to create the scoped name type
-	 */
-	public void setUnoidlProject(IUnoidlProject aUnoProject) {
-		mUnoProject = aUnoProject;
-		UnoTypeProvider.getInstance().initialize(mUnoProject, getProvidedTypes());
-	}
-	
-	/**
-	 * @return the root module where to create the UNO type.
-	 */
-	public String getPackageRoot() {
-		String packageName = mUnoProject != null ? mUnoProject.getRootModule() : ""; //$NON-NLS-1$
-		
-		if (!mRootName.equals("")) { //$NON-NLS-1$
-			if (!packageName.equals("")) { //$NON-NLS-1$
-				packageName += "::"; //$NON-NLS-1$
-			}
-			packageName = mRootName.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return packageName;
-	}
-	
-	/**
-	 * @return the module containing the UNO type, separated by "::".
-	 */
-	public String getPackage() {
-		String packageName = getPackageRoot();
-		
-		if (mPackageRow != null && !mPackageRow.getValue().equals("")) { //$NON-NLS-1$
-			if (!packageName.equals("")) { //$NON-NLS-1$
-				packageName += "::"; //$NON-NLS-1$
-			}
-			packageName += mPackageRow.getValue();
-		}
-		return packageName;
-	}
-	
-	/**
-	 * Get the name of the element to create
-	 */
-	public String getElementName() {
-		return (mNameRow != null) ? mNameRow.getValue() : "";
-	}
-	
-	/**
-	 * the container name of the type to create is composed of two parts: the
-	 * package root and the package. This method sets the first part.
-	 */
-	public void setPackageRoot(String value) {
-		String packageLabel = Messages.getString("NewScopedElementWizardPage.Package") + value; //$NON-NLS-1$
-		mRootName = value;
-		
-		if (mPackageRow != null) mPackageRow.setLabel(packageLabel);
-	}
-	
-	/**
-	 * the container name of the type to create is composed of two parts: the
-	 * package root and the package. This method sets the second part.
-	 * 
-	 * @param value the new package value
-	 * @param forced <code>true</code> will replace the current value, 
-	 * 			<code>false</code> will set the value only if the current
-	 * 			package is empty or <code>null</code>. 
-	 */
-	public void setPackage(String value, boolean forced) {
-		if (mPackageRow != null) {
-			mPackageRow.setValue(value);
-			mPackageRow.setEnabled(!forced);
-		} else {
-			mSubpackageName = value;
-		}
-	}
-	
-	/**
-	 * Sets the name of the element to create
-	 * 
-	 * @param value the new package value
-	 * @param forced <code>true</code> will replace the current value, 
-	 * 			<code>false</code> will set the value only if the current
-	 * 			package is empty or <code>null</code>. 
-	 */
-	public void setName(String value, boolean forced) {
-		
-		mElementName = value;
-		if (mNameRow != null) {
-			
-			value = value.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			mNameRow.setValue(value);
-			mNameRow.setEnabled(!forced);
-		}
-		setPageComplete(isPageComplete());
-	}
-	
-	/**
-	 * Returns whether the service is published or not
-	 */
-	public boolean isPublished() {
-		return (mPublishedRow != null) ? mPublishedRow.getBooleanValue() : false;
-	}
-	
-	/**
-	 * Sets whether the service is published or not
-	 */
-	public void setPublished(boolean value, boolean forced) {
-		
-		mPublishedRow.setValue(value);
-		mPublishedRow.setEnabled(!forced);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		try {
-			mPackageRow.removeFieldChangedlistener();
-			mNameRow.removeFieldChangedlistener();
-			mPublishedRow.removeFieldChangedlistener();
-			UnoTypeProvider.getInstance().stopProvider();
-		} catch (NullPointerException e) {
-			PluginLogger.debug(e.getMessage());
-		}
-		
-		super.dispose();
-	}
-	
-	//---------------------------------------------------------- IListenablePage
-	
-	private Vector<IPageListener> mListeners = new Vector<IPageListener>();
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.IListenablePage#addPageListener(org.openoffice.ide.eclipse.core.wizards.IPageListener)
-	 */
-	public void addPageListener(IPageListener listener) {
-		if (!mListeners.contains(listener))
-			mListeners.add(listener);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.IListenablePage#removePageListener(org.openoffice.ide.eclipse.core.wizards.IPageListener)
-	 */
-	public void removePageListener(IPageListener listener) {
-		if (mListeners.contains(listener))
-				mListeners.remove(listener);
-	}
-	
-	protected void firePageChanged(UnoFactoryData data) {
-		for (int i=0, length=mListeners.size(); i<length; i++) {
-			mListeners.get(i).pageChanged(data);
-		}
-	}
-	
-	//--------------------------------------------------- Page content managment
-	
-	private final static String P_PACKAGE           = "__package"; //$NON-NLS-1$
-	private final static String P_NAME              = "__name"; //$NON-NLS-1$
-	private final static String P_PUBLISHED			= "__published"; //$NON-NLS-1$
-	
-	private TextRow mPackageRow;
-	private TextRow mNameRow;
-	private BooleanRow mPublishedRow;
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		
-		Composite body = new Composite(parent, SWT.NONE);
-		body.setLayout(new GridLayout(3, false));
-		body.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		// Creates the package row
-		String packageLabel = Messages.getString("NewScopedElementWizardPage.Package"); //$NON-NLS-1$
-		if (null != mUnoProject) {
-			packageLabel = packageLabel + mUnoProject.getRootModule();
-		}
-		if (mRootName != null) {
-			packageLabel += mRootName;
-		}
-		
-		mPackageRow = new TextRow(body, P_PACKAGE, packageLabel);
-		mPackageRow.setFieldChangedListener(this);
-		mPackageRow.setValue(mSubpackageName);
-		mPackageRow.setTooltip(Messages.getString("NewScopedElementWizardPage.PackageTooltip")); //$NON-NLS-1$
-		
-		mNameRow = new TextRow(body, P_NAME, getTypeLabel());
-		mNameRow.setFieldChangedListener(this);
-		mNameRow.setValue(mElementName);
-		mNameRow.setTooltip(Messages.getString("NewScopedElementWizardPage.TypeNameTooltip")); //$NON-NLS-1$
-		
-		createSpecificControl(body);
-		
-		Composite publishedParent = new Composite(body, SWT.NONE);
-		publishedParent.setLayout(new GridLayout(2, false));
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		publishedParent.setLayoutData(gd);
-		
-		mPublishedRow = new BooleanRow(publishedParent, P_PUBLISHED,
-				Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
-		mPublishedRow.setFieldChangedListener(this);
-		
-		setPageComplete(isPageComplete());
-		
-		setControl(body);
-	}
+    /**
+     * Implement this method to add specific controls for the subclassing 
+     * wizard page.
+     * 
+     * @param pParent the composite parent where to put the controls
+     */
+    protected abstract void createSpecificControl(Composite pParent);
+    
+    /**
+     * @return the types to get in the UNO types provider. The returned integer
+     * is a <pre>bit or</pre> of the types defined in the {@link UnoTypeProvider} class.
+     */
+    public abstract int getProvidedTypes();
+    
+    /**
+     * Launch or relaunch the type provider by setting .
+     * the used OOo instance
+     * 
+     * @param pOOoInstance OOo instance to use.
+     */
+    public void setOOoInstance(IOOo pOOoInstance) {
+        if (pOOoInstance != null) {
+            UnoTypeProvider.getInstance().initialize(pOOoInstance, getProvidedTypes());
+        }
+    }
+    
+    /**
+     * Sets the UNO project in which to create the scoped name type.
+     * 
+     * @param pUnoProject the projet for which to create the UNO type.
+     */
+    public void setUnoidlProject(IUnoidlProject pUnoProject) {
+        mUnoProject = pUnoProject;
+        UnoTypeProvider.getInstance().initialize(mUnoProject, getProvidedTypes());
+    }
+    
+    /**
+     * @return the root module where to create the UNO type.
+     */
+    public String getPackageRoot() {
+        String packageName = ""; //$NON-NLS-1$
+        if (mUnoProject != null) {
+            packageName = mUnoProject.getRootModule();
+        }
+        
+        if (!mRootName.equals("")) { //$NON-NLS-1$
+            if (!packageName.equals("")) { //$NON-NLS-1$
+                packageName += "::"; //$NON-NLS-1$
+            }
+            packageName = mRootName.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return packageName;
+    }
+    
+    /**
+     * @return the module containing the UNO type, separated by "::".
+     */
+    public String getPackage() {
+        String packageName = getPackageRoot();
+        
+        if (mPackageRow != null && !mPackageRow.getValue().equals("")) { //$NON-NLS-1$
+            if (!packageName.equals("")) { //$NON-NLS-1$
+                packageName += "::"; //$NON-NLS-1$
+            }
+            packageName += mPackageRow.getValue();
+        }
+        return packageName;
+    }
+    
+    /**
+     * @return the name of the element to create.
+     */
+    public String getElementName() {
+        String name = ""; //$NON-NLS-1$
+        if (mNameRow != null) {
+            name = mNameRow.getValue();
+        }
+        return name;
+    }
+    
+    /**
+     * The container name of the type to create is composed of two parts: the
+     * package root and the package; this method sets the first part.
+     * 
+     * @param pValue the new package root to set
+     */
+    public void setPackageRoot(String pValue) {
+        String packageLabel = Messages.getString("NewScopedElementWizardPage.Package") + pValue; //$NON-NLS-1$
+        mRootName = pValue;
+        
+        if (mPackageRow != null) {
+            mPackageRow.setLabel(packageLabel);
+        }
+    }
+    
+    /**
+     * the container name of the type to create is composed of two parts: the
+     * package root and the package. This method sets the second part.
+     * 
+     * @param pValue the new package value
+     * @param pForced <code>true</code> will replace the current value, 
+     *             <code>false</code> will set the value only if the current
+     *             package is empty or <code>null</code>. 
+     */
+    public void setPackage(String pValue, boolean pForced) {
+        if (mPackageRow != null) {
+            mPackageRow.setValue(pValue);
+            mPackageRow.setEnabled(!pForced);
+        } else {
+            mSubpackageName = pValue;
+        }
+    }
+    
+    /**
+     * Sets the name of the element to create.
+     * 
+     * @param pValue the new package value
+     * @param pForced <code>true</code> will replace the current value, 
+     *             <code>false</code> will set the value only if the current
+     *             package is empty or <code>null</code>. 
+     */
+    public void setName(String pValue, boolean pForced) {
+        
+        mElementName = pValue;
+        if (mNameRow != null) {
+            
+            pValue = pValue.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            mNameRow.setValue(pValue);
+            mNameRow.setEnabled(!pForced);
+        }
+        setPageComplete(isPageComplete());
+    }
+    
+    /**
+     * @return whether the service is published or not.
+     */
+    public boolean isPublished() {
+        boolean isPublished = false;
+        if (mPublishedRow != null) {
+            isPublished = mPublishedRow.getBooleanValue();
+        }
+        return isPublished;
+    }
+    
+    /**
+     * Sets whether the type is published or not.
+     * 
+     * @param pValue <code>true</code> if the type is published, <code>false</code> 
+     *          otherwise
+     * @param pForced <code>true</code> to overwrite the existing value.
+     */
+    public void setPublished(boolean pValue, boolean pForced) {
+        
+        mPublishedRow.setValue(pValue);
+        mPublishedRow.setEnabled(!pForced);
+    }
+    
+    /**
+         * {@inheritDoc}
+         */
+    public void dispose() {
+        try {
+            mPackageRow.removeFieldChangedlistener();
+            mNameRow.removeFieldChangedlistener();
+            mPublishedRow.removeFieldChangedlistener();
+            UnoTypeProvider.getInstance().stopProvider();
+        } catch (NullPointerException e) {
+            PluginLogger.debug(e.getMessage());
+        }
+        
+        super.dispose();
+    }
+    
+    //---------------------------------------------------------- IListenablePage
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void addPageListener(IPageListener pListener) {
+        if (!mListeners.contains(pListener)) {
+            mListeners.add(pListener);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void removePageListener(IPageListener pListener) {
+        if (mListeners.contains(pListener)) {
+            mListeners.remove(pListener);
+        }
+    }
+    
+    /**
+     * Notifies all the page listeners that the pages data have changed.
+     * 
+     * @param pData the new data of the page.
+     */
+    protected void firePageChanged(UnoFactoryData pData) {
+        for (int i = 0, length = mListeners.size(); i < length; i++) {
+            mListeners.get(i).pageChanged(pData);
+        }
+    }
+    
+    //--------------------------------------------------- Page content managment
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void createControl(Composite pParent) {
+        
+        Composite body = new Composite(pParent, SWT.NONE);
+        body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
+        body.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        // Creates the package row
+        String packageLabel = Messages.getString("NewScopedElementWizardPage.Package"); //$NON-NLS-1$
+        if (null != mUnoProject) {
+            packageLabel = packageLabel + mUnoProject.getRootModule();
+        }
+        if (mRootName != null) {
+            packageLabel += mRootName;
+        }
+        
+        mPackageRow = new TextRow(body, P_PACKAGE, packageLabel);
+        mPackageRow.setFieldChangedListener(this);
+        mPackageRow.setValue(mSubpackageName);
+        mPackageRow.setTooltip(Messages.getString("NewScopedElementWizardPage.PackageTooltip")); //$NON-NLS-1$
+        
+        mNameRow = new TextRow(body, P_NAME, getTypeLabel());
+        mNameRow.setFieldChangedListener(this);
+        mNameRow.setValue(mElementName);
+        mNameRow.setTooltip(Messages.getString("NewScopedElementWizardPage.TypeNameTooltip")); //$NON-NLS-1$
+        
+        createSpecificControl(body);
+        
+        Composite publishedParent = new Composite(body, SWT.NONE);
+        publishedParent.setLayout(new GridLayout(2, false));
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = LabeledRow.LAYOUT_COLUMNS;
+        publishedParent.setLayoutData(gd);
+        
+        mPublishedRow = new BooleanRow(publishedParent, P_PUBLISHED,
+                Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
+        mPublishedRow.setFieldChangedListener(this);
+        
+        setPageComplete(isPageComplete());
+        
+        setControl(body);
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-	}
-	
-	/**
-	 * @return the given data with the completed properties, <code>null</code>
-	 *   if the provided data is <code>null</code>
-	 */
-	public UnoFactoryData fillData(UnoFactoryData data) {
-		if (data != null) {
-			data.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
-			data.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
-			data.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
-					Boolean.valueOf(isPublished()));
-		}
-		return data;
-	}
-	
-	/**
-	 * Creates an empty factory data for the page UNO type
-	 * 
-	 * @return the empty Uno factory data
-	 */
-	public abstract UnoFactoryData getEmptyTypeData();
-	
-	public static UnoFactoryData getTypeData(UnoFactoryData data) {
-		UnoFactoryData typeData = new UnoFactoryData();
-		
-		if (data != null) {
-			try {
-			String name = (String)data.getProperty(
-					IUnoFactoryConstants.PROJECT_NAME);
-			name = name.substring(0, 1).toUpperCase() + name.substring(1);
-			name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			String packageName = (String)data.getProperty(
-					IUnoFactoryConstants.PROJECT_PREFIX);
-			packageName = packageName.replace(".", "::"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			// put the properties in the data
-			typeData.setProperty(IUnoFactoryConstants.TYPE_NAME, name);
-			typeData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, packageName);
-			typeData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
-					Boolean.FALSE);
-			} catch (Exception e) {
-				typeData = null;
-			}
-		}
-		return typeData;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
-	 */
-	public void fieldChanged(FieldEvent event) {
-		
-		UnoFactoryData typeDelta = null;
-		
-		try {
-			if (event.getProperty().equals(P_PACKAGE)) {
-				// Change the label of the package row
-				String text = Messages.getString("NewScopedElementWizardPage.Package")+ mUnoProject.getRootModule(); //$NON-NLS-1$
-				
-				if (null != event.getValue() && !event.getValue().equals("")){ //$NON-NLS-1$
-					text = text + "::"; //$NON-NLS-1$
-				}
-				mPackageRow.setLabel(text);
-				typeDelta = getEmptyTypeData();
-				typeDelta.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
-	
-			} else if (event.getProperty().equals(P_NAME)) {
-				// Test if there is the scoped name already exists
-				boolean exists = UnoTypeProvider.getInstance().contains(event.getValue());
-				if (exists) {
-					setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
-				} else {
-					setErrorMessage(null);
-					typeDelta = getEmptyTypeData();
-					typeDelta.setProperty(IUnoFactoryConstants.TYPE_NAME, event.getValue());
-				}
-			}
-		} catch (NullPointerException e) {
-			// Nothing to do... this is sometimes normal
-		}
-		
-	
-		setPageComplete(isPageComplete());
-		if (typeDelta != null) {
-			UnoFactoryData delta = new UnoFactoryData();
-			delta.addInnerData(typeDelta);
+    /**
+     * {@inheritDoc}
+     */
+    public void setVisible(boolean pVisible) {
+        super.setVisible(pVisible);
+    }
+    
+    /**
+     * @param pData the UNO data to complete
+     * 
+     * @return the given data with the completed properties, <code>null</code>
+     *   if the provided data is <code>null</code>
+     */
+    public UnoFactoryData fillData(UnoFactoryData pData) {
+        if (pData != null) {
+            pData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
+            pData.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
+            pData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
+                    Boolean.valueOf(isPublished()));
+        }
+        return pData;
+    }
+    
+    /**
+     * Creates an empty factory data for the page UNO type.
+     * 
+     * @return the empty UNO factory data
+     */
+    public abstract UnoFactoryData getEmptyTypeData();
+    
+    /**
+     * @param pData the data of the project for which to get the default type
+     * data.
+     * 
+     * @return the default type data for the project
+     */
+    public static UnoFactoryData getTypeData(UnoFactoryData pData) {
+        UnoFactoryData typeData = new UnoFactoryData();
+        
+        if (pData != null) {
+            try {
+                String name = (String)pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
-			firePageChanged(delta);
-		}
-	}
+                String packageName = (String)pData.getProperty(
+                        IUnoFactoryConstants.PROJECT_PREFIX);
+                packageName = packageName.replace(".", "::"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
-	 */
-	public boolean isPageComplete() {
-		boolean result = true; 
-		
-		try {
-			// An IDL identifier corresponds to the following regexp: 
-			// [A-Za-z_][A-Za-z_0-9]*
-			if (!mNameRow.getValue().matches("[A-Za-z_][A-Za-z_0-9]*")) { //$NON-NLS-1$
-				result = false;
-			}
-		} catch (NullPointerException e) {
-			result = false;
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Checks whether a type already exists or not.
-	 * 
-	 * @param typeName the name of the type to look for
-	 * @param prj the project in which the type is looked for
-	 * @return <code>true</code> if the project contains an IDL file named from
-	 * 		the given type or the type isn't in the project package. 
-	 * 		<code>false</code> is returned in any other case.
-	 */
-	public static boolean existsType(String typeName, IUnoidlProject prj) {
-		boolean exists = false;
-		
-		// TODO implementation
-		
-		return exists;
-	}
+                // put the properties in the data
+                typeData.setProperty(IUnoFactoryConstants.TYPE_NAME, name);
+                typeData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, packageName);
+                typeData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, 
+                        Boolean.FALSE);
+            } catch (Exception e) {
+                typeData = null;
+            }
+        }
+        return typeData;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void fieldChanged(FieldEvent pEvent) {
+        
+        UnoFactoryData typeDelta = null;
+        
+        try {
+            if (pEvent.getProperty().equals(P_PACKAGE)) {
+                // Change the label of the package row
+                String text = Messages.getString("NewScopedElementWizardPage.Package") + 
+                    mUnoProject.getRootModule(); //$NON-NLS-1$
+                
+                if (null != pEvent.getValue() && !pEvent.getValue().equals("")) { //$NON-NLS-1$
+                    text = text + "::"; //$NON-NLS-1$
+                }
+                mPackageRow.setLabel(text);
+                typeDelta = getEmptyTypeData();
+                typeDelta.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
+    
+            } else if (pEvent.getProperty().equals(P_NAME)) {
+                // Test if there is the scoped name already exists
+                boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue());
+                if (exists) {
+                    setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
+                } else {
+                    setErrorMessage(null);
+                    typeDelta = getEmptyTypeData();
+                    typeDelta.setProperty(IUnoFactoryConstants.TYPE_NAME, pEvent.getValue());
+                }
+            }
+        } catch (NullPointerException e) {
+            // Nothing to do... this is sometimes normal
+        }
+        
+    
+        setPageComplete(isPageComplete());
+        if (typeDelta != null) {
+            UnoFactoryData delta = new UnoFactoryData();
+            delta.addInnerData(typeDelta);
+
+            firePageChanged(delta);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isPageComplete() {
+        boolean result = true; 
+        
+        try {
+            // An IDL identifier corresponds to the following regexp: 
+            // [A-Za-z_][A-Za-z_0-9]*
+            if (!mNameRow.getValue().matches("[A-Za-z_][A-Za-z_0-9]*")) { //$NON-NLS-1$
+                result = false;
+            }
+        } catch (NullPointerException e) {
+            result = false;
+        }
+        
+        return result;
+    }
 }

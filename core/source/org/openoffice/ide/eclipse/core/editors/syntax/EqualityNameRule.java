@@ -2,12 +2,12 @@
  *
  * $RCSfile: EqualityNameRule.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
-* The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -61,19 +61,23 @@ import org.eclipse.jface.text.rules.IToken;
  */
 public class EqualityNameRule extends RegexRule {
 
-	public EqualityNameRule(IToken aToken) {
-		super("[a-zA-Z]+\\p{Blank}?=", aToken); //$NON-NLS-1$
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
-	 */
-	public IToken evaluate(ICharacterScanner scanner) {
-		IToken result = super.evaluate(scanner);
-		if (result == getToken()){
-			scanner.unread();
-		}
-		return result;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param pToken the token to analyze.
+     */
+    public EqualityNameRule(IToken pToken) {
+        super("[a-zA-Z]+\\p{Blank}?=", pToken); //$NON-NLS-1$
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IToken evaluate(ICharacterScanner pScanner) {
+        IToken result = super.evaluate(pScanner);
+        if (result == getToken()) {
+            pScanner.unread();
+        }
+        return result;
+    }
 }

@@ -1,13 +1,13 @@
 /*************************************************************************
  *
- * $RCSfile: UnoProjectProvider.java,v $
+ * $RCSfile: PackageLicenseFormPage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:33:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -41,33 +41,38 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.gui;
+package org.openoffice.ide.eclipse.core.editors;
 
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
-import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.FormPage;
 
-public class UnoProjectProvider extends LabelProvider {
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-	 */
-	public Image getImage(Object element) {
-		return OOEclipsePlugin.getImage(ImagesConstants.UNO_PROJECT);
-	}
+/**
+ * The form page of the package editor helping to configure the project's
+ * licenses.
+ * 
+ * @author cedricbosdo
+ *
+ */
+public class PackageLicenseFormPage extends FormPage {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-	 */
-	public String getText(Object element) {
-		String text = null;
-		if (element instanceof IUnoidlProject) {
-			text= ((IUnoidlProject)element).getName();
-		}
-		return text;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param pEditor the editor where to add the page
+     * @param pId the page identifier
+     */
+    public PackageLicenseFormPage(FormEditor pEditor, String pId) {
+        super(pEditor, pId, "Licenses");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createFormContent(IManagedForm pManagedForm) {
+        super.createFormContent(pManagedForm);
+        
+        // TODO create the license form page here
+    }
 }

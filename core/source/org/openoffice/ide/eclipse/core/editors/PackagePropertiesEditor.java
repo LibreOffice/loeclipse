@@ -2,12 +2,12 @@
  *
  * $RCSfile: PackagePropertiesEditor.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:42:11 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -56,150 +56,170 @@ import org.openoffice.ide.eclipse.core.model.IPackageChangeListener;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 
 /**
+ * The project package editor.
+ * 
  * @author cedricbosdo
  *
  */
 public class PackagePropertiesEditor extends FormEditor {
 
-	private SourcePage mSourcePage;
-	private PackagePropertiesFormPage mFormPage;
-	
-	private PackagePropertiesModel mModel;
-	private boolean mIgnoreSourceChanges = false;
-	
-	public PackagePropertiesEditor() {
-		super();
-	}
+    private SourcePage mSourcePage;
+    private PackageContentsFormPage mContentsPage;
+    
+    private PackagePropertiesModel mModel;
+    private boolean mIgnoreSourceChanges = false;
+    
+    /**
+     * Default constructor.
+     */
+    public PackagePropertiesEditor() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
-	 */
-	@Override
-	protected void addPages() {
-		
-		try {
-			// Add the form page with the tree
-			mFormPage = new PackagePropertiesFormPage(this, "package"); //$NON-NLS-1$
-			addPage(mFormPage);
-			
-			// Add the text page
-			mSourcePage = new SourcePage(this, "source", "package.properties"); //$NON-NLS-1$ //$NON-NLS-2$
-			mSourcePage.init(getEditorSite(), getEditorInput());
-			mSourcePage.getDocumentProvider().addElementStateListener(new IElementStateListener() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addPages() {
+        
+        try {
+            // Add the form page with the tree
+            mContentsPage = new PackageContentsFormPage(this, "package"); //$NON-NLS-1$
+            addPage(mContentsPage);
+            
+            // Add the text page
+            mSourcePage = new SourcePage(this, "source", "package.properties"); //$NON-NLS-1$ //$NON-NLS-2$
+            mSourcePage.init(getEditorSite(), getEditorInput());
+            mSourcePage.getDocumentProvider().addElementStateListener(new IElementStateListener() {
 
-				public void elementContentAboutToBeReplaced(Object element) {
-				}
+                public void elementContentAboutToBeReplaced(Object pElement) {
+                }
 
-				public void elementContentReplaced(Object element) {
-				}
+                public void elementContentReplaced(Object pElement) {
+                }
 
-				public void elementDeleted(Object element) {
-				}
+                public void elementDeleted(Object pElement) {
+                }
 
-				public void elementDirtyStateChanged(Object element, boolean isDirty) {
-					if (!mIgnoreSourceChanges) {
-						mModel.setQuiet(true);
-					}
-					loadFromSource();
-					if (!mIgnoreSourceChanges) {
-						mModel.setQuiet(false);
-					}
-				}
+                public void elementDirtyStateChanged(Object pElement, boolean pIsDirty) {
+                    if (!mIgnoreSourceChanges) {
+                        mModel.setQuiet(true);
+                    }
+                    loadFromSource();
+                    if (!mIgnoreSourceChanges) {
+                        mModel.setQuiet(false);
+                    }
+                }
 
-				public void elementMoved(Object originalElement, Object movedElement) {
-				}				
-			});
-			addPage(mSourcePage);
-		} catch (PartInitException e) {
-			// log ?
-		}
-	}
-	
-	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		super.init(site, input);
-		
-		if (input instanceof IFileEditorInput) {
-			
-			IFileEditorInput fileInput = (IFileEditorInput)input;
-			String projectName = fileInput.getFile().getProject().getName();
-			setPartName(projectName);
-			
-			// Create the package properties
-			mModel = new PackagePropertiesModel(fileInput.getFile());
-			mModel.addChangeListener(new IPackageChangeListener() {
+                public void elementMoved(Object pOriginalElement, Object pMovedElement) {
+                }                
+            });
+            addPage(mSourcePage);
+        } catch (PartInitException e) {
+            // log ?
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(IEditorSite pSite, IEditorInput pInput) throws PartInitException {
+        super.init(pSite, pInput);
+        
+        if (pInput instanceof IFileEditorInput) {
+            
+            IFileEditorInput fileInput = (IFileEditorInput)pInput;
+            String projectName = fileInput.getFile().getProject().getName();
+            setPartName(projectName);
+            
+            // Create the package properties
+            mModel = new PackagePropertiesModel(fileInput.getFile());
+            mModel.addChangeListener(new IPackageChangeListener() {
 
-				public void packagePropertiesChanged() {
-					editorDirtyStateChanged();
-					writeToSource();
-				}
+                public void packagePropertiesChanged() {
+                    editorDirtyStateChanged();
+                    writeToSource();
+                }
 
-				public void packagePropertiesSaved() {
-					editorDirtyStateChanged();
-				}
-				
-			});
-		}
-	}
-	
-	@Override
-	public boolean isDirty() {
-		return mModel.isDirty();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		try {
-			mModel.write();
-			mSourcePage.doRevertToSaved();
-		} catch (Exception e) {
-			// Log ?
-		}
-	}
+                public void packagePropertiesSaved() {
+                    editorDirtyStateChanged();
+                }
+                
+            });
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isDirty() {
+        return mModel.isDirty();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doSave(IProgressMonitor pMonitor) {
+        try {
+            mModel.write();
+            mSourcePage.doRevertToSaved();
+        } catch (Exception e) {
+            // Log ?
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
-	@Override
-	public void doSaveAs() {
-		// Not allowed
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doSaveAs() {
+        // Not allowed
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
-	@Override
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	
-	public PackagePropertiesModel getModel() {
-		return mModel;
-	}
-	
-	public void writeToSource() {
-		if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
-			TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
-			IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
-			if (doc != null) {
-				mIgnoreSourceChanges = true;
-				doc.set(mModel.writeToString());
-				mIgnoreSourceChanges = false;
-			}
-		}
-	}
-	
-	public void loadFromSource() {
-		
-		if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
-			TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
-			IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
-			if (doc != null) {
-				mModel.reloadFromString(doc.get());
-			}
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSaveAsAllowed() {
+        return false;
+    }
+    
+    /**
+     * @return the project packaging properties file content.
+     */
+    public PackagePropertiesModel getModel() {
+        return mModel;
+    }
+    
+    /**
+     * Write the properties model to the source editor page.
+     */
+    public void writeToSource() {
+        if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
+            TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
+            IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
+            if (doc != null) {
+                mIgnoreSourceChanges = true;
+                doc.set(mModel.writeToString());
+                mIgnoreSourceChanges = false;
+            }
+        }
+    }
+    
+    /**
+     * Loads the properties model from the source editor page.
+     */
+    public void loadFromSource() {
+        
+        if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
+            TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
+            IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
+            if (doc != null) {
+                mModel.reloadFromString(doc.get());
+            }
+        }
+    }
 }

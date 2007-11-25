@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlDecorator.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -61,120 +61,118 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  * image and/or label. This decorator replaces the icons for IDL files and
  * registries.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
-	 */
-	public Image decorateImage(Image image, Object element) {
-		
-		
-		Image newImage = null;
-		
-		if (isIdlFolder(element)){
-			newImage = new OverlayImageIcon(image, 
-					OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
-					OverlayImageIcon.TOP_LEFT).getImage();
-		} else if (element instanceof IProject){
-			IProject project = (IProject)element;
-			try {
-				if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)){
-					newImage = new OverlayImageIcon(image, 
-							OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
-							OverlayImageIcon.BOTTOM_RIGHT).getImage();
-				}
-			} catch (CoreException e) {
-				// Nothing to do: no uno nature found
-			}
-		} else if (isDbFolder(element)){
-			newImage = new OverlayImageIcon(image, 
-					OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
-					OverlayImageIcon.TOP_LEFT).getImage();
-		}
-		
-		return newImage;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Image decorateImage(Image pImage, Object pElement) {
+        
+        
+        Image newImage = null;
+        
+        if (isIdlFolder(pElement)) {
+            newImage = new OverlayImageIcon(pImage, 
+                    OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
+                    OverlayImageIcon.TOP_LEFT).getImage();
+        } else if (pElement instanceof IProject) {
+            IProject project = (IProject)pElement;
+            try {
+                if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
+                    newImage = new OverlayImageIcon(pImage, 
+                            OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
+                            OverlayImageIcon.BOTTOM_RIGHT).getImage();
+                }
+            } catch (CoreException e) {
+                // Nothing to do: no uno nature found
+            }
+        } else if (isDbFolder(pElement)) {
+            newImage = new OverlayImageIcon(pImage, 
+                    OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
+                    OverlayImageIcon.TOP_LEFT).getImage();
+        }
+        
+        return newImage;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
-	 */
-	public String decorateText(String text, Object element) {
-		
-		if (isIdlFolder(element)){
-			
-			text = text.replaceAll("\\.", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		return text;
-	}
+    /**
+     * {@inheritDoc} 
+     */
+    public String decorateText(String pText, Object pElement) {
+        
+        if (isIdlFolder(pElement)) {
+            
+            pText = pText.replaceAll("\\.", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        
+        return pText;
+    }
 
-	/**
-	 * Tests if the element is a folder contained in the project IDL_DIR
-	 * 
-	 * @param element element to check
-	 * @return <code>true</code> if the element is an IDL directory, 
-	 * 			<code>false</code> otherwise.
-	 */
-	private boolean isIdlFolder(Object element){
-		boolean result = false;
-		
-		if (element instanceof IResource){
-			IResource resource = (IResource)element;
+    /**
+     * Tests if the element is a folder contained in the project idl directory.
+     * 
+     * @param pElement element to check
+     * @return <code>true</code> if the element is an IDL directory, 
+     *             <code>false</code> otherwise.
+     */
+    private boolean isIdlFolder(Object pElement) {
+        boolean result = false;
+        
+        if (pElement instanceof IResource) {
+            IResource resource = (IResource)pElement;
 
-			try {
-				if (IResource.FOLDER == resource.getType()){
-					IProject project = resource.getProject();
-					IUnoidlProject unoPrj = ProjectsManager.getProject(project.getName());
-					
-					IPath idlPath = unoPrj.getIdlPath();
-					IPath resPath = resource.getProjectRelativePath();
-					
-					result = resPath.toOSString().startsWith(idlPath.toOSString()); 
-				}
-			} catch (Exception e){
-				result = false;
-			}
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Tests if the elements is the urd folder of a unoidl project
-	 * or one of its children.
-	 * 
-	 * @param element the element to test
-	 * @return <code>true</code> if the element is the urd folder of a unoidl project
-	 *         or one of its children. Otherwise of if the element is a urd child but
-	 *         not a folder, <code>false</code> is returned
-	 */
-	private boolean isDbFolder (Object element){
-		boolean result = false;
-		
-		if (element instanceof IFolder) {
-			
-			try {
-				IFolder folder = (IFolder)element;
-			
-				IUnoidlProject project = ProjectsManager.getProject(
-						folder.getProject().getName());
-				
-				if (folder.getProjectRelativePath().toString().startsWith(
-						project.getUrdPath().toString())) {
-					
-					result = true;
-				}
-			} catch (Exception e) {
-				result = false;
-			}
-			
-		}
-		
-		return result;
-	}
+            try {
+                if (IResource.FOLDER == resource.getType()) {
+                    IProject project = resource.getProject();
+                    IUnoidlProject unoPrj = ProjectsManager.getProject(project.getName());
+                    
+                    IPath idlPath = unoPrj.getIdlPath();
+                    IPath resPath = resource.getProjectRelativePath();
+                    
+                    result = resPath.toOSString().startsWith(idlPath.toOSString()); 
+                }
+            } catch (Exception e) {
+                result = false;
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Tests if the elements is the urd folder of a unoidl project
+     * or one of its children.
+     * 
+     * @param pElement the element to test
+     * @return <code>true</code> if the element is the urd folder of a unoidl project
+     *         or one of its children. Otherwise of if the element is a urd child but
+     *         not a folder, <code>false</code> is returned
+     */
+    private boolean isDbFolder (Object pElement) {
+        boolean result = false;
+        
+        if (pElement instanceof IFolder) {
+            
+            try {
+                IFolder folder = (IFolder)pElement;
+            
+                IUnoidlProject project = ProjectsManager.getProject(
+                        folder.getProject().getName());
+                
+                if (folder.getProjectRelativePath().toString().startsWith(
+                        project.getUrdPath().toString())) {
+                    
+                    result = true;
+                }
+            } catch (Exception e) {
+                result = false;
+            }
+            
+        }
+        
+        return result;
+    }
 }

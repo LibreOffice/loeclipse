@@ -2,12 +2,12 @@
  *
  * $RCSfile: ZipContent.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/03 21:29:52 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,50 +53,71 @@ import java.util.zip.ZipOutputStream;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
- * This class is a small structure containing the data to zip for one file
+ * This class is a small structure containing the data to ZIP for one file.
  * 
  * @author cedricbosdo
  *
  */
 public class ZipContent {
 
-	protected File mFile;
-	
-	protected String mEntryName;
-	
-	public ZipContent(String entryName, File file) {
-		mFile = file;
-		mEntryName = entryName;
-	}
-	
-	public File getFile() {
-		return mFile;
-	}
-	
-	public void writeContentToZip(ZipOutputStream out) {
-		
-		BufferedInputStream origin = null;
-		try {
-			FileInputStream fi = new FileInputStream(mFile);
-			 origin = new BufferedInputStream(fi, 2048);
+    private static final int BUFFER_SIZE = 2048;
 
-			ZipEntry entry = new ZipEntry(mEntryName);
-			out.putNextEntry(entry);
+    protected File mFile;
+    
+    protected String mEntryName;
+    
+    /**
+     * Constructor.
+     * 
+     * @param pEntryName the name in the ZIP file
+     * @param pFile the file to put in the ZIP file.
+     */
+    public ZipContent(String pEntryName, File pFile) {
+        mFile = pFile;
+        mEntryName = pEntryName;
+    }
+    
+    /**
+     * @return the file represented by the {@link ZipEntry}
+     */
+    public File getFile() {
+        return mFile;
+    }
+    
+    /**
+     * Write the ZIP entry to the given Zip output stream.
+     * 
+     * @param pOutput the stream where to write the entry data.
+     */
+    public void writeContentToZip(ZipOutputStream pOutput) {
+        
+        BufferedInputStream origin = null;
+        try {
+            FileInputStream fi = new FileInputStream(mFile);
+            origin = new BufferedInputStream(fi, BUFFER_SIZE);
 
-			int count;
-			byte data[] = new byte[2048];
+            ZipEntry entry = new ZipEntry(mEntryName);
+            pOutput.putNextEntry(entry);
 
-			while((count = origin.read(data, 0, 2048)) != -1) {
-				out.write(data, 0, count);
-			}
-			
-			out.closeEntry();
-			
-		} catch (IOException e) {
-			PluginLogger.warning("Problem when writing file to zip: " + mEntryName); //$NON-NLS-1$
-		} finally {
-			// Close the file entry stream
-			try { if (origin != null) origin.close(); } catch (IOException e) {}
-		}
-	}
+            int count;
+            byte data[] = new byte[BUFFER_SIZE];
+
+            while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
+                pOutput.write(data, 0, count);
+            }
+            
+            pOutput.closeEntry();
+            
+        } catch (IOException e) {
+            PluginLogger.warning("Problem when writing file to zip: " + mEntryName); //$NON-NLS-1$
+        } finally {
+            // Close the file entry stream
+            try { 
+                if (origin != null) {
+                    origin.close();
+                } 
+            } catch (IOException e) {
+            }
+        }
+    }
 }

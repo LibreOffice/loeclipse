@@ -2,12 +2,12 @@
  *
  * $RCSfile: ILanguage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -48,15 +48,24 @@ package org.openoffice.ide.eclipse.core.model.language;
  * to the plugin. It only handles the interactions between the 
  * <code>UnoidlProject</code> and the language class.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  * @see org.openoffice.ide.eclipse.core.internal.model.UnoidlProject
  *
  */
 public interface ILanguage {
-	
-	public IProjectHandler getProjectHandler();
-	
-	public ILanguageBuilder getLanguageBuidler();
-	
-	public ILanguageUI getLanguageUI();
+    
+    /**
+     * @return the utility class for projects handling.
+     */
+    public IProjectHandler getProjectHandler();
+    
+    /**
+     * @return the utility class for building.
+     */
+    public ILanguageBuilder getLanguageBuidler();
+    
+    /**
+     * @return the utility class for UI operation.
+     */
+    public ILanguageUI getLanguageUI();
 }

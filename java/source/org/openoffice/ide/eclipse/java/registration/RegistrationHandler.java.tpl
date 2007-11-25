@@ -47,8 +47,27 @@ import java.util.ArrayList;
 import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.registry.XRegistryKey;
 
+/**
+ * Component's main registration class.
+ * 
+ * <p><strong>This class shouldn't be modified.</strong></p>
+ * 
+ * @author Cedric Bosdonnat aka. cedricbosdo
+ *
+ */
 public class RegistrationHandler '{'
 	
+	/**
+     * Get a component factory for the implementations handled by this class.
+     * 
+     * <p>This method calls all the methods of the same name from the classes listed
+     * in the <code>RegistrationHandler.classes</code> file. <strong>This method
+     * shouldn't be modified.</strong></p>
+     * 
+     * @param pImplementationName the name of the implementation to create.
+     *  
+     * @return the factory which can create the implementation.
+     */
 	public static XSingleComponentFactory __getComponentFactory(String sImplementationName ) '{'
         XSingleComponentFactory xFactory = null;
     
@@ -74,6 +93,18 @@ public class RegistrationHandler '{'
         return xFactory;
     }
 
+	/**
+     * Writes the services implementation informations to the UNO registry.
+     * 
+     * <p>This method calls all the methods of the same name from the classes listed
+     * in the <code>RegistrationHandler.classes</code> file. <strong>This method
+     * shouldn't be modified.</strong></p>
+     *  
+     * @param pRegistryKey the root registry key where to write the informations.
+     *  
+     * @return <code>true</code> if the informations have been successfully written
+     *      to the registry key, <code>false</code> otherwise.
+     */
     public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey ) '{'
     	
     	Class[] classes = findServicesImplementationClasses();
@@ -96,6 +127,9 @@ public class RegistrationHandler '{'
         return success;
     }
     
+    /**
+     * @return all the UNO implementation classes. 
+     */
     private static Class[] findServicesImplementationClasses() '{'
     	
     	ArrayList<Class> classes = new ArrayList<Class>();

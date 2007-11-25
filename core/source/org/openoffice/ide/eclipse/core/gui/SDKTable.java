@@ -2,12 +2,12 @@
  *
  * $RCSfile: SDKTable.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:07 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -79,404 +79,402 @@ import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
  * 
  * @see AbstractTable for the basic table functions descriptions
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class SDKTable extends AbstractTable {
 
-	/**
-	 * Temporary SDK for storing the values fetched from the dialog
-	 */
-	private SDK mTmpSdk;
-		
-	/**
-	 * Main constructor of the SDK Table. It's style can't be configured like
-	 * other SWT composites. When using a SDK Table, you should add all the 
-	 * necessary Layouts and Layout Data to display it correctly. 
-	 * 
-	 * @param parent Composite parent of the table.
-	 */
-	public SDKTable(Composite parent) {
-		super(parent, 
-				  Messages.getString("SDKTable.Title"), //$NON-NLS-1$
-				  new String[] {
-						Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
-						Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
-					},
-				  new int[] {100, 200},
-				  new String[] {
-					SDK.NAME,
-					SDK.PATH
-			      });
-			
-			mTableViewer.setInput(SDKContainer.getInstance());
-			mTableViewer.setContentProvider(new SDKContentProvider());
-	}
-	
-	/**
-	 * Fill the table with the preferences from the SDKS_CONFIG file
-	 */
-	public void getPreferences(){
-		SDKContainer.getInstance();
-	}
-	
-	/**
-	 * Saves the SDK preferences
-	 *
-	 */
-	public void savePreferences(){
-		
-		SDKContainer.saveSDKs();
-	}
+    private static final int DEFAULT_WIDTH = 100;
+    private static final int DEFAULT_HEIGHT = 200;
+    /**
+     * Temporary SDK for storing the values fetched from the dialog.
+     */
+    private SDK mTmpSdk;
+        
+    /**
+     * Main constructor of the SDK Table. It's style can't be configured like
+     * other SWT composites. When using a SDK Table, you should add all the 
+     * necessary Layouts and Layout Data to display it correctly. 
+     * 
+     * @param pParent Composite parent of the table.
+     */
+    public SDKTable(Composite pParent) {
+        super(pParent, 
+                  Messages.getString("SDKTable.Title"), //$NON-NLS-1$
+                  new String[] {
+                        Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
+                        Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
+                  },
+                  new int[] {DEFAULT_WIDTH, DEFAULT_HEIGHT},
+                  new String[] {
+                      SDK.NAME,
+                      SDK.PATH
+                  });
+            
+        mTableViewer.setInput(SDKContainer.getInstance());
+        mTableViewer.setContentProvider(new SDKContentProvider());
+    }
+    
+    /**
+     * Fill the table with the preferences from the SDKS_CONFIG file.
+     */
+    public void getPreferences() {
+        SDKContainer.getInstance();
+    }
+    
+    /**
+     * Saves the SDK preferences.
+     *
+     */
+    public void savePreferences() {
+        
+        SDKContainer.saveSDKs();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#handleDoubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-	 */
-	protected void handleDoubleClick(DoubleClickEvent event) {
-		if (!event.getSelection().isEmpty()){
-			
-			// Get the double clicked SDK line
-			SDK sdk = (SDK)((IStructuredSelection)event.getSelection()).getFirstElement();
-			
-			// Launch the dialog
-			sdk = openDialog(sdk);
-			SDKContainer.updateSDK(sdk.getId(), sdk);
-		}
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#addLine()
-	 */
-	protected ITableElement addLine() {
-		// Launch add SDK dialog
-		SDK sdk = openDialog(null);
-		SDKContainer.addSDK(sdk);
-		return sdk;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.gui.AbstractTable#removeLine()
-	 */
-	protected ITableElement removeLine() {
-		ITableElement o = super.removeLine();
-		if (null != o && o instanceof SDK) {
-			SDKContainer.delSDK((SDK)o);
-		}
-		
-		return o;
-	}
-	
-	/**
-	 * This method create and calls the dialog box to be launched on SDK 
-	 * edition or SDK creation. The parameter <code>sdk</code> could be null: 
-	 * in this case, a new one will be created. Otherwise the fields of the 
-	 * old one will be changed. This is useful for SDK editing: the object 
-	 * reference is the same.
-	 * 
-	 * @param sdk the SDK instance to edit if any
-	 * @param editing <code>true</code> if about to edit a SDK instance
-	 * 
-	 * @return the modified or created SDK instance
-	 */
-	protected SDK openDialog(SDK sdk){
-		
-		// Gets the shell of the active eclipse window
-		Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
-		
-		SDKDialog dialog = new SDKDialog(shell, sdk);
-		if (SDKDialog.OK == dialog.open()){
-			// The user validates his choice, perform the changes
-			SDK newSDK = mTmpSdk;
-			mTmpSdk = null;
-			
-			if (null != sdk){
-				// Only an existing SDK modification
-				try {
-					sdk.setHome(newSDK.getHome());
-				} catch (InvalidConfigException e) {
-					PluginLogger.error(
-							e.getLocalizedMessage(), e); 
-					// localized in SDK class
-				}
-			} else {
-				// Creation of a new SDK
-				
-				sdk = newSDK;
-			}
+    /**
+     * {@inheritDoc}
+     */
+    protected void handleDoubleClick(DoubleClickEvent pEvent) {
+        if (!pEvent.getSelection().isEmpty()) {
+            
+            // Get the double clicked SDK line
+            SDK sdk = (SDK)((IStructuredSelection)pEvent.getSelection()).getFirstElement();
+            
+            // Launch the dialog
+            sdk = openDialog(sdk);
+            SDKContainer.updateSDK(sdk.getId(), sdk);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected ITableElement addLine() {
+        // Launch add SDK dialog
+        SDK sdk = openDialog(null);
+        SDKContainer.addSDK(sdk);
+        return sdk;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected ITableElement removeLine() {
+        ITableElement o = super.removeLine();
+        if (null != o && o instanceof SDK) {
+            SDKContainer.delSDK((SDK)o);
+        }
+        
+        return o;
+    }
+    
+    /**
+     * This method create and calls the dialog box to be launched on SDK 
+     * edition or SDK creation. The parameter <code>pSdk</code> could be null: 
+     * in this case, a new one will be created. Otherwise the fields of the 
+     * old one will be changed. This is useful for SDK editing: the object 
+     * reference is the same.
+     * 
+     * @param pSdk the SDK instance to edit if any
+     * 
+     * @return the modified or created SDK instance
+     */
+    protected SDK openDialog(SDK pSdk) {
+        
+        // Gets the shell of the active eclipse window
+        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+        
+        SDKDialog dialog = new SDKDialog(shell, pSdk);
+        if (SDKDialog.OK == dialog.open()) {
+            // The user validates his choice, perform the changes
+            SDK newSDK = mTmpSdk;
+            mTmpSdk = null;
+            
+            if (null != pSdk) {
+                // Only an existing SDK modification
+                try {
+                    pSdk.setHome(newSDK.getHome());
+                } catch (InvalidConfigException e) {
+                    PluginLogger.error(
+                            e.getLocalizedMessage(), e); 
+                    // localized in SDK class
+                }
+            } else {
+                // Creation of a new SDK
+                
+                pSdk = newSDK;
+            }
 
-		}
-		
-		return sdk;
-	}
-	
-	/**
-	 * The SDK content provider is a class which provides the SDKs objects to 
-	 * the viewer.
-	 * 
-	 * @author cbosdonnat
-	 *
-	 */
-	class SDKContentProvider implements IStructuredContentProvider, IConfigListener {
-		
-		public SDKContentProvider() {
-			if (null == SDKContainer.getInstance()){
-				SDKContainer.getInstance();
-			}
-		}
+        }
+        
+        return pSdk;
+    }
+    
+    /**
+     * The SDK content provider is a class which provides the SDKs objects to 
+     * the viewer.
+     * 
+     * @author cedricbosdo
+     *
+     */
+    class SDKContentProvider implements IStructuredContentProvider, IConfigListener {
+        
+        /**
+         * Constructor.
+         */
+        public SDKContentProvider() {
+            if (null == SDKContainer.getInstance()) {
+                SDKContainer.getInstance();
+            }
+        }
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			return SDKContainer.toArray();
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public Object[] getElements(Object pInputElement) {
+            return SDKContainer.toArray();
+        }
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-			SDKContainer.removeListener(this);
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public void dispose() {
+            SDKContainer.removeListener(this);
+        }
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        }
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigAdded(java.lang.Object)
-		 */
-		public void ConfigAdded(Object element) {
-			if (element instanceof SDK){
-				mTableViewer.add(element);
-				
-				// This redrawing order is necessary to avoid having strange columns
-				mTable.redraw();
-			}
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public void ConfigAdded(Object pElement) {
+            if (pElement instanceof SDK) {
+                mTableViewer.add(pElement);
+                
+                // This redrawing order is necessary to avoid having strange columns
+                mTable.redraw();
+            }
+        }
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigRemoved(java.lang.Object)
-		 */
-		public void ConfigRemoved(Object element) {
-			if (null != element && element instanceof SDK){
-				// Only one SDK to remove
-				mTableViewer.remove(element);
-			} else {
-				// All the SDK have been removed
-				if (null != mTableViewer){
-					int i = 0;
-					SDK sdki = (SDK)mTableViewer.getElementAt(i);
-					
-					while (null != sdki){
-						mTableViewer.remove(sdki);
-					}
-				}
-			}
-			
-			// This redrawing order is necessary to avoid having strange columns
-			mTable.redraw();
-		}
+        /**
+         * {@inheritDoc}
+         */
+        public void ConfigRemoved(Object pElement) {
+            if (null != pElement && pElement instanceof SDK) {
+                // Only one SDK to remove
+                mTableViewer.remove(pElement);
+            } else {
+                // All the SDK have been removed
+                if (null != mTableViewer) {
+                    int i = 0;
+                    SDK sdki = (SDK)mTableViewer.getElementAt(i);
+                    
+                    while (null != sdki) {
+                        mTableViewer.remove(sdki);
+                    }
+                }
+            }
+            
+            // This redrawing order is necessary to avoid having strange columns
+            mTable.redraw();
+        }
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.preferences.IConfigListener#ConfigUpdated(java.lang.Object)
-		 */
-		public void ConfigUpdated(Object element) {
-			if (element instanceof SDK) {
-				// Note that we can do this only because the SDK Container guarantees
-				// that the reference of the sdk will not change during an update
-				mTableViewer.update(element, null);
-			}
-		}
-	}
-	
-	/**
-	 * Class for the SDK add/edit dialog. 
-	 * 
-	 * @author cbosdonnat
-	 */
-	class SDKDialog extends StatusDialog implements IFieldChangedListener{
-		
-		private static final String P_SDK_PATH    = "__sdk_path"; //$NON-NLS-1$
+        /**
+         * {@inheritDoc}
+         */
+        public void ConfigUpdated(Object pElement) {
+            if (pElement instanceof SDK) {
+                // Note that we can do this only because the SDK Container guarantees
+                // that the reference of the sdk will not change during an update
+                mTableViewer.update(pElement, null);
+            }
+        }
+    }
+    
+    /**
+     * Class for the SDK add/edit dialog. 
+     * 
+     * @author cedricbosdo
+     */
+    class SDKDialog extends StatusDialog implements IFieldChangedListener {
+        
+        private static final String P_SDK_PATH    = "__sdk_path"; //$NON-NLS-1$
 
-		private FileRow mSdkpathRow;
-		
-		private TextRow mBuidlidRow; 
-		
-		private SDK mSdk;
-		
-		/**
-		 * Create the SDK dialog without any SDK instance
-		 * 
-		 * @param parentShell the shell where to put the dialog 
-		 */
-		protected SDKDialog(Shell parentShell) {
-			this(parentShell, null);
-		}
-		
-		/**
-		 * Create the SDK dialog with an SDK instance to edit
-		 * 
-		 * @param parentShell the shell where to put the dialog 
-		 * @param sdk the SDK instance to edit
-		 */
-		protected SDKDialog(Shell parentShell, SDK sdk) {
-			super(parentShell);
-			setShellStyle(getShellStyle() | SWT.RESIZE);
-			this.mSdk = sdk;
-			
-			setBlockOnOpen(true); // This dialog is a modal one
-			setTitle(Messages.getString("SDKTable.DialogTitle")); //$NON-NLS-1$
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-		 */
-		protected Control createDialogArea(Composite parent) {
-			
-			Composite body = new Composite(parent, SWT.None);
-			body.setLayout(new GridLayout(3, false));
-			body.setLayoutData(new GridData(GridData.FILL_BOTH));
-			
-			Label image = new Label(body, SWT.RIGHT);
-			image.setBackground(new Color(getDisplay(), 255, 255, 255)); // White background
-			image.setImage(OOEclipsePlugin.getImage(ImagesConstants.SDK_DIALOG_IMAGE));
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 3;
-			image.setLayoutData(gd);
-			
-			// Creates each line of the dialog
-			mSdkpathRow = new FileRow(body, P_SDK_PATH, 
-					Messages.getString("SDKTable.PathTitle"), true); //$NON-NLS-1$
-			mSdkpathRow.setFieldChangedListener(this);
-			
-			// put the value of the edited SDK in the fields
-			if (null != mSdk){
-				mSdkpathRow.setValue(mSdk.getHome());
-			}
-			
-			mBuidlidRow = new TextRow(body, "",  //$NON-NLS-1$
-					Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
-			mBuidlidRow.setEnabled(false);   // This line is only to show the value
-			
-			if (null != mSdk && null != mSdk.getId()){
-				mBuidlidRow.setValue(mSdk.getId());
-			}
-			
-			// activate the OK button only if the SDK is correct
-			Button okButton = getButton(IDialogConstants.OK_ID);
-			if (null != okButton){
-				okButton.setEnabled(isValid(null));
-			}
-			
-			return body;
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-		 */
-		protected void okPressed() {
-			// Perform data controls on the fields: they are all mandatory
-			// If there is one field missing, print an error line at the bottom
-			// of the dialog.
-			
-			if (!mSdkpathRow.getValue().equals("")) { //$NON-NLS-1$
-				isValid(null);
-				super.okPressed();
-			} else {
-				updateStatus(new Status(Status.ERROR, 
-					     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-						 Status.ERROR,
-						 Messages.getString("SDKTable.MissingFieldError"), //$NON-NLS-1$
-						 null));
-			}
-		}
-		
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-		 */
-		protected void cancelPressed() {
-			
-			super.cancelPressed();
-		}
+        private static final int LAYOUT_COLUMNS = 3;
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener#fieldChanged(org.openoffice.ide.eclipse.core.gui.rows.FieldEvent)
-		 */
-		public void fieldChanged(FieldEvent e) {
-			// The result doesn't matter: we only want to update the status of the windows
-			
-			Button okButton = getButton(IDialogConstants.OK_ID);
-			if (null != okButton){
-				okButton.setEnabled(isValid(e.getProperty()));
-			}
-		}
-		
-		/**
-		 * Checks if the property is valid
-		 * 
-		 * @param property the property to check
-		 * @return <code>true</code> if the property is valid, <code>false</code>
-		 * 			otherwise.
-		 */
-		private boolean isValid(String property){
-			boolean result = false;
-				
-			// Try to create an SDK
-			try {
-				mTmpSdk = new SDK (mSdkpathRow.getValue()); 
+        private FileRow mSdkpathRow;
+        
+        private TextRow mBuidlidRow; 
+        
+        private SDK mSdk;
 
-				if (null != mTmpSdk.getId()) {
-					mBuidlidRow.setValue(mTmpSdk.getId());
-				}
-				
-				if (Platform.getOS().equals(Platform.OS_WIN32) && 
-						mSdkpathRow.getValue().contains(" ")) { //$NON-NLS-1$
-					
-					updateStatus(new Status(Status.WARNING,
-				    		OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-				    		Status.WARNING, 
-				    		Messages.getString("SDKTable.SpacesSdkPathWarning"),  //$NON-NLS-1$
-				    		null));
-				} else {
-					updateStatus(new Status(Status.OK,
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							Status.OK, "", null)); //$NON-NLS-1$
-				}
-				
-				result = true;
-				
-			} catch (InvalidConfigException e) {
-				if (property.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()){
-					updateStatus(new Status(Status.ERROR, 
-						     OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							 Status.ERROR,
-							 e.getMessage(),
-							 e));
-				} else {
-					updateStatus(new Status(Status.OK,
-							OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-							Status.OK,
-							"", //$NON-NLS-1$
-							e));
-				}
-			} 
-			
-			return result;
-		}
-	}
+        private final Color mWHITE = new Color(getDisplay(), 255, 255, 255);
+        
+        /**
+         * Create the SDK dialog without any SDK instance.
+         * 
+         * @param pParentShell the shell where to put the dialog 
+         */
+        protected SDKDialog(Shell pParentShell) {
+            this(pParentShell, null);
+        }
+        
+        /**
+         * Create the SDK dialog with an SDK instance to edit.
+         * 
+         * @param pParentShell the shell where to put the dialog 
+         * @param pSdk the SDK instance to edit
+         */
+        protected SDKDialog(Shell pParentShell, SDK pSdk) {
+            super(pParentShell);
+            setShellStyle(getShellStyle() | SWT.RESIZE);
+            this.mSdk = pSdk;
+            
+            // This dialog is a modal one
+            setBlockOnOpen(true);
+            setTitle(Messages.getString("SDKTable.DialogTitle")); //$NON-NLS-1$
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected Control createDialogArea(Composite pParent) {
+            
+            Composite body = new Composite(pParent, SWT.None);
+            body.setLayout(new GridLayout(LAYOUT_COLUMNS, false));
+            body.setLayoutData(new GridData(GridData.FILL_BOTH));
+            
+            Label image = new Label(body, SWT.RIGHT);
+            // White background
+            image.setBackground(mWHITE );
+            image.setImage(OOEclipsePlugin.getImage(ImagesConstants.SDK_DIALOG_IMAGE));
+            GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+            gd.horizontalSpan = LAYOUT_COLUMNS;
+            image.setLayoutData(gd);
+            
+            // Creates each line of the dialog
+            mSdkpathRow = new FileRow(body, P_SDK_PATH, 
+                    Messages.getString("SDKTable.PathTitle"), true); //$NON-NLS-1$
+            mSdkpathRow.setFieldChangedListener(this);
+            
+            // put the value of the edited SDK in the fields
+            if (null != mSdk) {
+                mSdkpathRow.setValue(mSdk.getHome());
+            }
+            
+            mBuidlidRow = new TextRow(body, "",  //$NON-NLS-1$
+                    Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
+            // This line is only to show the value
+            mBuidlidRow.setEnabled(false);
+            
+            if (null != mSdk && null != mSdk.getId()) {
+                mBuidlidRow.setValue(mSdk.getId());
+            }
+            
+            // activate the OK button only if the SDK is correct
+            Button okButton = getButton(IDialogConstants.OK_ID);
+            if (null != okButton) {
+                okButton.setEnabled(isValid(null));
+            }
+            
+            return body;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected void okPressed() {
+            // Perform data controls on the fields: they are all mandatory
+            // If there is one field missing, print an error line at the bottom
+            // of the dialog.
+            
+            if (!mSdkpathRow.getValue().equals("")) { //$NON-NLS-1$
+                isValid(null);
+                super.okPressed();
+            } else {
+                updateStatus(new Status(Status.ERROR, 
+                         OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                         Status.ERROR,
+                         Messages.getString("SDKTable.MissingFieldError"), //$NON-NLS-1$
+                         null));
+            }
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected void cancelPressed() {
+            
+            super.cancelPressed();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void fieldChanged(FieldEvent pEvent) {
+            // The result doesn't matter: we only want to update the status of the windows
+            
+            Button okButton = getButton(IDialogConstants.OK_ID);
+            if (null != okButton) {
+                okButton.setEnabled(isValid(pEvent.getProperty()));
+            }
+        }
+        
+        /**
+         * Checks if the property is valid.
+         * 
+         * @param pProperty the property to check
+         * @return <code>true</code> if the property is valid, <code>false</code>
+         *             otherwise.
+         */
+        private boolean isValid(String pProperty) {
+            boolean result = false;
+                
+            // Try to create an SDK
+            try {
+                mTmpSdk = new SDK (mSdkpathRow.getValue()); 
+
+                if (null != mTmpSdk.getId()) {
+                    mBuidlidRow.setValue(mTmpSdk.getId());
+                }
+                
+                if (Platform.getOS().equals(Platform.OS_WIN32) && 
+                        mSdkpathRow.getValue().contains(" ")) { //$NON-NLS-1$
+                    
+                    updateStatus(new Status(Status.WARNING,
+                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            Status.WARNING, 
+                            Messages.getString("SDKTable.SpacesSdkPathWarning"),  //$NON-NLS-1$
+                            null));
+                } else {
+                    updateStatus(new Status(Status.OK,
+                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            Status.OK, "", null)); //$NON-NLS-1$
+                }
+                
+                result = true;
+                
+            } catch (InvalidConfigException e) {
+                if (pProperty.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
+                    updateStatus(new Status(Status.ERROR, 
+                             OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                             Status.ERROR,
+                             e.getMessage(),
+                             e));
+                } else {
+                    updateStatus(new Status(Status.OK,
+                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            Status.OK,
+                            "", //$NON-NLS-1$
+                            e));
+                }
+            } 
+            
+            return result;
+        }
+    }
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: DialogRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:22 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -52,89 +52,99 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Row class with a text and a configurable button to open a dialog.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class DialogRow extends LabeledRow implements ModifyListener {
 
-	private String mValue = new String();
-	
-	/**
-	 * Simple constructor for the Dialog row creation. The button text will be
-	 * set to <em>Browse</em>.
-	 * 
-	 * @param parent the composite in which to create the row
-	 * @param property the property to recognize an event from this row
-	 * @param label the label on the left of the row
-	 */
-	public DialogRow(Composite parent, String property, String label) {
-		this(parent, property, label , Messages.getString("DialogRow.BrowseLabel")); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Constructor for the Dialog row creation allowing to change the button text
-	 * 
-	 * @param parent the composite in which to create the row
-	 * @param property the property to recognize an event from this row
-	 * @param label the label on the left of the row
-	 */
-	public DialogRow(Composite parent, String property,  String label, String btnLabel) {
-		super(property);
-		
-		Label aLabel = new Label(parent, SWT.LEFT | SWT.SHADOW_NONE);
-		aLabel.setText(label);
-		Text aField = new Text(parent, SWT.BORDER);
-		
-		createContent(parent, aLabel, aField, btnLabel);
-		((Text)mField).addModifyListener(this);
-		
-		mBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String newValue = doOpenDialog();
-				if (!mValue.equals(newValue)) {
-					setValue(newValue);
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Open the dialog when clicking on the right button. Subclasses, may
-	 * implement this method. Default returns an empty string.  
-	 *
-	 * @return the new value for the row
-	 */
-	public String doOpenDialog(){
-		return ""; //$NON-NLS-1$
-	}
-	
-	@Override
-	public String getValue() {
-		return mValue;
-	}
+    private String mValue = new String();
+    
+    /**
+     * Simple constructor for the Dialog row creation. The button text will be
+     * set to <em>Browse</em>.
+     * 
+     * @param pParent the composite in which to create the row
+     * @param pProperty the property to recognize an event from this row
+     * @param pLabel the label on the left of the row
+     */
+    public DialogRow(Composite pParent, String pProperty, String pLabel) {
+        this(pParent, pProperty, pLabel , Messages.getString("DialogRow.BrowseLabel")); //$NON-NLS-1$
+    }
+    
+    /**
+     * Constructor for the Dialog row creation allowing to change the button text.
+     * 
+     * @param pParent the composite in which to create the row
+     * @param pProperty the property to recognize an event from this row
+     * @param pLabel the label on the left of the row
+     * @param pBtnLabel the label of the button opening the dialog
+     */
+    public DialogRow(Composite pParent, String pProperty,  String pLabel, String pBtnLabel) {
+        super(pProperty);
+        
+        Label aLabel = new Label(pParent, SWT.LEFT | SWT.SHADOW_NONE);
+        aLabel.setText(pLabel);
+        Text aField = new Text(pParent, SWT.BORDER);
+        
+        createContent(pParent, aLabel, aField, pBtnLabel);
+        ((Text)mField).addModifyListener(this);
+        
+        mBrowse.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent pEvent) {
+                String newValue = doOpenDialog();
+                if (!mValue.equals(newValue)) {
+                    setValue(newValue);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Open the dialog when clicking on the right button. Subclasses, may
+     * implement this method. Default returns an empty string.  
+     *
+     * @return the new value for the row
+     */
+    public String doOpenDialog() {
+        return ""; //$NON-NLS-1$
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getValue() {
+        return mValue;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-	 */
-	public void modifyText(ModifyEvent e) {
-		setValue(((Text)mField).getText().trim());
-	}
-	
-	/**
-	 * Set a new value to the row
-	 * @param aValue the new value
-	 */
-	public void setValue(String aValue){
-		String newText = aValue;
-		if (null == aValue){
-			newText = ""; //$NON-NLS-1$
-		}
-		
-		if (!((Text)mField).getText().equals(newText)){
-			((Text)mField).setText(newText);
-		}
-		
-		mValue = newText;
-		FieldEvent fe = new FieldEvent(getProperty(), getValue());
-		fireFieldChangedEvent(fe);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void modifyText(ModifyEvent pEvent) {
+        setValue(((Text)mField).getText().trim());
+    }
+    
+    /**
+     * Set a new value to the row.
+     * 
+     * @param pValue the new value
+     */
+    public void setValue(String pValue) {
+        String newText = pValue;
+        if (null == pValue) {
+            newText = ""; //$NON-NLS-1$
+        }
+        
+        if (!((Text)mField).getText().equals(newText)) {
+            ((Text)mField).setText(newText);
+        }
+        
+        mValue = newText;
+        FieldEvent fe = new FieldEvent(getProperty(), getValue());
+        fireFieldChangedEvent(fe);
+    }
 }

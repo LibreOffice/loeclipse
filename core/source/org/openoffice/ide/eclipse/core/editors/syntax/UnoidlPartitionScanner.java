@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlPartitionScanner.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -54,28 +54,29 @@ import org.eclipse.jface.text.rules.Token;
  * Scanner splitting the text into partitions. In order to fully understand
  * the editor mechanisms, please report to Eclipse plugin developer's guide.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class UnoidlPartitionScanner extends RuleBasedPartitionScanner {
-	
-	public final static String IDL_AUTOCOMMENT = "_idl_autocomment"; //$NON-NLS-1$
-	public final static String IDL_COMMENT = "_idl_comment"; //$NON-NLS-1$
-	public final static String IDL_PREPROCESSOR = "_idl_preprocessor"; //$NON-NLS-1$
-	
-	/**
-	 * Constructor defining the rules to use to match the different partitions
-	 */
-	public UnoidlPartitionScanner() {
-		IToken idlComment = new Token(IDL_COMMENT);
-		IToken idlAutoComment = new Token(IDL_AUTOCOMMENT);
-		IToken idlPreprocessor = new Token(IDL_PREPROCESSOR);
-		
-		IPredicateRule[] rules = new IPredicateRule[5];
-		rules[0] = new MultiLineRule("/**", "*/", idlAutoComment); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[1] = new EndOfLineRule("///", idlAutoComment); //$NON-NLS-1$
-		rules[2] = new MultiLineRule("/*", "*/", idlComment); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[3] = new EndOfLineRule("//", idlComment); //$NON-NLS-1$
-		rules[4] = new EndOfLineRule("#", idlPreprocessor); //$NON-NLS-1$
-		setPredicateRules(rules);
-	}
+    
+    public static final String IDL_AUTOCOMMENT = "_idl_autocomment"; //$NON-NLS-1$
+    public static final String IDL_COMMENT = "_idl_comment"; //$NON-NLS-1$
+    public static final String IDL_PREPROCESSOR = "_idl_preprocessor"; //$NON-NLS-1$
+    
+    /**
+     * Constructor defining the rules to use to match the different partitions.
+     */
+    public UnoidlPartitionScanner() {
+        IToken idlComment = new Token(IDL_COMMENT);
+        IToken idlAutoComment = new Token(IDL_AUTOCOMMENT);
+        IToken idlPreprocessor = new Token(IDL_PREPROCESSOR);
+        
+        IPredicateRule[] rules = new IPredicateRule[] {
+            new MultiLineRule("/**", "*/", idlAutoComment), //$NON-NLS-1$ //$NON-NLS-2$
+            new EndOfLineRule("///", idlAutoComment), //$NON-NLS-1$
+            new MultiLineRule("/*", "*/", idlComment), //$NON-NLS-1$ //$NON-NLS-2$
+            new EndOfLineRule("//", idlComment), //$NON-NLS-1$
+            new EndOfLineRule("#", idlPreprocessor) //$NON-NLS-1$
+        };
+        setPredicateRules(rules);
+    }
 }

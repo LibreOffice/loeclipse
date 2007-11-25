@@ -2,12 +2,12 @@
  *
  * $RCSfile: IFieldChangedListener.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:14:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -51,15 +51,15 @@ package org.openoffice.ide.eclipse.core.gui.rows;
  * @see FieldEvent for the notification event description
  * @see LabeledRow for the base class of the listened rows
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public interface IFieldChangedListener {
 
-	/**
-	 * Method called when the row has changed
-	 * 
-	 * @param e the field event thrown
-	 */
-	public void fieldChanged(FieldEvent e);
+    /**
+     * Method called when the row has changed.
+     * 
+     * @param pEvent the field event thrown
+     */
+    public void fieldChanged(FieldEvent pEvent);
 }

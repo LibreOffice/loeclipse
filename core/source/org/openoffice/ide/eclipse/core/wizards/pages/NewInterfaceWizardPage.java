@@ -2,12 +2,12 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/07/17 21:01:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -55,6 +55,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
+import org.openoffice.ide.eclipse.core.gui.rows.LabeledRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -62,183 +63,202 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
-public class NewInterfaceWizardPage extends NewScopedElementWizardPage 
-									implements ISelectionChangedListener{
+/**
+ * Interface creation page, this page is managed by the {@link ServiceWizardSet}
+ * or is used by the new interface wizard.
+ * 
+ * @author cedricbosdo
+ *
+ */
+public class NewInterfaceWizardPage extends NewScopedElementWizardPage  
+                                    implements ISelectionChangedListener {
 
-	public NewInterfaceWizardPage(String pageName, IUnoidlProject unoProject) {
-		super(pageName, unoProject);
-	}
+    private static final int MAX_HEIGHT = 600;
+    private static final int MIN_WIDTH = 600;
+    private InterfacesTable mInterfaceInheritances;
+    private InterfaceMembersTable mMembers;
+    
+    
+    /**
+     * Constructor.
+     * 
+     * @param pPageName the page name
+     * @param pUnoProject the project for which to create the interface.
+     */
+    public NewInterfaceWizardPage(String pPageName, IUnoidlProject pUnoProject) {
+        super(pPageName, pUnoProject);
+    }
 
-	public NewInterfaceWizardPage(String pageName, IUnoidlProject project,
-			String aRootName, String aElementName) {
-		super(pageName, project, aRootName, aElementName);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		
-		mInterfaceInheritances.removeSelectionChangedListener(this);
-		mInterfaceInheritances = null;
-		
-		super.dispose();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getProvidedTypes()
-	 */
-	public int getProvidedTypes() {
-		return IUnoFactoryConstants.INTERFACE;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param pPageName the page name
+     * @param pProject the project for which to create the interface.
+     * @param pRootName scoped name of the module containing the type 
+     * @param pElementName name of the type, without any '.' or '::' 
+     */
+    public NewInterfaceWizardPage(String pPageName, IUnoidlProject pProject,
+            String pRootName, String pElementName) {
+        super(pPageName, pProject, pRootName, pElementName);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void dispose() {
+        
+        mInterfaceInheritances.removeSelectionChangedListener(this);
+        mInterfaceInheritances = null;
+        
+        super.dispose();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int getProvidedTypes() {
+        return IUnoFactoryConstants.INTERFACE;
+    }
 
-	
-	//--------------------------------------------------- Page content managment
+    
+    //--------------------------------------------------- Page content managment
 
-	private InterfacesTable mInterfaceInheritances;
-	private InterfaceMembersTable mMembers;
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#createSpecificControl(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void createSpecificControl(Composite parent) {
-		
-		// Pour avoir des tailles des tables correctes
-		Point point = getShell().getSize();
-		point.y = Math.max(point.y, 600);
-		point.x = Math.min(point.x, 600);
-		getShell().setSize(point);
-		
-		
-		Composite tableParent = new Composite(parent, SWT.NORMAL);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		tableParent.setLayoutData(gd);
-		tableParent.setLayout(new GridLayout(1, false));
-		
-		UnoTypeProvider.getInstance().initialize(getProject(), 
-				IUnoFactoryConstants.INTERFACE);
-		
-		mInterfaceInheritances = new InterfacesTable(tableParent);
-		mInterfaceInheritances.setToolTipText(Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip")); //$NON-NLS-1$
-		mInterfaceInheritances.addSelectionChangedListener(this);
-		
-		mMembers = new InterfaceMembersTable(tableParent);
-		mMembers.setToolTipText(Messages.getString("NewInterfaceWizardPage.MembersTableTooltip")); //$NON-NLS-1$
-		mMembers.addSelectionChangedListener(this);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
-	 */
-	public String getTitle() {
-		return Messages.getString("NewInterfaceWizardPage.Title"); //$NON-NLS-1$
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
-	 */
-	public String getDescription() {
-		return Messages.getString("NewInterfaceWizardPage.InterfaceDescription"); //$NON-NLS-1$
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getTypeLabel()
-	 */
-	protected String getTypeLabel() {
-		return Messages.getString("NewInterfaceWizardPage.Label"); //$NON-NLS-1$
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.wizards.NewScopedElementWizardPage#getImageDescriptor()
-	 */
-	protected ImageDescriptor getImageDescriptor() {
-		return OOEclipsePlugin.getImageDescriptor(
-				ImagesConstants.NEW_INTERFACE_IMAGE);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected void createSpecificControl(Composite pParent) {
+        
+        // To get correct table sizes
+        Point point = getShell().getSize();
+        point.y = Math.max(point.y, MAX_HEIGHT);
+        point.x = Math.min(point.x, MIN_WIDTH);
+        getShell().setSize(point);
+        
+        
+        Composite tableParent = new Composite(pParent, SWT.NORMAL);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = LabeledRow.LAYOUT_COLUMNS;
+        tableParent.setLayoutData(gd);
+        tableParent.setLayout(new GridLayout(1, false));
+        
+        UnoTypeProvider.getInstance().initialize(getProject(), 
+                IUnoFactoryConstants.INTERFACE);
+        
+        mInterfaceInheritances = new InterfacesTable(tableParent);
+        mInterfaceInheritances.setToolTipText(
+                Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip")); //$NON-NLS-1$
+        mInterfaceInheritances.addSelectionChangedListener(this);
+        
+        mMembers = new InterfaceMembersTable(tableParent);
+        mMembers.setToolTipText(Messages.getString("NewInterfaceWizardPage.MembersTableTooltip")); //$NON-NLS-1$
+        mMembers.addSelectionChangedListener(this);
+    }
+    
+    /**
+         * {@inheritDoc}
+         */
+    public String getTitle() {
+        return Messages.getString("NewInterfaceWizardPage.Title"); //$NON-NLS-1$
+    }
+    
+    /**
+         * {@inheritDoc}
+         */
+    public String getDescription() {
+        return Messages.getString("NewInterfaceWizardPage.InterfaceDescription"); //$NON-NLS-1$
+    }
+    
+    /**
+         * {@inheritDoc}
+         */
+    protected String getTypeLabel() {
+        return Messages.getString("NewInterfaceWizardPage.Label"); //$NON-NLS-1$
+    }
+    
+    /**
+         * {@inheritDoc}
+         */
+    protected ImageDescriptor getImageDescriptor() {
+        return OOEclipsePlugin.getImageDescriptor(
+                ImagesConstants.NEW_INTERFACE_IMAGE);
+    }
 
-	/*
-	 * When such an event is catch, this method reevaluate the page completeness
-	 * 
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		// TODO if the package root starts with something else than the project prefix
-		setPageComplete(isPageComplete());
-	}
-	
-	/**
-	 * @return the given data with the completed properties, <code>null</code>
-	 *   if the provided data is <code>null</code>
-	 */
-	public UnoFactoryData fillData(UnoFactoryData data) {
-		data = super.fillData(data);
-		if (data != null) {
-			data.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
-					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
-			
-			// Vector containing the interface inheritance paths "::" separated
-			Vector<String> optionalIntf = new Vector<String>();
-			Vector<String> mandatoryIntf = new Vector<String>();
-			
-			// Separate the optional and mandatory interface inheritances	
-			if (mInterfaceInheritances != null) {
-				Vector<ITableElement> lines = mInterfaceInheritances.getLines();
-				for (ITableElement linei : lines) {
-					InterfacesTable.InheritanceLine line = 
-						(InterfacesTable.InheritanceLine)linei;
+    /**
+     * {@inheritDoc}
+     */
+    public void selectionChanged(SelectionChangedEvent pEvent) {
+        setPageComplete(isPageComplete());
+    }
+    
+    /**
+     * @param pData the data to fill
+     * 
+     * @return the given data with the completed properties, <code>null</code>
+     *   if the provided data is <code>null</code>
+     */
+    public UnoFactoryData fillData(UnoFactoryData pData) {
+        pData = super.fillData(pData);
+        if (pData != null) {
+            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
+                    Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+            
+            // Vector containing the interface inheritance paths "::" separated
+            Vector<String> optionalIntf = new Vector<String>();
+            Vector<String> mandatoryIntf = new Vector<String>();
+            
+            // Separate the optional and mandatory interface inheritances    
+            if (mInterfaceInheritances != null) {
+                Vector<ITableElement> lines = mInterfaceInheritances.getLines();
+                for (ITableElement linei : lines) {
+                    InterfacesTable.InheritanceLine line = 
+                        (InterfacesTable.InheritanceLine)linei;
 
-					if (line.isOptional()) {
-						optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
-					} else {
-						mandatoryIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
-				lines.clear();
-			}
-			
-			// Get the mandatory inheritances
-			String[] interfaces = new String[mandatoryIntf.size()];
-			interfaces = mandatoryIntf.toArray(interfaces);
-			data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
-					interfaces);
-			
-			// Get the optional inheritances
-			String[] opt_interfaces = new String[optionalIntf.size()];
-			opt_interfaces = optionalIntf.toArray(opt_interfaces);
-			data.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, 
-					opt_interfaces);
-			
-			optionalIntf.clear();
-			mandatoryIntf.clear();
-			
-			// Get the interface members data
-			if (mMembers != null) {
-				UnoFactoryData[] membersData = mMembers.getUnoFactoryData();
-				for (UnoFactoryData member : membersData) {
-					data.addInnerData(member);
-				}
-			}
-		}
-		return data;
-	}
-	
-	@Override
-	public UnoFactoryData getEmptyTypeData() {
-		UnoFactoryData typeData = new UnoFactoryData();
+                    if (line.isOptional()) {
+                        optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
+                    } else {
+                        mandatoryIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                }
+                lines.clear();
+            }
+            
+            // Get the mandatory inheritances
+            String[] interfaces = new String[mandatoryIntf.size()];
+            interfaces = mandatoryIntf.toArray(interfaces);
+            pData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
+                    interfaces);
+            
+            // Get the optional inheritances
+            String[] opt_interfaces = new String[optionalIntf.size()];
+            opt_interfaces = optionalIntf.toArray(opt_interfaces);
+            pData.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, 
+                    opt_interfaces);
+            
+            optionalIntf.clear();
+            mandatoryIntf.clear();
+            
+            // Get the interface members data
+            if (mMembers != null) {
+                UnoFactoryData[] membersData = mMembers.getUnoFactoryData();
+                for (UnoFactoryData member : membersData) {
+                    pData.addInnerData(member);
+                }
+            }
+        }
+        return pData;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UnoFactoryData getEmptyTypeData() {
+        UnoFactoryData typeData = new UnoFactoryData();
 
-		if (typeData != null) {
-			typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
-					Integer.valueOf(IUnoFactoryConstants.INTERFACE));
-		}
-		return typeData;
-	}
+        if (typeData != null) {
+            typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, 
+                    Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+        }
+        return typeData;
+    }
 }

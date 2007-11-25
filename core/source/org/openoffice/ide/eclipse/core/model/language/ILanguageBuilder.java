@@ -2,12 +2,12 @@
  *
  * $RCSfile: ILanguageBuilder.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:24 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -55,54 +55,55 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * Interface defining a set of methods for to do the language specific
- * tasks to build Uno-idl projects
+ * tasks to build UNO projects.
  * 
  * @author cedricbosdo
  *
  */
 public interface ILanguageBuilder {
 
-	/**
-	 * Computes the environment variables needed to build the library.
-	 * 
-	 * @param unoProject the uno project of the library
-	 * @return an array containing all the environment variables under
-	 * 		the form <code>NAME=VALUE</code>
-	 */
-	public String[] getBuildEnv(IUnoidlProject unoProject);
+    /**
+     * Computes the environment variables needed to build the library.
+     * 
+     * @param pUnoProject the UNO project of the library
+     * @return an array containing all the environment variables under
+     *         the form <code>NAME=VALUE</code>
+     */
+    public String[] getBuildEnv(IUnoidlProject pUnoProject);
 
-	/**
-	 * Creates the library containing the component.
-	 * 
-	 * @param unoProject the project to build into a library
-	 * @return the created library path
-	 * @throws Exception if anything wrong happened
-	 */
-	public IPath createLibrary(IUnoidlProject unoProject) throws Exception;
+    /**
+     * Creates the library containing the component.
+     * 
+     * @param pUnoProject the project to build into a library
+     * @return the created library path
+     * @throws Exception if anything wrong happened
+     */
+    public IPath createLibrary(IUnoidlProject pUnoProject) throws Exception;
 
-	/**
-	 * <p>Generates the language specific interfaces corresponding
-	 * to the project unoidl specifications. This method needs an
-	 * OpenOffice.org instance, the project <code>types.rdb</code> 
-	 * path, the build path where to put the generated files and
-	 * the root module to avoid massive idl types creation</p>
-	 * 
-	 * @param sdk the sdk containing the tools for generation
-	 * @param ooo the working OpenOffice.org instance
-	 * @param typesFile the project types.rdb path
-	 * @param buildFolder the path to the folder where to the files will
-	 * 		be generated
-	 * @param rootModule the project root module (eg: <code>foo::bar</code>)
-	 * @param monitor the progress monitor
-	 */
-	public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile, 
-			File buildFolder, String rootModule, IProgressMonitor monitor);
+    /**
+     * <p>Generates the language specific interfaces corresponding
+     * to the project unoidl specifications. This method needs an
+     * OpenOffice.org instance, the project <code>types.rdb</code> 
+     * path, the build path where to put the generated files and
+     * the root module to avoid massive idl types creation</p>
+     * 
+     * @param pSdk the SDK containing the tools for generation
+     * @param pOoo the working OpenOffice.org instance
+     * @param pPrj the project for which to generate the interfaces
+     * @param pTypesFile the project types.rdb path
+     * @param pBuildFolder the path to the folder where to the files will
+     *         be generated
+     * @param pRootModule the project root module (eg: <code>foo::bar</code>)
+     * @param pMonitor the progress monitor
+     */
+    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile, 
+            File pBuildFolder, String pRootModule, IProgressMonitor pMonitor);
 
-	/**
-	 * Adds all the language specific libraries to the uno package. 
-	 * 
-	 * @param unoPackage the uno package to complete
-	 * @param prj the project to package
-	 */
-	public void fillUnoPackage(UnoPackage unoPackage, IUnoidlProject prj);
+    /**
+     * Adds all the language specific libraries to the UNO package. 
+     * 
+     * @param pUnoPackage the UNO package to complete
+     * @param pPrj the project to package
+     */
+    public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pPrj);
 }

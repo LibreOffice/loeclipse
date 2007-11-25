@@ -2,12 +2,12 @@
  *
  * $RCSfile: JavaMainProvider.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/26 21:37:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -57,85 +57,95 @@ import org.eclipse.jdt.core.JavaCore;
 import org.openoffice.ide.eclipse.core.launch.IMainProvider;
 
 /**
- * Class providing the XMain implementations in Java
+ * Class providing the XMain implementations in Java.
  * 
  * @author cedricbosdo
  *
  */
 public class JavaMainProvider implements IMainProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.launch.IMainProvider#getMainNames(org.eclipse.core.resources.IProject)
-	 */
-	public Vector<String> getMainNames(IProject project) {
-		Vector<String> mains = new Vector<String>();
-		
-		IJavaProject javaPrj = JavaCore.create(project);
-		try {
-			mains.addAll(getInternalMainNames(javaPrj));
-		} catch (Exception e) {
-		}
-		
-		return mains;
-	}
-	
-	/**
-	 * Recursive method to find the Classes and check their hierarchy
-	 * 
-	 * @param element
-	 * @return
-	 */
-	private Vector<String> getInternalMainNames(IParent element) {
-		Vector<String> mains = new Vector<String>();
-		
-		try {
-			for (IJavaElement child : element.getChildren()) {
-				
-				boolean visit = true; 
-				
-				if (child instanceof IPackageFragmentRoot) {
-					IPackageFragmentRoot root = (IPackageFragmentRoot)child;
-					if (root.getKind() != IPackageFragmentRoot.K_SOURCE) {
-						visit = false;
-					}
-				}
-				
-				if (visit) {
-					if (child instanceof ICompilationUnit) {
-						ICompilationUnit unit = (ICompilationUnit)child;
-						IType type = unit.findPrimaryType();
-						
-						if (isMainImplementation(type)) {
-							mains.add(type.getFullyQualifiedName());
-						}
-					} else if (child instanceof IParent){
-						mains.addAll(getInternalMainNames((IParent)child));
-					}
-				}
-			}
-		} catch (Exception e) {}
-		
-		return mains;
-	}
-	
-	private boolean isMainImplementation(IType type) {
-		boolean isMainImplementation = false;
-		
-		try {
-			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(null);
-			IType[] superInterfaces = hierarchy.getAllSuperInterfaces(type);
-			
-			int i=0;
-			while(!isMainImplementation && i<superInterfaces.length) {
-				if (superInterfaces[i].getFullyQualifiedName().equals("com.sun.star.lang.XMain")) {
-					isMainImplementation = true;
-				} else {
-					i++;
-				}
-			}
-		} catch (Exception e) {}
-		
-		return isMainImplementation;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Vector<String> getMainNames(IProject pProject) {
+        Vector<String> mains = new Vector<String>();
+        
+        IJavaProject javaPrj = JavaCore.create(pProject);
+        try {
+            mains.addAll(getInternalMainNames(javaPrj));
+        } catch (Exception e) {
+        }
+        
+        return mains;
+    }
+    
+    /**
+     * Recursive method to find the Classes and check their hierarchy.
+     * 
+     * @param pElement the Java AST element for scan for XMain implementations
+     * @return the names of the classes implementing the XMain interface in the 
+     *      Java AST element.
+     */
+    private Vector<String> getInternalMainNames(IParent pElement) {
+        Vector<String> mains = new Vector<String>();
+        
+        try {
+            for (IJavaElement child : pElement.getChildren()) {
+                
+                boolean visit = true; 
+                
+                if (child instanceof IPackageFragmentRoot) {
+                    IPackageFragmentRoot root = (IPackageFragmentRoot)child;
+                    if (root.getKind() != IPackageFragmentRoot.K_SOURCE) {
+                        visit = false;
+                    }
+                }
+                
+                if (visit) {
+                    if (child instanceof ICompilationUnit) {
+                        ICompilationUnit unit = (ICompilationUnit)child;
+                        IType type = unit.findPrimaryType();
+                        
+                        if (isMainImplementation(type)) {
+                            mains.add(type.getFullyQualifiedName());
+                        }
+                    } else if (child instanceof IParent) {
+                        mains.addAll(getInternalMainNames((IParent)child));
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        
+        return mains;
+    }
+    
+    /**
+     * Checks if the Java type implements the <code>com.sun.star.lang.XMain</code> 
+     * interface.
+     * 
+     * @param pType the Java type to check
+     * @return <code>true</code> if the type implements <code>XMain</code>, 
+     *      <code>false</code> otherwise.
+     */
+    private boolean isMainImplementation(IType pType) {
+        boolean isMainImplementation = false;
+        
+        try {
+            ITypeHierarchy hierarchy = pType.newSupertypeHierarchy(null);
+            IType[] superInterfaces = hierarchy.getAllSuperInterfaces(pType);
+            
+            int i = 0;
+            while (!isMainImplementation && i < superInterfaces.length) {
+                if (superInterfaces[i].getFullyQualifiedName().equals("com.sun.star.lang.XMain")) {
+                    isMainImplementation = true;
+                } else {
+                    i++;
+                }
+            }
+        } catch (Exception e) {
+        }
+        
+        return isMainImplementation;
+    }
 }

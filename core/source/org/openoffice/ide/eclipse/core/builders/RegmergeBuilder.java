@@ -2,12 +2,12 @@
  *
  * $RCSfile: RegmergeBuilder.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -62,75 +62,75 @@ import org.openoffice.ide.eclipse.core.utils.FileHelper;
  * This builder doesn't make any difference between full and incremental 
  * builds.</p>
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class RegmergeBuilder {
-		
-	/**
-	 * Root of the generated types, used by regmerge and javamaker. UCR 
-	 * is chosen for OpenOffice.org compatibility 
-	 */
-	public static final String TYPE_ROOT_KEY = "/UCR"; //$NON-NLS-1$
-	
-	/**
-	 * Computes the full build of all the <code>urd</code> files into a single
-	 * <code>types.rdb</code> file. This resulting file is given by 
-	 * {@link IUnoidlProject#getTypesPath()}. This methods simply launches the
-	 * {@link RegmergeBuildVisitor} on the urd folder.
-	 * 
-	 * @param unoprj the project to build
-	 * @param monitor a monitor to watch the build progress
-	 * @throws Exception is thrown is anything wrong happens
-	 */
-	public static void build(IUnoidlProject unoprj, IProgressMonitor monitor)
-			throws Exception {
-		
-		IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoprj.getName());
+        
+    /**
+     * Root of the generated types, used by regmerge and javamaker. UCR 
+     * is chosen for OpenOffice.org compatibility 
+     */
+    public static final String TYPE_ROOT_KEY = "/UCR"; //$NON-NLS-1$
+    
+    /**
+     * Computes the full build of all the <code>urd</code> files into a single
+     * <code>types.rdb</code> file. This resulting file is given by 
+     * {@link IUnoidlProject#getTypesPath()}. This methods simply launches the
+     * {@link RegmergeBuildVisitor} on the urd folder.
+     * 
+     * @param pUnoprj the project to build
+     * @param pMonitor a monitor to watch the build progress
+     * @throws Exception is thrown is anything wrong happens
+     */
+    public static void build(IUnoidlProject pUnoprj, IProgressMonitor pMonitor) throws Exception {
+        
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoprj.getName());
 
-		IFile typesFile = unoprj.getFile(unoprj.getTypesPath());
-		File mergeFile = prj.getLocation().append(typesFile.getProjectRelativePath()).toFile();
-		if (mergeFile != null && mergeFile.exists()) {
-			FileHelper.remove(mergeFile);
-		}
+        IFile typesFile = pUnoprj.getFile(pUnoprj.getTypesPath());
+        File mergeFile = prj.getLocation().append(typesFile.getProjectRelativePath()).toFile();
+        if (mergeFile != null && mergeFile.exists()) {
+            FileHelper.remove(mergeFile);
+        }
 
-		// merge each urd file
-		IFolder urdFolder = unoprj.getFolder(unoprj.getUrdPath());
-		IPath urdPath = prj.getLocation().append(urdFolder.getProjectRelativePath());
-		File urdFile = urdPath.toFile();
-		VisitableFile visitableUrd = new VisitableFile(urdFile);
-		visitableUrd.accept(new RegmergeBuildVisitor(unoprj, monitor));
-	}
+        // merge each urd file
+        IFolder urdFolder = pUnoprj.getFolder(pUnoprj.getUrdPath());
+        IPath urdPath = prj.getLocation().append(urdFolder.getProjectRelativePath());
+        File urdFile = urdPath.toFile();
+        VisitableFile visitableUrd = new VisitableFile(urdFile);
+        visitableUrd.accept(new RegmergeBuildVisitor(pUnoprj, pMonitor));
+    }
 
-	/**
-	 * Convenience method to execute the <code>regmerge</code> tool 
-	 * on a given file.
-	 * 
-	 * @param file the file to run <code>regmerge</code> on.
-	 * @param monitor a progress monitor
-	 */
-	static void runRegmergeOnFile(File file, IUnoidlProject unoprj, IProgressMonitor monitor){
-		
-		// The registry file is placed in the root of the project as announced 
-		// to the api-dev mailing-list
-		IFile mergeFile = unoprj.getFile(unoprj.getTypesPath());
-		
-		String existingReg = ""; //$NON-NLS-1$
-		if (mergeFile.exists()){
-			existingReg = mergeFile.getProjectRelativePath().toOSString() + " "; //$NON-NLS-1$
-		}
-		
-		String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
-						   existingReg + "\"" + file.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// Process creation
-		Process process = unoprj.getSdk().runTool(unoprj, command, monitor);
-		
-		// Just wait for the process to end before destroying it
-		try {
-			process.waitFor();
-		} catch (InterruptedException e) {
-			// Process has been interrupted by the user
-		}
-	}
+    /**
+     * Convenience method to execute the <code>regmerge</code> tool 
+     * on a given file.
+     * 
+     * @param pFile the file to run <code>regmerge</code> on.
+     * @param pUnoprj the UNO project on which to run the <code>regmerge</code> tool
+     * @param pMonitor a progress monitor
+     */
+    static void runRegmergeOnFile(File pFile, IUnoidlProject pUnoprj, IProgressMonitor pMonitor) {
+        
+        // The registry file is placed in the root of the project as announced 
+        // to the api-dev mailing-list
+        IFile mergeFile = pUnoprj.getFile(pUnoprj.getTypesPath());
+        
+        String existingReg = ""; //$NON-NLS-1$
+        if (mergeFile.exists()) {
+            existingReg = mergeFile.getProjectRelativePath().toOSString() + " "; //$NON-NLS-1$
+        }
+        
+        String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
+                           existingReg + "\"" + pFile.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+        
+        // Process creation
+        Process process = pUnoprj.getSdk().runTool(pUnoprj, command, pMonitor);
+        
+        // Just wait for the process to end before destroying it
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            // Process has been interrupted by the user
+        }
+    }
 }

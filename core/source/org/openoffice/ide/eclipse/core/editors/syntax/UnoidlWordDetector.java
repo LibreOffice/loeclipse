@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlWordDetector.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/06/09 06:13:59 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -48,37 +48,24 @@ import org.eclipse.jface.text.rules.IWordDetector;
 /**
  * Basic rule to detect words in the text.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class UnoidlWordDetector implements IWordDetector {
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
-	 */
-	public boolean isWordStart(char c) {
-		boolean result = false;
-		
-	    if ((c >= 'a' && c <= 'z') || 
-	        (c == '.') ||
-	        (c >= 'A' && c <= 'Z')||
-	        (c == '_')){
-	    	
-	    	result = true;
-	    	
-	    }
-	    return result;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
-	 */
-	public boolean isWordPart(char c) {
-		boolean result = false;
-		
-	    if (isWordStart(c) || (c >= '0' && c <= '9')){
-	    	result = true;
-	    }
-	     
-	    return result;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isWordStart(char pChar) {
+        boolean isLower = pChar >= 'a' && pChar <= 'z';
+        boolean isUpper = pChar >= 'A' && pChar <= 'Z';
+        
+        return isLower || isUpper || (pChar == '.') || (pChar == '_');
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isWordPart(char pChar) {
+        return isWordStart(pChar) || (pChar >= '0' && pChar <= '9');
+    }
 }

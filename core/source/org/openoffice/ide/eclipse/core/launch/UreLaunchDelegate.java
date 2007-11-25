@@ -2,12 +2,12 @@
  *
  * $RCSfile: UreLaunchDelegate.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:06 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:32 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -59,46 +59,59 @@ import org.openoffice.ide.eclipse.core.builders.ServicesBuilder;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
+/**
+ * This class launches the URE application from its configuration.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class UreLaunchDelegate extends LaunchConfigurationDelegate {
 
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		
-		monitor.beginTask(MessageFormat.format("{0}...", new Object[]{configuration.getName()}), 3); //$NON-NLS-1$
-		// check for cancellation
-		if (monitor.isCanceled()) {
-			return;
-		}
-		
-		String prjName = configuration.getAttribute(
-				IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
-		String mainName = configuration.getAttribute(
-				IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
-		String args = configuration.getAttribute(
-				IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
-		
-		IUnoidlProject prj = ProjectsManager.getProject(prjName);
-		if (prj != null) {
-			
-			// creates the services.rdb file
-			Status status = ServicesBuilder.syncRun(prj, monitor);
-			
-			if (status.getSeverity() == IStatus.OK) {
-				// Run the URE Applicaton using IOOo.runUno()
-				prj.getOOo().runUno(prj, mainName, args, launch, monitor);
-			} else {
-				Display.getDefault().asyncExec(new Runnable(){
+    private static final int TASK_UNITS = 3;
 
-					public void run() {
-						MessageDialog.openError(Display.getDefault().getActiveShell(),
-								Messages.getString("UreLaunchDelegate.ErrorTitle"),  //$NON-NLS-1$
-								Messages.getString("UreLaunchDelegate.ErrorMessage")); //$NON-NLS-1$	
-					}
-				});
-			}
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void launch(ILaunchConfiguration pConfiguration, String pMode, 
+            ILaunch pLaunch, IProgressMonitor pMonitor) throws CoreException {
+        
+        if (pMonitor == null) {
+            pMonitor = new NullProgressMonitor();
+        }
+        
+        pMonitor.beginTask(MessageFormat.format("{0}...", 
+                new Object[]{pConfiguration.getName()}), TASK_UNITS); //$NON-NLS-1$
+        // check for cancellation
+        if (pMonitor.isCanceled()) {
+            return;
+        }
+        
+        String prjName = pConfiguration.getAttribute(
+                IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+        String mainName = pConfiguration.getAttribute(
+                IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
+        String args = pConfiguration.getAttribute(
+                IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
+        
+        IUnoidlProject prj = ProjectsManager.getProject(prjName);
+        if (prj != null) {
+            
+            // creates the services.rdb file
+            Status status = ServicesBuilder.syncRun(prj, pMonitor);
+            
+            if (status.getSeverity() == IStatus.OK) {
+                // Run the URE Applicaton using IOOo.runUno()
+                prj.getOOo().runUno(prj, mainName, args, pLaunch, pMonitor);
+            } else {
+                Display.getDefault().asyncExec(new Runnable() {
+
+                    public void run() {
+                        MessageDialog.openError(Display.getDefault().getActiveShell(),
+                                Messages.getString("UreLaunchDelegate.ErrorTitle"),  //$NON-NLS-1$
+                                Messages.getString("UreLaunchDelegate.ErrorMessage")); //$NON-NLS-1$    
+                    }
+                });
+            }
+        }
+    }
 }

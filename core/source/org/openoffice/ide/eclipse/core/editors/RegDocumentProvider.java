@@ -2,12 +2,12 @@
  *
  * $RCSfile: RegDocumentProvider.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -68,89 +68,86 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  *
  */
 public class RegDocumentProvider extends FileDocumentProvider {
-	
-	/**
-	 * Default constructor
-	 */
-	public RegDocumentProvider() {
-		super();
-	}
+    
+    /**
+     * Default constructor.
+     */
+    public RegDocumentProvider() {
+        super();
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
-	 */
-	protected IDocument createDocument(Object element) throws CoreException {
-		// create a document from the output of the regview execution
-		
-		IDocument document = new Document(Messages.getString("RegDocumentProvider.DocumentCreationError"));  //$NON-NLS-1$
-		
-		if (element instanceof IFileEditorInput){
-		
-			IFile file = ((IFileEditorInput)element).getFile();
-			IUnoidlProject unoproject = ProjectsManager.getProject(
-					file.getProject().getName());
-			
-			// Try to run regview on the file
-		
-			String command = "regview " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
-					
-			Process process = unoproject.getSdk().runTool(unoproject, command, null);
-						
-			// Get the process ouput to fill the document with
-			InputStreamReader in = new InputStreamReader(process.getInputStream());
-			LineNumberReader reader = new LineNumberReader(in);
-			
-			try {
-				String output = ""; //$NON-NLS-1$
-				String tmpLine = reader.readLine();
-				
-				while (null != tmpLine){
-					// The two first lines of the output are not interesting 
-					
-					if (reader.getLineNumber() > 2){
-						output = output + tmpLine + "\r\n"; //$NON-NLS-1$
-					}
-					tmpLine = reader.readLine();
-				}
-				
-				document = new Document(output);
-				
-			} catch (IOException e){ 
-				document = new Document(Messages.getString("RegDocumentProvider.RegviewError")); //$NON-NLS-1$
-				
-				// Do not forget to destroy the process, even after an error 
-				process.destroy();
-			} finally {
-				try {
-					reader.close();
-					in.close();
-				} catch (IOException e) {}
-			}
-		}
-			
-		return document;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected IDocument createDocument(Object pElement) throws CoreException {
+        // create a document from the output of the regview execution
+        
+        IDocument document = new Document(
+                Messages.getString("RegDocumentProvider.DocumentCreationError"));  //$NON-NLS-1$
+        
+        if (pElement instanceof IFileEditorInput) {
+        
+            IFile file = ((IFileEditorInput)pElement).getFile();
+            IUnoidlProject unoproject = ProjectsManager.getProject(
+                    file.getProject().getName());
+            
+            // Try to run regview on the file
+        
+            String command = "regview " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
+                    
+            Process process = unoproject.getSdk().runTool(unoproject, command, null);
+                        
+            // Get the process ouput to fill the document with
+            InputStreamReader in = new InputStreamReader(process.getInputStream());
+            LineNumberReader reader = new LineNumberReader(in);
+            
+            try {
+                String output = ""; //$NON-NLS-1$
+                String tmpLine = reader.readLine();
+                
+                while (null != tmpLine) {
+                    // The two first lines of the output are not interesting 
+                    
+                    if (reader.getLineNumber() > 2) {
+                        output = output + tmpLine + "\r\n"; //$NON-NLS-1$
+                    }
+                    tmpLine = reader.readLine();
+                }
+                
+                document = new Document(output);
+                
+            } catch (IOException e) { 
+                document = new Document(Messages.getString("RegDocumentProvider.RegviewError")); //$NON-NLS-1$
+                
+                // Do not forget to destroy the process, even after an error 
+                process.destroy();
+            } finally {
+                try {
+                    reader.close();
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+            
+        return document;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createAnnotationModel(java.lang.Object)
-	 */
-	protected IAnnotationModel createAnnotationModel(Object element)
-			throws CoreException {
-		
-		// there is no need of an annotation model here
-		
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected IAnnotationModel createAnnotationModel(Object pElement) throws CoreException {
+        
+        // there is no need of an annotation model here
+        return null;
+    }
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSaveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
-	 */
-	protected void doSaveDocument(IProgressMonitor monitor, Object element,
-			IDocument document, boolean overwrite) throws CoreException {
-		
-		// This kind of document cannot be edited, nor saved
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected void doSaveDocument(IProgressMonitor pMonitor, Object pElement,
+            IDocument pDocument, boolean pOverwrite) throws CoreException {
+        
+        // This kind of document cannot be edited, nor saved
+    }
 }

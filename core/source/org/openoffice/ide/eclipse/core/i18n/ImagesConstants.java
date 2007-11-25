@@ -2,12 +2,12 @@
  *
  * $RCSfile: ImagesConstants.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/08 08:09:13 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -47,35 +47,35 @@ package org.openoffice.ide.eclipse.core.i18n;
  * Defines the keys to use for images internationalization. The default file name
  * is defined in the <code>ImageManager.properties</code> file 
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class ImagesConstants {
 
-	public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE"; //$NON-NLS-1$
-	public static final String OOO_DIALOG_IMAGE = "OOO_DIALOG_IMAGE"; //$NON-NLS-1$
-	public static final String ERROR = "ERROR"; //$NON-NLS-1$
-	public static final String UNO_PROJECT = "UNO_PROJECT"; //$NON-NLS-1$
-	public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ"; //$NON-NLS-1$
-	public static final String NEWFILE_WIZ = "NEWFILE_WIZ"; //$NON-NLS-1$
-	public static final String NEW_SERVICE_IMAGE = "NEW_SERVICE_IMAGE"; //$NON-NLS-1$
-	public static final String CHECKED = "CHECKED"; //$NON-NLS-1$
-	public static final String UNCHECKED = "UNCHECKED"; //$NON-NLS-1$
-	public static final String SERVICE = "SERVICE"; //$NON-NLS-1$
-	public static final String INTERFACE = "INTERFACE"; //$NON-NLS-1$
-	public static final String ABOUT_BANNER = "ABOUT_BANNER"; //$NON-NLS-1$
-	public static final String NEW_INTERFACE_IMAGE = "NEW_INTERFACE_IMAGE"; //$NON-NLS-1$
-	public static final String URE_APP = "URE_APP"; //$NON-NLS-1$
-	public static final String ATTRIBUTE = "ATTRIBUTE"; //$NON-NLS-1$
-	public static final String METHOD = "METHOD"; //$NON-NLS-1$
-	public static final String STRUCT = "STRUCT"; //$NON-NLS-1$
-	public static final String ENUM = "ENUM"; //$NON-NLS-1$
-	public static final String EXCEPTION = "EXCEPTION"; //$NON-NLS-1$
-	public static final String CONSTANTS = "CONSTANTS"; //$NON-NLS-1$
-	public static final String TYPEDEF = "TYPEDEF"; //$NON-NLS-1$
-	public static final String PRJ_MODIFIER = "PRJ_MODIFIER"; //$NON-NLS-1$
-	public static final String DB_MODIFIER = "DB_MODIFIER"; //$NON-NLS-1$
-	public static final String IDL_MODIFIER = "IDL_MODIFIER"; //$NON-NLS-1$
-	public static final String PACKAGE_EXPORT_WIZ = "PACKAGE_EXPORT_WIZ"; //$NON-NLS-1$
-	public static final String URE_APP_WIZ = "URE_APP_WIZ"; //$NON-NLS-1$
+    public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE"; //$NON-NLS-1$
+    public static final String OOO_DIALOG_IMAGE = "OOO_DIALOG_IMAGE"; //$NON-NLS-1$
+    public static final String ERROR = "ERROR"; //$NON-NLS-1$
+    public static final String UNO_PROJECT = "UNO_PROJECT"; //$NON-NLS-1$
+    public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ"; //$NON-NLS-1$
+    public static final String NEWFILE_WIZ = "NEWFILE_WIZ"; //$NON-NLS-1$
+    public static final String NEW_SERVICE_IMAGE = "NEW_SERVICE_IMAGE"; //$NON-NLS-1$
+    public static final String CHECKED = "CHECKED"; //$NON-NLS-1$
+    public static final String UNCHECKED = "UNCHECKED"; //$NON-NLS-1$
+    public static final String SERVICE = "SERVICE"; //$NON-NLS-1$
+    public static final String INTERFACE = "INTERFACE"; //$NON-NLS-1$
+    public static final String ABOUT_BANNER = "ABOUT_BANNER"; //$NON-NLS-1$
+    public static final String NEW_INTERFACE_IMAGE = "NEW_INTERFACE_IMAGE"; //$NON-NLS-1$
+    public static final String URE_APP = "URE_APP"; //$NON-NLS-1$
+    public static final String ATTRIBUTE = "ATTRIBUTE"; //$NON-NLS-1$
+    public static final String METHOD = "METHOD"; //$NON-NLS-1$
+    public static final String STRUCT = "STRUCT"; //$NON-NLS-1$
+    public static final String ENUM = "ENUM"; //$NON-NLS-1$
+    public static final String EXCEPTION = "EXCEPTION"; //$NON-NLS-1$
+    public static final String CONSTANTS = "CONSTANTS"; //$NON-NLS-1$
+    public static final String TYPEDEF = "TYPEDEF"; //$NON-NLS-1$
+    public static final String PRJ_MODIFIER = "PRJ_MODIFIER"; //$NON-NLS-1$
+    public static final String DB_MODIFIER = "DB_MODIFIER"; //$NON-NLS-1$
+    public static final String IDL_MODIFIER = "IDL_MODIFIER"; //$NON-NLS-1$
+    public static final String PACKAGE_EXPORT_WIZ = "PACKAGE_EXPORT_WIZ"; //$NON-NLS-1$
+    public static final String URE_APP_WIZ = "URE_APP_WIZ"; //$NON-NLS-1$
 }

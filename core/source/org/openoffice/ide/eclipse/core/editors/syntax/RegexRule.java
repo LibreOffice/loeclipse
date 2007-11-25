@@ -2,12 +2,12 @@
  *
  * $RCSfile: RegexRule.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -53,7 +53,7 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * A scanning rule matching a regular expression.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  */
 public class RegexRule implements IRule {
 
@@ -67,22 +67,21 @@ public class RegexRule implements IRule {
      * Constructor, initializing the token to return and the regex to
      * match.
      * 
-     * @param aRegex the regular expression to match
-     * @param aToken the token to associate
+     * @param pRegex the regular expression to match
+     * @param pToken the token to associate
      */
-    public RegexRule(String aRegex, IToken aToken){
-        mToken = aToken;
-        mRegex = aRegex;
+    public RegexRule(String pRegex, IToken pToken) {
+        mToken = pToken;
+        mRegex = pRegex;
     }
     
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
+    /**
+     * {@inheritDoc}
      */
-    public IToken evaluate(ICharacterScanner scanner) {
-    	mCharReadNb = 0;
+    public IToken evaluate(ICharacterScanner pScanner) {
+        mCharReadNb = 0;
         IToken result = Token.UNDEFINED;
-        mDelimiters = scanner.getLegalLineDelimiters();
+        mDelimiters = pScanner.getLegalLineDelimiters();
         
         // Reads the characters and test the pattern matching
         String line = new String();
@@ -90,69 +89,81 @@ public class RegexRule implements IRule {
         boolean matchingBegun = false;
         int c;
         
-         do {
-        	c = scanner.read();
+        do {
+            c = pScanner.read();
             line = line + new Character((char)c);
             mCharReadNb++;
             
-            if (!isEOL(c)){
-                if (Pattern.matches(mRegex, line)){
+            if (!isEOL(c)) {
+                if (Pattern.matches(mRegex, line)) {
                     matchingBegun = true;
                 } else {
-                	if (matchingBegun){
-                		matchingDone = true;
-                		scanner.unread(); // Unread the bad character
-                		result = mToken;
-                		line = line.substring(0, line.length()-2);
-                	}
+                    if (matchingBegun) {
+                        matchingDone = true;
+                        // Unread the bad character
+                        pScanner.unread();
+                        result = mToken;
+                        line = line.substring(0, line.length() - 2);
+                    }
                 }
             } else {
-            	if (matchingBegun){
-            		matchingDone = true;
-            		result = mToken;
-                	//scanner.unread();
-            	}
+                if (matchingBegun) {
+                    matchingDone = true;
+                    result = mToken;
+                    //scanner.unread();
+                }
             }
-        }while (!isEOL(c) && !matchingDone);
+        } while (!isEOL(c) && !matchingDone);
         
         // Unread all the line except the first character if the line is not valid
-        if (result != mToken){
-	        for (int i=0; i<mCharReadNb; i++){
-	            scanner.unread();
-	        }
+        if (result != mToken) {
+            for (int i = 0; i < mCharReadNb; i++) {
+                pScanner.unread();
+            }
         }
         
         return result;
     }
   
     /**
-     * Returns the associated token
+     * @return the associated token.
      */
-    protected IToken getToken(){
-    	return mToken;
+    protected IToken getToken() {
+        return mToken;
     }
     
     /**
      * Convenience method to determine if a character corresponds to an end
      * of line.
+     * 
+     * @param pChar the character to check
+     * 
+     * @return <code>true</code> if the character is an end of line,
+     *      <code>false</code> otherwise.
      */
-    protected boolean isEOL (int c){
- 
-        for (int i= 0; i < mDelimiters.length; i++) {
-			if (c == mDelimiters[i][0] || isEOF(c)) {
-				return true;
-			}
-		}
-        return false;
+    protected boolean isEOL (int pChar) {
+        boolean isEol = false;
+        
+        for (int i = 0; i < mDelimiters.length; i++) {
+            if (pChar == mDelimiters[i][0] || isEOF(pChar)) {
+                isEol = true;
+            }
+        }
+        return isEol;
     }
     
     /**
      * Convenience method to determine if a character corresponds to an end
      * of file.
+     * 
+     * @param pChar the character to check
+     * 
+     * @return <code>true</code> if the character is an end of file,
+     *      <code>false</code> otherwise.
      */
-    protected boolean isEOF (int c){
+    protected boolean isEOF (int pChar) {
         boolean result = false;
-        if (ICharacterScanner.EOF == c){
+        if (ICharacterScanner.EOF == pChar) {
             result = true;
         }
         return result;

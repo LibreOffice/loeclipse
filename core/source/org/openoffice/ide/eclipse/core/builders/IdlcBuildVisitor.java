@@ -2,12 +2,12 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:05 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -57,55 +57,53 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  * Class visiting each child of the idl folder to generate the corresponding
  * <code>urd</code> file.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class IdlcBuildVisitor implements IResourceVisitor {
-	
-	private IProgressMonitor mProgressMonitor;
-	
-	/**
-	 * Default constructor
-	 * 
-	 * @param monitor progress monitor
-	 */
-	public IdlcBuildVisitor(IProgressMonitor monitor) {
-		mProgressMonitor = monitor;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
-	 */
-	public boolean visit(IResource resource) throws CoreException {
-		
-		boolean visitChildren = false;
-		if (TypesBuilder.sBuildState == 1) {
-			if (IResource.FILE == resource.getType()){
+    
+    private IProgressMonitor mProgressMonitor;
+    
+    /**
+     * Default constructor.
+     * 
+     * @param pMonitor progress monitor
+     */
+    public IdlcBuildVisitor(IProgressMonitor pMonitor) {
+        mProgressMonitor = pMonitor;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean visit(IResource pResource) throws CoreException {
+        
+        boolean visitChildren = false;
+        if (TypesBuilder.sBuildState == 1) {
+            if (IResource.FILE == pResource.getType() &&
+                    pResource.getFileExtension().equals("idl")) { //$NON-NLS-1$
 
-				// Try to compile the file if it is an idl file
-				if (resource.getFileExtension().equals("idl")){ //$NON-NLS-1$
+                TypesBuilder.runIdlcOnFile((IFile)pResource, mProgressMonitor);
+                if (mProgressMonitor != null) {
+                    mProgressMonitor.worked(1);
+                }
 
-					TypesBuilder.runIdlcOnFile((IFile)resource, mProgressMonitor);
-					if (mProgressMonitor != null) mProgressMonitor.worked(1);
-				}
+            } else if (pResource instanceof IContainer) {
 
-			} else if (resource instanceof IContainer){
+                IUnoidlProject project = ProjectsManager.getProject(
+                        pResource.getProject().getName());
+                IPath resPath = pResource.getProjectRelativePath();
+                IPath idlPath = project.getIdlPath();
 
-				IUnoidlProject project = ProjectsManager.getProject(
-						resource.getProject().getName());
-				IPath resPath = resource.getProjectRelativePath();
-				IPath idlPath = project.getIdlPath();
+                if (resPath.segmentCount() < idlPath.segmentCount() ||
+                        resPath.toString().startsWith(idlPath.toString())) {
+                    visitChildren = true;
+                }
+            }
 
-				if (resPath.segmentCount() < idlPath.segmentCount() ||
-						resPath.toString().startsWith(idlPath.toString())){
-					visitChildren = true;
-				}
-			}
-
-			// cleaning
-			mProgressMonitor = null;
-		}
-		return visitChildren;
-	}
+            // cleaning
+            mProgressMonitor = null;
+        }
+        return visitChildren;
+    }
 }

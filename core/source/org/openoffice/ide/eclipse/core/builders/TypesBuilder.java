@@ -2,12 +2,12 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.12 $
+ * $Revision: 1.13 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/10/11 18:06:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -63,7 +63,6 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
@@ -72,9 +71,10 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
  * to split the work, the different tasks have been split into several builders:
  *   <ul>
  *     <li>{@link RegmergeBuilder} merging the urd files into the types 
- *     	   registry</li>
- *     <li>{@link ILanguageBuilder#generateFromTypes(ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, IProject, File, File, String, IProgressMonitor)}
- *     	   generating the language specific type files</li>
+ *            registry</li>
+ *     <li>{@link ILanguageBuilder#generateFromTypes(
+ *          ISdk, org.openoffice.ide.eclipse.core.preferences.IOOo, IProject, File, File, String, IProgressMonitor)}
+ *            generating the language specific type files</li>
  *   </ul>
  * </p>
  * 
@@ -83,193 +83,210 @@ import org.openoffice.ide.eclipse.core.preferences.ISdk;
  */
 public class TypesBuilder extends IncrementalProjectBuilder {
 
-	/**
-	 * The builder ID as set in the <code>plugin.xml</code> file
-	 */
-	public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".types"; //$NON-NLS-1$
-	
-	private boolean changedIdl = false;
-	static int sBuildState = -1;
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-			throws CoreException {
-		
-		changedIdl = false;
-		
-		if (sBuildState < 0) {
-			IResourceDelta delta = getDelta(getProject());
-			if (delta != null) {
-				delta.accept(new IResourceDeltaVisitor() {
-					public boolean visit(IResourceDelta delta) throws CoreException {
+    /**
+     * The builder ID as set in the <code>plugin.xml</code> file.
+     */
+    public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".types"; //$NON-NLS-1$
+    
+    public static final int IDLC_STATE = 1;
 
-						boolean visitChildren = false;
+    public static final int REGMERGE_STATE = 2;
 
-						IProject prj = getProject();
-						IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
-						IPath idlPath = unoprj.getIdlPath();
-						IPath resPath = delta.getResource().getProjectRelativePath();
+    public static final int GENERATE_TYPES_STATE = 3;
 
-						if (delta.getResource() instanceof IContainer && 
-								resPath.segmentCount() < idlPath.segmentCount()) {
-							visitChildren = true;
-						} else if (delta.getResource() instanceof IContainer && 
-								resPath.toString().startsWith(idlPath.toString())) {
-							visitChildren = true;
-						} else if (delta.getResource() instanceof IFile) {
-							if (resPath.getFileExtension().equals("idl")) { //$NON-NLS-1$
-								visitChildren = false;
-								changedIdl = true;
-							} else if (resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
-								sBuildState = 4;
-							}
-						}
-						return visitChildren;
-					}
-				});
-			} else {
-				changedIdl = true;
-			}
+    public static final int COMPLETED_STATE = 4;
 
-			if (changedIdl && sBuildState < 0) {
-				try {
-					build(getProject(), monitor);
-				} catch (Exception e) {
-					sBuildState = -1;
-					CoreException thrown = new CoreException(new Status(
-							Status.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-							"Error during UNO types build", e));
-					if (!(e instanceof CoreException)) {
-						thrown = (CoreException)e;
-					}
-					throw thrown;
-				}
-				sBuildState = -1;
-			} else if (sBuildState == 4) {
-				sBuildState = -1;
-			}
-		}
-		
-		return null;
-	}
-	
-	public static void build(IProject prj, IProgressMonitor monitor) 
-			throws Exception {
+    public static final int NOT_STARTED_STATE = -1;
+    
+    static int sBuildState = NOT_STARTED_STATE;
+    
+    private boolean mChangedIdl = false;
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected IProject[] build(int pKind, Map pArgs, IProgressMonitor pMonitor) throws CoreException {
+        
+        mChangedIdl = false;
+        
+        if (sBuildState < 0) {
+            IResourceDelta delta = getDelta(getProject());
+            if (delta != null) {
+                delta.accept(new IResourceDeltaVisitor() {
+                    public boolean visit(IResourceDelta pDelta) throws CoreException {
 
-		IUnoidlProject unoprj = ProjectsManager.getProject(
-				prj.getName());
-		
-		// Clears the registries before beginning
-		sBuildState = 1;
-		removeAllRegistries(prj);
-		buildIdl(unoprj, monitor);
-		
-		sBuildState = 2;
-		RegmergeBuilder.build(unoprj, monitor);
-		
-		sBuildState = 3;
-		File types = prj.getLocation().append(unoprj.getTypesPath()).toFile();
-		File build = prj.getLocation().append(unoprj.getBuildPath()).toFile();
-		
-		unoprj.getLanguage().getLanguageBuidler().generateFromTypes(
-				unoprj.getSdk(),
-				unoprj.getOOo(),
-				prj,
-				types, build,
-				unoprj.getRootModule(), monitor);
-		
-		prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		sBuildState = -1;
-	}
-	
-	/**
-	 * Removes all the registries, ie <code>.urd</code> and 
-	 * <code>types.rdb</code> files.
-	 * 
-	 * @param unoproject the Uno project from which to remove the registries
-	 */
-	private static void removeAllRegistries(IProject prj) {
-		
-		IUnoidlProject unoprj = ProjectsManager.getProject(
-				prj.getName());
-		
-		try {
-			IPath rdbPath = unoprj.getTypesPath();
-			IFile rdbFile = prj.getFile(rdbPath);
-			if (rdbFile.exists()) {
-				rdbFile.delete(true, null);
-			}
-			
-			IPath urdPath = unoprj.getUrdPath();
-			IFolder urdFolder = prj.getFolder(urdPath);
-			IResource[] members = urdFolder.members();
-			
-			for (int i=0, length=members.length; i<length; i++) {
-				IResource resi = members[i];
-				if (resi.exists()) {
-					resi.delete(true, null);
-				}
-			}
-			
-		} catch (CoreException e) {
-			PluginLogger.debug(e.getMessage());
-		}
-	}
-	
-	/**
-	 * Runs the idl files compilation
-	 * 
-	 * @param project the uno project to build
-	 * @param monitor a monitor to watch the progress
-	 * @throws Exception if anything wrong happened
-	 */
-	public static void buildIdl(IUnoidlProject project, IProgressMonitor monitor)
-			throws Exception {
-		
-		// compile each idl file
-		IFolder idlFolder = project.getFolder(
-				project.getRootModulePath());
-		idlFolder.accept(new IdlcBuildVisitor(monitor));
-	}
-	
-	/**
-	 * Convenience method to execute the <code>idlc</code> tool on a given
-	 * file.
-	 * 
-	 * @param file the file to run <code>idlc</code> on.
-	 * @param monitor a progress monitor
-	 */
-	static void runIdlcOnFile(IFile file, IProgressMonitor monitor){
-		
-		IUnoidlProject project = ProjectsManager.getProject(file.getProject().getName());
-		
-		ISdk sdk = project.getSdk();
-		
-		if (null != sdk){
-			
-			// Get local references to the SDK used members
-			String sdkHome = sdk.getHome();
-			
-			Path sdkPath = new Path(sdkHome);
-			int segmentCount = project.getIdlPath().segmentCount();
-			
-			IPath outputLocation = project.getUrdPath().append(
-					file.getProjectRelativePath().removeLastSegments(1).
-					removeFirstSegments(segmentCount));
-			
-			String command = "idlc -O \"" + outputLocation.toOSString() + "\"" + //$NON-NLS-1$
-				" -I \"" + sdkPath.append("idl").toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
-				" -I \"" + project.getIdlPath().toOSString() + "\"" +  //$NON-NLS-1$
-				" " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
-			
-			Process process = project.getSdk().runTool(project, command, monitor);
-			
-			IdlcErrorReader errorReader = new IdlcErrorReader(
-					process.getErrorStream(), file);
-			errorReader.readErrors();
-		}
-	}
+                        boolean visitChildren = false;
+
+                        IProject prj = getProject();
+                        IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+                        IPath idlPath = unoprj.getIdlPath();
+                        IPath resPath = pDelta.getResource().getProjectRelativePath();
+
+                        if (pDelta.getResource() instanceof IContainer && 
+                                resPath.segmentCount() < idlPath.segmentCount()) {
+                            visitChildren = true;
+                        } else if (pDelta.getResource() instanceof IContainer && 
+                                resPath.toString().startsWith(idlPath.toString())) {
+                            visitChildren = true;
+                        } else {
+                            if ((pDelta.getResource() instanceof IFile) && 
+                                    resPath.getFileExtension().equals("idl")) { //$NON-NLS-1$
+                                visitChildren = false;
+                                mChangedIdl = true;
+                            } else if ((pDelta.getResource() instanceof IFile) && 
+                                    resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
+                                sBuildState = COMPLETED_STATE;
+                            }
+                        }
+                        return visitChildren;
+                    }
+                });
+            } else {
+                mChangedIdl = true;
+            }
+
+            if (mChangedIdl && sBuildState < 0) {
+                try {
+                    build(getProject(), pMonitor);
+                } catch (Exception e) {
+                    sBuildState = NOT_STARTED_STATE;
+                    CoreException thrown = new CoreException(new Status(
+                            Status.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+                            "Error during UNO types build", e));
+                    if (!(e instanceof CoreException)) {
+                        thrown = (CoreException)e;
+                    }
+                    throw thrown;
+                }
+                sBuildState = NOT_STARTED_STATE;
+            } else if (sBuildState == COMPLETED_STATE) {
+                sBuildState = NOT_STARTED_STATE;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Build the types of a project.
+     * 
+     * @param pPrj the project to build
+     * @param pMonitor a monitor to report the build progress
+     * 
+     * @throws Exception if anything wrong happens during the build
+     */
+    public static void build(IProject pPrj, IProgressMonitor pMonitor) throws Exception {
+
+        IUnoidlProject unoprj = ProjectsManager.getProject(
+                pPrj.getName());
+        
+        // Clears the registries before beginning
+        sBuildState = IDLC_STATE;
+        removeAllRegistries(pPrj);
+        buildIdl(unoprj, pMonitor);
+        
+        sBuildState = REGMERGE_STATE;
+        RegmergeBuilder.build(unoprj, pMonitor);
+        
+        sBuildState = GENERATE_TYPES_STATE;
+        File types = pPrj.getLocation().append(unoprj.getTypesPath()).toFile();
+        File build = pPrj.getLocation().append(unoprj.getBuildPath()).toFile();
+        
+        unoprj.getLanguage().getLanguageBuidler().generateFromTypes(
+                unoprj.getSdk(),
+                unoprj.getOOo(),
+                pPrj,
+                types, build,
+                unoprj.getRootModule(), pMonitor);
+        
+        pPrj.refreshLocal(IResource.DEPTH_INFINITE, pMonitor);
+        sBuildState = NOT_STARTED_STATE;
+    }
+    
+    /**
+     * Removes all the registries, ie <code>.urd</code> and 
+     * <code>types.rdb</code> files.
+     * 
+     * @param pPrj the project from which to remove the registries
+     */
+    private static void removeAllRegistries(IProject pPrj) {
+        
+        IUnoidlProject unoprj = ProjectsManager.getProject(
+                pPrj.getName());
+        
+        try {
+            IPath rdbPath = unoprj.getTypesPath();
+            IFile rdbFile = pPrj.getFile(rdbPath);
+            if (rdbFile.exists()) {
+                rdbFile.delete(true, null);
+            }
+            
+            IPath urdPath = unoprj.getUrdPath();
+            IFolder urdFolder = pPrj.getFolder(urdPath);
+            IResource[] members = urdFolder.members();
+            
+            for (int i = 0, length = members.length; i < length; i++) {
+                IResource resi = members[i];
+                if (resi.exists()) {
+                    resi.delete(true, null);
+                }
+            }
+            
+        } catch (CoreException e) {
+            PluginLogger.debug(e.getMessage());
+        }
+    }
+    
+    /**
+     * Runs the idl files compilation.
+     * 
+     * @param pProject the uno project to build
+     * @param pMonitor a monitor to watch the progress
+     * @throws Exception if anything wrong happened
+     */
+    public static void buildIdl(IUnoidlProject pProject, IProgressMonitor pMonitor) throws Exception {
+        
+        // compile each idl file
+        IFolder idlFolder = pProject.getFolder(
+                pProject.getRootModulePath());
+        idlFolder.accept(new IdlcBuildVisitor(pMonitor));
+    }
+    
+    /**
+     * Convenience method to execute the <code>idlc</code> tool on a given
+     * file.
+     * 
+     * @param pFile the file to run <code>idlc</code> on.
+     * @param pMonitor a progress monitor
+     */
+    static void runIdlcOnFile(IFile pFile, IProgressMonitor pMonitor) {
+        
+        IUnoidlProject project = ProjectsManager.getProject(pFile.getProject().getName());
+        
+        ISdk sdk = project.getSdk();
+        
+        if (null != sdk) {
+            
+            // Get local references to the SDK used members
+            String sdkHome = sdk.getHome();
+            
+            Path sdkPath = new Path(sdkHome);
+            int segmentCount = project.getIdlPath().segmentCount();
+            
+            IPath outputLocation = project.getUrdPath().append(
+                    pFile.getProjectRelativePath().removeLastSegments(1).
+                    removeFirstSegments(segmentCount));
+            
+            String command = "idlc -O \"" + outputLocation.toOSString() + "\"" + //$NON-NLS-1$
+                " -I \"" + sdkPath.append("idl").toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
+                " -I \"" + project.getIdlPath().toOSString() + "\"" +  //$NON-NLS-1$
+                " " + pFile.getProjectRelativePath().toOSString();  //$NON-NLS-1$
+            
+            Process process = project.getSdk().runTool(project, command, pMonitor);
+            
+            IdlcErrorReader errorReader = new IdlcErrorReader(
+                    process.getErrorStream(), pFile);
+            errorReader.readErrors();
+        }
+    }
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoidlConfiguration.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:54 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors;
 
-import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
@@ -68,77 +67,58 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlScanner;
  * @author cbosdonnat
  */
 public class UnoidlConfiguration extends SourceViewerConfiguration {
-	
-	private UnoidlDoubleClickStrategy mDoubleClickStrategy;
-	private UnoidlScanner mScanner;
-	private UnoidlDocScanner mDocScanner;
-	private UnoidlPreprocessorScanner mPreprocScanner;
-	private ColorProvider mColorManager;
+    
+    private UnoidlDoubleClickStrategy mDoubleClickStrategy;
+    private UnoidlScanner mScanner;
+    private UnoidlDocScanner mDocScanner;
+    private UnoidlPreprocessorScanner mPreprocScanner;
+    private ColorProvider mColorManager;
 
-	/**
-	 * Default constructor using a color manager.
-	 * @param colorManager the color manager to colorize the syntax elements
-	 */
-	public UnoidlConfiguration(ColorProvider colorManager) {
-		this.mColorManager = colorManager;
-	}
-	
-	//----------------------------------------- Text editing facilities support
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
-	public ITextDoubleClickStrategy getDoubleClickStrategy(
-		ISourceViewer sourceViewer,
-		String contentType) {
-		if (mDoubleClickStrategy == null)
-			mDoubleClickStrategy = new UnoidlDoubleClickStrategy();
-		return mDoubleClickStrategy;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
-	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer,
-											String contentType) {
-		
-		// TODO Add here the IAutoEditStrategies to manage:
-		//   - Automatic indentation
-		//   - Automatic bracket closing
-		//   - Automatic comment closing
-		
-		return super.getAutoEditStrategies(sourceViewer, contentType);
-	}
+    /**
+     * Default constructor using a color manager.
+     * @param pColorManager the color manager to colorize the syntax elements
+     */
+    public UnoidlConfiguration(ColorProvider pColorManager) {
+        this.mColorManager = pColorManager;
+    }
+    
+    //----------------------------------------- Text editing facilities support
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ITextDoubleClickStrategy getDoubleClickStrategy( ISourceViewer pSourceViewer, String pContentType) {
+        if (mDoubleClickStrategy == null) {
+            mDoubleClickStrategy = new UnoidlDoubleClickStrategy();
+        }
+        return mDoubleClickStrategy;
+    }
 
-	//--------------------------------------------- Syntax highlighting support
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
-	 */
-	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] {
-			UnoidlPartitionScanner.IDL_AUTOCOMMENT,
-			UnoidlPartitionScanner.IDL_COMMENT,
-			UnoidlPartitionScanner.IDL_PREPROCESSOR};
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
-	 */
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		PresentationReconciler reconciler = new PresentationReconciler();
-		
-		// Scans the AutoDoc comments
-		DefaultDamagerRepairer drAC = new DefaultDamagerRepairer(getDocScanner());
-		reconciler.setDamager(drAC, UnoidlPartitionScanner.IDL_AUTOCOMMENT);
-		reconciler.setRepairer(drAC, UnoidlPartitionScanner.IDL_AUTOCOMMENT);
+    //--------------------------------------------- Syntax highlighting support
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getConfiguredContentTypes(ISourceViewer pSourceViewer) {
+        return new String[] {
+            UnoidlPartitionScanner.IDL_AUTOCOMMENT,
+            UnoidlPartitionScanner.IDL_COMMENT,
+            UnoidlPartitionScanner.IDL_PREPROCESSOR};
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IPresentationReconciler getPresentationReconciler(ISourceViewer pSourceViewer) {
+        PresentationReconciler reconciler = new PresentationReconciler();
+        
+        // Scans the AutoDoc comments
+        DefaultDamagerRepairer drAC = new DefaultDamagerRepairer(getDocScanner());
+        reconciler.setDamager(drAC, UnoidlPartitionScanner.IDL_AUTOCOMMENT);
+        reconciler.setRepairer(drAC, UnoidlPartitionScanner.IDL_AUTOCOMMENT);
 
-		// Affects a Damager repairer for IDL_COMMENT sections
-		NonRuleBasedDamagerRepairer ndr =
+        // Affects a Damager repairer for IDL_COMMENT sections
+        NonRuleBasedDamagerRepairer ndr =
             new NonRuleBasedDamagerRepairer(
                 new TextAttribute(
                     mColorManager.getColor(Colors.C_COMMENT)));
@@ -147,58 +127,58 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
         reconciler.setRepairer(ndr, UnoidlPartitionScanner.IDL_COMMENT);
         
         // Scans the code for more precise syntax highlighting
-		DefaultDamagerRepairer drCode =
-			new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(drCode, IDocument.DEFAULT_CONTENT_TYPE);
-		reconciler.setRepairer(drCode, IDocument.DEFAULT_CONTENT_TYPE);
-		
-		DefaultDamagerRepairer drPreproc = new DefaultDamagerRepairer(getPreprocScanner());
-		reconciler.setDamager(drPreproc, UnoidlPartitionScanner.IDL_PREPROCESSOR);
-		reconciler.setRepairer(drPreproc, UnoidlPartitionScanner.IDL_PREPROCESSOR);
+        DefaultDamagerRepairer drCode =
+            new DefaultDamagerRepairer(getCodeScanner());
+        reconciler.setDamager(drCode, IDocument.DEFAULT_CONTENT_TYPE);
+        reconciler.setRepairer(drCode, IDocument.DEFAULT_CONTENT_TYPE);
+        
+        DefaultDamagerRepairer drPreproc = new DefaultDamagerRepairer(getPreprocScanner());
+        reconciler.setDamager(drPreproc, UnoidlPartitionScanner.IDL_PREPROCESSOR);
+        reconciler.setRepairer(drPreproc, UnoidlPartitionScanner.IDL_PREPROCESSOR);
 
-		return reconciler;
-	}
-	
-	/**
-	 * Creates the code scanner if it's not already created.
-	 */
-	protected UnoidlScanner getCodeScanner() {
-		if (mScanner == null) {
-			mScanner = new UnoidlScanner(mColorManager);
-			mScanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-						mColorManager.getColor(Colors.C_TEXT))));
-		}
-		return mScanner;
-	}
-	
-	/**
-	 * Return the comments scanner if it's not already created
-	 */
-	protected UnoidlDocScanner getDocScanner(){
-		if (mDocScanner == null) {
-			mDocScanner = new UnoidlDocScanner(mColorManager);
-			mDocScanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-						mColorManager.getColor(Colors.C_AUTODOC_COMMENT))));
-		}
-		return mDocScanner;
-	}
-	
-	/**
-	 * Returns the preprocessor instruction scanner if it's not already
-	 * created.
-	 */
-	protected UnoidlPreprocessorScanner getPreprocScanner(){
-		if (mPreprocScanner == null) {
-			mPreprocScanner = new UnoidlPreprocessorScanner(mColorManager);
-			mPreprocScanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(
-						mColorManager.getColor(Colors.C_PREPROCESSOR))));
-		}
-		return mPreprocScanner;
-	}
+        return reconciler;
+    }
+    
+    /**
+     * @return the code scanner if it's not already created
+     */
+    protected UnoidlScanner getCodeScanner() {
+        if (mScanner == null) {
+            mScanner = new UnoidlScanner(mColorManager);
+            mScanner.setDefaultReturnToken(
+                new Token(
+                    new TextAttribute(
+                        mColorManager.getColor(Colors.C_TEXT))));
+        }
+        return mScanner;
+    }
+    
+    /**
+     * @return the comments scanner if it's not already created
+     */
+    protected UnoidlDocScanner getDocScanner() {
+        if (mDocScanner == null) {
+            mDocScanner = new UnoidlDocScanner(mColorManager);
+            mDocScanner.setDefaultReturnToken(
+                new Token(
+                    new TextAttribute(
+                        mColorManager.getColor(Colors.C_AUTODOC_COMMENT))));
+        }
+        return mDocScanner;
+    }
+    
+    /**
+     * @return the preprocessor instruction scanner if it's not already
+     *          created.
+     */
+    protected UnoidlPreprocessorScanner getPreprocScanner() {
+        if (mPreprocScanner == null) {
+            mPreprocScanner = new UnoidlPreprocessorScanner(mColorManager);
+            mPreprocScanner.setDefaultReturnToken(
+                new Token(
+                    new TextAttribute(
+                        mColorManager.getColor(Colors.C_PREPROCESSOR))));
+        }
+        return mPreprocScanner;
+    }
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: UnoFactoryData.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/02/04 18:17:03 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -55,86 +55,95 @@ import java.util.Vector;
  */
 public class UnoFactoryData {
 
-	private HashMap<String, Object> mProperties = new HashMap<String, Object>();
-	private Vector<UnoFactoryData> mInnerData = new Vector<UnoFactoryData>();
-	
-	/**
-	 * Add or replace the property value associated with the key. Nothing
-	 * happens if the key is <code>null</code> or an empty string. 
-	 */
-	public void setProperty(String key, Object value) {
-		if (key != null && !key.equals("")) { //$NON-NLS-1$
-			mProperties.put(key, value);
-		}
-	}
-	
-	/**
-	 * @return the property corresponding to the key or <code>null</code> if
-	 * 	the key is null or an empty string or if there is such a key.
-	 */
-	public Object getProperty(String key) {
-		Object result = null;
-		if (key != null && !key.equals("")) { //$NON-NLS-1$
-			result = mProperties.get(key);
-		}
-		return result;
-	}
-	
-	/**
-	 * @return an array of all the contained property keys
-	 */
-	public String[] getKeys() {
-		Object[] aKeys = mProperties.keySet().toArray();
-		String[] sKeys = new String[aKeys.length];
-		for (int i=0; i<aKeys.length; i++) {
-			sKeys[i] = (String)aKeys[i];
-		}
-		return sKeys;
-	}
-	
-	/**
-	 * @return an array of all the data contained by this data.
-	 */
-	public UnoFactoryData[] getInnerData() {
-		UnoFactoryData[] data = new UnoFactoryData[mInnerData.size()];
-		for (int i=0, length=mInnerData.size(); i<length; i++) {
-			data[i] = mInnerData.get(i);
-		}
-		return data;
-	}
-	
-	/**
-	 * Adds an inner data if it is neither <code>null</code> nor already
-	 * present in the inner data
-	 */
-	public void addInnerData(UnoFactoryData data) {
-		if (data != null && !mInnerData.contains(data)) {
-			mInnerData.add(data);
-		}
-	}
-	
-	/**
-	 * Removes an inner data if it isn't <code>null</code> and already
-	 * present in the inner data
-	 */
-	public void removeInnerData(UnoFactoryData data) {
-		if (data != null && mInnerData.contains(data)) {
-			mInnerData.remove(data);
-		}
-	}
-	
-	/**
-	 * Destroy the data content before being garbage collected
-	 */
-	public void dispose() {
-		
-		for (int i=0, length=mInnerData.size(); i<length; i++) {
-			mInnerData.get(i).dispose();
-		}
-		mInnerData.clear();
-		mInnerData = null;
-		
-		mProperties.clear();
-		mProperties = null;
-	}
+    private HashMap<String, Object> mProperties = new HashMap<String, Object>();
+    private Vector<UnoFactoryData> mInnerData = new Vector<UnoFactoryData>();
+    
+    /**
+     * Add or replace the property value associated with the key. Nothing
+     * happens if the key is <code>null</code> or an empty string. 
+     * 
+     * @param pKey the name of the property
+     * @param pValue the value of the property
+     */
+    public void setProperty(String pKey, Object pValue) {
+        if (pKey != null && !pKey.equals("")) { //$NON-NLS-1$
+            mProperties.put(pKey, pValue);
+        }
+    }
+    
+    /**
+     * @param pKey the key of the property to get.
+     * 
+     * @return the property corresponding to the key or <code>null</code> if
+     *     the key is null or an empty string or if there is such a key.
+     */
+    public Object getProperty(String pKey) {
+        Object result = null;
+        if (pKey != null && !pKey.equals("")) { //$NON-NLS-1$
+            result = mProperties.get(pKey);
+        }
+        return result;
+    }
+    
+    /**
+     * @return an array of all the contained property keys
+     */
+    public String[] getKeys() {
+        Object[] aKeys = mProperties.keySet().toArray();
+        String[] sKeys = new String[aKeys.length];
+        for (int i = 0; i < aKeys.length; i++) {
+            sKeys[i] = (String)aKeys[i];
+        }
+        return sKeys;
+    }
+    
+    /**
+     * @return an array of all the data contained by this data.
+     */
+    public UnoFactoryData[] getInnerData() {
+        UnoFactoryData[] data = new UnoFactoryData[mInnerData.size()];
+        for (int i = 0, length = mInnerData.size(); i < length; i++) {
+            data[i] = mInnerData.get(i);
+        }
+        return data;
+    }
+    
+    /**
+     * Adds an inner data if it is neither <code>null</code> nor already
+     * present in the inner data.
+     * 
+     * @param pData the data to add
+     */
+    public void addInnerData(UnoFactoryData pData) {
+        if (pData != null && !mInnerData.contains(pData)) {
+            mInnerData.add(pData);
+        }
+    }
+    
+    /**
+     * Removes an inner data if it isn't <code>null</code> and already
+     * present in the inner data.
+     * 
+     * @param pData the data to remove
+     */
+    public void removeInnerData(UnoFactoryData pData) {
+        if (pData != null && mInnerData.contains(pData)) {
+            mInnerData.remove(pData);
+        }
+    }
+    
+    /**
+     * Destroy the data content before being garbage collected.
+     */
+    public void dispose() {
+        
+        for (int i = 0, length = mInnerData.size(); i < length; i++) {
+            mInnerData.get(i).dispose();
+        }
+        mInnerData.clear();
+        mInnerData = null;
+        
+        mProperties.clear();
+        mProperties = null;
+    }
 }

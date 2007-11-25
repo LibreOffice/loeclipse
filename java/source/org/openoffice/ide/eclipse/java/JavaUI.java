@@ -2,12 +2,12 @@
  *
  * $RCSfile: JavaUI.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/11/11 18:39:34 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -47,13 +47,18 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
 import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 
+/**
+ * The language UI implementation for Java.
+ * 
+ * @author cedricbosdo
+ *
+ */
 public class JavaUI implements ILanguageUI {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openoffice.ide.eclipse.core.model.language.ILanguageUI#getWizardPage(org.openoffice.ide.eclipse.core.model.UnoFactoryData)
-	 */
-	public LanguageWizardPage getWizardPage(UnoFactoryData data) {
-		return new JavaWizardPage(data);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public LanguageWizardPage getWizardPage(UnoFactoryData pData) {
+        return new JavaWizardPage(pData);
+    }
 }

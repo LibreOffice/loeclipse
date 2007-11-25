@@ -2,12 +2,12 @@
  *
  * $RCSfile: IFileVisitor.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:20 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -47,19 +47,19 @@ import java.io.File;
 
 /**
  * A little tiny interface for a File visitor. This has to be used to avoid 
- * multiple and annoying project refresh operations trigerring unwanted changes. 
+ * multiple and annoying project refresh operations triggering unwanted changes. 
  * 
  * @author cedricbosdo
  *
  */
 public interface IFileVisitor {
-	
-	/**
-	 * Simply visit the file and return if the children should be visited.
-	 * 
-	 * @param file the file to visit
-	 * @return <code>true</code> if the children should be visited, 
-	 * 			<code>false</code> otherwise. This has no importance for files.
-	 */
-	public boolean visit(File file);
+    
+    /**
+     * Simply visit the file and return if the children should be visited.
+     * 
+     * @param pFile the file to visit
+     * @return <code>true</code> if the children should be visited, 
+     *             <code>false</code> otherwise. This has no importance for files.
+     */
+    public boolean visit(File pFile);
 }

@@ -2,12 +2,12 @@
  *
  * $RCSfile: MainPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/08/20 11:55:55 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
  *
  * The Contents of this file are made available subject to the terms of
- * either of the GNU Lesser General Public License Version 2.1
+ * the GNU Lesser General Public License Version 2.1
  *
  * Sun Microsystems Inc., October, 2000
  *
@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.openoffice.ide.eclipse.core.LogLevels;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
@@ -62,7 +63,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 /**
  * This preferences page defines plugin generic values like log level.
  * 
- * @author cbosdonnat
+ * @author cedricbosdo
  *
  */
 public class MainPage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -72,89 +73,87 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
 
     private ChoiceRow mLoglevel;
     
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+    /**
+     * {@inheritDoc}
      */
-	protected Control createContents(Composite parent) {
-		
-		Composite body = new Composite(parent, SWT.NONE);
-		body.setLayout(new GridLayout(2, false));
-		body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    protected Control createContents(Composite pParent) {
+        
+        Composite body = new Composite(pParent, SWT.NONE);
+        body.setLayout(new GridLayout(2, false));
+        body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         mLoglevel = new ChoiceRow(body, LOGLEVEL, 
                 Messages.getString("MainPage.LogLevel")); //$NON-NLS-1$
         mLoglevel.add(Messages.getString("MainPage.Error"), //$NON-NLS-1$
-                PluginLogger.ERROR);
+                LogLevels.ERROR.toString());
         mLoglevel.add(Messages.getString("MainPage.Warning"), //$NON-NLS-1$
-                PluginLogger.WARNING);
+                LogLevels.WARNING.toString());
         mLoglevel.add(Messages.getString("MainPage.Info"), //$NON-NLS-1$
-                PluginLogger.INFO);
+                LogLevels.INFO.toString());
         mLoglevel.add(Messages.getString("MainPage.Debug"), //$NON-NLS-1$
-                PluginLogger.DEBUG);
+                LogLevels.DEBUG.toString());
         
         IPreferenceStore store = getPreferenceStore();
         mLoglevel.select(store.getString(
-        		OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
+                OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
         mLoglevel.setFieldChangedListener(mListener);
             
-		return body;
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
-		
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#doGetPreferenceStore()
-	 */
-	protected IPreferenceStore doGetPreferenceStore() {
-		return OOEclipsePlugin.getDefault().getPreferenceStore();
-	}
-    
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-     */
-    public boolean performOk() {
-    	boolean result = super.performOk();
-    	
-    	IPreferenceStore store = getPreferenceStore();
-    	store.setValue(OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY, 
-    			mLoglevel.getValue());
-    	
-    	return result;
+        return body;
     }
-    
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+
+    /**
+     * {@inheritDoc}
      */
-    protected void performDefaults() {
-    	super.performDefaults();
-    	
-    	IPreferenceStore store = getPreferenceStore();
-    	mLoglevel.select(store.getDefaultString(
-    			OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
+    public void init(IWorkbench pWorkbench) {
+        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected IPreferenceStore doGetPreferenceStore() {
+        return OOEclipsePlugin.getDefault().getPreferenceStore();
     }
     
     /**
-	 * Listens to the log level changes and set the correct level to the
-	 * plugin logger.
-	 * 
-	 * @author cbosdonnat
-	 */
+     * {@inheritDoc}
+     */
+    public boolean performOk() {
+        boolean result = super.performOk();
+        
+        IPreferenceStore store = getPreferenceStore();
+        store.setValue(OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY, 
+                mLoglevel.getValue());
+        
+        return result;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void performDefaults() {
+        super.performDefaults();
+        
+        IPreferenceStore store = getPreferenceStore();
+        mLoglevel.select(store.getDefaultString(
+                OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
+    }
+    
+    /**
+     * Listens to the log level changes and set the correct level to the
+     * plugin logger.
+     * 
+     * @author cbosdonnat
+     */
     private class loglevelListener implements IFieldChangedListener {
         
-    	public void fieldChanged(FieldEvent e) {
-            if (e.getProperty().equals(LOGLEVEL)) {
+        /**
+         * {@inheritDoc}
+         */
+        public void fieldChanged(FieldEvent pE) {
+            if (pE.getProperty().equals(LOGLEVEL)) {
                 // set the new logger level
-                PluginLogger.setLevel(e.getValue());
+                PluginLogger.setLevel(LogLevels.valueOf(pE.getValue()));
             }
         }
     }
