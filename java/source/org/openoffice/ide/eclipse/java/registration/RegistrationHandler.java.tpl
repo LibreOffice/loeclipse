@@ -48,9 +48,9 @@ import com.sun.star.lang.XSingleComponentFactory;
 import com.sun.star.registry.XRegistryKey;
 
 /**
- * Component's main registration class.
+ * Component main registration class.
  * 
- * <p><strong>This class shouldn't be modified.</strong></p>
+ * <p><strong>This class should not be modified.</strong></p>
  * 
  * @author Cedric Bosdonnat aka. cedricbosdo
  *
@@ -62,7 +62,7 @@ public class RegistrationHandler '{'
      * 
      * <p>This method calls all the methods of the same name from the classes listed
      * in the <code>RegistrationHandler.classes</code> file. <strong>This method
-     * shouldn't be modified.</strong></p>
+     * should not be modified.</strong></p>
      * 
      * @param pImplementationName the name of the implementation to create.
      *  
@@ -98,7 +98,7 @@ public class RegistrationHandler '{'
      * 
      * <p>This method calls all the methods of the same name from the classes listed
      * in the <code>RegistrationHandler.classes</code> file. <strong>This method
-     * shouldn't be modified.</strong></p>
+     * should not be modified.</strong></p>
      *  
      * @param pRegistryKey the root registry key where to write the informations.
      *  
