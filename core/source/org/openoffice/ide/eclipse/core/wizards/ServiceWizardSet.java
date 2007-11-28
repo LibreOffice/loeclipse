@@ -2,9 +2,9 @@
  *
  * $RCSfile: ServiceWizardSet.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:57 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -190,7 +190,6 @@ public class ServiceWizardSet extends WizardPageSet {
         String ifaceName = (String)pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
         String ifacePackage = (String)pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
         
-        
         if (ifaceName == null) {
             ifaceName = pServiceInheritance.substring(pServiceInheritance.lastIndexOf(':') + 1);
         }
@@ -253,14 +252,6 @@ public class ServiceWizardSet extends WizardPageSet {
         
         serviceName = (String)pServiceData.getProperty(IUnoFactoryConstants.TYPE_NAME);
         servicePackage = (String)pServiceData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
-
-        if (servicePackage == null) {
-            servicePackage = pPackageRoot;
-        }
-        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) {
-            serviceName = pPrjName.replace("\\W", "");
-            serviceName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1);
-        }
         
         // Get the service package and name from the dialog if null: may be 
         // called on data change
@@ -271,6 +262,15 @@ public class ServiceWizardSet extends WizardPageSet {
 
         if (serviceName == null) {
             serviceName = servicePage.getElementName();
+        }
+        
+        // If the service package and service names aren't defined in the page, use defaults
+        if (servicePackage == null || servicePackage.equals("")) {
+            servicePackage = pPackageRoot;
+        }
+        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) {
+            serviceName = pPrjName.replace("\\W", "");
+            serviceName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1);
         }
 
 
@@ -357,6 +357,11 @@ public class ServiceWizardSet extends WizardPageSet {
                 packageRoot = prefix.replaceAll("\\.", "::");
             }
             
+            if (packageRoot == null) {
+                NewServiceWizardPage servicePage = (NewServiceWizardPage)getPage(SERVICE_PAGE_ID); 
+                packageRoot = servicePage.getPackageRoot();
+            }
+            
             UnoFactoryData[] inner = pDelta.getInnerData();
             HashMap<Integer, Integer> ids = getPagesId(inner);
             
@@ -399,6 +404,18 @@ public class ServiceWizardSet extends WizardPageSet {
         serviceName = (String)pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
         servicePackage = (String)pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
 
+        // Get the service package and name from the dialog if null: may be 
+        // called on data change
+        NewServiceWizardPage servicePage = (NewServiceWizardPage)getPage(SERVICE_PAGE_ID);
+        if (servicePackage == null) {
+            servicePackage = servicePage.getPackage();
+        }
+        
+        if (serviceName == null) {
+            serviceName = servicePage.getElementName();
+        }
+        
+        // Otherwise computes it from the project
         if (servicePackage == null) {
             servicePackage = pPackageRoot;
         }
@@ -411,18 +428,6 @@ public class ServiceWizardSet extends WizardPageSet {
                 IUnoFactoryConstants.INHERITED_INTERFACES);
         if (inheritances != null && inheritances.length > 0) {
             serviceInheritance = inheritances[0];
-        }
-        
-        
-        // Get the service package and name from the dialog if null: may be 
-        // called on data change
-        NewServiceWizardPage servicePage = (NewServiceWizardPage)getPage(SERVICE_PAGE_ID);
-        if (servicePackage == null) {
-            servicePackage = servicePage.getPackage();
-        }
-
-        if (serviceName == null) {
-            serviceName = servicePage.getElementName();
         }
 
         if (serviceInheritance == null) {
@@ -486,8 +491,7 @@ public class ServiceWizardSet extends WizardPageSet {
             // Get the UNO project to fetch the missing package root
             NewServiceWizardPage servicePage = (NewServiceWizardPage)getPage(
                     SERVICE_PAGE_ID);
-            IUnoidlProject unoPrj = servicePage.getProject();
-            pPackageRoot = unoPrj.getRootModule();
+            pPackageRoot = servicePage.getPackageRoot();
         }
         
         if (pTypePackage != null) {

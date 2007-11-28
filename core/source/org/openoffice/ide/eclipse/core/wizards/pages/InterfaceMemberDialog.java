@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:56 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -300,6 +300,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
             typeLabel = Messages.getString("InterfaceMemberDialog.ReturnType"); //$NON-NLS-1$
         }
         
+        // FIXME only simple types, interfaces, enums and structs should be allowed
         mTypeRow = new TypeRow(pParent, TYPE, typeLabel,
                 InternalUnoType.ALL_TYPES);
         mTypeRow.includeSequences(true);
@@ -511,19 +512,15 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
     private void toggleFlag(String pFlag) {
         String flags = (String)mData.getProperty(IUnoFactoryConstants.FLAGS);
         if (flags != null && flags.contains(pFlag)) {
-            if (! mBoundRow.getBooleanValue()) {
-                // remove the flag
-                flags = flags.replace(pFlag, "").trim(); //$NON-NLS-1$
-            }
+            // remove the flag
+            flags = flags.replace(pFlag, "").trim(); //$NON-NLS-1$
         } else {
-            if (mBoundRow.getBooleanValue()) {
-                // Set the flag
-                if (flags == null) {
-                    flags = ""; //$NON-NLS-1$
-                }
-                flags += " " + pFlag; //$NON-NLS-1$
-                flags = flags.trim();
+            // Set the flag
+            if (flags == null) {
+                flags = ""; //$NON-NLS-1$
             }
+            flags += " " + pFlag; //$NON-NLS-1$
+            flags = flags.trim();
         }
         mData.setProperty(IUnoFactoryConstants.FLAGS, flags);
     }

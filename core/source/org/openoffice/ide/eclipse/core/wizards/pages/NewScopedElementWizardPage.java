@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:56 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -246,7 +246,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
             packageName = mUnoProject.getRootModule();
         }
         
-        if (!mRootName.equals("")) { //$NON-NLS-1$
+        if (mRootName != null && !mRootName.equals("")) { //$NON-NLS-1$
             if (!packageName.equals("")) { //$NON-NLS-1$
                 packageName += "::"; //$NON-NLS-1$
             }
@@ -274,11 +274,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      * @return the name of the element to create.
      */
     public String getElementName() {
-        String name = ""; //$NON-NLS-1$
-        if (mNameRow != null) {
-            name = mNameRow.getValue();
-        }
-        return name;
+        return mElementName;
     }
     
     /**
@@ -306,6 +302,12 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      *             package is empty or <code>null</code>. 
      */
     public void setPackage(String pValue, boolean pForced) {
+        String moduleSep = "::";
+        
+        if (pValue.startsWith(moduleSep)) {
+            pValue = pValue.substring(moduleSep.length());
+        }
+        
         if (mPackageRow != null) {
             mPackageRow.setValue(pValue);
             mPackageRow.setEnabled(!pForced);
@@ -421,8 +423,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
         String packageLabel = Messages.getString("NewScopedElementWizardPage.Package"); //$NON-NLS-1$
         if (null != mUnoProject) {
             packageLabel = packageLabel + mUnoProject.getRootModule();
-        }
-        if (mRootName != null) {
+        } else if (mRootName != null) {
             packageLabel += mRootName;
         }
         
@@ -523,18 +524,11 @@ public abstract class NewScopedElementWizardPage extends WizardPage
         
         try {
             if (pEvent.getProperty().equals(P_PACKAGE)) {
-                // Change the label of the package row
-                String text = Messages.getString("NewScopedElementWizardPage.Package") + 
-                    mUnoProject.getRootModule(); //$NON-NLS-1$
-                
-                if (null != pEvent.getValue() && !pEvent.getValue().equals("")) { //$NON-NLS-1$
-                    text = text + "::"; //$NON-NLS-1$
-                }
-                mPackageRow.setLabel(text);
                 typeDelta = getEmptyTypeData();
                 typeDelta.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
     
             } else if (pEvent.getProperty().equals(P_NAME)) {
+                mElementName = pEvent.getValue();
                 // Test if there is the scoped name already exists
                 boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue());
                 if (exists) {
@@ -553,6 +547,19 @@ public abstract class NewScopedElementWizardPage extends WizardPage
         setPageComplete(isPageComplete());
         if (typeDelta != null) {
             UnoFactoryData delta = new UnoFactoryData();
+            
+            try {
+                String projectName = getProject().getName();
+                String prefix = getProject().getCompanyPrefix();
+                IOOo ooo = getProject().getOOo();
+
+                delta.setProperty(IUnoFactoryConstants.PROJECT_NAME, projectName);
+                delta.setProperty(IUnoFactoryConstants.PROJECT_OOO, ooo);
+                delta.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, prefix);
+            } catch (NullPointerException e) {
+                // The project isn't defined: it might be normal
+            }
+            
             delta.addInnerData(typeDelta);
 
             firePageChanged(delta);
