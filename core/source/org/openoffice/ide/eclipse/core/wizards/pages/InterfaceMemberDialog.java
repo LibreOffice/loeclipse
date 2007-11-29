@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:56 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/29 00:16:14 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -82,7 +82,6 @@ import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.gui.rows.TypeRow;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
@@ -300,9 +299,12 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
             typeLabel = Messages.getString("InterfaceMemberDialog.ReturnType"); //$NON-NLS-1$
         }
         
-        // FIXME only simple types, interfaces, enums and structs should be allowed
-        mTypeRow = new TypeRow(pParent, TYPE, typeLabel,
-                InternalUnoType.ALL_TYPES);
+        // only simple types, interfaces, enums and structs, typedefs should be allowed
+        int types = IUnoFactoryConstants.INTERFACE | IUnoFactoryConstants.STRUCT |
+            IUnoFactoryConstants.ENUM | IUnoFactoryConstants.TYPEDEF;
+        types |= IUnoFactoryConstants.BASICS;
+        
+        mTypeRow = new TypeRow(pParent, TYPE, typeLabel, types);
         mTypeRow.includeSequences(true);
         mTypeRow.includeSimpleTypes(true);
         mTypeRow.setFieldChangedListener(this);
@@ -419,7 +421,12 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
             PARAM_TYPE,
             PARAM_INOUT
         });
-        TypeCellEditor typeCellEditor = new TypeCellEditor(table, InternalUnoType.ALL_TYPES);
+        // only simple types, interfaces, enums and structs, typedefs should be allowed
+        int types = IUnoFactoryConstants.INTERFACE | IUnoFactoryConstants.STRUCT |
+            IUnoFactoryConstants.ENUM | IUnoFactoryConstants.TYPEDEF;
+        types |= IUnoFactoryConstants.BASICS;
+        
+        TypeCellEditor typeCellEditor = new TypeCellEditor(table, types);
         typeCellEditor.includeSequences(true);
         typeCellEditor.includeSimpleTypes(true);
         typeCellEditor.includeVoid(false);
