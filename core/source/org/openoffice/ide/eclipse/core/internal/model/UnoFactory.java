@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/29 09:05:42 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -45,6 +45,8 @@ package org.openoffice.ide.eclipse.core.internal.model;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -306,6 +308,9 @@ public final class UnoFactory {
 
         // Add the include line for the inheritance interface
         createIncludes(fileContent, inheritedIfaces);
+        
+        String[] includes = getNeededIncludes(pData);
+        createIncludes(fileContent, includes);
 
         IUnoComposite currentModule = createParentModules(fileContent, path);
 
@@ -392,6 +397,9 @@ public final class UnoFactory {
 
         createIncludes(fileContent, interfaces);
         createIncludes(fileContent, opt_interfaces);
+        
+        String[] includes = getNeededIncludes(pData);
+        createIncludes(fileContent, includes);
 
         IUnoComposite currentModule = createParentModules(fileContent, path);
 
@@ -444,6 +452,26 @@ public final class UnoFactory {
         }
     }
     
+    private static String[] getNeededIncludes(UnoFactoryData pData) {
+        
+        ArrayList<String> includes = new ArrayList<String>();
+        
+        String[] properties = pData.getKeys();
+        for (String name : properties) {
+            String stringValue = pData.getProperty(name).toString();
+            if (stringValue.contains("::") && !name.equals(IUnoFactoryConstants.PACKAGE_NAME)) {
+                includes.add(stringValue);
+            }
+        }
+        
+        for (UnoFactoryData child : pData.getInnerData()) {
+            String[] childIncludes = getNeededIncludes(child);
+            includes.addAll(Arrays.asList(childIncludes));
+        }
+        
+        return includes.toArray(new String[includes.size()]);
+    }
+
     /**
      * Create the parent modules and return the deepest one.
      * 
