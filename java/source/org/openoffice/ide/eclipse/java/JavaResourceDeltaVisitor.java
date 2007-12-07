@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaResourceDeltaVisitor.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:31:20 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -75,7 +75,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
      */
     public boolean visit(IResourceDelta pDelta) throws CoreException {
         
-        boolean visitChildren = false;
+        boolean visitChildren = true;
         
         if (!(pDelta.getResource() instanceof IWorkspaceRoot)) {
             
