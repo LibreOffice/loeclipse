@@ -2,9 +2,9 @@
  *
  * $RCSfile: LabeledRow.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -137,7 +137,13 @@ public abstract class LabeledRow {
     }
     
     /**
-     * {@inheritDoc}
+     * Stores the row controls, creates the button if its text
+     * is not <code>null</code> and layout the controls.
+     * 
+     * @param pParent the parent composite where to create the controls
+     * @param pLabel the control for the label
+     * @param pField the control for the field
+     * @param pBrowseText the text to show on the right button of the row.
      */
     protected void createContent(Composite pParent, Control pLabel,
               Control pField, String pBrowseText) {

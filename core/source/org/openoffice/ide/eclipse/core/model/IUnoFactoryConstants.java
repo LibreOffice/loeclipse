@@ -2,9 +2,9 @@
  *
  * $RCSfile: IUnoFactoryConstants.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -42,6 +42,10 @@
  *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model;
+
+import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * This interface contains the keys for the data to provide to the UNO

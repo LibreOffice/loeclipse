@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/29 09:05:42 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -62,6 +62,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
+import org.openoffice.ide.eclipse.core.wizards.ServiceWizardSet;
 
 /**
  * Interface creation page, this page is managed by the {@link ServiceWizardSet}

@@ -2,9 +2,9 @@
  *
  * $RCSfile: ISdk.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -79,7 +79,6 @@ public interface ISdk {
      * Path constructor to get the folder object. 
      * 
      * @return SDK home directory
-     * @see Path
      */
     public String getHome();
     

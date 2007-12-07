@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.13 $
+ * $Revision: 1.14 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:17 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -63,6 +63,7 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
@@ -192,7 +193,8 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         File types = pPrj.getLocation().append(unoprj.getTypesPath()).toFile();
         File build = pPrj.getLocation().append(unoprj.getBuildPath()).toFile();
         
-        unoprj.getLanguage().getLanguageBuidler().generateFromTypes(
+        ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuidler();
+        languageBuilder.generateFromTypes(
                 unoprj.getSdk(),
                 unoprj.getOOo(),
                 pPrj,

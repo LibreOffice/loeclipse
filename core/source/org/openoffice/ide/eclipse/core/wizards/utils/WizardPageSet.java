@@ -2,9 +2,9 @@
  *
  * $RCSfile: WizardPageSet.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbenchPage;
+import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**
@@ -299,7 +300,7 @@ public abstract class WizardPageSet {
      * Performs the actions to run at the end of the wizard for the wizard set.
      * 
      * <p>Performs the changes needed by the wizard set. This method has to be 
-     * called in the {@link Wizard#performFinish()} method. For cleaner actions
+     * called in the {@link IWizard#performFinish()} method. For cleaner actions
      * the actions performed by the wizard set finish should concern only the
      * data defined by the wizard set pages.</p>
      * 
@@ -312,7 +313,7 @@ public abstract class WizardPageSet {
      * @param pMonitor the monitor used to follow the finish process.
      * @param pActivePage the page that was active before opening the wizard.
      * 
-     * @see Wizard#performFinish() for more informations on actions performed
+     * @see IWizard#performFinish() for more informations on actions performed
      *             when finishing a wizard.
      * 
      */

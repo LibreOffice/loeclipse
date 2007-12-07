@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -166,7 +166,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
     }
 
     /**
-     * {@inheritDoc}
+     * @return the instance of the OOo Eclipse bundle. 
      */
     public static OOEclipsePlugin getDefault() {
         return sPlugin;

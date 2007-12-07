@@ -57,7 +57,9 @@
             <property name="format" value="TODO"/>
         </module>
         <module name="AvoidNestedBlocks"/>
-        <module name="UnusedImports"/>
+        <module name="UnusedImports">
+            <property name="severity" value="info"/>
+        </module>
         <module name="JavadocMethod">
             <property name="logLoadErrors" value="true"/>
             <property name="suppressLoadErrors" value="true"/>
