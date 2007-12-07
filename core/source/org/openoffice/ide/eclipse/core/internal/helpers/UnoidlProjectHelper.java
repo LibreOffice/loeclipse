@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProjectHelper.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -45,6 +45,7 @@ package org.openoffice.ide.eclipse.core.internal.helpers;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
@@ -111,11 +112,14 @@ public class UnoidlProjectHelper {
         properties.setProperty(UnoidlProject.IDL_DIR, IDL_BASIS);
         properties.setProperty(UnoidlProject.BUILD_DIR, BUILD_BASIS);
         
+        FileOutputStream out = null;
         try {
-            FileOutputStream out = new FileOutputStream(pConfigFile);
+            out = new FileOutputStream(pConfigFile);
             properties.store(out, "UNO project configuration file");
         } catch (Exception e) {
             PluginLogger.warning("Can't create default uno configuration file", e);
+        } finally {
+            try { out.close(); } catch (IOException e) { }
         }
     }
     

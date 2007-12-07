@@ -2,9 +2,9 @@
  *
  * $RCSfile: PropertiesManager.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -183,12 +183,7 @@ public class PropertiesManager {
         } catch (IOException e) {
             PluginLogger.error(e.getLocalizedMessage(), e);
         } finally {
-            try {
-                if (out != null) {
-                    out.close(); 
-                }
-            } catch (IOException e) {
-            }
+            try { out.close(); } catch (Exception e) { }
         }
     }
     
@@ -313,12 +308,7 @@ public class PropertiesManager {
         } catch (IOException e) {
             PluginLogger.error(e.getLocalizedMessage(), e);
         } finally {
-            try { 
-                if (out != null) {
-                    out.close(); 
-                }
-            } catch (IOException e) {
-            }
+            try { out.close(); } catch (Exception e) { }
         }
     }
     
@@ -345,8 +335,7 @@ public class PropertiesManager {
         try {
             ooosProperties.load(in);
         } finally {
-            try { in.close(); } catch (IOException e) {
-            }
+            try { in.close(); } catch (IOException e) { }
         }
         
         return ooosProperties;

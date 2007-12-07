@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackagePropertiesModel.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:32 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -108,12 +108,10 @@ public class PackagePropertiesModel {
         try {
             mProperties.load(is);
         } catch (IOException e) {
-            try { 
-                is.close();
-            } catch (IOException ex) {
-            }
             PluginLogger.warning(
                     Messages.getString("PackagePropertiesModel.FileReadException") + pFile.getLocation()); //$NON-NLS-1$
+        } finally {
+            try { is.close(); } catch (Exception e) { }
         }
     }
     
@@ -192,8 +190,9 @@ public class PackagePropertiesModel {
                 Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
             firePackageSaved();
         } catch (IOException e) {
-            os.close();
             throw e;
+        } finally {
+            try { os.close(); } catch (Exception e) { }
         }
     }
     

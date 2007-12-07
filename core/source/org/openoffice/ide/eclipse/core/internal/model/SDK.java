@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -485,8 +485,10 @@ public class SDK implements ISdk, ITableElement {
             File dkFile = new File(pSettingsFile, F_DK_CONFIG);
             
             Properties dkProperties = new Properties();
+            FileInputStream in = null;
             try {
-                dkProperties.load(new FileInputStream(dkFile));
+                in = new FileInputStream(dkFile);
+                dkProperties.load(in);
                 
                 // Checks if the name and buildid properties are set
                 if (dkProperties.containsKey(K_SDK_BUILDID)) {
@@ -510,6 +512,8 @@ public class SDK implements ISdk, ITableElement {
                         Messages.getString("SDK.NoReadableFileError") + 
                         "settings/" + F_DK_CONFIG,  //$NON-NLS-1$ //$NON-NLS-2$
                         InvalidConfigException.INVALID_SDK_HOME);
+            } finally {
+                try { in.close(); } catch (Exception e) { }
             }
             
         } else {

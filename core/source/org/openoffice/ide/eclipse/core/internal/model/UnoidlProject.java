@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -46,6 +46,7 @@ package org.openoffice.ide.eclipse.core.internal.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Properties;
 
@@ -509,17 +510,20 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         File configFile = getConfigFile();
         String property = null;
         
+        FileInputStream in = null;
         try  {
             // Create a default configuration file if needed
             if (!configFile.exists()) {
                 UnoidlProjectHelper.createDefaultConfig(configFile);
             }
         
-            FileInputStream in = new FileInputStream(configFile);
+            in = new FileInputStream(configFile);
             properties.load(in);
             property = properties.getProperty(pPropertyName);
         } catch (Exception e) {
             PluginLogger.warning("Unreadable uno project configuration file " + CONFIG_FILE, e);
+        } finally {
+            try { in.close(); } catch (IOException e) { }
         }
         
         return property;
@@ -535,18 +539,20 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         Properties properties = new Properties();
         File configFile = getConfigFile();
         
+        FileInputStream in = null;
+        FileOutputStream out = null;
         try  {
             // Create a default configuration file if needed
             if (!configFile.exists()) {
                 UnoidlProjectHelper.createDefaultConfig(configFile);
             }
         
-            FileInputStream in = new FileInputStream(configFile);
+            in = new FileInputStream(configFile);
             properties.load(in);
         
             properties.setProperty(pName, pValue);
         
-            FileOutputStream out = new FileOutputStream(configFile);
+            out = new FileOutputStream(configFile);
             properties.store(out, "UNO project configuration file");
             
             // Refresh the configuration file
@@ -556,6 +562,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             String message = MessageFormat.format("Error during project property change ({0}, {1})", 
                     pName, pValue);
             PluginLogger.warning(message, e);
+        } finally {
+            try { in.close(); } catch (IOException e) { }
+            try { out.close(); } catch (IOException e) { }
         }
     }
     
@@ -572,8 +581,10 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             UnoidlProjectHelper.createDefaultConfig(configFile);
         }
         
+        FileInputStream in = null;
+        FileOutputStream out = null;
         try  {
-            FileInputStream in = new FileInputStream(configFile);
+            in = new FileInputStream(configFile);
             properties.load(in);
         
             properties.setProperty(LANGUAGE, LanguagesHelper.getNameFromLanguage(mLanguage));
@@ -584,16 +595,17 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             properties.setProperty(COMPANY_PREFIX, mCompanyPrefix);
             properties.setProperty(OUTPUT_EXT, mOutputExtension);
         
-            FileOutputStream out = new FileOutputStream(configFile);
+            out = new FileOutputStream(configFile);
             properties.store(out, "UNO project configuration file");
-            
-            out.close();
             
             // Refresh the configuration file
             getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
             
         } catch (Exception e) {
             PluginLogger.warning("Error saving all the project properties", e);
+        } finally {
+            try { in.close(); } catch (IOException e) { }
+            try { out.close(); } catch (IOException e) { }
         }
     }
     
