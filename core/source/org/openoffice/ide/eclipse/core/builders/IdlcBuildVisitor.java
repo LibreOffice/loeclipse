@@ -2,9 +2,9 @@
  *
  * $RCSfile: IdlcBuildVisitor.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:37:28 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -81,7 +81,7 @@ public class IdlcBuildVisitor implements IResourceVisitor {
         boolean visitChildren = false;
         if (TypesBuilder.sBuildState == 1) {
             if (IResource.FILE == pResource.getType() &&
-                    pResource.getFileExtension().equals("idl")) { //$NON-NLS-1$
+                    "idl".equals(pResource.getFileExtension())) { //$NON-NLS-1$
 
                 TypesBuilder.runIdlcOnFile((IFile)pResource, mProgressMonitor);
                 if (mProgressMonitor != null) {
