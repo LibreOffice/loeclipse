@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:56 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:36:45 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -450,6 +450,9 @@ public abstract class NewScopedElementWizardPage extends WizardPage
         mPublishedRow.setFieldChangedListener(this);
         
         setPageComplete(isPageComplete());
+        
+        // force layout because of some bug in SWT for Windows
+        body.layout();
         
         setControl(body);
     }
