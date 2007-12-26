@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaProjectHandler.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:19 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -55,9 +55,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
@@ -66,6 +64,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.java.build.OOoContainerPage;
 import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
 
 /**
@@ -120,29 +119,7 @@ public class JavaProjectHandler implements IProjectHandler {
 
         IJavaProject javaProject = JavaCore.create(pProject);
         
-        if (null != pOoo) {
-            // Find the jars in the first level of the directory
-            Vector<Path> jarPaths = findJarsFromPath(pOoo);
-            
-            try {
-                IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
-                IClasspathEntry[] entries = new IClasspathEntry[jarPaths.size() + oldEntries.length];
-                
-                System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
-                
-                for (int i = 0, length = jarPaths.size(); i < length; i++) {
-                    IPath jarPathi = jarPaths.get(i);
-                    IClasspathEntry entry = JavaCore.newLibraryEntry(
-                            jarPathi, null, null);
-                    entries[oldEntries.length + i] = entry;
-                }
-                
-                javaProject.setRawClasspath(entries, null);
-            } catch (JavaModelException e) {
-                PluginLogger.error(
-                        Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
-            }
-        }
+        OOoContainerPage.addOOoDependencies(pOoo, javaProject);
     }
 
     /**
@@ -245,28 +222,7 @@ public class JavaProjectHandler implements IProjectHandler {
     public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
         IJavaProject javaProject = JavaCore.create(pProject);
         
-        try {
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            Vector<IClasspathEntry> newEntries = new Vector<IClasspathEntry>();
-
-            // Copy all the sources in a new entry container
-            for (int i = 0, length = entries.length; i < length; i++) {
-                IClasspathEntry entry = entries[i];
-
-                if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
-                    newEntries.add(entry);
-                }
-            }
-            
-            IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
-            result = newEntries.toArray(result);
-            
-            javaProject.setRawClasspath(result, null);
-            
-        } catch (JavaModelException e) {
-            PluginLogger.error(
-                    Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
-        }
+        OOoContainerPage.removeOOoDependencies(javaProject);
     }
     
     /**
@@ -314,7 +270,7 @@ public class JavaProjectHandler implements IProjectHandler {
      * @param pOoo the OOo instance from which to get the jars
      * @return a vector of Path pointing to each jar.
      */
-    private Vector<Path> findJarsFromPath(IOOo pOoo) {
+    public static Vector<Path> findJarsFromPath(IOOo pOoo) {
         Vector<Path> jarsPath = new Vector<Path>();
         
         Path folderPath = new Path(pOoo.getClassesPath());
@@ -340,7 +296,7 @@ public class JavaProjectHandler implements IProjectHandler {
      * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, 
      *         <code>false</code> otherwise.
      */
-    private boolean isKeptJar(String pJarName) {
+    private static boolean isKeptJar(String pJarName) {
         
         int i = 0;
         boolean isKept = false;

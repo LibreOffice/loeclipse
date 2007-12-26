@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOoContainer.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:25 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -53,6 +53,8 @@ import java.util.regex.Pattern;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.PropertiesManager;
+import org.openoffice.ide.eclipse.core.internal.model.OOo;
+import org.openoffice.ide.eclipse.core.internal.model.URE;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
@@ -300,6 +302,66 @@ public class OOoContainer {
             ooo = sInstance.mElements.get(pOookey);
         } 
         return ooo;
+    }
+    
+    /**
+     * Leniently return an OOo instance descriptor from a given value.
+     * 
+     * <p>This method will try several ways to find an OOo. These are 
+     * the following:
+     *  <ol>
+     *      <li>Check if there is a configured OOo with a name like <code>pValue</code></li>
+     *      <li>Check if there is a configured OOo at a path like <code>pValue</code></li>
+     *      <li>Check if there is an OOo at the given path and configure it if necessary</li>
+     *      <li>Get an OOo instance from the configured ones</li>
+     *  </ol>
+     * If no OOo instance can be found using one of the previous ways, <code>null</code>
+     * will be returned.</p>
+     * 
+     * @param pValue the value helping to find the OOo instance.
+     * @return the OOo instance or <code>null</code> if not found
+     */
+    public static IOOo getSomeOOo(String pValue) {
+        IOOo found = null;
+        
+        // First attempt: try to look by OOo name.
+        found = getOOo(pValue);
+        
+        // Second attempt: try by path amongst the registered OOos
+        if (found == null) {
+            Iterator<IOOo> iter = sInstance.mElements.values().iterator();
+            while (iter.hasNext() && found == null) {
+                IOOo ooo = iter.next();
+                if (ooo.getHome().equals(pValue)) {
+                    found = ooo;
+                }
+            }
+        }
+        
+        // Third attempt: Try to create a new OOo an register it.
+        if (found == null) {
+            try {
+                found = new OOo(pValue);
+            } catch (Exception errOoo) {
+                try {
+                    found = new URE(pValue);
+                } catch (Exception errUre) {
+                    // Still not found: nothing to log
+                }
+            }
+            
+            // Register the OOo
+            if (found != null) {
+                addOOo(found);
+            }
+        }
+        
+        // Fourth attempt: Get a registered OOo
+        if (found == null) {
+            found = sInstance.mElements.values().iterator().next();
+        }
+        
+        return found;
     }
     
     /**

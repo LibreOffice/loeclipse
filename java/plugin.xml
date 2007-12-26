@@ -20,5 +20,20 @@
          point="org.eclipse.ui.startup">
       <startup class="org.openoffice.ide.eclipse.java.JavaUnoResourceChangeHandler"/>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.openoffice.ide.eclipse.java.build.OooClasspathContainerInitializer"
+            id="org.openoffice.ide.eclipse.java.OOO_CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+            class="org.openoffice.ide.eclipse.java.build.OOoContainerPage"
+            id="org.openoffice.ide.eclipse.java.OOO_CONTAINER"
+            name="OpenOffice.org Libraries">
+      </classpathContainerPage>
+   </extension>
 
 </plugin>

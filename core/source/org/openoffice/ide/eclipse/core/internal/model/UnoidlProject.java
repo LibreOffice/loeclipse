@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:25 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -69,6 +69,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
@@ -298,6 +299,18 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     public void setOOo(IOOo pOoo) {
         
         setErrorMarker(null == pOoo || null == getSdk());
+        
+        try {
+            IProjectHandler langHandler = getLanguage().getProjectHandler();
+            
+            // Remove the old OOo libraries
+            langHandler.removeOOoDependencies(mOOo, getProject());
+
+            // Add the new ones
+            langHandler.addOOoDependencies(pOoo, getProject());
+        } catch (Exception e) {
+            // This might happen at some stage of the project creation
+        }
         
         this.mOOo = pOoo;
     }
@@ -604,8 +617,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         } catch (Exception e) {
             PluginLogger.warning("Error saving all the project properties", e);
         } finally {
-            try { in.close(); } catch (IOException e) { }
-            try { out.close(); } catch (IOException e) { }
+            try { in.close(); } catch (Exception e) { }
+            try { out.close(); } catch (Exception e) { }
         }
     }
     
@@ -625,14 +638,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             setSdk(SDKContainer.getSDK(sdkKey));
         }
         
-        String oooKey = getProperty(OOO_NAME);
-        if (oooKey != null) {
-            setOOo(OOoContainer.getOOo(oooKey));
-        }
-        
-        String idlDir = getProperty(COMPANY_PREFIX);
-        if (idlDir != null) {
-            mCompanyPrefix = idlDir;
+        String prefix = getProperty(COMPANY_PREFIX);
+        if (prefix != null) {
+            mCompanyPrefix = prefix;
         }
         
         String outputExt = getProperty(OUTPUT_EXT);
@@ -644,6 +652,25 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         if (languageName != null) {
             setLanguage(LanguagesHelper.getLanguageFromName(languageName));
         }
+        
+        String idlDir = getProperty(IDL_DIR);
+        if (idlDir != null) {
+            setIdlDir(idlDir);
+        }
+
+        String srcDir = getProperty(SRC_DIRECTORY);
+        if (srcDir != null) {
+            setSourcesDir(srcDir);
+        }
+        
+        String oooKey = getProperty(OOO_NAME);
+        if (oooKey != null) {
+            IOOo someOOo = OOoContainer.getSomeOOo(oooKey);
+            setOOo(someOOo);
+        }
+        
+        // Save any change from the read project file
+        saveAllProperties();
     }
     
     /**
