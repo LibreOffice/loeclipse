@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageOverviewFormPage.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -63,7 +63,7 @@ public class PackageOverviewFormPage extends FormPage {
      * @param pId the page identifier
      */
     public PackageOverviewFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId, "Overview");
+        super(pEditor, pId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
     }
 
     /**

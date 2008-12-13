@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewInterfaceWizardPage.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -60,13 +60,10 @@ import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
-import org.openoffice.ide.eclipse.core.wizards.ServiceWizardSet;
 
 /**
- * Interface creation page, this page is managed by the {@link ServiceWizardSet}
- * or is used by the new interface wizard.
+ * Interface creation page.
  * 
  * @author cedricbosdo
  *
@@ -140,9 +137,6 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage
         gd.horizontalSpan = LabeledRow.LAYOUT_COLUMNS;
         tableParent.setLayoutData(gd);
         tableParent.setLayout(new GridLayout(1, false));
-        
-        UnoTypeProvider.getInstance().initialize(getProject(), 
-                IUnoFactoryConstants.INTERFACE);
         
         mInterfaceInheritances = new InterfacesTable(tableParent);
         mInterfaceInheritances.setToolTipText(

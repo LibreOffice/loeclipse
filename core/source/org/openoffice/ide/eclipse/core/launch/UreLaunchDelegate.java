@@ -2,9 +2,9 @@
  *
  * $RCSfile: UreLaunchDelegate.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:32 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -47,17 +47,15 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import org.openoffice.ide.eclipse.core.builders.ServicesBuilder;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 
 /**
  * This class launches the URE application from its configuration.
@@ -79,8 +77,8 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
             pMonitor = new NullProgressMonitor();
         }
         
-        pMonitor.beginTask(MessageFormat.format("{0}...", 
-                new Object[]{pConfiguration.getName()}), TASK_UNITS); //$NON-NLS-1$
+        pMonitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
+                new Object[]{pConfiguration.getName()}), TASK_UNITS);
         // check for cancellation
         if (pMonitor.isCanceled()) {
             return;
@@ -95,14 +93,13 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
         
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         if (prj != null) {
+            try {
+                ILanguageBuilder langBuilder = prj.getLanguage().getLanguageBuidler();
+                langBuilder.createLibrary(prj);
             
-            // creates the services.rdb file
-            Status status = ServicesBuilder.syncRun(prj, pMonitor);
-            
-            if (status.getSeverity() == IStatus.OK) {
                 // Run the URE Applicaton using IOOo.runUno()
                 prj.getOOo().runUno(prj, mainName, args, pLaunch, pMonitor);
-            } else {
+            } catch (Exception e) {
                 Display.getDefault().asyncExec(new Runnable() {
 
                     public void run() {

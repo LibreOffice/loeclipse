@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaBuilder.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -109,7 +109,7 @@ public class JavaBuilder implements ILanguageBuilder {
             String relPath = lib.getPath().substring(prjPath.length() + 1);
             classpath += relPath + " "; //$NON-NLS-1$
         }
-        if (!classpath.equals("")) {
+        if (!classpath.equals("")) { //$NON-NLS-1$
             classpath = "Class-Path: " + classpath + "\r\n"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         
@@ -188,16 +188,22 @@ public class JavaBuilder implements ILanguageBuilder {
                 
                 if (null != pSdk && null != pOoo) {
                     
-                    IPath ooTypesPath = new Path (pOoo.getTypesPath());
+                    String[] paths = pOoo.getTypesPath();
+                    String oooTypesArgs = ""; //$NON-NLS-1$
+                    for (String path : paths) {
+                        IPath ooTypesPath = new Path (path);
+                        oooTypesArgs += " -X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    
                     
                     // TODO What if the user creates other root modules ?
                     String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
                     
                     String command = "javamaker -T" + firstModule +  //$NON-NLS-1$
                         ".* -nD -Gc -BUCR " +  //$NON-NLS-1$
-                        "-O \"" + pBuildFolder.getAbsolutePath() + "\" \"" + //$NON-NLS-1$
+                        "-O \"" + pBuildFolder.getAbsolutePath() + "\" \"" + //$NON-NLS-1$ //$NON-NLS-2$
                         pTypesFile.getAbsolutePath() + "\" " + //$NON-NLS-1$
-                        "-X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+                        oooTypesArgs; 
                     
                     IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
                     Process process = pSdk.runTool(unoprj,command, pMonitor);
@@ -206,7 +212,7 @@ public class JavaBuilder implements ILanguageBuilder {
                             new InputStreamReader(process.getErrorStream()));
                     
                     // Only for debugging purpose
-                    if (PluginLogger.isLevel(LogLevels.DEBUG)) { //$NON-NLS-1$
+                    if (PluginLogger.isLevel(LogLevels.DEBUG)) {
                     
                         String line = lineReader.readLine();
                         while (null != line) {
@@ -292,14 +298,14 @@ public class JavaBuilder implements ILanguageBuilder {
                 
         // Add the component Jar file
         JavaProjectHandler handler = (JavaProjectHandler)mLanguage.getProjectHandler();
-        pUnoPackage.addComponentFile(handler.getJarFile(pUnoPrj), "Java");
+        pUnoPackage.addComponentFile(handler.getJarFile(pUnoPrj), "Java"); //$NON-NLS-1$
         
         // Add all the jar dependencies
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
         Vector<File> libs = getLibs(javaPrj);
         for (File lib : libs) {
-            pUnoPackage.addTypelibraryFile(lib, "Java");
+            pUnoPackage.addTypelibraryFile(lib, "Java"); //$NON-NLS-1$
         }
     }
     
@@ -325,7 +331,7 @@ public class JavaBuilder implements ILanguageBuilder {
                      */
                     IPath path = entry.getPath();
                     if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
-                            path.toString().startsWith("/" + pJavaPrj.getProject().getName())) {
+                            path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
                         // Relative to the project
                         File libFile = prjPath.append(path.removeFirstSegments(1)).toFile();
                         if (libFile.isFile()) {

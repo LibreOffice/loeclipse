@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackagePropertiesModel.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:32 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -246,8 +246,8 @@ public class PackagePropertiesModel {
         }
         
         try {
-            if (!libs.equals("")) {
-                libs += ", "; //$NON-NLS-1$ //$NON-NLS-2$
+            if (!libs.equals("")) { //$NON-NLS-1$
+                libs += ", "; //$NON-NLS-1$
             }
             libs += pLibFolder.getProjectRelativePath().toString();
         } catch (Exception e) {
@@ -271,8 +271,8 @@ public class PackagePropertiesModel {
         }
         
         try {
-            if (!libs.equals("")) {
-                libs += ", "; //$NON-NLS-1$ //$NON-NLS-2$
+            if (!libs.equals("")) { //$NON-NLS-1$
+                libs += ", "; //$NON-NLS-1$
             }
             libs += pLibFolder.getProjectRelativePath().toString();
         } catch (Exception e) {
@@ -363,8 +363,8 @@ public class PackagePropertiesModel {
         }
         
         try {
-            if (!libs.equals("")) {
-                libs += ", "; //$NON-NLS-1$ //$NON-NLS-2$
+            if (!libs.equals("")) { //$NON-NLS-1$
+                libs += ", "; //$NON-NLS-1$
             }
             libs += pRes.getProjectRelativePath().toString();
         } catch (Exception e) {

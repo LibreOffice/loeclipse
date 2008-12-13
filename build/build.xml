@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2006/12/06 07:49:50 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:56 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -41,50 +41,11 @@
  ====================================================================== -->
 
 <project name="ooeclipseintegration" default="site" basedir="..">
-	<description>
-            This project provides a new plugin for Eclipse to help 
-			OpenOffice.org development
-    </description>
 
-	<property name="out.path" value="site" />
-	<condition property="debug" value="false">
-		<not>
-			<isset property="debug"/>
-		</not>
-	</condition>
-
-	<target name="clean">
-		
-		<!-- plugins cleaning -->
-		<ant dir="core/build/" inheritall="false"
-			target="clean" />
-
-		<ant dir="java/build/" inheritall="false" 
-			target="clean" />
-				
-		
-		<!-- build cleaning -->
-		<delete dir="${out.path}" />
-		
-	</target>
+	<import file="../core/build/build.xml"/>
+	<import file="../java/build/build.xml"/>
 	
-	<target name="purge">
-			
-			<!-- plugins cleaning -->
-			<ant dir="core/build/" inheritall="false"
-				target="purge" />
-
-			<ant dir="java/build/" inheritall="false" 
-				target="purge" />
-					
-			
-			<!-- build cleaning -->
-			<delete dir="${out.path}" />
-			<delete file="ooeclipseintegration_site.zip" />
-			
-		</target>
-	
-	<target name="help">
+	<target name="help" description="Tells how to run the script">
 		<echo>
 		This ant file has to be called with the following parameters:
 			-Dopenoffice.home=/path/to/your/ooo/
@@ -95,50 +56,95 @@
 			
 		Targets:
 			site (default): generates the eclipse update site
+			archive-site: generates an archive of the update site
 			clean: removes all the temporary build results
 			purge: removes all the build results
 		</echo>
 	</target>
 	
-	<!-- ================================= 
-          target: site              
-         ================================= -->
-	<target name="site">
-		
-		<!-- Executing the ant site targets for all the plugins 
-			 The file has to be named 'build.xml' in the given
-			 directories, and its default target builds the site
-		-->
-		
-		<ant dir="core/build/" inheritall="false">
-			<property name="debug" value="${debug}"/>
-		</ant>
+	<target name="check-ooo-version">
+        <property file="ant/build.properties"/>
+        
+		<property name="office.basis.dir" value="${openoffice.home}${file.separator}basis-link"/>
+        <property name="office.ure.dir" value="${office.basis.dir}${file.separator}ure-link"/>
+        
+        <!-- test whether building against OOo3 or not -->
+        <condition property="office.version3" value="true">
+            <and>
+                <available file="${office.basis.dir}" />
+                <available file="${office.ure.dir}"/>
+            </and>
+        </condition>
+    </target>
+	
+	<target name="init-env-ooo3" depends="check-ooo-version" if="office.version3">
+		<echo message="Initializing the properties for OpenOffice 3.0"/>
 
-		<ant dir="java/build/" inheritall="false">
-			<property name="debug" value="${debug}"/>
-		</ant>
+        <path id="office.class.path">
+            <fileset dir="${office.basis.dir}${file.separator}program${file.separator}classes">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${office.ure.dir}${file.separator}share${file.separator}java">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+    </target>
+
+    <target name="init-env-ooo2" depends="check-ooo-version" unless="office.version3">
+        <path id="office.class.path">
+            <fileset dir="${office.install.dir}${file.separator}program${file.separator}classes">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+    </target>
+	
+	<target name="init-env" 
+		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env">
+		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
-		<!-- Gathering plugins infos into a site -->
+		<property name="out.path" value="site" />
+		<condition property="debug" value="false">
+			<not>
+				<isset property="debug"/>
+			</not>
+		</condition>
 		
 		<mkdir dir="${out.path}" />
 		<mkdir dir="${out.path}/plugins" />
 		<mkdir dir="${out.path}/features" />
+	</target>
 
-		<!-- Copying the features and plugins -->
+	<target name="clean" description="Cleans the temporary output results" 
+		depends="init-env, core.clean, java.clean">
+		<delete dir="${out.path}" />
+	</target>
+	
+	<target name="purge" description="Cleans all the output results" 
+		depends="clean, core.purge, java.purge">
+		<delete file="ooeclipseintegration_site.zip" />
+	</target>
+	
+	
+	<target name="site" depends="init-env, core.site, java.site"
+		description="Creates the Eclipse update site">
 		
+		<!-- Copying the features and plugins -->
+		<echo message="Copying the plugins feature JARs"/>
 		<copy todir="${out.path}/features" >
-			<fileset dir=".."
+			<fileset dir="."
 				includes="**/features/*.jar" />
 			<mapper type="flatten" />
 		</copy>
 		
+		<echo message="Copying the plugins plugin JARs"/>
 		<copy todir="${out.path}/plugins">
-			<fileset dir=".." 
+			<fileset dir="." 
 				includes="**/plugins/*.jar" />
 			<mapper type="flatten" />
 		</copy>
 		
 		<!-- Site map generation -->
+		<echo message="Merging the site.xml fragments"/>
 		<concat destfile="${out.path}/site.xml">
 			<header file="build/site_header.xml" />
 			<fileset dir="."
@@ -146,26 +152,14 @@
 			</fileset>
 			<footer file="build/site_footer.xml" />
 		</concat>
-		
+	</target>
+
+	<target name="archive-site" description="Create a zip for the update site"
+		depends="site">
 		<zip destfile="ooeclipseintegration_site.zip"
 			basedir="${out.path}"
 			includes="plugins/**, features/**, site.xml" />
-
-        <echo>
-           =================================================
-           The ooeclipseintegration update site is generated
-
-           To use it you, just unzip 
-           bin/ant/ooeclipseintegration_site.zip where you
-           want to create your update site.
-           
-           Eclipse can althought install from a local zipped
-           update site.
-           
-           =================================================
-        </echo>
-
 	</target>
-
+	
 </project>
 

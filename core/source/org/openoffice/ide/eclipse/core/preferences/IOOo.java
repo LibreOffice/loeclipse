@@ -2,9 +2,9 @@
  *
  * $RCSfile: IOOo.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -84,7 +84,7 @@ public interface IOOo {
     
     /**
      * <p>Returns the path to the OpenOffice.org classes directory. 
-     * This string could be passed to the Path constructor to get the 
+     * These strings could be passed to the Path constructor to get the 
      * folder object.</p> 
      * 
      * <p><em>This method should be used for future compatibility with 
@@ -92,7 +92,7 @@ public interface IOOo {
      * 
      * @return path to the OpenOffice.org classes directory
      */
-    public String getClassesPath();
+    public String[] getClassesPath();
     
     /**
      * <p>Returns the path to the OpenOffice.org shared libraries. This string
@@ -100,19 +100,19 @@ public interface IOOo {
      * 
      * @return path to the OpenOffice.org libraries directory
      */
-    public String getLibsPath();
+    public String[] getLibsPath();
     
     /**
      * @return the path to the <code>types.rdb</code> file of the OOo or URE
      * instance.
      */
-    public String getTypesPath();
+    public String[] getTypesPath();
     
     /**
      * @return the path to the <code>services.rdb</code> file of the OOo or URE
      * instance.
      */
-    public String getServicesPath();
+    public String[] getServicesPath();
     
     /**
      * @return the path to the UNO bootstrap properties file.

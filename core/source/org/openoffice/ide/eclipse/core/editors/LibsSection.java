@@ -2,9 +2,9 @@
  *
  * $RCSfile: LibsSection.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -226,8 +226,8 @@ public class LibsSection extends SectionPart {
         mTableViewer.setCellEditors(new CellEditor[]{
             null,
             new ComboBoxCellEditor(mTableViewer.getTable(),
-                new String[]{Messages.getString("LibsSection.BasicLibrary"), 
-                    Messages.getString("LibsSection.DialogLibrary")}) //$NON-NLS-1$ //$NON-NLS-2$
+                new String[]{Messages.getString("LibsSection.BasicLibrary"),  //$NON-NLS-1$
+                    Messages.getString("LibsSection.DialogLibrary")}) //$NON-NLS-1$
         });
         mTableViewer.setCellModifier(new LibsCellModifier());
         mTableViewer.setColumnProperties(new String[]{P_NAME, P_LIBTYPE});

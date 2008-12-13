@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:36:45 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -43,8 +43,10 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards.pages;
 
+import java.text.MessageFormat;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -173,13 +175,13 @@ public abstract class NewScopedElementWizardPage extends WizardPage
         setDescription(getDescription());
         setImageDescriptor(getImageDescriptor());
         
-        mRootName = "";
+        mRootName = ""; //$NON-NLS-1$
         if (null != pRootName) {
-            mRootName = pRootName; //$NON-NLS-1$
+            mRootName = pRootName;
         }
-        mElementName = "";
+        mElementName = ""; //$NON-NLS-1$
         if (null != pElementName) {
-            mElementName = pElementName; //$NON-NLS-1$
+            mElementName = pElementName;
         }
         mSubpackageName = ""; //$NON-NLS-1$
     }
@@ -216,14 +218,13 @@ public abstract class NewScopedElementWizardPage extends WizardPage
     public abstract int getProvidedTypes();
     
     /**
-     * Launch or relaunch the type provider by setting .
-     * the used OOo instance
+     * Set the OOo instance to query the types from.
      * 
      * @param pOOoInstance OOo instance to use.
      */
     public void setOOoInstance(IOOo pOOoInstance) {
         if (pOOoInstance != null) {
-            UnoTypeProvider.getInstance().initialize(pOOoInstance, getProvidedTypes());
+            UnoTypeProvider.getInstance().setOOoInstance(pOOoInstance);
         }
     }
     
@@ -234,7 +235,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      */
     public void setUnoidlProject(IUnoidlProject pUnoProject) {
         mUnoProject = pUnoProject;
-        UnoTypeProvider.getInstance().initialize(mUnoProject, getProvidedTypes());
+        UnoTypeProvider.getInstance().setProject(mUnoProject);
     }
     
     /**
@@ -302,7 +303,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      *             package is empty or <code>null</code>. 
      */
     public void setPackage(String pValue, boolean pForced) {
-        String moduleSep = "::";
+        String moduleSep = "::"; //$NON-NLS-1$
         
         if (pValue.startsWith(moduleSep)) {
             pValue = pValue.substring(moduleSep.length());
@@ -369,7 +370,6 @@ public abstract class NewScopedElementWizardPage extends WizardPage
             mPackageRow.removeFieldChangedlistener();
             mNameRow.removeFieldChangedlistener();
             mPublishedRow.removeFieldChangedlistener();
-            UnoTypeProvider.getInstance().stopProvider();
         } catch (NullPointerException e) {
             PluginLogger.debug(e.getMessage());
         }
@@ -546,8 +546,6 @@ public abstract class NewScopedElementWizardPage extends WizardPage
             // Nothing to do... this is sometimes normal
         }
         
-    
-        setPageComplete(isPageComplete());
         if (typeDelta != null) {
             UnoFactoryData delta = new UnoFactoryData();
             
@@ -566,6 +564,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
             delta.addInnerData(typeDelta);
 
             firePageChanged(delta);
+            
+            setPageComplete(isPageComplete());
         }
     }
 
@@ -573,7 +573,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      * {@inheritDoc}
      */
     public boolean isPageComplete() {
-        boolean result = true; 
+        String type = getPackage() + "::" + getElementName(); //$NON-NLS-1$
+        boolean result = !existsIdlFile(type, getProject()); 
         
         try {
             // An IDL identifier corresponds to the following regexp: 
@@ -586,5 +587,46 @@ public abstract class NewScopedElementWizardPage extends WizardPage
         }
         
         return result;
+    }
+    
+    /**
+     * Checks if an IDL file exists in the project for a given IDL type.
+     * 
+     * <p>Please note that this method behaves correctly only if the user is 
+     * respecting the following design rules:
+     * <ul>
+     *     <li>One IDL type per file</li>
+     *     <li>The IDL types have to be organized in directories representing the 
+     *          UNO modules</li>
+     * </ul>
+     * </p>
+     * 
+     * @param pIdlFullName the full name of the IDL file check
+     * @param pPrj the project where to look for the IDL file
+     * 
+     * @return <code>true</code> if the an IDL file corresponds to the searched type,
+     *          <code>false</code> otherwise.
+     */
+    public static boolean existsIdlFile(String pIdlFullName, IUnoidlProject pPrj) {
+        
+        boolean exists = false;
+        
+        if (pPrj != null) {
+            try {
+                IPath idlPath = pPrj.getIdlPath();
+                String slashedName = pIdlFullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+                idlPath = idlPath.append(slashedName + ".idl"); //$NON-NLS-1$
+                
+                idlPath = pPrj.getProjectPath().append(idlPath);
+                
+                exists = idlPath.toFile().exists();
+            } catch (Exception e) {
+                String pattern = Messages.getString("ServiceWizardSet.IsIdlTypeExistingWarning"); //$NON-NLS-1$
+                String msg = MessageFormat.format(pattern, pIdlFullName);
+                PluginLogger.warning(msg, e);
+            }
+        }
+        
+        return exists;
     }
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: JavaProjectHandler.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:19 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -188,9 +188,9 @@ public class JavaProjectHandler implements IProjectHandler {
         
         if (pService.startsWith(prefix)) {
             String localName = pService.substring(prefix.length());
-            implementationName = prefix + "." + comp + localName + "Impl";
+            implementationName = prefix + "." + comp + localName + "Impl"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            throw new Exception("Cannot find implementation name for service: " + pService);
+            throw new Exception("Cannot find implementation name for service: " + pService); //$NON-NLS-1$
         }
         
         return implementationName;
@@ -247,7 +247,7 @@ public class JavaProjectHandler implements IProjectHandler {
      * @return a handle to the jar file of the project
      */
     public File getJarFile(IUnoidlProject pProject) {
-        String filename = pProject.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$
+        String filename = pProject.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         return pProject.getFile(filename).getLocation().toFile();
     }
     
@@ -273,17 +273,20 @@ public class JavaProjectHandler implements IProjectHandler {
     public static Vector<Path> findJarsFromPath(IOOo pOoo) {
         Vector<Path> jarsPath = new Vector<Path>();
         
-        Path folderPath = new Path(pOoo.getClassesPath());
-        File programFolder = folderPath.toFile();
-        
-        String[] content = programFolder.list();
-        for (int i = 0, length = content.length; i < length; i++) {
-            String contenti = content[i];
-            if (isKeptJar(contenti)) {
-                Path jariPath = new Path (
-                        pOoo.getClassesPath() + "/" + contenti); //$NON-NLS-1$
-                jarsPath.add(jariPath);
-            }
+        String[] paths = pOoo.getClassesPath();
+        for (String path : paths) {
+            Path folderPath = new Path(path);
+            File programFolder = folderPath.toFile();
+            
+            String[] content = programFolder.list();
+            for (int i = 0, length = content.length; i < length; i++) {
+                String contenti = content[i];
+                if (isKeptJar(contenti)) {
+                    Path jariPath = new Path (
+                            path + "/" + contenti); //$NON-NLS-1$
+                    jarsPath.add(jariPath);
+                }
+            }   
         }
         
         return jarsPath;

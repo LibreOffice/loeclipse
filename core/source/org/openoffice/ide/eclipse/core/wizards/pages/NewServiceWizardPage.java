@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizardPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -53,10 +53,9 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
-import org.openoffice.ide.eclipse.core.wizards.ServiceWizardSet;
 
 /**
- * Service creation wizard page, this page is used by the {@link ServiceWizardSet}.
+ * Service creation wizard page.
  * 
  * @author cedricbosdo
  */
@@ -177,7 +176,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
      * @return the fully qualified name of the exported interface separated with "::"  
      */
     public String getInheritanceName() {
-        String result = "";
+        String result = ""; //$NON-NLS-1$
         if (mIfaceInheritanceRow != null) {
             result = mIfaceInheritanceRow.getValue();
         }

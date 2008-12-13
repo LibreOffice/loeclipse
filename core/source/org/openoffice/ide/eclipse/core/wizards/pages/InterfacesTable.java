@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfacesTable.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -55,7 +55,6 @@ import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
-import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
@@ -126,15 +125,8 @@ public class InterfacesTable extends AbstractTable {
     protected ITableElement addLine() {
         ITableElement line = null;
         
-        // Saving the current types filtering
-        UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
-        int oldType = typesProvider.getTypes();
-        
-        // Ask for interfaces only
-        typesProvider.setTypes(IUnoFactoryConstants.INTERFACE);
-        
         // Launching the UNO Type Browser
-        UnoTypeBrowser browser = new UnoTypeBrowser(getShell(), typesProvider);
+        UnoTypeBrowser browser = new UnoTypeBrowser(getShell(), IUnoFactoryConstants.INTERFACE);
         if (UnoTypeBrowser.OK == browser.open()) {
             
             String value = null;
@@ -148,9 +140,6 @@ public class InterfacesTable extends AbstractTable {
             line = new InheritanceLine();
             ((InheritanceLine)line).setInterfaceName(value);
         }
-        
-        // Restoring the old types filtering
-        typesProvider.setTypes(oldType);
         
         return line;
     }

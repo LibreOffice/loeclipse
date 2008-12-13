@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProjectHelper.java,v $
  *
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -115,9 +115,9 @@ public class UnoidlProjectHelper {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(pConfigFile);
-            properties.store(out, "UNO project configuration file");
+            properties.store(out, Messages.getString("UnoidlProjectHelper.ConfigFileComment")); //$NON-NLS-1$
         } catch (Exception e) {
-            PluginLogger.warning("Can't create default uno configuration file", e);
+            PluginLogger.warning(Messages.getString("UnoidlProjectHelper.DefaultConfigFileError"), e); //$NON-NLS-1$
         } finally {
             try { out.close(); } catch (IOException e) { }
         }
@@ -176,14 +176,14 @@ public class UnoidlProjectHelper {
 
         // Set the idl directory
         String idlDir = (String)pData.getProperty(IUnoFactoryConstants.PROJECT_IDL_DIR);
-        if (idlDir == null || idlDir.equals("")) {
+        if (idlDir == null || idlDir.equals("")) { //$NON-NLS-1$
             idlDir = IDL_BASIS;
         }
         unoProject.setIdlDir(idlDir);
         
         // Set the sources directory
         String sourcesDir = (String)pData.getProperty(IUnoFactoryConstants.PROJECT_SRC_DIR);
-        if (sourcesDir == null || sourcesDir.equals("")) {
+        if (sourcesDir == null || sourcesDir.equals("")) { //$NON-NLS-1$
             sourcesDir = SOURCE_BASIS;
         }
         unoProject.setSourcesDir(sourcesDir);
@@ -321,10 +321,10 @@ public class UnoidlProjectHelper {
                 
                 // Create the IDL folder and all its parents
                 IPath idlPath = pUnoproject.getIdlPath();
-                String currentPath = "/";
+                String currentPath = "/"; //$NON-NLS-1$
                 
                 for (int i = 0, length = idlPath.segmentCount(); i < length; i++) {
-                    currentPath += idlPath.segment(i) + "/";
+                    currentPath += idlPath.segment(i) + "/"; //$NON-NLS-1$
                     IFolder folder = pUnoproject.getFolder(currentPath);
                     if (!folder.exists()) {
                         folder.create(true, true, pMonitor);
@@ -356,7 +356,7 @@ public class UnoidlProjectHelper {
             IProgressMonitor pMonitor) {
 
         String sourcesDir = pUnoproject.getSourcePath().toPortableString();
-        if (sourcesDir == null || sourcesDir.equals("")) {
+        if (sourcesDir == null || sourcesDir.equals("")) { //$NON-NLS-1$
             sourcesDir = SOURCE_BASIS;
         }
         

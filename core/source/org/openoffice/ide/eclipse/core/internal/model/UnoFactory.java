@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoFactory.java,v $
  *
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -148,13 +148,19 @@ public final class UnoFactory {
         if (languageOption != null) {
             
             // Get the registries
-            String oooTypes = prj.getOOo().getTypesPath();
-            oooTypes = oooTypes.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-            oooTypes = oooTypes.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
-            oooTypes = "file:///" + oooTypes; //$NON-NLS-1$
+            String typesReg = ""; //$NON-NLS-1$
+            String[] oooTypes = prj.getOOo().getTypesPath();
+            for (String oooType : oooTypes) {
+                oooType = oooType.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+                oooType = oooType.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+                oooType = "file:///" + oooType; //$NON-NLS-1$
+                
+                typesReg += " -l " + oooType; //$NON-NLS-1$
+            }
+            
             
             String prjTypes = prj.getTypesPath().toString();
-            String typesReg = "-l " + oooTypes + " -l " + prjTypes; //$NON-NLS-1$ //$NON-NLS-2$
+            typesReg += " -l " + prjTypes; //$NON-NLS-1$
 
             // Get the unorc file
             String unorc = "-env:BOOTSTRAPINI=\"" + prj.getOOo().getUnorcPath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,7 +169,7 @@ public final class UnoFactory {
             String service = ""; //$NON-NLS-1$
             int i = 0;
             
-            while (i < inner.length && service.equals("")) {
+            while (i < inner.length && service.equals("")) { //$NON-NLS-1$
                 
                 int typeNature = ((Integer)inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
                 if (typeNature == IUnoFactoryConstants.SERVICE) {
@@ -173,7 +179,7 @@ public final class UnoFactory {
                     String fullname = module + "::" + name; //$NON-NLS-1$
                     fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
-                    service = fullname; //$NON-NLS-1$
+                    service = fullname;
                 }
 
                 i++;
@@ -324,15 +330,8 @@ public final class UnoFactory {
         file.dispose();
 
         // show the generated file
-        String filename = typepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        UnoidlProjectHelper.refreshProject(pPrj, null);
-
         if (pOpenFile) {
-            IFile serviceFile = pPrj.getFile(
-                    pPrj.getIdlPath().append(filename));
-
-            showFile(serviceFile, pActivePage);
+            showType(typepath, pPrj, pActivePage);
         }
     }
     
@@ -443,15 +442,26 @@ public final class UnoFactory {
         file.create(true);
         file.dispose();
 
-        // show the generated file
         if (pOpenFile) {
-            String filename = typepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            UnoidlProjectHelper.refreshProject(pPrj, null);
-            IFile interfaceFile = pPrj.getFile(pPrj.getIdlPath().append(filename));
-            showFile(interfaceFile, pActivePage);
+            showType(typepath, pPrj, pActivePage);
         }
     }
     
+    /**
+     * Show the file declaring a UNO type.
+     * 
+     * @param pTypepath the complete name of the type to show separated by <code>::</code>.
+     * @param pPrj the project containing the type
+     * @param pActivePage the workbench active page
+     */
+    private static void showType(String pTypepath, IUnoidlProject pPrj, IWorkbenchPage pActivePage) {
+        // show the generated file
+        String filename = pTypepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        UnoidlProjectHelper.refreshProject(pPrj, null);
+        IFile interfaceFile = pPrj.getFile(pPrj.getIdlPath().append(filename));
+        showFile(interfaceFile, pActivePage);
+    }
+
     /**
      * Get the includes to add from the children.
      * 
@@ -465,7 +475,7 @@ public final class UnoFactory {
         String[] properties = pData.getKeys();
         for (String name : properties) {
             String stringValue = pData.getProperty(name).toString();
-            if (stringValue.contains("::") && !name.equals(IUnoFactoryConstants.PACKAGE_NAME)) {
+            if (stringValue.contains("::") && !name.equals(IUnoFactoryConstants.PACKAGE_NAME)) { //$NON-NLS-1$
                 includes.add(stringValue);
             }
         }

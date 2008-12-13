@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoFilePage.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -191,7 +191,7 @@ public class NewUnoFilePage extends WizardNewFileCreationPage {
                 PluginLogger.error(
                         Messages.getString("NewUnoFilePage.NoIdlFolderError"), e); //$NON-NLS-1$
             } catch (NullPointerException e) {
-                PluginLogger.debug("Can't open the IDL file: " + pFilename, e);
+                PluginLogger.debug("Can't open the IDL file: " + pFilename, e); //$NON-NLS-1$
             }
         }
         return performed;

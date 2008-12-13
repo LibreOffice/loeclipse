@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectWizard.java,v $
  *
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -206,9 +206,9 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
                 serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, serviceName);
                 serviceData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
-                        new String[]{ifaceName.replaceAll("\\.", "::")});
+                        new String[]{ifaceName.replaceAll("\\.", "::")}); //$NON-NLS-1$ //$NON-NLS-2$
                 serviceData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, 
-                        mMainPage.getPrefix().replaceAll("\\.", "::"));
+                        mMainPage.getPrefix().replaceAll("\\.", "::")); //$NON-NLS-1$ //$NON-NLS-2$
 
                 data.addInnerData(serviceData);
 
@@ -217,10 +217,10 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                     UnoFactoryData ifaceData = new UnoFactoryData();
                     ifaceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.INTERFACE);
                     
-                    String[] splitted = mServiceIfaceName.split("::");
+                    String[] splitted = mServiceIfaceName.split("::"); //$NON-NLS-1$
                     String packageName = splitted[0];
                     for (int i = 1; i < splitted.length - 1; i++) {
-                        packageName += "::" + splitted[i];
+                        packageName += "::" + splitted[i]; //$NON-NLS-1$
                     }
                     
                     ifaceData.setProperty(IUnoFactoryConstants.TYPE_NAME, splitted[splitted.length - 1]);

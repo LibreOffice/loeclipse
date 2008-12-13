@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOEclipsePlugin.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -43,14 +43,14 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 import org.openoffice.ide.eclipse.core.i18n.ImageManager;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
@@ -145,7 +145,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
     public void start(BundleContext pContext) throws Exception {
         super.start(pContext);
         setDefaultPreferences();
-
+        
         // Creates the SDK container
         OOoContainer.load();
         SDKContainer.load();

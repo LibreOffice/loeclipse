@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: PackageLicenseFormPage.java,v $
+ * $RCSfile: OfficeHelper.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -41,38 +41,43 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.editors;
+package org.openoffice.ide.eclipse.core.office;
 
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
+import java.lang.reflect.Constructor;
+import java.net.URLClassLoader;
+
+import org.openoffice.ide.eclipse.core.preferences.IOOo;
 
 /**
- * The form page of the package editor helping to configure the project's
- * licenses.
+ * Provides a set of utility methods to use to handle OOo. All the code handling
+ * OpenOffice.org has to be in the {@value #OOO_PACKAGE} package. These classes have
+ * to be loaded by the {@link OfficeClassLoader}. All the classes facade classes have
+ * to be in the same package than this class.
  * 
  * @author cedricbosdo
  *
  */
-public class PackageLicenseFormPage extends FormPage {
-
+public class OfficeHelper {
+    
+    static final String OOO_PACKAGE = "org.openoffice.ide.eclipse.core.internal.office"; //$NON-NLS-1$
+    
+    static final String CLASS_CONNECTION = OOO_PACKAGE + ".OfficeConnection"; //$NON-NLS-1$
+    
     /**
-     * Constructor.
+     * Create an office connection object using a given class loader.
      * 
-     * @param pEditor the editor where to add the page
-     * @param pId the page identifier
+     * @param pClassLoader the class loader to use
+     * @param pOOo the office to set in the connection
+     * 
+     * @return the office connection object
+     * 
+     * @throws Exception if the class cannot be found or the constructor cannot be called.
      */
-    public PackageLicenseFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId, Messages.getString("PackageLicenseFormPage.Title")); //$NON-NLS-1$
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void createFormContent(IManagedForm pManagedForm) {
-        super.createFormContent(pManagedForm);
+    static Object createConnection(URLClassLoader pClassLoader, IOOo pOOo) throws Exception {
+        String className = CLASS_CONNECTION;
+        Class<?> clazz = pClassLoader.loadClass(className);
         
-        // TODO create the license form page here
+        Constructor<?> constr = clazz.getConstructor(IOOo.class);
+        return constr.newInstance(pOOo);
     }
 }

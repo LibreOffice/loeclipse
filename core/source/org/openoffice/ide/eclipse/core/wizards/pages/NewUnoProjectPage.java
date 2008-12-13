@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewUnoProjectPage.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -458,17 +458,19 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
     private void addCustomDirsControls(Composite pParent) {
         // Add the custom directories checkbox
         mCustomDirsRow = new BooleanRow(pParent, CUSTOM_DIRS, 
-                "Use custom project directories");
+                Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
         mCustomDirsRow.setFieldChangedListener(this);
         
         // Add the custom source directory chooser
-        mSourceRow = new TextRow(pParent, CUSTOM_SRC, "Sources");
+        mSourceRow = new TextRow(pParent, CUSTOM_SRC, 
+                Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
         mSourceRow.setValue(UnoidlProjectHelper.SOURCE_BASIS);
         mSourceRow.setEnabled(false);
         mSourceRow.setFieldChangedListener(this);
         
         // Add the custom idl directory chooser
-        mIdlDirRow = new TextRow(pParent, CUSTOM_IDL, "IDL files");
+        mIdlDirRow = new TextRow(pParent, CUSTOM_IDL, 
+                Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
         mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
         mIdlDirRow.setEnabled(false);
         mIdlDirRow.setFieldChangedListener(this);    

@@ -2,9 +2,9 @@
  *
  * $RCSfile: SDK.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -250,6 +250,26 @@ public class SDK implements ISdk, ITableElement {
      */
     private IPath getBinPath(String pHome) {
         IPath path = null;
+        
+        // First check for the 3.0 SDK structure
+        path = new Path(pHome).append("/bin"); //$NON-NLS-1$
+        if (!path.toFile().isDirectory()) {
+            path = getSDK2BinPath(pHome);
+        }
+        
+        return path;
+    }
+    
+    /**
+     * Get the binaries path for the SDK 2.x structure.
+     * 
+     * @param pHome the SDK home path
+     * 
+     * @return the path to the bin directory
+     */
+    private IPath getSDK2BinPath(String pHome) {
+        IPath path = null;
+        
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             path = new Path(pHome).append("/windows/bin/"); //$NON-NLS-1$
         } else if (Platform.getOS().equals(Platform.OS_LINUX)) {
@@ -263,9 +283,10 @@ public class SDK implements ISdk, ITableElement {
         } else if (Platform.getOS().equals(Platform.OS_MACOSX)) {
             path = new Path(pHome).append("/macosx/bin"); //$NON-NLS-1$
         }
+        
         return path;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -332,7 +353,7 @@ public class SDK implements ISdk, ITableElement {
             dialog.create();
             dialog.open();
         } catch (Exception e) {
-            PluginLogger.error(e.getMessage(), null); //$NON-NLS-1$
+            PluginLogger.error(e.getMessage(), null);
         }
         
         return process;
@@ -384,13 +405,24 @@ public class SDK implements ISdk, ITableElement {
     private String[] updateEnvironment(String[] pVars, IOOo pOoo) throws Exception {
         String binPath = getBinPath().toOSString();
         
+        // Extract the libraries paths
+        String[] paths = pOoo.getLibsPath();
+        String oooLibs = ""; //$NON-NLS-1$
+        for (int i = 0; i < paths.length; i++) {
+            String path = paths[i];
+            String oooLibsPath = new Path(path).toOSString();
+            if (i < paths.length - 1) {
+                oooLibsPath += PATH_SEPARATOR;
+            }
+            oooLibs += oooLibsPath;
+        }
+        
         // Create the exec parameters depending on the OS
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             
             // Definining path variables
-            Path oooLibsPath = new Path(pOoo.getLibsPath());
             pVars = SystemHelper.addEnv(pVars, "PATH", binPath + PATH_SEPARATOR +  //$NON-NLS-1$
-                    oooLibsPath.toOSString(), PATH_SEPARATOR);
+                    oooLibs, PATH_SEPARATOR);
             
         } else if (Platform.getOS().equals(Platform.OS_LINUX) ||
                 Platform.getOS().equals(Platform.OS_SOLARIS)) {
@@ -399,18 +431,18 @@ public class SDK implements ISdk, ITableElement {
             String[] tmpVars = SystemHelper.addEnv(pVars, "PATH",  //$NON-NLS-1$
                     binPath, PATH_SEPARATOR);
             pVars = SystemHelper.addEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
-                    pOoo.getLibsPath(), PATH_SEPARATOR);
+                    oooLibs, PATH_SEPARATOR);
             
         } else if (Platform.getOS().equals(Platform.OS_MACOSX)) { 
             
             String[] tmpVars = SystemHelper.addEnv(pVars, "PATH",  //$NON-NLS-1$
                     binPath, PATH_SEPARATOR);
             pVars = SystemHelper.addEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
-                    pOoo.getLibsPath(), PATH_SEPARATOR);
+                    oooLibs, PATH_SEPARATOR);
             
         } else {
             // Unmanaged OS
-            throw new Exception(Messages.getString("SDK.InvalidSdkError"));
+            throw new Exception(Messages.getString("SDK.InvalidSdkError")); //$NON-NLS-1$
         }
         
         return pVars;
@@ -509,8 +541,8 @@ public class SDK implements ISdk, ITableElement {
                         InvalidConfigException.INVALID_SDK_HOME);
             } catch (IOException e) {
                 throw new InvalidConfigException(
-                        Messages.getString("SDK.NoReadableFileError") + 
-                        "settings/" + F_DK_CONFIG,  //$NON-NLS-1$ //$NON-NLS-2$
+                        Messages.getString("SDK.NoReadableFileError") +  //$NON-NLS-1$
+                        "settings/" + F_DK_CONFIG,  //$NON-NLS-1$
                         InvalidConfigException.INVALID_SDK_HOME);
             } finally {
                 try { in.close(); } catch (Exception e) { }

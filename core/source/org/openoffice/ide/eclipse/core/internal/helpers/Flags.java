@@ -1,8 +1,8 @@
 /*************************************************************************
  *
- * $RCSfile: PackageLicenseFormPage.java,v $
+ * $RCSfile: Flags.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
  * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
@@ -41,38 +41,66 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.editors;
-
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.editor.FormPage;
+package org.openoffice.ide.eclipse.core.internal.helpers;
 
 /**
- * The form page of the package editor helping to configure the project's
- * licenses.
+ * Class handling a set of bit-ORed flags.
  * 
  * @author cedricbosdo
  *
  */
-public class PackageLicenseFormPage extends FormPage {
-
+public class Flags {
+    
+    private int mFlags;
+    private int mMax;
+    private int mAllowed;
+    
     /**
-     * Constructor.
+     * Initializes the flags structure with a default value and a maximum
+     * number of bits to use for the flags.
      * 
-     * @param pEditor the editor where to add the page
-     * @param pId the page identifier
+     * @param pMax the number value of the flags
+     * @param pAllowed the allowed flags
+     * @param pDefault the default value
      */
-    public PackageLicenseFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId, Messages.getString("PackageLicenseFormPage.Title")); //$NON-NLS-1$
+    public Flags(int pMax, int pAllowed, int pDefault) {
+        mFlags = pDefault;
+        mMax = pMax;
+        mAllowed = pAllowed;
     }
 
     /**
-     * {@inheritDoc}
+     * Set one or more types. To specify more than one types give the bit or
+     * of all the types, e.g. <code>INTERFACE | SERVICE</code>. The non-allowed
+     * flags are automatically stripped.
+     * 
+     * @param pValue the bit or of the types
      */
-    @Override
-    protected void createFormContent(IManagedForm pManagedForm) {
-        super.createFormContent(pManagedForm);
-        
-        // TODO create the license form page here
+    public void setTypes(int pValue) {
+
+        // Only 10 bits available
+        if (pValue >= 0 && pValue <= mMax) {
+            if (mFlags != pValue) {
+                mFlags = pValue & mAllowed;
+            }
+        }
+    }
+
+    /**
+     * @return the flags set as an integer. The flags field is a bit OR of all the
+     *          flags set.
+     */
+    public int getFlags() {
+        return mFlags;
+    }
+
+    /**
+     * Checks if the given flag will be queried.
+     * 
+     * @param pFlag the flag to match
+     * @return <code>true</code> if the flag is one of the flags set
+     */
+    public boolean isFlagSet(int pFlag) {
+        return (mFlags & pFlag) == pFlag;
     }
 }

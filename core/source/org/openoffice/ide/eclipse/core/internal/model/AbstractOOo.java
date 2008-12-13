@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractOOo.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -74,7 +74,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     
     public static final String PATH = "__ooo_path"; //$NON-NLS-1$
 
-    protected static final String FILE_SEP = System.getProperty("file.separator");
+    protected static final String FILE_SEP = System.getProperty("file.separator"); //$NON-NLS-1$
     
     private String mHome;
     private String mName;
@@ -123,10 +123,10 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         
         mHome = pHome;
             
-        /* Checks if the classes path is a directory */
+        /* Checks if the classes paths are directories */
         checkClassesDir();
         
-        /* Checks if types.rdb is a readable file */
+        /* Checks if types registries are readable files */
         checkTypesRdb();
         
         /* Checks if services.rdb is a readable file */
@@ -190,15 +190,19 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      *      isn't present
      */
     private void checkServicesRdb() throws InvalidConfigException {
-        Path servicesPath = new Path(getServicesPath());
-        File servicesFile = servicesPath.toFile();
+        String[] paths = getServicesPath();
         
-        if (!servicesFile.isFile() || !servicesFile.canRead()) {
-            mHome = null;
-            throw new InvalidConfigException(
-                Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
-                        servicesFile.getAbsolutePath(), 
-                InvalidConfigException.INVALID_OOO_HOME);
+        for (String path : paths) {
+            Path servicesPath = new Path(path);
+            File servicesFile = servicesPath.toFile();
+            
+            if (!servicesFile.isFile() || !servicesFile.canRead()) {
+                mHome = null;
+                throw new InvalidConfigException(
+                    Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+                            servicesFile.getAbsolutePath(), 
+                    InvalidConfigException.INVALID_OOO_HOME);
+            }   
         }
     }
 
@@ -210,15 +214,18 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      *      isn't present
      */
     private void checkTypesRdb() throws InvalidConfigException {
-        Path typesPath = new Path(getTypesPath());
-        File typesFile = typesPath.toFile();
-        
-        if (!typesFile.isFile() || !typesFile.canRead()) {
-            mHome = null;
-            throw new InvalidConfigException(
-                Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
-                        typesFile.getAbsolutePath(), 
-                InvalidConfigException.INVALID_OOO_HOME);
+        String[] paths = getTypesPath();
+        for (String path : paths) {
+            Path typesPath = new Path(path);
+            File typesFile = typesPath.toFile();
+            
+            if (!typesFile.isFile() || !typesFile.canRead()) {
+                mHome = null;
+                throw new InvalidConfigException(
+                    Messages.getString("AbstractOOo.NoFileError") +  //$NON-NLS-1$
+                            typesFile.getAbsolutePath(), 
+                    InvalidConfigException.INVALID_OOO_HOME);
+            }
         }
     }
 
@@ -228,16 +235,19 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * @throws InvalidConfigException if the classes directory can't be found
      */
     private void checkClassesDir() throws InvalidConfigException {
-        Path javaPath = new Path(getClassesPath());
-        File javaDir = javaPath.toFile();
-        
-        if (!javaDir.isDirectory() || !javaDir.canRead()) {
-            mHome = null;
-            throw new InvalidConfigException(
-                Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
-                        javaDir.getAbsolutePath(), 
-                InvalidConfigException.INVALID_OOO_HOME);
-        }        
+        String[] paths = getClassesPath();
+        for (String path : paths) {
+            Path javaPath = new Path(path);
+            File javaDir = javaPath.toFile();
+            
+            if (!javaDir.isDirectory() || !javaDir.canRead()) {
+                mHome = null;
+                throw new InvalidConfigException(
+                    Messages.getString("AbstractOOo.NoDirectoryError") +  //$NON-NLS-1$
+                            javaDir.getAbsolutePath(), 
+                    InvalidConfigException.INVALID_OOO_HOME);
+            }      
+        }
     }
     
     //-------------------------------------------- ITableElement Implementation
@@ -314,7 +324,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             unoPath = "uno"; //$NON-NLS-1$
         }
         
-        String command = unoPath +  //$NON-NLS-1$
+        String command = unoPath +
             " -c " + pMain + //$NON-NLS-1$
             " -l " + libpath +  //$NON-NLS-1$
             " -- " + pArgs; //$NON-NLS-1$

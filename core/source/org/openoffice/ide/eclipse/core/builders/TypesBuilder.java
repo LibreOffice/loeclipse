@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesBuilder.java,v $
  *
- * $Revision: 1.14 $
+ * $Revision: 1.15 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:17 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -153,7 +153,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
                     sBuildState = NOT_STARTED_STATE;
                     CoreException thrown = new CoreException(new Status(
                             Status.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-                            "Error during UNO types build", e));
+                            Messages.getString("TypesBuilder.BuildError0"), e)); //$NON-NLS-1$
                     if (!(e instanceof CoreException)) {
                         thrown = (CoreException)e;
                     }
@@ -279,9 +279,9 @@ public class TypesBuilder extends IncrementalProjectBuilder {
                     pFile.getProjectRelativePath().removeLastSegments(1).
                     removeFirstSegments(segmentCount));
             
-            String command = "idlc -O \"" + outputLocation.toOSString() + "\"" + //$NON-NLS-1$
-                " -I \"" + sdkPath.append("idl").toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
-                " -I \"" + project.getIdlPath().toOSString() + "\"" +  //$NON-NLS-1$
+            String command = "idlc -O \"" + outputLocation.toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
+                " -I \"" + sdkPath.append("idl").toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                " -I \"" + project.getIdlPath().toOSString() + "\"" +  //$NON-NLS-1$ //$NON-NLS-2$
                 " " + pFile.getProjectRelativePath().toOSString();  //$NON-NLS-1$
             
             Process process = project.getSdk().runTool(project, command, pMonitor);

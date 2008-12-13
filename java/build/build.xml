@@ -2,9 +2,9 @@
 <!-- ====================================================================== 
  * $RCSfile: build.xml,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/08/15 12:27:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
  *
  * The Contents of this file are made available subject to the terms of 
  * the GNU Lesser General Public License Version 2.1
@@ -40,120 +40,93 @@
  * Contributor(s): Cedric Bosdonnat                                                              
  ====================================================================== -->
 
-<project name="org.openoffice.ide.eclipse.java" default="site">
-	<description>
-            This project provides a new plugin for Eclipse to help 
-			OpenOffice.org development
-    </description>
+<project name="java" default="java.error">
 
-	<loadproperties srcfile="build.properties" />
 	
-	<property name="prj.path" value=".." />
-	<property name="out.path" value="${prj.path}/bin/ant" />
-	
-	<path id="dependencies.path">
-		<pathelement location="${prj.path}/../core/bin/ant/plugin/"/>
-		
-		<fileset dir="${eclipse.home}/plugins/">
-			<include name="org.eclipse*.jar"/>
-		</fileset>
-	</path>
-	
-	<target name="clean"
-			description="Cleans all the temporary files">
-		
-		<delete dir="${out.path}/plugin" />
-		<delete dir="${out.path}/feature" />
-	</target>
-	
-	<target name="purge"
-			description="Removes all the generated files">
-		<delete dir="${out.path}" />
-	</target>
-
-	<!-- ================================= 
-          target: site              
-         ================================= -->
-	<target name="site"
-    	        depends="plugin, feature" 
-    	        description="builds and delivers the plugin">
-
-		<copy file="${prj.path}/build/site_fragment.xml.in" 
-			tofile="${out.path}/site_fragment.xml" />
-		<replace file="${out.path}/site_fragment.xml"
-			token="@VERSION@" value="${version}" />
-
-        <echo>
-           =================================================
-           
-           The java plugin and feature are created. Please
-           run the build.xml file in the build project in
-           order to generate the whole ooeclipseintegration
-           update site.
-           
-           =================================================
-        </echo>
-
-	</target>
-
-	<!-- - - - - - - - -   target: feature  - - - - - - - - - - - - -->
-	<target name="feature" depends="plugin">
-		
-		<mkdir dir="${out.path}/features" />
-		
-		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
-		<mkdir dir="${out.path}/feature" />
-		<copy file="${prj.path}/build/feature.xml.in"
-			tofile="${out.path}/feature/feature.xml" />
-		<replace file="${out.path}/feature/feature.xml" 
-			token="@VERSION@" value="${version}" />
-		
-		<jar destfile="${out.path}/features/org.openoffice.ide.eclipse.java_${version}.jar"
-			basedir="${out.path}/feature"
-			includes="feature.xml" />
-		
-	</target>
-
-	<!-- - - - - - - - -   target: plugin  - - - - - - - - - - - - -->
-	<target name="plugin">
-		
-		<mkdir dir="${out.path}/plugins" />
-		<mkdir dir="${out.path}/plugin" />
-		<javac srcdir="${prj.path}/source" destdir="${out.path}/plugin"
-			target="1.5" source="1.5" debug="${debug}"
-			classpathref="dependencies.path" 
-			excludes="**/unittests/**"/>
-		
-		<copy todir="${out.path}/plugin">
-			<fileset dir="${prj.path}/source">
-				<include name="**/*.properties"/>
-				<include name="**/*.tpl"/>
-			</fileset>
-		</copy>
-
-		<!-- Copy the important files in the directory -->
-
-		<copy file="${prj.path}/build/MANIFEST.MF.in"
-			tofile="${out.path}/plugin/META-INF/MANIFEST.MF" />
-		<replace file="${out.path}/plugin/META-INF/MANIFEST.MF"
-			token="@VERSION@" value="${version}" />
-
-		<copy todir="${out.path}/plugin/icons">
-	    	<fileset dir="${prj.path}/icons">
-	    		<include name="**/*"/>
-	    	</fileset>
-		</copy>
+	<target name="java.error">
+		<fail>Wrong target!
 			
-		<copy file="${prj.path}/plugin.xml" 
-			  tofile="${out.path}/plugin/plugin.xml" />
+			This script should not be executed directly.
+			Please, use the one in the build project
+		</fail>
+	</target>
+	
+	
+	<target name="init-env">
+		<dirname property="java.basedir" file="${ant.file.java}/.."/>
+		
+		<loadproperties srcfile="${java.basedir}/build/build.properties" />
+		
+		<property name="java.out.path" value="${java.basedir}/bin/ant" />
+		<property name="java.out.classes" value="${java.out.path}/classes"/>
+		<property name="java.sources" value="${java.basedir}/source"/>
+		
+		<path id="java.dependencies.path">
+			<pathelement location="${core.out.classes}"/>
+			
+			<fileset dir="${eclipse.home}/plugins/">
+				<include name="org.eclipse*.jar"/>
+			</fileset>
+		</path>
+		
+		<mkdir dir="${java.out.path}/features" />
+		<mkdir dir="${java.out.path}/plugins" />
+		<mkdir dir="${java.out.classes}" />
+	</target>
+	
+	<target name="clean">
+		<delete dir="${java.out.classes}" />
+	</target>
+	
+	<target name="purge" depends="clean">
+		<delete dir="${java.out.path}" />
+	</target>
 
+	<target name="site" depends="java.plugin, java.feature">
+		<copy file="${java.basedir}/build/site_fragment.xml.in" 
+			tofile="${java.out.path}/site_fragment.xml" />
+		<replace file="${java.out.path}/site_fragment.xml"
+			token="@VERSION@" value="${java.plugin.version}" />
+	</target>
+
+	<target name="java.feature">
+		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
+		<copy file="${java.basedir}/build/feature.xml.in"
+			tofile="${java.out.path}/feature.xml" />
+		<replace file="${java.out.path}/feature.xml" 
+			token="@VERSION@" value="${java.plugin.version}" />
+		<replace file="${java.out.path}/feature.xml" 
+			token="@CORE_VERSION@" value="${core.plugin.version}" />
 		
-		<!-- Creating the plugin jar file -->
-		<jar destfile="${out.path}/plugins/org.openoffice.ide.eclipse.java_${version}.jar"
-			basedir="${out.path}/plugin"
-			manifest="${out.path}/plugin/META-INF/MANIFEST.MF"
-			includes="**/*" />
+		<jar destfile="${java.out.path}/features/${package.prefix}.java_${java.plugin.version}.jar">
+			<zipfileset prefix="" file="${java.out.path}/feature.xml"/>
+		</jar>
+	</target>
+
+	<target name="java.compile" depends="init-env">
+		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
+			target="1.5" source="1.5" 
+			debug="${debug}"
+			classpathref="java.dependencies.path" 
+			excludes="**/unittests/**"/>
+	</target>
+	
+	<target name="java.plugin" depends="java.compile">
+		<copy file="${java.basedir}/build/MANIFEST.MF.in"
+			tofile="${java.out.path}/MANIFEST.MF" />
+		<replace file="${java.out.path}/MANIFEST.MF"
+			token="@VERSION@" value="${java.plugin.version}" />
 		
+		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.plugin.version}.jar"
+			manifest="${java.out.path}/MANIFEST.MF">
+			<zipfileset prefix="" dir="${java.sources}">
+				<exclude name="**/*.java"/>
+			</zipfileset>
+			<zipfileset prefix="" dir="${java.out.classes}"/>
+			
+			<zipfileset prefix="icons" dir="${java.basedir}/icons"/>
+			<zipfileset prefix="" file="${java.basedir}/plugin.xml" />
+		</jar>
 	</target>
 	
 </project>

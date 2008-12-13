@@ -2,9 +2,9 @@
  *
  * $RCSfile: ServiceWizardSet.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:57 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -45,7 +45,6 @@ package org.openoffice.ide.eclipse.core.wizards;
 
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.IWorkbenchPage;
@@ -58,6 +57,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
+import org.openoffice.ide.eclipse.core.wizards.pages.NewScopedElementWizardPage;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewServiceWizardPage;
 import org.openoffice.ide.eclipse.core.wizards.utils.WizardPageSet;
 
@@ -69,8 +69,8 @@ import org.openoffice.ide.eclipse.core.wizards.utils.WizardPageSet;
  */
 public class ServiceWizardSet extends WizardPageSet {
 
-    public static final String SERVICE_PAGE_ID = "service";
-    public static final String INTERFACE_PAGE_ID = "interface";
+    public static final String SERVICE_PAGE_ID = "service"; //$NON-NLS-1$
+    public static final String INTERFACE_PAGE_ID = "interface"; //$NON-NLS-1$
     
     /**
      * An instance of the project in which the wizard set is run. 
@@ -146,7 +146,7 @@ public class ServiceWizardSet extends WizardPageSet {
 
             String packageRoot = null;
             if (prefix != null) {
-                packageRoot = prefix.replaceAll("\\.", "::");
+                packageRoot = prefix.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             
             UnoFactoryData[] inner = pData.getInnerData();
@@ -169,7 +169,7 @@ public class ServiceWizardSet extends WizardPageSet {
             
             
         } catch (Exception e) {
-            PluginLogger.warning("Wrong data for service page set initizalization", e);
+            PluginLogger.warning(Messages.getString("ServiceWizardSet.WrongInitDataWarning"), e); //$NON-NLS-1$
         }
     }
     
@@ -195,7 +195,7 @@ public class ServiceWizardSet extends WizardPageSet {
         }
         
         if (ifacePackage == null) {
-            ifacePackage = pServiceInheritance.substring(0, pServiceInheritance.lastIndexOf(":") - 1 );
+            ifacePackage = pServiceInheritance.substring(0, pServiceInheritance.lastIndexOf(":") - 1 ); //$NON-NLS-1$
         }
         
         
@@ -212,7 +212,7 @@ public class ServiceWizardSet extends WizardPageSet {
              */
             ifaceName = pServiceInheritance.substring(pServiceInheritance.lastIndexOf(':') + 1);
             ifacePackage = pServiceInheritance.substring(0, 
-                    pServiceInheritance.lastIndexOf(":") - 1);
+                    pServiceInheritance.lastIndexOf(":") - 1); //$NON-NLS-1$
         }
 
         NewInterfaceWizardPage ifacePage = (NewInterfaceWizardPage)getPage(INTERFACE_PAGE_ID);
@@ -265,11 +265,11 @@ public class ServiceWizardSet extends WizardPageSet {
         }
         
         // If the service package and service names aren't defined in the page, use defaults
-        if (servicePackage == null || servicePackage.equals("")) {
+        if (servicePackage == null || servicePackage.equals("")) { //$NON-NLS-1$
             servicePackage = pPackageRoot;
         }
-        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) {
-            serviceName = pPrjName.replace("\\W", "");
+        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) { //$NON-NLS-1$
+            serviceName = pPrjName.replace("\\W", ""); //$NON-NLS-1$ //$NON-NLS-2$
             serviceName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1);
         }
 
@@ -354,7 +354,7 @@ public class ServiceWizardSet extends WizardPageSet {
             
             String packageRoot = null;
             if (prefix != null) {
-                packageRoot = prefix.replaceAll("\\.", "::");
+                packageRoot = prefix.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             
             if (packageRoot == null) {
@@ -381,7 +381,7 @@ public class ServiceWizardSet extends WizardPageSet {
             setInterfacePageData(ifaceData, packageRoot, prjName, ooo, serviceInheritance);
             
         } catch (Exception e) {
-            PluginLogger.warning("Wrong data for service page set initizalization", e);
+            PluginLogger.warning(Messages.getString("ServiceWizardSet.WrongInitDataWarning"), e); //$NON-NLS-1$
         }
     }
     
@@ -419,8 +419,8 @@ public class ServiceWizardSet extends WizardPageSet {
         if (servicePackage == null) {
             servicePackage = pPackageRoot;
         }
-        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) {
-            serviceName = pPrjName.replace("\\W", "");
+        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) { //$NON-NLS-1$
+            serviceName = pPrjName.replace("\\W", ""); //$NON-NLS-1$ //$NON-NLS-2$
             serviceName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1);
         }
         
@@ -431,7 +431,7 @@ public class ServiceWizardSet extends WizardPageSet {
         }
 
         if (serviceInheritance == null) {
-            serviceInheritance = servicePackage + "::X" + serviceName;
+            serviceInheritance = servicePackage + "::X" + serviceName; //$NON-NLS-1$
         }
         
         return serviceInheritance;
@@ -467,9 +467,10 @@ public class ServiceWizardSet extends WizardPageSet {
                 existingRoot = pPrj.getRootModule();
             }
             
-            if (existingRoot != null && !existingRoot.equals("")) {
+            if (existingRoot != null && !existingRoot.equals("")) { //$NON-NLS-1$
                 boolean needsInterfacePage = pServiceInheritance.startsWith(existingRoot);
-                needsInterfacePage = needsInterfacePage && !existsIdlFile(pServiceInheritance, pPrj);
+                needsInterfacePage = needsInterfacePage && 
+                    !NewScopedElementWizardPage.existsIdlFile(pServiceInheritance, pPrj);
                 mShowInterfacePage = needsInterfacePage;
             } else {
                 mShowInterfacePage = false;
@@ -496,7 +497,7 @@ public class ServiceWizardSet extends WizardPageSet {
         
         if (pTypePackage != null) {
             pTypePackage = pTypePackage.substring(pPackageRoot.length());
-            if (pTypePackage.startsWith("::")) {
+            if (pTypePackage.startsWith("::")) { //$NON-NLS-1$
                 pTypePackage = pTypePackage.substring(2);
             }
         }
@@ -548,46 +549,8 @@ public class ServiceWizardSet extends WizardPageSet {
             wizardSetData.dispose();
             
         } catch (Exception e) {
-            PluginLogger.error("Error happened during service creation", e);
+            PluginLogger.error(Messages.getString("ServiceWizardSet.ServiceCreationError"), e); //$NON-NLS-1$
         }
         
-    }
-    
-    /**
-     * Checks if an IDL file exists in the project for a given IDL type.
-     * 
-     * <p>Please note that this method behaves correctly only if the user is 
-     * respecting the following design rules:
-     * <ul>
-     *     <li>One IDL type per file</li>
-     *     <li>The IDL types have to be organized in directories representing the 
-     *          UNO modules</li>
-     * </ul>
-     * </p>
-     * 
-     * @param pIdlFullName the full name of the IDL file check
-     * @param pPrj the project where to look for the IDL file
-     * 
-     * @return <code>true</code> if the an IDL file corresponds to the searched type,
-     *          <code>false</code> otherwise.
-     */
-    private boolean existsIdlFile(String pIdlFullName, IUnoidlProject pPrj) {
-        
-        boolean exists = false;
-        
-        if (pPrj != null) {
-            try {
-                IPath idlPath = pPrj.getIdlPath();
-                idlPath = idlPath.append(pIdlFullName.replace("::", "/") + ".idl");
-                
-                idlPath = pPrj.getProjectPath().append(idlPath);
-                
-                exists = idlPath.toFile().exists();
-            } catch (Exception e) {
-                PluginLogger.warning("Error determining if the idl file exists: " + pIdlFullName, e);
-            }
-        }
-        
-        return exists;
     }
 }

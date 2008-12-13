@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoidlProject.java,v $
  *
- * $Revision: 1.12 $
+ * $Revision: 1.13 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -336,7 +336,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     public void setSourcesDir(String pSourcesDir) {
-        if (pSourcesDir == null || pSourcesDir.equals("")) {
+        if (pSourcesDir == null || pSourcesDir.equals("")) { //$NON-NLS-1$
             pSourcesDir = UnoidlProjectHelper.SOURCE_BASIS;
         }
         
@@ -406,8 +406,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      */
     public IPath getBuildPath() {
         String buildDir = getProperty(BUILD_DIR);
-        if (!buildDir.startsWith("/")) {
-            buildDir = "/" + buildDir;
+        if (!buildDir.startsWith("/")) { //$NON-NLS-1$
+            buildDir = "/" + buildDir; //$NON-NLS-1$
         }
         
         return getFolder(buildDir).getProjectRelativePath();
@@ -418,8 +418,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      */
     public IPath getIdlPath() {
         String idlDir = getProperty(IDL_DIR);
-        if (!idlDir.startsWith("/")) {
-            idlDir = "/" + idlDir;
+        if (!idlDir.startsWith("/")) { //$NON-NLS-1$
+            idlDir = "/" + idlDir; //$NON-NLS-1$
         }
         
         return getFolder(idlDir).getProjectRelativePath();
@@ -534,7 +534,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             properties.load(in);
             property = properties.getProperty(pPropertyName);
         } catch (Exception e) {
-            PluginLogger.warning("Unreadable uno project configuration file " + CONFIG_FILE, e);
+            String pattern = Messages.getString("UnoidlProject.UnreadableConfigFileWarning"); //$NON-NLS-1$
+            String msg = MessageFormat.format(pattern, CONFIG_FILE);
+            PluginLogger.warning(msg, e);
         } finally {
             try { in.close(); } catch (IOException e) { }
         }
@@ -566,14 +568,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             properties.setProperty(pName, pValue);
         
             out = new FileOutputStream(configFile);
-            properties.store(out, "UNO project configuration file");
+            properties.store(out, Messages.getString("UnoidlProject.ConfigFileComment")); //$NON-NLS-1$
             
             // Refresh the configuration file
             getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
             
         } catch (Exception e) {
-            String message = MessageFormat.format("Error during project property change ({0}, {1})", 
-                    pName, pValue);
+            String pattern = Messages.getString("UnoidlProject.PropertyChangeError"); //$NON-NLS-1$
+            String message = MessageFormat.format(pattern, pName, pValue);
             PluginLogger.warning(message, e);
         } finally {
             try { in.close(); } catch (IOException e) { }
@@ -609,13 +611,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             properties.setProperty(OUTPUT_EXT, mOutputExtension);
         
             out = new FileOutputStream(configFile);
-            properties.store(out, "UNO project configuration file");
+            properties.store(out, Messages.getString("UnoidlProject.ConfigFileComment")); //$NON-NLS-1$
             
             // Refresh the configuration file
             getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
             
         } catch (Exception e) {
-            PluginLogger.warning("Error saving all the project properties", e);
+            PluginLogger.warning(Messages.getString("UnoidlProject.ConfigFileSaveError"), e); //$NON-NLS-1$
         } finally {
             try { in.close(); } catch (Exception e) { }
             try { out.close(); } catch (Exception e) { }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: CompositeFactory.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -452,7 +452,7 @@ public final class CompositeFactory {
             
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
             properties.put("name", pName); //$NON-NLS-1$
-            String optional = "";
+            String optional = ""; //$NON-NLS-1$
             if (pOptional) {
                 optional = "[optional] "; //$NON-NLS-1$
             }

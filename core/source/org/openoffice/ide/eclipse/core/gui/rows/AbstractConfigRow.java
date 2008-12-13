@@ -2,9 +2,9 @@
  *
  * $RCSfile: AbstractConfigRow.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:25 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -71,7 +71,9 @@ public abstract class AbstractConfigRow extends ChoiceRow {
      * @param pSelection the configuration element to select first
      */
     public AbstractConfigRow(final Composite pParent, String pProperty, Object pSelection) {
-        super(pParent, pProperty, "configuration", "Browse");
+        super(pParent, pProperty, 
+                Messages.getString("AbstractConfigRow.Label"), //$NON-NLS-1$
+                Messages.getString("AbstractConfigRow.BrowseButton")); //$NON-NLS-1$
         
         addListener(mConfigListener);
         

@@ -2,9 +2,9 @@
  *
  * $RCSfile: OooClasspathContainerInitializer.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/26 14:40:18 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -81,5 +81,19 @@ public class OooClasspathContainerInitializer extends
 
             JavaCore.setClasspathContainer(pContainerPath, projects, containers, null);
         }
+    }
+    
+    /**
+     * Always allow container modification: it could be necessary to add additional OOo 
+     * jars or set the sources path.
+     * 
+     * @param containerPath the path of the container
+     * @param project the project for which to change the container
+     * 
+     * @return always <code>true</code>
+     */
+    @Override
+    public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
+        return true;
     }
 }

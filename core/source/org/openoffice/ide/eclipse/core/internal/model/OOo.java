@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -85,6 +85,8 @@ public class OOo extends AbstractOOo {
     
     private boolean mDoRemovePackage = false;
     
+    private OOo3PathMapper mMapper;
+    
     /**
      * Creating a new OOo instance specifying its home directory.
      * 
@@ -113,42 +115,87 @@ public class OOo extends AbstractOOo {
     //----------------------------------------------------- IOOo Implementation
     
     /**
-     * {@inheritDoc}
+     * Overridden to initialize the path mapper for 00o3 installations.
+     * 
+     * @param pHome the OOo installation path to set.
+     * 
+     * @throws InvalidConfigException if the path doesn't point to a
+     *      valid OOo installation.
      */
-    public String getClassesPath() {
-        return getLibsPath() + FILE_SEP + "classes";  //$NON-NLS-1$
+    @Override
+    public void setHome(String pHome) throws InvalidConfigException {
+        mMapper = new OOo3PathMapper(pHome);
+        super.setHome(pHome);
     }
     
     /**
      * {@inheritDoc}
      */
-    public String getLibsPath() {
+    public String[] getClassesPath() {
+        
+        String[] paths = new String[] {
+            getLibsPath()[0] + FILE_SEP + "classes"  //$NON-NLS-1$
+        };
+        
+        if (mMapper.isVersion3()) {
+            paths = mMapper.getClasses();
+        }
+        
+        return paths;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getLibsPath() {
+        // Nothing if not OOo3
+        String[] otherPaths = mMapper.getAdditionnalLibs();
+        
         String libs = getHome() + FILE_SEP + "program"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-            libs = getHome() + FILE_SEP + "Contents" + FILE_SEP + "MacOS";
+            libs = getHome() + FILE_SEP + "Contents" + FILE_SEP + "MacOS"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return libs;
+        
+        return mMapper.mergeArrays(new String[]{ libs }, otherPaths);
     }
     
     /**
      * {@inheritDoc}
      */
-    public String getTypesPath() {
-        return getLibsPath() + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+    public String[] getTypesPath() {
+        String[] paths = {
+            getLibsPath()[0] + FILE_SEP + "types.rdb" //$NON-NLS-1$ 
+        };
+        
+        if (mMapper.isVersion3()) {
+            paths = mMapper.getTypes();
+        }
+        
+        return paths; 
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getServicesPath() {
-        return getLibsPath() + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
+    public String[] getServicesPath() {
+        String[] paths = new String[] {
+            getLibsPath()[0] + FILE_SEP + "services.rdb" //$NON-NLS-1$
+        };
+        
+        // Change the paths for OOo3 installs
+        if (mMapper.isVersion3()) {
+            paths = mMapper.getServices();
+        }
+        return paths;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getUnorcPath() {
-        String path = getLibsPath() + FILE_SEP + "bootstrap"; //$NON-NLS-1$ //$NON-NLS-2$
+        // TODO v3
+        
+        String path = getLibsPath()[0] + FILE_SEP + "bootstrap"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             path += ".ini"; //$NON-NLS-1$
         } else {
@@ -165,7 +212,13 @@ public class OOo extends AbstractOOo {
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             uno = "uno.exe"; //$NON-NLS-1$
         }
-        return getLibsPath() + FILE_SEP + uno; //$NON-NLS-1$ //$NON-NLS-2$
+        String unoPath = getLibsPath()[0] + FILE_SEP + uno;
+        
+        if (mMapper.isVersion3()) {
+            unoPath = mMapper.getUnoPath();
+        }
+        
+        return unoPath;
     }
     
     /**
@@ -249,15 +302,17 @@ public class OOo extends AbstractOOo {
                 classpath += "\""; //$NON-NLS-1$
             }
 
-            String oooClassesPath = getClassesPath();
-            File oooClasses = new File(oooClassesPath);
-            String[] content = oooClasses.list();
+            String[] oooClassesPaths = getClassesPath();
+            for (String oooClassesPath : oooClassesPaths) {
+                File oooClasses = new File(oooClassesPath);
+                String[] content = oooClasses.list();
 
-            for (int i = 0, length = content.length; i < length; i++) {
-                String contenti = content[i];
-                if (contenti.endsWith(".jar")) { //$NON-NLS-1$
-                    classpath += oooClassesPath + 
-                        fileSeparator + contenti + pathSeparator;
+                for (int i = 0, length = content.length; i < length; i++) {
+                    String contenti = content[i];
+                    if (contenti.endsWith(".jar")) { //$NON-NLS-1$
+                        classpath += oooClassesPath + 
+                            fileSeparator + contenti + pathSeparator;
+                    }
                 }
             }
 
@@ -277,7 +332,7 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     public String getJavaldxPath() {
-        String javaldx = getLibsPath() + FILE_SEP + "javaldx";
+        String javaldx = getLibsPath() + FILE_SEP + "javaldx"; //$NON-NLS-1$
         return  javaldx; 
     }
     
@@ -328,6 +383,9 @@ public class OOo extends AbstractOOo {
     /**
      * Add a Uno package to the OOo user packages.
      * 
+     * FIXME This method has to handle license ap
+     * proval
+     * 
      * @param pPackageFile the package file to add
      * @throws Exception if anything wrong happens
      */
@@ -336,7 +394,7 @@ public class OOo extends AbstractOOo {
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             path = "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        String shellCommand = "unopkg add " + path; //$NON-NLS-1$
+        String shellCommand = "unopkg gui -f " + path; //$NON-NLS-1$
         
         String[] env = SystemHelper.getSystemEnvironement();
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
@@ -363,8 +421,8 @@ public class OOo extends AbstractOOo {
         }
         
         if (failed) {
-            throw new Exception(Messages.getString("OOo.PackageAddError") + 
-                    pPackageFile.getAbsolutePath()); //$NON-NLS-1$
+            throw new Exception(Messages.getString("OOo.PackageAddError") +  //$NON-NLS-1$
+                    pPackageFile.getAbsolutePath());
         }
     }
     
@@ -422,5 +480,214 @@ public class OOo extends AbstractOOo {
         }
         
         return contained;
+    }
+    
+    /**
+     * A class providing the paths for the OOo3 installation.
+     * 
+     * @author cbosdonnat
+     *
+     */
+    private class OOo3PathMapper {
+        
+        private String mHome;
+        private String mBasis;
+        
+        private boolean mVersionChecked = false;
+        
+        /**
+         * This field holds the URE instance to use for OOo3.
+         */
+        private URE mUre;
+        
+        /**
+         * Create a new mapper object to get the OOo3 layers paths.
+         * 
+         * @param pHome the OOo install home
+         */
+        public OOo3PathMapper(String pHome) {
+            mHome = pHome;
+        }
+        
+        /**
+         * @return <code>true</code> if the openoffice install corresponds to a 3.0 
+         *      installation layout, <code>false</code> otherwise.
+         */
+        public boolean isVersion3() {
+            boolean version3 = false;
+            
+            if (!mVersionChecked ) {
+                try {
+                    Path homePath = new Path(mHome);
+                    File homeFile = homePath.toFile();
+
+                    File basis = getPortableLink("basis-link",homeFile); //$NON-NLS-1$
+                    File ure = getPortableLink("ure-link", basis); //$NON-NLS-1$
+
+                    version3 = basis.isDirectory() && ure.isDirectory();
+
+                    if (version3) {
+                        mBasis = basis.getCanonicalPath();
+                        mUre = new URE(ure.getCanonicalPath());
+                    }
+                } catch (Exception e) {
+                    version3 = false;
+                }
+                
+                mVersionChecked = true;
+            } else {
+                version3 = mUre != null;
+            }
+            
+            return version3;
+        }
+        
+        /**
+         * @return the libraries path to add for OOo3 or an empty array if not an 
+         *      OOo3 install.
+         */
+        public String[] getAdditionnalLibs() {
+            String[] additionnal = new String[0];
+            
+            if (isVersion3()) {
+                String[] ureLibs = mUre.getLibsPath();
+                String basisLibs = mBasis + FILE_SEP + "program"; //$NON-NLS-1$
+                
+                additionnal = mergeArrays(ureLibs, new String[]{basisLibs});
+            }
+            
+            return additionnal;
+        }
+        
+        /**
+         * @return the OOo 3.0 classes path or an empty array if not an OOo3 install.
+         */
+        public String[] getClasses() {
+            String[] classes = new String[0];
+            
+            if (isVersion3()) {
+                String[] ureClasses = mUre.getClassesPath();
+                String basisClasses = mBasis + FILE_SEP + "program" + //$NON-NLS-1$ 
+                    FILE_SEP + "classes"; //$NON-NLS-1$
+                
+                classes = mergeArrays(ureClasses, new String[]{basisClasses});
+            }
+            
+            return classes;
+        }
+        
+        /**
+         * @return the OOo3 types path or an empty array if not an OOo3 install.
+         */
+        public String[] getTypes() {
+            String[] types = new String[0];
+            
+            if (isVersion3()) {
+                String[] ureTypes = mUre.getTypesPath();
+                String basisTypes = mBasis + FILE_SEP + "program" + //$NON-NLS-1$ 
+                    FILE_SEP + "offapi.rdb"; //$NON-NLS-1$
+                
+                types = mergeArrays(ureTypes, new String[]{basisTypes});
+            }
+            
+            return types;
+        }
+        
+        /**
+         * @return the OOo3 services.rdb files or <code>null</code> if not an OOo3 install.
+         */
+        public String[] getServices() {
+            String[] types = new String[0];
+            
+            if (isVersion3()) {
+                String[] ureTypes = mUre.getServicesPath();
+                String basisTypes = mBasis + FILE_SEP + "program" + //$NON-NLS-1$ 
+                    FILE_SEP + "services.rdb"; //$NON-NLS-1$
+                
+                types = mergeArrays(ureTypes, new String[]{basisTypes});
+            }
+            
+            return types;
+        }
+        
+        /**
+         * @return the path to the uno executable for OOo3 of <code>null</code> if 
+         *      not an OOo3 install.
+         */
+        public String getUnoPath() {
+            String path = null;
+            if (isVersion3()) {
+                path = mUre.getUnoPath();
+            }
+            
+            return path; 
+        }
+        
+        /**
+         * @return the javaldx path for OOo3 or <code>null</code> if not an OOo3 install.
+         */
+        public String getJavaldx() {
+            String path = null;
+            if (isVersion3()) {
+                path = mUre.getJavaldxPath();
+            }
+            
+            return path;
+        }
+        
+        /**
+         * Merge two string arrays into one.
+         * 
+         * The duplicated elements are not removed.
+         * 
+         * @param pArray1 the first array to merge
+         * @param pArray2 the second array to merge
+         * 
+         * @return the array with the elements of both arrays
+         */
+        public String[] mergeArrays(String[] pArray1, String[] pArray2) {
+            String[] result = new String[pArray1.length + pArray2.length];
+            
+            System.arraycopy(pArray1, 0, result, 0, pArray1.length);
+            System.arraycopy(pArray2, 0, result, pArray1.length, pArray2.length);
+            
+            return result;
+        }
+        
+        /**
+         * Get the file object for the link defined as a child of a folder.
+         * 
+         * On Windows platform, the link relative location is specified as the content of 
+         * a file named after the link name. On Unix-based systems symbolic links are
+         * supported.
+         * 
+         * @param pName the name of the symbolic link
+         * @param pParent the parent directory file
+         * 
+         * @return the file representing the link target or <code>null</code>
+         */
+        private File getPortableLink(String pName, File pParent) {
+            File link = null;
+            
+            File linkFile = new File(pParent, pName);
+            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+                // Read the content of the file to get the true folder
+                try {
+                    FileInputStream is = new FileInputStream(linkFile);
+                    byte[] buf = new byte[is.available()];
+                    is.read(buf);
+                    
+                    String relativePath = new String(buf);
+                    linkFile = new File(pParent, relativePath);
+                    link = linkFile;
+                } catch (Exception e) {
+                    // the returned link is null to show the error
+                }
+            } else {
+                link = linkFile;
+            }
+            
+            return link;
+        }
     }
 }

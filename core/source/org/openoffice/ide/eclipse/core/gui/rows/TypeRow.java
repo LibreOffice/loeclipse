@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeRow.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -55,7 +55,6 @@ import org.eclipse.swt.widgets.Text;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
-import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 /**
  * Row for the selection of a UNO type.
@@ -205,14 +204,10 @@ public class TypeRow extends TextRow {
             public void widgetSelected(SelectionEvent pEvent) {
                 super.widgetSelected(pEvent);
                 
-                UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+                // Remove the module type from the current types
+                int allowedTypes = mType & (Integer.MAX_VALUE - IUnoFactoryConstants.MODULE);
                 
-                int oldType = typesProvider.getTypes();
-                typesProvider.setTypes(mType & 
-                        UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.MODULE));
-                
-                UnoTypeBrowser browser = new UnoTypeBrowser(
-                        shell, typesProvider);
+                UnoTypeBrowser browser = new UnoTypeBrowser(shell, allowedTypes);
                 browser.setSelectedType(mSelectedType);
                 
                 if (UnoTypeBrowser.OK == browser.open()) {
@@ -220,14 +215,12 @@ public class TypeRow extends TextRow {
                     if (null != mSelectedType) {
                         Text text = (Text)mField;
                         int pos = text.getCaretPosition();
-                        text.insert(mSelectedType.getFullName().replaceAll("\\.", "::"));
+                        text.insert(mSelectedType.getFullName().replaceAll("\\.", "::")); //$NON-NLS-1$ //$NON-NLS-2$
                         text.setFocus();
                         text.setSelection(pos + mSelectedType.getFullName().length());
                         setValue(text.getText().trim());
                     }
                 }
-                
-                typesProvider.setTypes(oldType);
             }
         });
     }

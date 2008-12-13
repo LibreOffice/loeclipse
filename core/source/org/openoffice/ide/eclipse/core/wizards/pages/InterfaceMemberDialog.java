@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfaceMemberDialog.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/29 00:16:14 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -231,7 +231,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
             }
         }
         
-        createCommonRows(body, type.equals(""));
+        createCommonRows(body, type.equals("")); //$NON-NLS-1$
         
         mSpecificPanel = new Composite(body, SWT.NONE);
         GridData gd = new GridData(GridData.FILL_BOTH);
@@ -258,7 +258,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
      */
     private void createCommonRows(Composite pParent, boolean pCreateTypeSelector) {
         // Common rows
-        if (pCreateTypeSelector) { // $NON-NLS-1$ //$NON-NLS-1$
+        if (pCreateTypeSelector) {
             
             Composite typeComposite = new Composite(pParent, SWT.NONE);
             GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -505,9 +505,9 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
         } else if (pEvent.getProperty().equals(TYPE)) {
             mData.setProperty(IUnoFactoryConstants.TYPE, pEvent.getValue().trim());
         } else if (pEvent.getProperty().equals(BOUND)) {
-            toggleFlag("bound");
+            toggleFlag("bound"); //$NON-NLS-1$
         } else if (pEvent.getProperty().equals(READONLY)) {
-            toggleFlag("readonly");
+            toggleFlag("readonly"); //$NON-NLS-1$
         }
     }
     

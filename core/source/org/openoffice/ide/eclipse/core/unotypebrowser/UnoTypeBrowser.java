@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeBrowser.java,v $
  *
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -43,8 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unotypebrowser;
 
-import java.util.HashMap;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -60,6 +58,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -77,6 +77,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.internal.helpers.Flags;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 
 /**
@@ -93,63 +94,87 @@ public class UnoTypeBrowser extends StatusDialog
 
     private static final String F_INPUT = "__input"; //$NON-NLS-1$
     private static final String F_TYPE_FILTER = "__type_filter"; //$NON-NLS-1$ 
-    private static final String ALL = "all"; //$NON-NLS-1$
-    private static final String SIMPLE = "single"; //$NON-NLS-1$
-    private static final String SERVICE = "service"; //$NON-NLS-1$
-    private static final String INTERFACE = "interface"; //$NON-NLS-1$
-    private static final String SINGLETON = "singleton"; //$NON-NLS-1$
-    private static final String ENUM = "enum"; //$NON-NLS-1$
-    private static final String CONSTANT = "constant"; //$NON-NLS-1$
-    private static final String CONSTANTS = "constants"; //$NON-NLS-1$
-    private static final String EXCEPTION = "exception"; //$NON-NLS-1$
-    private static final String STRUCT = "struct"; //$NON-NLS-1$
-    private static final String TYPEDEF = "typedef"; //$NON-NLS-1$
     
     private static final int TITLE_HEIGHT = 20;
     private static final int TABLE_HEIGHT = 150;
     private static final int COLUMN_WIDTH = 300;
+    private static final int ID_REFRESH = 3;
     
     private TextRow mInputRow;
     private TableViewer mTypesList;
+    private Button mRefreshBtn;
     
     private ChoiceRow mTypeFilterRow;
     
-    private UnoTypeProvider mTypesProvider;
     private InternalUnoType mSelectedType;
-    private int mFilter;
+    private Flags mTypes;
+    
     
     /**
      * Creates a new browser dialog. The browser, waits for the type provider
      * to finish its work if it's not already over.
      * 
      * @param pParentShell the shell where to create the dialog
-     * @param pUnoTypesProvider the UNO type provider
+     * @param pAllowedTypes the bit-ORed allowed types 
      */
-    public UnoTypeBrowser(Shell pParentShell, UnoTypeProvider pUnoTypesProvider) {
+    public UnoTypeBrowser(Shell pParentShell, int pAllowedTypes) {
         super(pParentShell);
+        
+        mTypes = new Flags(UnoTypeProvider.ALL_TYPES, pAllowedTypes, pAllowedTypes);
         
         setShellStyle(getShellStyle() | SWT.RESIZE);
         setBlockOnOpen(true);
         setTitle(Messages.getString("UnoTypeBrowser.Title")); //$NON-NLS-1$
         
         // Initialize the Type Browser
-        if (null != pUnoTypesProvider) {
-            mTypesProvider = pUnoTypesProvider;
-            mTypesProvider.addInitListener(this);
-            
-            if (!mTypesProvider.isInitialized()) {
-                // changes the status to warn the user
+        UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+        typesProvider.addInitListener(this);
+
+        if (!typesProvider.isInitialized()) {
+            // changes the status to warn the user
+
+            updateStatus(new Status(IStatus.INFO,
+                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                    IStatus.INFO,
+                    Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
+                    null));
+        }
+    }
+    
+    //---------------------------------------------------- UI creation & control 
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createButtonsForButtonBar(Composite pParent) {
+        
+        mRefreshBtn = createButton(pParent, ID_REFRESH, "Refresh", false);
+        Image img = OOEclipsePlugin.getImage("REFRESH"); //$NON-NLS-1$
+        mRefreshBtn.setImage(img);
+        mRefreshBtn.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent pEvent) {
+                // Refresh the cache and the view
+                activateFields(false);
                 
                 updateStatus(new Status(IStatus.INFO,
                         OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
                         IStatus.INFO,
                         Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
                         null));
-            }
+                
+                UnoTypeProvider.getInstance().refreshCache();
+            } 
+        });
+        
+        UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+        if (!typesProvider.isInitialized()) {
+            activateFields(false);
         }
+        
+        super.createButtonsForButtonBar(pParent);
     }
-    
-    //---------------------------------------------------- UI creation & control 
     
     /**
      * {@inheritDoc}
@@ -183,14 +208,11 @@ public class UnoTypeBrowser extends StatusDialog
         mTypeFilterRow.setTooltip(Messages.getString("UnoTypeBrowser.FilterTooltip")); //$NON-NLS-1$
         mTypeFilterRow.setFieldChangedListener(this);
         setFilterValues();
-        mTypeFilterRow.select(ALL);
+        mTypeFilterRow.select(0);
         
-        mFilter = mTypesProvider.getTypes();
+        UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
 
-        mTypesList.setInput(mTypesProvider);
-        if (!mTypesProvider.isInitialized()) {
-            activateFields(false);
-        }
+        mTypesList.setInput(typesProvider);
         
         mInputRow.setFocus();
         
@@ -208,24 +230,24 @@ public class UnoTypeBrowser extends StatusDialog
                 if (!mTypesList.getTable().isDisposed()) {
                     
                     // Add the simple types here if needed
-                    if (mTypesProvider.isTypeSet(IUnoFactoryConstants.BASICS) &&
-                            mTypesProvider.getTypes() != IUnoFactoryConstants.BASICS) {
+                    UnoTypeProvider typesProvider = UnoTypeProvider.getInstance(); 
+                    if (mTypes.isFlagSet(IUnoFactoryConstants.BASICS)) {
                         
-                        mTypesProvider.addType(InternalUnoType.STRING);
-                        mTypesProvider.addType(InternalUnoType.VOID);
-                        mTypesProvider.addType(InternalUnoType.BOOLEAN);
-                        mTypesProvider.addType(InternalUnoType.BYTE);
-                        mTypesProvider.addType(InternalUnoType.SHORT);
-                        mTypesProvider.addType(InternalUnoType.LONG);
-                        mTypesProvider.addType(InternalUnoType.HYPER);
-                        mTypesProvider.addType(InternalUnoType.FLOAT);
-                        mTypesProvider.addType(InternalUnoType.DOUBLE);
-                        mTypesProvider.addType(InternalUnoType.CHAR);
-                        mTypesProvider.addType(InternalUnoType.TYPE);
-                        mTypesProvider.addType(InternalUnoType.ANY);
-                        mTypesProvider.addType(InternalUnoType.USHORT);
-                        mTypesProvider.addType(InternalUnoType.ULONG);
-                        mTypesProvider.addType(InternalUnoType.UHYPER);
+                        typesProvider.addType(InternalUnoType.STRING);
+                        typesProvider.addType(InternalUnoType.VOID);
+                        typesProvider.addType(InternalUnoType.BOOLEAN);
+                        typesProvider.addType(InternalUnoType.BYTE);
+                        typesProvider.addType(InternalUnoType.SHORT);
+                        typesProvider.addType(InternalUnoType.LONG);
+                        typesProvider.addType(InternalUnoType.HYPER);
+                        typesProvider.addType(InternalUnoType.FLOAT);
+                        typesProvider.addType(InternalUnoType.DOUBLE);
+                        typesProvider.addType(InternalUnoType.CHAR);
+                        typesProvider.addType(InternalUnoType.TYPE);
+                        typesProvider.addType(InternalUnoType.ANY);
+                        typesProvider.addType(InternalUnoType.USHORT);
+                        typesProvider.addType(InternalUnoType.ULONG);
+                        typesProvider.addType(InternalUnoType.UHYPER);
                     }
                     
                     mTypesList.refresh();
@@ -299,30 +321,32 @@ public class UnoTypeBrowser extends StatusDialog
      */
     private void setFilterValues() {
         // This filter is always present
-        mTypeFilterRow.add(Messages.getString("UnoTypeBrowser.FilterAll"), ALL); //$NON-NLS-1$
- 
-        addFilter(IUnoFactoryConstants.BASICS, "UnoTypeBrowser.FilterSimple", SIMPLE); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.SERVICE, "UnoTypeBrowser.FilterServices", SERVICE); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.INTERFACE, "UnoTypeBrowser.FilterInterfaces", INTERFACE); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.SINGLETON, "UnoTypeBrowser.FilterSingletons", SINGLETON); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.ENUM, "UnoTypeBrowser.FilterEnumerations", ENUM); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.STRUCT, "UnoTypeBrowser.FilterStructures", STRUCT); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.CONSTANT,"UnoTypeBrowser.FilterConstants", CONSTANT); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.CONSTANTS, "UnoTypeBrowser.FilterConstantsGroups", CONSTANTS); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.EXCEPTION, "UnoTypeBrowser.FilterException", EXCEPTION); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.TYPEDEF, "UnoTypeBrowser.FilterTypedefs", TYPEDEF); //$NON-NLS-1$
+        addFilter(UnoTypeProvider.ALL_TYPES, "UnoTypeBrowser.FilterAll"); //$NON-NLS-1$
+        
+        addFilter(IUnoFactoryConstants.BASICS, "UnoTypeBrowser.FilterSimple"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.SERVICE, "UnoTypeBrowser.FilterServices"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.INTERFACE, "UnoTypeBrowser.FilterInterfaces"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.SINGLETON, "UnoTypeBrowser.FilterSingletons"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.ENUM, "UnoTypeBrowser.FilterEnumerations"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.STRUCT, "UnoTypeBrowser.FilterStructures"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.CONSTANT,"UnoTypeBrowser.FilterConstants"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.CONSTANTS, "UnoTypeBrowser.FilterConstantsGroups"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.EXCEPTION, "UnoTypeBrowser.FilterException"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.TYPEDEF, "UnoTypeBrowser.FilterTypedefs"); //$NON-NLS-1$
     }
     
     /**
      * Add a filter if it is selected by the types mask.
      * 
+     * The value of the filter option is a string version of the type
+     * 
      * @param pType the type to add in {@link IUnoFactoryConstants}
      * @param pMessageKey the message key to use to get the message from the messages bundle.
-     * @param pValue the value in the filters list box
      */
-    private void addFilter(int pType, String pMessageKey, String pValue) {
-        if ((mTypesProvider.getTypes() & pType) != 0) {
-            mTypeFilterRow.add(Messages.getString(pMessageKey), pValue);
+    private void addFilter(int pType, String pMessageKey) {
+        if (pType == UnoTypeProvider.ALL_TYPES || mTypes.isFlagSet(pType)) {
+            String value = Integer.toString(pType);
+            mTypeFilterRow.add(Messages.getString(pMessageKey), value);
         }
     }
 
@@ -338,6 +362,11 @@ public class UnoTypeBrowser extends StatusDialog
         mInputRow.setEnabled(pActivate);
         mTypesList.getTable().setEnabled(pActivate);
         mTypeFilterRow.setEnabled(pActivate);
+        
+        // The refresh button can be null during the dialog construction
+        if (mRefreshBtn != null) {
+            mRefreshBtn.setEnabled(pActivate);
+        }
         
         Button okButton = getButton(IDialogConstants.OK_ID);
         if (null != okButton) {
@@ -427,7 +456,7 @@ public class UnoTypeBrowser extends StatusDialog
                     Messages.getString("UnoTypeBrowser.EmptySelectionError"),  //$NON-NLS-1$
                     null));
             getButton(IDialogConstants.OK_ID).setEnabled(false);
-            mTypesProvider.removeInitListener(this);
+            UnoTypeProvider.getInstance().removeInitListener(this);
         } else {
             super.okPressed();
         }
@@ -451,35 +480,16 @@ public class UnoTypeBrowser extends StatusDialog
     public void fieldChanged(FieldEvent pEvent) {
         
         if (pEvent.getProperty().equals(F_TYPE_FILTER)) {
-            mFilter = convertToUnoType(pEvent.getValue());
+            try {
+                mTypes.setTypes(Integer.parseInt(pEvent.getValue()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
         
         refresh();
         
         mInputRow.setFocus();
-    }
-    
-    /**
-     * converts the list box value into the values used by the {@link InternalUnoType}.
-     * 
-     * @param pValue the list box value to convert
-     * @return the converted value or <code>null</code> if the input value wasn't correst.
-     */
-    private int convertToUnoType(String pValue) {
-        HashMap<String, Integer> typesMapping = new HashMap<String, Integer>();
-        typesMapping.put(ALL, InternalUnoType.ALL_TYPES);
-        typesMapping.put(SIMPLE, IUnoFactoryConstants.BASICS);
-        typesMapping.put(SERVICE, IUnoFactoryConstants.SERVICE);
-        typesMapping.put(INTERFACE, IUnoFactoryConstants.INTERFACE);
-        typesMapping.put(SINGLETON, IUnoFactoryConstants.SINGLETON);
-        typesMapping.put(STRUCT, IUnoFactoryConstants.STRUCT);
-        typesMapping.put(ENUM, IUnoFactoryConstants.ENUM);
-        typesMapping.put(CONSTANT, IUnoFactoryConstants.CONSTANT);
-        typesMapping.put(CONSTANTS, IUnoFactoryConstants.CONSTANTS);
-        typesMapping.put(EXCEPTION, IUnoFactoryConstants.EXCEPTION);
-        typesMapping.put(TYPEDEF, IUnoFactoryConstants.TYPEDEF);
-        
-        return typesMapping.get(pValue);
     }
 
     //---------------------------------------- Filters the elements in the list
@@ -499,7 +509,7 @@ public class UnoTypeBrowser extends StatusDialog
             
             if (pElement instanceof InternalUnoType) {
                 InternalUnoType type = (InternalUnoType)pElement;
-                if ((mFilter & type.getType()) != 0) {
+                if (mTypes.isFlagSet(type.getType())) {
                     // The type is correct, check the name
                     if (type.getName().startsWith(mInputRow.getValue())) {
                         select = true;
@@ -526,6 +536,7 @@ public class UnoTypeBrowser extends StatusDialog
      */
     public void setSelectedType(InternalUnoType pType) {
         mSelectedType = pType;
+            
         if (null != mTypesList) {
             IStructuredSelection selection = StructuredSelection.EMPTY;
             if (null != mSelectedType) {
@@ -548,7 +559,7 @@ public class UnoTypeBrowser extends StatusDialog
          * {@inheritDoc}
          */
         public Object[] getElements(Object pInputElement) {
-            return mTypesProvider.toArray();
+            return UnoTypeProvider.getInstance().toArray();
         }
 
         /**

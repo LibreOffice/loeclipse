@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewServiceWizard.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -191,7 +191,8 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
                     
                     UnoFactoryData serviceData = new UnoFactoryData();
                     serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
-                    serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, "MyService");
+                    serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, 
+                            Messages.getString("NewServiceWizard.DefaultName")); //$NON-NLS-1$
                     
                     data.addInnerData(serviceData);
                     

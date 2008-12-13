@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.12 $
+ * $Revision: 1.13 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -43,20 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unotypebrowser;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.net.URL;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.internal.model.OOo;
-import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.office.TypesGetter;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 
 /**
@@ -68,34 +61,12 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
  */
 public class UnoTypeProvider {
     
+    public static final int ALL_TYPES = 2047;
+    
     private static UnoTypeProvider sInstance = new UnoTypeProvider();
     
-    private static final int[] ALLOWED_TYPES = {
-        IUnoFactoryConstants.BASICS,
-        IUnoFactoryConstants.MODULE,
-        IUnoFactoryConstants.INTERFACE,
-        IUnoFactoryConstants.SERVICE,
-        IUnoFactoryConstants.STRUCT,
-        IUnoFactoryConstants.ENUM,
-        IUnoFactoryConstants.EXCEPTION,
-        IUnoFactoryConstants.TYPEDEF,
-        IUnoFactoryConstants.CONSTANT,
-        IUnoFactoryConstants.CONSTANTS,
-        IUnoFactoryConstants.SINGLETON
-    };
-
-    private static final int ALL_TYPES = 2047;
-
-    private static final int MAX_BITS_LENGTH = 11;
-    
-    private UnoTypesGetterThread mGetTypesThread = new UnoTypesGetterThread();
-    
-    private Vector<IInitListener> mListeners = new Vector<IInitListener>(); 
-    
-    private Vector<InternalUnoType> mInternalTypes = new Vector<InternalUnoType>();
-    
-    
-    private int mTypes = ALL_TYPES;
+    private LinkedList<IInitListener> mListeners = new LinkedList<IInitListener>(); 
+    private List<InternalUnoType> mCache;
     
     private IOOo mOooInstance;
     private String mPathToRegister;
@@ -115,112 +86,18 @@ public class UnoTypeProvider {
         return sInstance;
     }
     
-    /**
-     * Initializes the type provider from a UNO project.
-     * 
-     * @param pProject the UNO project to query (with its OOo parameter)
-     * @param pTypes the types to get
-     */
-    public void initialize(IUnoidlProject pProject, int pTypes) {
-        setTypes(pTypes);
-        setProject(pProject);
-    }
-    
-    /**
-     * Initializes the UNO type provider from an OpenOffice.org instance.
-     * 
-     * @param pOOoInstance the OOo instance to query
-     * @param pTypes the types to get
-     */
-    public void initialize(IOOo pOOoInstance, int pTypes) {
-        setTypes(pTypes);
-        setOOoInstance(pOOoInstance);
-    }
-    
-    /**
-     * Stop the type provider.
-     */
-    public void stopProvider() {
-        removeAllTypes();
-        
-        mInternalTypes = null;
-        mOooInstance = null;
-        mPathToRegister = null;
-        
-        if (mGetTypesThread != null && mGetTypesThread.isAlive()) {
-            // Not sure it stops when running
-            mGetTypesThread.shutdown();
-            mGetTypesThread = null;
-            PluginLogger.debug("UnoTypeProvider stopped"); //$NON-NLS-1$
-        }
-    }
-    
     //---------------------------------------------------------- Type management
     
     /**
-     * Method changing all the '1' into '0' and the '0' into '1' but only
-     * on the interesting bytes for the types.
-     * 
-     * @param pType the type to negate
-     * @return the negated type
+     * Refresh the cache of Uno types.
      */
-    public static int invertTypeBits(int pType) {
-        int result = 0;
+    public void refreshCache() {
+        mInitialized = false;
+
+        removeAllTypes();
         
-        String sInv = Integer.toBinaryString(pType);
-        int length = ALLOWED_TYPES.length - sInv.length();
-        
-        if (length <= MAX_BITS_LENGTH) {
-            
-            for (int i = 0; i < length; i++) {
-                sInv = '0' + sInv;
-            }
-            
-            sInv = sInv.replace('0', '2').replace('1', '0');
-            sInv = sInv.replace('2', '1');
-            result = Integer.parseInt(sInv, 2);
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Set one or more types. To specify more than one types give the bit or
-     * of all the types, e.g. <code>INTERFACE | SERVICE</code>
-     * 
-     * @param pTypes the bit or of the types
-     */
-    public void setTypes(int pTypes) {
-        
-        // Only 10 bits available
-        if (pTypes >= 0 && pTypes <= InternalUnoType.ALL_TYPES) {
-            if (mTypes != pTypes) {
-                mTypes = pTypes;
-                IOOo ooo = mOooInstance;
-                mOooInstance = null;
-                setOOoInstance(ooo);
-            }
-        }
-    }
-    
-    /**
-     * @return the types set as an integer. The types field is a bit or of all the
-     *          types set.
-     *          
-     * @see #setTypes(int)
-     */
-    public int getTypes() {
-        return mTypes;
-    }
-    
-    /**
-     * Checks if the given type will be queried.
-     * 
-     * @param pType the type to match
-     * @return <code>true</code> if the type is one of the types set
-     */
-    public boolean isTypeSet(int pType) {
-        return (getTypes() & pType) == pType;
+        // Start getting the types again
+        new UnoTypesGetterThread().start();
     }
     
     /**
@@ -235,7 +112,7 @@ public class UnoTypeProvider {
         pScopedName = pScopedName.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (isInitialized()) {
-            Iterator<InternalUnoType> iter = mInternalTypes.iterator();
+            Iterator<InternalUnoType> iter = mCache.iterator();
             while (iter.hasNext() && !result) {
                 InternalUnoType type = iter.next();
                 if (type.getFullName().equals(pScopedName)) {
@@ -256,23 +133,15 @@ public class UnoTypeProvider {
      * 
      * @param pProject the project for which to launch the type query 
      */
-    private void setProject(IUnoidlProject pProject) {
+    public void setProject(IUnoidlProject pProject) {
         
         if (null != pProject) {
-            
-            // Stop the provider before everything
-            stopProvider();
-            mInternalTypes = new Vector<InternalUnoType>();
-            
             mOooInstance = pProject.getOOo();
             mPathToRegister = (pProject.getFile(
                     pProject.getTypesPath()).getLocation()).toOSString();
             
             PluginLogger.debug(
                     "UnoTypeProvider initialized with " + pProject); //$NON-NLS-1$
-            
-            mInitialized = false;
-            askUnoTypes();
         }
     }
     
@@ -281,20 +150,12 @@ public class UnoTypeProvider {
      * 
      *  @param pOOoInstance OpenOffice.org instance to bootstrap
      */
-    private void setOOoInstance(IOOo pOOoInstance) {
+    public void setOOoInstance(IOOo pOOoInstance) {
         
         if (null != pOOoInstance && !pOOoInstance.equals(mOooInstance)) {
-            
-            // Stop the provider before everything
-            stopProvider();
-            mInternalTypes = new Vector<InternalUnoType>();
-            
             mOooInstance = pOOoInstance;
             PluginLogger.debug(
                     "UnoTypeProvider initialized with " + pOOoInstance); //$NON-NLS-1$
-            
-            mInitialized = false;
-            askUnoTypes();
         }
     }
     
@@ -306,81 +167,6 @@ public class UnoTypeProvider {
     }
     
     //---------------------------------------------------- TypeGetter launching
-    
-    /**
-     * @return the command to launch to get all the types.
-     * 
-     * @throws IOException is thrown if the application fails.
-     */
-    private String computeGetterCommand() throws IOException {
-        String command = null;
-        
-        if (null != mOooInstance) {
-            // Compute the library location (UnoTypesGetter.jar file)
-            URL pluginURL = OOEclipsePlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
-            // NOTE not replaced by FileLocator to avoid dependency on Eclipse 3.2 
-            URL libURL = FileLocator.toFileURL(pluginURL);
-
-            // Compute the types mask argument
-            String typesMask = "-T" + mTypes; //$NON-NLS-1$
-            
-            // Get the OOo types.rdb registry path as external registry
-            String typesPath = new Path(mOooInstance.getTypesPath()).toString();
-            typesPath = "-Efile:///" + typesPath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            
-            // Add the local registry path
-            String localRegistryPath = ""; //$NON-NLS-1$
-            // If the path to the registry isn't set, don't take
-            // it into account in the command build
-            if (null != mPathToRegister) {
-                localRegistryPath = " -Lfile:///" +  //$NON-NLS-1$
-                    mPathToRegister.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
-                localRegistryPath = localRegistryPath.replace('\\', '/');
-            }
-            
-            // compute the arguments array
-            String[] args = new String[] {
-                typesPath,
-                localRegistryPath,
-                typesMask
-            };
-            
-            // Computes the command to execute if oooInstance isn't the URE
-            if (mOooInstance instanceof OOo) {
-                
-                String libPath = new Path(libURL.getPath()).toOSString();
-                libPath = libPath + "UnoTypesGetter.jar"; //$NON-NLS-1$
-                
-                command = mOooInstance.createUnoCommand(
-                        "org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter",  //$NON-NLS-1$
-                        libPath, new String[0], args);
-            } else {
-
-                String libPath = new Path(libURL.getPath()).toString();
-                libPath = libPath + "UnoTypesGetter.jar"; //$NON-NLS-1$
-                libPath = libPath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
-                
-                command = mOooInstance.createUnoCommand(
-                        "org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypesGetter",  //$NON-NLS-1$
-                        "file:///" + libPath, new String[]{}, args); //$NON-NLS-1$
-            }
-        }
-        return command;
-    }
-    
-    /**
-     * Launches the UNO type query process.
-     */
-    private void askUnoTypes() {
-        
-        if (null == mGetTypesThread || !mGetTypesThread.isAlive()) {
-            
-            mInternalTypes = new Vector<InternalUnoType>();
-            
-            mGetTypesThread = new UnoTypesGetterThread();
-            mGetTypesThread.start();
-        }
-    }
     
     /**
      * Register the given listener.
@@ -422,7 +208,7 @@ public class UnoTypeProvider {
      */
     public InternalUnoType getType(String pTypePath) {
         
-        Iterator<InternalUnoType> iter = mInternalTypes.iterator();
+        Iterator<InternalUnoType> iter = mCache.iterator();
         InternalUnoType result = null;
         
         while (null == result && iter.hasNext()) {
@@ -436,13 +222,17 @@ public class UnoTypeProvider {
     }
     
     /**
+     * Initializes the cache if needed and get the cached data.
+     * 
      * @return the types list as an array.
      */
     protected Object[] toArray() {
-        Object[] types = new Object[0];
-        if (mInternalTypes != null) {
-            types = mInternalTypes.toArray();
+        if (mCache == null) {
+            refreshCache();
         }
+        
+        Object[] types = new Object[mCache.size()];
+        types = mCache.toArray();
         return types;
     }
     
@@ -452,15 +242,17 @@ public class UnoTypeProvider {
      * @param pInternalType the type to add
      */
     protected void addType(InternalUnoType pInternalType) {
-        mInternalTypes.add(pInternalType);
+        mCache.add(pInternalType);
     }
 
     /**
      * Purge the types list.
      */
     protected void removeAllTypes() {
-        if (mInternalTypes != null) {
-            mInternalTypes.clear();
+        if (mCache != null) {
+            mCache.clear();
+        } else {
+            mCache = new LinkedList<InternalUnoType>();
         }
     }
     
@@ -472,55 +264,24 @@ public class UnoTypeProvider {
      */
     private class UnoTypesGetterThread extends Thread {
 
-        private Process mProcess;
-        private boolean mStop = false;
-        
-        /**
-         * Stops the process.
-         */
-        public void shutdown() {
-            if (mProcess != null) {
-                mProcess.destroy();
-            }
-            mProcess = null;
-            mStop = true;
-        }
-
         /**
          * Runs the job.
          */
         public void run() {
             try {
                 removeAllTypes();
-                String command = computeGetterCommand();
 
-                // Computes the environment variables
-
-                mProcess = Runtime.getRuntime().exec(command);
-
-                if (!mStop) {
-                    // Reads the types and add them to the list
-                    InputStreamReader in = new InputStreamReader(mProcess.getInputStream());
-                    LineNumberReader reader = new LineNumberReader(in);
-
-                    try {
-                        String line = reader.readLine();
-
-                        while (null != line) {
-                            InternalUnoType internalType = new InternalUnoType(line);
-                            addType(internalType);
-                            line = reader.readLine();
-                        }
-                    } finally {
-                        reader.close();
-                        in.close();
-                    }
-                    setInitialized();
-                    PluginLogger.debug("Types fetched"); //$NON-NLS-1$
-                }
-
-            } catch (IOException e) {                
-                PluginLogger.error(Messages.getString("UnoTypeProvider.IOError"), e); //$NON-NLS-1$
+                // Reads the types and add them to the list
+                TypesGetter getter = new TypesGetter();
+                getter.setOOo(mOooInstance);
+                LinkedList<String> localRegs = new LinkedList<String>();
+                localRegs.add(mPathToRegister);
+                getter.setLocalRegs(localRegs);
+                
+                mCache = getter.getTypes(null, ALL_TYPES);
+                
+                setInitialized();
+                PluginLogger.debug("Types fetched"); //$NON-NLS-1$
             } catch (Exception e) {
                 PluginLogger.error(Messages.getString("UnoTypeProvider.UnexpectedError"), e); //$NON-NLS-1$
             }

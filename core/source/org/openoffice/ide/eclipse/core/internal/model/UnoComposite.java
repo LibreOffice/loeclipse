@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoComposite.java,v $
  *
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/28 23:32:56 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -68,7 +68,7 @@ public class UnoComposite implements IUnoComposite {
     private Hashtable<String, Object> mProperties;
     private String mTemplate;
     private String mFilename;
-    private String mSeparator = "";
+    private String mSeparator = ""; //$NON-NLS-1$
     
     private boolean mIndentation = false;
     

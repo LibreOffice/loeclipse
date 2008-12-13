@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeCellEditor.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -63,7 +63,6 @@ import org.eclipse.swt.widgets.Layout;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
-import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 
 /**
  * Table cell editor for UNO types.
@@ -145,14 +144,10 @@ public class TypeCellEditor extends TextCellEditor {
         
         Object result = getValue(); 
         
-        UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
+        // Remove the module type from the current types 
+        int allowedTypes = mType & (Integer.MAX_VALUE - IUnoFactoryConstants.MODULE);
         
-        int oldType = typesProvider.getTypes();
-        typesProvider.setTypes(mType & 
-                UnoTypeProvider.invertTypeBits(IUnoFactoryConstants.MODULE));
-        
-        UnoTypeBrowser browser = new UnoTypeBrowser(
-                pParent.getShell(), typesProvider);
+        UnoTypeBrowser browser = new UnoTypeBrowser(pParent.getShell(), allowedTypes);
         
         if (UnoTypeBrowser.OK == browser.open()) {
             InternalUnoType mSelectedType = browser.getSelectedType();
@@ -165,7 +160,6 @@ public class TypeCellEditor extends TextCellEditor {
             }
         }
         
-        typesProvider.setTypes(oldType);
         return result;
     }
     

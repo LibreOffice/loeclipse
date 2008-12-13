@@ -2,9 +2,9 @@
  *
  * $RCSfile: PropertiesManager.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 07:32:31 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -74,14 +74,14 @@ public class PropertiesManager {
     /**
      * OOo SDK path preference key. Used to store the preferences
      */
-    private static final String SDKPATH_PREFERENCE_KEY    = "sdkpath"; //$NON-NLS-1$
+    private static final String SDKPATH_PREFERENCE_KEY = "sdkpath"; //$NON-NLS-1$
     
     /**
      * OOo path preference key. Used to store the preferences
      */
-    private static final String OOOPATH_PREFERENCE_KEY    = "ooopath"; //$NON-NLS-1$
+    private static final String OOOPATH_PREFERENCE_KEY = "ooopath"; //$NON-NLS-1$
     
-    private static final String OOONAME_PREFERENCE_KEY      = "oooname"; //$NON-NLS-1$
+    private static final String OOONAME_PREFERENCE_KEY = "oooname"; //$NON-NLS-1$
     
     /**
      * Loads the SDK properties.
@@ -133,8 +133,8 @@ public class PropertiesManager {
             
         } catch (IOException e) {
             PluginLogger.error(
-                    Messages.getString("PropertiesManager.UnreadableFileError") + 
-                    OOEclipsePlugin.OOO_CONFIG, e); //$NON-NLS-1$
+                    Messages.getString("PropertiesManager.UnreadableFileError") +  //$NON-NLS-1$
+                    OOEclipsePlugin.OOO_CONFIG, e);
         }
         
         return result;
@@ -236,8 +236,8 @@ public class PropertiesManager {
             
         } catch (IOException e) {
             PluginLogger.error(
-                Messages.getString("PropertiesManager.UnreadableFileError") + 
-                OOEclipsePlugin.OOO_CONFIG, e); //$NON-NLS-1$
+                Messages.getString("PropertiesManager.UnreadableFileError") + //$NON-NLS-1$
+                OOEclipsePlugin.OOO_CONFIG, e);
         }
         
         return result;

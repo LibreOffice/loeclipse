@@ -306,4 +306,11 @@
          point="org.eclipse.ui.startup">
       <startup class="org.openoffice.ide.eclipse.core.ResourceChangesHandler"/>
    </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <file-association
+            content-type="org.eclipse.core.runtime.xml"
+            file-extensions="xcu,xcs">
+      </file-association>
+   </extension>
 </plugin>

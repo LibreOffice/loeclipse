@@ -2,9 +2,9 @@
  *
  * $RCSfile: URE.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:26 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -98,47 +98,47 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
-    public String getClassesPath() {
+    public String[] getClassesPath() {
         String jars = getHome() + FILE_SEP + "share" + FILE_SEP + "java"; //$NON-NLS-1$ //$NON-NLS-2$
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             jars = getHome() + FILE_SEP + "java"; //$NON-NLS-1$
         }
-        return jars;
+        return new String[]{ jars };
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getLibsPath() {
+    public String[] getLibsPath() {
         String libs = getHome() + FILE_SEP + "lib"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
         }
-        return libs;
+        return new String[]{ libs };
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getTypesPath() {
+    public String[] getTypesPath() {
         String types = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
             FILE_SEP + "types.rdb"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return types;
+        return new String[]{ types };
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getServicesPath() {
+    public String[] getServicesPath() {
         String services = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
                 FILE_SEP + "services.rdb"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return services;
+        return new String[]{ services };
     }
 
     /**
@@ -200,11 +200,21 @@ public class URE extends AbstractOOo {
         }
         
         // Get the paths to OOo instance types and services registries
-        Path typesPath = new Path(getTypesPath());
-        Path servicesPath = new Path(getServicesPath());
-        
-        String sTypesPath = typesPath.toString().replace(" ", "%20");  //$NON-NLS-1$ //$NON-NLS-2$
-        String sServicesPath = servicesPath.toString().replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+        String typesArg = ""; //$NON-NLS-1$
+        String[] paths = getTypesPath();
+        for (String path : paths) {
+            Path typesPath = new Path(path);
+            String sTypesPath = typesPath.toString().replace(" ", "%20");  //$NON-NLS-1$ //$NON-NLS-2$
+            typesArg += " -ro file:///" + sTypesPath; //$NON-NLS-1$
+        }
+
+        String serviceArgs = ""; //$NON-NLS-1$
+        String[] servicePaths = getServicesPath();
+        for (String path : servicePaths) {
+            Path servicesPath = new Path(path);
+            String sServicesPath = servicesPath.toString().replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+            serviceArgs += " -ro file:///" + sServicesPath; //$NON-NLS-1$
+        }
         
         String unoPath = getUnoPath();
         if (Platform.OS_WIN32.equals(Platform.getOS())) {
@@ -214,8 +224,8 @@ public class URE extends AbstractOOo {
         command = unoPath +
             " -c " + pImplementationName +  //$NON-NLS-1$
             " -l " + pLibLocation +  //$NON-NLS-1$
-            " -ro file:///" + sTypesPath + //$NON-NLS-1$
-            " -ro file:///" + sServicesPath +  //$NON-NLS-1$
+            typesArg +
+            " -ro file:///" + serviceArgs +  //$NON-NLS-1$
             " " + additionnalRegistries +  //$NON-NLS-1$
             " -- " + sArgs;  //$NON-NLS-1$
         

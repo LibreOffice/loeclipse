@@ -2,9 +2,9 @@
  *
  * $RCSfile: PackageExportWizard.java,v $
  *
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
+ * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -67,12 +67,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.builders.ServicesBuilder;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.utils.FileHelper;
 import org.openoffice.ide.eclipse.core.wizards.pages.PackageExportWizardPage;
@@ -162,15 +162,22 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
          */
         @Override
         protected IStatus run(IProgressMonitor pMonitor) {
-            // First run the services builder
-            Status status = ServicesBuilder.syncRun(mPrj, pMonitor);
             
-            if (status.getSeverity() != Status.CANCEL && status.getSeverity() != Status.ERROR) {
+            IStatus status = new Status(IStatus.ERROR, 
+                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+                    IStatus.ERROR, 
+                    Messages.getString("PackageExportWizard.EXPORT_ERROR_MSG"), //$NON-NLS-1$
+                    null);
+            
+            try {
+                // Export the library
+                IPath libraryPath = null;
+                ILanguageBuilder langBuilder = mPrj.getLanguage().getLanguageBuidler();
+                libraryPath = langBuilder.createLibrary(mPrj);
             
                 // Remove the temporarily created Manifest and keep the library
                 try {
                     mPrj.getFile("MANIFEST.MF").delete(true, pMonitor); //$NON-NLS-1$
-                    mPrj.getFile("services.rdb").delete(true, pMonitor); //$NON-NLS-1$
                 } catch (CoreException e) {
                     // Not important
                 }
@@ -178,7 +185,9 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 // Create the package
                 IPath prjPath = mPrj.getProjectPath();
                 File dir = new File(prjPath.toOSString());
-                File dest = new File(mOutputDir, mPrj.getName().replace(" ", "") + "." + mExtension); //$NON-NLS-1$
+                File dest = new File(mOutputDir, 
+                        mPrj.getName().replace(" ", "") //$NON-NLS-1$ //$NON-NLS-2$ 
+                            + "." + mExtension); //$NON-NLS-1$
                 UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(mPrj, dest, dir);            
 
                 /*
@@ -220,7 +229,7 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 
                 // Clean up the library file and META-INF directory
                 FileHelper.remove(new File(dir, "META-INF")); //$NON-NLS-1$
-                File libFile = new File(mPrj.getLanguage().getProjectHandler().getLibraryPath(mPrj));
+                File libFile = new File(libraryPath.toOSString());
                 FileHelper.remove(libFile);
 
                 // Refresh the project and return the status
@@ -234,7 +243,11 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                         IStatus.OK, 
                         Messages.getString("PackageExportWizard.ExportedMessage"), //$NON-NLS-1$
                         null);
+                
+            } catch (Exception e) {
+                // the error status is already defined at the beginning of the method  
             }
+                
             return status;
         }
     }
