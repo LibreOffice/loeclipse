@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeProvider.java,v $
  *
- * $Revision: 1.13 $
+ * $Revision: 1.14 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -43,9 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unotypebrowser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -62,16 +66,35 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
 public class UnoTypeProvider {
     
     public static final int ALL_TYPES = 2047;
+    public static final String BASIC_TYPES_KEY = "basic-types"; //$NON-NLS-1$
+    
+    private static final InternalUnoType[] SIMPLE_TYPES = {
+        InternalUnoType.STRING,
+        InternalUnoType.VOID,
+        InternalUnoType.BOOLEAN,
+        InternalUnoType.BYTE,
+        InternalUnoType.SHORT,
+        InternalUnoType.LONG,
+        InternalUnoType.HYPER,
+        InternalUnoType.FLOAT,
+        InternalUnoType.DOUBLE,
+        InternalUnoType.CHAR,
+        InternalUnoType.TYPE,
+        InternalUnoType.ANY,
+        InternalUnoType.USHORT,
+        InternalUnoType.ULONG,
+        InternalUnoType.UHYPER  
+    };
     
     private static UnoTypeProvider sInstance = new UnoTypeProvider();
     
     private LinkedList<IInitListener> mListeners = new LinkedList<IInitListener>(); 
-    private List<InternalUnoType> mCache;
+    private Map<String, List<InternalUnoType>> mCache;
     
     private IOOo mOooInstance;
     private String mPathToRegister;
     
-    private boolean mInitialized = false;
+    private TypeProviderState mState = TypeProviderState.EMPTY;
     
     /**
      * Only to restrict the use of the default constructor: this is a singleton.
@@ -92,31 +115,40 @@ public class UnoTypeProvider {
      * Refresh the cache of Uno types.
      */
     public void refreshCache() {
-        mInitialized = false;
+        if (mOooInstance != null) {
+            mState = TypeProviderState.INITIALIZING;
 
-        removeAllTypes();
-        
-        // Start getting the types again
-        new UnoTypesGetterThread().start();
+            removeAllTypes();
+
+            // Start getting the types again
+            new UnoTypesGetterThread().start();
+        }
     }
     
     /**
      * Checks whether the list contains the given type name.
      * 
      * @param pScopedName the type name to match
+     * @param pContainers the UNO types containers to look in. These have to be either
+     *          the path to a project RDB file or an OpenOffice.org name
+     * 
      * @return <code>true</code> if the list contains a type with this name
      */
-    public boolean contains(String pScopedName) {
-        
+    public boolean contains(String pScopedName, String[] pContainers) {
         boolean result = false;
         pScopedName = pScopedName.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
         
-        if (isInitialized()) {
-            Iterator<InternalUnoType> iter = mCache.iterator();
-            while (iter.hasNext() && !result) {
-                InternalUnoType type = iter.next();
-                if (type.getFullName().equals(pScopedName)) {
-                    result = true;
+        if (getState().equals(TypeProviderState.INITIALIZED)) {
+            for (String container : pContainers) {
+                List<InternalUnoType> types = mCache.get(container);
+                if (types != null) {
+                    Iterator<InternalUnoType> iter = types.iterator();
+                    while (iter.hasNext() && !result) {
+                        InternalUnoType type = iter.next();
+                        if (type.getFullName().equals(pScopedName)) {
+                            result = true;
+                        }
+                    }
                 }
             }
         }
@@ -160,10 +192,10 @@ public class UnoTypeProvider {
     }
     
     /**
-     * @return whether the type provider has been initialized.
+     * @return the status of the UNO type provider.
      */
-    public boolean isInitialized() {
-        return mInitialized;
+    public TypeProviderState getState() {
+        return mState;
     }
     
     //---------------------------------------------------- TypeGetter launching
@@ -190,7 +222,7 @@ public class UnoTypeProvider {
      * Propagate the news to the listeners that it has been initialized.
      */
     private void setInitialized() {
-        mInitialized = true;
+        mState = TypeProviderState.INITIALIZED;
         
         for (int i = 0, length = mListeners.size(); i < length; i++) {
             mListeners.get(i).initialized();
@@ -200,49 +232,41 @@ public class UnoTypeProvider {
     //--------------------------------------------------- Collection management
     
     /**
-     * Get a type from its path.
-     * 
-     * @param pTypePath the type path
-     * 
-     * @return the corresponding complete type description
-     */
-    public InternalUnoType getType(String pTypePath) {
-        
-        Iterator<InternalUnoType> iter = mCache.iterator();
-        InternalUnoType result = null;
-        
-        while (null == result && iter.hasNext()) {
-            InternalUnoType type = iter.next();
-            if (type.getFullName().equals(pTypePath)) {
-                result = type;
-            }
-        }
-        return result;
-        
-    }
-    
-    /**
      * Initializes the cache if needed and get the cached data.
      * 
+     * @param pContainers the container from which to get the types.
+     * 
      * @return the types list as an array.
+     * 
+     * @see org.openoffice.ide.eclipse.core.internal.office.TypesGetter
      */
-    protected Object[] toArray() {
+    protected Object[] toArray(String[] pContainers) {
+        // Fill in the cache if necessary
         if (mCache == null) {
             refreshCache();
         }
         
-        Object[] types = new Object[mCache.size()];
-        types = mCache.toArray();
-        return types;
-    }
-    
-    /**
-     * Add a type to the list.
-     * 
-     * @param pInternalType the type to add
-     */
-    protected void addType(InternalUnoType pInternalType) {
-        mCache.add(pInternalType);
+        ArrayList<String> containers = new ArrayList<String>();
+        containers.addAll(Arrays.asList(pContainers));
+        
+        // Use the set OOo and project as containers
+        if (mPathToRegister != null) {
+            containers.add(mPathToRegister);
+        }
+        
+        if (mOooInstance != null) {
+            containers.add(mOooInstance.getName());
+        }
+        
+        LinkedList<InternalUnoType> types = new LinkedList<InternalUnoType>();
+        for (String container : containers) {
+            List<InternalUnoType> regTypes = mCache.get(container);
+            if (regTypes != null) {
+                types.addAll(regTypes);
+            }
+        }
+        
+        return types.toArray();
     }
 
     /**
@@ -252,7 +276,7 @@ public class UnoTypeProvider {
         if (mCache != null) {
             mCache.clear();
         } else {
-            mCache = new LinkedList<InternalUnoType>();
+            mCache = new HashMap<String, List<InternalUnoType>>();
         }
     }
     
@@ -278,7 +302,24 @@ public class UnoTypeProvider {
                 localRegs.add(mPathToRegister);
                 getter.setLocalRegs(localRegs);
                 
-                mCache = getter.getTypes(null, ALL_TYPES);
+                Map<String, List<InternalUnoType>> data = getter.getTypes(null, ALL_TYPES);
+                Iterator<String> iter = data.keySet().iterator();
+                while (iter.hasNext()) {
+                    String key = iter.next();
+                    
+                    // Clears the cache for the fetched registries
+                    List<InternalUnoType> types = mCache.get(key);
+                    if (types != null) {
+                        types.clear();
+                        mCache.remove(key);
+                    }
+                    
+                    // Put the new types
+                    mCache.put(key, data.get(key));
+                }
+                
+                // Add the basic types
+                mCache.put(BASIC_TYPES_KEY, Arrays.asList(SIMPLE_TYPES));
                 
                 setInitialized();
                 PluginLogger.debug("Types fetched"); //$NON-NLS-1$

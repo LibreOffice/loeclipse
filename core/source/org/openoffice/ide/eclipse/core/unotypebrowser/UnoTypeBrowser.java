@@ -2,9 +2,9 @@
  *
  * $RCSfile: UnoTypeBrowser.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -42,6 +42,8 @@
  *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unotypebrowser;
+
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -109,13 +111,17 @@ public class UnoTypeBrowser extends StatusDialog
     private InternalUnoType mSelectedType;
     private Flags mTypes;
     
+//    private IUnoidlProject mProject;
+//    private IOOo mOOo;
+    
     
     /**
      * Creates a new browser dialog. The browser, waits for the type provider
      * to finish its work if it's not already over.
      * 
      * @param pParentShell the shell where to create the dialog
-     * @param pAllowedTypes the bit-ORed allowed types 
+     * @param pAllowedTypes the bit-ORed allowed types
+     *  
      */
     public UnoTypeBrowser(Shell pParentShell, int pAllowedTypes) {
         super(pParentShell);
@@ -130,7 +136,7 @@ public class UnoTypeBrowser extends StatusDialog
         UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
         typesProvider.addInitListener(this);
 
-        if (!typesProvider.isInitialized()) {
+        if (!typesProvider.getState().equals(TypeProviderState.INITIALIZED)) {
             // changes the status to warn the user
 
             updateStatus(new Status(IStatus.INFO,
@@ -169,7 +175,7 @@ public class UnoTypeBrowser extends StatusDialog
         });
         
         UnoTypeProvider typesProvider = UnoTypeProvider.getInstance();
-        if (!typesProvider.isInitialized()) {
+        if (!typesProvider.getState().equals(TypeProviderState.INITIALIZED)) {
             activateFields(false);
         }
         
@@ -228,28 +234,6 @@ public class UnoTypeBrowser extends StatusDialog
 
             public void run() {
                 if (!mTypesList.getTable().isDisposed()) {
-                    
-                    // Add the simple types here if needed
-                    UnoTypeProvider typesProvider = UnoTypeProvider.getInstance(); 
-                    if (mTypes.isFlagSet(IUnoFactoryConstants.BASICS)) {
-                        
-                        typesProvider.addType(InternalUnoType.STRING);
-                        typesProvider.addType(InternalUnoType.VOID);
-                        typesProvider.addType(InternalUnoType.BOOLEAN);
-                        typesProvider.addType(InternalUnoType.BYTE);
-                        typesProvider.addType(InternalUnoType.SHORT);
-                        typesProvider.addType(InternalUnoType.LONG);
-                        typesProvider.addType(InternalUnoType.HYPER);
-                        typesProvider.addType(InternalUnoType.FLOAT);
-                        typesProvider.addType(InternalUnoType.DOUBLE);
-                        typesProvider.addType(InternalUnoType.CHAR);
-                        typesProvider.addType(InternalUnoType.TYPE);
-                        typesProvider.addType(InternalUnoType.ANY);
-                        typesProvider.addType(InternalUnoType.USHORT);
-                        typesProvider.addType(InternalUnoType.ULONG);
-                        typesProvider.addType(InternalUnoType.UHYPER);
-                    }
-                    
                     mTypesList.refresh();
                     activateFields(true);
 
@@ -559,7 +543,13 @@ public class UnoTypeBrowser extends StatusDialog
          * {@inheritDoc}
          */
         public Object[] getElements(Object pInputElement) {
-            return UnoTypeProvider.getInstance().toArray();
+            ArrayList<String> containers = new ArrayList<String>();
+            
+            if (mTypes.isFlagSet(IUnoFactoryConstants.BASICS)) {
+                containers.add(UnoTypeProvider.BASIC_TYPES_KEY);
+            }
+            
+            return UnoTypeProvider.getInstance().toArray(containers.toArray(new String[containers.size()]));
         }
 
         /**

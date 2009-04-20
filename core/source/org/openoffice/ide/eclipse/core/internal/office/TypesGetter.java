@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesGetter.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -47,10 +47,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 
@@ -108,30 +108,22 @@ public class TypesGetter {
     
     /**
      * @param pLocalRegs the local registries to search. The path has to be in
-     *      written in an OS dependent form. This method converts them to an 
-     *      OpenOffice.org URL. 
+     *      written in an OS dependent form. This path is converted into an OOo valid URL
+     *      just before getting the types from it.
      */
     public void setLocalRegs(List<String> pLocalRegs) {
-        // convert the path to an OOo path
         mLocalRegs.clear();
-        
-        for (String reg : pLocalRegs) {
-            mLocalRegs.add(convertToOOoPath(reg));
-        }
+        mLocalRegs.addAll(pLocalRegs);
     }
 
     /**
      * @param pExternalRegs the external registries to search. The path has to be in
-     *      written in an OS dependent form. This method converts them to an 
-     *      OpenOffice.org URL. 
+     *      written in an OS dependent form. This path is converted into an OOo valid URL
+     *      just before getting the types from it.
      */
     public void setExternalRegs(List<String> pExternalRegs) {
-        // convert the path to an OOo path
         mExternalRegs.clear();
-        
-        for (String reg : pExternalRegs) {
-            mExternalRegs.add(convertToOOoPath(reg));
-        }
+        mExternalRegs.addAll(pExternalRegs);
     }
 
     /**
@@ -149,30 +141,17 @@ public class TypesGetter {
      * 
      * @throws Throwable if anything wrong happens
      */
-    public List<InternalUnoType> getTypes(String pRoot, Integer pMask) throws Throwable {
-        LinkedList<InternalUnoType> types = new LinkedList<InternalUnoType>();
+    public Map<String, List<InternalUnoType>> getTypes(String pRoot, Integer pMask) throws Throwable {
+        Map<String, List<InternalUnoType>> types = new HashMap<String, List<InternalUnoType>>();
         
         mConnection.startOffice();
 
         initialize(pRoot, pMask);
-        types.addAll(queryTypes());
+        types = queryTypes();
         
         mConnection.stopOffice();
         
         return types;
-    }
-    
-    /**
-     * Convert an OS dependent file path to an OOo valid URL.
-     *  
-     * @param pPath the OS dependent path to convert
-     * 
-     * @return the resulting OpenOffice.org URL
-     */
-    private String convertToOOoPath(String pPath) {
-        String typesPath = new Path(pPath).toString();
-        typesPath = typesPath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
-        return "file:///" + typesPath; //$NON-NLS-1$
     }
     
     /**
@@ -201,24 +180,36 @@ public class TypesGetter {
     }
     
     /**
-     * Query the types and return them in a vector of {@link InternalUnoType}.
+     * Query the types and return them in a map..
+     * 
+     * <p>The types are mapped to an identifier indicating where they have been
+     * extracted from. For an OpenOffice.org instance, the key in the map will be the 
+     * OOo name. For any external registry, the key in the map will be the OS
+     * specific path to the registry.</p>
      * 
      * @return the types
      * 
-     * @throws Exception if anywrong happens
+     * @throws Exception if anything wrong happens
      */
-    private List<InternalUnoType> queryTypes() throws Exception {
+    private Map<String, List<InternalUnoType>> queryTypes() throws Exception {
             
-        LinkedList<InternalUnoType> results = new LinkedList<InternalUnoType>();
+        Map<String, List<InternalUnoType>> results = new HashMap<String, List<InternalUnoType>>();
         
         for (int i = 0, length = mLocalRegs.size(); i < length; i++) {
-            String registryPath = mLocalRegs.get(i);
-            results.addAll(getTypesFromRegistry(registryPath, true));
+            String path = mLocalRegs.get(i);
+            String url = mConnection.convertToUrl(path);
+            if (url != null) {
+                results.put(path, getTypesFromRegistry(url, true));
+            }
         }
 
         for (int i = 0, length = mExternalRegs.size(); i < length; i++) {
-            String registryPath = mExternalRegs.get(i);
-            results.addAll(getTypesFromRegistry(registryPath, true));
+            String path = mExternalRegs.get(i);
+            String url = mConnection.convertToUrl(path);
+            if (url != null) {
+                String oooKey = mConnection.getOOo().getName();
+                results.put(oooKey, getTypesFromRegistry(url, false));
+            }
         }
 
         return results;

@@ -2,9 +2,9 @@
  *
  * $RCSfile: OfficeConnection.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:49 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -43,6 +43,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.office;
 
+import java.io.File;
+import java.net.URL;
+
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 
@@ -52,6 +55,8 @@ import com.sun.star.frame.XDesktop;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
+import com.sun.star.uri.ExternalUriReferenceTranslator;
+import com.sun.star.uri.XExternalUriReferenceTranslator;
 
 /**
  * Abstract class for tasks requiring an office connection.
@@ -114,7 +119,30 @@ public class OfficeConnection {
                 PluginLogger.info("Office stopped"); //$NON-NLS-1$
             }
         } catch (Exception e) {
-            PluginLogger.error("Couldn't stop the office connection", e);
+            PluginLogger.error(Messages.getString("OfficeConnection.ERROR_STOP"), e); //$NON-NLS-1$
         }
+    }
+    
+    /**
+     * Convert an OS dependent file path to an OOo valid URL.
+     *  
+     * @param pPath the OS dependent path to convert
+     * 
+     * @return the resulting OpenOffice.org URL
+     */
+    public String convertToUrl(String pPath) {
+        String internalUrl = null;
+        
+        try {
+            if (pPath != null) {
+                URL externalUrl = new File(pPath).toURI().toURL();
+                XExternalUriReferenceTranslator translator = ExternalUriReferenceTranslator.create(mContext);
+                internalUrl =  translator.translateToInternal(externalUrl.toExternalForm());
+            }
+        } catch (Exception e) {
+            PluginLogger.error(Messages.getString("OfficeConnection.ERROR_CONVERT_URL") + pPath, e); //$NON-NLS-1$
+        }
+     
+        return internalUrl;
     }
 }

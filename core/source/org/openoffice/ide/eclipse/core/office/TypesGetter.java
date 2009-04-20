@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypesGetter.java,v $
  *
- * $Revision: 1.1 $
+ * $Revision: 1.2 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -45,8 +45,9 @@ package org.openoffice.ide.eclipse.core.office;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
@@ -101,8 +102,8 @@ public class TypesGetter {
      * @return the list of types available in the office
      */
     @SuppressWarnings("unchecked")
-    public List<InternalUnoType> getTypes(String pRoot, int pMask) {
-        List<InternalUnoType> types = new LinkedList<InternalUnoType>();
+    public Map<String, List<InternalUnoType>> getTypes(String pRoot, int pMask) {
+        Map<String, List<InternalUnoType>> types = new HashMap<String, List<InternalUnoType>>();
         
         try {
             // Load the target class and create the getter instance
@@ -135,7 +136,7 @@ public class TypesGetter {
             Method method = clazz.getMethod("getTypes", String.class, Integer.class); //$NON-NLS-1$
             Object result = method.invoke(getter, pRoot, new Integer(pMask));
             
-            types = (List<InternalUnoType>) result;
+            types = (Map<String, List<InternalUnoType>>) result;
             
         } catch (Throwable e) {
             PluginLogger.error(Messages.getString("TypesGetter.ERROR"), e.getCause()); //$NON-NLS-1$

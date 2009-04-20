@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.openoffice.ide.eclipse.core; singleton:=true
 Bundle-Version: 1.1.0
 Bundle-Activator: org.openoffice.ide.eclipse.core.OOEclipsePlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.core.resources,
  org.eclipse.ui.editors,
@@ -18,7 +17,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.junit,
  org.eclipse.debug.core,
- org.eclipse.debug.ui
+ org.eclipse.debug.ui,
+ org.eclipse.ui;bundle-version="3.4.1"
 Eclipse-LazyStart: true
 Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.gui.rows,

@@ -2,9 +2,9 @@
  *
  * $RCSfile: InterfacesTable.java,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -69,11 +69,9 @@ public class InterfacesTable extends AbstractTable {
     
     private static final int OPTIONAL_WIDTH = 25;
     private static final int NAME_WIDTH = 400;
-
+    
     /**
-     * Simplified constructor for this kind of table. It uses a types provider
-     * in order to fetch the UNO types earlier than showing the UNO type browser.
-     * This way it avoids a too long UI freeze time.
+     * Simplified constructor for this kind of table.
      * 
      * @param pParent the parent composite where to put the table
      */

@@ -2,9 +2,9 @@
  *
  * $RCSfile: OOo.java,v $
  *
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -124,6 +124,11 @@ public class OOo extends AbstractOOo {
      */
     @Override
     public void setHome(String pHome) throws InvalidConfigException {
+        
+        if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+            pHome = pHome + FILE_SEP + "Contents"; //$NON-NLS-1$
+        }
+        
         mMapper = new OOo3PathMapper(pHome);
         super.setHome(pHome);
     }
@@ -153,7 +158,7 @@ public class OOo extends AbstractOOo {
         
         String libs = getHome() + FILE_SEP + "program"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-            libs = getHome() + FILE_SEP + "Contents" + FILE_SEP + "MacOS"; //$NON-NLS-1$ //$NON-NLS-2$
+            libs = getHome() + FILE_SEP + "MacOS"; //$NON-NLS-1$
         }
         
         return mMapper.mergeArrays(new String[]{ libs }, otherPaths);
@@ -193,8 +198,6 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     public String getUnorcPath() {
-        // TODO v3
-        
         String path = getLibsPath()[0] + FILE_SEP + "bootstrap"; //$NON-NLS-1$
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             path += ".ini"; //$NON-NLS-1$

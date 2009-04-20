@@ -2,9 +2,9 @@
  *
  * $RCSfile: NewScopedElementWizardPage.java,v $
  *
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:47 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -224,7 +224,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      */
     public void setOOoInstance(IOOo pOOoInstance) {
         if (pOOoInstance != null) {
-            UnoTypeProvider.getInstance().setOOoInstance(pOOoInstance);
+            UnoTypeProvider provider = UnoTypeProvider.getInstance();
+            provider.setOOoInstance(pOOoInstance);
         }
     }
     
@@ -235,7 +236,8 @@ public abstract class NewScopedElementWizardPage extends WizardPage
      */
     public void setUnoidlProject(IUnoidlProject pUnoProject) {
         mUnoProject = pUnoProject;
-        UnoTypeProvider.getInstance().setProject(mUnoProject);
+        UnoTypeProvider provider = UnoTypeProvider.getInstance();
+        provider.setProject(mUnoProject);
     }
     
     /**
@@ -533,7 +535,11 @@ public abstract class NewScopedElementWizardPage extends WizardPage
             } else if (pEvent.getProperty().equals(P_NAME)) {
                 mElementName = pEvent.getValue();
                 // Test if there is the scoped name already exists
-                boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue());
+                String[] containers = new String[] {
+                        getProject().getTypesPath().toOSString(),
+                        getProject().getOOo().getName()
+                };
+                boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue(), containers);
                 if (exists) {
                     setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
                 } else {

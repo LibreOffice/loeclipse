@@ -2,9 +2,9 @@
  *
  * $RCSfile: TypeCellEditor.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -88,11 +88,12 @@ public class TypeCellEditor extends TextCellEditor {
      * obtained by bit-OR of the types constants defined in {@link InternalUnoType}
      * class.</p>
      * 
-     * @param pParent the parent composite
+     * @param pParent the parent composite.
      * @param pTypeMask the types to show.
      */
     public TypeCellEditor(Composite pParent, int pTypeMask) {
         super(pParent, SWT.None);
+        
         if (pTypeMask >= 0 && pTypeMask <= InternalUnoType.ALL_TYPES) {
             mType = pTypeMask;
         }

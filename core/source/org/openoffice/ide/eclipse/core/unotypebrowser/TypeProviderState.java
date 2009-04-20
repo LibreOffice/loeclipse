@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- * $RCSfile: Messages.java,v $
+ * $RCSfile: TypeProviderState.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:01 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -41,42 +41,22 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.office;
-
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+package org.openoffice.ide.eclipse.core.unotypebrowser;
 
 /**
- * Messages for the package.
+ * Indicates the state of the {@link UnoTypeProvider}.
+ *  
+ * <ul>
+ *      <li>{@link #EMPTY} means that the types provider has never been initialized</li>
+ *      <li>{@link #INITIALIZING} means that the types provider is updating the types</li>
+ *      <li>{@link #INITIALIZED} means that the types provider has fetched the types</li>
+ * </ul>
  * 
- * @author cedricbosdo
+ * @author cbosdonnat
  *
  */
-public class Messages {
-    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.office.messages"; //$NON-NLS-1$
-
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME);
-
-    /**
-     * Default constructor.
-     */
-    private Messages() {
-    }
-
-    /**
-     * Get the string from it's key.
-     * 
-     * @param pKey the key of the string
-     * 
-     * @return the internationalized string
-     */
-    public static String getString(String pKey) {
-        String string = '!' + pKey + '!';
-        try {
-            string =  RESOURCE_BUNDLE.getString(pKey);
-        } catch (MissingResourceException e) {
-        }
-        return string;
-    }
+public enum TypeProviderState {
+    EMPTY,
+    INITIALIZING,
+    INITIALIZED
 }

@@ -2,9 +2,9 @@
  *
  * $RCSfile: Messages.java,v $
  *
- * $Revision: 1.2 $
+ * $Revision: 1.1 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:02 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:00 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.office;
+package org.openoffice.ide.eclipse.core.internal.office;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -53,7 +53,7 @@ import java.util.ResourceBundle;
  *
  */
 public class Messages {
-    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.office.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.internal.office.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(BUNDLE_NAME);

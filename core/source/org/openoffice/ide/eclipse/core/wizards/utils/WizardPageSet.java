@@ -2,9 +2,9 @@
  *
  * $RCSfile: WizardPageSet.java,v $
  *
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/12/07 08:47:16 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -49,7 +49,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbenchPage;
-import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**

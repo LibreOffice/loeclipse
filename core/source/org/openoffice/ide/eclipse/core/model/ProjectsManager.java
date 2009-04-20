@@ -2,9 +2,9 @@
  *
  * $RCSfile: ProjectsManager.java,v $
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ * last change: $Author: cedricbosdo $ $Date: 2009/04/20 06:16:02 $
  *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
@@ -95,7 +95,7 @@ public class ProjectsManager {
      */
     public static void addProject(IProject pProject) {
         try {
-            if (pProject.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
+            if (pProject.isAccessible() &&  pProject.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
                 
                 // Load the nature
                 UnoidlProject unoproject = (UnoidlProject)pProject.getNature(
