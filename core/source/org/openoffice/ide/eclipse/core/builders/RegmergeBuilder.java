@@ -123,8 +123,16 @@ public class RegmergeBuilder {
         String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
                            existingReg + "\"" + pFile.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
         
-        // Process creation
-        Process process = pUnoprj.getSdk().runTool(pUnoprj, command, pMonitor);
+        // Process creation. Need to set the PATH value using OOo path: due to some tools changes in 3.1
+        String[] sPaths = pUnoprj.getOOo().getLibsPath();
+        String sPathValue = "PATH="; //$NON-NLS-1$
+        for (String sPath : sPaths) {
+            if ( !sPathValue.endsWith("=")) { //$NON-NLS-1$
+                sPathValue += System.getProperty("path.separator"); //$NON-NLS-1$
+            }
+            sPathValue += sPath;
+        }
+        Process process = pUnoprj.getSdk().runToolWithEnv(pUnoprj, command, new String[]{ sPathValue }, pMonitor);
         
         // Just wait for the process to end before destroying it
         try {
