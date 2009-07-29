@@ -137,7 +137,7 @@ public class JavaMainProvider implements IMainProvider {
             
             int i = 0;
             while (!isMainImplementation && i < superInterfaces.length) {
-                if (superInterfaces[i].getFullyQualifiedName().equals("com.sun.star.lang.XMain")) {
+                if (superInterfaces[i].getFullyQualifiedName().equals("com.sun.star.lang.XMain")) { //$NON-NLS-1$
                     isMainImplementation = true;
                 } else {
                     i++;

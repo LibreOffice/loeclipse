@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.editors;
+package org.openoffice.ide.eclipse.core.editors.main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +77,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor;
 import org.openoffice.ide.eclipse.core.gui.LocaleCellProvider;
 import org.openoffice.ide.eclipse.core.gui.ProjectSelectionDialog;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;

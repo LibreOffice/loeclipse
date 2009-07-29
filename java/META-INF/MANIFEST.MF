@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.openoffice.ide.eclipse.java; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.openoffice.ide.eclipse.java.OOoJavaPlugin
 Bundle-Vendor: OpenOffice.org
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.openoffice.ide.eclipse.core,
@@ -15,4 +14,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt,
  org.eclipse.jdt.ui,
  org.eclipse.jface.text
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

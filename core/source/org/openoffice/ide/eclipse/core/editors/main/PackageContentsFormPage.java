@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.editors;
+package org.openoffice.ide.eclipse.core.editors.main;
 
 import java.util.List;
 
@@ -52,7 +52,10 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor;
 
 /**
  * Page displaying the Package properties in a more user friendly way.
@@ -95,6 +98,9 @@ public class PackageContentsFormPage extends FormPage {
     protected void createFormContent(IManagedForm pManagedForm) {
         super.createFormContent(pManagedForm);
         ScrolledForm form = pManagedForm.getForm();
+        
+        FormToolkit toolkit = pManagedForm.getToolkit();
+        toolkit.decorateFormHeading( form.getForm() );
         
         form.setText(Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
         

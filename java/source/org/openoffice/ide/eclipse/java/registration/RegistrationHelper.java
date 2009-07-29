@@ -69,7 +69,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
  */
 public abstract class RegistrationHelper {
 
-    public static final String CLASS_FILENAME = "RegistrationHandler";
+    public static final String CLASS_FILENAME = "RegistrationHandler"; //$NON-NLS-1$
     
     /**
      * Creates all the necessary files for the java registration of UNO services
@@ -84,7 +84,7 @@ public abstract class RegistrationHelper {
         IFolder dest = pProject.getFolder(relPath);
         
         // Compute the name of the main implementation class
-        String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension();
+        String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension(); //$NON-NLS-1$
         
         // Create the RegistrationHandler.java file
 
@@ -93,16 +93,16 @@ public abstract class RegistrationHelper {
         BufferedReader patternReader = null;
         InputStream in = null;
         try {
-            in = RegistrationHelper.class.getResourceAsStream("RegistrationHandler.java.tpl");
+            in = RegistrationHelper.class.getResourceAsStream("RegistrationHandler.java.tpl"); //$NON-NLS-1$
             patternReader = new BufferedReader(new InputStreamReader(in));
             String line = patternReader.readLine();
             while (line != null) {
-                pattern.append(line + "\n");
+                pattern.append(line + "\n"); //$NON-NLS-1$
                 line = patternReader.readLine();
             }
         } catch (IOException e) {
             // log the error
-            PluginLogger.error("Error during registration class creation [reading template]", e);
+            PluginLogger.error(Messages.getString("RegistrationHelper.ReadTemplateError"), e); //$NON-NLS-1$
         } finally {
             try {
                 patternReader.close();
@@ -116,7 +116,7 @@ public abstract class RegistrationHelper {
 
             FileWriter writer = null;
             try {
-                IFile classIFile = dest.getFile(CLASS_FILENAME + ".java");
+                IFile classIFile = dest.getFile(CLASS_FILENAME + ".java"); //$NON-NLS-1$
                 File classFile = classIFile.getLocation().toFile();
                 
                 if (!classFile.exists()) {
@@ -131,7 +131,7 @@ public abstract class RegistrationHelper {
                 
                 
             } catch (IOException e) {
-                PluginLogger.error("Error during registration class creation [writing class]", e);
+                PluginLogger.error(Messages.getString("RegistrationHelper.WriteClassError"), e); //$NON-NLS-1$
             } finally {
                 try {
                     writer.close();
@@ -146,7 +146,7 @@ public abstract class RegistrationHelper {
             File listFile = getClassesListFile(pProject).getLocation().toFile();
             listFile.createNewFile();
         } catch (IOException e) {
-            PluginLogger.error("Error during registration classes list", e);
+            PluginLogger.error(Messages.getString("RegistrationHelper.WriteClassesListError"), e); //$NON-NLS-1$
         } finally {
             try {
                 empty.close();
@@ -194,8 +194,8 @@ public abstract class RegistrationHelper {
      */
     public static String getRegistrationClassName(IUnoidlProject pProject) {
         // Compute the name of the main implementation class
-        String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension();
-        return implPkg + "." + CLASS_FILENAME;
+        String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension(); //$NON-NLS-1$
+        return implPkg + "." + CLASS_FILENAME; //$NON-NLS-1$
     }
     
     /**
@@ -215,7 +215,7 @@ public abstract class RegistrationHelper {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                PluginLogger.error("Error during registration classes list", e);
+                PluginLogger.error(Messages.getString("RegistrationHelper.WriteClassesListError"), e); //$NON-NLS-1$
             }
         }
         
@@ -259,10 +259,10 @@ public abstract class RegistrationHelper {
         try {
             writer = new FileWriter(file);
             for (String implClass : pClasses) {
-                writer.append(implClass + "\n");
+                writer.append(implClass + "\n"); //$NON-NLS-1$
             }
         } catch (IOException e) {
-            PluginLogger.error("Error during classes list writing", e);
+            PluginLogger.error(Messages.getString("RegistrationHelper.WriteClassesListError"), e); //$NON-NLS-1$
         } finally {
             try {
                 writer.close();
@@ -285,6 +285,6 @@ public abstract class RegistrationHelper {
         IPath relPath = pProject.getImplementationPath();
         IFolder dest = pProject.getFolder(relPath);
         
-        return dest.getFile("RegistrationHandler.classes");
+        return dest.getFile("RegistrationHandler.classes"); //$NON-NLS-1$
     }
 }

@@ -68,7 +68,7 @@ public class FileRefreshJob extends Job {
      * @param pToRefresh the file to refresh
      */
     public FileRefreshJob(IFile pToRefresh) {
-        super("Registration Handler class refresh job");
+        super("Registration Handler class refresh job"); //$NON-NLS-1$
         mToRefresh = pToRefresh;
     }
     
@@ -84,7 +84,7 @@ public class FileRefreshJob extends Job {
                     Status.WARNING, 
                     OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
                     Status.WARNING,
-                    "Can't refresh the registration classes file",
+                    Messages.getString("FileRefreshJob.Error"), //$NON-NLS-1$
                     e);
         }
         return status;

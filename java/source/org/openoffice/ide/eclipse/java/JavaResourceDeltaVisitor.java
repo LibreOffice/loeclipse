@@ -108,10 +108,10 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     private void removeImplementation(IResourceDelta pDelta,
             IUnoidlProject pUnoprj) {
         IResource res = pDelta.getResource();
-        if (res.getName().endsWith(".java")) {
+        if (res.getName().endsWith(".java")) { //$NON-NLS-1$
             String prjPath = pDelta.getProjectRelativePath().toString();
-            prjPath = prjPath.replace(".java", "");
-            prjPath = prjPath.replace("/", ".");
+            prjPath = prjPath.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
             Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
             for (String implName : classes) {
@@ -145,7 +145,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     private String isJavaServiceImpl(IResource pResource) {
         
         String className = null;
-        if (pResource.getType() == IResource.FILE && pResource.getName().endsWith(".java")) {
+        if (pResource.getType() == IResource.FILE && pResource.getName().endsWith(".java")) { //$NON-NLS-1$
             /* 
              * For sure the resource is a Java class file.
              * Now the file has to be read to find out if it contains the two
@@ -163,33 +163,34 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                 
                 // Read the file into a string without line delimiters
                 String line = reader.readLine();
-                String fileContent = "";
+                String fileContent = ""; //$NON-NLS-1$
                 while (line != null) {
                     fileContent = fileContent + line;
                     line = reader.readLine();
                 }
                 
-                String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory\\s+__getComponentFactory";
+                String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory" + //$NON-NLS-1$
+                        "\\s+__getComponentFactory"; //$NON-NLS-1$
                 boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
                 
-                String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo";
+                String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo"; //$NON-NLS-1$
                 boolean containsWriteService = fileContent.split(writeServiceRegex).length > 1;
                 
                 // Do not consider the RegistrationHandler class as a service implementation
                 if (containsGetFactory && containsWriteService && 
-                        !pResource.getName().equals("RegistrationHandler.java")) {
+                        !pResource.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
                     /*
                      * Computes the class name 
                      */
-                    Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent);
+                    Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent); //$NON-NLS-1$
                     if (m3.matches()) {
                         String packageName = m3.group(1);
 
 
                         String fileName = pResource.getName();
-                        className = fileName.substring(0, fileName.length() - ".java".length());
+                        className = fileName.substring(0, fileName.length() - ".java".length()); //$NON-NLS-1$
 
-                        className = packageName + "." + className;
+                        className = packageName + "." + className; //$NON-NLS-1$
                     }
                 }
                 

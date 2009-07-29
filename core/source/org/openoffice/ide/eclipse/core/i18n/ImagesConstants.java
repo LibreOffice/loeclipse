@@ -78,4 +78,6 @@ public class ImagesConstants {
     public static final String IDL_MODIFIER = "IDL_MODIFIER"; //$NON-NLS-1$
     public static final String PACKAGE_EXPORT_WIZ = "PACKAGE_EXPORT_WIZ"; //$NON-NLS-1$
     public static final String URE_APP_WIZ = "URE_APP_WIZ"; //$NON-NLS-1$
+    public static final String ADD = "ADD"; //$NON-NLS-1$
+    public static final String DELETE = "DELETE"; //$NON-NLS-1$
 }

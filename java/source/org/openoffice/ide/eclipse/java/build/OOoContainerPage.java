@@ -78,7 +78,7 @@ public class OOoContainerPage extends WizardPage implements
 
     private static final int LAYOUT_COLUMNS = 3;
 
-    private static final String OOO = "ooo";
+    private static final String OOO = "ooo"; //$NON-NLS-1$
     
     private IClasspathEntry mContainer;
     private IJavaProject mProject;
@@ -89,11 +89,12 @@ public class OOoContainerPage extends WizardPage implements
      * Needed default constructor.
      */
     public OOoContainerPage() {
-        super("oocontainer");
+        super("oocontainer"); //$NON-NLS-1$
         
-        setTitle("OpenOffice.org Libraries");
-        setDescription("OpenOffice.org Library edition page");
-        ImageDescriptor image = OOoJavaPlugin.getImageDescriptor("/icons/library_wiz.png");
+        setTitle(Messages.getString("OOoContainerPage.DialogTitle")); //$NON-NLS-1$
+        setDescription(Messages.getString("OOoContainerPage.DialogDescription")); //$NON-NLS-1$
+        ImageDescriptor image = OOoJavaPlugin.getImageDescriptor(
+                Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
         setImageDescriptor(image);
         
         mContainer = getDefaultEntry();

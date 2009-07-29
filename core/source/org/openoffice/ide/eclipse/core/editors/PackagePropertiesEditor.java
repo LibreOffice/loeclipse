@@ -43,6 +43,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
@@ -51,7 +53,10 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IElementStateListener;
+import org.openoffice.ide.eclipse.core.editors.main.PackageContentsFormPage;
+import org.openoffice.ide.eclipse.core.editors.main.PackageOverviewFormPage;
 import org.openoffice.ide.eclipse.core.model.IPackageChangeListener;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 
@@ -64,7 +69,12 @@ import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 public class PackagePropertiesEditor extends FormEditor {
 
     private SourcePage mSourcePage;
+    private SourcePage mDescriptionPage;
+    private PackageOverviewFormPage mOverviewPage;
     private PackageContentsFormPage mContentsPage;
+    
+    private IEditorInput mPropsEditorInput;
+    private IEditorInput mDescrEditorInput;
     
     private PackagePropertiesModel mModel;
     private boolean mIgnoreSourceChanges = false;
@@ -83,13 +93,18 @@ public class PackagePropertiesEditor extends FormEditor {
     protected void addPages() {
         
         try {
+            
+            // Add the overview page
+            mOverviewPage = new PackageOverviewFormPage( this, "overview" ); //$NON-NLS-1$
+            addPage( mOverviewPage );
+            
             // Add the form page with the tree
             mContentsPage = new PackageContentsFormPage(this, "package"); //$NON-NLS-1$
             addPage(mContentsPage);
             
-            // Add the text page
+            // Add the text page for package.properties
             mSourcePage = new SourcePage(this, "source", "package.properties"); //$NON-NLS-1$ //$NON-NLS-2$
-            mSourcePage.init(getEditorSite(), getEditorInput());
+            mSourcePage.init(getEditorSite(), mPropsEditorInput);
             mSourcePage.getDocumentProvider().addElementStateListener(new IElementStateListener() {
 
                 public void elementContentAboutToBeReplaced(Object pElement) {
@@ -115,6 +130,11 @@ public class PackagePropertiesEditor extends FormEditor {
                 }                
             });
             addPage(mSourcePage);
+            
+            // Add the description.xml source page
+            mDescriptionPage = new SourcePage( this, "description", "description.xml");
+            mDescriptionPage.init( getEditorSite(), mDescrEditorInput );
+            addPage( mDescriptionPage );
         } catch (PartInitException e) {
             // log ?
         }
@@ -130,7 +150,15 @@ public class PackagePropertiesEditor extends FormEditor {
         if (pInput instanceof IFileEditorInput) {
             
             IFileEditorInput fileInput = (IFileEditorInput)pInput;
-            String projectName = fileInput.getFile().getProject().getName();
+            IProject prj = fileInput.getFile().getProject();
+            String projectName = prj.getName();
+            
+            IFile descrFile = prj.getFile( "description.xml" );
+            mDescrEditorInput = new FileEditorInput( descrFile );
+            
+            IFile propsFile = prj.getFile( "package.properties" );
+            mPropsEditorInput = new FileEditorInput( propsFile );
+            
             setPartName(projectName);
             
             // Create the package properties

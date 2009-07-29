@@ -41,11 +41,14 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.editors;
+package org.openoffice.ide.eclipse.core.editors.main;
 
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.openoffice.ide.eclipse.core.editors.Messages;
 
 /**
  * The form page of the package editor helping to configure the project's
@@ -72,6 +75,11 @@ public class PackageLicenseFormPage extends FormPage {
     @Override
     protected void createFormContent(IManagedForm pManagedForm) {
         super.createFormContent(pManagedForm);
+        
+        ScrolledForm form = pManagedForm.getForm();
+        
+        FormToolkit toolkit = pManagedForm.getToolkit();
+        toolkit.decorateFormHeading( form.getForm() );
         
         // TODO create the license form page here
     }

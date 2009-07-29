@@ -22,7 +22,7 @@
       <editor
             class="org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor"
             default="true"
-            filenames="package.properties"
+            filenames="package.properties,description.xml"
             icon="icons/build_exec.gif"
             id="org.openoffice.ide.eclipse.core.editors.extproperties"
             name="Extension properties editor"/>

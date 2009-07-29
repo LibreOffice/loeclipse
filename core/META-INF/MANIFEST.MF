@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
  org.eclipse.ui;bundle-version="3.4.1"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.gui.rows,
  org.openoffice.ide.eclipse.core.i18n,
@@ -30,3 +30,4 @@ Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.utils,
  org.openoffice.ide.eclipse.core.wizards
 Bundle-Vendor: OpenOffice.org
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

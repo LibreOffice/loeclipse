@@ -62,7 +62,7 @@ import org.openoffice.ide.eclipse.java.JavaProjectHandler;
  */
 public class OOoClasspathContainer implements IClasspathContainer {
 
-    public static final String ID = "org.openoffice.ide.eclipse.java.OOO_CONTAINER";
+    public static final String ID = "org.openoffice.ide.eclipse.java.OOO_CONTAINER"; //$NON-NLS-1$
 
     private IOOo mOOo;
     
@@ -96,7 +96,7 @@ public class OOoClasspathContainer implements IClasspathContainer {
      * {@inheritDoc}
      */
     public String getDescription() {
-        String pattern = "{0} libraries";
+        String pattern = Messages.getString("OOoClasspathContainer.LibrariesName"); //$NON-NLS-1$
         String descr = MessageFormat.format(pattern, mOOo.getName());
         return descr;
     }

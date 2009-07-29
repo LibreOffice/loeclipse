@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.editors;
+package org.openoffice.ide.eclipse.core.editors.main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +61,8 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor;
 import org.openoffice.ide.eclipse.core.model.IPackageChangeListener;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;

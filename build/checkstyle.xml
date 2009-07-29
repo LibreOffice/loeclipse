@@ -54,6 +54,7 @@
         <module name="JavaNCSS"/>
         <module name="NPathComplexity"/>
         <module name="TodoComment">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="TODO comment left"/>
             <property name="format" value="TODO"/>
         </module>
         <module name="AvoidNestedBlocks"/>

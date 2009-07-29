@@ -169,7 +169,7 @@ public class OfficeClassLoader extends URLClassLoader {
 
             oUrls.add(plugin);
         } catch (Exception e) {
-            PluginLogger.error("Failed to create the OfficeClassLoader", e);
+            PluginLogger.error(Messages.getString("OfficeClassLoader.LoaderError"), e); //$NON-NLS-1$
         }
         return oUrls.toArray(new URL[oUrls.size()]);
     }

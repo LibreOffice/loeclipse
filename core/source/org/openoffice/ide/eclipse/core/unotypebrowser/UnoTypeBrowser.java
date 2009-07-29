@@ -155,7 +155,8 @@ public class UnoTypeBrowser extends StatusDialog
     @Override
     protected void createButtonsForButtonBar(Composite pParent) {
         
-        mRefreshBtn = createButton(pParent, ID_REFRESH, "Refresh", false);
+        mRefreshBtn = createButton(pParent, ID_REFRESH, 
+                Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
         Image img = OOEclipsePlugin.getImage("REFRESH"); //$NON-NLS-1$
         mRefreshBtn.setImage(img);
         mRefreshBtn.addSelectionListener(new SelectionAdapter() {
