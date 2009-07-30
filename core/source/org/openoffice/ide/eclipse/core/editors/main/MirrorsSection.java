@@ -3,8 +3,6 @@
  */
 package org.openoffice.ide.eclipse.core.editors.main;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -37,6 +35,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section showing the update-informations part of the description.xml file.
@@ -50,12 +49,12 @@ public class MirrorsSection extends SectionPart {
 
     private PackageOverviewFormPage mPage;
     
+    private DescriptionModel mModel;
+    
     private TableViewer mTable;
     private Text mUrlTxt;
     private Button mAddBtn;
     private MenuItem mDeleteAction;
-    
-    private ArrayList<String> mSitesUrls;
     
     /**
      * @param pParent the parent composite where to add the section
@@ -65,9 +64,9 @@ public class MirrorsSection extends SectionPart {
         super( pParent, pPage.getManagedForm().getToolkit(), Section.TITLE_BAR );
         mPage = pPage;
         
-        mSitesUrls = new ArrayList<String>( );
-        
         createContent( );
+        mModel = pPage.getModel();
+        mTable.setInput( mModel.mUpdateInfos );
     }
     
     /**
@@ -115,7 +114,7 @@ public class MirrorsSection extends SectionPart {
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 String text = mUrlTxt.getText();
-                mSitesUrls.add( text );
+                mModel.mUpdateInfos.add( text );
                 mTable.add( text );
                 mUrlTxt.setText( new String( ) );
             }
@@ -143,7 +142,6 @@ public class MirrorsSection extends SectionPart {
             new TextCellEditor( table )
         });
         mTable.setCellModifier( new UrlCellModifier( ) );
-        mTable.setInput( mSitesUrls );
         
         TableColumn column = new TableColumn( table, SWT.LEFT );
         column.setMoveable( false );
@@ -161,7 +159,7 @@ public class MirrorsSection extends SectionPart {
                 IStructuredSelection sel = (IStructuredSelection)mTable.getSelection();
                 Object selected = sel.getFirstElement();
                 mTable.remove( selected );
-                mSitesUrls.remove( selected );
+                mModel.mUpdateInfos.remove( selected );
             } 
         });
         
@@ -228,8 +226,8 @@ public class MirrorsSection extends SectionPart {
                 Object o = ((TableItem)pElement).getData();
                 String oldValue = o.toString( );
                 
-                int pos = mSitesUrls.indexOf( oldValue );
-                mSitesUrls.set( pos, pValue.toString() );
+                int pos = mModel.mUpdateInfos.indexOf( oldValue );
+                mModel.mUpdateInfos.set( pos, pValue.toString() );
                 mTable.replace( pValue, pos );
                 mTable.refresh( o );
             }

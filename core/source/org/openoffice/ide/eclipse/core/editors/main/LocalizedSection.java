@@ -3,10 +3,12 @@ package org.openoffice.ide.eclipse.core.editors.main;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -25,9 +27,10 @@ public abstract class LocalizedSection extends SectionPart implements ILocaleLis
     /**
      * @param pParent the parent composite where to add the section
      * @param pPage the page page of the section
+     * @param pStyle a bit-or of the styles defined in Section class
      */
-    public LocalizedSection ( Composite pParent, FormPage pPage ) {
-        super( pParent, pPage.getManagedForm().getToolkit(), Section.TITLE_BAR);
+    public LocalizedSection ( Composite pParent, FormPage pPage, int pStyle ) {
+        super( pParent, pPage.getManagedForm().getToolkit(), pStyle );
         
         mPage = pPage;
         

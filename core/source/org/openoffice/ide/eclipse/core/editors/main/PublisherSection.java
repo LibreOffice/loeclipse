@@ -3,24 +3,30 @@
  */
 package org.openoffice.ide.eclipse.core.editors.main;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
+import org.openoffice.ide.eclipse.core.model.description.PublisherInfos;
 
 /**
+ * Class implementing the publisher form section.
+ * 
  * @author cbosdonnat
  *
  */
 public class PublisherSection extends LocalizedSection {
-
-    private HashMap<Locale, PublisherInfos> mInfos;
+    
+    private DescriptionModel mModel;
     
     private Text mUrlTxt;
     private Text mNameTxt;
@@ -30,11 +36,11 @@ public class PublisherSection extends LocalizedSection {
      * @param pPage the parent page
      */
     public PublisherSection(Composite pParent, PackageOverviewFormPage pPage) {
-        super(pParent, pPage);
+        super( pParent, pPage, Section.TITLE_BAR );
         
         getSection().setText( "Provider informations" );
         
-        mInfos = new HashMap<Locale, PublisherInfos>( );
+        mModel = pPage.getModel();
     }
 
     /**
@@ -57,19 +63,33 @@ public class PublisherSection extends LocalizedSection {
         mNameTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
         mNameTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         mNameTxt.setEnabled( false );
+        mNameTxt.addModifyListener( new ModifyListener () {
+            public void modifyText(ModifyEvent pE) {
+                PublisherInfos infos = mModel.mPublisherInfos.get( mCurrentLocale );
+                infos.mName = mNameTxt.getText();
+            }
+        });
         
         // Url controls
         pToolkit.createLabel( pParent, "Url" );
         mUrlTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
         mUrlTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         mUrlTxt.setEnabled( false );
+        mUrlTxt.addModifyListener( new ModifyListener () {
+            public void modifyText(ModifyEvent pE) {
+                PublisherInfos infos = mModel.mPublisherInfos.get( mCurrentLocale );
+                infos.mUrl = mUrlTxt.getText();
+            }
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     public void addLocale(Locale pLocale) {
-        mInfos.put( pLocale, new PublisherInfos( ) );
+        if ( !mModel.mPublisherInfos.containsKey( pLocale ) ) {
+            mModel.mPublisherInfos.put( pLocale, new PublisherInfos( ) );
+        }
         mNameTxt.setEnabled( true );
         mUrlTxt.setEnabled( true );
     }
@@ -78,8 +98,8 @@ public class PublisherSection extends LocalizedSection {
      * {@inheritDoc}
      */
     public void deleteLocale(Locale pLocale) {
-        mInfos.remove( pLocale );
-        if ( mInfos.size( ) == 0 ) {
+        mModel.mPublisherInfos.remove( pLocale );
+        if ( mModel.mPublisherInfos.size( ) == 0 ) {
             mNameTxt.setEnabled( false );
             mUrlTxt.setEnabled( false );
         }
@@ -92,24 +112,13 @@ public class PublisherSection extends LocalizedSection {
     public void selectLocale(Locale pLocale) {
         
         if ( mCurrentLocale != null ) {
-            PublisherInfos infos = mInfos.get( mCurrentLocale );
+            PublisherInfos infos = mModel.mPublisherInfos.get( mCurrentLocale );
             infos.mName = mNameTxt.getText();
             infos.mUrl = mUrlTxt.getText();
         }
         super.selectLocale(pLocale);
-        PublisherInfos infos = mInfos.get( pLocale );
+        PublisherInfos infos = mModel.mPublisherInfos.get( pLocale );
         mNameTxt.setText( infos.mName );
         mUrlTxt.setText( infos.mUrl );
-    }
-    
-    /**
-     * Simple structure storing the publisher informations.
-     * 
-     * @author cbosdonnat
-     *
-     */
-    private class PublisherInfos {
-        String mUrl = ""; //$NON-NLS-1$
-        String mName = ""; //$NON-NLS-1$
     }
 }

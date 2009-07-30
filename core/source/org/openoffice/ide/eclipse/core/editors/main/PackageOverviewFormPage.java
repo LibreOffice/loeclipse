@@ -43,15 +43,31 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.main;
 
+import java.util.ArrayList;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.gui.OverlayImageIcon;
+import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * The form page of the package editor helping to configure the project's
@@ -62,16 +78,37 @@ import org.openoffice.ide.eclipse.core.editors.Messages;
  */
 public class PackageOverviewFormPage extends FormPage {
 
+    private LocaleSelector mLocaleSel;
+    private DescriptionModel mModel;
+    
+    private ArrayList<Control> mPages;
+    
     /**
      * Constructor.
      * 
      * @param pEditor the editor where to add the page
      * @param pId the page identifier
      */
-    public PackageOverviewFormPage(FormEditor pEditor, String pId) {
+    public PackageOverviewFormPage(FormEditor pEditor, String pId ) {
         super(pEditor, pId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
+        
+        mPages = new ArrayList<Control>( );
     }
 
+    /**
+     * @param pModel the description.xml model to set
+     */
+    public void setModel( DescriptionModel pModel ) {
+        mModel = pModel;
+    }
+    
+    /**
+     * @return the description model for the page.
+     */
+    public DescriptionModel getModel( ) {
+        return mModel;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -82,46 +119,80 @@ public class PackageOverviewFormPage extends FormPage {
         ScrolledForm form = pManagedForm.getForm();
         form.setText( "Overview" );
         
-        form.getBody().setLayout(new GridLayout(2, true));
+        form.getBody().setLayout( new GridLayout( ) );
         
         FormToolkit toolkit = getManagedForm().getToolkit();
         toolkit.decorateFormHeading( form.getForm() );
         
-        Composite leftColumn = toolkit.createComposite( form.getBody() );
+        Label descrLbl = toolkit.createLabel( form.getBody(), 
+                "Some of the fields are localized; they can't be filled when no locale is selected.", 
+                SWT.WRAP );
+        descrLbl.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+        
+        Composite body = toolkit.createComposite( form.getBody() );
+        body.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+        body.setLayout( new GridLayout( ) );
+        
+        // Create the locale selector line
+        Composite bottomLine = toolkit.createComposite( form.getBody() );
+        bottomLine.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+        bottomLine.setLayout( new GridLayout( ) );
+        
+        mLocaleSel = new LocaleSelector( toolkit, bottomLine );   
+        
+        createMainPage( toolkit, body );
+        
+        mLocaleSel.loadLocales( mModel.getAllLocales() );
+    }
+
+    /**
+     * Creates the main tab page.
+     * 
+     * @param pToolkit the toolkit used to create the page
+     * @param pParent the parent composite where to create the page.
+     * 
+     * @return the page control
+     */
+    private Control createMainPage( FormToolkit pToolkit, Composite pParent ) {
+        
+        Composite body = pToolkit.createComposite( pParent );
+        body.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+        body.setLayout( new GridLayout( 2, true ) );
+        
+        Composite leftColumn = pToolkit.createComposite( body );
         leftColumn.setLayoutData( new GridData( GridData.FILL_BOTH ));
         leftColumn.setLayout( new GridLayout( ) ); 
         
         
-        Composite rightColumn = toolkit.createComposite( form.getBody() );
+        Composite rightColumn = pToolkit.createComposite( body );
         rightColumn.setLayoutData( new GridData( GridData.FILL_BOTH ));
         rightColumn.setLayout( new GridLayout( ) );
         
         /*
          * Left column:                         Right column:
          *    + Section "General"                  + Section "Update mirrors"
-         *    + Section "Integration"              + Section "Release notes"
+         *    + Section "Integration"              + Section "License"
          *    + Section "Publisher"
+         *    + Section "Release notes"
          */
-        
-        Composite bottomLine = toolkit.createComposite( form.getBody() );
-        GridData ld = new GridData( GridData.FILL_HORIZONTAL );
-        ld.horizontalSpan = 2;
-        bottomLine.setLayoutData( ld );
-        bottomLine.setLayout( new GridLayout( ) );
-        
-        LocaleSelector localeSel = new LocaleSelector( toolkit, bottomLine );
-        
         GeneralSection generalSection = new GeneralSection( leftColumn, this );
-        localeSel.addListener( generalSection );
+        mLocaleSel.addListener( generalSection );
         
         IntegrationSection integrationSection = new IntegrationSection( leftColumn, this );
         
         PublisherSection publisherSection = new PublisherSection( leftColumn, this );
-        localeSel.addListener( publisherSection );
+        mLocaleSel.addListener( publisherSection );
+        
+        ReleaseNotesSection releaseNotesSection = new ReleaseNotesSection( leftColumn, this );
+        mLocaleSel.addListener( releaseNotesSection );
         
         MirrorsSection mirrorsSection = new MirrorsSection( rightColumn, this );
         
-        ReleaseNotesSection releaseNotesSection = new ReleaseNotesSection( rightColumn, this );
-        localeSel.addListener( releaseNotesSection );
+        IFileEditorInput input = (IFileEditorInput)getEditorInput();
+        IProject project = input.getFile().getProject();
+        LicenseSection licenseSection = new LicenseSection( rightColumn, this, project );
+        mLocaleSel.addListener( licenseSection );
+        
+        return body;
     }
 }

@@ -13,6 +13,8 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -29,6 +31,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section showing the compatibility parts of the description.xml file.
@@ -65,6 +68,7 @@ public class IntegrationSection extends SectionPart {
     private static final int GRID_COLUMS = 3;
     
     private PackageOverviewFormPage mPage;
+    private DescriptionModel mModel;
     
     private Text mMinOOoTxt;
     private Text mMaxOOoTxt;
@@ -79,8 +83,20 @@ public class IntegrationSection extends SectionPart {
         mPage = pPage;
         
         createContent( );
+        
+        mModel = pPage.getModel();
+        loadValues( );
     }
 
+    /**
+     * Loads the values from the model into the controls.
+     */
+    public void loadValues( ) {
+        mMinOOoTxt.setText( mModel.mMinOOo  );
+        mMaxOOoTxt.setText( mModel.mMaxOOo );
+        mPlatformTxt.setText( mModel.mPlatforms );
+    }
+    
     /**
      * Creates the sections controls.
      */
@@ -107,6 +123,11 @@ public class IntegrationSection extends SectionPart {
         gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = GRID_COLUMS - 1;
         mMinOOoTxt.setLayoutData( gd );
+        mMinOOoTxt.addModifyListener( new ModifyListener () {
+            public void modifyText(ModifyEvent pE) {
+                mModel.mMinOOo = mMinOOoTxt.getText();
+            }
+        });
         
         // Max OOo version controls
         toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.MaxOOoVersion") ); //$NON-NLS-1$
@@ -114,11 +135,21 @@ public class IntegrationSection extends SectionPart {
         gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = GRID_COLUMS - 1;
         mMaxOOoTxt.setLayoutData( gd );
+        mMaxOOoTxt.addModifyListener( new ModifyListener () {
+            public void modifyText(ModifyEvent pE) {
+                mModel.mMaxOOo = mMaxOOoTxt.getText();
+            }
+        });
         
         // Platforms controls
         toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.Platforms") ); //$NON-NLS-1$
         mPlatformTxt = toolkit.createText( clientArea, "all" ); //$NON-NLS-1$
         mPlatformTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+        mPlatformTxt.addModifyListener( new ModifyListener () {
+            public void modifyText(ModifyEvent pE) {
+                mModel.mPlatforms = mPlatformTxt.getText();
+            }
+        });
         
         Button platformBtn = toolkit.createButton( clientArea, "...", SWT.PUSH | SWT.FLAT ); //$NON-NLS-1$
         platformBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );

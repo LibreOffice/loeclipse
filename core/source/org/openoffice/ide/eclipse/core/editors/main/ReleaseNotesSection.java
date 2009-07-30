@@ -3,16 +3,19 @@
  */
 package org.openoffice.ide.eclipse.core.editors.main;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section displaying the release notes part of the descriptions.xml file.
@@ -23,7 +26,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class ReleaseNotesSection extends LocalizedSection implements
         ILocaleListener {
 
-    private HashMap<Locale, String> mInfos;
+    private DescriptionModel mModel;
     
     private Text mUrlTxt;
     
@@ -32,11 +35,11 @@ public class ReleaseNotesSection extends LocalizedSection implements
      * @param pPage the parent page
      */
     public ReleaseNotesSection(Composite pParent, PackageOverviewFormPage pPage) {
-        super(pParent, pPage);
+        super( pParent, pPage, Section.TITLE_BAR );
         
         getSection().setText( "Release notes" );
         
-        mInfos = new HashMap<Locale, String>( );
+        mModel = pPage.getModel();
     }
     
     /**
@@ -55,16 +58,23 @@ public class ReleaseNotesSection extends LocalizedSection implements
         
         // Url controls
         pToolkit.createLabel( pParent, "Url" );
-        mUrlTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
+        mUrlTxt = pToolkit.createText( pParent, new String( ) );
         mUrlTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         mUrlTxt.setEnabled( false );
+        mUrlTxt.addModifyListener( new ModifyListener () {
+            public void modifyText(ModifyEvent pE) {
+                mModel.mReleaseNotes.put( mCurrentLocale, mUrlTxt.getText() );
+            }
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     public void addLocale(Locale pLocale) {
-        mInfos.put( pLocale, "" ); //$NON-NLS-1$
+        if ( !mModel.mReleaseNotes.containsKey( pLocale ) ) {
+            mModel.mReleaseNotes.put( pLocale, new String( ) );
+        }
         mUrlTxt.setEnabled( true );
     }
 
@@ -72,8 +82,8 @@ public class ReleaseNotesSection extends LocalizedSection implements
      * {@inheritDoc}
      */
     public void deleteLocale(Locale pLocale) {
-        mInfos.remove( pLocale );
-        if ( mInfos.size( ) == 0 ) {
+        mModel.mReleaseNotes.remove( pLocale );
+        if ( mModel.mReleaseNotes.size( ) == 0 ) {
             mUrlTxt.setEnabled( false );
         }
     }
@@ -85,9 +95,9 @@ public class ReleaseNotesSection extends LocalizedSection implements
     public void selectLocale(Locale pLocale) {
         
         if ( mCurrentLocale != null ) {
-            mInfos.put( mCurrentLocale, mUrlTxt.getText() );
+            mModel.mReleaseNotes.put( mCurrentLocale, mUrlTxt.getText() );
         }
         super.selectLocale(pLocale);
-        mUrlTxt.setText( mInfos.get( pLocale ) );
+        mUrlTxt.setText( mModel.mReleaseNotes.get( pLocale ) );
     }
 }

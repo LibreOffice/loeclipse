@@ -43,6 +43,11 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors;
 
+import java.io.File;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,10 +60,13 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IElementStateListener;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.editors.main.PackageContentsFormPage;
 import org.openoffice.ide.eclipse.core.editors.main.PackageOverviewFormPage;
 import org.openoffice.ide.eclipse.core.model.IPackageChangeListener;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionHandler;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * The project package editor.
@@ -76,6 +84,7 @@ public class PackagePropertiesEditor extends FormEditor {
     private IEditorInput mPropsEditorInput;
     private IEditorInput mDescrEditorInput;
     
+    private DescriptionModel mDescriptionModel;
     private PackagePropertiesModel mModel;
     private boolean mIgnoreSourceChanges = false;
     
@@ -97,6 +106,7 @@ public class PackagePropertiesEditor extends FormEditor {
             // Add the overview page
             mOverviewPage = new PackageOverviewFormPage( this, "overview" ); //$NON-NLS-1$
             addPage( mOverviewPage );
+            mOverviewPage.setModel( getDescriptionModel() );
             
             // Add the form page with the tree
             mContentsPage = new PackageContentsFormPage(this, "package"); //$NON-NLS-1$
@@ -132,7 +142,7 @@ public class PackagePropertiesEditor extends FormEditor {
             addPage(mSourcePage);
             
             // Add the description.xml source page
-            mDescriptionPage = new SourcePage( this, "description", "description.xml");
+            mDescriptionPage = new SourcePage( this, "description", "description.xml"); //$NON-NLS-1$ //$NON-NLS-2$
             mDescriptionPage.init( getEditorSite(), mDescrEditorInput );
             addPage( mDescriptionPage );
         } catch (PartInitException e) {
@@ -160,6 +170,22 @@ public class PackagePropertiesEditor extends FormEditor {
             mPropsEditorInput = new FileEditorInput( propsFile );
             
             setPartName(projectName);
+            
+            // Load the description
+            try {
+                SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+                // Enables the namespaces mapping
+                parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespaces" , true ); //$NON-NLS-1$
+                parser.getXMLReader().setFeature( 
+                        "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
+                DescriptionHandler handler = new DescriptionHandler( getDescriptionModel() );
+                File file = new File( descrFile.getLocationURI().getPath() );
+                parser.parse(file, handler);
+                
+            } catch ( Exception e ) {
+                PluginLogger.error( "Error parsing description.xml file", e );
+            }
+            
             
             // Create the package properties
             mModel = new PackagePropertiesModel(fileInput.getFile());
@@ -213,6 +239,16 @@ public class PackagePropertiesEditor extends FormEditor {
     @Override
     public boolean isSaveAsAllowed() {
         return false;
+    }
+    
+    /**
+     * @return the description.xml model.
+     */
+    public DescriptionModel getDescriptionModel( ) {
+        if ( mDescriptionModel == null ) {
+            mDescriptionModel = new DescriptionModel( );
+        }
+        return mDescriptionModel;
     }
     
     /**
