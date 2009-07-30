@@ -1,6 +1,33 @@
-/**
+/*************************************************************************
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2009 by Novell, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
  * 
- */
+ * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ *
+ * Copyright: 2009 by Novell, Inc.
+ *
+ * All Rights Reserved.
+ * 
+ ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.main;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -34,13 +61,14 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.editors.Messages;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section showing the update-informations part of the description.xml file.
  * 
- * @author cbosdonnat
+ * @author Cédric Bosdonnat
  *
  */
 public class MirrorsSection extends SectionPart {
@@ -83,9 +111,9 @@ public class MirrorsSection extends SectionPart {
         clientArea.setLayout( new GridLayout( 2, false ) );
         
         
-        Label descrLbl = toolkit.createLabel( clientArea, "List the URLs of the update sites " +
-                            "to use for this extension. The first one is the primary mirror.", 
-                            SWT.WRAP);
+        Label descrLbl = toolkit.createLabel( clientArea, 
+                Messages.getString("MirrorsSection.Description"),  //$NON-NLS-1$
+                SWT.WRAP);
         GridData gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = 2;
         descrLbl.setLayoutData( gd );
@@ -94,7 +122,8 @@ public class MirrorsSection extends SectionPart {
         createTable( clientArea );
         
         // Create the add controls
-        Label addLbl = toolkit.createLabel( clientArea, "Specify a new mirror URL" );
+        Label addLbl = toolkit.createLabel( clientArea, 
+                Messages.getString("MirrorsSection.MirrorTextTitle") ); //$NON-NLS-1$
         gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = 2;
         addLbl.setLayoutData( gd );
@@ -108,7 +137,7 @@ public class MirrorsSection extends SectionPart {
             }            
         });
         
-        mAddBtn = toolkit.createButton( clientArea, "Add", SWT.PUSH );
+        mAddBtn = toolkit.createButton( clientArea, Messages.getString("MirrorsSection.Add"), SWT.PUSH ); //$NON-NLS-1$
         mAddBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );
         mAddBtn.addSelectionListener( new SelectionAdapter( ) {
             @Override
@@ -150,7 +179,7 @@ public class MirrorsSection extends SectionPart {
         // Create the table context menu
         Menu menu = new Menu( table );
         mDeleteAction = new MenuItem( menu, SWT.PUSH );
-        mDeleteAction.setText( "Remove" );
+        mDeleteAction.setText( Messages.getString("MirrorsSection.Remove") ); //$NON-NLS-1$
         mDeleteAction.setImage( OOEclipsePlugin.getImage( ImagesConstants.DELETE ) );
         mDeleteAction.setEnabled( false );
         mDeleteAction.addSelectionListener( new SelectionAdapter( ) {
@@ -176,7 +205,7 @@ public class MirrorsSection extends SectionPart {
     /**
      * Label provider for the urls table.
      * 
-     * @author cbosdonnat
+     * @author Cédric Bosdonnat
      *
      */
     private class UrlLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -199,7 +228,7 @@ public class MirrorsSection extends SectionPart {
     /**
      * Class allowing changes from the Urls table viewer on the model.
      * 
-     * @author cbosdonnat
+     * @author Cédric Bosdonnat
      *
      */
     private class UrlCellModifier implements ICellModifier {

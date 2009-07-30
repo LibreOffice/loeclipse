@@ -73,6 +73,7 @@
         <module name="TabCharacter"/>
         <module name="Indentation"/>
         <module name="RegexpHeader">
+            <property name="severity" value="info"/>
             <property name="headerFile" value="${samedir}/header.txt"/>
         </module>
         <module name="EmptyBlock">

@@ -43,45 +43,33 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.main;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.editors.Messages;
-import org.openoffice.ide.eclipse.core.gui.OverlayImageIcon;
-import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * The form page of the package editor helping to configure the project's
  * description and main properties.
  * 
- * @author cedricbosdo
+ * @author Cédric Bosdonnat
  *
  */
 public class PackageOverviewFormPage extends FormPage {
 
     private LocaleSelector mLocaleSel;
     private DescriptionModel mModel;
-    
-    private ArrayList<Control> mPages;
     
     /**
      * Constructor.
@@ -91,8 +79,6 @@ public class PackageOverviewFormPage extends FormPage {
      */
     public PackageOverviewFormPage(FormEditor pEditor, String pId ) {
         super(pEditor, pId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
-        
-        mPages = new ArrayList<Control>( );
     }
 
     /**
@@ -117,7 +103,7 @@ public class PackageOverviewFormPage extends FormPage {
         super.createFormContent(pManagedForm);
         
         ScrolledForm form = pManagedForm.getForm();
-        form.setText( "Overview" );
+        form.setText( Messages.getString("PackageOverviewFormPage.Title") ); //$NON-NLS-1$
         
         form.getBody().setLayout( new GridLayout( ) );
         
@@ -125,7 +111,7 @@ public class PackageOverviewFormPage extends FormPage {
         toolkit.decorateFormHeading( form.getForm() );
         
         Label descrLbl = toolkit.createLabel( form.getBody(), 
-                "Some of the fields are localized; they can't be filled when no locale is selected.", 
+                Messages.getString("PackageOverviewFormPage.Description"),  //$NON-NLS-1$
                 SWT.WRAP );
         descrLbl.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         
@@ -178,7 +164,7 @@ public class PackageOverviewFormPage extends FormPage {
         GeneralSection generalSection = new GeneralSection( leftColumn, this );
         mLocaleSel.addListener( generalSection );
         
-        IntegrationSection integrationSection = new IntegrationSection( leftColumn, this );
+        new IntegrationSection( leftColumn, this );
         
         PublisherSection publisherSection = new PublisherSection( leftColumn, this );
         mLocaleSel.addListener( publisherSection );
@@ -186,7 +172,7 @@ public class PackageOverviewFormPage extends FormPage {
         ReleaseNotesSection releaseNotesSection = new ReleaseNotesSection( leftColumn, this );
         mLocaleSel.addListener( releaseNotesSection );
         
-        MirrorsSection mirrorsSection = new MirrorsSection( rightColumn, this );
+        new MirrorsSection( rightColumn, this );
         
         IFileEditorInput input = (IFileEditorInput)getEditorInput();
         IProject project = input.getFile().getProject();

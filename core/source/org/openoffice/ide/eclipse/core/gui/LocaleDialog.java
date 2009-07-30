@@ -71,7 +71,7 @@ public class LocaleDialog extends Dialog {
         
         // Language
         Label langLbl = new Label( body, SWT.NONE );
-        langLbl.setText( "Locale" );
+        langLbl.setText( Messages.getString("LocaleDialog.Title") ); //$NON-NLS-1$
         langLbl.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING ) );
         
         Combo list = new Combo( body, SWT.READ_ONLY | SWT.DROP_DOWN );

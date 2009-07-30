@@ -1,6 +1,33 @@
-/**
+/*************************************************************************
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2009 by Novell, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
  * 
- */
+ * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ *
+ * Copyright: 2009 by Novell, Inc.
+ *
+ * All Rights Reserved.
+ * 
+ ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.main;
 
 import java.util.Locale;
@@ -15,13 +42,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.openoffice.ide.eclipse.core.editors.Messages;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 import org.openoffice.ide.eclipse.core.model.description.PublisherInfos;
 
 /**
  * Class implementing the publisher form section.
  * 
- * @author cbosdonnat
+ * @author Cédric Bosdonnat
  *
  */
 public class PublisherSection extends LocalizedSection {
@@ -38,7 +66,7 @@ public class PublisherSection extends LocalizedSection {
     public PublisherSection(Composite pParent, PackageOverviewFormPage pPage) {
         super( pParent, pPage, Section.TITLE_BAR );
         
-        getSection().setText( "Provider informations" );
+        getSection().setText( Messages.getString("PublisherSection.Title") ); //$NON-NLS-1$
         
         mModel = pPage.getModel();
     }
@@ -51,15 +79,15 @@ public class PublisherSection extends LocalizedSection {
         
         pParent.setLayout( new GridLayout( 2, false ) );
         
-        Label descrLbl = pToolkit.createLabel( pParent, "Define the localized informartions on the " +
-                "extension publisher.", 
+        Label descrLbl = pToolkit.createLabel( pParent, 
+                Messages.getString("PublisherSection.Description"),  //$NON-NLS-1$
                 SWT.WRAP );
         GridData gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = 2;
         descrLbl.setLayoutData( gd );
         
         // Name controls
-        pToolkit.createLabel( pParent, "Name" );
+        pToolkit.createLabel( pParent, Messages.getString("PublisherSection.Name") ); //$NON-NLS-1$
         mNameTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
         mNameTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         mNameTxt.setEnabled( false );
@@ -71,7 +99,7 @@ public class PublisherSection extends LocalizedSection {
         });
         
         // Url controls
-        pToolkit.createLabel( pParent, "Url" );
+        pToolkit.createLabel( pParent, Messages.getString("PublisherSection.Url") ); //$NON-NLS-1$
         mUrlTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
         mUrlTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         mUrlTxt.setEnabled( false );

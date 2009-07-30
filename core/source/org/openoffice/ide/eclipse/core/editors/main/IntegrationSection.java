@@ -1,6 +1,33 @@
-/**
+/*************************************************************************
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2009 by Novell, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
  * 
- */
+ * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ *
+ * Copyright: 2009 by Novell, Inc.
+ *
+ * All Rights Reserved.
+ * 
+ ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.main;
 
 import java.util.ArrayList;
@@ -36,7 +63,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 /**
  * Section showing the compatibility parts of the description.xml file.
  * 
- * @author cbosdonnat
+ * @author Cédric Bosdonnat
  *
  */
 public class IntegrationSection extends SectionPart {
@@ -111,7 +138,7 @@ public class IntegrationSection extends SectionPart {
         clientArea.setLayout( new GridLayout( GRID_COLUMS, false ) );
         
         Label descrLbl = toolkit.createLabel( clientArea, 
-                "Define the dependencies of the extension: OpenOffice.org version and compatible system.", 
+                Messages.getString("IntegrationSection.Description"),  //$NON-NLS-1$
                 SWT.WRAP );
         GridData gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = GRID_COLUMS;
@@ -119,7 +146,7 @@ public class IntegrationSection extends SectionPart {
         
         // Min OOo version controls
         toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.MinOOoVersion") ); //$NON-NLS-1$
-        mMinOOoTxt = toolkit.createText( clientArea, "" ); //$NON-NLS-1$
+        mMinOOoTxt = toolkit.createText( clientArea, new String( ) );
         gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = GRID_COLUMS - 1;
         mMinOOoTxt.setLayoutData( gd );
@@ -131,7 +158,7 @@ public class IntegrationSection extends SectionPart {
         
         // Max OOo version controls
         toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.MaxOOoVersion") ); //$NON-NLS-1$
-        mMaxOOoTxt = toolkit.createText( clientArea, "" ); //$NON-NLS-1$
+        mMaxOOoTxt = toolkit.createText( clientArea, new String( ) );
         gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = GRID_COLUMS - 1;
         mMaxOOoTxt.setLayoutData( gd );
@@ -188,7 +215,7 @@ public class IntegrationSection extends SectionPart {
             
             setShellStyle(SWT.RESIZE | SWT.APPLICATION_MODAL);
             
-            String textValue = mPlatformTxt.getText().replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            String textValue = mPlatformTxt.getText().replace(" ", new String( ) ); //$NON-NLS-1$
             String[ ] selection = textValue.split( SEPARATOR );
             mSelected = new ArrayList<String>( Arrays.asList( selection ) );
         }
@@ -197,7 +224,7 @@ public class IntegrationSection extends SectionPart {
          * @return the selected platforms in a comma-separated string.
          */
         public String getSelected( ) {
-            String selection = ""; //$NON-NLS-1$
+            String selection = new String( );
             for (String selected : mSelected) {
                 selection += selected + SEPARATOR;
             }

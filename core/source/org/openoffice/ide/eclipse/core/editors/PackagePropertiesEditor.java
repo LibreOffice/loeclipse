@@ -163,10 +163,10 @@ public class PackagePropertiesEditor extends FormEditor {
             IProject prj = fileInput.getFile().getProject();
             String projectName = prj.getName();
             
-            IFile descrFile = prj.getFile( "description.xml" );
+            IFile descrFile = prj.getFile( "description.xml" ); //$NON-NLS-1$
             mDescrEditorInput = new FileEditorInput( descrFile );
             
-            IFile propsFile = prj.getFile( "package.properties" );
+            IFile propsFile = prj.getFile( "package.properties" ); //$NON-NLS-1$
             mPropsEditorInput = new FileEditorInput( propsFile );
             
             setPartName(projectName);
@@ -183,7 +183,7 @@ public class PackagePropertiesEditor extends FormEditor {
                 parser.parse(file, handler);
                 
             } catch ( Exception e ) {
-                PluginLogger.error( "Error parsing description.xml file", e );
+                PluginLogger.error( Messages.getString("PackagePropertiesEditor.DescriptionParseError"), e ); //$NON-NLS-1$
             }
             
             
