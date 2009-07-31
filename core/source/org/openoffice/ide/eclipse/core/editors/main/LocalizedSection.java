@@ -35,7 +35,6 @@ import java.util.Locale;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -44,7 +43,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * @author Cédric Bosdonnat
  *
  */
-public abstract class LocalizedSection extends SectionPart implements ILocaleListener {
+public abstract class LocalizedSection extends AbstractOverviewSection implements ILocaleListener {
     
     protected Locale mCurrentLocale;
     
@@ -56,7 +55,7 @@ public abstract class LocalizedSection extends SectionPart implements ILocaleLis
      * @param pStyle a bit-or of the styles defined in Section class
      */
     public LocalizedSection ( Composite pParent, FormPage pPage, int pStyle ) {
-        super( pParent, pPage.getManagedForm().getToolkit(), pStyle );
+        super( pParent, pPage, pStyle );
         
         mPage = pPage;
         

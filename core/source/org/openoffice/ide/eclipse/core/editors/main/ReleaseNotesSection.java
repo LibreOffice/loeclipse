@@ -74,6 +74,14 @@ public class ReleaseNotesSection extends LocalizedSection implements
      * {@inheritDoc}
      */
     @Override
+    public void loadData() {
+        // Nothing to do: everything is localized
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
         pParent.setLayout( new GridLayout( 2, false ) );
         
@@ -92,6 +100,7 @@ public class ReleaseNotesSection extends LocalizedSection implements
         mUrlTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mReleaseNotes.put( mCurrentLocale, mUrlTxt.getText() );
+                markDirty();
             }
         });
     }

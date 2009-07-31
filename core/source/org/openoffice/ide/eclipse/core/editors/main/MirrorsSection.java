@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
@@ -71,7 +70,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author Cédric Bosdonnat
  *
  */
-public class MirrorsSection extends SectionPart {
+public class MirrorsSection extends AbstractOverviewSection {
 
     private static final int COLUMN_WIDTH = 200;
 
@@ -89,11 +88,19 @@ public class MirrorsSection extends SectionPart {
      * @param pPage the parent page
      */
     public MirrorsSection( Composite pParent, PackageOverviewFormPage pPage ) {
-        super( pParent, pPage.getManagedForm().getToolkit(), Section.TITLE_BAR );
+        super( pParent, pPage, Section.TITLE_BAR );
         mPage = pPage;
         
         createContent( );
         mModel = pPage.getModel();
+        mTable.setInput( mModel.mUpdateInfos );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadData() {
         mTable.setInput( mModel.mUpdateInfos );
     }
     
@@ -146,6 +153,7 @@ public class MirrorsSection extends SectionPart {
                 mModel.mUpdateInfos.add( text );
                 mTable.add( text );
                 mUrlTxt.setText( new String( ) );
+                markDirty();
             }
         } );
         
@@ -189,6 +197,7 @@ public class MirrorsSection extends SectionPart {
                 Object selected = sel.getFirstElement();
                 mTable.remove( selected );
                 mModel.mUpdateInfos.remove( selected );
+                markDirty();
             } 
         });
         
@@ -259,6 +268,7 @@ public class MirrorsSection extends SectionPart {
                 mModel.mUpdateInfos.set( pos, pValue.toString() );
                 mTable.replace( pValue, pos );
                 mTable.refresh( o );
+                markDirty();
             }
         }
     }

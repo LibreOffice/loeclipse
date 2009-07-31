@@ -43,7 +43,11 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -61,12 +65,14 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.editors.main.DescriptionSourcePage;
 import org.openoffice.ide.eclipse.core.editors.main.PackageContentsFormPage;
 import org.openoffice.ide.eclipse.core.editors.main.PackageOverviewFormPage;
 import org.openoffice.ide.eclipse.core.model.IPackageChangeListener;
 import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionHandler;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
+import org.xml.sax.InputSource;
 
 /**
  * The project package editor.
@@ -87,6 +93,7 @@ public class PackagePropertiesEditor extends FormEditor {
     private DescriptionModel mDescriptionModel;
     private PackagePropertiesModel mModel;
     private boolean mIgnoreSourceChanges = false;
+    private IFile mDescrFile;
     
     /**
      * Default constructor.
@@ -142,8 +149,10 @@ public class PackagePropertiesEditor extends FormEditor {
             addPage(mSourcePage);
             
             // Add the description.xml source page
-            mDescriptionPage = new SourcePage( this, "description", "description.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+            mDescriptionPage = new DescriptionSourcePage( this, 
+                    "description", "description.xml"); //$NON-NLS-1$ //$NON-NLS-2$
             mDescriptionPage.init( getEditorSite(), mDescrEditorInput );
+            mDescriptionPage.getDocumentProvider();
             addPage( mDescriptionPage );
         } catch (PartInitException e) {
             // log ?
@@ -163,15 +172,15 @@ public class PackagePropertiesEditor extends FormEditor {
             IProject prj = fileInput.getFile().getProject();
             String projectName = prj.getName();
             
-            IFile descrFile = prj.getFile( "description.xml" ); //$NON-NLS-1$
-            mDescrEditorInput = new FileEditorInput( descrFile );
+            mDescrFile = prj.getFile( "description.xml" ); //$NON-NLS-1$
+            mDescrEditorInput = new FileEditorInput( mDescrFile );
             
             IFile propsFile = prj.getFile( "package.properties" ); //$NON-NLS-1$
             mPropsEditorInput = new FileEditorInput( propsFile );
             
             setPartName(projectName);
             
-            // Load the description
+            // Load the description.xml file
             try {
                 SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
                 // Enables the namespaces mapping
@@ -179,13 +188,14 @@ public class PackagePropertiesEditor extends FormEditor {
                 parser.getXMLReader().setFeature( 
                         "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
                 DescriptionHandler handler = new DescriptionHandler( getDescriptionModel() );
-                File file = new File( descrFile.getLocationURI().getPath() );
+                File file = new File( mDescrFile.getLocationURI().getPath() );
                 parser.parse(file, handler);
                 
             } catch ( Exception e ) {
-                PluginLogger.error( Messages.getString("PackagePropertiesEditor.DescriptionParseError"), e ); //$NON-NLS-1$
+                PluginLogger.error( 
+                        Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$ 
+                        e );
             }
-            
             
             // Create the package properties
             mModel = new PackagePropertiesModel(fileInput.getFile());
@@ -209,7 +219,7 @@ public class PackagePropertiesEditor extends FormEditor {
      */
     @Override
     public boolean isDirty() {
-        return mModel.isDirty();
+        return mModel.isDirty() || mOverviewPage.isDirty() || mDescriptionPage.isDirty();
     }
     
     /**
@@ -222,6 +232,12 @@ public class PackagePropertiesEditor extends FormEditor {
             mSourcePage.doRevertToSaved();
         } catch (Exception e) {
             // Log ?
+        }
+        
+        // Reload the model if the we haven't moved from the overview page
+        if ( getActivePageInstance() == mOverviewPage ) {  
+            writeDescrToSource();
+            mDescriptionPage.doSave( pMonitor );
         }
     }
 
@@ -256,6 +272,66 @@ public class PackagePropertiesEditor extends FormEditor {
      */
     public PackagePropertiesModel getModel() {
         return mModel;
+    }
+    
+    /**
+     * Write the description model to the description source page.
+     */
+    public void writeDescrToSource( ) {
+        if ( mDescriptionPage.getDocumentProvider() instanceof TextFileDocumentProvider ) {
+            TextFileDocumentProvider docProvider  = (TextFileDocumentProvider)mDescriptionPage.getDocumentProvider();
+            IDocument doc = docProvider.getDocument( mDescriptionPage.getEditorInput() );
+            if ( doc != null ) {
+                mIgnoreSourceChanges = true;
+                
+                // Write the description.xml to a buffer stream
+                ByteArrayOutputStream out = null;
+                try {
+                    out = new ByteArrayOutputStream( );
+                    mDescriptionModel.serialize( out );
+                    doc.set( out.toString() );
+                } finally {
+                    try { out.close(); } catch (IOException e) { }
+                }
+                
+                mIgnoreSourceChanges = false;
+            }
+        }
+    }
+    
+    /**
+     * Re-load the model from the XML code shown in the description source page.
+     */
+    public void loadDescFromSource( ) {
+        if ( mDescriptionPage.getDocumentProvider() instanceof TextFileDocumentProvider ) {
+            TextFileDocumentProvider docProvider  = (TextFileDocumentProvider)mDescriptionPage.getDocumentProvider();
+            IDocument doc = docProvider.getDocument( mDescriptionPage.getEditorInput() );
+            if ( doc != null ) {
+                
+                StringReader reader = null;
+                try {
+                    SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+                    // Enables the namespaces mapping
+                    parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespaces" , true ); //$NON-NLS-1$
+                    parser.getXMLReader().setFeature( 
+                            "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
+                    DescriptionHandler handler = new DescriptionHandler( getDescriptionModel() );
+                    
+                    reader = new StringReader( doc.get( ) );
+                    InputSource is = new InputSource( reader );
+                    parser.parse( is, handler);
+
+                } catch ( Exception e ) {
+                    PluginLogger.error( 
+                            Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$ 
+                            e );
+                } finally {
+                    reader.close();
+                }
+                
+                mOverviewPage.refresh( );
+            }
+        }
     }
     
     /**

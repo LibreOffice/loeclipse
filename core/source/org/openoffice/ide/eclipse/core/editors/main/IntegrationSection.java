@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.openoffice.ide.eclipse.core.editors.Messages;
@@ -66,7 +65,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author Cédric Bosdonnat
  *
  */
-public class IntegrationSection extends SectionPart {
+public class IntegrationSection extends AbstractOverviewSection {
 
     static final String SEPARATOR = ","; //$NON-NLS-1$
     static final String[] PLATFORMS = {
@@ -106,19 +105,19 @@ public class IntegrationSection extends SectionPart {
      * @param pPage the parent page
      */
     public IntegrationSection( Composite pParent, PackageOverviewFormPage pPage ) {
-        super( pParent, pPage.getManagedForm().getToolkit(), Section.TITLE_BAR );
+        super( pParent, pPage, Section.TITLE_BAR );
         mPage = pPage;
         
         createContent( );
         
         mModel = pPage.getModel();
-        loadValues( );
+        loadData( );
     }
 
     /**
      * Loads the values from the model into the controls.
      */
-    public void loadValues( ) {
+    public void loadData( ) {
         mMinOOoTxt.setText( mModel.mMinOOo  );
         mMaxOOoTxt.setText( mModel.mMaxOOo );
         mPlatformTxt.setText( mModel.mPlatforms );
@@ -153,6 +152,7 @@ public class IntegrationSection extends SectionPart {
         mMinOOoTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mMinOOo = mMinOOoTxt.getText();
+                markDirty();
             }
         });
         
@@ -165,6 +165,7 @@ public class IntegrationSection extends SectionPart {
         mMaxOOoTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mMaxOOo = mMaxOOoTxt.getText();
+                markDirty();
             }
         });
         
@@ -175,6 +176,7 @@ public class IntegrationSection extends SectionPart {
         mPlatformTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mPlatforms = mPlatformTxt.getText();
+                markDirty();
             }
         });
         

@@ -70,6 +70,14 @@ public class PublisherSection extends LocalizedSection {
         
         mModel = pPage.getModel();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadData() {
+        // Nothing to do: everything is localized
+    }
 
     /**
      * {@inheritDoc}
@@ -95,6 +103,7 @@ public class PublisherSection extends LocalizedSection {
             public void modifyText(ModifyEvent pE) {
                 PublisherInfos infos = mModel.mPublisherInfos.get( mCurrentLocale );
                 infos.mName = mNameTxt.getText();
+                markDirty();
             }
         });
         
@@ -107,6 +116,7 @@ public class PublisherSection extends LocalizedSection {
             public void modifyText(ModifyEvent pE) {
                 PublisherInfos infos = mModel.mPublisherInfos.get( mCurrentLocale );
                 infos.mUrl = mUrlTxt.getText();
+                markDirty();
             }
         });
     }

@@ -189,9 +189,9 @@ public class DescriptionHandler extends DefaultHandler {
                 Attributes pAttributes) throws SAXException {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
-            if ( XMLTokens.ATTR_OOO_MIN.equals( pName ) ) {
+            if ( XMLTokens.ELEMENT_OOO_MIN.equals( pName ) ) {
                 mModel.mMinOOo = pAttributes.getValue( XMLTokens.ATTR_VALUE );
-            } else if ( XMLTokens.ATTR_OOO_MAX.equals( pName ) ) {
+            } else if ( XMLTokens.ELEMENT_OOO_MAX.equals( pName ) ) {
                 mModel.mMaxOOo = pAttributes.getValue( XMLTokens.ATTR_VALUE );
             }
         }
@@ -217,7 +217,7 @@ public class DescriptionHandler extends DefaultHandler {
                 if ( mModel.mUpdateInfos == null ) {
                     mModel.mUpdateInfos = new ArrayList<String>( );
                 }
-                String value = pAttributes.getValue( XMLTokens.XLINK_URL, XMLTokens.ATTR_HREF );
+                String value = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 mModel.mUpdateInfos.add( value );
             }
         }
@@ -257,7 +257,7 @@ public class DescriptionHandler extends DefaultHandler {
                 mModel.mSuppressOnUpdate = Boolean.parseBoolean( value );
                 
             } else if ( XMLTokens.ELEMENT_LICENSE_TEXT.equals( pName ) ) {
-                String ref = pAttributes.getValue( XMLTokens.XLINK_URL, XMLTokens.ATTR_HREF );
+                String ref = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 String lang = pAttributes.getValue( XMLTokens.ATTR_LANG );
                 
                 Locale locale = parseLocale( lang );
@@ -292,7 +292,7 @@ public class DescriptionHandler extends DefaultHandler {
                 if ( mModel.mPublisherInfos == null ) {
                     mModel.mPublisherInfos = new HashMap<Locale, PublisherInfos>( );
                 }
-                mRef = pAttributes.getValue( XMLTokens.XLINK_URL, XMLTokens.ATTR_HREF );
+                mRef = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 mLocale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
             }
         }
@@ -347,7 +347,7 @@ public class DescriptionHandler extends DefaultHandler {
                 if ( mModel.mReleaseNotes == null ) {
                     mModel.mReleaseNotes = new HashMap<Locale, String>( );
                 }
-                String value = pAttributes.getValue( XMLTokens.XLINK_URL, XMLTokens.ATTR_HREF );
+                String value = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 Locale locale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
                 if ( locale != null ) {
                     mModel.mReleaseNotes.put( locale, value );
@@ -425,7 +425,7 @@ public class DescriptionHandler extends DefaultHandler {
                 Attributes pAttributes) throws SAXException {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
-            String ref = pAttributes.getValue( XMLTokens.XLINK_URL, XMLTokens.ATTR_HREF );
+            String ref = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
             if ( XMLTokens.ELEMENT_DEFAULT.equals( pName ) ) {
                 mModel.mDefaultIcon = ref;
                 
@@ -455,7 +455,7 @@ public class DescriptionHandler extends DefaultHandler {
                 if ( mModel.mDescriptions == null ) {
                     mModel.mDescriptions = new HashMap<Locale, String>( );
                 }
-                String value = pAttributes.getValue( XMLTokens.XLINK_URL, XMLTokens.ATTR_HREF );
+                String value = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 Locale locale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
                 if ( locale != null ) {
                     mModel.mDescriptions.put( locale, value );

@@ -43,6 +43,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.main;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -57,6 +59,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
@@ -71,6 +74,8 @@ public class PackageOverviewFormPage extends FormPage {
     private LocaleSelector mLocaleSel;
     private DescriptionModel mModel;
     
+    private ArrayList<AbstractOverviewSection> mSections;
+    
     /**
      * Constructor.
      * 
@@ -79,6 +84,7 @@ public class PackageOverviewFormPage extends FormPage {
      */
     public PackageOverviewFormPage(FormEditor pEditor, String pId ) {
         super(pEditor, pId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
+        mSections = new ArrayList<AbstractOverviewSection>( );
     }
 
     /**
@@ -129,6 +135,11 @@ public class PackageOverviewFormPage extends FormPage {
         createMainPage( toolkit, body );
         
         mLocaleSel.loadLocales( mModel.getAllLocales() );
+        
+        // Enable the dirty notifications in all sections 
+        for ( AbstractOverviewSection section : mSections ) {
+            section.setNotifyChanges( true );
+        }
     }
 
     /**
@@ -163,22 +174,60 @@ public class PackageOverviewFormPage extends FormPage {
          */
         GeneralSection generalSection = new GeneralSection( leftColumn, this );
         mLocaleSel.addListener( generalSection );
+        mSections.add( generalSection );
         
-        new IntegrationSection( leftColumn, this );
+        IntegrationSection integrationSection = new IntegrationSection( leftColumn, this );
+        mSections.add( integrationSection );
         
         PublisherSection publisherSection = new PublisherSection( leftColumn, this );
         mLocaleSel.addListener( publisherSection );
+        mSections.add( publisherSection );
         
         ReleaseNotesSection releaseNotesSection = new ReleaseNotesSection( leftColumn, this );
         mLocaleSel.addListener( releaseNotesSection );
+        mSections.add( releaseNotesSection );
         
-        new MirrorsSection( rightColumn, this );
+        MirrorsSection mirrorSection = new MirrorsSection( rightColumn, this );
+        mSections.add( mirrorSection );
         
         IFileEditorInput input = (IFileEditorInput)getEditorInput();
         IProject project = input.getFile().getProject();
         LicenseSection licenseSection = new LicenseSection( rightColumn, this, project );
+        mSections.add( licenseSection );
         mLocaleSel.addListener( licenseSection );
         
+        // Suspend the first dirty notifications in all sections 
+        for ( AbstractOverviewSection section : mSections ) {
+            section.setNotifyChanges( false );
+        }
         return body;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canLeaveThePage() {
+        PackagePropertiesEditor editor = (PackagePropertiesEditor)getEditor();
+        editor.writeDescrToSource();
+        
+        return super.canLeaveThePage();
+    }
+    
+    /**
+     * Mark all the sections as saved.
+     */
+    public void setSaved( ) {
+        for (AbstractOverviewSection section : mSections) {
+            section.refresh( );
+        }
+    }
+
+    public void refresh() {
+        for ( AbstractOverviewSection section : mSections ) {
+            section.loadData( );
+        }
+        
+        mLocaleSel.loadLocales( mModel.getAllLocales() );
     }
 }

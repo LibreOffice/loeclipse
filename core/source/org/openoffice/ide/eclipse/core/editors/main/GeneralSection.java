@@ -57,6 +57,7 @@ public class GeneralSection extends LocalizedSection {
     private Text mNameTxt;
     private Text mIdTxt;
     private Text mVersionTxt;
+
     
     /**
      * @param pParent the parent composite where to add the section
@@ -65,10 +66,11 @@ public class GeneralSection extends LocalizedSection {
     public GeneralSection( Composite pParent, PackageOverviewFormPage pPage ) {
         super( pParent, pPage, Section.TITLE_BAR );
         
+        
         getSection().setText( Messages.getString("GeneralSection.Title") ); //$NON-NLS-1$
         
         mModel = pPage.getModel();
-        loadValues( );
+        loadData( );
         
         if ( mModel.mDisplayNames == null ) {
             mModel.mDisplayNames = new HashMap<Locale, String>( );
@@ -78,7 +80,7 @@ public class GeneralSection extends LocalizedSection {
     /**
      * Loads the values from the model into the controls.
      */
-    public void loadValues( ) {
+    public void loadData( ) {
         mIdTxt.setText( mModel.mId );
         mVersionTxt.setText( mModel.mVersion );
     }
@@ -106,6 +108,7 @@ public class GeneralSection extends LocalizedSection {
         mNameTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mDisplayNames.put( mCurrentLocale, mNameTxt.getText() );
+                markDirty();
             }
         });
         
@@ -116,6 +119,7 @@ public class GeneralSection extends LocalizedSection {
         mIdTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mId = mIdTxt.getText();
+                markDirty();
             }
         });
         
@@ -126,10 +130,11 @@ public class GeneralSection extends LocalizedSection {
         mVersionTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
                 mModel.mVersion = mVersionTxt.getText();
+                markDirty();
             }
         });
     }
-
+    
     /**
      * {@inheritDoc}
      */

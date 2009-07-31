@@ -36,6 +36,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -87,7 +89,7 @@ public class LicenseSection extends LocalizedSection {
     /**
      * Load the data from the model into the non-localized controls.
      */
-    private void loadData() {
+    public void loadData() {
         mSuppressUpdateBtn.setSelection( mModel.mSuppressOnUpdate );
         mUserAcceptBtn.setSelection( mModel.mAcceptByUser );
     }
@@ -125,6 +127,7 @@ public class LicenseSection extends LocalizedSection {
         mUserAcceptBtn.addSelectionListener( new SelectionAdapter( ) {
             public void widgetSelected(SelectionEvent pE) {
                 mModel.mAcceptByUser = mUserAcceptBtn.getSelection();
+                markDirty();
             } 
         });
         
@@ -138,6 +141,7 @@ public class LicenseSection extends LocalizedSection {
         mSuppressUpdateBtn.addSelectionListener( new SelectionAdapter( ) {
             public void widgetSelected(SelectionEvent pE) {
                 mModel.mSuppressOnUpdate = mSuppressUpdateBtn.getSelection();
+                markDirty();
             } 
         });
     }
@@ -156,6 +160,12 @@ public class LicenseSection extends LocalizedSection {
         
         mFileTxt = pToolkit.createText( pParent, new String( ) );
         mFileTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
+        mFileTxt.addModifyListener( new ModifyListener( ) {
+            public void modifyText(ModifyEvent pE) {
+                mModel.mLicenses.put( mCurrentLocale, mFileTxt.getText() );
+                markDirty();
+            }            
+        });
         
         mFileBrowseBtn = pToolkit.createButton( pParent, "...", SWT.PUSH ); //$NON-NLS-1$
         mFileBrowseBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );
@@ -165,7 +175,6 @@ public class LicenseSection extends LocalizedSection {
                 // Open the folder selection dialog
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog( mProject, 
                         Messages.getString("LicenseSection.FileChooserTooltip") ); //$NON-NLS-1$
-                dlg.setShowOnlyFolders( true );
                 
                 if ( dlg.open() == ProjectSelectionDialog.OK ) {
                     IResource res = dlg.getSelected();

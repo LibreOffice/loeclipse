@@ -43,10 +43,13 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.model;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -66,6 +69,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
@@ -94,6 +98,22 @@ public final class UnoFactory {
         
         // Creates an empty package.properties file
         prj.getFile("package.properties").getLocation().toFile().createNewFile(); //$NON-NLS-1$
+        
+        // Creates an empty description.xml file
+        File file = prj.getFile("description.xml").getLocation().toFile(); //$NON-NLS-1$
+        DescriptionModel descrModel = new DescriptionModel( );
+        descrModel.mDisplayNames.put( Locale.ENGLISH, prj.getName() );
+        descrModel.mId = prj.getCompanyPrefix().toLowerCase() + "." + 
+            prj.getName().replaceAll( "[^a-zA-Z0-9]", new String( ) ).toLowerCase();
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream( file );
+            descrModel.serialize( out );
+        } catch ( Exception e ) {
+            // TODO Log ?
+        } finally {
+            try { out.close(); } catch ( Exception e ) {}
+        }
             
         UnoidlProjectHelper.refreshProject(prj, null);
         UnoidlProjectHelper.forceBuild(prj, pMonitor);

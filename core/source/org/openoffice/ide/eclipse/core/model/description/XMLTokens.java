@@ -37,7 +37,13 @@ package org.openoffice.ide.eclipse.core.model.description;
  *
  */
 public class XMLTokens {
+    
+    public static final String ATTR_XMLNS = "xmlns"; //$NON-NLS-1$
 
+    public static final String URI_DESCRIPTION = "http://openoffice.org/extensions/description/2006"; //$NON-NLS-1$
+    public static final String PREFIX_DESCRIPTION = "d"; //$NON-NLS-1$
+    
+    public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
     public static final String ELEMENT_VERSION = "version"; //$NON-NLS-1$
     public static final String ELEMENT_IDENTIFIER = "identifier"; //$NON-NLS-1$
     public static final String ELEMENT_PLATFORM = "platform"; //$NON-NLS-1$
@@ -50,7 +56,8 @@ public class XMLTokens {
     public static final String ELEMENT_ICON = "icon"; //$NON-NLS-1$
     public static final String ELEMENT_EXTENSION_DESCRIPTION = "extension-description"; //$NON-NLS-1$
     
-    
+    public static final String ELEMENT_OOO_MIN = "OpenOffice.org-minimal-version"; //$NON-NLS-1$
+    public static final String ELEMENT_OOO_MAX = "OpenOffice.org-maximal-version"; //$NON-NLS-1$
     public static final String ELEMENT_NAME = "name"; //$NON-NLS-1$
     public static final String ELEMENT_SRC = "src"; //$NON-NLS-1$
     public static final String ELEMENT_SIMPLE_LICENSE = "simple-license"; //$NON-NLS-1$
@@ -60,14 +67,30 @@ public class XMLTokens {
 
     public static final String ATTR_LANG = "lang"; //$NON-NLS-1$
     public static final String ATTR_VALUE = "value"; //$NON-NLS-1$
-    public static final String ATTR_OOO_MIN = "OpenOffice.org-minimal-version"; //$NON-NLS-1$
-    public static final String ATTR_OOO_MAX = "OpenOffice.org-maximal-version"; //$NON-NLS-1$
     public static final String ATTR_ACCEPT_BY = "accept-by"; //$NON-NLS-1$
     public static final String ATTR_SUPPRESS_ON_UPDATE = "suppress-on-update"; //$NON-NLS-1$
 
     public static final String VALUE_USER = "user"; //$NON-NLS-1$
     public static final String VALUE_ADMIN = "admin"; //$NON-NLS-1$
     
-    public static final String XLINK_URL = "http://www.w3.org/1999/xlink"; //$NON-NLS-1$
+    public static final String URI_XLINK = "http://www.w3.org/1999/xlink"; //$NON-NLS-1$
+    public static final String PREFIX_XLINK = "xlink"; //$NON-NLS-1$
     public static final String ATTR_HREF = "href"; //$NON-NLS-1$
+    
+    /**
+     * Returns the XML qname corresponding to the given prefix and local name.
+     *  
+     * @param pPrefix the prefix (can be <code>null</code>)
+     * @param pLocalName the element local name
+     * 
+     * @return the qname
+     */
+    public static String createQName( String pPrefix, String pLocalName ) {
+        String qname = pLocalName;
+        if ( pPrefix != null ) {
+            qname = pPrefix + ":" + qname; //$NON-NLS-1$
+        }
+        return qname;
+    }
+    
 }
