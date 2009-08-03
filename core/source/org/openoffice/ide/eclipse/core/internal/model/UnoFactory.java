@@ -103,8 +103,8 @@ public final class UnoFactory {
         File file = prj.getFile("description.xml").getLocation().toFile(); //$NON-NLS-1$
         DescriptionModel descrModel = new DescriptionModel( );
         descrModel.mDisplayNames.put( Locale.ENGLISH, prj.getName() );
-        descrModel.mId = prj.getCompanyPrefix().toLowerCase() + "." + 
-            prj.getName().replaceAll( "[^a-zA-Z0-9]", new String( ) ).toLowerCase();
+        descrModel.mId = prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$
+            prj.getName().replaceAll( "[^a-zA-Z0-9]", new String( ) ).toLowerCase(); //$NON-NLS-1$
         FileOutputStream out = null;
         try {
             out = new FileOutputStream( file );
@@ -112,7 +112,7 @@ public final class UnoFactory {
         } catch ( Exception e ) {
             // TODO Log ?
         } finally {
-            try { out.close(); } catch ( Exception e ) {}
+            try { out.close(); } catch ( Exception e ) { }
         }
             
         UnoidlProjectHelper.refreshProject(prj, null);

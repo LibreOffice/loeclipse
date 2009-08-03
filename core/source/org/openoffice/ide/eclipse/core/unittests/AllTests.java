@@ -62,6 +62,7 @@ public class AllTests {
         //$JUnit-BEGIN$
         suite.addTestSuite(CompositeTest.class);
         suite.addTestSuite(UnoFactoryTest.class);
+        suite.addTestSuite(OOoTest.class);
         //$JUnit-END$
         return suite;
     }

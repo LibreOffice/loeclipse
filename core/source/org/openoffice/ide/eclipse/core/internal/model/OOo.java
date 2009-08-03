@@ -111,7 +111,7 @@ public class OOo extends AbstractOOo {
     public OOo(String pOooHome, String pOooName) throws InvalidConfigException {
         super(pOooHome, pOooName);
     }
-        
+    
     //----------------------------------------------------- IOOo Implementation
     
     /**
@@ -125,7 +125,7 @@ public class OOo extends AbstractOOo {
     @Override
     public void setHome(String pHome) throws InvalidConfigException {
         
-        if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
             pHome = pHome + FILE_SEP + "Contents"; //$NON-NLS-1$
         }
         
@@ -157,7 +157,7 @@ public class OOo extends AbstractOOo {
         String[] otherPaths = mMapper.getAdditionnalLibs();
         
         String libs = getHome() + FILE_SEP + "program"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
             libs = getHome() + FILE_SEP + "MacOS"; //$NON-NLS-1$
         }
         
@@ -199,7 +199,7 @@ public class OOo extends AbstractOOo {
      */
     public String getUnorcPath() {
         String path = getLibsPath()[0] + FILE_SEP + "bootstrap"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             path += ".ini"; //$NON-NLS-1$
         } else {
             path += "rc"; //$NON-NLS-1$
@@ -212,7 +212,7 @@ public class OOo extends AbstractOOo {
      */
     public String getUnoPath() {
         String uno = "uno.bin"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             uno = "uno.exe"; //$NON-NLS-1$
         }
         String unoPath = getLibsPath()[0] + FILE_SEP + uno;
@@ -301,7 +301,7 @@ public class OOo extends AbstractOOo {
 
             // Constitute the classpath for OOo Boostrapping
             String classpath = "-cp "; //$NON-NLS-1$
-            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            if (getPlatform().equals(Platform.OS_WIN32)) {
                 classpath += "\""; //$NON-NLS-1$
             }
 
@@ -320,7 +320,7 @@ public class OOo extends AbstractOOo {
             }
 
             classpath += pLibLocation;
-            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            if (getPlatform().equals(Platform.OS_WIN32)) {
                 classpath += "\""; //$NON-NLS-1$
             }
 
@@ -394,7 +394,7 @@ public class OOo extends AbstractOOo {
      */
     private void addPackage(File pPackageFile) throws Exception {
         String path = pPackageFile.getAbsolutePath();
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             path = "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
         }
         String shellCommand = "unopkg gui -f " + path; //$NON-NLS-1$
@@ -673,7 +673,7 @@ public class OOo extends AbstractOOo {
             File link = null;
             
             File linkFile = new File(pParent, pName);
-            if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            if (getPlatform().equals(Platform.OS_WIN32)) {
                 // Read the content of the file to get the true folder
                 try {
                     FileInputStream is = new FileInputStream(linkFile);

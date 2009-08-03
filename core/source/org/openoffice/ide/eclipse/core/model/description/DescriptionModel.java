@@ -428,10 +428,10 @@ public class DescriptionModel {
      * @return the string form of the locale
      */
     private String writeLocale( Locale pLocale ) {
-        char sep = '-'; //$NON-NLS-1$
+        char sep = '-';
         String result = new String( );
         
-        result = pLocale.toString().replace( '_', sep ); //$NON-NLS-1$
+        result = pLocale.toString().replace( '_', sep );
         
         return result;
     }

@@ -223,6 +223,9 @@ public class PackageOverviewFormPage extends FormPage {
         }
     }
 
+    /**
+     * Refresh data on the page.
+     */
     public void refresh() {
         for ( AbstractOverviewSection section : mSections ) {
             section.loadData( );

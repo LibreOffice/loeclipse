@@ -100,7 +100,7 @@ public class URE extends AbstractOOo {
      */
     public String[] getClassesPath() {
         String jars = getHome() + FILE_SEP + "share" + FILE_SEP + "java"; //$NON-NLS-1$ //$NON-NLS-2$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             jars = getHome() + FILE_SEP + "java"; //$NON-NLS-1$
         }
         return new String[]{ jars };
@@ -111,7 +111,7 @@ public class URE extends AbstractOOo {
      */
     public String[] getLibsPath() {
         String libs = getHome() + FILE_SEP + "lib"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
         }
         return new String[]{ libs };
@@ -123,7 +123,7 @@ public class URE extends AbstractOOo {
     public String[] getTypesPath() {
         String types = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
             FILE_SEP + "types.rdb"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return new String[]{ types };
@@ -135,7 +135,7 @@ public class URE extends AbstractOOo {
     public String[] getServicesPath() {
         String services = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
                 FILE_SEP + "services.rdb"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return new String[]{ services };
@@ -146,7 +146,7 @@ public class URE extends AbstractOOo {
      */
     public String getUnorcPath() {
         String path = getHome() + FILE_SEP + "lib" + FILE_SEP + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             path = getHome() + FILE_SEP + "bin" + FILE_SEP + "uno.ini"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return path;
@@ -157,7 +157,7 @@ public class URE extends AbstractOOo {
      */
     public String getUnoPath() {
         String uno = "uno.bin"; //$NON-NLS-1$
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             uno = "uno.exe";  //$NON-NLS-1$
         }
         
@@ -217,7 +217,7 @@ public class URE extends AbstractOOo {
         }
         
         String unoPath = getUnoPath();
-        if (Platform.OS_WIN32.equals(Platform.getOS())) {
+        if (Platform.OS_WIN32.equals(getPlatform())) {
             unoPath = "\"" + unoPath + "\"";  // escape spaces in windows names //$NON-NLS-1$ //$NON-NLS-2$
         }
         

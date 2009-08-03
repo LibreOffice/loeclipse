@@ -76,6 +76,8 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     protected static final String FILE_SEP = System.getProperty("file.separator"); //$NON-NLS-1$
     
+    private static String sPlatform;
+    
     private String mHome;
     private String mName;
     
@@ -319,7 +321,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         libpath = "file:///" + libpath; //$NON-NLS-1$
         
         String unoPath = getUnoPath();
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        if (getPlatform().equals(Platform.OS_WIN32)) {
             /* uno is already in the PATH variable, so don't worry */
             unoPath = "uno"; //$NON-NLS-1$
         }
@@ -352,5 +354,25 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         
         Process p = pPrj.getSdk().runToolWithEnv(pPrj, command, env, pMonitor);
         DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.UreProcessName")  + pMain); //$NON-NLS-1$
+    }
+    
+    /**
+     * Sets the target platform for tests.
+     * 
+     * @param pPlatform the target platform
+     */
+    public static void setPlatform( String pPlatform ) {
+        sPlatform = pPlatform;
+    }
+    
+    /**
+     * @return the system platform, or the test one if set.
+     */
+    protected String getPlatform( ) {
+        String result = sPlatform;
+        if ( sPlatform == null) {
+            result = Platform.getOS();
+        }
+        return result;
     }
 }
