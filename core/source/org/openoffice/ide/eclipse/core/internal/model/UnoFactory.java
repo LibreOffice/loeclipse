@@ -211,6 +211,7 @@ public final class UnoFactory {
             String command = "uno-skeletonmaker" +    //$NON-NLS-1$
                 " " + unorc +  //$NON-NLS-1$
                 " component " + languageOption +  //$NON-NLS-1$
+                " --propertysetmixin" +  //$NON-NLS-1$
                 " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$
                 " " + typesReg + //$NON-NLS-1$
                 " -n " + implementationName + //$NON-NLS-1$

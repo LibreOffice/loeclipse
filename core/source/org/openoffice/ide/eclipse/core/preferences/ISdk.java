@@ -98,6 +98,11 @@ public interface ISdk {
     public IPath getBinPath();
     
     /**
+     * @return the path to the includes in the SDK.
+     */
+    public IPath getIncludePath();
+    
+    /**
      * Create a process for the given shell command. This process will 
      * be created with the project parameters such as it's SDK and 
      * location path
@@ -125,4 +130,5 @@ public interface ISdk {
      */
     public Process runToolWithEnv(IUnoidlProject pProject, 
             String pShellCommand, String[] pEnv, IProgressMonitor pMonitor);
+
 }

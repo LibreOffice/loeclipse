@@ -91,6 +91,8 @@ public class SDK implements ISdk, ITableElement {
 
     private static final String PATH_SEPARATOR = System.getProperty("path.separator"); //$NON-NLS-1$
 
+    private static final String INCLUDE = "include"; //$NON-NLS-1$
+
     
     
     /* SDK Members */
@@ -240,6 +242,13 @@ public class SDK implements ISdk, ITableElement {
      */
     public IPath getBinPath() {
         return getBinPath(getHome());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IPath getIncludePath() {
+        return new Path( getHome() ).append( INCLUDE );
     }
     
     /**
