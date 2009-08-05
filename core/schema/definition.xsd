@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://openoffice.org/extensions/description/2006"
+	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://openoffice.org/extensions/description/2006">
+
+	<xs:import schemaLocation="xlink.xsd" namespace="http://www.w3.org/1999/xlink" />
+	<xs:element name="description" type="TDescription" />
+
+	<xs:complexType name="TDescription">
+		<xs:sequence>
+			<xs:element name="version" type="TValue" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="identifier" type="TValue" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="platform" type="TValue" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="dependencies" type="TDependencies"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="update-information" minOccurs="0"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="src" type="TLink" minOccurs="1"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="registration" type="TRegistration"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="publisher" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="TPubName" minOccurs="1"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="release-notes" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="src" type="TLocalizedLink" minOccurs="1"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="display-name" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="TName" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="icon" type="TIcon" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="extension-description" minOccurs="0"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="src" type="TLocalizedLink" minOccurs="1"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TValue">
+		<xs:attribute name="value" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TDependencies">
+		<xs:sequence>
+			<xs:element name="OpenOffice.org-minimal-version" type="TVersion"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="OpenOffice.org-maximal-version" type="TVersion"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TVersion">
+		<xs:attribute name="value" type="xs:string" use="required" />
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TLink">
+		<xs:attribute ref="xlink:href" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="TRegistration">
+		<xs:sequence>
+			<xs:element name="simple-license" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="license-text" type="TLocalizedLink" />
+					</xs:sequence>
+					<xs:attribute name="accept-by" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="user" />
+								<xs:enumeration value="admin" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="suppress-on-update" type="xs:boolean"
+						use="optional" default="false" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TLocalizedLink">
+		<xs:complexContent>
+			<xs:extension base="TLink">
+				<xs:attribute name="lang" type="TLocale" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TPubName">
+		<xs:simpleContent>
+			<xs:extension base="TName">
+				<xs:attribute ref="xlink:href" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="TName">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="lang" type="TLocale" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+    <xs:complexType name="TIcon">
+    	<xs:sequence>
+    		<xs:element name="default" type="TLink" minOccurs="0"
+    			maxOccurs="1"/>
+    		<xs:element name="hight-contrast" type="TLink" minOccurs="0" maxOccurs="1"/>
+    	</xs:sequence>
+    </xs:complexType>
+
+	<xs:simpleType name="TLocale">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-z]{2,2}(-[A-Z]{2,2}(-[a-zA-Z]+)?)?"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>
