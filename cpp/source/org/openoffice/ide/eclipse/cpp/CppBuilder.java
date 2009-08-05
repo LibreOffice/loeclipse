@@ -1,3 +1,33 @@
+/*************************************************************************
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2009 by Novell, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ *
+ * Copyright: 2009 by Novell, Inc.
+ *
+ * All Rights Reserved.
+ * 
+ ************************************************************************/
 package org.openoffice.ide.eclipse.cpp;
 
 import java.io.File;
@@ -10,7 +40,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -24,18 +53,9 @@ import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 public class CppBuilder implements ILanguageBuilder {
+    
+    private static final String INCLUDE = "include"; //$NON-NLS-1$
 
-    private Language mLanguage;
-    
-    /**
-     * Constructor.
-     * 
-     * @param pLanguage the C++ Language object
-     */
-    public CppBuilder( Language pLanguage ) {
-        mLanguage = pLanguage;
-    }
-    
     @Override
     public IPath createLibrary(IUnoidlProject unoProject) throws Exception {
         // TODO Auto-generated method stub
@@ -74,7 +94,7 @@ public class CppBuilder implements ILanguageBuilder {
 
                     String command = "cppumaker -T\"*\"" +  //$NON-NLS-1$
                     " -Gc -BUCR " +  //$NON-NLS-1$
-                    "-O \"" + new File( pBuildFolder, "include" ).getAbsolutePath() + "\" \"" + //$NON-NLS-1$ //$NON-NLS-2$
+                    "-O \"" + new File( pBuildFolder, INCLUDE ).getAbsolutePath() + "\" \"" + //$NON-NLS-1$ //$NON-NLS-2$
                     pTypesFile.getAbsolutePath() + "\" " + //$NON-NLS-1$
                     oooTypesArgs; 
 
@@ -98,7 +118,7 @@ public class CppBuilder implements ILanguageBuilder {
                     
                     // Check if the build/include dir is in the includes
                     ICProject cprj = CoreModel.getDefault().create( pPrj );
-                    IPath incPath = unoprj.getBuildPath().append( "include" );
+                    IPath incPath = unoprj.getBuildPath().append( INCLUDE );
                     if ( !cprj.isOnSourceRoot( pPrj.getFolder( incPath ) ) ) {
                         try {
                             IIncludeEntry entry = CoreModel.newIncludeEntry( null, null, incPath );
