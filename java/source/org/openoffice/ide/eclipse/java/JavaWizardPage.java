@@ -47,6 +47,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
@@ -62,17 +63,13 @@ import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 public class JavaWizardPage extends LanguageWizardPage {
 
     public static final String JAVA_VERSION = "java_version"; //$NON-NLS-1$
+    public static final String JAVA_TESTS = "java_tests"; //$NON-NLS-1$
     
     private ChoiceRow mJavaVersionRow;
+    private BooleanRow mJavaTestsRow;
     
     private String mJavaVersion;
-    
-    private IFieldChangedListener mListener = new IFieldChangedListener() {
-
-        public void fieldChanged(FieldEvent pEvent) {
-            mJavaVersion = mJavaVersionRow.getValue();
-        }
-    };
+    private boolean mUseTests;
     
     /**
      * Constructor.
@@ -93,8 +90,9 @@ public class JavaWizardPage extends LanguageWizardPage {
      * {@inheritDoc}
      */
     public void setProjectInfos(UnoFactoryData pData) {
-        // default value
+        // default values
         mJavaVersion = "java4"; //$NON-NLS-1$
+        mUseTests = true;
     }
     
     /**
@@ -104,6 +102,7 @@ public class JavaWizardPage extends LanguageWizardPage {
         
         if (pData != null) {
             pData.setProperty(JAVA_VERSION, mJavaVersion);
+            pData.setProperty(JAVA_TESTS, mUseTests);
         }
         
         return pData;
@@ -118,13 +117,30 @@ public class JavaWizardPage extends LanguageWizardPage {
         body.setLayout(new GridLayout(2, false));
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
         
+        // Create the Java version row
         mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION, 
                 Messages.getString("JavaWizardPage.JavaVersion")); //$NON-NLS-1$
         mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java4"), "java4"); //$NON-NLS-1$ //$NON-NLS-2$
         mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
-        mJavaVersionRow.setFieldChangedListener(mListener);
+        mJavaVersionRow.setFieldChangedListener( new IFieldChangedListener() {
+            
+            public void fieldChanged(FieldEvent pEvent) {
+                mJavaVersion = mJavaVersionRow.getValue();
+            }
+        });
         mJavaVersionRow.select(0);
         mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
+        
+        // Create the test row
+        mJavaTestsRow = new BooleanRow( body, JAVA_TESTS, 
+                "Include base classes for tests" );
+        mJavaTestsRow.setValue( true );
+        mJavaTestsRow.setFieldChangedListener( new IFieldChangedListener() {
+            
+            public void fieldChanged(FieldEvent pEvent) {
+                mUseTests = mJavaTestsRow.getBooleanValue();
+            }
+        });
         
         setControl(body);
     }

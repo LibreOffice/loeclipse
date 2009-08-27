@@ -66,6 +66,7 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.preferences.IOOo;
 import org.openoffice.ide.eclipse.java.build.OOoContainerPage;
 import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
+import org.openoffice.ide.eclipse.java.tests.TestsHelper;
 
 /**
  * The Project handler implementation for Java.
@@ -175,6 +176,18 @@ public class JavaProjectHandler implements IProjectHandler {
         String javaversion = (String)pData.getProperty(
                 JavaWizardPage.JAVA_VERSION);
         unoprj.setProperty(P_JAVA_VERSION, javaversion);
+        
+        // Add the registration files
+        RegistrationHelper.generateFiles( unoprj );
+        
+        // Tests creation
+        Boolean usetests = (Boolean)pData.getProperty( JavaWizardPage.JAVA_TESTS );
+        if ( usetests.booleanValue() ) {
+            TestsHelper.writeTestClasses( unoprj );
+            
+            IJavaProject javaprj = JavaCore.create( prj );
+            TestsHelper.addJUnitLibraries( javaprj );
+        }
     }
 
     /**
@@ -230,13 +243,6 @@ public class JavaProjectHandler implements IProjectHandler {
      */
     public String getLibraryPath(IUnoidlProject pProject) {
         return getJarFile(pProject).getAbsolutePath();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void createRegistrationSystem(IUnoidlProject pProject) {
-        RegistrationHelper.generateFiles(pProject);
     }
     
     /**

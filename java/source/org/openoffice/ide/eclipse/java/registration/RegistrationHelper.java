@@ -59,6 +59,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.java.utils.TemplatesHelper;
 
 /**
  * This class provides utility methods to generate the class and files needed
@@ -79,66 +80,8 @@ public abstract class RegistrationHelper {
      */
     public static void generateFiles(IUnoidlProject pProject) {
         
-        // Get the path where to place the class and the implementations list
-        IPath relPath = pProject.getImplementationPath();
-        IFolder dest = pProject.getFolder(relPath);
-        
-        // Compute the name of the main implementation class
-        String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension(); //$NON-NLS-1$
-        
-        // Create the RegistrationHandler.java file
-
-        StringBuffer pattern = new StringBuffer();
-        
-        BufferedReader patternReader = null;
-        InputStream in = null;
-        try {
-            in = RegistrationHelper.class.getResourceAsStream("RegistrationHandler.java.tpl"); //$NON-NLS-1$
-            patternReader = new BufferedReader(new InputStreamReader(in));
-            String line = patternReader.readLine();
-            while (line != null) {
-                pattern.append(line + "\n"); //$NON-NLS-1$
-                line = patternReader.readLine();
-            }
-        } catch (IOException e) {
-            // log the error
-            PluginLogger.error(Messages.getString("RegistrationHelper.ReadTemplateError"), e); //$NON-NLS-1$
-        } finally {
-            try {
-                patternReader.close();
-                in.close();
-            } catch (Exception e) {
-            }
-        }
-        
-        if (pattern.length() > 0) {
-            String content = MessageFormat.format(pattern.toString(), new Object[]{implPkg});
-
-            FileWriter writer = null;
-            try {
-                IFile classIFile = dest.getFile(CLASS_FILENAME + ".java"); //$NON-NLS-1$
-                File classFile = classIFile.getLocation().toFile();
-                
-                if (!classFile.exists()) {
-                    classFile.getParentFile().mkdirs();
-                    classFile.createNewFile();
-                }
-                
-                writer = new FileWriter(classFile);
-                writer.append(content);
-                
-                // Define the new registration class
-                
-                
-            } catch (IOException e) {
-                PluginLogger.error(Messages.getString("RegistrationHelper.WriteClassError"), e); //$NON-NLS-1$
-            } finally {
-                try {
-                    writer.close();
-                } catch (Exception e) {
-                }
-            }
-        }
+        // Copy the RegistrationHandler.java.tpl file
+        TemplatesHelper.copyTemplate( pProject, CLASS_FILENAME, RegistrationHelper.class, new String( ) );
         
         // Create the empty RegistrationHandler.classes file
         ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);

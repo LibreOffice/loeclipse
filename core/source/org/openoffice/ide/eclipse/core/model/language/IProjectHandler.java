@@ -154,12 +154,4 @@ public interface IProjectHandler {
      * <code>File</code> class constructor.
      */
     public String getLibraryPath(IUnoidlProject pPrj);
-    
-    /**
-     * Adds the necessary code for the registration of several services
-     * implementation.
-     * 
-     * @param pPrj the project where to add the registration system
-     */
-    public void createRegistrationSystem(IUnoidlProject pPrj);
 }

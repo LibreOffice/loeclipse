@@ -104,12 +104,6 @@ public class CppProjectHandler implements IProjectHandler {
         // TODO Auto-generated method stub
 
     }
-
-    @Override
-    public void createRegistrationSystem(IUnoidlProject prj) {
-        // TODO Auto-generated method stub
-
-    }
     
     /**
      * {@inheritDoc}

@@ -123,8 +123,6 @@ public final class UnoFactory {
                 IUnoFactoryConstants.PROJECT_LANGUAGE);
         language.getProjectHandler().configureProject(pData);
         
-        language.getProjectHandler().createRegistrationSystem(prj);
-        
         return prj;
     }
     
