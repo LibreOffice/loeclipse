@@ -1,5 +1,6 @@
 package org.openoffice.ide.eclipse.core.editors.main;
 
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -27,6 +28,7 @@ public abstract class AbstractOverviewSection extends SectionPart {
         super(pParent, pPage.getManagedForm().getToolkit(), pStyle);
         initialize( pPage.getManagedForm() );
         getManagedForm().addPart( this );
+        getSection( ).setLayoutData( new GridData( GridData.FILL_BOTH ) );
     }
     
     /**

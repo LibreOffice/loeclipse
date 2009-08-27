@@ -67,7 +67,7 @@ public class GeneralSection extends LocalizedSection {
         super( pParent, pPage, Section.TITLE_BAR );
         
         
-        getSection().setText( Messages.getString("GeneralSection.Title") ); //$NON-NLS-1$
+        getSection( ).setText( Messages.getString("GeneralSection.Title") ); //$NON-NLS-1$
         
         mModel = pPage.getModel();
         loadData( );
