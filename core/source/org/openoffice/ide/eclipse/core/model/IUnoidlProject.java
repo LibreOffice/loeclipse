@@ -46,9 +46,9 @@ package org.openoffice.ide.eclipse.core.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * Interface for a UNO project.

@@ -53,7 +53,7 @@ import java.util.LinkedList;
 import org.eclipse.core.runtime.FileLocator;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Special class loader to use to load OOo related classes.

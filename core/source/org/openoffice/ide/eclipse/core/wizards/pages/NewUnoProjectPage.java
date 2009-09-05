@@ -90,10 +90,10 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 

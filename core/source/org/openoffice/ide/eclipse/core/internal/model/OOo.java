@@ -55,7 +55,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Representing an OpenOffice.org instance for use in the UNO-IDL projects.

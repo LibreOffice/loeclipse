@@ -61,6 +61,8 @@ import org.openoffice.ide.eclipse.core.gui.rows.SdkRow;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 
 /**
  * The project preference page. This page can be used to reconfigure the

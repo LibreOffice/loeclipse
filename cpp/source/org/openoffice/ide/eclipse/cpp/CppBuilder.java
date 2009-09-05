@@ -35,10 +35,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IIncludeEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
+import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -48,13 +47,13 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 public class CppBuilder implements ILanguageBuilder {
     
-    private static final String INCLUDE = "include"; //$NON-NLS-1$
+    public static final String INCLUDE = "include"; //$NON-NLS-1$
 
     @Override
     public IPath createLibrary(IUnoidlProject unoProject) throws Exception {
@@ -117,21 +116,12 @@ public class CppBuilder implements ILanguageBuilder {
                     process.waitFor();
                     
                     // Check if the build/include dir is in the includes
-                    ICProject cprj = CoreModel.getDefault().create( pPrj );
-                    IPath incPath = unoprj.getBuildPath().append( INCLUDE );
-                    if ( !cprj.isOnSourceRoot( pPrj.getFolder( incPath ) ) ) {
-                        try {
-                            IIncludeEntry entry = CoreModel.newIncludeEntry( null, null, incPath );
-                            IPathEntry[] entries = cprj.getRawPathEntries();
-                            IPathEntry[] newEntries = new IPathEntry[ entries.length + 1 ];
-                            System.arraycopy( entries, 0, newEntries, 0, entries.length );
-                            newEntries[entries.length] = entry;
-                            cprj.setRawPathEntries( newEntries, pMonitor );
-                        } catch ( Exception e ) {
-                            PluginLogger.warning( "Unable to add the local includes directory to the C++ project",e  );
-                        }
-                        
-                    }
+                    IPath includePath = pPrj.getFolder( 
+                            unoprj.getBuildPath().append( CppBuilder.INCLUDE ) ).getProjectRelativePath();
+                    
+                    CppProjectHandler.addIncludesAndLibs( pPrj, 
+                            new CIncludePathEntry[]{ new CIncludePathEntry( includePath, ICSettingEntry.VALUE_WORKSPACE_PATH ) }, 
+                            new CLibraryPathEntry[0] );
                 }
             } catch (InterruptedException e) {
                 PluginLogger.error(

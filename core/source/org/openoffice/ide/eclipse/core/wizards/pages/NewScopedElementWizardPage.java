@@ -62,7 +62,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeProvider;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 import org.openoffice.ide.eclipse.core.wizards.utils.IListenablePage;

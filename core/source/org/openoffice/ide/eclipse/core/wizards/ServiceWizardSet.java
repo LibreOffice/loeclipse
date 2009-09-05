@@ -55,7 +55,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewScopedElementWizardPage;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewServiceWizardPage;

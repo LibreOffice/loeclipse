@@ -51,7 +51,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.openoffice.ide.eclipse.core.gui.AbstractTable;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
 
 /**
  * Row for the selection of a configuration element.

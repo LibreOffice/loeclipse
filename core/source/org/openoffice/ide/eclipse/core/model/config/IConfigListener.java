@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.preferences;
+package org.openoffice.ide.eclipse.core.model.config;
 
 /**
  * Interface describing a OOo or SDK configuration listener.

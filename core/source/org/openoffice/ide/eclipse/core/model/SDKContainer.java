@@ -51,9 +51,9 @@ import java.util.Map.Entry;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.PropertiesManager;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Singleton object containing the SDK instances.

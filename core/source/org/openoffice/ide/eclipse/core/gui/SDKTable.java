@@ -70,8 +70,8 @@ import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.internal.model.SDK;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  *This class creates the whole SDK table with it's viewer and content provider.

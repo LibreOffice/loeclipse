@@ -63,8 +63,8 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * <p>Main builder of the UNO-IDL projects, it computes the language specific

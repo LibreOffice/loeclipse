@@ -70,9 +70,9 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 import org.openoffice.ide.eclipse.core.utils.ZipContent;
 import org.openoffice.ide.eclipse.java.utils.ZipContentHelper;
 

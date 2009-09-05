@@ -49,8 +49,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.gui.AbstractTable;
 import org.openoffice.ide.eclipse.core.gui.SDKTable;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 
 /**
  * Row displaying the selection of an SDK instance.

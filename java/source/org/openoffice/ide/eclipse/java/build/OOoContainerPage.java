@@ -63,7 +63,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.OOoRow;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.java.Messages;
 import org.openoffice.ide.eclipse.java.OOoJavaPlugin;
 

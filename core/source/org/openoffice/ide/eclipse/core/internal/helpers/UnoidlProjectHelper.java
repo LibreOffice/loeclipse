@@ -70,9 +70,9 @@ import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * Helper class for UNO-IDL project handling.
@@ -161,6 +161,9 @@ public class UnoidlProjectHelper {
                 IUnoFactoryConstants.PROJECT_LANGUAGE);
         unoProject.setLanguage(language);
 
+        // create the language-specific part
+        language.getProjectHandler().configureProject(pData);
+        
         // Set the SDK
         String sdkname = (String)pData.getProperty(
                 IUnoFactoryConstants.PROJECT_SDK);
@@ -374,11 +377,10 @@ public class UnoidlProjectHelper {
             pUnoproject.getLanguage().getProjectHandler().addLanguageDependencies(
                     pUnoproject, pMonitor);
             PluginLogger.debug("Language dependencies added"); //$NON-NLS-1$
-            
+
             pUnoproject.getLanguage().getProjectHandler().addOOoDependencies(
                     pUnoproject.getOOo(), ((UnoidlProject)pUnoproject).getProject());
             PluginLogger.debug("OOo dependencies added"); //$NON-NLS-1$
-            
         } catch (CoreException e) {
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {

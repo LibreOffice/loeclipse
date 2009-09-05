@@ -22,13 +22,26 @@ Require-Bundle: org.eclipse.core.runtime,
  javax.xml;bundle-version="1.3.4"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.ide.eclipse.core,
+ org.openoffice.ide.eclipse.core.actions,
+ org.openoffice.ide.eclipse.core.builders,
+ org.openoffice.ide.eclipse.core.editors,
+ org.openoffice.ide.eclipse.core.editors.main,
+ org.openoffice.ide.eclipse.core.editors.syntax,
+ org.openoffice.ide.eclipse.core.gui,
  org.openoffice.ide.eclipse.core.gui.rows,
  org.openoffice.ide.eclipse.core.i18n,
  org.openoffice.ide.eclipse.core.launch,
  org.openoffice.ide.eclipse.core.model,
+ org.openoffice.ide.eclipse.core.model.config,
+ org.openoffice.ide.eclipse.core.model.description,
  org.openoffice.ide.eclipse.core.model.language,
+ org.openoffice.ide.eclipse.core.office,
  org.openoffice.ide.eclipse.core.preferences,
+ org.openoffice.ide.eclipse.core.unittests,
+ org.openoffice.ide.eclipse.core.unotypebrowser,
  org.openoffice.ide.eclipse.core.utils,
- org.openoffice.ide.eclipse.core.wizards
+ org.openoffice.ide.eclipse.core.wizards,
+ org.openoffice.ide.eclipse.core.wizards.pages,
+ org.openoffice.ide.eclipse.core.wizards.utils
 Bundle-Vendor: OpenOffice.org
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

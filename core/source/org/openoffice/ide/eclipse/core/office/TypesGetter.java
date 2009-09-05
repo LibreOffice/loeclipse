@@ -51,7 +51,7 @@ import java.util.Map;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 
 /**

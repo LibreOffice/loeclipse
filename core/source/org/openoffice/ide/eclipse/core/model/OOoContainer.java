@@ -55,9 +55,9 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.PropertiesManager;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.internal.model.URE;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Singleton object containing the OOo configurations.

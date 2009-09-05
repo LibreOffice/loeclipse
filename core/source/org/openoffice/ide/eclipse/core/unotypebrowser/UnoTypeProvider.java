@@ -53,8 +53,8 @@ import java.util.Map;
 
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.office.TypesGetter;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
 
 /**
  * Class providing UNO types from an OpenOffice.org instance and optionally

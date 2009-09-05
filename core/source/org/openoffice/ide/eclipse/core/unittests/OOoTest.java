@@ -36,7 +36,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 import junit.framework.TestCase;
 

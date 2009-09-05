@@ -46,7 +46,7 @@ package org.openoffice.ide.eclipse.core.office;
 import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
 
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Provides a set of utility methods to use to handle OOo. All the code handling

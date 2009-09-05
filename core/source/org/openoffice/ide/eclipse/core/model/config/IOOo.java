@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.preferences;
+package org.openoffice.ide.eclipse.core.model.config;
 
 import java.io.File;
 

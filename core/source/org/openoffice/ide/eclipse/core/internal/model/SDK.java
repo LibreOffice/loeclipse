@@ -62,9 +62,9 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
 import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Class representing a SDK instance used in the UNO-IDL projects.
@@ -92,6 +92,7 @@ public class SDK implements ISdk, ITableElement {
     private static final String PATH_SEPARATOR = System.getProperty("path.separator"); //$NON-NLS-1$
 
     private static final String INCLUDE = "include"; //$NON-NLS-1$
+    private static final String LIB = "lib"; //$NON-NLS-1$
 
     
     
@@ -249,6 +250,13 @@ public class SDK implements ISdk, ITableElement {
      */
     public IPath getIncludePath() {
         return new Path( getHome() ).append( INCLUDE );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IPath getLibPath() {
+        return new Path( getHome() ).append( LIB );
     }
     
     /**

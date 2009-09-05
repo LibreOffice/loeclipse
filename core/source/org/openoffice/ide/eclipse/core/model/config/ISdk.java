@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.preferences;
+package org.openoffice.ide.eclipse.core.model.config;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -101,6 +101,11 @@ public interface ISdk {
      * @return the path to the includes in the SDK.
      */
     public IPath getIncludePath();
+    
+    /**
+     * @return the path to the libraries in the SDK.
+     */
+    public IPath getLibPath();
     
     /**
      * Create a process for the given shell command. This process will 

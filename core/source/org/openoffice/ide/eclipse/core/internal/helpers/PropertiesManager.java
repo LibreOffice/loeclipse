@@ -57,9 +57,9 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.internal.model.SDK;
 import org.openoffice.ide.eclipse.core.internal.model.URE;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Helper class for OOo and SDK preferences handling. These aren't stored in

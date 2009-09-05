@@ -49,8 +49,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.gui.AbstractTable;
 import org.openoffice.ide.eclipse.core.gui.OOoTable;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
-import org.openoffice.ide.eclipse.core.preferences.IConfigListener;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Row displaying the selection of an OOo instance.

@@ -41,7 +41,8 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.preferences;
+package org.openoffice.ide.eclipse.core.model.config;
+
 
 /**
  * This exception is thrown when an OOo or SDK isn't valid, ie that it's home

@@ -44,9 +44,9 @@
 package org.openoffice.ide.eclipse.core.model;
 
 // Imports used for the javadocs
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
-import org.openoffice.ide.eclipse.core.preferences.IOOo;
-import org.openoffice.ide.eclipse.core.preferences.ISdk;
 
 /**
  * This interface contains the keys for the data to provide to the UNO

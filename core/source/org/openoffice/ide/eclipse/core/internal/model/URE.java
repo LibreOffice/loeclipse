@@ -47,7 +47,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.openoffice.ide.eclipse.core.preferences.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Class representing a URE installation.
