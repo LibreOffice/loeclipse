@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
-import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -119,9 +118,10 @@ public class CppBuilder implements ILanguageBuilder {
                     IPath includePath = pPrj.getFolder( 
                             unoprj.getBuildPath().append( CppBuilder.INCLUDE ) ).getProjectRelativePath();
                     
-                    CppProjectHandler.addIncludesAndLibs( pPrj, 
+                    CppProjectHandler.addEntries( pPrj, 
                             new CIncludePathEntry[]{ new CIncludePathEntry( includePath, ICSettingEntry.VALUE_WORKSPACE_PATH ) }, 
-                            new CLibraryPathEntry[0] );
+                            ICSettingEntry.INCLUDE_PATH );
+                    
                 }
             } catch (InterruptedException e) {
                 PluginLogger.error(

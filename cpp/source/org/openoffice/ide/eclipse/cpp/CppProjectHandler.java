@@ -31,6 +31,7 @@
 package org.openoffice.ide.eclipse.cpp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
+import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -55,10 +57,12 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -85,8 +89,11 @@ public class CppProjectHandler implements IProjectHandler {
         for (String libPath : oooLibs) {
             libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
         }
-        addIncludesAndLibs( project, new CIncludePathEntry[] { sdkIncludes }, 
-                libs.toArray( new CLibraryPathEntry[libs.size()]) );
+        
+        addEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
+        addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+         
     }
 
     @Override
@@ -165,6 +172,7 @@ public class CppProjectHandler implements IProjectHandler {
             newConf.setSourceEntries( new ICSourceEntry[] { sourceEntry } );
             newConf.setArtifactExtension( "uno." + newConf.getArtifactExtension() ); //$NON-NLS-1$
         }
+        
         ManagedBuildManager.saveBuildInfo( prj, true );
     }
     
@@ -189,9 +197,12 @@ public class CppProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public String getLibraryPath(IUnoidlProject prj) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getLibraryPath(IUnoidlProject pUnoprj) {
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pUnoprj.getName() );
+        
+        IConfiguration config = ManagedBuildManager.getBuildInfo( prj ).getSelectedConfiguration();
+        IPath path = ManagedBuildManager.getBuildLocation( config, config.getBuilder() );
+        return path.toFile().getAbsolutePath();
     }
 
     /**
@@ -216,12 +227,35 @@ public class CppProjectHandler implements IProjectHandler {
         for (String libPath : oooLibs) {
             libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
         }
-        removeIncludesAndLibs( project, new CIncludePathEntry[] { sdkIncludes }, 
-                libs.toArray( new CLibraryPathEntry[libs.size()]) );
+        removeEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
+        removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
     }
     
-    static public void addIncludesAndLibs( IProject pProject, CIncludePathEntry[] pNewIncludes, 
-            CLibraryPathEntry[] pNewLibs ) {
+    private static ICLanguageSettingEntry[] getMacrosForPlatform(String pOs ) {
+        
+        HashMap<String, String> macrosList = new HashMap<String, String>();
+        macrosList.put( Platform.OS_LINUX, "UNX GCC LINUX CPPU_ENV=gcc3" ); //$NON-NLS-1$
+        macrosList.put( Platform.OS_MACOSX, "UNX GCC MACOSX CPPU_ENV=gcc3" ); //$NON-NLS-1$
+        macrosList.put( Platform.OS_SOLARIS, "UNX SOLARIS SPARC CPPU_ENV=sunpro5" ); //$NON-NLS-1$
+        macrosList.put( Platform.OS_WIN32, "WIN32 WNT CPPU_ENV=msci" ); //$NON-NLS-1$
+        
+        
+        ArrayList<ICLanguageSettingEntry> results = new ArrayList<ICLanguageSettingEntry>();
+        String[] macros = macrosList.get( pOs ).split( " " ); //$NON-NLS-1$
+        for (String macro : macros) {
+            String[] parts = macro.split( "=" ); //$NON-NLS-1$
+            String name = parts[0];
+            String value = null;
+            if ( parts.length > 1 ) {
+                value = parts[1];
+            }
+            results.add( new CMacroEntry( name, value, 0 ) );
+        }
+        
+        return results.toArray( new ICLanguageSettingEntry[ results.size() ]);
+    }
+    
+    static public void addEntries( IProject pProject, ICLanguageSettingEntry[] pNewEntries, int pEntriesType ) {
         ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription( pProject );
         ICConfigurationDescription[] configs = prjDesc.getConfigurations();
         
@@ -230,23 +264,13 @@ public class CppProjectHandler implements IProjectHandler {
             ICFolderDescription folder = config.getRootFolderDescription();
             ICLanguageSetting[] languages = folder.getLanguageSettings();
             for (ICLanguageSetting lang : languages) {
-                // The includes
-                List<ICLanguageSettingEntry> includes = lang.getSettingEntriesList( ICSettingEntry.INCLUDE_PATH );
-                for ( CIncludePathEntry newEntry : pNewIncludes ) {
-                    if ( !includes.contains( newEntry ) ) {
-                        includes.add( newEntry );
+                List<ICLanguageSettingEntry> entries = lang.getSettingEntriesList( pEntriesType );
+                for ( ICLanguageSettingEntry newEntry : pNewEntries ) {
+                    if ( !entries.contains( newEntry ) ) {
+                        entries.add( newEntry );
                     }
                 }
-                lang.setSettingEntries( ICSettingEntry.INCLUDE_PATH, includes );
-                
-                // The libs
-                List<ICLanguageSettingEntry> libs = lang.getSettingEntriesList( ICSettingEntry.LIBRARY_PATH );
-                for ( CLibraryPathEntry newLib : pNewLibs ) {
-                    if ( !includes.contains( newLib ) ) {
-                        libs.add( newLib );
-                    }
-                }
-                lang.setSettingEntries( ICSettingEntry.LIBRARY_PATH, libs );
+                lang.setSettingEntries( pEntriesType, entries );
             }
         }
         
@@ -257,8 +281,7 @@ public class CppProjectHandler implements IProjectHandler {
         }
     }
     
-    static public void removeIncludesAndLibs( IProject pProject, CIncludePathEntry[] pOldIncludes, 
-            CLibraryPathEntry[] pOldLibs ) {
+    static public void removeEntries( IProject pProject, ICLanguageSettingEntry[] pOldEntries, int pEntriesType ) {
         ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription( pProject );
         ICConfigurationDescription[] configs = prjDesc.getConfigurations();
         
@@ -267,23 +290,13 @@ public class CppProjectHandler implements IProjectHandler {
             ICFolderDescription folder = config.getRootFolderDescription();
             ICLanguageSetting[] languages = folder.getLanguageSettings();
             for (ICLanguageSetting lang : languages) {
-                // The includes
-                List<ICLanguageSettingEntry> includes = lang.getSettingEntriesList( ICSettingEntry.INCLUDE_PATH );
-                for ( CIncludePathEntry oldEntry : pOldIncludes ) {
-                    if ( includes.contains( oldEntry ) ) {
-                        includes.remove( oldEntry );
+                List<ICLanguageSettingEntry> entries = lang.getSettingEntriesList( pEntriesType );
+                for ( ICLanguageSettingEntry oldEntry : pOldEntries ) {
+                    if ( entries.contains( oldEntry ) ) {
+                        entries.remove( oldEntry );
                     }
                 }
-                lang.setSettingEntries( ICSettingEntry.INCLUDE_PATH, includes );
-                
-                // The libs
-                List<ICLanguageSettingEntry> libs = lang.getSettingEntriesList( ICSettingEntry.LIBRARY_PATH );
-                for ( CLibraryPathEntry oldLib : pOldLibs ) {
-                    if ( includes.contains( oldLib ) ) {
-                        libs.remove( oldLib );
-                    }
-                }
-                lang.setSettingEntries( ICSettingEntry.LIBRARY_PATH, libs );
+                lang.setSettingEntries( pEntriesType, entries );
             }
         }
         
