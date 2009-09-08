@@ -57,25 +57,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.gui.OOoTable;
-import org.openoffice.ide.eclipse.core.gui.SDKTable;
+import org.openoffice.ide.eclipse.core.gui.OOoConfigPanel;
 import org.openoffice.ide.eclipse.core.gui.rows.BooleanRow;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
@@ -87,12 +82,7 @@ import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.OOoContainer;
-import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
-import org.openoffice.ide.eclipse.core.model.config.IOOo;
-import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
@@ -105,13 +95,12 @@ import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
  *
  */
 public class NewUnoProjectPage extends WizardNewProjectCreationPage 
-                               implements IFieldChangedListener, IConfigListener {
+                               implements IFieldChangedListener {
     
     /* Constants defining the field properties used to react to field change events */
     private static final String PREFIX = "__prefix"; //$NON-NLS-1$
     private static final String OUTPUT_EXT = "__output_ext"; //$NON-NLS-1$
-    private static final String SDK = "__sdk"; //$NON-NLS-1$
-    private static final String OOO = "__ooo"; //$NON-NLS-1$
+
     private static final String LANGUAGE = "__language"; //$NON-NLS-1$
     
     private static final String CUSTOM_DIRS = "__custom_dirs"; //$NON-NLS-1$
@@ -129,16 +118,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
      * Implementation extension field object.
      */
     private TextRow mOutputExt;
-    
-    /**
-     * SDK used for the project selection row.
-     */
-    private ChoiceRow mSdkRow;
-    
-    /**
-     * OOo used for the project selection row.
-     */
-    private ChoiceRow mOOoRow;
     
     /**
      * Programming language to use for code generation.
@@ -174,6 +153,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
             ((NewUnoProjectWizard)getWizard()).pageChanged(NewUnoProjectPage.this);
         }
     };
+    private OOoConfigPanel mOOoConfigPanel;
     
     /**
      * Default constructor.
@@ -189,9 +169,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         
         setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
                 ImagesConstants.NEWPROJECT_WIZ));
-        
-        OOoContainer.addListener(this);
-        SDKContainer.addListener(this);
     }
     
     /**
@@ -208,9 +185,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         mListenedTexts.clear();
         
         super.dispose();
-        
-        OOoContainer.removeListener(this);
-        SDKContainer.removeListener(this);
     }
     
     /**
@@ -236,28 +210,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
     }
     
     /**
-     * @return SDK name selected
-     */
-    public String getSDKName() {
-        String sdkName = ""; //$NON-NLS-1$
-        if (null != mSdkRow) {
-            sdkName = mSdkRow.getValue();
-        }
-        return sdkName;
-    }
-    
-    /** 
-     * @return OOo name selected
-     */
-    public String getOOoName() {
-        String oooName = ""; //$NON-NLS-1$
-        if (null != mOOoRow) {
-            oooName = mOOoRow.getValue();
-        }
-        return oooName;
-    }
-    
-    /**
      * @return the chosen implementation language.
      */
     public ILanguage getChosenLanguage() {
@@ -267,6 +219,13 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
             language = LanguagesHelper.getLanguageFromName(value);
         }
         return language;
+    }
+    
+    /**
+     * @return the selected OOo name
+     */
+    public String getOOoName( ) {
+        return mOOoConfigPanel.getOOoName();
     }
     
     /**
@@ -392,45 +351,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         mOutputExt.setFieldChangedListener(this);
         mOutputExt.setTooltip(Messages.getString("NewUnoProjectPage.CompExtensionTooltip")); //$NON-NLS-1$
         
-        // Add the SDK choice field
-        mSdkRow = new ChoiceRow(body, SDK,
-                        Messages.getString("NewUnoProjectPage.UsedSdk"), //$NON-NLS-1$
-                        Messages.getString("NewUnoProjectPage.SdkBrowse")); //$NON-NLS-1$
-        mSdkRow.setFieldChangedListener(this);
-        mSdkRow.setBrowseSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent pEvent) {
-                super.widgetSelected(pEvent);
-                
-                // Open the SDK Configuration page
-                TableDialog dialog = new TableDialog(getShell(), true);
-                dialog.create();
-                dialog.open();
-                
-            }
-        });
-        
-        fillSDKRow();
-        mSdkRow.setTooltip(Messages.getString("NewUnoProjectPage.SdkTooltip")); //$NON-NLS-1$
-        
-        
-        // Add the OOo choice field
-        mOOoRow = new ChoiceRow(body, OOO,
-                        Messages.getString("NewUnoProjectPage.UsedOOo"), //$NON-NLS-1$
-                        Messages.getString("NewUnoProjectPage.OOoBrowse")); //$NON-NLS-1$
-        mOOoRow.setFieldChangedListener(this);
-        mOOoRow.setBrowseSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent pEvent) {
-                super.widgetSelected(pEvent);
-                
-                // Open the OOo Configuration page
-                TableDialog dialog = new TableDialog(getShell(), false);
-                dialog.create();
-                dialog.open();
-            }
-        });
-        
-        fillOOoRow();
-        mOOoRow.setTooltip(Messages.getString("NewUnoProjectPage.OOoTooltip")); //$NON-NLS-1$
+        mOOoConfigPanel = new OOoConfigPanel( body );
         
         
         // Adding the programming language row 
@@ -474,47 +395,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
         mIdlDirRow.setEnabled(false);
         mIdlDirRow.setFieldChangedListener(this);    
-    }
-
-    /**
-     * Set the SDK names to the SDK list-box.
-     */
-    private void fillSDKRow () {
-        
-        if (null != mSdkRow) {
-            // Adding the SDK names to the combo box 
-            String[] sdks = new String[SDKContainer.getSDKCount()];
-            Vector<String> sdkKeys = SDKContainer.getSDKKeys();
-            for (int i = 0, length = SDKContainer.getSDKCount(); i < length; i++) {
-                sdks[i] = sdkKeys.get(i);
-            }
-            
-            mSdkRow.removeAll();
-            mSdkRow.addAll(sdks);
-            // The default SDK is randomly the first one
-            mSdkRow.select(0);
-        }
-    }
-
-    /**
-     * Set the OOo names to the OOo list-box.
-     */
-    private void fillOOoRow() {
-        
-        if (null != mOOoRow) {
-            
-            // Adding the OOo names to the combo box 
-            String[] ooos = new String[OOoContainer.getOOoCount()];
-            Vector<String> oooKeys = OOoContainer.getOOoKeys();
-            for (int i = 0, length = OOoContainer.getOOoCount(); i < length; i++) {
-                ooos[i] = oooKeys.get(i);
-            }
-            
-            mOOoRow.removeAll();
-            mOOoRow.addAll(ooos);
-            // The default OOo is randomly the first one
-            mOOoRow.select(0);
-        }
     }
     
     /**
@@ -609,42 +489,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
     }
     
     /**
-     * {@inheritDoc}
-     */
-    public void ConfigAdded(Object pElement) {
-        if (pElement instanceof IOOo) {
-            fillOOoRow();
-        } else {
-            fillSDKRow();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void ConfigRemoved(Object pElement) {
-        
-        if (null == pElement || pElement instanceof IOOo) {
-            fillOOoRow();
-        } 
-        
-        if (null == pElement || pElement instanceof ISdk) {
-            fillSDKRow();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void ConfigUpdated(Object pElement) {
-        if (pElement instanceof IOOo) {
-            fillOOoRow();
-        } else {
-            fillSDKRow();
-        }
-    };
-    
-    /**
      * @param pData the data to fill.
      * @param pForce forces the project creation. Otherwise, the project handle won't be set
      * 
@@ -667,8 +511,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
             pData.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, getPrefix());
             pData.setProperty(IUnoFactoryConstants.PROJECT_COMP, getOutputExt());
             pData.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_SDK, getSDKName());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_OOO, getOOoName());
+            pData.setProperty(IUnoFactoryConstants.PROJECT_SDK, mOOoConfigPanel.getSDKName());
+            pData.setProperty(IUnoFactoryConstants.PROJECT_OOO, mOOoConfigPanel.getOOoName());
             
             pData.setProperty(IUnoFactoryConstants.PROJECT_SRC_DIR, mSourceRow.getValue());
             pData.setProperty(IUnoFactoryConstants.PROJECT_IDL_DIR, mIdlDirRow.getValue());
@@ -682,66 +526,5 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
      */
     public IUnoidlProject getUnoidlProject() {
         return mUnoProject;
-    }
-    
-    /**
-     * Dialog for OOo and SDK configuration.
-     * 
-     * @author cedribosdo
-     */
-    private class TableDialog extends Dialog {
-        
-        private boolean mEditSdk = true;
-        
-        private Object mTable;
-        
-        /**
-         * Constructor.
-         * 
-         * @param pParentShell the parent shell of the dialog.
-         * @param pEditSDK <code>true</code> for SDK, <code>false</code> for OOo edition.
-         */
-        TableDialog (Shell pParentShell, boolean pEditSDK) {
-            super(pParentShell);
-            setShellStyle(getShellStyle() | SWT.RESIZE);
-            mEditSdk = pEditSDK;
-            
-            // This dialog is a modal one
-            setBlockOnOpen(true);
-            if (pEditSDK) {
-                setTitle(Messages.getString("NewUnoProjectPage.SdkBrowse")); //$NON-NLS-1$
-            } else {
-                setTitle(Messages.getString("NewUnoProjectPage.OOoBrowse")); //$NON-NLS-1$
-            }
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        protected Control createDialogArea(Composite pParent) {
-            
-            if (mEditSdk) {
-                mTable = new SDKTable(pParent);
-                ((SDKTable)mTable).getPreferences();
-            } else {
-                mTable = new OOoTable(pParent);
-                ((OOoTable)mTable).getPreferences();
-            }
-                
-            return pParent;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        protected void okPressed() {
-            super.okPressed();
-            
-            if (mEditSdk) {
-                ((SDKTable)mTable).savePreferences();
-            } else {
-                ((OOoTable)mTable).savePreferences();
-            }
-        }
     }
 }

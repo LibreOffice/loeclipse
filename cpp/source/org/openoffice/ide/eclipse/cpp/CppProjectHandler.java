@@ -69,6 +69,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 public class CppProjectHandler implements IProjectHandler {
@@ -82,18 +83,7 @@ public class CppProjectHandler implements IProjectHandler {
     @Override
     public void addOOoDependencies(IOOo ooo, IProject project) {
         IUnoidlProject unoprj = ProjectsManager.getProject( project.getName() );
-        
-        CIncludePathEntry sdkIncludes = new CIncludePathEntry( unoprj.getSdk().getIncludePath(), 0 );
-        ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
-        String[] oooLibs = ooo.getLibsPath();
-        for (String libPath : oooLibs) {
-            libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
-        }
-        
-        addEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
-        addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
-        addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
-         
+        addOOoDependencies( ooo, unoprj.getSdk(), project );
     }
 
     @Override
@@ -220,15 +210,7 @@ public class CppProjectHandler implements IProjectHandler {
     @Override
     public void removeOOoDependencies(IOOo ooo, IProject project) {
         IUnoidlProject unoprj = ProjectsManager.getProject( project.getName() );
-        
-        CIncludePathEntry sdkIncludes = new CIncludePathEntry( unoprj.getSdk().getIncludePath(), 0 );
-        ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
-        String[] oooLibs = ooo.getLibsPath();
-        for (String libPath : oooLibs) {
-            libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
-        }
-        removeEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
-        removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        removeOOoDependencies( ooo, unoprj.getSdk(), project );
     }
     
     private static ICLanguageSettingEntry[] getMacrosForPlatform(String pOs ) {
@@ -305,5 +287,30 @@ public class CppProjectHandler implements IProjectHandler {
         } catch ( CoreException e ) {
             PluginLogger.error( "Error setting the includes and libaries", e );
         }
+    }
+    
+    static public void addOOoDependencies(IOOo ooo, ISdk sdk, IProject project) {
+        CIncludePathEntry sdkIncludes = new CIncludePathEntry( sdk.getIncludePath(), 0 );
+        ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
+        String[] oooLibs = ooo.getLibsPath();
+        for (String libPath : oooLibs) {
+            libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
+        }
+        
+        addEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
+        addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+         
+    }
+    
+    static public void removeOOoDependencies(IOOo ooo, ISdk sdk, IProject project) {
+        CIncludePathEntry sdkIncludes = new CIncludePathEntry( sdk.getIncludePath(), 0 );
+        ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
+        String[] oooLibs = ooo.getLibsPath();
+        for (String libPath : oooLibs) {
+            libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
+        }
+        removeEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
+        removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
     }
 }
