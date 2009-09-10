@@ -50,7 +50,7 @@ import org.openoffice.ide.eclipse.cpp.CppProjectHandler;
 
 public class ClientWizard extends CCProjectWizard {
 
-    private static final String HELPER_DIR_NAME = "helper";
+    private static final String HELPER_DIR_NAME = "helper"; //$NON-NLS-1$
     private UnoConnectionPage mCnxPage;
 
     public ClientWizard() {
@@ -86,9 +86,6 @@ public class ClientWizard extends CCProjectWizard {
         IOOo ooo = mCnxPage.getOoo();
         ISdk sdk = mCnxPage.getSdk();
         
-        // Add the necessary includes/libs/macros
-        CppProjectHandler.addOOoDependencies( ooo, sdk, newProject );
-        
         // Copy the helper files in the helper source dir
         IFolder srcDir = newProject.getFolder( HELPER_DIR_NAME );
         srcDir.create( true, true, null );
@@ -106,7 +103,7 @@ public class ClientWizard extends CCProjectWizard {
         newEntries[ newEntries.length - 1 ] = CoreModel.newSourceEntry( srcDir.getFullPath() );
         CoreModel.setRawPathEntries( cprj, newEntries, null );
         
-        // TODO Run the cppumaker on the ooo types ( asynchronous )
+        CppProjectHandler.addOOoDependencies( ooo, sdk, newProject );
         
         // TODO Setup the launch config
         

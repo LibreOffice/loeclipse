@@ -43,6 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.config;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -112,13 +113,13 @@ public interface ISdk {
      * be created with the project parameters such as it's SDK and 
      * location path
      * 
-     * @param pProject the UNO-IDL project on which to run the tool
+     * @param pProject the UNO project on which to run the tool
      * @param pShellCommand the shell command to execute the tool
      * @param pMonitor a process monitor to watch the tool launching
      * 
      * @return the process executing the tool
      */
-    public Process runTool(IUnoidlProject pProject, 
+    public Process runTool(IUnoidlProject pProject,   
             String pShellCommand, IProgressMonitor pMonitor);
     
     /**
@@ -126,14 +127,15 @@ public interface ISdk {
      * be created with the project parameters such as it's SDK and 
      * location path
      * 
-     * @param pProject the UNO-IDL project on which to run the tool
+     * @param pProject the folder from which to run the command
+     * @param pOOo the ooo instance to run the tool
      * @param pShellCommand the shell command to execute the tool
-     * @param pEnv tool environement variable
+     * @param pEnv tool environment variable
      * @param pMonitor a process monitor to watch the tool launching
      * 
      * @return the process executing the tool
      */
-    public Process runToolWithEnv(IUnoidlProject pProject, 
+    public Process runToolWithEnv(IProject pProject, IOOo pOOo, 
             String pShellCommand, String[] pEnv, IProgressMonitor pMonitor);
 
 }

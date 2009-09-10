@@ -127,10 +127,14 @@ bool AbstractConnection::connect( )
 	}
 	catch ( NoConnectException e )
 	{
+#if DEBUG
 		fprintf( stderr, "connection failed: %s : %s\n",
 				OUSTRING_TO_C( m_sConnectionString ),
 				OUSTRING_TO_C( e.Message ) );
+#endif
+		m_bConnected = false;
 	}
+	return m_bConnected;
 }
 
 void AbstractConnection::disconnect()

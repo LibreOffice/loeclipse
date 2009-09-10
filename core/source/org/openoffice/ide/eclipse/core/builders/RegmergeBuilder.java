@@ -132,7 +132,10 @@ public class RegmergeBuilder {
             }
             sPathValue += sPath;
         }
-        Process process = pUnoprj.getSdk().runToolWithEnv(pUnoprj, command, new String[]{ sPathValue }, pMonitor);
+        
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pUnoprj.getName() );
+        Process process = pUnoprj.getSdk().runToolWithEnv( prj, 
+                pUnoprj.getOOo(), command, new String[]{ sPathValue }, pMonitor);
         
         // Just wait for the process to end before destroying it
         try {

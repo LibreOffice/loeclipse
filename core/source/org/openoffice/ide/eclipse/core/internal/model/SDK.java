@@ -51,6 +51,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -309,33 +311,31 @@ public class SDK implements ISdk, ITableElement {
      */
     public Process runTool(IUnoidlProject pProject, 
             String pShellCommand, IProgressMonitor pMonitor) {
-        return runToolWithEnv(pProject, pShellCommand, new String[0], pMonitor);
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pProject.getName() );
+        return runToolWithEnv(prj, pProject.getOOo(), pShellCommand, new String[0], pMonitor);
     }
     
     /**
      * {@inheritDoc}
      */
-    public Process runToolWithEnv(IUnoidlProject pProject, 
+    public Process runToolWithEnv(IProject pProject, IOOo pOOo, 
             String pShellCommand, String[] pEnv, IProgressMonitor pMonitor) {
         
         Process process = null;
         
         try {
-            ISdk sdk = pProject.getSdk();
-            IOOo ooo = pProject.getOOo();
-            
-            if (null != sdk && null != ooo) {
+            if ( null != pOOo ) {
                 
                 // Get the environment variables and copy them. Needs Java 1.5
                 String[] sysEnv = SystemHelper.getSystemEnvironement();
                 
                 String[] vars = mergeVariables(sysEnv, pEnv);
                
-                vars = updateEnvironment(vars, ooo);
+                vars = updateEnvironment(vars, pOOo);
                 
                 // Run only if the OS and ARCH are valid for the SDK
                 if (null != vars) {
-                    File projectFile = pProject.getProjectPath().toFile();
+                    File projectFile = pProject.getLocation().toFile();
                     process = SystemHelper.runTool(pShellCommand, vars, projectFile);
                 }
             }

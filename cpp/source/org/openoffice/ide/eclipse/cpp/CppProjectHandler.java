@@ -32,10 +32,7 @@ package org.openoffice.ide.eclipse.cpp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -44,18 +41,14 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -74,6 +67,13 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 public class CppProjectHandler implements IProjectHandler {
 
+    public static final String[] LIBS = {
+        "uno_sal", //$NON-NLS-1$
+        "uno_cppu", //$NON-NLS-1$
+        "uno_cppuhelpergcc3", //$NON-NLS-1$
+        "uno_salhelpergcc3" //$NON-NLS-1$
+    };
+    
     @Override
     public void addLanguageDependencies(IUnoidlProject unoproject,
             IProgressMonitor monitor) throws CoreException {
@@ -89,23 +89,8 @@ public class CppProjectHandler implements IProjectHandler {
     @Override
     public void addProjectNature(IProject pProject) {
         try {
-            if (!pProject.exists()) {
-                pProject.create(null);
-                PluginLogger.debug(
-                        "Project created during language specific operation"); //$NON-NLS-1$
-            }
-            
-            if (!pProject.isOpen()) {
-                pProject.open(null);
-                PluginLogger.debug("Project opened"); //$NON-NLS-1$
-            }
-            
-            CProjectNature.addCNature(pProject, null);
-            CCProjectNature.addCCNature( pProject, null );
-            ManagedCProjectNature.addManagedNature( pProject, null );
-            
+            CDTHelper.addCDTNature( pProject, null );
             PluginLogger.debug( "C++ project nature set" );
-            
         } catch (CoreException e) {
             PluginLogger.error( "Failed to set C++ project nature" );
         }
@@ -213,7 +198,7 @@ public class CppProjectHandler implements IProjectHandler {
         removeOOoDependencies( ooo, unoprj.getSdk(), project );
     }
     
-    private static ICLanguageSettingEntry[] getMacrosForPlatform(String pOs ) {
+    private static ICLanguageSettingEntry[] getMacrosForPlatform( String pOs ) {
         
         HashMap<String, String> macrosList = new HashMap<String, String>();
         macrosList.put( Platform.OS_LINUX, "UNX GCC LINUX CPPU_ENV=gcc3" ); //$NON-NLS-1$
@@ -237,80 +222,45 @@ public class CppProjectHandler implements IProjectHandler {
         return results.toArray( new ICLanguageSettingEntry[ results.size() ]);
     }
     
-    static public void addEntries( IProject pProject, ICLanguageSettingEntry[] pNewEntries, int pEntriesType ) {
-        ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription( pProject );
-        ICConfigurationDescription[] configs = prjDesc.getConfigurations();
-        
-        // Set them on all the languages of all the configurations
-        for (ICConfigurationDescription config : configs) {
-            ICFolderDescription folder = config.getRootFolderDescription();
-            ICLanguageSetting[] languages = folder.getLanguageSettings();
-            for (ICLanguageSetting lang : languages) {
-                List<ICLanguageSettingEntry> entries = lang.getSettingEntriesList( pEntriesType );
-                for ( ICLanguageSettingEntry newEntry : pNewEntries ) {
-                    if ( !entries.contains( newEntry ) ) {
-                        entries.add( newEntry );
-                    }
-                }
-                lang.setSettingEntries( pEntriesType, entries );
-            }
-        }
-        
-        try {
-            CoreModel.getDefault().setProjectDescription( pProject, prjDesc );
-        } catch ( CoreException e ) {
-            PluginLogger.error( "Error setting the includes and libraries", e );
-        }
-    }
-    
-    static public void removeEntries( IProject pProject, ICLanguageSettingEntry[] pOldEntries, int pEntriesType ) {
-        ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription( pProject );
-        ICConfigurationDescription[] configs = prjDesc.getConfigurations();
-        
-        // Set them on all the languages of all the configurations
-        for (ICConfigurationDescription config : configs) {
-            ICFolderDescription folder = config.getRootFolderDescription();
-            ICLanguageSetting[] languages = folder.getLanguageSettings();
-            for (ICLanguageSetting lang : languages) {
-                List<ICLanguageSettingEntry> entries = lang.getSettingEntriesList( pEntriesType );
-                for ( ICLanguageSettingEntry oldEntry : pOldEntries ) {
-                    if ( entries.contains( oldEntry ) ) {
-                        entries.remove( oldEntry );
-                    }
-                }
-                lang.setSettingEntries( pEntriesType, entries );
-            }
-        }
-        
-        try {
-            CoreModel.getDefault().setProjectDescription( pProject, prjDesc );
-        } catch ( CoreException e ) {
-            PluginLogger.error( "Error setting the includes and libaries", e );
-        }
-    }
-    
     static public void addOOoDependencies(IOOo ooo, ISdk sdk, IProject project) {
         CIncludePathEntry sdkIncludes = new CIncludePathEntry( sdk.getIncludePath(), 0 );
+        CIncludePathEntry includes = new CIncludePathEntry( OOoSdkProjectJob.getIncludes( ooo ), 0 );
+        
         ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
         String[] oooLibs = ooo.getLibsPath();
         for (String libPath : oooLibs) {
             libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
         }
+        IFolder oooSdkLibs = OOoSdkProjectJob.getLibraries( ooo ); 
+        libs.add( new CLibraryPathEntry( oooSdkLibs, ICSettingEntry.VALUE_WORKSPACE_PATH ) );
         
-        addEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
-        addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
-        addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
-         
+        
+        CDTHelper.addEntries( project, new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
+        CDTHelper.addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        CDTHelper.addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+        
+        // Run the cppumaker on the ooo types ( asynchronous )
+        OOoSdkProjectJob job = new OOoSdkProjectJob(ooo, sdk );
+        job.schedule();
+        
+        CDTHelper.addEntries( project, new ICLanguageSettingEntry[]{ includes }, ICSettingEntry.INCLUDE_PATH );
     }
     
     static public void removeOOoDependencies(IOOo ooo, ISdk sdk, IProject project) {
         CIncludePathEntry sdkIncludes = new CIncludePathEntry( sdk.getIncludePath(), 0 );
+        CIncludePathEntry includes = new CIncludePathEntry( OOoSdkProjectJob.getIncludes( ooo ), 0 );
+        
         ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
         String[] oooLibs = ooo.getLibsPath();
         for (String libPath : oooLibs) {
             libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
         }
-        removeEntries( project, new CIncludePathEntry[] { sdkIncludes }, ICSettingEntry.INCLUDE_PATH );
-        removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        IFolder oooSdkLibs = OOoSdkProjectJob.getLibraries( ooo ); 
+        libs.add( new CLibraryPathEntry( oooSdkLibs, ICSettingEntry.VALUE_WORKSPACE_PATH ) );
+        
+        CDTHelper.removeEntries( project, new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
+        CDTHelper.removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        CDTHelper.removeEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+
     }
 }

@@ -11,11 +11,11 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            canFinishEarly="true"
+            canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
             class="org.openoffice.ide.eclipse.cpp.client.ClientWizard"
             hasPages="true"
-            icon="icons/uno_client.gif"
+            icon="icons/uno_client.png"
             id="org.openoffice.ide.eclipse.cpp.client"
             name="C++ UNO client application">
       </wizard>

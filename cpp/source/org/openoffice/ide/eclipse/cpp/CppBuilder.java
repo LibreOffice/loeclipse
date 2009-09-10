@@ -87,7 +87,7 @@ public class CppBuilder implements ILanguageBuilder {
                     String oooTypesArgs = ""; //$NON-NLS-1$
                     for (String path : paths) {
                         IPath ooTypesPath = new Path (path);
-                        oooTypesArgs += " \"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+                        oooTypesArgs += " -X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
                     }
 
                     String command = "cppumaker -T\"*\"" +  //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class CppBuilder implements ILanguageBuilder {
                     IPath includePath = pPrj.getFolder( 
                             unoprj.getBuildPath().append( CppBuilder.INCLUDE ) ).getProjectRelativePath();
                     
-                    CppProjectHandler.addEntries( pPrj, 
+                    CDTHelper.addEntries( pPrj, 
                             new CIncludePathEntry[]{ new CIncludePathEntry( includePath, ICSettingEntry.VALUE_WORKSPACE_PATH ) }, 
                             ICSettingEntry.INCLUDE_PATH );
                     

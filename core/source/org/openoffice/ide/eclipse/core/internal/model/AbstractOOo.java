@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -333,8 +335,11 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         
         String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
         
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
+        
         if (getJavaldxPath() != null) {
-            Process p = pPrj.getSdk().runToolWithEnv(pPrj, getJavaldxPath(), env, pMonitor);
+            Process p = pPrj.getSdk().runToolWithEnv(prj, 
+                    pPrj.getOOo(), getJavaldxPath(), env, pMonitor);
             InputStream out = p.getInputStream();
             StringWriter writer = new StringWriter();
             
@@ -352,7 +357,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                     System.getProperty("path.separator")); //$NON-NLS-1$
         }
         
-        Process p = pPrj.getSdk().runToolWithEnv(pPrj, command, env, pMonitor);
+        Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
         DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.UreProcessName")  + pMain); //$NON-NLS-1$
     }
     
