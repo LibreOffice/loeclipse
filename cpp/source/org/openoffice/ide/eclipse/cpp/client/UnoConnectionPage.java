@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.openoffice.ide.eclipse.core.gui.ConnectionConfigPanel;
 import org.openoffice.ide.eclipse.core.gui.OOoConfigPanel;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
@@ -52,8 +53,14 @@ import org.openoffice.ide.eclipse.core.model.config.ISdk;
 public class UnoConnectionPage extends WizardPage {
 
     private static final int LAYOUT_COLUMNS = 3;
+
+    private static final String PIPE_PATTERN = "PipeConnection cnx( \"{0}\" );"; //$NON-NLS-1$
+    private static final String SOCKET_PATTERN = "SocketConnection cnx( {1}, \"{0}\" );"; //$NON-NLS-1$
+    
     private UnoClientWizardPage mMainPage;
+    
     private OOoConfigPanel mOOoConfigPanel;
+    private ConnectionConfigPanel mCnxConfigPanel;
 
     public UnoConnectionPage( ) {
         super( "unocnxpage" ); //$NON-NLS-1$
@@ -75,9 +82,15 @@ public class UnoConnectionPage extends WizardPage {
         confLbl.setLayoutData( gd );
         confLbl.setText( "OpenOffice.org and SDK for building" );
         
-        // TODO Add a section for the sample connection config
-        
         mOOoConfigPanel = new OOoConfigPanel( body );
+        
+        Label sep = new Label( body, SWT.SEPARATOR | SWT.HORIZONTAL );
+        gd = new GridData( SWT.FILL, SWT.CENTER, true, false );
+        gd.horizontalSpan = LAYOUT_COLUMNS;
+        sep.setLayoutData( gd );
+        
+        mCnxConfigPanel = new ConnectionConfigPanel( body );
+        mCnxConfigPanel.setPatterns( PIPE_PATTERN, SOCKET_PATTERN );
         
         setControl( body );
     }
@@ -94,6 +107,13 @@ public class UnoConnectionPage extends WizardPage {
      */
     public ISdk getSdk( ) {
         return SDKContainer.getSDK( mOOoConfigPanel.getSDKName() );
+    }
+    
+    /**
+     * @return the C++ connection code for the sample client
+     */
+    public String getConnectionCode( ) {
+        return mCnxConfigPanel.getConnectionCode();
     }
     
     /**

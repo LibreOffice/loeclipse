@@ -98,8 +98,7 @@ public class ClientWizard extends CCProjectWizard {
             copyResource( "connection.hxx", srcDir, new String() ); //$NON-NLS-1$
             copyResource( "connection.cxx", srcDir, new String() ); //$NON-NLS-1$
             
-            // TODO Make that configurable in the wizard
-            String cnxInitCode = "SocketConnection cnx( 8080, \"localhost\" );"; //$NON-NLS-1$
+            String cnxInitCode = mCnxPage.getConnectionCode();
             copyResource( CLIENT_FILE, srcDir, cnxInitCode );
 
             srcDir.refreshLocal( IResource.DEPTH_ONE, null );

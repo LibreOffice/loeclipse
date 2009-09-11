@@ -17,13 +17,9 @@
             hasPages="true"
             icon="icons/uno_client.png"
             id="org.openoffice.ide.eclipse.cpp.client"
-            name="C++ UNO client application">
+            name="C++ UNO client application"
+            project="true">
       </wizard>
-   </extension>
-   <extension
-         id="id1"
-         name="name"
-         point="org.eclipse.cdt.core.externalSettingsProvider">
    </extension>
 
 </plugin>
