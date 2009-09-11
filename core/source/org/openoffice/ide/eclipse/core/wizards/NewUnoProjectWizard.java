@@ -66,6 +66,7 @@ import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
+import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewUnoProjectPage;
 import org.openoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
@@ -91,7 +92,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     public NewUnoProjectWizard() {
         
         super();
-        mActivePage = OOEclipsePlugin.getActivePage();
+        mActivePage = WorkbenchHelper.getActivePage();
         setForcePreviousAndNextButtons(false);
     }
     

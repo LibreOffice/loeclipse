@@ -49,10 +49,10 @@ using namespace com::sun::star;
 
 #define OUSTRING_TO_C( x )		rtl::OUStringToOString( x, RTL_TEXTENCODING_UTF8 ).getStr( )
 
-namespace unoclienthelper {
+namespace unoclienthelper '{'
 
 SocketConnection::SocketConnection( int nPort, char* pHost )
-{
+'{'
 	rtl::OUString sCnxString = rtl::OUString::createFromAscii( "socket,host=" );
 	sCnxString = sCnxString.concat( rtl::OUString::createFromAscii( pHost ) );
 	sCnxString = sCnxString.concat( rtl::OUString::createFromAscii( ",port=" ) );
@@ -60,34 +60,34 @@ SocketConnection::SocketConnection( int nPort, char* pHost )
 }
 
 SocketConnection::~SocketConnection()
-{
+'{'
 }
 
 PipeConnection::PipeConnection( char* pPipeName )
-{
+'{'
 	rtl::OUString sCnxString = rtl::OUString::createFromAscii( "pipe,name=" );
 	m_sConnectionString = sCnxString.concat( rtl::OUString::createFromAscii( pPipeName ) );
 }
 
 PipeConnection::~PipeConnection()
-{
+'{'
 }
 
 AbstractConnection::AbstractConnection() :
 	m_bExpectingDisconnect( false ),
 	m_bConnected ( false )
-{
+'{'
 }
 
 AbstractConnection::~AbstractConnection()
-{
+'{'
 }
 
 bool AbstractConnection::connect( )
-{
+'{'
 	// Try to connect
 	try
-	{
+	'{'
 		Reference< XComponentContext > xCtx = cppu::defaultBootstrap_InitialComponentContext();
 		Reference< XMultiServiceFactory > xServiceFactory ( xCtx->getServiceManager(), UNO_QUERY );
 
@@ -126,7 +126,7 @@ bool AbstractConnection::connect( )
 		m_bConnected = true;
 	}
 	catch ( NoConnectException e )
-	{
+	'{'
 #if DEBUG
 		fprintf( stderr, "connection failed: %s : %s\n",
 				OUSTRING_TO_C( m_sConnectionString ),
@@ -138,29 +138,29 @@ bool AbstractConnection::connect( )
 }
 
 void AbstractConnection::disconnect()
-{
+'{'
 	m_bExpectingDisconnect = true;
 	Reference< XComponent > xBridgeComponent( m_xBridge, UNO_QUERY );
 	xBridgeComponent->dispose( );
 }
 
 bool AbstractConnection::isConnected( )
-{
+'{'
 	return m_bConnected;
 }
 
 Reference<XComponentContext> AbstractConnection::getContext( )
-{
+'{'
 	return m_xCtx;
 }
 
 Reference<XMultiComponentFactory> AbstractConnection::getServiceManager( )
-{
+'{'
 	return m_xServiceMngr;
 }
 
 Reference<XDesktop> AbstractConnection::getDesktop()
-{
+'{'
 	Reference<XDesktop> xDesktop(
 			getService( rtl::OUString::createFromAscii( "com.sun.star.frame.Desktop" ) ),
 			UNO_QUERY );
@@ -168,12 +168,12 @@ Reference<XDesktop> AbstractConnection::getDesktop()
 }
 
 Reference<XInterface> AbstractConnection::getService( rtl::OUString sServiceName )
-{
+'{'
 	Reference< XInterface > xIface;
 
 	bool bManagedConnection = true;
 	if ( !m_bConnected )
-	{
+	'{'
 #if DEBUG
 		fprintf( stderr, "Trying to (re)connect\n" );
 #endif
@@ -187,15 +187,15 @@ Reference<XInterface> AbstractConnection::getService( rtl::OUString sServiceName
 }
 
 void AbstractConnection::disposing( const EventObject& source ) throw ( RuntimeException )
-{
+'{'
 	m_bConnected = false;
 #if DEBUG
 	if ( m_bExpectingDisconnect )
-	{
+	'{'
 		fprintf( stderr, "Disconnected\n" );
 	}
 	else
-	{
+	'{'
 		fprintf( stderr, "Disconnected unexpectedly\n" );
 	}
 #endif

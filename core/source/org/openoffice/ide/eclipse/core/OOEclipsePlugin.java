@@ -48,8 +48,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openoffice.ide.eclipse.core.editors.Colors;
 import org.openoffice.ide.eclipse.core.i18n.ImageManager;
@@ -230,20 +228,5 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
         PreferenceConverter.setDefault(store, Colors.C_MODIFIER, MODIFIER);
         
         store.setDefault(LOGLEVEL_PREFERENCE_KEY, LogLevels.INFO.toString());
-    }
-
-    /**
-     * Convenience method returning the active workbench page.
-     * 
-     * @return the active page
-     */
-    public static IWorkbenchPage getActivePage() {
-        IWorkbenchPage page = null;
-        
-        IWorkbenchWindow window = getDefault().getWorkbench().getActiveWorkbenchWindow();
-        if (null != window) {
-            page = window.getActivePage();
-        }
-        return page;
     }
 }

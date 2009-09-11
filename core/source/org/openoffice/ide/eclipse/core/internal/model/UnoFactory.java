@@ -52,16 +52,9 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.CompositeFactory;
@@ -73,6 +66,7 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
+import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
 /**
  * This class is a factory creating UNO projects and types from data sets
@@ -242,7 +236,7 @@ public final class UnoFactory {
             implementationPath = prj.getSourcePath().append(implementationPath);
             IFile implementationFile = prj.getFile(implementationPath);
 
-            showFile(implementationFile, pActivePage);
+            WorkbenchHelper.showFile(implementationFile, pActivePage);
         }
     }
     
@@ -474,7 +468,7 @@ public final class UnoFactory {
         String filename = pTypepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         UnoidlProjectHelper.refreshProject(pPrj, null);
         IFile interfaceFile = pPrj.getFile(pPrj.getIdlPath().append(filename));
-        showFile(interfaceFile, pActivePage);
+        WorkbenchHelper.showFile(interfaceFile, pActivePage);
     }
 
     /**
@@ -538,41 +532,6 @@ public final class UnoFactory {
     private static void createIncludes(IUnoComposite pFileContent, String[] pTypes) {
         for (int i = 0; i < pTypes.length; i++) {
             pFileContent.addChild(CompositeFactory.createInclude(pTypes[i]));
-        }
-    }
-    
-    /**
-     * Simply shows the file in the IDE.
-     * 
-     * @param pFile the file to show
-     * @param pPage the active workbench page
-     */
-    private static void showFile(IFile pFile, IWorkbenchPage pPage) {
-        
-        try {
-            IWorkbench workbench = PlatformUI.getWorkbench();
-            BasicNewResourceWizard.selectAndReveal(
-                    pFile, workbench.getActiveWorkbenchWindow());
-
-            final IWorkbenchPage activePage = pPage;
-            final IFile toShow = pFile;
-
-            if (activePage != null) {
-                final Display display = Display.getDefault();
-                if (display != null) {
-                    display.asyncExec(new Runnable() {
-                        public void run() {
-                            try {
-                                IDE.openEditor(activePage, toShow, true);
-                            } catch (PartInitException e) {
-                                PluginLogger.debug(e.getMessage());
-                            }
-                        }
-                    });
-                }
-            }
-        } catch (Exception e) {
-            PluginLogger.error("Can't open file", e); //$NON-NLS-1$
         }
     }
 }

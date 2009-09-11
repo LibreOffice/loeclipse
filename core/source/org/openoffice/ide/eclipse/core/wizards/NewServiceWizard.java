@@ -62,6 +62,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
@@ -81,7 +82,7 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
      */
     public NewServiceWizard() {
         super();
-        mActivePage = OOEclipsePlugin.getActivePage();
+        mActivePage = WorkbenchHelper.getActivePage();
     }
 
     /**

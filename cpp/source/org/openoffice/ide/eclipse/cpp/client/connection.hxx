@@ -36,10 +36,10 @@
 #include <rtl/ustring.hxx>
 
 
-namespace unoclienthelper {
+namespace unoclienthelper '{'
 
 class AbstractConnection : public cppu::WeakImplHelper1< com::sun::star::lang::XEventListener >
-{
+'{'
 private:
 	com::sun::star::uno::Reference<com::sun::star::uno::XComponentContext> m_xCtx;
 	com::sun::star::uno::Reference<com::sun::star::bridge::XBridge> m_xBridge;
@@ -71,14 +71,14 @@ private:
 };
 
 class PipeConnection : public AbstractConnection
-{
+'{'
 public:
 	PipeConnection( char* pPipeName );
 	~PipeConnection( );
 };
 
 class SocketConnection : public AbstractConnection
-{
+'{'
 public:
 	SocketConnection( int nPort, char* pHost = "localhost" );
 	~SocketConnection( );

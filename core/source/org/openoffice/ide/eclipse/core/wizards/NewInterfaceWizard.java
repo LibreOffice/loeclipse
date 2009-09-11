@@ -66,6 +66,7 @@ import org.openoffice.ide.eclipse.core.internal.model.UnoFactory;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
+import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
 
 /**
@@ -86,7 +87,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
     public NewInterfaceWizard() {
         super();
         
-        mActivePage = OOEclipsePlugin.getActivePage();
+        mActivePage = WorkbenchHelper.getActivePage();
     }
 
     /**

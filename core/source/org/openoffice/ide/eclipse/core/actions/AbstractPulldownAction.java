@@ -68,6 +68,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
 /**
  * Abstract class to create a pulldown menu action.
@@ -204,7 +205,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     private IStructuredSelection getSelection() {
         IStructuredSelection strucSelection = StructuredSelection.EMPTY;
         
-        IWorkbenchWindow window = OOEclipsePlugin.getActivePage().getWorkbenchWindow();
+        IWorkbenchWindow window = WorkbenchHelper.getActivePage().getWorkbenchWindow();
         if (window != null) {
             ISelection selection = window.getSelectionService().getSelection();
             if (selection instanceof IStructuredSelection) {

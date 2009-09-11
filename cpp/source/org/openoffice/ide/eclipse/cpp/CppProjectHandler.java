@@ -238,6 +238,7 @@ public class CppProjectHandler implements IProjectHandler {
         CDTHelper.addEntries( project, new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
         CDTHelper.addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
         CDTHelper.addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+        CDTHelper.addLibs( project, LIBS );
         
         // Run the cppumaker on the ooo types ( asynchronous )
         OOoSdkProjectJob job = new OOoSdkProjectJob(ooo, sdk );
@@ -261,6 +262,6 @@ public class CppProjectHandler implements IProjectHandler {
         CDTHelper.removeEntries( project, new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
         CDTHelper.removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
         CDTHelper.removeEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
-
+        CDTHelper.removeLibs( project, LIBS );
     }
 }

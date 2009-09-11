@@ -34,28 +34,36 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.wizards.CCProjectWizard;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IWorkbenchPage;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
+import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.cpp.Activator;
 import org.openoffice.ide.eclipse.cpp.CppProjectHandler;
 
 
 public class ClientWizard extends CCProjectWizard {
 
-    private static final String HELPER_DIR_NAME = "helper"; //$NON-NLS-1$
+    private static final String SRC_DIR_NAME = "src"; //$NON-NLS-1$
+    private static final String CLIENT_FILE = "client.cxx"; //$NON-NLS-1$
+    
     private UnoConnectionPage mCnxPage;
+    private IWorkbenchPage mActivePage;
 
     public ClientWizard() {
         super( );
         setWindowTitle( "UNO Client C++ project" );
+        mActivePage = WorkbenchHelper.getActivePage();
     }
     
     @Override
@@ -75,44 +83,52 @@ public class ClientWizard extends CCProjectWizard {
         
     }
     
-    /**
-     * Do the final configuration for UNO client and generate some code here.
-     */
     @Override
-    protected boolean setCreated() throws CoreException {
+    public boolean performFinish() {
+        boolean finished = super.performFinish();
         
-        boolean created = super.setCreated();
+        try {
+            IOOo ooo = mCnxPage.getOoo();
+            ISdk sdk = mCnxPage.getSdk();
+
+            // Copy the helper files in the helper source dir
+            IFolder srcDir = newProject.getFolder( SRC_DIR_NAME );
+            srcDir.create( true, true, null );
+
+            copyResource( "connection.hxx", srcDir, new String() ); //$NON-NLS-1$
+            copyResource( "connection.cxx", srcDir, new String() ); //$NON-NLS-1$
+            
+            // TODO Make that configurable in the wizard
+            String cnxInitCode = "SocketConnection cnx( 8080, \"localhost\" );"; //$NON-NLS-1$
+            copyResource( CLIENT_FILE, srcDir, cnxInitCode );
+
+            srcDir.refreshLocal( IResource.DEPTH_ONE, null );
+
+            // Add the helper dir to the source path entries
+            ICProject cprj = CoreModel.getDefault().getCModel().getCProject( newProject.getName() );
+            IPathEntry[] entries = CoreModel.getRawPathEntries( cprj );
+            IPathEntry[] newEntries = new IPathEntry[ entries.length + 1 ];
+            System.arraycopy( entries, 0, newEntries, 0, entries.length );
+            newEntries[ newEntries.length - 1 ] = CoreModel.newSourceEntry( srcDir.getFullPath() );
+            CoreModel.setRawPathEntries( cprj, newEntries, null );
+
+            CppProjectHandler.addOOoDependencies( ooo, sdk, newProject );
+            
+            // TODO Setup the launch config
+            
+            selectAndReveal( srcDir.getFile( CLIENT_FILE ) );
+            WorkbenchHelper.showFile( srcDir.getFile( CLIENT_FILE ), mActivePage );
         
-        IOOo ooo = mCnxPage.getOoo();
-        ISdk sdk = mCnxPage.getSdk();
+        } catch ( Exception e ) {
+            PluginLogger.error( "Couldn't set OOo Client config", e );
+        }
         
-        // Copy the helper files in the helper source dir
-        IFolder srcDir = newProject.getFolder( HELPER_DIR_NAME );
-        srcDir.create( true, true, null );
-        
-        copyResource( "connection.hxx", srcDir ); //$NON-NLS-1$
-        copyResource( "connection.cxx", srcDir ); //$NON-NLS-1$
-        
-        srcDir.refreshLocal( IResource.DEPTH_ONE, null );
-        
-        // Add the helper dir to the source path entries
-        ICProject cprj = CoreModel.getDefault().getCModel().getCProject( newProject.getName() );
-        IPathEntry[] entries = CoreModel.getRawPathEntries( cprj );
-        IPathEntry[] newEntries = new IPathEntry[ entries.length + 1 ];
-        System.arraycopy( entries, 0, newEntries, 0, entries.length );
-        newEntries[ newEntries.length - 1 ] = CoreModel.newSourceEntry( srcDir.getFullPath() );
-        CoreModel.setRawPathEntries( cprj, newEntries, null );
-        
-        CppProjectHandler.addOOoDependencies( ooo, sdk, newProject );
-        
-        // TODO Setup the launch config
-        
-        return created;
+        return finished;
     }
 
-    private void copyResource(String pResName, IFolder pSrcDir) {
+    private void copyResource(String pResName, IContainer pSrcDir, String pReplacement ) {
         InputStream in = this.getClass().getResourceAsStream( pResName );
-        File destFile = pSrcDir.getFile( pResName ).getLocation().toFile();
+        File destFile = new File( pSrcDir.getLocation().toFile(), pResName );
         
         FileWriter out = null;
         try {
@@ -122,7 +138,7 @@ public class ClientWizard extends CCProjectWizard {
             
             String line = reader.readLine();
             while ( line != null ) {
-                out.append( line + "\n" ); //$NON-NLS-1$
+                out.append( MessageFormat.format( line, pReplacement ) + "\n" ); //$NON-NLS-1$
                 line = reader.readLine();
             }
             

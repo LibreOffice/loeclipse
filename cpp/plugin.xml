@@ -20,5 +20,10 @@
             name="C++ UNO client application">
       </wizard>
    </extension>
+   <extension
+         id="id1"
+         name="name"
+         point="org.eclipse.cdt.core.externalSettingsProvider">
+   </extension>
 
 </plugin>
