@@ -1,0 +1,7 @@
+   <feature 
+   		url="features/org.openoffice.ide.eclipse.cpp_@VERSION@.jar" 
+   		id="org.openoffice.ide.eclipse.cpp" version="@VERSION@">
+      <category name="OpenOffice.org"/>
+   </feature>
+   
+   

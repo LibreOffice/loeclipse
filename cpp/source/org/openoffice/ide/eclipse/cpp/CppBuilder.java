@@ -125,10 +125,10 @@ public class CppBuilder implements ILanguageBuilder {
                 }
             } catch (InterruptedException e) {
                 PluginLogger.error(
-                        "cppumaker code generation failed", e);
+                        Messages.getString("CppBuilder.CppumakerError"), e); //$NON-NLS-1$
             } catch (IOException e) {
                 PluginLogger.warning(
-                        "Unreadable output error");
+                        Messages.getString("CppBuilder.ErrorOutputUnreadable")); //$NON-NLS-1$
             }
         }
     }

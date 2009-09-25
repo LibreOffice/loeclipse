@@ -64,8 +64,8 @@ public class UnoConnectionPage extends WizardPage {
 
     public UnoConnectionPage( ) {
         super( "unocnxpage" ); //$NON-NLS-1$
-        setTitle( "UNO configuration" );
-        setDescription( "Set some important informations for the UNO development" );
+        setTitle( Messages.getString("UnoConnectionPage.Title") ); //$NON-NLS-1$
+        setDescription( Messages.getString("UnoConnectionPage.Description") ); //$NON-NLS-1$
     }
     
     @Override
@@ -80,7 +80,7 @@ public class UnoConnectionPage extends WizardPage {
         GridData gd = new GridData( GridData.FILL_HORIZONTAL );
         gd.horizontalSpan = LAYOUT_COLUMNS;
         confLbl.setLayoutData( gd );
-        confLbl.setText( "OpenOffice.org and SDK for building" );
+        confLbl.setText( Messages.getString("UnoConnectionPage.ConnectionLabel") ); //$NON-NLS-1$
         
         mOOoConfigPanel = new OOoConfigPanel( body );
         

@@ -25,7 +25,7 @@
             filenames="package.properties,description.xml"
             icon="icons/build_exec.gif"
             id="org.openoffice.ide.eclipse.core.editors.extproperties"
-            name="Extension properties editor"/>
+            name="%editor.name"/>
    </extension>
    
    <extension
@@ -62,7 +62,7 @@
             name="%wizards.unoidlfile"
             project="false">
          <description>
-            Create a new UNO specification file. Please use this wizard with care: you should better run the type-specific wizards if they exists.
+            %wizard.file.description
          </description>
       </wizard>
       <wizard
@@ -77,7 +77,7 @@
          	<parameter name="unoproject" value="true"/>
          </class>
          <description>
-            Create an empty UNO component with a service and it's implementation.
+            %wizard.component.description
          </description>
       </wizard>
       <wizard
@@ -92,7 +92,7 @@
          	<parameter name="unotype" value="true"/>
          </class>
          <description>
-            Creates a new 'new-styled' UNO service. A service will export one interface and define some constructors.
+            %wizard.service.description
          </description>
       </wizard>
       <wizard
@@ -107,7 +107,7 @@
          	<parameter name="unotype" value="true"/>
          </class>
          <description>
-            Create an new UNO interface. An interface is a set of related methods and properties that will be used by a service.
+            %wizard.interface.description
          </description>
       </wizard>
       <wizard
@@ -116,19 +116,19 @@
             hasPages="true"
             icon="icons/new_ure_app.gif"
             id="org.openoffice.ide.eclipse.core.newureapp"
-            name="New URE based Application"
+            name="%wizard.ure.name"
             project="true">
          <class class="org.openoffice.ide.eclipse.core.wizards.NewUreAppWizard">
          	<parameter name="unoproject" value="true"/>
          </class>
          <description>
-            Create an URE based application. This wizard will create the basic skeleton to run an application featuring UNO component model.
+            %wizard.ure.description
          </description>
       </wizard>
    </extension>
    <extension
          id="unonature"
-         name="UNO Nature"
+         name="%nature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run class="org.openoffice.ide.eclipse.core.internal.model.UnoidlProject"/>
@@ -154,10 +154,10 @@
                class="org.openoffice.ide.eclipse.core.actions.UnoTypePulldownAction"
                icon="icons/newservice.gif"
                id="org.openoffice.ide.eclipse.core.newactions.newtype"
-               label="New Uno Service"
+               label="%action.service.label"
                style="pulldown"
                toolbarPath="uno"
-               tooltip="Create a UNO Service"/>
+               tooltip="%action.service.tooltip"/>
          <!--
          <action
                class="org.openoffice.ide.eclipse.core.actions.NewUnoFileAction"

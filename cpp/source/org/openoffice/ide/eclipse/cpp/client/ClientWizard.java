@@ -62,19 +62,19 @@ public class ClientWizard extends CCProjectWizard {
 
     public ClientWizard() {
         super( );
-        setWindowTitle( "UNO Client C++ project" );
+        setWindowTitle( Messages.getString("ClientWizard.Title") ); //$NON-NLS-1$
         mActivePage = WorkbenchHelper.getActivePage();
     }
     
     @Override
     public void addPages() {
         mCnxPage = new UnoConnectionPage();
-        UnoClientWizardPage mainPage = new UnoClientWizardPage( "cdtmain", mCnxPage );
+        UnoClientWizardPage mainPage = new UnoClientWizardPage( "cdtmain", mCnxPage ); //$NON-NLS-1$
         fMainPage = mainPage;
         fMainPage.setTitle( getWindowTitle() );
-        fMainPage.setDescription( "Create the UNO C++ client application project" );
+        fMainPage.setDescription( Messages.getString("ClientWizard.Description") ); //$NON-NLS-1$
         fMainPage.setImageDescriptor( Activator.imageDescriptorFromPlugin( Activator.PLUGIN_ID, 
-                "icons/uno_client_wiz.png" ) );
+                Messages.getString("ClientWizard.ClientWizardBanner") ) ); //$NON-NLS-1$
         
         addPage(fMainPage);
         
@@ -119,7 +119,7 @@ public class ClientWizard extends CCProjectWizard {
             WorkbenchHelper.showFile( srcDir.getFile( CLIENT_FILE ), mActivePage );
         
         } catch ( Exception e ) {
-            PluginLogger.error( "Couldn't set OOo Client config", e );
+            PluginLogger.error( Messages.getString("ClientWizard.ClientConfigError"), e ); //$NON-NLS-1$
         }
         
         return finished;

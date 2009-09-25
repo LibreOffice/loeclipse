@@ -44,6 +44,7 @@
 
 	<import file="../core/build/build.xml"/>
 	<import file="../java/build/build.xml"/>
+	<import file="../cpp/build/build.xml"/>
 	
 	<target name="help" description="Tells how to run the script">
 		<echo>
@@ -99,7 +100,7 @@
     </target>
 	
 	<target name="init-env" 
-		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env">
+		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env, cpp.init-env">
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
 		<property name="out.path" value="site" />
@@ -115,17 +116,17 @@
 	</target>
 
 	<target name="clean" description="Cleans the temporary output results" 
-		depends="init-env, core.clean, java.clean">
+		depends="init-env, core.clean, java.clean, cpp.clean">
 		<delete dir="${out.path}" />
 	</target>
 	
 	<target name="purge" description="Cleans all the output results" 
-		depends="clean, core.purge, java.purge">
+		depends="clean, core.purge, java.purge, cpp.purge">
 		<delete file="ooeclipseintegration_site.zip" />
 	</target>
 	
 	
-	<target name="site" depends="init-env, core.site, java.site"
+	<target name="site" depends="init-env, core.site, java.site, cpp.site"
 		description="Creates the Eclipse update site">
 		
 		<!-- Copying the features and plugins -->

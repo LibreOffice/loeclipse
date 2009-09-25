@@ -90,9 +90,9 @@ public class CppProjectHandler implements IProjectHandler {
     public void addProjectNature(IProject pProject) {
         try {
             CDTHelper.addCDTNature( pProject, null );
-            PluginLogger.debug( "C++ project nature set" );
+            PluginLogger.debug( Messages.getString("CppProjectHandler.NatureSet") ); //$NON-NLS-1$
         } catch (CoreException e) {
-            PluginLogger.error( "Failed to set C++ project nature" );
+            PluginLogger.error( Messages.getString("CppProjectHandler.NatureFailed") ); //$NON-NLS-1$
         }
     }
 

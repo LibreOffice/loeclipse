@@ -2,7 +2,7 @@ Building OOoEclipse Integration
 
 in order to build OOoEclipseIntegration to produce an update site,
 you need to have installed OpenOffice.org and Eclipse.You may install
-only the necesary jars, but you'll have to hack the ant build.xml
+only the necessary jars, but you'll have to hack the ant build.xml
 files.
 
 Define the ANT_ARGS variable to the following:

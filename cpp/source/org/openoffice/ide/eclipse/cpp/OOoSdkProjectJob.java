@@ -32,7 +32,7 @@ public class OOoSdkProjectJob extends Job {
     private ISdk mSdk;
     
     public OOoSdkProjectJob( IOOo pOOo, ISdk pSdk ) {
-        super( "Generating the OOo includes project for " + pOOo.getName() );
+        super( Messages.getString("OOoSdkProjectJob.Title") + pOOo.getName() ); //$NON-NLS-1$
         mOOo = pOOo;
         mSdk = pSdk;
     }
@@ -56,7 +56,7 @@ public class OOoSdkProjectJob extends Job {
     @Override
     protected IStatus run( IProgressMonitor pMonitor ) {
         
-        IStatus status = new Status( IStatus.OK, Activator.PLUGIN_ID, "UNO includes generated" );
+        IStatus status = new Status( IStatus.OK, Activator.PLUGIN_ID, Messages.getString("OOoSdkProjectJob.OkStatus") ); //$NON-NLS-1$
         
         try {
             // Create the OOo SDK project
@@ -79,7 +79,7 @@ public class OOoSdkProjectJob extends Job {
             createIncludes( prj, pMonitor );
             
         } catch ( Exception e ) {
-            status = new Status( IStatus.ERROR, Activator.PLUGIN_ID, "Failed to generate the includes", e );
+            status = new Status( IStatus.ERROR, Activator.PLUGIN_ID, Messages.getString("OOoSdkProjectJob.FailedStatus"), e ); //$NON-NLS-1$
         }
         
         return status;
@@ -126,7 +126,7 @@ public class OOoSdkProjectJob extends Job {
                             
                             StringBuffer buf = getErrorString( proc );
                             if ( !buf.toString().trim().equals( new String( ) ) ) {
-                                String msg = "Cannot link library " + libname + "\n";
+                                String msg = Messages.getString("OOoSdkProjectJob.LinkError") + libname + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
                                 msg += buf.toString();
                                 PluginLogger. error( msg );
                             }
@@ -134,7 +134,7 @@ public class OOoSdkProjectJob extends Job {
                             proc.waitFor();
                             
                         } catch ( Exception e ) {
-                            PluginLogger.error( "Cannot link library " + libname, e );
+                            PluginLogger.error( Messages.getString("OOoSdkProjectJob.LinkError") + libname, e ); //$NON-NLS-1$
                         }
                     }
                 }
@@ -165,7 +165,7 @@ public class OOoSdkProjectJob extends Job {
 
         StringBuffer buf = getErrorString( process );
         if ( !buf.toString().trim().equals( new String( ) ) ) {
-            String msg = "Error generating the includes\n";
+            String msg = Messages.getString("OOoSdkProjectJob.IncludesError"); //$NON-NLS-1$
             msg += buf.toString();
             PluginLogger. error( msg );
         }
