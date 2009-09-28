@@ -34,13 +34,22 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
 import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 
+/**
+ * Class for the C++ UI extensions to the core: nothing done here.
+ * @author cbosdonnat
+ *
+ */
 public class CppUI implements ILanguageUI {
 
     /**
      * There is no need for C++ only options: then no page.
+     * 
+     * @param pData not used
+     * 
+     * @return <code>null</code>
      */
     @Override
-    public LanguageWizardPage getWizardPage(UnoFactoryData data) {
+    public LanguageWizardPage getWizardPage(UnoFactoryData pData) {
         return null;
     }
 }

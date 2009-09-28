@@ -62,6 +62,9 @@ public class UnoConnectionPage extends WizardPage {
     private OOoConfigPanel mOOoConfigPanel;
     private ConnectionConfigPanel mCnxConfigPanel;
 
+    /**
+     * Default constructor.
+     */
     public UnoConnectionPage( ) {
         super( "unocnxpage" ); //$NON-NLS-1$
         setTitle( Messages.getString("UnoConnectionPage.Title") ); //$NON-NLS-1$
@@ -124,6 +127,9 @@ public class UnoConnectionPage extends WizardPage {
         return mMainPage.getNextCdtPage();
     }
 
+    /**
+     * @param pMainPage the main configuration page of the UNO Client Wizard
+     */
     public void setMainPage(UnoClientWizardPage pMainPage) {
         mMainPage = pMainPage;
     }

@@ -51,7 +51,12 @@ import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.cpp.Activator;
 import org.openoffice.ide.eclipse.cpp.CppProjectHandler;
 
-
+/**
+ * Class for the C++ UNO Client wizard.
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class ClientWizard extends CCProjectWizard {
 
     private static final String SRC_DIR_NAME = "src"; //$NON-NLS-1$
@@ -60,6 +65,9 @@ public class ClientWizard extends CCProjectWizard {
     private UnoConnectionPage mCnxPage;
     private IWorkbenchPage mActivePage;
 
+    /**
+     * Default constructor.
+     */
     public ClientWizard() {
         super( );
         setWindowTitle( Messages.getString("ClientWizard.Title") ); //$NON-NLS-1$
@@ -125,6 +133,13 @@ public class ClientWizard extends CCProjectWizard {
         return finished;
     }
 
+    /**
+     * Copy a template resource into the generated project.
+     * 
+     * @param pResName the name of the file to copy
+     * @param pSrcDir the folder where to put it
+     * @param pReplacement the replacement value for the connection string
+     */
     private void copyResource(String pResName, IContainer pSrcDir, String pReplacement ) {
         InputStream in = this.getClass().getResourceAsStream( pResName );
         File destFile = new File( pSrcDir.getLocation().toFile(), pResName );

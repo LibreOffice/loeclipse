@@ -38,6 +38,15 @@ import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 
+/**
+ * Class for the main UNO client wizard page.
+ * 
+ * This page is derived from the CDT class, but some restrictions are 
+ * applied to the selectable projects to fit the UNO Client case.
+ *  
+ * @author cbosdonnat
+ *
+ */
 public class UnoClientWizardPage extends CDTMainWizardPage {
 
     private UnoConnectionPage mUnoCnxPage;
@@ -45,26 +54,31 @@ public class UnoClientWizardPage extends CDTMainWizardPage {
     /**
      * Creates a new project creation wizard page.
      *
-     * @param pageName the name of this page
+     * @param pPageName the name of this page
+     * @param pUnoPage the page for the UNO connection config
      */
     public UnoClientWizardPage(String pPageName, UnoConnectionPage pUnoPage ) {
         super(pPageName);
-        mUnoCnxPage= pUnoPage;
+        mUnoCnxPage = pUnoPage;
         setPageComplete(false);
     }
     
     /**
-     * Only show the executable project types here
+     * Only show the executable project types here.
+     * 
+     * @param pItems the items to filter.
+     * @return the items to show
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List filterItems(List items) {
+    public List filterItems(List pItems) {
         ArrayList filtered = new ArrayList();
         
-        for (Object item : items) {
+        for (Object item : pItems) {
             EntryDescriptor desc = (EntryDescriptor)item;
             String parentId = desc.getParentId();
-            boolean exeParent = parentId != null && parentId.equals( ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_EXE );
+            boolean exeParent = parentId != null && 
+                parentId.equals( ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_EXE );
             boolean exe = desc.getId().equals( ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_EXE );
             
             boolean kept = exeParent || exe;

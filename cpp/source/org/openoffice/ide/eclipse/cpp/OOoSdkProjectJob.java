@@ -22,6 +22,16 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 
+/**
+ * Eclipse Job generating an OOo SDK project to use for the C++ UNO 
+ * projects dependencies.
+ * 
+ * This job also generates the headers from the UNO types defined in 
+ * the OpenOffice.org instance. 
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class OOoSdkProjectJob extends Job {
     
     private static final String INCLUDES_DIR = "includes"; //$NON-NLS-1$
@@ -31,12 +41,26 @@ public class OOoSdkProjectJob extends Job {
     private IOOo mOOo;
     private ISdk mSdk;
     
+    /**
+     * Constructor.
+     * 
+     * @param pOOo the OOo for which to create the SDK project
+     * @param pSdk the OOo SDK for which to create the SDK project
+     */
     public OOoSdkProjectJob( IOOo pOOo, ISdk pSdk ) {
         super( Messages.getString("OOoSdkProjectJob.Title") + pOOo.getName() ); //$NON-NLS-1$
         mOOo = pOOo;
         mSdk = pSdk;
     }
 
+    /**
+     * Get the includes folder in the SDK project corresponding to the 
+     * given OOo instance. 
+     * 
+     * @param pOOo the OOo instance for which to get the includes folder
+     * 
+     * @return the include folder in the workspace.
+     */
     public static IFolder getIncludes( IOOo pOOo ) {
         
         String prjName = MessageFormat.format( PRJ_NAME_PATTERN, pOOo.getName() );
@@ -45,6 +69,14 @@ public class OOoSdkProjectJob extends Job {
         return prj.getFolder( INCLUDES_DIR );
     }
     
+    /**
+     * Get the libraries folder in the SDK project corresponding to the 
+     * given OOo instance. 
+     * 
+     * @param pOOo the OOo instance for which to get the libraries folder
+     * 
+     * @return the libraries folder in the workspace.
+     */
     public static IFolder getLibraries( IOOo pOOo ) {
         
         String prjName = MessageFormat.format( PRJ_NAME_PATTERN, pOOo.getName() );
@@ -56,7 +88,8 @@ public class OOoSdkProjectJob extends Job {
     @Override
     protected IStatus run( IProgressMonitor pMonitor ) {
         
-        IStatus status = new Status( IStatus.OK, Activator.PLUGIN_ID, Messages.getString("OOoSdkProjectJob.OkStatus") ); //$NON-NLS-1$
+        IStatus status = new Status( IStatus.OK, Activator.PLUGIN_ID, 
+                Messages.getString("OOoSdkProjectJob.OkStatus") ); //$NON-NLS-1$
         
         try {
             // Create the OOo SDK project
@@ -79,19 +112,28 @@ public class OOoSdkProjectJob extends Job {
             createIncludes( prj, pMonitor );
             
         } catch ( Exception e ) {
-            status = new Status( IStatus.ERROR, Activator.PLUGIN_ID, Messages.getString("OOoSdkProjectJob.FailedStatus"), e ); //$NON-NLS-1$
+            status = new Status( IStatus.ERROR, Activator.PLUGIN_ID, 
+                    Messages.getString("OOoSdkProjectJob.FailedStatus"), e ); //$NON-NLS-1$
         }
         
         return status;
     }
 
-    private void createLibLinks(IProject prj, IProgressMonitor pMonitor) throws CoreException {
+    /**
+     * Utility method creating the links to the libraries in the SDK project.
+     * 
+     * @param pPrj the project in which to create the links
+     * @param pMonitor a progress monitor
+     * 
+     * @throws CoreException if anything wrong happens
+     */
+    private void createLibLinks(IProject pPrj, IProgressMonitor pMonitor) throws CoreException {
         
         String os = Platform.getOS();
         if ( os.equals( Platform.OS_LINUX ) || os.equals( Platform.OS_SOLARIS ) 
                 || os.equals( Platform.OS_MACOSX ) ) {
             // Create the link folder
-            IFolder folder = prj.getFolder( LIBS_DIR );
+            IFolder folder = pPrj.getFolder( LIBS_DIR );
 
             if ( !folder.exists() ) {
                 folder.create( true, true, pMonitor );
@@ -118,15 +160,16 @@ public class OOoSdkProjectJob extends Job {
                         
                         // Run ln to link the files: present on all *NIX platforms
                         String[] command = { 
-                                "ln", "-s", //$NON-NLS-1$ //$NON-NLS-2$
-                                orig, dest
+                            "ln", "-s", //$NON-NLS-1$ //$NON-NLS-2$
+                            orig, dest
                         };
                         try {
                             Process proc = Runtime.getRuntime().exec( command );
                             
                             StringBuffer buf = getErrorString( proc );
                             if ( !buf.toString().trim().equals( new String( ) ) ) {
-                                String msg = Messages.getString("OOoSdkProjectJob.LinkError") + libname + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+                                String msg = Messages.getString("OOoSdkProjectJob.LinkError") + //$NON-NLS-1$ 
+                                    libname + "\n"; //$NON-NLS-1$
                                 msg += buf.toString();
                                 PluginLogger. error( msg );
                             }
@@ -134,7 +177,8 @@ public class OOoSdkProjectJob extends Job {
                             proc.waitFor();
                             
                         } catch ( Exception e ) {
-                            PluginLogger.error( Messages.getString("OOoSdkProjectJob.LinkError") + libname, e ); //$NON-NLS-1$
+                            PluginLogger.error( Messages.getString("OOoSdkProjectJob.LinkError") + //$NON-NLS-1$ 
+                                    libname, e );
                         }
                     }
                 }
@@ -143,6 +187,14 @@ public class OOoSdkProjectJob extends Job {
         }
     }
 
+    /**
+     * Utility method creating the headers in the SDK project.
+     * 
+     * @param pProject the project in which to create the headers
+     * @param pMonitor a progress monitor
+     * 
+     * @throws Exception if anything wrong happens
+     */
     private void createIncludes( IProject pProject, IProgressMonitor pMonitor) throws Exception {
         // Create the destination folder if needed 
         IFolder folder = pProject.getFolder( INCLUDES_DIR );
@@ -176,11 +228,18 @@ public class OOoSdkProjectJob extends Job {
         folder.refreshLocal( IResource.DEPTH_INFINITE, pMonitor );
     }
 
-    private StringBuffer getErrorString(Process process) {
+    /**
+     * Get the error string from the <code>cppumaker</code> process.
+     * 
+     * @param pProcess the running process
+     * 
+     * @return the error string buffer
+     */
+    private StringBuffer getErrorString(Process pProcess) {
         StringBuffer buf = new StringBuffer();
         
         LineNumberReader lineReader = new LineNumberReader(
-                new InputStreamReader(process.getErrorStream()));
+                new InputStreamReader(pProcess.getErrorStream()));
 
         try {
             // Only for debugging purpose

@@ -50,24 +50,30 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 
+/**
+ * Helper class for the C++ UNO internal build tools.
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class CppBuilder implements ILanguageBuilder {
     
     public static final String INCLUDE = "include"; //$NON-NLS-1$
 
     @Override
-    public IPath createLibrary(IUnoidlProject unoProject) throws Exception {
+    public IPath createLibrary(IUnoidlProject pUnoProject) throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void fillUnoPackage(UnoPackage unoPackage, IUnoidlProject prj) {
+    public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pPrj) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public String[] getBuildEnv(IUnoidlProject unoProject) {
+    public String[] getBuildEnv(IUnoidlProject pUnoProject) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -91,10 +97,11 @@ public class CppBuilder implements ILanguageBuilder {
                     }
 
                     String command = "cppumaker -T\"*\"" +  //$NON-NLS-1$
-                    " -Gc -BUCR " +  //$NON-NLS-1$
-                    "-O \"" + new File( pBuildFolder, INCLUDE ).getAbsolutePath() + "\" \"" + //$NON-NLS-1$ //$NON-NLS-2$
-                    pTypesFile.getAbsolutePath() + "\" " + //$NON-NLS-1$
-                    oooTypesArgs; 
+                        " -Gc -BUCR " +  //$NON-NLS-1$
+                        "-O \"" + new File( pBuildFolder, INCLUDE ).getAbsolutePath() + //$NON-NLS-1$ 
+                        "\" \"" + //$NON-NLS-1$
+                        pTypesFile.getAbsolutePath() + "\" " + //$NON-NLS-1$
+                        oooTypesArgs; 
 
                     IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
                     Process process = pSdk.runTool(unoprj,command, pMonitor);
@@ -119,7 +126,8 @@ public class CppBuilder implements ILanguageBuilder {
                             unoprj.getBuildPath().append( CppBuilder.INCLUDE ) ).getProjectRelativePath();
                     
                     CDTHelper.addEntries( pPrj, 
-                            new CIncludePathEntry[]{ new CIncludePathEntry( includePath, ICSettingEntry.VALUE_WORKSPACE_PATH ) }, 
+                            new CIncludePathEntry[]{ 
+                                new CIncludePathEntry( includePath, ICSettingEntry.VALUE_WORKSPACE_PATH ) }, 
                             ICSettingEntry.INCLUDE_PATH );
                     
                 }

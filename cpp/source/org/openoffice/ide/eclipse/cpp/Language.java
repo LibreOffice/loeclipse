@@ -35,6 +35,12 @@ import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
+/**
+ * Class for the extension point.
+ * 
+ * @author cbosdonnat
+ *
+ */
 public class Language implements ILanguage {
 
     @Override

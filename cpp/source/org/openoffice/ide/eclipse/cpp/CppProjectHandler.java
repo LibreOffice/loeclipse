@@ -65,6 +65,12 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
+/**
+ * Helper class handling the C++ parts of UNO projects.
+ *  
+ * @author cbosdonnat
+ *
+ */
 public class CppProjectHandler implements IProjectHandler {
 
     public static final String[] LIBS = {
@@ -75,15 +81,15 @@ public class CppProjectHandler implements IProjectHandler {
     };
     
     @Override
-    public void addLanguageDependencies(IUnoidlProject unoproject,
-            IProgressMonitor monitor) throws CoreException {
+    public void addLanguageDependencies(IUnoidlProject pUnoproject,
+            IProgressMonitor pMonitor) throws CoreException {
         // Everything is done in the configureProject method
     }
 
     @Override
-    public void addOOoDependencies(IOOo ooo, IProject project) {
-        IUnoidlProject unoprj = ProjectsManager.getProject( project.getName() );
-        addOOoDependencies( ooo, unoprj.getSdk(), project );
+    public void addOOoDependencies(IOOo pOoo, IProject pProject) {
+        IUnoidlProject unoprj = ProjectsManager.getProject( pProject.getName() );
+        addOOoDependencies( pOoo, unoprj.getSdk(), pProject );
     }
 
     @Override
@@ -155,17 +161,16 @@ public class CppProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public IPath getImplementationFile(String implementationName) {
-        return new Path( implementationName + ".cxx" ); //$NON-NLS-1$
+    public IPath getImplementationFile(String pImplementationName) {
+        return new Path( pImplementationName + ".cxx" ); //$NON-NLS-1$
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getImplementationName(IUnoidlProject prj, String service)
-            throws Exception {
-        return service.substring( service.lastIndexOf( '.' ) + 1 ) + "Impl"; //$NON-NLS-1$
+    public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
+        return pService.substring( pService.lastIndexOf( '.' ) + 1 ) + "Impl"; //$NON-NLS-1$
     }
 
     /**
@@ -184,8 +189,7 @@ public class CppProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public String getSkeletonMakerLanguage(UnoFactoryData data)
-            throws Exception {
+    public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
         return "--cpp"; //$NON-NLS-1$
     }
 
@@ -193,11 +197,18 @@ public class CppProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void removeOOoDependencies(IOOo ooo, IProject project) {
-        IUnoidlProject unoprj = ProjectsManager.getProject( project.getName() );
-        removeOOoDependencies( ooo, unoprj.getSdk(), project );
+    public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
+        IUnoidlProject unoprj = ProjectsManager.getProject( pProject.getName() );
+        removeOOoDependencies( pOoo, unoprj.getSdk(), pProject );
     }
     
+    /**
+     * Utility method providing the necessary macros to add depending on the OS.
+     * 
+     * @param pOs the OS for which to get the macros
+     * 
+     * @return the list of macros to set
+     */
     private static ICLanguageSettingEntry[] getMacrosForPlatform( String pOs ) {
         
         HashMap<String, String> macrosList = new HashMap<String, String>();
@@ -222,46 +233,64 @@ public class CppProjectHandler implements IProjectHandler {
         return results.toArray( new ICLanguageSettingEntry[ results.size() ]);
     }
     
-    static public void addOOoDependencies(IOOo ooo, ISdk sdk, IProject project) {
-        CIncludePathEntry sdkIncludes = new CIncludePathEntry( sdk.getIncludePath(), 0 );
-        CIncludePathEntry includes = new CIncludePathEntry( OOoSdkProjectJob.getIncludes( ooo ), 0 );
+    /**
+     * Add the OOo C++ dependencies to a project.
+     * 
+     * @param pOoo the OOo to configure with
+     * @param pSdk the OOo Sdk to configure with
+     * @param pProject the project to configure
+     */
+    public static void addOOoDependencies(IOOo pOoo, ISdk pSdk, IProject pProject) {
+        CIncludePathEntry sdkIncludes = new CIncludePathEntry( pSdk.getIncludePath(), 0 );
+        CIncludePathEntry includes = new CIncludePathEntry( OOoSdkProjectJob.getIncludes( pOoo ), 0 );
         
         ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
-        String[] oooLibs = ooo.getLibsPath();
+        String[] oooLibs = pOoo.getLibsPath();
         for (String libPath : oooLibs) {
             libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
         }
-        IFolder oooSdkLibs = OOoSdkProjectJob.getLibraries( ooo ); 
+        IFolder oooSdkLibs = OOoSdkProjectJob.getLibraries( pOoo ); 
         libs.add( new CLibraryPathEntry( oooSdkLibs, ICSettingEntry.VALUE_WORKSPACE_PATH ) );
         
         
-        CDTHelper.addEntries( project, new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
-        CDTHelper.addEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
-        CDTHelper.addEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
-        CDTHelper.addLibs( project, LIBS );
+        CDTHelper.addEntries( pProject, 
+                new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
+        CDTHelper.addEntries( pProject, 
+                libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        CDTHelper.addEntries( pProject, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+        CDTHelper.addLibs( pProject, LIBS );
         
         // Run the cppumaker on the ooo types ( asynchronous )
-        OOoSdkProjectJob job = new OOoSdkProjectJob(ooo, sdk );
+        OOoSdkProjectJob job = new OOoSdkProjectJob(pOoo, pSdk );
         job.schedule();
         
-        CDTHelper.addEntries( project, new ICLanguageSettingEntry[]{ includes }, ICSettingEntry.INCLUDE_PATH );
+        CDTHelper.addEntries( pProject, new ICLanguageSettingEntry[]{ includes }, ICSettingEntry.INCLUDE_PATH );
     }
     
-    static public void removeOOoDependencies(IOOo ooo, ISdk sdk, IProject project) {
-        CIncludePathEntry sdkIncludes = new CIncludePathEntry( sdk.getIncludePath(), 0 );
-        CIncludePathEntry includes = new CIncludePathEntry( OOoSdkProjectJob.getIncludes( ooo ), 0 );
+    /**
+     * Remove the OOo C++ dependencies to a project.
+     * 
+     * @param pOoo the OOo to configure with
+     * @param pSdk the OOo Sdk to configure with
+     * @param pProject the project to configure
+     */
+    public static void removeOOoDependencies(IOOo pOoo, ISdk pSdk, IProject pProject) {
+        CIncludePathEntry sdkIncludes = new CIncludePathEntry( pSdk.getIncludePath(), 0 );
+        CIncludePathEntry includes = new CIncludePathEntry( OOoSdkProjectJob.getIncludes( pOoo ), 0 );
         
         ArrayList< CLibraryPathEntry > libs = new ArrayList<CLibraryPathEntry>();
-        String[] oooLibs = ooo.getLibsPath();
+        String[] oooLibs = pOoo.getLibsPath();
         for (String libPath : oooLibs) {
             libs.add( new CLibraryPathEntry( new Path( libPath ), 0 ) );   
         }
-        IFolder oooSdkLibs = OOoSdkProjectJob.getLibraries( ooo ); 
+        IFolder oooSdkLibs = OOoSdkProjectJob.getLibraries( pOoo ); 
         libs.add( new CLibraryPathEntry( oooSdkLibs, ICSettingEntry.VALUE_WORKSPACE_PATH ) );
         
-        CDTHelper.removeEntries( project, new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
-        CDTHelper.removeEntries( project, libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
-        CDTHelper.removeEntries( project, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
-        CDTHelper.removeLibs( project, LIBS );
+        CDTHelper.removeEntries( pProject, 
+                new CIncludePathEntry[] { sdkIncludes, includes }, ICSettingEntry.INCLUDE_PATH );
+        CDTHelper.removeEntries( pProject, 
+                libs.toArray( new CLibraryPathEntry[libs.size()]), ICSettingEntry.LIBRARY_PATH );
+        CDTHelper.removeEntries( pProject, getMacrosForPlatform( Platform.getOS() ), ICSettingEntry.MACRO );
+        CDTHelper.removeLibs( pProject, LIBS );
     }
 }
