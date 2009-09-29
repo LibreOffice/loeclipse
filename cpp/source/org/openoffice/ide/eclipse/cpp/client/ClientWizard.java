@@ -121,8 +121,6 @@ public class ClientWizard extends CCProjectWizard {
 
             CppProjectHandler.addOOoDependencies( ooo, sdk, newProject );
             
-            // TODO Setup the launch config
-            
             selectAndReveal( srcDir.getFile( CLIENT_FILE ) );
             WorkbenchHelper.showFile( srcDir.getFile( CLIENT_FILE ), mActivePage );
         

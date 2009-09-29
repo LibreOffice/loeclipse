@@ -206,12 +206,13 @@
       <persistent value="true"/>
    </extension>
    
- <!-- Uncomment when the cheatsheet will be reworked
+
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             id="org.openoffice.ide.eclipse.core.cheatsheets"
             name="%cheatsheets.name"/>
+	  <!-- Uncomment when the cheatsheet will be reworked
       <cheatsheet
             category="org.openoffice.ide.eclipse.core.cheatsheets"
             contentFile="$nl$/doc/cheatsheets/starting.xml"
@@ -221,8 +222,8 @@
             %cheatsheets.starting.description
          </description>
       </cheatsheet>
+      -->
    </extension>
- -->
  
    <extension
          point="org.eclipse.help.toc">

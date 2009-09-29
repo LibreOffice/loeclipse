@@ -21,5 +21,15 @@
             project="true">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatsheet
+            category="org.openoffice.ide.eclipse.core.cheatsheets"
+            composite="false"
+            contentFile="doc/cheatsheets/unoclient.xml"
+            id="org.openoffice.ide.eclipse.cpp.unoclient"
+            name="Create a C++ UNO Client">
+      </cheatsheet>
+   </extension>
 
 </plugin>
