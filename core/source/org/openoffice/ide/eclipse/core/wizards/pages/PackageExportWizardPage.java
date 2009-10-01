@@ -208,7 +208,7 @@ public class PackageExportWizardPage extends WizardPage {
         });
         
         mOOoVersion = new ChoiceRow(body, OOVERSION, 
-                Messages.getString("PackageExportWizardPage.OOoVersionLabel")); //$NON-NLS-1$
+                Messages.getString("PackageExportWizardPage.OOoVersionLabel"), null); //$NON-NLS-1$
         mOOoVersion.setTooltip(Messages.getString("PackageExportWizardPage.OOoVersionTooltip")); //$NON-NLS-1$
 
         mOOoVersion.add("1.x", "zip"); //$NON-NLS-1$ //$NON-NLS-2$

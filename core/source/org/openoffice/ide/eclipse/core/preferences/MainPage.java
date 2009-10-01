@@ -83,7 +83,7 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         mLoglevel = new ChoiceRow(body, LOGLEVEL, 
-                Messages.getString("MainPage.LogLevel")); //$NON-NLS-1$
+                Messages.getString("MainPage.LogLevel"), null); //$NON-NLS-1$
         mLoglevel.add(Messages.getString("MainPage.Error"), //$NON-NLS-1$
                 LogLevels.ERROR.toString());
         mLoglevel.add(Messages.getString("MainPage.Warning"), //$NON-NLS-1$

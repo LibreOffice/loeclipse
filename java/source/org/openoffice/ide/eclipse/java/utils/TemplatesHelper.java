@@ -40,6 +40,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -73,26 +75,49 @@ public class TemplatesHelper {
      * @param pClazz the class from which to load the resource file
      * @param pDestSuffix the subpath in which the file should be copied, relatively to 
      *          the implementation package.
+     * @param pArgs additional arguments to pass to the formatter
      */
     public static void copyTemplate( IUnoidlProject pProject, String pTemplateName, 
-            Class<?> pClazz, String pDestSuffix ) {
+            Class<?> pClazz, String pDestSuffix, Object... pArgs ) {
        
-        String fileName = pTemplateName + TEMPLATE_EXT;
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pProject.getName() );
         
-        // Get the path where to place the files
         IPath relPath = pProject.getImplementationPath();
         relPath = relPath.append( pDestSuffix );
         IFolder dest = pProject.getFolder(relPath);
         
-        relPath.toFile().mkdirs();
-        
         // Compute the name of the project's implementation package
         String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension(); //$NON-NLS-1$
         
+        Object[] args = new Object[ pArgs.length + 1 ];
+        args[0] = implPkg;
+        System.arraycopy( pArgs, 0, args, 1, pArgs.length );
+        
+        copyTemplate( prj, pTemplateName, pClazz, 
+                dest.getProjectRelativePath().toString(), args );
+    }
+    
+    /**
+     * Copies the template to the project.
+     * 
+     * @param pProject the project where to copy the file
+     * @param pTemplateName the template name (without the extension)
+     * @param pClazz the class from which to load the resource file
+     * @param pDestPath the path in which the file should be copied, relatively to 
+     *          the project root.
+     * @param pArgs additional arguments to pass to the formatter
+     */
+    public static void copyTemplate( IProject pProject, String pTemplateName, 
+            Class<?> pClazz, String pDestPath, Object... pArgs ) {
+       
+        String fileName = pTemplateName + TEMPLATE_EXT;
+        
+        // Get the path where to place the files
+        IFolder dest = pProject.getFolder( pDestPath );
+        dest.getProjectRelativePath().toFile().mkdirs();
 
         // Read the template into a buffer
         FileWriter writer = null;
-        
         
         BufferedReader patternReader = null;
         InputStream in = null;
@@ -114,7 +139,7 @@ public class TemplatesHelper {
             // Loop over the lines, format and write them.
             String line = patternReader.readLine();
             while (line != null) {
-                line = MessageFormat.format(line, new Object[]{implPkg});
+                line = MessageFormat.format(line, pArgs );
                 writer.append(line + "\n"); //$NON-NLS-1$
                 line = patternReader.readLine();
             }

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cheatsheet
-      title="Create a C++ UNO client">
+      title="Create a Java UNO client">
    <intro>
       <description>
          OpenOffice.org can be used as well as a server. Creating clients connecting to it is not an easy task for beginners and the informations are split all over the web.
 <br/><br/>
-<b>Follow the next steps to create a new C++ UNO Client really quickly.</b>
+<b>Follow the next steps to create a new Java UNO Client really quickly.</b>
       </description>
    </intro>
    <item
-         title="Create the C++ UNO Client">
+         title="Create the Java UNO Client">
       <description>
-         Create a new project of type <b>C++ UNO Client application</b>.
+         Create a new project of type <b>Java UNO Client application</b> .
 <br/><br/>
 Configure the OpenOffice.org instance and SDK used to build to program and configure the OpenOffice.org connection.
       </description>
       <command
             required="true"
-            serialization="org.eclipse.ui.newWizard(newWizardId=org.openoffice.ide.eclipse.cpp.client)"/>
+            serialization="org.eclipse.ui.newWizard(newWizardId=org.openoffice.ide.eclipse.java.client)"/>
    </item>
    <item
          title="Write the client code">
@@ -26,18 +26,6 @@ Configure the OpenOffice.org instance and SDK used to build to program and confi
       </description>
    </item>
    <item
-         title="Create a launch configuration">
-      <description>
-         Create a C++ Application run configuration. 
-<br/><br/>
-Don&apos;t forget to add the <b>LD_LIBRARY_PATH or PATH</b> in the environment variables and set it to the path to the <b>ure/lib</b> folder in the OpenOffice.org installation.
-      </description>
-      <command
-            required="true"
-            serialization="org.eclipse.debug.ui.commands.OpenRunConfigurations"/>
-   </item>
-   <item
-         skip="false"
          title="Start OpenOffice.org">
       <description>
          OpenOffice.org needs to be started with the following parameter depending on your connection configuration:
@@ -51,6 +39,8 @@ Don&apos;t forget to add the <b>LD_LIBRARY_PATH or PATH</b> in the environment v
          title="Run the client">
       <description>
          <b>Everything is done!</b> Now run the new UNO client program.
+<br/><br/>
+To run your application, right-click on your class in the Package Explorer and select Run As &gt; Java Application. The Console view should appear at the bottom and display the output.
       </description>
    </item>
 </cheatsheet>

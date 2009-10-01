@@ -28,44 +28,43 @@
  * All Rights Reserved.
  * 
  ************************************************************************/
-package org.openoffice.ide.eclipse.cpp.client;
+package org.openoffice.ide.eclipse.java.client;
 
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.widgets.Composite;
-import org.openoffice.ide.eclipse.core.wizards.pages.BaseUnoConnectionPage;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
- * Wizard page for the UNO Client configuration.
+ * Messages for the package.
  * 
  * @author cbosdonnat
  *
  */
-public class UnoConnectionPage extends BaseUnoConnectionPage {
+public class Messages {
+    
+    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.java.client.messages"; //$NON-NLS-1$
 
-    private static final String PIPE_PATTERN = "PipeConnection cnx( \"{0}\" );"; //$NON-NLS-1$
-    private static final String SOCKET_PATTERN = "SocketConnection cnx( {1}, \"{0}\" );"; //$NON-NLS-1$
-    
-    private UnoClientWizardPage mMainPage;
-    
-    @Override
-    public void createControl(Composite pParent) {
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(BUNDLE_NAME);
 
-        super.createControl( pParent );
-        setConnectionPatterns( PIPE_PATTERN, SOCKET_PATTERN );
-    }
-    
     /**
-     * @return the normal next page of the CDT main page.
+     * Default constructor.
      */
-    @Override
-    public IWizardPage getNextPage() {
-        return mMainPage.getNextCdtPage();
+    private Messages() {
     }
 
     /**
-     * @param pMainPage the main configuration page of the UNO Client Wizard
+     * Get the string from it's key.
+     * 
+     * @param pKey the key of the string
+     * 
+     * @return the internationalized string
      */
-    public void setMainPage(UnoClientWizardPage pMainPage) {
-        mMainPage = pMainPage;
+    public static String getString(String pKey) {
+        String string = '!' + pKey + '!';
+        try {
+            string =  RESOURCE_BUNDLE.getString(pKey);
+        } catch (MissingResourceException e) {
+        }
+        return string;
     }
 }

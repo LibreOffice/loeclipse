@@ -130,7 +130,7 @@ public class OOoConfigPanel {
      * @return SDK name selected
      */
     public String getSDKName() {
-        String sdkName = ""; //$NON-NLS-1$
+        String sdkName = new String();
         if (null != mSdkRow) {
             sdkName = mSdkRow.getValue();
         }
@@ -141,7 +141,7 @@ public class OOoConfigPanel {
      * @return OOo name selected
      */
     public String getOOoName() {
-        String oooName = ""; //$NON-NLS-1$
+        String oooName = new String();
         if (null != mOOoRow) {
             oooName = mOOoRow.getValue();
         }

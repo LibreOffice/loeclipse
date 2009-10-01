@@ -356,7 +356,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         
         // Adding the programming language row 
         mLanguageRow = new ChoiceRow(body, LANGUAGE,
-                        Messages.getString("NewUnoProjectPage.Language")); //$NON-NLS-1$
+                        Messages.getString("NewUnoProjectPage.Language"), null); //$NON-NLS-1$
         mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
         
         // Sets the available programming languages

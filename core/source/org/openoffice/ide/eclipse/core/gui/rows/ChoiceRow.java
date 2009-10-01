@@ -43,6 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui.rows;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
@@ -71,18 +72,9 @@ import org.eclipse.swt.widgets.Label;
 public class ChoiceRow extends LabeledRow {
     
     private Hashtable<String, String> mTranslations;
+    private ArrayList<String> mItems;
+    private int mSelected;
         
-    /**
-     * Create a new choice row. The parent composite should have a grid layout
-     * with 2 or 3 horizontal spans.
-     * 
-     * @param pParent the parent composite where to create the raw 
-     * @param pProperty the property name of the raw
-     * @param pLabel label the label to print on the left of the raw
-     */
-    public ChoiceRow (Composite pParent, String pProperty, String pLabel) {
-        this(pParent, pProperty, pLabel, null);
-    }
     
     /**
      * Create a new choice row with a button on the right. The parent 
@@ -97,48 +89,39 @@ public class ChoiceRow extends LabeledRow {
             String pBrowse) {
         
         super(pProperty);
+        
+        // mField is always created
+        int numFields = 1;
 
         mTranslations = new Hashtable<String, String>();
+        mItems = new ArrayList<String>();
+        mSelected = -1;
         
-        Label aLabel = new Label(pParent, SWT.NONE);
-        aLabel.setText(pLabel);
+        Label aLabel = null;
+        if ( pLabel != null ) {
+            aLabel = new Label(pParent, SWT.NONE);
+            aLabel.setText(pLabel);
+            numFields++;
+        }
         
         Combo aField = new Combo(pParent, SWT.READ_ONLY);
         aField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
+                mSelected = ((Combo)mField).getSelectionIndex();
                 FieldEvent fe = new FieldEvent(mProperty, getValue());
                 fireFieldChangedEvent(fe);
             }
         });
         
         createContent(pParent, aLabel, aField, pBrowse);
-    }
-    
-    /**
-     * Create a new choice row.
-     * 
-     * @param pParent the parent composite
-     * @param pProperty the property name to use in events
-     */
-    public ChoiceRow(Composite pParent, String pProperty) {
-        super(pProperty);
         
-        mTranslations = new Hashtable<String, String>();
-
-        Combo aField = new Combo(pParent, SWT.READ_ONLY);
-        aField.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent pEvent) {
-                FieldEvent fe = new FieldEvent(mProperty, getValue());
-                fireFieldChangedEvent(fe);
-            }
-        });
+        if ( mBrowse != null ) {
+            numFields++;
+        }
         
-        createContent(pParent, null, aField, null);
-        
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING); 
-        gd.horizontalSpan = ((GridLayout)pParent.getLayout()).numColumns;
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL); 
+        gd.horizontalSpan = ((GridLayout)pParent.getLayout()).numColumns - numFields;
         aField.setLayoutData(gd);
     }
     
@@ -164,6 +147,7 @@ public class ChoiceRow extends LabeledRow {
     public void addAll(String[] pItems) {
         for (int i = 0; i < pItems.length; i++) {
             ((Combo)mField).add(pItems[i]);
+            mItems.add(pItems[i]);
         }
     }
     
@@ -177,15 +161,17 @@ public class ChoiceRow extends LabeledRow {
      * 
      * @param pText the translated item text
      * @param pValue the item value
-     * @param pIndex te item index
+     * @param pIndex the item index
      */
     public void add(String pText, String pValue, int pIndex) {
         if (!mTranslations.containsKey(pText)) {
             mTranslations.put(pText, pValue);
             if (pIndex >= 0) {
                 ((Combo)mField).add(pText, pIndex);
+                mItems.add( pIndex, pText );
             } else {
                 ((Combo)mField).add(pText);
+                mItems.add( pText );
             }
         }
     }
@@ -232,6 +218,7 @@ public class ChoiceRow extends LabeledRow {
     public void remove(String pText) {
         mTranslations.remove(pText);
         ((Combo)mField).remove(pText);
+        mItems.remove( pText );
     }
     
     /**
@@ -266,6 +253,7 @@ public class ChoiceRow extends LabeledRow {
     public void removeAll() {
         mTranslations.clear();
         ((Combo)mField).removeAll();
+        mItems.clear();
     }
     
     /**
@@ -276,6 +264,7 @@ public class ChoiceRow extends LabeledRow {
      */
     public void select(int pIndex) {
         ((Combo)mField).select(pIndex);
+        mSelected = pIndex;
         
         // Fire a modification event to the listener 
         FieldEvent fe = new FieldEvent(this.mProperty, getValue());
@@ -314,7 +303,7 @@ public class ChoiceRow extends LabeledRow {
      *     <code>getValue()</code> to get the selected value.
      */
     public String getItem(int pIndex) {
-        return ((Combo)mField).getItem(pIndex);
+        return mItems.get(pIndex);
     }
 
     /**
@@ -324,7 +313,7 @@ public class ChoiceRow extends LabeledRow {
      * @see Combo#getItemCount()
      */
     public int getItemCount() {
-        return ((Combo)mField).getItemCount();
+        return mItems.size();
     }
 
     /**
@@ -336,9 +325,8 @@ public class ChoiceRow extends LabeledRow {
     public String getValue() {
         String result = null; 
         
-        int selectedId = ((Combo)mField).getSelectionIndex();
-        if (-1 != selectedId) {
-            result = getValue(selectedId);
+        if (-1 != mSelected) {
+            result = getValue(mSelected);
         }
         
         return result;
@@ -354,7 +342,7 @@ public class ChoiceRow extends LabeledRow {
         String result = null;
         
         if (pIndex >= 0 && pIndex < getItemCount()) {
-            String text = ((Combo)mField).getItem(pIndex);
+            String text = mItems.get(pIndex);
             result = text;
             
             String value = mTranslations.get(text);

@@ -35,5 +35,28 @@
             name="OpenOffice.org Libraries">
       </classpathContainerPage>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="org.openoffice.ide.eclipse.core"
+            class="org.openoffice.ide.eclipse.java.client.ClientWizard"
+            hasPages="true"
+            icon="icons/uno_client.png"
+            id="org.openoffice.ide.eclipse.java.client"
+            name="Java UNO client application"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatsheet
+            category="org.openoffice.ide.eclipse.core.cheatsheets"
+            composite="false"
+            contentFile="doc/cheatsheets/unoclient.xml"
+            id="org.openoffice.ide.eclipse.java.unoclient"
+            name="Create a Java UNO client">
+      </cheatsheet>
+   </extension>
 
 </plugin>

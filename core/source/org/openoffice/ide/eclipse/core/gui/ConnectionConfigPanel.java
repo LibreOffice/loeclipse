@@ -35,6 +35,8 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
@@ -65,6 +67,10 @@ public class ConnectionConfigPanel {
     private boolean mIsPipe;
     private String[] mPatterns;
     
+    private String mName;
+    private String mHost;
+    private String mPort;
+    
     private Combo mTypeList;
     private ArrayList<Composite> mDetails;
 
@@ -86,6 +92,10 @@ public class ConnectionConfigPanel {
     public ConnectionConfigPanel( Composite pParent  ) {
         mIsPipe = false;
         mPatterns = new String[TYPE_VALUES.length];
+        
+        mName = "somename"; //$NON-NLS-1$
+        mPort = "8100"; //$NON-NLS-1$
+        mHost = "localhost"; //$NON-NLS-1$
         
         createControls( pParent );
     }
@@ -119,10 +129,10 @@ public class ConnectionConfigPanel {
         
         if ( mIsPipe ) {
             cnxString = MessageFormat.format( mPatterns[0], 
-                    mNameTxt.getText() );
+                    mName );
         } else {
             cnxString = MessageFormat.format( mPatterns[1], 
-                    mHostTxt.getText(), mPortTxt.getText() );
+                    mHost, mPort );
         }
         
         return cnxString;
@@ -206,7 +216,13 @@ public class ConnectionConfigPanel {
         
         mNameTxt = new Text( body, SWT.SINGLE | SWT.BORDER );
         mNameTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mNameTxt.setText( "somename" ); //$NON-NLS-1$
+        mNameTxt.addKeyListener( new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent pE) {
+                mName = mNameTxt.getText();
+            }
+        });
+        mNameTxt.setText( mName );
         
         return body;
     }
@@ -225,7 +241,14 @@ public class ConnectionConfigPanel {
         
         mHostTxt = new Text( body, SWT.SINGLE | SWT.BORDER );
         mHostTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mHostTxt.setText( "localhost" ); //$NON-NLS-1$
+        mHostTxt.addKeyListener( new KeyAdapter() {
+            
+            @Override
+            public void keyReleased(KeyEvent pE) {
+                mHost = mHostTxt.getText();
+            }
+        });
+        mHostTxt.setText( mHost );
         
         Label portLbl = new Label( body, SWT.NONE );
         portLbl.setText( Messages.getString("ConnectionConfigPanel.Port") ); //$NON-NLS-1$
@@ -233,17 +256,25 @@ public class ConnectionConfigPanel {
         
         mPortTxt = new Text( body, SWT.SINGLE | SWT.BORDER );
         mPortTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mPortTxt.setText( "8100" ); //$NON-NLS-1$
         mPortTxt.addVerifyListener( new VerifyListener() {
             
-            public void verifyText( VerifyEvent pEvent ) {
+            public void verifyText(VerifyEvent pEvent) {
                 try {
-                    Integer.parseInt( pEvent.text );
-                } catch ( NumberFormatException e ) {
+                    if ( pEvent.text.length() > 0 ) {
+                        Integer.parseInt( pEvent.text );
+                    }
+                } catch (NumberFormatException e) {
                     pEvent.doit = false;
                 }
             }
         });
+        mPortTxt.addKeyListener( new KeyAdapter () {
+            @Override
+            public void keyReleased(KeyEvent pEvent) {
+                mPort = mPortTxt.getText();
+            }
+        });
+        mPortTxt.setText( mPort );
         
         return body;
     }

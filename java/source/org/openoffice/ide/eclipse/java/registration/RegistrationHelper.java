@@ -49,9 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;

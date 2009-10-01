@@ -28,9 +28,8 @@
  * All Rights Reserved.
  * 
  ************************************************************************/
-package org.openoffice.ide.eclipse.cpp.client;
+package org.openoffice.ide.eclipse.java.client;
 
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.wizards.pages.BaseUnoConnectionPage;
 
@@ -42,30 +41,12 @@ import org.openoffice.ide.eclipse.core.wizards.pages.BaseUnoConnectionPage;
  */
 public class UnoConnectionPage extends BaseUnoConnectionPage {
 
-    private static final String PIPE_PATTERN = "PipeConnection cnx( \"{0}\" );"; //$NON-NLS-1$
-    private static final String SOCKET_PATTERN = "SocketConnection cnx( {1}, \"{0}\" );"; //$NON-NLS-1$
-    
-    private UnoClientWizardPage mMainPage;
+    private static final String PIPE_PATTERN = "cnx = new PipeConnection( \"{0}\" );"; //$NON-NLS-1$
+    private static final String SOCKET_PATTERN = "cnx = new SocketConnection( \"{0}\", {1} );"; //$NON-NLS-1$
     
     @Override
     public void createControl(Composite pParent) {
-
-        super.createControl( pParent );
+        super.createControl(pParent);
         setConnectionPatterns( PIPE_PATTERN, SOCKET_PATTERN );
-    }
-    
-    /**
-     * @return the normal next page of the CDT main page.
-     */
-    @Override
-    public IWizardPage getNextPage() {
-        return mMainPage.getNextCdtPage();
-    }
-
-    /**
-     * @param pMainPage the main configuration page of the UNO Client Wizard
-     */
-    public void setMainPage(UnoClientWizardPage pMainPage) {
-        mMainPage = pMainPage;
     }
 }
