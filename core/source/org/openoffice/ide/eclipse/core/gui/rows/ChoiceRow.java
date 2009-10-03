@@ -121,7 +121,7 @@ public class ChoiceRow extends LabeledRow {
         }
         
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL); 
-        gd.horizontalSpan = ((GridLayout)pParent.getLayout()).numColumns - numFields;
+        gd.horizontalSpan = ((GridLayout)pParent.getLayout()).numColumns - numFields + 1;
         aField.setLayoutData(gd);
     }
     

@@ -154,7 +154,7 @@ public class TypeCellEditor extends TextCellEditor {
             InternalUnoType mSelectedType = browser.getSelectedType();
             if (null != mSelectedType) {
                 int pos = text.getCaretPosition();
-                text.insert(mSelectedType.getFullName());
+                text.insert(mSelectedType.getFullName().replaceAll("\\.", "::")); //$NON-NLS-1$ //$NON-NLS-2$
                 text.setFocus();
                 text.setSelection(pos + mSelectedType.getFullName().length());
                 result = text.getText().trim();

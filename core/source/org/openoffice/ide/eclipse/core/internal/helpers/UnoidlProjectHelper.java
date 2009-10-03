@@ -160,9 +160,6 @@ public class UnoidlProjectHelper {
         ILanguage language = (ILanguage)pData.getProperty(
                 IUnoFactoryConstants.PROJECT_LANGUAGE);
         unoProject.setLanguage(language);
-
-        // create the language-specific part
-        language.getProjectHandler().configureProject(pData);
         
         // Set the SDK
         String sdkname = (String)pData.getProperty(
@@ -190,6 +187,9 @@ public class UnoidlProjectHelper {
             sourcesDir = SOURCE_BASIS;
         }
         unoProject.setSourcesDir(sourcesDir);
+        
+        // create the language-specific part
+        language.getProjectHandler().configureProject(pData);
         
         
         // Save all the properties to the configuration file
