@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OOo eclipse integration
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.openoffice.ide.eclipse.core; singleton:=true
 Bundle-Version: @VERSION@
 Bundle-Activator: org.openoffice.ide.eclipse.core.OOEclipsePlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.core.resources,
  org.eclipse.ui.editors,
@@ -18,15 +17,31 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.junit,
  org.eclipse.debug.core,
- org.eclipse.debug.ui
-Eclipse-LazyStart: true
+ org.eclipse.debug.ui,
+ org.eclipse.ui,
+ javax.xml
+Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.ide.eclipse.core,
+ org.openoffice.ide.eclipse.core.actions,
+ org.openoffice.ide.eclipse.core.builders,
+ org.openoffice.ide.eclipse.core.editors,
+ org.openoffice.ide.eclipse.core.editors.main,
+ org.openoffice.ide.eclipse.core.editors.syntax,
+ org.openoffice.ide.eclipse.core.gui,
  org.openoffice.ide.eclipse.core.gui.rows,
  org.openoffice.ide.eclipse.core.i18n,
  org.openoffice.ide.eclipse.core.launch,
  org.openoffice.ide.eclipse.core.model,
+ org.openoffice.ide.eclipse.core.model.config,
+ org.openoffice.ide.eclipse.core.model.description,
  org.openoffice.ide.eclipse.core.model.language,
+ org.openoffice.ide.eclipse.core.office,
  org.openoffice.ide.eclipse.core.preferences,
+ org.openoffice.ide.eclipse.core.unittests,
+ org.openoffice.ide.eclipse.core.unotypebrowser,
  org.openoffice.ide.eclipse.core.utils,
- org.openoffice.ide.eclipse.core.wizards
+ org.openoffice.ide.eclipse.core.wizards,
+ org.openoffice.ide.eclipse.core.wizards.pages,
+ org.openoffice.ide.eclipse.core.wizards.utils
 Bundle-Vendor: OpenOffice.org
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
