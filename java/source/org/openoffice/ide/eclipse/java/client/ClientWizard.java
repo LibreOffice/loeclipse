@@ -30,9 +30,11 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.client;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -42,6 +44,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.ui.IWorkbenchPage;
@@ -59,16 +62,8 @@ import org.openoffice.ide.eclipse.java.utils.TemplatesHelper;
  *
  */
 public class ClientWizard extends BasicNewResourceWizard {
-    
-    private static final String[] HELPER_CLASSES = {
-        "AbstractConnection", //$NON-NLS-1$
-        "Connection", //$NON-NLS-1$
-        "OpenOfficeException", //$NON-NLS-1$
-        "PipeConnection", //$NON-NLS-1$
-        "SocketConnection" //$NON-NLS-1$
-    };
 
-    private static final String DEST_PACKAGE = "org.openoffice.connection"; //$NON-NLS-1$
+    private static final String DEST_PACKAGE = "org.openoffice.client"; //$NON-NLS-1$
     private static final String CLIENT_CLASS = "UnoClient"; //$NON-NLS-1$
 
     private IWorkbenchPage mActivePage;
@@ -99,7 +94,7 @@ public class ClientWizard extends BasicNewResourceWizard {
                 
                 try {
                     mThirdPage.performFinish( pMonitor );
-                    setupClientProject( mThirdPage.getJavaProject() );
+                    setupClientProject( mThirdPage.getJavaProject(), pMonitor );
                 } catch ( Exception e ) {
                     PluginLogger.error( Messages.getString("ClientWizard.ProjectCreationError"), e ); //$NON-NLS-1$
                     status = new Status( IStatus.ERROR, OOoJavaPlugin.PLUGIN_ID, 
@@ -116,21 +111,22 @@ public class ClientWizard extends BasicNewResourceWizard {
 
     /**
      * Configure the Java project in order to have a Java UNO client project.
-     *  
+     *
      * @param pJavaProject the Java project to configure
+     * @param pMonitor progress monitor to update
+     * 
+     * @throws Exception if anything wrong happens 
      */
-    protected void setupClientProject(IJavaProject pJavaProject ) {
+    protected void setupClientProject(IJavaProject pJavaProject, IProgressMonitor pMonitor ) throws Exception {
+        
         // Generate the sample classes in org.openoffice.connection
         IProject prj = pJavaProject.getProject();
+        
         IClasspathEntry[] srcEntries = mFirstPage.getSourceClasspathEntries();
         IFolder srcFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder( srcEntries[0].getPath() ); 
         IPath srcPath = srcFolder.getProjectRelativePath();
         
         String path = srcPath.append( DEST_PACKAGE.replace( '.', '/' ) ).toString();
-        for ( String helperClass : HELPER_CLASSES ) {
-            TemplatesHelper.copyTemplate( prj, helperClass, ClientWizard.class, path, DEST_PACKAGE );
-        }
-        
         TemplatesHelper.copyTemplate( prj, CLIENT_CLASS, ClientWizard.class,
                 path, DEST_PACKAGE, mCnxPage.getConnectionCode() );
         
@@ -148,6 +144,16 @@ public class ClientWizard extends BasicNewResourceWizard {
         IFile javaClientFile = srcDir.getFile( CLIENT_CLASS + ".java" ); //$NON-NLS-1$
         selectAndReveal( javaClientFile );
         WorkbenchHelper.showFile( javaClientFile, mActivePage );
+        
+        // Create the Uno connection project
+        IJavaProject cnxPrj = CnxProjectHelper.getConnectionProject( mCnxPage.getOoo(), pMonitor );
+        if ( cnxPrj != null ) {
+            IClasspathEntry[] oldClasspath = pJavaProject.getRawClasspath();
+            IClasspathEntry[] classpath = new IClasspathEntry[ oldClasspath.length + 1 ];
+            classpath[0] = JavaCore.newProjectEntry( cnxPrj.getProject().getFullPath() );
+            System.arraycopy( oldClasspath, 0, classpath, 1, oldClasspath.length );
+            pJavaProject.setRawClasspath( classpath, pMonitor );
+        }
     }
 
     @Override

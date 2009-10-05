@@ -1,8 +1,9 @@
 package {0};
 
-import com.sun.star.frame.XDesktop;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.uno.UnoRuntime;
+import org.openoffice.connection.AbstractConnection;
+import org.openoffice.connection.PipeConnection;
+import org.openoffice.connection.SocketConnection;
+
 import com.sun.star.uno.XComponentContext;
 
 public class UnoClient '{'
