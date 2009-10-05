@@ -116,6 +116,14 @@ public class URE extends AbstractOOo {
         }
         return new String[]{ libs };
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String[] getBinPath() {
+        String libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
+        return new String[]{ libs };
+    }
 
     /**
      * {@inheritDoc}

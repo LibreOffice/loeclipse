@@ -103,6 +103,14 @@ public interface IOOo {
     public String[] getLibsPath();
     
     /**
+     * <p>Returns the path to any folder containing binaries in the OOo installation. 
+     * This string could be passed to the Path constructor to get the folder object.</p>
+     * 
+     * @return paths to the OpenOffice.org binary directories
+     */
+    public String[] getBinPath();
+    
+    /**
      * @return the path to the <code>types.rdb</code> file of the OOo or URE
      * instance.
      */

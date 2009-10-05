@@ -124,7 +124,7 @@ public class RegmergeBuilder {
                            existingReg + "\"" + pFile.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
         
         // Process creation. Need to set the PATH value using OOo path: due to some tools changes in 3.1
-        String[] sPaths = pUnoprj.getOOo().getLibsPath();
+        String[] sPaths = pUnoprj.getOOo().getBinPath();
         String sPathValue = "PATH="; //$NON-NLS-1$
         for (String sPath : sPaths) {
             if ( !sPathValue.endsWith("=")) { //$NON-NLS-1$

@@ -167,6 +167,21 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    public String[] getBinPath() {
+        // Nothing if not OOo3
+        String[] otherPaths = mMapper.getAdditionnalBins();
+        
+        String bins = getHome() + FILE_SEP + "program"; //$NON-NLS-1$
+        if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+            bins = getHome() + FILE_SEP + "MacOS"; //$NON-NLS-1$
+        }
+        
+        return mMapper.mergeArrays(new String[]{ bins }, otherPaths);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public String[] getTypesPath() {
         String[] paths = {
             getLibsPath()[0] + FILE_SEP + "types.rdb" //$NON-NLS-1$ 
@@ -511,7 +526,7 @@ public class OOo extends AbstractOOo {
         public OOo3PathMapper(String pHome) {
             mHome = pHome;
         }
-        
+
         /**
          * @return <code>true</code> if the openoffice install corresponds to a 3.0 
          *      installation layout, <code>false</code> otherwise.
@@ -557,6 +572,23 @@ public class OOo extends AbstractOOo {
                 String basisLibs = mBasis + FILE_SEP + "program"; //$NON-NLS-1$
                 
                 additionnal = mergeArrays(ureLibs, new String[]{basisLibs});
+            }
+            
+            return additionnal;
+        }
+        
+        /**
+         * @return the binaries path to add for OOo3 or an empty array if not an
+         *      OOo3 install.   
+         */
+        public String[] getAdditionnalBins() {
+            String[] additionnal = new String[0];
+            
+            if (isVersion3()) {
+                String[] ureBins = mUre.getBinPath();
+                String basisBins = mBasis + FILE_SEP + "program"; //$NON-NLS-1$
+                
+                additionnal = mergeArrays(ureBins, new String[]{basisBins});
             }
             
             return additionnal;
@@ -624,18 +656,6 @@ public class OOo extends AbstractOOo {
             }
             
             return path; 
-        }
-        
-        /**
-         * @return the javaldx path for OOo3 or <code>null</code> if not an OOo3 install.
-         */
-        public String getJavaldx() {
-            String path = null;
-            if (isVersion3()) {
-                path = mUre.getJavaldxPath();
-            }
-            
-            return path;
         }
         
         /**
