@@ -155,7 +155,7 @@ public class PackageExportWizardPage extends WizardPage {
         body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
         
         mProjectRow = new DialogRow(body, "",  //$NON-NLS-1$
-                Messages.getString("PackageExportWizardPage.PackageLabel")) { //$NON-NLS-1$
+                Messages.getString("PackageExportWizardPage.PackageLabel"), false) { //$NON-NLS-1$
             @Override
             public String doOpenDialog() {
                 String result = getValue();
@@ -208,7 +208,7 @@ public class PackageExportWizardPage extends WizardPage {
         });
         
         mOOoVersion = new ChoiceRow(body, OOVERSION, 
-                Messages.getString("PackageExportWizardPage.OOoVersionLabel"), null); //$NON-NLS-1$
+                Messages.getString("PackageExportWizardPage.OOoVersionLabel"), null, false); //$NON-NLS-1$
         mOOoVersion.setTooltip(Messages.getString("PackageExportWizardPage.OOoVersionTooltip")); //$NON-NLS-1$
 
         mOOoVersion.add("1.x", "zip"); //$NON-NLS-1$ //$NON-NLS-2$

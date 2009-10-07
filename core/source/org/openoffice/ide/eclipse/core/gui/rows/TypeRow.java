@@ -135,9 +135,9 @@ public class TypeRow extends TextRow {
      * {@inheritDoc}
      */
     protected void createContent(Composite pParent, Control pLabel, 
-            Control pField, String pBrowseText) {
-
-        super.createContent(pParent, pLabel, pField, Messages.getString("TypeRow.Browse")); //$NON-NLS-1$
+            Control pField, String pBrowseText, boolean pLink) {
+        
+        super.createContent(pParent, pLabel, pField, Messages.getString("TypeRow.Browse"), true); //$NON-NLS-1$
         
         // Add a completion listener on the Text field
         ((Text)mField).addKeyListener(new KeyAdapter() {
@@ -200,7 +200,7 @@ public class TypeRow extends TextRow {
         
         final Shell shell = pParent.getShell();
         
-        mBrowse.addSelectionListener(new SelectionAdapter() {
+        addBrowseSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent pEvent) {
                 super.widgetSelected(pEvent);
                 

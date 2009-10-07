@@ -31,11 +31,11 @@
 package org.openoffice.ide.eclipse.java.tests;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.junit.buildpath.JUnitContainerInitializer;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.java.utils.TemplatesHelper;
@@ -57,6 +57,11 @@ public class TestsHelper {
     };
     private static final String TEST_PATH = "tests"; //$NON-NLS-1$
     
+    
+    private static final String JUNIT_CONTAINER = "org.eclipse.jdt.junit.JUNIT_CONTAINER"; //$NON-NLS-1$
+    private static final String JUNIT3 = "3"; //$NON-NLS-1$
+    private static final IPath JUNIT3_PATH = new Path( JUNIT_CONTAINER ).append( JUNIT3 );
+    
     /**
      * Creates all the test classes files in the UNO project.
      * 
@@ -64,7 +69,8 @@ public class TestsHelper {
      */
     public static void writeTestClasses( IUnoidlProject pProject ) {
         for (String template : TEMPLATES) {
-            TemplatesHelper.copyTemplate( pProject, template, TestsHelper.class, TEST_PATH );
+            TemplatesHelper.copyTemplate( pProject, template + TemplatesHelper.JAVA_EXT, 
+                    TestsHelper.class, TEST_PATH );
         }
     }
     
@@ -73,7 +79,6 @@ public class TestsHelper {
      * 
      * @param pProject the project to add the libraries on
      */
-    @SuppressWarnings("restriction")
     public static void addJUnitLibraries( IJavaProject pProject ) {
         try {
             IClasspathEntry[] oldEntries = pProject.getRawClasspath();
@@ -81,8 +86,7 @@ public class TestsHelper {
             
             System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
             
-            IPath path = JUnitContainerInitializer.JUNIT3_PATH;
-            IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
+            IClasspathEntry containerEntry = JavaCore.newContainerEntry(JUNIT3_PATH);
             entries[entries.length - 1] = containerEntry;
             
             pProject.setRawClasspath(entries, null);

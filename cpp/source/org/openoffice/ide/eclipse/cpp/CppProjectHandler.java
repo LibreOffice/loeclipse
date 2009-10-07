@@ -79,12 +79,6 @@ public class CppProjectHandler implements IProjectHandler {
         "uno_cppuhelpergcc3", //$NON-NLS-1$
         "uno_salhelpergcc3" //$NON-NLS-1$
     };
-    
-    @Override
-    public void addLanguageDependencies(IUnoidlProject pUnoproject,
-            IProgressMonitor pMonitor) throws CoreException {
-        // Everything is done in the configureProject method
-    }
 
     @Override
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
@@ -106,7 +100,7 @@ public class CppProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void configureProject(UnoFactoryData pData) throws Exception {
+    public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
         IProject prj = (IProject)pData.getProperty(
                 IUnoFactoryConstants.PROJECT_HANDLE);
         

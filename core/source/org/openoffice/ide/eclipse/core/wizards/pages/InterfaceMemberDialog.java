@@ -266,7 +266,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements
             typeComposite.setLayoutData(gd);
             typeComposite.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
             
-            mMemberTypeRow = new ChoiceRow(typeComposite, MEMBER_TYPE, null, null );
+            mMemberTypeRow = new ChoiceRow(typeComposite, MEMBER_TYPE, null, null, false );
             mMemberTypeRow.add(
                     Messages.getString("InterfaceMemberDialog.MethodChoice"), "method"); //$NON-NLS-1$ //$NON-NLS-2$
             mMemberTypeRow.add(

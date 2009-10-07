@@ -68,12 +68,13 @@ public abstract class AbstractConfigRow extends ChoiceRow {
      * 
      * @param pParent the composite where to create the row
      * @param pProperty the property for the row events
+     * @param pBrowseText the text for the browse button/link
      * @param pSelection the configuration element to select first
      */
-    public AbstractConfigRow(final Composite pParent, String pProperty, Object pSelection) {
+    public AbstractConfigRow(final Composite pParent, String pProperty, String pBrowseText, Object pSelection) {
         super(pParent, pProperty, 
                 Messages.getString("AbstractConfigRow.Label"), //$NON-NLS-1$
-                Messages.getString("AbstractConfigRow.BrowseButton")); //$NON-NLS-1$
+                pBrowseText, true);
         
         addListener(mConfigListener);
         

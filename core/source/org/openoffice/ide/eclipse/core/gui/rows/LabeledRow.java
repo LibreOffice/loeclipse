@@ -43,7 +43,10 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui.rows;
 
+import java.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Link;
 
 /**
  * Basic class for a property row. Subclasses will override:
@@ -75,7 +79,7 @@ public abstract class LabeledRow {
 
     protected Control mLabel;
     protected Control mField;
-    protected Button  mBrowse;
+    protected Control mBrowse;
     protected String  mProperty;
 
     protected IFieldChangedListener mListener;
@@ -100,11 +104,13 @@ public abstract class LabeledRow {
      * @param pField Control containing the field data.
      * @param pBrowseText Button text. If <code>null</code>, the button isn't 
      *              created.
+     * @param pLink the browse is shown as a link if <code>true</code>, otherwise
+     *              it is a button.
      */
     public LabeledRow(Composite pParent, String pProperty, Control pLabel,
-                      Control pField, String pBrowseText) {
+                      Control pField, String pBrowseText, boolean pLink) {
         this.mProperty = pProperty;
-        createContent(pParent, pLabel, pField, pBrowseText);
+        createContent(pParent, pLabel, pField, pBrowseText, pLink);
     }
     
     /**
@@ -137,6 +143,20 @@ public abstract class LabeledRow {
     }
     
     /**
+     * Add a selection listener to the browse link or button (depends on the 
+     * arguments of the constructor).
+     * 
+     * @param pListener the listener to add
+     */
+    public void addBrowseSelectionListener( SelectionListener pListener ) {
+        if ( mBrowse instanceof Link ) {
+            ((Link) mBrowse).addSelectionListener( pListener );
+        } else if ( mBrowse instanceof Button ) {
+            ((Button) mBrowse).addSelectionListener( pListener );
+        }
+    }
+    
+    /**
      * Stores the row controls, creates the button if its text
      * is not <code>null</code> and layout the controls.
      * 
@@ -144,14 +164,30 @@ public abstract class LabeledRow {
      * @param pLabel the control for the label
      * @param pField the control for the field
      * @param pBrowseText the text to show on the right button of the row.
+     * @param pLink the browse is shown as a link if <code>true</code>, otherwise
+     *              it is a button.
      */
     protected void createContent(Composite pParent, Control pLabel,
-              Control pField, String pBrowseText) {
+              Control pField, String pBrowseText, boolean pLink) {
+        
         this.mLabel = pLabel;
         this.mField = pField;
         if (null != pBrowseText) {
-            mBrowse = new Button(pParent, SWT.PUSH);
-            mBrowse.setText(pBrowseText);
+            if ( pLink ) {
+                Link link = new Link(pParent, SWT.NONE);
+                link.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
+                link.setFont(pParent.getFont());
+                String linkPattern = "<A>{0}</A>"; //$NON-NLS-1$
+                String linkedText = MessageFormat.format( linkPattern, pBrowseText );
+                link.setText( linkedText );
+                mBrowse = link;
+            } else {
+                Button btn = new Button(pParent, SWT.PUSH);
+                btn.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
+                btn.setText( pBrowseText );
+                mBrowse = btn;
+            }
+            
         }
         fillRow(pParent);
     }

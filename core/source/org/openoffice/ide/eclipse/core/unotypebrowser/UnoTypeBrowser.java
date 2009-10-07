@@ -211,7 +211,7 @@ public class UnoTypeBrowser extends StatusDialog
         
         // create the types filter row
         mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER, 
-                Messages.getString("UnoTypeBrowser.FilterLabel"), null); //$NON-NLS-1$
+                Messages.getString("UnoTypeBrowser.FilterLabel"), null, false); //$NON-NLS-1$
         mTypeFilterRow.setTooltip(Messages.getString("UnoTypeBrowser.FilterTooltip")); //$NON-NLS-1$
         mTypeFilterRow.setFieldChangedListener(this);
         setFilterValues();

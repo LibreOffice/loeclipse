@@ -328,12 +328,15 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         // Inherits the parents control
         super.createControl(pParent);
         
+        initializeDialogUnits(pParent);
+        
         Composite control = (Composite)getControl();
         
         // Listens to name and directory changes
         addTextListener(control);
         
         Composite body = new Composite(control, SWT.NONE);
+        body.setFont( pParent.getFont() );
         body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
         
@@ -356,7 +359,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         
         // Adding the programming language row 
         mLanguageRow = new ChoiceRow(body, LANGUAGE,
-                        Messages.getString("NewUnoProjectPage.Language"), null); //$NON-NLS-1$
+                        Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
         mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
         
         // Sets the available programming languages

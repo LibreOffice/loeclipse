@@ -30,11 +30,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.client;
 
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -127,8 +125,8 @@ public class ClientWizard extends BasicNewResourceWizard {
         IPath srcPath = srcFolder.getProjectRelativePath();
         
         String path = srcPath.append( DEST_PACKAGE.replace( '.', '/' ) ).toString();
-        TemplatesHelper.copyTemplate( prj, CLIENT_CLASS, ClientWizard.class,
-                path, DEST_PACKAGE, mCnxPage.getConnectionCode() );
+        TemplatesHelper.copyTemplate( prj, CLIENT_CLASS + TemplatesHelper.JAVA_EXT, 
+                ClientWizard.class, path, DEST_PACKAGE, mCnxPage.getConnectionCode() );
         
         // Add the OpenOffice.org libraries to the project
         OOoContainerPage.addOOoDependencies( mCnxPage.getOoo(), pJavaProject );
@@ -159,10 +157,10 @@ public class ClientWizard extends BasicNewResourceWizard {
     @Override
     public void addPages() {
         
-        mFirstPage = new NewJavaProjectWizardPageOne();
+        mCnxPage = new UnoConnectionPage();
+        mFirstPage = new ClientWizardPageOne( mCnxPage );
         addPage( mFirstPage );
         
-        mCnxPage = new UnoConnectionPage();
         addPage( mCnxPage );
         
         mThirdPage = new NewJavaProjectWizardPageTwo( mFirstPage );

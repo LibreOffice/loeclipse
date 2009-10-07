@@ -88,7 +88,7 @@ public class FileRow extends LabeledRow {
         Text aField = new Text(pParent, SWT.BORDER);
             
         createContent(pParent, aLabel, aField,
-                Messages.getString("FileRow.Browse")); //$NON-NLS-1$
+                Messages.getString("FileRow.Browse"), false); //$NON-NLS-1$
         
         mField.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent pEvent) {
@@ -96,7 +96,7 @@ public class FileRow extends LabeledRow {
             }
         });
         
-        mBrowse.addSelectionListener(new SelectionAdapter() {
+        addBrowseSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent pEvent) {
                 browse();
             }

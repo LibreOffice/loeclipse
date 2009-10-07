@@ -81,7 +81,7 @@ public class BooleanRow extends LabeledRow {
         
         Label text = new Label(pParent, SWT.NONE);
         
-        createContent(pParent, checkbox,text, null);
+        createContent(pParent, checkbox,text, null, false);
     }
 
     /**

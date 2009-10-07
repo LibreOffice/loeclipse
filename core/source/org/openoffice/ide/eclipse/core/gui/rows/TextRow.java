@@ -84,7 +84,7 @@ public class TextRow extends LabeledRow
         aLabel.setText(pLabel);
         Text aField = new Text(pParent, SWT.BORDER);
         
-        createContent(pParent, aLabel, aField, null);
+        createContent(pParent, aLabel, aField, null, false);
         mField.addFocusListener(this);
         mField.addKeyListener(this);
     }

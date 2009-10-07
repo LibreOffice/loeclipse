@@ -1,3 +1,33 @@
+/*************************************************************************
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2009 by Cédric Bosdonnat
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ *
+ * Copyright: 2009 by Cédric Bosdonnat.
+ *
+ * All Rights Reserved.
+ * 
+ ************************************************************************/
 package org.openoffice.ide.eclipse.java.client;
 
 import org.eclipse.core.resources.ICommand;
@@ -9,11 +39,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.java.JavaProjectHandler;
 import org.openoffice.ide.eclipse.java.OOoJavaPlugin;
@@ -29,6 +59,8 @@ public class CnxProjectHelper {
 
     public static final String DEST_PACKAGE = "org.openoffice.connection"; //$NON-NLS-1$
     
+    private static final String LICENSE_FILE = "LICENSE.txt"; //$NON-NLS-1$
+    private static final String AUTHORS_FILE = "AUTHORS.txt"; //$NON-NLS-1$
     private static final String[] HELPER_CLASSES = {
         "AbstractConnection", //$NON-NLS-1$
         "Connection", //$NON-NLS-1$
@@ -41,8 +73,6 @@ public class CnxProjectHelper {
     private static final String CNX_PROJECT_NAME = "Java Uno Connector"; //$NON-NLS-1$
     private static final String SRC_DIR = "src"; //$NON-NLS-1$
     private static final String BIN_DIR = "bin"; //$NON-NLS-1$
-
-    private static final String JRE_ID = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
     
     
     /**
@@ -91,7 +121,7 @@ public class CnxProjectHelper {
         if ( creating ) {
             cnxPrj = JavaCore.create( prj );
             IClasspathEntry srcEntry = JavaCore.newSourceEntry( src.getFullPath() );
-            IClasspathEntry jreEntry = JavaCore.newContainerEntry( new Path( JRE_ID ) );
+            IClasspathEntry jreEntry = JavaRuntime.getDefaultJREContainerEntry();
             cnxPrj.setRawClasspath( new IClasspathEntry[] { srcEntry, jreEntry }, pMonitor );
             cnxPrj.setOutputLocation( bin.getFullPath(), pMonitor );
             cnxPrj.save( pMonitor, true );
@@ -105,8 +135,15 @@ public class CnxProjectHelper {
             // Add the sources 
             String path = src.getProjectRelativePath().append( DEST_PACKAGE.replace( '.', '/' ) ).toString();
             for ( String helperClass : HELPER_CLASSES ) {
-                TemplatesHelper.copyTemplate( prj, helperClass, ClientWizard.class, path, DEST_PACKAGE );
+                TemplatesHelper.copyTemplate( prj, helperClass + TemplatesHelper.JAVA_EXT, 
+                        ClientWizard.class, path, DEST_PACKAGE );
             }
+            
+            TemplatesHelper.copyTemplate( prj, LICENSE_FILE, 
+                    CnxProjectHelper.class, null );
+            TemplatesHelper.copyTemplate( prj, AUTHORS_FILE, 
+                    CnxProjectHelper.class, null );
+            
             prj.refreshLocal( IResource.DEPTH_INFINITE, pMonitor );
         } else if ( prj.hasNature( JavaCore.NATURE_ID ) ) {
             cnxPrj = JavaCore.create( prj );

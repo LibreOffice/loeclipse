@@ -61,12 +61,12 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
+import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.model.CompositeFactory;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.UnoPackage;
@@ -189,7 +189,7 @@ public class UnoidlProjectHelper {
         unoProject.setSourcesDir(sourcesDir);
         
         // create the language-specific part
-        language.getProjectHandler().configureProject(pData);
+        language.getProjectHandler().configureProject(pData, pMonitor);
         
         
         // Save all the properties to the configuration file
@@ -373,10 +373,6 @@ public class UnoidlProjectHelper {
                 PluginLogger.debug(
                     "source folder created"); //$NON-NLS-1$
             }
-            
-            pUnoproject.getLanguage().getProjectHandler().addLanguageDependencies(
-                    pUnoproject, pMonitor);
-            PluginLogger.debug("Language dependencies added"); //$NON-NLS-1$
 
             pUnoproject.getLanguage().getProjectHandler().addOOoDependencies(
                     pUnoproject.getOOo(), ((UnoidlProject)pUnoproject).getProject());

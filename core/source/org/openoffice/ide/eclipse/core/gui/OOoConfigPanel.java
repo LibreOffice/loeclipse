@@ -32,15 +32,9 @@ package org.openoffice.ide.eclipse.core.gui;
 
 import java.util.Vector;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
+import org.openoffice.ide.eclipse.core.gui.rows.OOoRow;
+import org.openoffice.ide.eclipse.core.gui.rows.SdkRow;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
@@ -61,12 +55,12 @@ public class OOoConfigPanel {
     /**
      * SDK used for the project selection row.
      */
-    private ChoiceRow mSdkRow;
+    private SdkRow mSdkRow;
     
     /**
      * OOo used for the project selection row.
      */
-    private ChoiceRow mOOoRow;
+    private OOoRow mOOoRow;
     private ConfigListener mConfigListener;
     
     /**
@@ -79,43 +73,8 @@ public class OOoConfigPanel {
         OOoContainer.addListener( mConfigListener );
         SDKContainer.addListener( mConfigListener );
         
-        // Add the SDK choice field
-        mSdkRow = new ChoiceRow(pParent, SDK,
-                        Messages.getString("OOoConfigPanel.UsedSdk"), //$NON-NLS-1$
-                        Messages.getString("OOoConfigPanel.SdkBrowse")); //$NON-NLS-1$
-        mSdkRow.setBrowseSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent pEvent) {
-                super.widgetSelected(pEvent);
-                
-                // Open the SDK Configuration page
-                TableDialog dialog = new TableDialog( Display.getDefault().getActiveShell(), true);
-                dialog.create();
-                dialog.open();
-                
-            }
-        });
-        
-        fillSDKRow();
-        mSdkRow.setTooltip(Messages.getString("OOoConfigPanel.SdkTooltip")); //$NON-NLS-1$
-        
-        
-        // Add the OOo choice field
-        mOOoRow = new ChoiceRow(pParent, OOO,
-                        Messages.getString("OOoConfigPanel.UsedOOo"), //$NON-NLS-1$
-                        Messages.getString("OOoConfigPanel.OOoBrowse")); //$NON-NLS-1$
-        mOOoRow.setBrowseSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent pEvent) {
-                super.widgetSelected(pEvent);
-                
-                // Open the OOo Configuration page
-                TableDialog dialog = new TableDialog( Display.getDefault().getActiveShell(), false);
-                dialog.create();
-                dialog.open();
-            }
-        });
-        
-        fillOOoRow();
-        mOOoRow.setTooltip(Messages.getString("OOoConfigPanel.OOoTooltip")); //$NON-NLS-1$
+        mSdkRow = new SdkRow( pParent, SDK, null );
+        mOOoRow = new OOoRow( pParent, OOO, null );
     }
     
     /**
@@ -231,66 +190,5 @@ public class OOoConfigPanel {
                 fillSDKRow();
             }
         };
-    }
-    
-    /**
-     * Dialog for OOo and SDK configuration.
-     * 
-     * @author cedribosdo
-     */
-    private class TableDialog extends Dialog {
-        
-        private boolean mEditSdk = true;
-        
-        private Object mTable;
-        
-        /**
-         * Constructor.
-         * 
-         * @param pParentShell the parent shell of the dialog.
-         * @param pEditSDK <code>true</code> for SDK, <code>false</code> for OOo edition.
-         */
-        TableDialog (Shell pParentShell, boolean pEditSDK) {
-            super(pParentShell);
-            setShellStyle(getShellStyle() | SWT.RESIZE);
-            mEditSdk = pEditSDK;
-            
-            // This dialog is a modal one
-            setBlockOnOpen(true);
-            if (pEditSDK) {
-                getShell().setText(Messages.getString("OOoConfigPanel.SdkBrowse")); //$NON-NLS-1$
-            } else {
-                getShell().setText(Messages.getString("OOoConfigPanel.OOoBrowse")); //$NON-NLS-1$
-            }
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        protected Control createDialogArea(Composite pParent) {
-            
-            if (mEditSdk) {
-                mTable = new SDKTable(pParent);
-                ((SDKTable)mTable).getPreferences();
-            } else {
-                mTable = new OOoTable(pParent);
-                ((OOoTable)mTable).getPreferences();
-            }
-                
-            return pParent;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        protected void okPressed() {
-            super.okPressed();
-            
-            if (mEditSdk) {
-                ((SDKTable)mTable).savePreferences();
-            } else {
-                ((OOoTable)mTable).savePreferences();
-            }
-        }
     }
 }

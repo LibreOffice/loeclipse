@@ -68,7 +68,7 @@ public class OOoRow extends AbstractConfigRow {
      * @param pToSelect the configuration element to select first
      */
     public OOoRow(final Composite pParent, String pProperty, IOOo pToSelect) {
-        super(pParent, pProperty, pToSelect);
+        super(pParent, pProperty, Messages.getString("OOoRow.Browse"), pToSelect); //$NON-NLS-1$
     }
     
     /**

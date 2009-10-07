@@ -38,11 +38,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
@@ -64,8 +66,8 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 public class TemplatesHelper {
     
 
-    private static final String JAVA_EXT  = ".java"; //$NON-NLS-1$
-    private static final String TEMPLATE_EXT = JAVA_EXT + ".tpl"; //$NON-NLS-1$
+    public static final String JAVA_EXT  = ".java"; //$NON-NLS-1$
+    private static final String TEMPLATE_EXT = ".tpl"; //$NON-NLS-1$
 
     /**
      * Copies the template to the UNO project.
@@ -113,8 +115,11 @@ public class TemplatesHelper {
         String fileName = pTemplateName + TEMPLATE_EXT;
         
         // Get the path where to place the files
-        IFolder dest = pProject.getFolder( pDestPath );
-        dest.getProjectRelativePath().toFile().mkdirs();
+        IContainer dest = pProject;
+        if ( pDestPath != null && !pDestPath.equals( new String( ) ) ) {
+            dest = pProject.getFolder( pDestPath );
+            dest.getLocation().toFile().mkdirs();
+        }
 
         // Read the template into a buffer
         FileWriter writer = null;
@@ -123,7 +128,7 @@ public class TemplatesHelper {
         InputStream in = null;
         try {
             // Destination file opening
-            IFile classIFile = dest.getFile( pTemplateName + JAVA_EXT );
+            IFile classIFile = dest.getFile( new Path( pTemplateName ) );
             File classFile = classIFile.getLocation().toFile();
             
             if (!classFile.exists()) {

@@ -87,31 +87,6 @@ public class JavaProjectHandler implements IProjectHandler {
         "unoloader.jar", //$NON-NLS-1$
         "officebean.jar" //$NON-NLS-1$
     };
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void addLanguageDependencies(IUnoidlProject pUnoproject,
-            IProgressMonitor pMonitor) throws CoreException {
-        
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-                pUnoproject.getName());
-        
-        IJavaProject javaProject = JavaCore.create(project);
-        javaProject.open(pMonitor);
-        
-        IPath sourcePath = pUnoproject.getFolder(pUnoproject.getSourcePath()).getFullPath();
-        IPath buildPath = pUnoproject.getFolder(pUnoproject.getBuildPath()).getFullPath();
-        
-        IClasspathEntry[] entries = new IClasspathEntry[] { 
-                JavaCore.newSourceEntry(sourcePath),
-                JavaRuntime.getDefaultJREContainerEntry(),
-                JavaCore.newLibraryEntry(buildPath, null, null, false)
-        };
-        
-        javaProject.setRawClasspath(entries, pMonitor);
-        
-    }
 
     /**
      * {@inheritDoc}
@@ -159,7 +134,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    public void configureProject(UnoFactoryData pData) throws Exception {
+    public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
 
         // Get the project from data
         IProject prj = (IProject)pData.getProperty(
@@ -176,6 +151,24 @@ public class JavaProjectHandler implements IProjectHandler {
         String javaversion = (String)pData.getProperty(
                 JavaWizardPage.JAVA_VERSION);
         unoprj.setProperty(P_JAVA_VERSION, javaversion);
+        
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+                unoprj.getName());
+        
+        // Create the project structure
+        IJavaProject javaProject = JavaCore.create(project);
+        javaProject.open( pMonitor );
+        
+        IPath sourcePath = unoprj.getFolder(unoprj.getSourcePath()).getFullPath();
+        IPath buildPath = unoprj.getFolder(unoprj.getBuildPath()).getFullPath();
+        
+        IClasspathEntry[] entries = new IClasspathEntry[] { 
+                JavaCore.newSourceEntry(sourcePath),
+                JavaRuntime.getDefaultJREContainerEntry(),
+                JavaCore.newLibraryEntry(buildPath, null, null, false)
+        };
+        
+        javaProject.setRawClasspath(entries, pMonitor);
         
         // Add the registration files
         RegistrationHelper.generateFiles( unoprj );

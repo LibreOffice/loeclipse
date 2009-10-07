@@ -79,7 +79,8 @@ public abstract class RegistrationHelper {
     public static void generateFiles(IUnoidlProject pProject) {
         
         // Copy the RegistrationHandler.java.tpl file
-        TemplatesHelper.copyTemplate( pProject, CLASS_FILENAME, RegistrationHelper.class, new String( ) );
+        TemplatesHelper.copyTemplate( pProject, CLASS_FILENAME + TemplatesHelper.JAVA_EXT, 
+                RegistrationHelper.class, new String( ) );
         
         // Create the empty RegistrationHandler.classes file
         ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);

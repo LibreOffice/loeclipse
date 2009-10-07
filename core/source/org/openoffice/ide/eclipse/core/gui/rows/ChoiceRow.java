@@ -84,9 +84,10 @@ public class ChoiceRow extends LabeledRow {
      * @param pProperty the property name of the row
      * @param pLabel label the label to print on the left of the row
      * @param pBrowse the label of the button
+     * @param pLink <code>true</code> to show a link for the browse button
      */
     public ChoiceRow (Composite pParent, String pProperty, String pLabel,
-            String pBrowse) {
+            String pBrowse, boolean pLink) {
         
         super(pProperty);
         
@@ -114,7 +115,7 @@ public class ChoiceRow extends LabeledRow {
             }
         });
         
-        createContent(pParent, aLabel, aField, pBrowse);
+        createContent(pParent, aLabel, aField, pBrowse, pLink);
         
         if ( mBrowse != null ) {
             numFields++;
@@ -133,7 +134,7 @@ public class ChoiceRow extends LabeledRow {
      */
     public void setBrowseSelectionListener(SelectionListener pListener) {
         if (null != mBrowse) {
-            mBrowse.addSelectionListener(pListener);
+            addBrowseSelectionListener(pListener);
         }
     }
     

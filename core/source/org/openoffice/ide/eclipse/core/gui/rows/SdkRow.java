@@ -68,7 +68,7 @@ public class SdkRow extends AbstractConfigRow {
      * @param pToSelect the configuration element to select first
      */
     public SdkRow(final Composite pParent, String pProperty, ISdk pToSelect) {
-        super(pParent, pProperty, pToSelect);
+        super(pParent, pProperty, Messages.getString("SdkRow.Browse"), pToSelect); //$NON-NLS-1$
     }
     
     /**

@@ -44,7 +44,6 @@
 package org.openoffice.ide.eclipse.core.model.language;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -64,10 +63,11 @@ public interface IProjectHandler {
      * has to be contained in the provided data.
      * 
      * @param pData the data describing the project to configure
+     * @param pMonitor the monitor reporting the progress
      * 
      * @throws Exception if anything wrong happens.
      */
-    public void configureProject(UnoFactoryData pData) throws Exception;
+    public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception;
 
     /**
      * Add a language specific language nature. This one has to
@@ -95,19 +95,6 @@ public interface IProjectHandler {
      */
     public void removeOOoDependencies(IOOo pOoo, IProject pProject);
     
-    /**
-     * Adds the language specific dependencies for the project. This
-     * is mostly about library path settings. This method although has
-     * to add the build path to the libraries and the implementation as 
-     * the sources path. 
-     * 
-     * @param pUnoproject the UNO project on which to add the dependencies
-     * @param pMonitor a progress monitor
-     * @throws CoreException if there is any problem during the operation
-     */
-    public void addLanguageDependencies(IUnoidlProject pUnoproject,
-            IProgressMonitor pMonitor) throws CoreException;
-
     /**
      * Extracts the language option name to give to the 
      * <code>uno-skeletonmaker</code>: <code>--java5</code> for Java 1.5 

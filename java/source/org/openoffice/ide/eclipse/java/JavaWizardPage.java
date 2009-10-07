@@ -119,7 +119,7 @@ public class JavaWizardPage extends LanguageWizardPage {
         
         // Create the Java version row
         mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION, 
-                Messages.getString("JavaWizardPage.JavaVersion"), null); //$NON-NLS-1$
+                Messages.getString("JavaWizardPage.JavaVersion"), null, false); //$NON-NLS-1$
         mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java4"), "java4"); //$NON-NLS-1$ //$NON-NLS-2$
         mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
         mJavaVersionRow.setFieldChangedListener( new IFieldChangedListener() {
