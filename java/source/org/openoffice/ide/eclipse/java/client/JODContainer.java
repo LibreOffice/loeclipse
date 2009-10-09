@@ -154,7 +154,7 @@ public class JODContainer extends ClasspathContainerInitializer {
                     
                     libs[i] = JavaCore.newLibraryEntry( libPath, srcPath, null );
                 } catch ( Exception e ) {
-                    PluginLogger.error( "Failed to get library: " + lib,  e );
+                    PluginLogger.error( Messages.getString("JODContainer.GetLibraryError") + lib,  e ); //$NON-NLS-1$
                 }
             }
             
@@ -165,7 +165,7 @@ public class JODContainer extends ClasspathContainerInitializer {
          * {@inheritDoc}
          */
         public String getDescription() {
-            return "OpenOffice.org UNO connector";
+            return Messages.getString("JODContainer.Description"); //$NON-NLS-1$
         }
 
         /**

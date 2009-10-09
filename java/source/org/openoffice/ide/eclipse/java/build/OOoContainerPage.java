@@ -258,7 +258,7 @@ public class OOoContainerPage extends WizardPage implements
             
         } catch (JavaModelException e) {
             PluginLogger.error(
-                    Messages.getString("Language.ClasspathSetFailed"), e); //$NON-NLS-1$
+                    Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
         }
     }
 }

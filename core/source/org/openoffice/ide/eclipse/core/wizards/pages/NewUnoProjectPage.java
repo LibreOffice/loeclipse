@@ -65,6 +65,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
@@ -332,33 +333,35 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         
         Composite control = (Composite)getControl();
         
+        Composite body = new Composite( control, SWT.None );
+        body.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
+        body.setLayout( new GridLayout() );
+        
         // Listens to name and directory changes
         addTextListener(control);
         
-        Composite body = new Composite(control, SWT.NONE);
-        body.setFont( pParent.getFont() );
-        body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
-        body.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Group prjGroup = new Group(body, SWT.NONE);
+        prjGroup.setText( Messages.getString("NewUnoProjectPage.UnoGroupTitle") ); //$NON-NLS-1$
+        prjGroup.setFont( pParent.getFont() );
+        prjGroup.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
+        prjGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         // Add the company prefix field
-        mPrefixRow = new TextRow(body, PREFIX, 
+        mPrefixRow = new TextRow(prjGroup, PREFIX, 
                         Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
         mPrefixRow.setValue("org.openoffice.example"); // Setting default value //$NON-NLS-1$
         mPrefixRow.setFieldChangedListener(this);
         mPrefixRow.setTooltip(Messages.getString("NewUnoProjectPage.RootPackageTooltip")); //$NON-NLS-1$
         
         // Add the output directory field
-        mOutputExt = new TextRow(body, OUTPUT_EXT,
+        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT,
                         Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
         mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
         mOutputExt.setFieldChangedListener(this);
         mOutputExt.setTooltip(Messages.getString("NewUnoProjectPage.CompExtensionTooltip")); //$NON-NLS-1$
         
-        mOOoConfigPanel = new OOoConfigPanel( body );
-        
-        
         // Adding the programming language row 
-        mLanguageRow = new ChoiceRow(body, LANGUAGE,
+        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE,
                         Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
         mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
         
@@ -371,7 +374,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
         mLanguageRow.setFieldChangedListener(this);
         
         
-        addCustomDirsControls(body);
+        mOOoConfigPanel = new OOoConfigPanel( body );
+        
+        
+        addCustomDirsControls( body );
     }
     
     /**
@@ -380,20 +386,26 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
      * @param pParent the parent composite where to create the controls. 
      */
     private void addCustomDirsControls(Composite pParent) {
+        
+        Group group = new Group( pParent, SWT.NONE );
+        group.setText( Messages.getString("NewUnoProjectPage.LayoutGroupTitle") ); //$NON-NLS-1$
+        group.setLayout( new GridLayout( 2, false ) );
+        group.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        
         // Add the custom directories checkbox
-        mCustomDirsRow = new BooleanRow(pParent, CUSTOM_DIRS, 
+        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS, 
                 Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
         mCustomDirsRow.setFieldChangedListener(this);
         
         // Add the custom source directory chooser
-        mSourceRow = new TextRow(pParent, CUSTOM_SRC, 
+        mSourceRow = new TextRow(group, CUSTOM_SRC, 
                 Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
         mSourceRow.setValue(UnoidlProjectHelper.SOURCE_BASIS);
         mSourceRow.setEnabled(false);
         mSourceRow.setFieldChangedListener(this);
         
         // Add the custom idl directory chooser
-        mIdlDirRow = new TextRow(pParent, CUSTOM_IDL, 
+        mIdlDirRow = new TextRow(group, CUSTOM_IDL, 
                 Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
         mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
         mIdlDirRow.setEnabled(false);

@@ -45,6 +45,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
@@ -148,8 +149,10 @@ public class ConnectionConfigPanel {
         if ( layout instanceof GridLayout ) {
             int layoutColumns = ((GridLayout)layout).numColumns;
         
-            Composite body = new Composite( pParent, SWT.NONE );
-            GridData gd = new GridData( SWT.FILL, SWT.FILL, true, true );
+            Group body = new Group( pParent, SWT.NONE );
+            body.setText( Messages.getString("ConnectionConfigPanel.GroupTitle") ); //$NON-NLS-1$
+            
+            GridData gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
             gd.horizontalSpan = layoutColumns;
             body.setLayoutData( gd );
             body.setLayout( new GridLayout( 2, false ) );

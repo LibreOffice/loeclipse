@@ -64,7 +64,7 @@ public class JODContainerPage extends WizardPage implements
     public JODContainerPage( ) {
         super( "jodcontainer" ); //$NON-NLS-1$
         
-        setTitle( "OpenOffice.org UNO Connector" );
+        setTitle( Messages.getString("JODContainerPage.Title") ); //$NON-NLS-1$
         ImageDescriptor image = OOoJavaPlugin.getImageDescriptor(
                 Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
         setImageDescriptor(image);
@@ -104,7 +104,7 @@ public class JODContainerPage extends WizardPage implements
         body.setLayout( new GridLayout( LAYOUT_COLS, false ) );
         
         // SLF4J boolean row
-        mSlf4jRow = new BooleanRow( body, new String(), "Add the SLF4J JDK14 implementation" );
+        mSlf4jRow = new BooleanRow( body, new String(), Messages.getString("JODContainerPage.SLF4JLabel") ); //$NON-NLS-1$
         mSlf4jRow.setValue( mSlf4j );
         mSlf4jRow.setFieldChangedListener( new IFieldChangedListener() {
             

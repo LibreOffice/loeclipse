@@ -35,7 +35,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.openoffice.ide.eclipse.core.gui.ConnectionConfigPanel;
 import org.openoffice.ide.eclipse.core.gui.OOoConfigPanel;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
@@ -54,8 +53,6 @@ import org.openoffice.ide.eclipse.core.wizards.Messages;
  *
  */
 public class BaseUnoConnectionPage extends WizardPage {
-
-    private static final int LAYOUT_COLUMNS = 3;
     
     private OOoConfigPanel mOOoConfigPanel;
     private ConnectionConfigPanel mCnxConfigPanel;
@@ -65,8 +62,8 @@ public class BaseUnoConnectionPage extends WizardPage {
      */
     public BaseUnoConnectionPage( ) {
         super( "unocnxpage" ); //$NON-NLS-1$
-        setTitle( Messages.getString("UnoConnectionPage.Title") ); //$NON-NLS-1$
-        setDescription( Messages.getString("UnoConnectionPage.Description") ); //$NON-NLS-1$
+        setTitle( Messages.getString("BaseUnoConnectionPage.Title") ); //$NON-NLS-1$
+        setDescription( Messages.getString("BaseUnoConnectionPage.Description") ); //$NON-NLS-1$
     }
     
     /**
@@ -75,22 +72,10 @@ public class BaseUnoConnectionPage extends WizardPage {
     public void createControl(Composite pParent) {
 
         Composite body = new Composite( pParent, SWT.NONE );
-        body.setLayout( new GridLayout( LAYOUT_COLUMNS, false ) );
+        body.setLayout( new GridLayout( ) );
         body.setLayoutData( new GridData( GridData.FILL_BOTH ) );
         
-        // Add a title label here
-        Label confLbl = new Label( body, SWT.NONE );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
-        gd.horizontalSpan = LAYOUT_COLUMNS;
-        confLbl.setLayoutData( gd );
-        confLbl.setText( Messages.getString("UnoConnectionPage.ConnectionLabel") ); //$NON-NLS-1$
-        
         mOOoConfigPanel = new OOoConfigPanel( body );
-        
-        Label sep = new Label( body, SWT.SEPARATOR | SWT.HORIZONTAL );
-        gd = new GridData( SWT.FILL, SWT.CENTER, true, false );
-        gd.horizontalSpan = LAYOUT_COLUMNS;
-        sep.setLayoutData( gd );
         
         mCnxConfigPanel = new ConnectionConfigPanel( body );
         setControl( body );

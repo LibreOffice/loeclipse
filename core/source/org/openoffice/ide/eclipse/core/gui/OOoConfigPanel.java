@@ -30,7 +30,11 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.openoffice.ide.eclipse.core.gui.rows.OOoRow;
 import org.openoffice.ide.eclipse.core.gui.rows.SdkRow;
 
@@ -42,6 +46,8 @@ import org.openoffice.ide.eclipse.core.gui.rows.SdkRow;
  */
 public class OOoConfigPanel {
 
+    private static final int GRID_COLUMNS = 3;
+    
     private SdkRow mSdkRow;
     private OOoRow mOOoRow;
     
@@ -52,8 +58,13 @@ public class OOoConfigPanel {
      */
     public OOoConfigPanel ( Composite pParent ) {
         
-        mSdkRow = new SdkRow( pParent, new String(), null );
-        mOOoRow = new OOoRow( pParent, new String(), null );
+        Group group = new Group( pParent, SWT.NONE );
+        group.setText( Messages.getString("OOoConfigPanel.GroupTitle") ); //$NON-NLS-1$
+        group.setLayout( new GridLayout( GRID_COLUMNS, false ) );
+        group.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        
+        mSdkRow = new SdkRow( group, new String(), null );
+        mOOoRow = new OOoRow( group, new String(), null );
     }
     
     /**
