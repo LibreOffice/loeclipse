@@ -55,6 +55,7 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
 
     public static final String PLUGIN_ID = "org.openoffice.ide.eclipse.java"; //$NON-NLS-1$
     public static final String WIZBAN = "wizban"; //$NON-NLS-1$
+    public static final String LIBS_DIR = "lib/"; //$NON-NLS-1$
     
     //The shared instance.
     private static OOoJavaPlugin sPlugin;

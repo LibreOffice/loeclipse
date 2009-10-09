@@ -1,15 +1,15 @@
 package {0};
 
-import org.openoffice.connection.AbstractConnection;
-import org.openoffice.connection.PipeConnection;
-import org.openoffice.connection.SocketConnection;
+import com.artofsolving.jodconverter.openoffice.connection.AbstractOpenOfficeConnection;
+import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
+import com.artofsolving.jodconverter.openoffice.connection.PipeOpenOfficeConnection;
 
 import com.sun.star.uno.XComponentContext;
 
 public class UnoClient '{'
 
     public static void main(String[] args) '{'
-        AbstractConnection cnx = null;
+        AbstractOpenOfficeConnection cnx = null;
         
         try '{'
             {1}

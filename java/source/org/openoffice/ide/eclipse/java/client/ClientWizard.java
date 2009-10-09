@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.ui.IWorkbenchPage;
@@ -50,7 +49,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.java.OOoJavaPlugin;
-import org.openoffice.ide.eclipse.java.build.OOoContainerPage;
 import org.openoffice.ide.eclipse.java.utils.TemplatesHelper;
 
 /**
@@ -63,6 +61,12 @@ public class ClientWizard extends BasicNewResourceWizard {
 
     private static final String DEST_PACKAGE = "org.openoffice.client"; //$NON-NLS-1$
     private static final String CLIENT_CLASS = "UnoClient"; //$NON-NLS-1$
+    private static final String LICENSE_DIR = "third-party licenses"; //$NON-NLS-1$
+    private static final String[] LICENSE_FILES = new String[] {
+        "license-jodconnector.txt", //$NON-NLS-1$
+        "license-openoffice.org.txt", //$NON-NLS-1$
+        "license-slf4j.txt", //$NON-NLS-1$
+    };
 
     private IWorkbenchPage mActivePage;
     
@@ -128,8 +132,13 @@ public class ClientWizard extends BasicNewResourceWizard {
         TemplatesHelper.copyTemplate( prj, CLIENT_CLASS + TemplatesHelper.JAVA_EXT, 
                 ClientWizard.class, path, DEST_PACKAGE, mCnxPage.getConnectionCode() );
         
-        // Add the OpenOffice.org libraries to the project
-        OOoContainerPage.addOOoDependencies( mCnxPage.getOoo(), pJavaProject );
+        // Copy the third-party licenses
+        IFolder licensesFolder = prj.getFolder( LICENSE_DIR );
+        licensesFolder.create( true, true, pMonitor );
+        IPath licPath = licensesFolder.getProjectRelativePath();
+        for ( String license : LICENSE_FILES ) {
+            TemplatesHelper.copyTemplate( prj, license, ClientWizard.class, licPath.toString() );
+        }
         
         // Refresh the project
         try {
@@ -142,16 +151,6 @@ public class ClientWizard extends BasicNewResourceWizard {
         IFile javaClientFile = srcDir.getFile( CLIENT_CLASS + ".java" ); //$NON-NLS-1$
         selectAndReveal( javaClientFile );
         WorkbenchHelper.showFile( javaClientFile, mActivePage );
-        
-        // Create the Uno connection project
-        IJavaProject cnxPrj = CnxProjectHelper.getConnectionProject( mCnxPage.getOoo(), pMonitor );
-        if ( cnxPrj != null ) {
-            IClasspathEntry[] oldClasspath = pJavaProject.getRawClasspath();
-            IClasspathEntry[] classpath = new IClasspathEntry[ oldClasspath.length + 1 ];
-            classpath[0] = JavaCore.newProjectEntry( cnxPrj.getProject().getFullPath() );
-            System.arraycopy( oldClasspath, 0, classpath, 1, oldClasspath.length );
-            pJavaProject.setRawClasspath( classpath, pMonitor );
-        }
     }
 
     @Override

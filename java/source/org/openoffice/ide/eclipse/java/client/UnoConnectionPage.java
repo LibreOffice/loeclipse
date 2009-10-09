@@ -41,8 +41,8 @@ import org.openoffice.ide.eclipse.core.wizards.pages.BaseUnoConnectionPage;
  */
 public class UnoConnectionPage extends BaseUnoConnectionPage {
 
-    private static final String PIPE_PATTERN = "cnx = new PipeConnection( \"{0}\" );"; //$NON-NLS-1$
-    private static final String SOCKET_PATTERN = "cnx = new SocketConnection( \"{0}\", {1} );"; //$NON-NLS-1$
+    private static final String PIPE_PATTERN = "cnx = new PipeOpenOfficeConnection( \"{0}\" );"; //$NON-NLS-1$
+    private static final String SOCKET_PATTERN = "cnx = new SocketOpenOfficeConnection( \"{0}\", {1} );"; //$NON-NLS-1$
     
     @Override
     public void createControl(Composite pParent) {

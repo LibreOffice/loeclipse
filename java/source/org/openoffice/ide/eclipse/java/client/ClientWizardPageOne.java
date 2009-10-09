@@ -65,14 +65,20 @@ public class ClientWizardPageOne extends NewJavaProjectWizardPageOne {
     @Override
     public IClasspathEntry[] getDefaultClasspathEntries() {
         IClasspathEntry[] oldEntries = super.getDefaultClasspathEntries();
-        IClasspathEntry[] entries = new IClasspathEntry[ oldEntries.length + 1 ];
-        
-        System.arraycopy( oldEntries, 0, entries, 0, oldEntries.length );
         
         IOOo ooo = mCnxPage.getOoo();
         IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
         IClasspathEntry oooEntry = JavaCore.newContainerEntry(path);
-        entries[ entries.length - 1 ] = oooEntry;
+        
+        IClasspathEntry[] newEntries = new IClasspathEntry[] {
+            oooEntry,
+            JODContainer.createClasspathEntry( true )
+        };
+        
+        IClasspathEntry[] entries = new IClasspathEntry[ oldEntries.length + newEntries.length ];
+        
+        System.arraycopy( oldEntries, 0, entries, 0, oldEntries.length );
+        System.arraycopy( newEntries, 0, entries, oldEntries.length, newEntries.length );
         
         return entries;
     }
