@@ -290,6 +290,8 @@ public class ChoiceRow extends LabeledRow {
             i++;
         }
         cField.select(result);
+        mSelected = result;
+        fireFieldChangedEvent( new FieldEvent( mProperty, pValue ) );
     }
     
     /**

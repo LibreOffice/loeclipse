@@ -115,7 +115,7 @@ public class OOoRow extends AbstractConfigRow {
      * {@inheritDoc}
      */
     @Override
-    protected String getSelectionName(Object pToSelect) {
+    protected String getElementName(Object pToSelect) {
         return ((IOOo)pToSelect).getName();
     }
     

@@ -126,7 +126,7 @@ public class SdkRow extends AbstractConfigRow {
      * {@inheritDoc}
      */
     @Override
-    protected String getSelectionName(Object pToSelect) {
+    protected String getElementName(Object pToSelect) {
         return ((ISdk)pToSelect).getId();
     }
 

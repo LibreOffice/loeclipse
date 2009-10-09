@@ -61,7 +61,7 @@ import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
  */
 public abstract class AbstractConfigRow extends ChoiceRow {
     
-    private IConfigListener mConfigListener;
+    private IConfigListener mConfigListener = new ConfigListener();
 
     /**
      * Constructor.
@@ -91,7 +91,12 @@ public abstract class AbstractConfigRow extends ChoiceRow {
             }
         });
         
-        fillRow(pSelection);
+        fillRow( );
+        if ( pSelection != null ) {
+            select( getElementName( pSelection ) );
+        } else {
+            select( 0 );
+        }
     }
 
     /**
@@ -128,27 +133,20 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Computes the name to use to select the given object.
      * 
-     * @param pToSelect the configuration object to select
+     * @param pElement the configuration object for which to get the name
      * @return the name to use for the selection
      */
-    protected abstract String getSelectionName(Object pToSelect);
+    protected abstract String getElementName(Object pElement);
     
     /**
      * Fills the row with the existing values from the configuration.
-     * 
-     * @param pToSelect the configuration object to select
      */
-    private void fillRow(Object pToSelect) {
+    private void fillRow( ) {
         
         String[] values = getConfigValues();
 
         removeAll();
         addAll(values);
-        if (null != pToSelect) {
-            select(getSelectionName(pToSelect));
-        } else {
-            select(0);
-        }
     }
     
     /**
@@ -208,5 +206,42 @@ public abstract class AbstractConfigRow extends ChoiceRow {
 
             savePreferences();
         }
+    }
+    
+    /**
+     * Class listening for the OOo and SDK config changes and updating the fields.
+     * 
+     * @author cbosdonnat
+     *
+     */
+    private class ConfigListener implements IConfigListener {
+        /**
+         * {@inheritDoc}
+         */
+        public void ConfigAdded(Object pElement) {
+            fillRow( );
+            select( getElementName( pElement ) );
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void ConfigRemoved(Object pElement) {
+            String value = getValue();
+            fillRow( );
+            
+            // Select the previous selection if it hasn't been removed
+            if ( pElement != null && !value.equals( getElementName( pElement ) ) ) {
+                select( value );
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void ConfigUpdated(Object pElement) {
+            fillRow( );
+            select( getElementName( pElement ) );
+        };
     }
 }
