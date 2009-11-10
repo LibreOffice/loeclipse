@@ -75,7 +75,11 @@ public class PublisherSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void loadData() {
-        // Nothing to do: everything is localized
+        getModel().setSuspendEvent( true );
+        PublisherInfos pubInfos = getModel().getPublisherInfos().get( mCurrentLocale );
+        mUrlTxt.setText( pubInfos.getUrl() );
+        mNameTxt.setText( pubInfos.getName() );
+        getModel().setSuspendEvent( false );
     }
 
     /**
