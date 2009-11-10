@@ -49,9 +49,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 
 /**
  * Interface defining a set of methods for to do the language specific

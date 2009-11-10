@@ -6,26 +6,33 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.UnoidlEditor"
+            class="org.openoffice.ide.eclipse.core.editors.idl.UnoidlEditor"
             default="true"
             extensions="idl"
             icon="icons/idl_file.gif"
             id="org.openoffice.ide.eclipse.core.editors.UnoidlEditor"
             name="%idleditor.name"/>
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.RegEditor"
+            class="org.openoffice.ide.eclipse.core.editors.registry.RegEditor"
             default="true"
             extensions="rdb, urd"
             icon="icons/db_file.gif"
             id="org.openoffice.ide.eclipse.core.editors.regvieweditor"
             name="%regeditor.name"/>
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.PackagePropertiesEditor"
+            class="org.openoffice.ide.eclipse.core.editors.pack.PackagePropertiesEditor"
             default="true"
-            filenames="package.properties,description.xml"
+            filenames="package.properties"
             icon="icons/build_exec.gif"
             id="org.openoffice.ide.eclipse.core.editors.extproperties"
-            name="%editor.name"/>
+            name="%package.editor.name"/>
+      <editor
+            class="org.openoffice.ide.eclipse.core.editors.description.DescriptionEditor"
+            default="true"
+            filenames="description.xml"
+            icon="icons/build_exec.gif"
+            id="org.openoffice.ide.eclipse.core.editors.description"
+            name="%description.editor.name"/>
    </extension>
    
    <extension

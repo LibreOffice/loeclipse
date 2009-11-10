@@ -28,27 +28,38 @@
  * All Rights Reserved.
  * 
  ************************************************************************/
-package org.openoffice.ide.eclipse.cpp;
+package org.openoffice.ide.eclipse.core.editors.description;
 
-import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
-import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.openoffice.ide.eclipse.core.editors.utils.SourcePage;
 
 /**
- * Class for the C++ UI extensions to the core: nothing done here.
- * @author cbosdonnat
+ * The source page for the description.xml file.
+ * 
+ * @author Cédric Bosdonnat
  *
  */
-public class CppUI implements ILanguageUI {
-
+public class DescriptionSourcePage extends SourcePage {
+    
     /**
-     * There is no need for C++ only options: then no page.
+     * Description source editor page constructor.
      * 
-     * @param pData not used
-     * 
-     * @return <code>null</code>
+     * @param pFormEditor the editor hosting the page.
+     * @param pId the page identifier
+     * @param pTitle the page title
      */
-    public LanguageWizardPage getWizardPage(UnoFactoryData pData) {
-        return null;
+    public DescriptionSourcePage(FormEditor pFormEditor, String pId, String pTitle) {
+        super( pFormEditor, pId, pTitle );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canLeaveThePage() {
+        DescriptionEditor editor = (DescriptionEditor)getEditor();
+        editor.loadDescFromSource();
+        
+        return super.canLeaveThePage();
     }
 }

@@ -49,7 +49,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.openoffice.ide.eclipse.core.editors.Colors;
+import org.openoffice.ide.eclipse.core.editors.idl.Colors;
 
 /**
  * Preference page to change the UNO-IDL editor colors.

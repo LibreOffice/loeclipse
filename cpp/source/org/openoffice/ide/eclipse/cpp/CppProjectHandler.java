@@ -80,13 +80,17 @@ public class CppProjectHandler implements IProjectHandler {
         "uno_salhelpergcc3" //$NON-NLS-1$
     };
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
         IUnoidlProject unoprj = ProjectsManager.getProject( pProject.getName() );
         addOOoDependencies( pOoo, unoprj.getSdk(), pProject );
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void addProjectNature(IProject pProject) {
         try {
             CDTHelper.addCDTNature( pProject, null );
@@ -99,7 +103,6 @@ public class CppProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
         IProject prj = (IProject)pData.getProperty(
                 IUnoFactoryConstants.PROJECT_HANDLE);
@@ -154,7 +157,6 @@ public class CppProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public IPath getImplementationFile(String pImplementationName) {
         return new Path( pImplementationName + ".cxx" ); //$NON-NLS-1$
     }
@@ -162,7 +164,6 @@ public class CppProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
         return pService.substring( pService.lastIndexOf( '.' ) + 1 ) + "Impl"; //$NON-NLS-1$
     }
@@ -170,7 +171,6 @@ public class CppProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getLibraryPath(IUnoidlProject pUnoprj) {
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pUnoprj.getName() );
         
@@ -182,7 +182,6 @@ public class CppProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
         return "--cpp"; //$NON-NLS-1$
     }
@@ -190,7 +189,6 @@ public class CppProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
         IUnoidlProject unoprj = ProjectsManager.getProject( pProject.getName() );
         removeOOoDependencies( pOoo, unoprj.getSdk(), pProject );

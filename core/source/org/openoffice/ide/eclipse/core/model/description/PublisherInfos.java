@@ -37,6 +37,51 @@ package org.openoffice.ide.eclipse.core.model.description;
  *
  */
 public class PublisherInfos {
-    public String mUrl = ""; //$NON-NLS-1$
-    public String mName = ""; //$NON-NLS-1$
+    
+    private DescriptionModel mModel;
+    
+    private String mUrl = ""; //$NON-NLS-1$
+    private String mName = ""; //$NON-NLS-1$
+    
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return mUrl;
+    }
+    /**
+     * @param pUrl the url to set
+     */
+    public void setUrl(String pUrl) {
+        mUrl = pUrl;
+        if ( mUrl != null ) {
+            mUrl = mUrl.trim( );
+        }
+        mModel.fireModelChanged();
+    }
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return mName;
+    }
+    /**
+     * @param pName the name to set
+     */
+    public void setName(String pName) {
+        mName = pName;
+        if ( mName != null ) {
+            mName = mName.trim( );
+        }
+        mModel.fireModelChanged();
+    }
+    
+    /**
+     * Set the description model in order to be able to fire the model changes.
+     * 
+     * @param pModel the parent model
+     */
+    protected void setModel( DescriptionModel pModel ) {
+        mModel = pModel;
+    }
 }

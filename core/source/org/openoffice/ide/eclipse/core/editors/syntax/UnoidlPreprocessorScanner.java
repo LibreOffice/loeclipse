@@ -51,8 +51,8 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.swt.SWT;
-import org.openoffice.ide.eclipse.core.editors.ColorProvider;
-import org.openoffice.ide.eclipse.core.editors.Colors;
+import org.openoffice.ide.eclipse.core.editors.idl.Colors;
+import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 
 /**
  * Scanner splitting the preprocessor commands into items to be colorized. 

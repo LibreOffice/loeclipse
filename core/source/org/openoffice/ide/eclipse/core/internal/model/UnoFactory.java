@@ -97,9 +97,9 @@ public final class UnoFactory {
         // Creates an empty description.xml file
         File file = prj.getFile("description.xml").getLocation().toFile(); //$NON-NLS-1$
         DescriptionModel descrModel = new DescriptionModel( );
-        descrModel.mDisplayNames.put( Locale.ENGLISH, prj.getName() );
-        descrModel.mId = prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$
-            prj.getName().replaceAll( "[^a-zA-Z0-9]", new String( ) ).toLowerCase(); //$NON-NLS-1$
+        descrModel.getDisplayNames().put( Locale.ENGLISH, prj.getName() );
+        descrModel.setId( prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$
+            prj.getName().replaceAll( "[^a-zA-Z0-9]", new String( ) ).toLowerCase() ); //$NON-NLS-1$
         FileOutputStream out = null;
         try {
             out = new FileOutputStream( file );

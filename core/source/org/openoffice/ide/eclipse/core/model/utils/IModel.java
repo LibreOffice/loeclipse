@@ -28,27 +28,37 @@
  * All Rights Reserved.
  * 
  ************************************************************************/
-package org.openoffice.ide.eclipse.cpp;
-
-import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
-import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
+package org.openoffice.ide.eclipse.core.model.utils;
 
 /**
- * Class for the C++ UI extensions to the core: nothing done here.
+ * Interface for listened models.
+ * 
  * @author cbosdonnat
  *
  */
-public class CppUI implements ILanguageUI {
+public interface IModel {
 
     /**
-     * There is no need for C++ only options: then no page.
+     * Add a model listener.
      * 
-     * @param pData not used
-     * 
-     * @return <code>null</code>
+     * @param pListener the listener to add
      */
-    public LanguageWizardPage getWizardPage(UnoFactoryData pData) {
-        return null;
-    }
+    public void addListener( IModelChangedListener pListener );
+    
+    /**
+     * Remove a model listener.
+     * 
+     * @param pListener the listener to remove
+     */
+    public void removeListener( IModelChangedListener pListener );
+    
+    /**
+     * @return whether the model has been changed without being saved or not.
+     */
+    public boolean isDirty( );
+    
+    /**
+     * @param pSuspend <code>true</code> to suspend the events for the model
+     */
+    public void setSuspendEvent( boolean pSuspend );
 }

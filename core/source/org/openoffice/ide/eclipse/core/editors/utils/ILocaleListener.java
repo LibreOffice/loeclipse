@@ -28,27 +28,36 @@
  * All Rights Reserved.
  * 
  ************************************************************************/
-package org.openoffice.ide.eclipse.cpp;
+package org.openoffice.ide.eclipse.core.editors.utils;
 
-import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
-import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
+import java.util.Locale;
 
 /**
- * Class for the C++ UI extensions to the core: nothing done here.
+ * Interface to implement in order to get notified of Locale changes in a control.
+ * 
  * @author cbosdonnat
  *
  */
-public class CppUI implements ILanguageUI {
+public interface ILocaleListener {
 
     /**
-     * There is no need for C++ only options: then no page.
+     * The locale selection has changed.
      * 
-     * @param pData not used
-     * 
-     * @return <code>null</code>
+     * @param pLocale the new locale to use.
      */
-    public LanguageWizardPage getWizardPage(UnoFactoryData pData) {
-        return null;
-    }
+    public void selectLocale( Locale pLocale );
+    
+    /**
+     * A locale has been deleted.
+     * 
+     * @param pLocale the deleted locale
+     */
+    public void deleteLocale( Locale pLocale );
+    
+    /**
+     * A locale has been added.
+     * 
+     * @param pLocale the added locale
+     */
+    public void addLocale( Locale pLocale );
 }

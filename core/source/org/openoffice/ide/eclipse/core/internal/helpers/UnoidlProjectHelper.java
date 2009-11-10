@@ -69,10 +69,10 @@ import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 
 /**
  * Helper class for UNO-IDL project handling.

@@ -1,11 +1,21 @@
 /*************************************************************************
  *
+ * $RCSfile: IPackageChangeListener.java,v $
+ *
+ * $Revision: 1.2 $
+ *
+ * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
+ *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
  * GNU Lesser General Public License Version 2.1
  * =============================================
- * Copyright 2009 by Novell, Inc.
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,34 +31,34 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  * 
- * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
- * Copyright: 2009 by Novell, Inc.
+ * Copyright: 2002 by Sun Microsystems, Inc.
  *
  * All Rights Reserved.
- * 
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
+ *
  ************************************************************************/
-package org.openoffice.ide.eclipse.cpp;
-
-import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
-import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
+package org.openoffice.ide.eclipse.core.model.utils;
 
 /**
- * Class for the C++ UI extensions to the core: nothing done here.
- * @author cbosdonnat
- *
+ * Generic interface to listen to models.
+ * 
+ * @author cedricbosdo
  */
-public class CppUI implements ILanguageUI {
-
+public interface IModelChangedListener {
+    
     /**
-     * There is no need for C++ only options: then no page.
-     * 
-     * @param pData not used
-     * 
-     * @return <code>null</code>
+     * Method called each time the listened model has changed.
+     *
      */
-    public LanguageWizardPage getWizardPage(UnoFactoryData pData) {
-        return null;
-    }
+    public void modelChanged();
+    
+    /**
+     * Method called each time the listened model is saved.
+     *
+     */
+    public void modelSaved();
 }

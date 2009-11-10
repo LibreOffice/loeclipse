@@ -50,8 +50,8 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.SWT;
-import org.openoffice.ide.eclipse.core.editors.ColorProvider;
-import org.openoffice.ide.eclipse.core.editors.Colors;
+import org.openoffice.ide.eclipse.core.editors.idl.Colors;
+import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 
 /**
  * UNO-IDL comment scanner. Used by the UNO-IDL viewer configuration. In order 

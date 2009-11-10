@@ -43,17 +43,23 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
  */
 public class Language implements ILanguage {
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public ILanguageBuilder getLanguageBuidler() {
         return new CppBuilder( );
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public ILanguageUI getLanguageUI() {
         return new CppUI( );
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public IProjectHandler getProjectHandler() {
         return new CppProjectHandler( );
     }

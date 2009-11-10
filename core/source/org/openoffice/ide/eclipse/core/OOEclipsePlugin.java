@@ -49,7 +49,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.openoffice.ide.eclipse.core.editors.Colors;
+import org.openoffice.ide.eclipse.core.editors.idl.Colors;
 import org.openoffice.ide.eclipse.core.i18n.ImageManager;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;

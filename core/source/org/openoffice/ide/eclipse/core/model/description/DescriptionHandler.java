@@ -30,8 +30,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.description;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,13 +77,13 @@ public class DescriptionHandler extends DefaultHandler {
             mCurrentHandler.startElement( pUri, pLocalName, pName, pAttributes);
             
         } else if ( XMLTokens.ELEMENT_VERSION.equals( pName ) ) {
-            mModel.mVersion = pAttributes.getValue( XMLTokens.ATTR_VALUE );
+            mModel.setVersion( pAttributes.getValue( XMLTokens.ATTR_VALUE ) );
             
         } else if ( XMLTokens.ELEMENT_IDENTIFIER.equals( pName ) ) {
-            mModel.mId = pAttributes.getValue( XMLTokens.ATTR_VALUE );
+            mModel.setId( pAttributes.getValue( XMLTokens.ATTR_VALUE ) );
             
         } else if ( XMLTokens.ELEMENT_PLATFORM.equals( pName ) ) {
-            mModel.mPlatforms = pAttributes.getValue( XMLTokens.ATTR_VALUE );
+            mModel.setPlatforms( pAttributes.getValue( XMLTokens.ATTR_VALUE ) );
             
         } else if ( XMLTokens.ELEMENT_DEPENDENCIES.equals( pName ) ) {
             mCurrentHandler = new DependenciesHandler( );
@@ -190,9 +188,9 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_OOO_MIN.equals( pName ) ) {
-                mModel.mMinOOo = pAttributes.getValue( XMLTokens.ATTR_VALUE );
+                mModel.setMinOOo( pAttributes.getValue( XMLTokens.ATTR_VALUE ) );
             } else if ( XMLTokens.ELEMENT_OOO_MAX.equals( pName ) ) {
-                mModel.mMaxOOo = pAttributes.getValue( XMLTokens.ATTR_VALUE );
+                mModel.setMaxOOo( pAttributes.getValue( XMLTokens.ATTR_VALUE ) );
             }
         }
     }
@@ -214,11 +212,8 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_SRC.equals( pName ) ) {
-                if ( mModel.mUpdateInfos == null ) {
-                    mModel.mUpdateInfos = new ArrayList<String>( );
-                }
                 String value = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
-                mModel.mUpdateInfos.add( value );
+                mModel.addUpdateInfo( value );
             }
         }
     }
@@ -240,13 +235,9 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_SIMPLE_LICENSE.equals( pName ) ) {
-                if ( mModel.mLicenses == null) {
-                    mModel.mLicenses = new HashMap<Locale, String>( );
-                }
-                
                 String value = pAttributes.getValue( XMLTokens.ATTR_ACCEPT_BY );
                 if ( value != null ) {
-                    mModel.mAcceptByUser = value.equals( XMLTokens.VALUE_USER );
+                    mModel.setAcceptByUser( value.equals( XMLTokens.VALUE_USER ) );
                 }
                 
                 // Optional attribute defaulting to false
@@ -254,7 +245,7 @@ public class DescriptionHandler extends DefaultHandler {
                 if ( value == null ) {
                     value = Boolean.FALSE.toString();
                 }
-                mModel.mSuppressOnUpdate = Boolean.parseBoolean( value );
+                mModel.setSuppressOnUpdate( Boolean.parseBoolean( value ) );
                 
             } else if ( XMLTokens.ELEMENT_LICENSE_TEXT.equals( pName ) ) {
                 String ref = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
@@ -262,7 +253,7 @@ public class DescriptionHandler extends DefaultHandler {
                 
                 Locale locale = parseLocale( lang );
                 if ( locale != null ) {
-                    mModel.mLicenses.put( locale, ref );
+                    mModel.addLicense( locale, ref );
                 }
             }
         }
@@ -289,9 +280,6 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_NAME.equals( pName ) ) {
-                if ( mModel.mPublisherInfos == null ) {
-                    mModel.mPublisherInfos = new HashMap<Locale, PublisherInfos>( );
-                }
                 mRef = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 mLocale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
             }
@@ -315,9 +303,9 @@ public class DescriptionHandler extends DefaultHandler {
             
             if ( XMLTokens.ELEMENT_NAME.equals( pName )  && mLocale != null ) {
                 PublisherInfos infos = new PublisherInfos( );
-                infos.mName = mName;
-                infos.mUrl = mRef;
-                mModel.mPublisherInfos.put( mLocale, infos );
+                infos.setName( mName );
+                infos.setUrl( mRef );
+                mModel.addPublisherInfo( mLocale, infos );
                 
                 // Cleans all the members for the next entry
                 mName = null;
@@ -344,13 +332,10 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_SRC.equals( pName ) ) {
-                if ( mModel.mReleaseNotes == null ) {
-                    mModel.mReleaseNotes = new HashMap<Locale, String>( );
-                }
                 String value = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 Locale locale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
                 if ( locale != null ) {
-                    mModel.mReleaseNotes.put( locale, value );
+                    mModel.addReleaseNote( locale, value );
                 }
             }
         }
@@ -376,9 +361,6 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_NAME.equals( pName ) ) {
-                if ( mModel.mDisplayNames == null ) {
-                    mModel.mDisplayNames = new HashMap<Locale, String>( );
-                }
                 mLocale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
             }
         }
@@ -400,7 +382,7 @@ public class DescriptionHandler extends DefaultHandler {
             super.endElement(pUri, pLocalName, pName);
             
             if ( XMLTokens.ELEMENT_NAME.equals( pName )  && mLocale != null ) {
-                mModel.mDisplayNames.put( mLocale, mName );
+                mModel.getDisplayNames().put( mLocale, mName );
                 
                 // Cleans all the members for the next entry
                 mName = null;
@@ -427,10 +409,10 @@ public class DescriptionHandler extends DefaultHandler {
             
             String ref = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
             if ( XMLTokens.ELEMENT_DEFAULT.equals( pName ) ) {
-                mModel.mDefaultIcon = ref;
+                mModel.setDefaultIcon( ref );
                 
             } else if ( XMLTokens.ELEMENT_HIGH_CONTRAST.equals( pName ) ) {
-                mModel.mHCIcon = ref;
+                mModel.setHCIcon( ref );
             }
         }
     }
@@ -452,13 +434,10 @@ public class DescriptionHandler extends DefaultHandler {
             super.startElement(pUri, pLocalName, pName, pAttributes);
             
             if ( XMLTokens.ELEMENT_SRC.equals( pName ) ) {
-                if ( mModel.mDescriptions == null ) {
-                    mModel.mDescriptions = new HashMap<Locale, String>( );
-                }
                 String value = pAttributes.getValue( XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF );
                 Locale locale = parseLocale( pAttributes.getValue( XMLTokens.ATTR_LANG ) );
                 if ( locale != null ) {
-                    mModel.mDescriptions.put( locale, value );
+                    mModel.addDescription( locale, value );
                 }
             }
         }

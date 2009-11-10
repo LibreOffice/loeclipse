@@ -69,11 +69,11 @@ import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.model.PackagePropertiesModel;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.model.UnoPackage;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
+import org.openoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.utils.FileHelper;
 import org.openoffice.ide.eclipse.core.wizards.pages.PackageExportWizardPage;
 
