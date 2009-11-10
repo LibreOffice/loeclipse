@@ -56,6 +56,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 public class ReleaseNotesSection extends LocalizedSection< DescriptionModel > implements
         ILocaleListener {
     
+    private static final int LAYOUT_COLS = 2;
     private Text mUrlTxt;
     
     /**
@@ -85,13 +86,13 @@ public class ReleaseNotesSection extends LocalizedSection< DescriptionModel > im
      */
     @Override
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
-        pParent.setLayout( new GridLayout( 2, false ) );
+        pParent.setLayout( new GridLayout( LAYOUT_COLS, false ) );
         
         Label descrLbl = pToolkit.createLabel( pParent, 
                 Messages.getString("ReleaseNotesSection.Description"),  //$NON-NLS-1$
                 SWT.WRAP );
         GridData gd = new GridData( GridData.FILL_HORIZONTAL );
-        gd.horizontalSpan = 2;
+        gd.horizontalSpan = LAYOUT_COLS;
         descrLbl.setLayoutData( gd );
         
         // Url controls
@@ -122,7 +123,7 @@ public class ReleaseNotesSection extends LocalizedSection< DescriptionModel > im
      */
     public void deleteLocale(Locale pLocale) {
         getModel().removeReleaseNote( pLocale );
-        if ( getModel().getReleaseNotes().size( ) == 0 ) {
+        if ( getModel().getReleaseNotes().isEmpty() ) {
             mUrlTxt.setEnabled( false );
         }
     }

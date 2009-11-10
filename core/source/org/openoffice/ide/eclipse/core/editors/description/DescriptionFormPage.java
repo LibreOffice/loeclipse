@@ -176,6 +176,9 @@ public class DescriptionFormPage extends FormPage {
         rightColumn.setLayoutData( new GridData( GridData.FILL_BOTH ) );
         rightColumn.setLayout( new GridLayout( ) );
         
+        IFileEditorInput input = (IFileEditorInput)getEditorInput();
+        IProject project = input.getFile().getProject();
+        
         /*
          * Left column:                         Right column:
          *    + Section "General"                  + Section "Update mirrors"
@@ -183,7 +186,7 @@ public class DescriptionFormPage extends FormPage {
          *    + Section "Publisher"
          *    + Section "Release notes"
          */
-        GeneralSection generalSection = new GeneralSection( leftColumn, this );
+        GeneralSection generalSection = new GeneralSection( leftColumn, this, project );
         localized.add( generalSection );
         mSections.add( generalSection );
         
@@ -201,8 +204,6 @@ public class DescriptionFormPage extends FormPage {
         MirrorsSection mirrorSection = new MirrorsSection( rightColumn, this );
         mSections.add( mirrorSection );
         
-        IFileEditorInput input = (IFileEditorInput)getEditorInput();
-        IProject project = input.getFile().getProject();
         LicenseSection licenseSection = new LicenseSection( rightColumn, this, project );
         mSections.add( licenseSection );
         localized.add( licenseSection );

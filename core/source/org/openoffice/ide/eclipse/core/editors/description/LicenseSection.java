@@ -205,7 +205,7 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
      */
     public void deleteLocale(Locale pLocale) {
         getModel().removeLicense( pLocale );
-        if ( getModel().getLicenses().size() == 0 ) {
+        if ( getModel().getLicenses().isEmpty() ) {
             // disable the text and file
             mFileBrowseBtn.setEnabled( false );
             mFileTxt.setEnabled( false );
