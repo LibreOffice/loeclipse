@@ -147,7 +147,7 @@ public class DescriptionEditor extends FormEditor {
             
             input.getFile().refreshLocal( IResource.DEPTH_ZERO, pMonitor );
         } catch ( Exception e ) {
-            PluginLogger.error( "Error saving the description.xml", e );
+            PluginLogger.error( Messages.getString("DescriptionEditor.ErrorSaving"), e ); //$NON-NLS-1$
         } finally {
             try { out.close(); } catch ( Exception e ) { }
             mSourcePage.doRevertToSaved();
