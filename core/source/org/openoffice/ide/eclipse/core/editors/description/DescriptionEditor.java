@@ -32,12 +32,15 @@ package org.openoffice.ide.eclipse.core.editors.description;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
@@ -46,6 +49,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.part.FileEditorInput;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.editors.Messages;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionHandler;
@@ -134,11 +138,21 @@ public class DescriptionEditor extends FormEditor {
      */
     @Override
     public void doSave(IProgressMonitor pMonitor) {
-        // Reload the model if the we haven't moved from the overview page
-        if ( getActivePageInstance() == mFormPage ) {  
-            writeDescrToSource();
+        OutputStream out = null;
+        try {
+            FileEditorInput input = (FileEditorInput)getEditorInput();
+            File file = new File( input.getFile().getLocationURI() );
+            out = new FileOutputStream( file );
+            getDescriptionModel().serialize( out );
+            
+            input.getFile().refreshLocal( IResource.DEPTH_ZERO, pMonitor );
+        } catch ( Exception e ) {
+            PluginLogger.error( "Error saving the description.xml", e );
+        } finally {
+            try { out.close(); } catch ( Exception e ) { }
+            mSourcePage.doRevertToSaved();
+            mFormPage.reloadData();
         }
-        mSourcePage.doSave( pMonitor );
     }
 
     /**

@@ -154,7 +154,7 @@ public class GeneralSection extends LocalizedSection< DescriptionModel > {
         mDescriptionTxt.setEnabled( false );
         mDescriptionTxt.addModifyListener( new ModifyListener () {
             public void modifyText(ModifyEvent pE) {
-                getModel().addDisplayName( mCurrentLocale, mDescriptionTxt.getText() );
+                getModel().addDescription( mCurrentLocale, mDescriptionTxt.getText() );
             }
         });
         
