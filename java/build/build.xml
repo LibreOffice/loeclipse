@@ -52,7 +52,7 @@
 	</target>
 	
 	
-	<target name="init-env">
+	<target name="init-env" unless="java.nobuild">
 		<dirname property="java.basedir" file="${ant.file.java}/.."/>
 		
 		<loadproperties srcfile="${java.basedir}/build/build.properties" />
@@ -74,22 +74,20 @@
 		<mkdir dir="${java.out.classes}" />
 	</target>
 	
-	<target name="clean">
-		<delete dir="${java.out.classes}" />
-	</target>
-	
-	<target name="purge" depends="clean">
+	<target name="purge">
+		<dirname property="java.basedir" file="${ant.file.java}/.."/>
+		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<delete dir="${java.out.path}" />
 	</target>
 
-	<target name="site" depends="java.plugin, java.feature">
+	<target name="site" depends="java.plugin, java.feature" unless="java.nobuild">
 		<copy file="${java.basedir}/build/site_fragment.xml.in" 
 			tofile="${java.out.path}/site_fragment.xml" />
 		<replace file="${java.out.path}/site_fragment.xml"
 			token="@VERSION@" value="${java.plugin.version}" />
 	</target>
 
-	<target name="java.feature">
+	<target name="java.feature" unless="java.nobuild">
 		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
 		<copy file="${java.basedir}/build/feature.xml.in"
 			tofile="${java.out.path}/feature.xml" />
@@ -103,7 +101,7 @@
 		</jar>
 	</target>
 
-	<target name="java.compile" depends="init-env">
+	<target name="java.compile" depends="init-env" unless="java.nobuild">
 		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
 			target="1.5" source="1.5" 
 			debug="${debug}"
@@ -111,7 +109,7 @@
 			excludes="**/unittests/**"/>
 	</target>
 	
-	<target name="java.plugin" depends="java.compile">
+	<target name="java.plugin" depends="java.compile" unless="java.nobuild">
 		<copy file="${java.basedir}/build/MANIFEST.MF.in"
 			tofile="${java.out.path}/MANIFEST.MF" />
 		<replace file="${java.out.path}/MANIFEST.MF"

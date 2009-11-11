@@ -72,17 +72,11 @@
 		<mkdir dir="${core.out.classes}" />
 	</target>
 	
-	
-	<target name="clean">
-		<delete dir="${core.out.classes}" />
-		<delete file="${core.out.path}/javadocs-done"/>
-	</target>
-	
-	
-	<target name="purge" depends="clean">
+	<target name="purge">
+		<dirname property="core.basedir" file="${ant.file.core}/.."/>
+		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<delete dir="${core.out.path}" />
 		<delete dir="${core.basedir}/doc/help/html/api" />
-		<delete file="${core.basedir}/UnoTypesGetter.jar" />
 	</target>
 
 	
@@ -136,7 +130,6 @@
 			<zipfileset dir="${core.basedir}/icons" prefix="icons"/>
 			<zipfileset dir="${core.basedir}/schema" prefix="schema"/>
 			<zipfileset dir="${core.basedir}" defaultexcludes="true" prefix="">
-				<include name="UnoTypesGetter.jar"/>
 				<include name="about.*"/>
 				<include name="plugin.*"/>
 			</zipfileset>

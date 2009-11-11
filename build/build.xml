@@ -52,6 +52,13 @@
 			-Dopenoffice.home=/path/to/your/ooo/
 			-Declipse.home=/path/to/your/eclipse/
 			
+			To disable the build of a language plugin, define the corresponding
+			variable amongst the following ones. By default all the plugins are
+			built. The value of these parameters can be anything: they only have
+			to be defined.
+			-Dcpp.nobuild=true
+			-Djava.nobuild=true
+			
 			These arguments can be either put in the command line or in an
 			environment variable called ANT_ARGS.
 			
@@ -114,17 +121,11 @@
 		<mkdir dir="${out.path}/plugins" />
 		<mkdir dir="${out.path}/features" />
 	</target>
-
-	<target name="clean" description="Cleans the temporary output results" 
-		depends="init-env, core.clean, java.clean, cpp.clean">
-		<delete dir="${out.path}" />
-	</target>
 	
 	<target name="purge" description="Cleans all the output results" 
-		depends="clean, core.purge, java.purge, cpp.purge">
+		depends="core.purge, java.purge, cpp.purge">
 		<delete file="ooeclipseintegration_site.zip" />
 	</target>
-	
 	
 	<target name="site" depends="init-env, core.site, java.site, cpp.site"
 		description="Creates the Eclipse update site">

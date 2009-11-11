@@ -41,7 +41,6 @@
  ====================================================================== -->
 
 <project name="cpp" default="cpp.error">
-
 	
 	<target name="cpp.error">
 		<fail>Wrong target!
@@ -52,7 +51,7 @@
 	</target>
 	
 	
-	<target name="init-env">
+	<target name="init-env"  unless="cpp.nobuild">
 		<dirname property="cpp.basedir" file="${ant.file.cpp}/.."/>
 		
 		<loadproperties srcfile="${cpp.basedir}/build/build.properties" />
@@ -74,22 +73,20 @@
 		<mkdir dir="${cpp.out.classes}" />
 	</target>
 	
-	<target name="clean">
-		<delete dir="${cpp.out.classes}" />
-	</target>
-	
-	<target name="purge" depends="clean">
+	<target name="purge">
+		<dirname property="cpp.basedir" file="${ant.file.cpp}/.."/>
+		<property name="cpp.out.path" value="${cpp.basedir}/bin/ant" />
 		<delete dir="${cpp.out.path}" />
 	</target>
 
-	<target name="site" depends="cpp.plugin, cpp.feature">
+	<target name="site" depends="cpp.plugin, cpp.feature" unless="cpp.nobuild">
 		<copy file="${cpp.basedir}/build/site_fragment.xml.in" 
 			tofile="${cpp.out.path}/site_fragment.xml" />
 		<replace file="${cpp.out.path}/site_fragment.xml"
 			token="@VERSION@" value="${cpp.plugin.version}" />
 	</target>
 
-	<target name="cpp.feature">
+	<target name="cpp.feature" unless="cpp.nobuild">
 		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
 		<copy file="${cpp.basedir}/build/feature.xml.in"
 			tofile="${cpp.out.path}/feature.xml" />
@@ -103,7 +100,7 @@
 		</jar>
 	</target>
 
-	<target name="cpp.compile" depends="init-env">
+	<target name="cpp.compile" depends="init-env" unless="cpp.nobuild">
 		<javac srcdir="${cpp.sources}" destdir="${cpp.out.classes}"
 			target="1.5" source="1.5" 
 			debug="${debug}"
@@ -111,7 +108,7 @@
 			excludes="**/unittests/**"/>
 	</target>
 	
-	<target name="cpp.plugin" depends="cpp.compile">
+	<target name="cpp.plugin" depends="cpp.compile" unless="cpp.nobuild">
 		<copy file="${cpp.basedir}/build/MANIFEST.MF.in"
 			tofile="${cpp.out.path}/MANIFEST.MF" />
 		<replace file="${cpp.out.path}/MANIFEST.MF"
