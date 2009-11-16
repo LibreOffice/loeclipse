@@ -290,7 +290,7 @@ public class JavaBuilder implements ILanguageBuilder {
                             path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
                         // Relative to the project
                         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
-                        if ( file != null ) {
+                        if ( file != null && file.exists() ) {
                             libs.add( file );
                         }
                     }

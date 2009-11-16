@@ -48,6 +48,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.pack.ManifestModel;
 import org.openoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
@@ -62,7 +65,12 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
 
     public void run( IAction pAction ) {
         PackagePropertiesModel propsModel = new PackagePropertiesModel( mPackageFile );
-        ManifestModel manifestModel = new ManifestModel();
+        
+        String prjName = mPackageFile.getProject().getName();
+        IUnoidlProject prj = ProjectsManager.getProject( prjName );
+        // Create a dummy package to get the automatic entries of the manifest
+        UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage( prj, new File( "foo.oxt" ) ); //$NON-NLS-1$
+        ManifestModel manifestModel = unoPackage.getManifestModel();
         
         for (IFolder lib : propsModel.getBasicLibraries()) {
             manifestModel.addBasicLibrary( lib );

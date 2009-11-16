@@ -133,6 +133,13 @@ public class UnoPackage {
     }
     
     /**
+     * @return the manifest.xml model contained in the package
+     */
+    public ManifestModel getManifestModel( ) {
+        return mManifest;
+    }
+    
+    /**
      * Add a file or directory to the package.
      * 
      * <p>This method doesn't know about the different languages
