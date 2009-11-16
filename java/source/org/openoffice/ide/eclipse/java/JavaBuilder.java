@@ -44,20 +44,19 @@
 package org.openoffice.ide.eclipse.java;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.StringReader;
-import java.util.Vector;
-import java.util.jar.JarOutputStream;
+import java.util.ArrayList;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -65,6 +64,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.jarpackager.IJarExportRunnable;
+import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 import org.openoffice.ide.eclipse.core.LogLevels;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -73,8 +74,8 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
-import org.openoffice.ide.eclipse.core.utils.ZipContent;
-import org.openoffice.ide.eclipse.java.utils.ZipContentHelper;
+import org.openoffice.ide.eclipse.java.build.FilesVisitor;
+import org.openoffice.ide.eclipse.java.build.UnoManifestProvider;
 
 /**
  * The language builder implementation for Java.
@@ -100,79 +101,36 @@ public class JavaBuilder implements ILanguageBuilder {
      */
     public IPath createLibrary(IUnoidlProject pUnoProject) throws Exception {
 
-        // Create the manifest file
-        String classpath = ""; //$NON-NLS-1$
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
-        Vector<File> libs = getLibs(JavaCore.create(prj));
-        String prjPath = prj.getLocation().toOSString();
-        for (File lib : libs) {
-            String relPath = lib.getPath().substring(prjPath.length() + 1);
-            classpath += relPath + " "; //$NON-NLS-1$
-        }
-        if (!classpath.equals("")) { //$NON-NLS-1$
-            classpath = "Class-Path: " + classpath + "\r\n"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        IFile jarFile = ((JavaProjectHandler)mLanguage.getProjectHandler()).getJarFile(pUnoProject);
         
-        String classname = ((JavaProjectHandler)mLanguage.getProjectHandler()).
-            getRegistrationClassName(pUnoProject);
-        String content = "ManifestVersion: 1.0\r\n" +  //$NON-NLS-1$
-                         "RegistrationClassName: " + classname + "\r\n" + //$NON-NLS-1$ //$NON-NLS-2$
-                         classpath;
+        JarPackageData description = new JarPackageData();
+        description.setGenerateManifest( true );
+        description.setJarLocation( jarFile.getLocation() );
         
+        String regClassname = ((JavaProjectHandler)mLanguage.getProjectHandler()).
+        getRegistrationClassName(pUnoProject);
+        description.setManifestProvider( new UnoManifestProvider( regClassname ) );
+        description.setManifestLocation( pUnoProject.getFile( "MANIFEST.MF" ).getFullPath() ); //$NON-NLS-1$
+        description.setSaveManifest( true );
+        description.setReuseManifest( true );
+        description.setExportOutputFolders( true );
+        description.setExportClassFiles( true );
+        description.setExportWarnings( true );
+        description.setOverwrite( true );
         
-        File manifestFile = new File(pUnoProject.getFile("MANIFEST.MF"). //$NON-NLS-1$
-                getLocation().toOSString());
-        StringReader reader = new StringReader(content);
-        FileWriter writer = new FileWriter(manifestFile);
-        try {
-            int c = reader.read();
-
-            while (c != -1) {
-                writer.write(c);
-                c = reader.read();
-            }
-        } finally {
-            try {
-                writer.close();
-                reader.close();
-            } catch (IOException e) { e.printStackTrace(); }
-        }
+        // Get the files to export: javamaker output + project classes
+        FilesVisitor visitor = new FilesVisitor( );
+        visitor.addException( pUnoProject.getFolder( pUnoProject.getUrdPath( ) ) );
         
+        IFolder buildDir = pUnoProject.getFolder( pUnoProject.getBuildPath() );
+        buildDir.accept( visitor );
+        description.setElements( visitor.getFiles() );
         
-        // Create projectname.jar
-        File jarFile = ((JavaProjectHandler)mLanguage.getProjectHandler()).
-                getJarFile(pUnoProject);
-        FileOutputStream out = new FileOutputStream(jarFile);
-        JarOutputStream jarOut = new JarOutputStream(out);
+        // Create the Jar file
+        IJarExportRunnable runnable = description.createJarExportRunnable( null );
+        runnable.run( new NullProgressMonitor() );
         
-        // Add the manifest
-        ZipContent manifest = new ZipContent("META-INF/MANIFEST.MF", manifestFile); //$NON-NLS-1$
-        manifest.writeContentToZip(jarOut);
-        
-        // Get all the files to write
-        File bin = new File(pUnoProject.getFolder("bin"). //$NON-NLS-1$
-                getLocation().toOSString());
-        // JDT dependent
-        ZipContent[] binContent = ZipContentHelper.getFiles(bin);
-        
-        File build = new File(pUnoProject.getFolder(pUnoProject.getBuildPath()).
-                getLocation().toOSString());
-        ZipContent[] javamakerContent = ZipContentHelper.getFiles(build);
-        
-        // write the content of the bin directory to the Jar
-        for (int i = 0; i < binContent.length; i++) {
-            binContent[i].writeContentToZip(jarOut);
-        }
-        
-        for (int i = 0; i < javamakerContent.length; i++) {
-            javamakerContent[i].writeContentToZip(jarOut);
-        }
-        
-        // Close all the streams
-        jarOut.close();
-        out.close();
-        
-        return new Path(jarFile.getAbsolutePath());
+        return jarFile.getLocation();
     }
 
 
@@ -303,8 +261,8 @@ public class JavaBuilder implements ILanguageBuilder {
         // Add all the jar dependencies
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
-        Vector<File> libs = getLibs(javaPrj);
-        for (File lib : libs) {
+        ArrayList<IFile> libs = getLibs(javaPrj);
+        for (IFile lib : libs) {
             pUnoPackage.addTypelibraryFile(lib, "Java"); //$NON-NLS-1$
         }
     }
@@ -316,10 +274,8 @@ public class JavaBuilder implements ILanguageBuilder {
      * @param pJavaPrj the project from which to extract the libraries
      * @return a list of all the File pointing to the libraries.
      */
-    private Vector<File> getLibs(IJavaProject pJavaPrj) {
-        Vector<File> libs = new Vector<File>();
-        IPath prjPath = pJavaPrj.getProject().getLocation();
-        
+    private ArrayList<IFile> getLibs(IJavaProject pJavaPrj) {
+        ArrayList<IFile> libs = new ArrayList<IFile>();
         try {
             IClasspathEntry[] entries = pJavaPrj.getResolvedClasspath(true);
             for (IClasspathEntry entry : entries) {
@@ -333,9 +289,9 @@ public class JavaBuilder implements ILanguageBuilder {
                     if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
                             path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
                         // Relative to the project
-                        File libFile = prjPath.append(path.removeFirstSegments(1)).toFile();
-                        if (libFile.isFile()) {
-                            libs.add(libFile);
+                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
+                        if ( file != null ) {
+                            libs.add( file );
                         }
                     }
                 }

@@ -46,6 +46,7 @@ package org.openoffice.ide.eclipse.java;
 import java.io.File;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -235,7 +236,7 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     public String getLibraryPath(IUnoidlProject pProject) {
-        return getJarFile(pProject).getAbsolutePath();
+        return getJarFile(pProject).getLocation().toOSString();
     }
     
     /**
@@ -245,9 +246,9 @@ public class JavaProjectHandler implements IProjectHandler {
      * @param pProject the concerned UNO project
      * @return a handle to the jar file of the project
      */
-    public File getJarFile(IUnoidlProject pProject) {
+    public IFile getJarFile(IUnoidlProject pProject) {
         String filename = pProject.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return pProject.getFile(filename).getLocation().toFile();
+        return pProject.getFile(filename);
     }
     
     /**

@@ -44,12 +44,12 @@
 package org.openoffice.ide.eclipse.core.utils;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.resources.IResource;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
@@ -62,7 +62,7 @@ public class ZipContent {
 
     private static final int BUFFER_SIZE = 2048;
 
-    protected File mFile;
+    protected IResource mResource;
     
     protected String mEntryName;
     
@@ -70,18 +70,18 @@ public class ZipContent {
      * Constructor.
      * 
      * @param pEntryName the name in the ZIP file
-     * @param pFile the file to put in the ZIP file.
+     * @param pResource the file to put in the ZIP file.
      */
-    public ZipContent(String pEntryName, File pFile) {
-        mFile = pFile;
+    public ZipContent( String pEntryName, IResource pResource ) {
+        mResource = pResource;
         mEntryName = pEntryName;
     }
     
     /**
      * @return the file represented by the {@link ZipEntry}
      */
-    public File getFile() {
-        return mFile;
+    public IResource getFile() {
+        return mResource;
     }
     
     /**
@@ -93,7 +93,7 @@ public class ZipContent {
         
         BufferedInputStream origin = null;
         try {
-            FileInputStream fi = new FileInputStream(mFile);
+            FileInputStream fi = new FileInputStream( mResource.getLocation().toFile() );
             origin = new BufferedInputStream(fi, BUFFER_SIZE);
 
             ZipEntry entry = new ZipEntry(mEntryName);

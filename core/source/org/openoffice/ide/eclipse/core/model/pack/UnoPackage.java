@@ -45,25 +45,24 @@ package org.openoffice.ide.eclipse.core.model.pack;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.CoreException;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.Messages;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.utils.FileHelper;
 import org.openoffice.ide.eclipse.core.utils.ZipContent;
 
 /**
@@ -78,17 +77,18 @@ import org.openoffice.ide.eclipse.core.utils.ZipContent;
  */
 public class UnoPackage {
 
+    public static final String MANIFEST_PATH = "manifest.xml"; //$NON-NLS-1$
+    
     public static final String ZIP = "zip"; //$NON-NLS-1$
     public static final String UNOPKG = "uno.pkg"; //$NON-NLS-1$
     public static final String OXT = "oxt"; //$NON-NLS-1$
     
+    private IProject mPrj;
     private File mDestination;
-    private File mOrigin;
     private boolean mBuilding = false;
     
     private HashMap<String, ZipContent> mZipEntries = new HashMap<String, ZipContent>();
-    private HashMap<String, String> mManifestEntries = new HashMap<String, String>();
-    private Vector<File> mTemporaryFiles = new Vector<File>();
+    private ManifestModel mManifest = new ManifestModel();
     
     /**
      * Create a new package object. 
@@ -106,7 +106,7 @@ public class UnoPackage {
      * @param pOut the file of the package.
      * @param pDir the root directory of the package content. 
      */
-    public UnoPackage(File pOut, File pDir) {
+    public UnoPackage( File pOut, IProject pPrj ) {
         if (! (pOut.getName().endsWith(ZIP) || pOut.getName().endsWith(UNOPKG) || 
                 pOut.getName().endsWith(OXT)) ) {
             int pos = pOut.getName().lastIndexOf("."); //$NON-NLS-1$
@@ -119,7 +119,7 @@ public class UnoPackage {
         }
         
         mDestination = pOut;
-        mOrigin = pDir;
+        mPrj = pPrj;
     }
     
     /**
@@ -128,10 +128,8 @@ public class UnoPackage {
      */
     public void dispose() {
         mDestination = null;
-        mOrigin = null;
-        mManifestEntries.clear();
+        mManifest.dispose();
         mZipEntries.clear();
-        mTemporaryFiles.clear();
     }
     
     /**
@@ -142,22 +140,28 @@ public class UnoPackage {
      * 
      * @param pContent the file or folder to add
      */
-    public void addContent(File pContent) {
-        if (pContent.isFile()) {
+    public void addContent(IResource pContent) {
+        if ( pContent instanceof IFile ) {
+            IFile file = (IFile)pContent;
             if (pContent.getName().endsWith(".xcs")) { //$NON-NLS-1$
-                addConfigurationSchemaFile(pContent);
+                addConfigurationSchemaFile( file );
             } else if (pContent.getName().endsWith(".xcu")) { //$NON-NLS-1$
-                addConfigurationDataFile(pContent);
+                addConfigurationDataFile( file );
             } else if (pContent.getName().endsWith(".rdb")) { //$NON-NLS-1$
-                addTypelibraryFile(pContent, "RDB"); //$NON-NLS-1$
+                addTypelibraryFile( file , "RDB"); //$NON-NLS-1$
             } else {
-                addOtherFile(pContent);
+                addOtherFile( file );
             }
-        } else {
+        } else if ( pContent instanceof IContainer ) {
             // Recurse on the directory
-            File[] children = pContent.listFiles();
-            for (File child : children) {
-                addContent(child);
+            IContainer container = (IContainer) pContent;
+            IResource[] children;
+            try {
+                children = container.members();
+                for (IResource child : children) {
+                    addContent( child );
+                }
+            } catch (CoreException e) {
             }
         }
     }
@@ -171,9 +175,9 @@ public class UnoPackage {
      * @param pFile the file to add to the package
      * @param pType the type of the file to add.
      * 
-     * @see #addComponentFile(File, String, String) for platform support
+     * @see #addComponentFile(IFile, String, String) for platform support
      */
-    public void addComponentFile(File pFile, String pType) {
+    public void addComponentFile(IFile pFile, String pType) {
         addComponentFile(pFile, pType, null);
     }
     
@@ -189,22 +193,15 @@ public class UnoPackage {
      * @param pPlatform optional parameter to use only with native type. Please
      *         refer to the OOo Developer's Guide for more information.
      */
-    public void addComponentFile(File pFile, String pType, String pPlatform) {
+    public void addComponentFile(IFile pFile, String pType, String pPlatform) {
         // Do not change the extension from now
         initializeOutput();
     
-        String mediaType = "application/vnd.sun.star.uno-component;type=" + pType; //$NON-NLS-1$
-        if (pPlatform != null && pType.equals("native")) { //$NON-NLS-1$
-            mediaType += ";platform=" + pPlatform; //$NON-NLS-1$
-        }
-        
-        String relPath = getOriginRelativePath(pFile);
-        
         // create the manifest entry
-        addManifestEntry(relPath, mediaType);
+        mManifest.addComponentFile( pFile, pType, pPlatform );
         
         // create the ZipContent
-        addZipContent(relPath, pFile);
+        addZipContent( pFile.getProjectRelativePath().toString(), pFile );
     }
     
     /**
@@ -216,18 +213,15 @@ public class UnoPackage {
      * @param pFile the file to add 
      * @param pType the type of the file as specified in the OOo Developer's Guide
      */
-    public void addTypelibraryFile(File pFile, String pType) {
+    public void addTypelibraryFile(IFile pFile, String pType) {
         // Do not change the extension from now
         initializeOutput();
         
-        String mediaType = "application/vnd.sun.star.uno-typelibrary;type=" + pType; //$NON-NLS-1$
-        String relPath = getOriginRelativePath(pFile);
-        
         // create the manifest entry
-        addManifestEntry(relPath, mediaType);
+        mManifest.addTypelibraryFile( pFile, pType );
         
         // create the ZipContent
-        addZipContent(relPath, pFile);
+        addZipContent( pFile.getProjectRelativePath().toString(), pFile );
     }
     
     /**
@@ -237,18 +231,12 @@ public class UnoPackage {
      * 
      * @param pDir the directory of the basic library.
      */
-    public void addBasicLibraryFile(File pDir) {
-        if (pDir.isDirectory()) {
-            // Do not change the extension from now
-            initializeOutput();
+    public void addBasicLibraryFile(IFolder pDir) {
+        // Do not change the extension from now
+        initializeOutput();
 
-            String mediaType = "application/vnd.sun.star.basic-library"; //$NON-NLS-1$
-            String relPath = getOriginRelativePath(pDir);
-            
-            addManifestEntry(relPath, mediaType);
-            
-            addZipContent(relPath, pDir);
-        }
+        mManifest.addBasicLibrary( pDir );
+        addZipContent( pDir.getProjectRelativePath().toString(), pDir );
     }
     
     /**
@@ -258,18 +246,12 @@ public class UnoPackage {
      * 
      * @param pDir the directory of the dialog library.
      */
-    public void addDialogLibraryFile(File pDir) {
-        if (pDir.isDirectory()) {
-            // Do not change the extension from now
-            initializeOutput();
+    public void addDialogLibraryFile(IFolder pDir) {
+        // Do not change the extension from now
+        initializeOutput();
 
-            String mediaType = "application/vnd.sun.star.dialog-library"; //$NON-NLS-1$
-            String relPath = getOriginRelativePath(pDir);
-            
-            addManifestEntry(relPath, mediaType);
-            
-            addZipContent(relPath, pDir);
-        }
+        mManifest.addDialogLibrary( pDir );
+        addZipContent( pDir.getProjectRelativePath().toString(), pDir );
     }
     
     /**
@@ -277,18 +259,12 @@ public class UnoPackage {
      * 
      * @param pFile the xcu file to add
      */
-    public void addConfigurationDataFile(File pFile) {
-        if (pFile.isFile() && pFile.getName().endsWith("xcu")) { //$NON-NLS-1$
-            // Do not change the extension from now
-            initializeOutput();
-            
-            String mediaType = "application/vnd.sun.star.configuration-data"; //$NON-NLS-1$
-            String relPath = getOriginRelativePath(pFile);
-            
-            addManifestEntry(relPath, mediaType);
-            
-            addZipContent(relPath, pFile);
-        }
+    public void addConfigurationDataFile(IFile pFile) {
+        // Do not change the extension from now
+        initializeOutput();
+
+        mManifest.addConfigurationDataFile( pFile );
+        addZipContent( pFile.getProjectRelativePath().toString(), pFile );
     }
     
     /**
@@ -296,18 +272,12 @@ public class UnoPackage {
      * 
      * @param pFile the xcs file to add
      */
-    public void addConfigurationSchemaFile(File pFile) {
-        if (pFile.isFile() && pFile.getName().endsWith("xcs")) { //$NON-NLS-1$
-            // Do not change the extension from now
-            initializeOutput();
-            
-            String mediaType = "application/vnd.sun.star.configuration-schema"; //$NON-NLS-1$
-            String relPath = getOriginRelativePath(pFile);
-            
-            addManifestEntry(relPath, mediaType);
-            
-            addZipContent(relPath, pFile);
-        }
+    public void addConfigurationSchemaFile(IFile pFile) {
+        // Do not change the extension from now
+        initializeOutput();
+
+        mManifest.addConfigurationSchemaFile( pFile );
+        addZipContent( pFile.getProjectRelativePath().toString(), pFile );
     }
     
     /**
@@ -316,29 +286,9 @@ public class UnoPackage {
      * @param pDescriptionFile the file containing the description for that locale
      * @param pLocale the locale of the description. Can be <code>null</code>.
      */
-    public void addPackageDescription(File pDescriptionFile, Locale pLocale) {
-        try {
-            // write the description to a file
-            String localeString = ""; //$NON-NLS-1$
-            if (pLocale != null) {
-                localeString = pLocale.toString();
-                localeString = localeString.replace("_", "-"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-
-            // Add the file entry to the manifest
-            String mediaType = "application/vnd.sun.star.package-bundle-description"; //$NON-NLS-1$
-            if (!localeString.equals("")) { //$NON-NLS-1$
-                mediaType += ";locale=" + localeString; //$NON-NLS-1$
-            }
-            String relPath = getOriginRelativePath(pDescriptionFile);
-            
-            addManifestEntry(relPath, mediaType);
-
-            // Add the file to the zip entries
-            addZipContent(relPath, pDescriptionFile);
-        } catch (Exception e) {
-            // Can't add the description file to the package
-        }
+    public void addPackageDescription(IFile pFile, Locale pLocale) {
+        mManifest.addDescription( pFile, pLocale );
+        addZipContent( pFile.getProjectRelativePath().toString(), pFile );
     }
     
     /**
@@ -349,12 +299,11 @@ public class UnoPackage {
      * 
      * @param pFile the file or directory to add.
      */
-    public void addOtherFile(File pFile) {
+    public void addOtherFile(IFile pFile) {
         // Do not change the extension from now 
         initializeOutput();
         
-        String relPath = getOriginRelativePath(pFile);
-        addZipContent(relPath, pFile);
+        addZipContent( pFile.getProjectRelativePath().toString(), pFile );
     }
     
     /**
@@ -368,26 +317,14 @@ public class UnoPackage {
         
         if (mBuilding) {
             try {
-                // Write the manifest
-                File metainfDir = new File(mOrigin, "META-INF"); //$NON-NLS-1$
-                if (!metainfDir.exists()) {
-                    metainfDir.mkdir();
+                // Write the manifest if it doesn't exist
+                IFile manifestFile = mPrj.getFile( MANIFEST_PATH );
+                if ( !manifestFile.exists() ) {
+                    FileOutputStream writer = new FileOutputStream( manifestFile.getLocation().toFile() );
+                    mManifest.write( writer );
+                    writer.close();
+                    manifestFile.refreshLocal( IResource.DEPTH_ZERO, null );
                 }
-                File manifestFile = new File(metainfDir, "manifest.xml"); //$NON-NLS-1$
-
-                FileWriter writer = new FileWriter(manifestFile);
-                writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
-                writer.append("<manifest:manifest>\n"); //$NON-NLS-1$
-                
-                // Add the manifest entries
-                Iterator<String> manifestIter = mManifestEntries.values().iterator();
-                while (manifestIter.hasNext()) {
-                    String entry = manifestIter.next();
-                    writer.append("\t" + entry + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                
-                writer.append("</manifest:manifest>\n"); //$NON-NLS-1$
-                writer.close();
                 
                 // Write the ZipContent
                 FileOutputStream out = new FileOutputStream(mDestination);
@@ -411,11 +348,6 @@ public class UnoPackage {
                 PluginLogger.error(Messages.getString("UnoPackage.PackageCreationError"), e); //$NON-NLS-1$
             }
             
-            // remove the temporary files
-            for (File file : mTemporaryFiles) {
-                FileHelper.remove(file);
-            }
-            
             result = mDestination;
     
             dispose();
@@ -427,10 +359,10 @@ public class UnoPackage {
      * @return a list of the files that are already queued for addition 
      *         to the package.
      */
-    public List<File> getContainedFiles() {
-        ArrayList<File> files = new ArrayList<File>(mZipEntries.size());
+    public List<IResource> getContainedFiles() {
+        ArrayList<IResource> files = new ArrayList<IResource>(mZipEntries.size());
         for (ZipContent content : mZipEntries.values()) {
-            files.add(content.getFile());
+            files.add( content.getFile() );
         }
         return files;
     }
@@ -451,17 +383,14 @@ public class UnoPackage {
             
             File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
             
-            IPath prjPath = prj.getProjectPath();
-            File dir = new File(prjPath.toOSString());
             File dest = new File(outputDir, prj.getName() + ".zip"); //$NON-NLS-1$
-            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(prj, dest, dir);
+            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(prj, dest);
             
-            List<File> files = unoPackage.getContainedFiles();
-            String path = pRes.getLocation().toString();
+            List<IResource> files = unoPackage.getContainedFiles();
             int i = 0;
             while (i < files.size() && !contained) {
-                File file = files.get(i);
-                if (file.getPath().equals(path)) {
+                IResource res = files.get(i);
+                if ( res.getLocation().equals( pRes.getLocation() ) ) {
                     contained = true;
                 }
                 i++;
@@ -488,23 +417,10 @@ public class UnoPackage {
             
             File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
             
-            IPath prjPath = unoprj.getProjectPath();
-            File dir = new File(prjPath.toOSString());
             File dest = new File(outputDir, pPrj.getName() + ".zip"); //$NON-NLS-1$
-            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(unoprj, dest, dir);
+            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(unoprj, dest);
             
-            List<File> files = unoPackage.getContainedFiles();
-            
-            // Convert the Files into IResources
-            for (File file : files) {
-                String relPath = unoPackage.getOriginRelativePath(file);
-                IFile iFile = pPrj.getFile(relPath);
-                if (iFile.exists()) {
-                    resources.add(iFile);
-                } else if (pPrj.getFolder(relPath).exists()) {
-                    resources.add(pPrj.getFolder(relPath));
-                }
-            }
+            resources.addAll( unoPackage.getContainedFiles() );
             
             unoPackage.dispose();
         }
@@ -524,64 +440,26 @@ public class UnoPackage {
     }
     
     /**
-     * Computes the manifest entry and add it to the Manifest entries table.
-     * 
-     * @param pRelativePath the destination relative path of the file
-     * @param pMediaType the media type of the file, as specified in the OOo
-     *         developer's guide
-     */
-    private void addManifestEntry(String pRelativePath, String pMediaType) {
-        if (pRelativePath != null) {
-            String entry = "<manifest:file-entry"; //$NON-NLS-1$
-            entry += " manifest:full-path=\"" + pRelativePath + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-            entry += " manifest:media-type=\"" + pMediaType + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-            entry += "/>"; //$NON-NLS-1$
-
-            mManifestEntries.put(pRelativePath, entry);
-        }
-    }
-    
-    /**
      * Recursively add the file or directory to the Zip entries.
      * 
      * @param pRelativePath the relative path of the file to add
      * @param pFile the file or directory to add
      */
-    private void addZipContent(String pRelativePath, File pFile) {
+    private void addZipContent(String pRelativePath, IResource pFile) {
         if (pRelativePath != null) {
-            if (pFile.isDirectory()) {
+            if ( pFile instanceof IContainer ) {
                 // Add all the children
-                String[] children = pFile.list();
-                for (String child : children) {
-                    if (!child.equals(".") && !child.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-                        addZipContent(pRelativePath + "/" + child, new File(pFile, child)); //$NON-NLS-1$
+                try {
+                    IResource[] children = ((IContainer)pFile).members();
+                    for (IResource child : children) {
+                        addZipContent( pRelativePath + "/" + child.getName(), child ); //$NON-NLS-1$
                     }
+                } catch ( Exception e ) {
                 }
             } else {
                 ZipContent content = new ZipContent(pRelativePath, pFile);
                 mZipEntries.put(pRelativePath, content);
             }
         }
-    }
-    
-    /**
-     * Returns the path of the file relatively to the origin directory. If the
-     * file is not contained in the origin directory, null is returned.
-     * 
-     * @param pFile the file of which to get the relative path
-     * @return the relative path using "/" separators or <code>null</code> if
-     *         the file isn't contained in the origin directory.
-     */
-    private String getOriginRelativePath(File pFile) {
-        String path = pFile.getAbsolutePath();
-        String originPath = mOrigin.getAbsolutePath();
-        
-        String relativePath = null;
-        
-        if (path.startsWith(originPath)) {
-            relativePath = path.substring(originPath.length() + 1);
-            relativePath = relativePath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        return relativePath;
     }
 }

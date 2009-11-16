@@ -53,7 +53,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -174,21 +173,14 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 IPath libraryPath = null;
                 ILanguageBuilder langBuilder = mPrj.getLanguage().getLanguageBuidler();
                 libraryPath = langBuilder.createLibrary(mPrj);
-            
-                // Remove the temporarily created Manifest and keep the library
-                try {
-                    mPrj.getFile("MANIFEST.MF").delete(true, pMonitor); //$NON-NLS-1$
-                } catch (CoreException e) {
-                    // Not important
-                }
-
+                
                 // Create the package
                 IPath prjPath = mPrj.getProjectPath();
                 File dir = new File(prjPath.toOSString());
                 File dest = new File(mOutputDir, 
                         mPrj.getName().replace(" ", "") //$NON-NLS-1$ //$NON-NLS-2$ 
                             + "." + mExtension); //$NON-NLS-1$
-                UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(mPrj, dest, dir);            
+                UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(mPrj, dest);      
 
                 /*
                  *  Read the package.properties files to add user selected files.
@@ -202,24 +194,24 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 
                     List<IFolder> basicLibs = pkgModel.getBasicLibraries();
                     for (IFolder lib : basicLibs) {
-                        unoPackage.addBasicLibraryFile(lib.getLocation().toFile());
+                        unoPackage.addBasicLibraryFile(lib);
                     }
 
                     List<IFolder> dialogLibs = pkgModel.getDialogLibraries();
                     for (IFolder lib : dialogLibs) {
-                        unoPackage.addDialogLibraryFile(lib.getLocation().toFile());
+                        unoPackage.addDialogLibraryFile(lib);
                     }
 
                     List<IResource> contents = pkgModel.getContents();
                     for (IResource res : contents) {
-                        unoPackage.addContent(res.getLocation().toFile());
+                        unoPackage.addContent(res);
                     }
 
                     Map<Locale, IFile> descriptions = pkgModel.getDescriptionFiles();
                     Iterator<Entry<Locale, IFile>> iter = descriptions.entrySet().iterator();
                     while (iter.hasNext()) {
                         Entry<Locale, IFile> entry = iter.next();
-                        unoPackage.addPackageDescription(entry.getValue().getLocation().toFile(), 
+                        unoPackage.addPackageDescription(entry.getValue(), 
                                 entry.getKey());
                     }
                 }
@@ -246,6 +238,11 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 
             } catch (Exception e) {
                 // the error status is already defined at the beginning of the method  
+                status = new Status(IStatus.ERROR, 
+                        OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
+                        IStatus.ERROR, 
+                        Messages.getString("PackageExportWizard.EXPORT_ERROR_MSG"), //$NON-NLS-1$
+                        e );
             }
                 
             return status;

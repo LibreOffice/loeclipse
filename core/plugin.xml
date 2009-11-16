@@ -60,19 +60,6 @@
    	        name="%wizards">
    	  </category>
       <wizard
-            canFinishEarly="true"
-            category="org.openoffice.ide.eclipse.core"
-            class="org.openoffice.ide.eclipse.core.wizards.NewUnoFileWizard"
-            hasPages="true"
-            icon="icons/newunofile.gif"
-            id="org.openoffice.ide.eclipse.core.newunofile"
-            name="%wizards.unoidlfile"
-            project="false">
-         <description>
-            %wizard.file.description
-         </description>
-      </wizard>
-      <wizard
             canFinishEarly="false"
             category="org.openoffice.ide.eclipse.core"
             hasPages="true"
@@ -165,16 +152,6 @@
                style="pulldown"
                toolbarPath="uno"
                tooltip="%action.service.tooltip"/>
-         <!--
-         <action
-               class="org.openoffice.ide.eclipse.core.actions.NewUnoFileAction"
-               icon="icons/newunofile.gif"
-               id="org.openoffice.ide.eclipse.core.newactions.newfile"
-               label="%newactions.newfile.name"
-               style="push"
-               toolbarPath="uno"
-               tooltip="%newactions.newfile.tooltip"/>
-         -->
       </actionSet>
    </extension>
    <extension
@@ -320,5 +297,20 @@
             content-type="org.eclipse.core.runtime.xml"
             file-extensions="xcu,xcs">
       </file-association>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.openoffice.ide.eclipse.core.objectContribution1"
+            nameFilter="package.properties"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="org.openoffice.ide.eclipse.core.actions.ConvertToManifestAction"
+               enablesFor="1"
+               id="org.openoffice.ide.eclipse.core.actions.create_manifest"
+               label="Convert to manifest">
+         </action>
+      </objectContribution>
    </extension>
 </plugin>

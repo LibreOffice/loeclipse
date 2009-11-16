@@ -52,6 +52,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -509,12 +510,13 @@ public class UnoidlProjectHelper {
      * 
      * @return the minimal {@link UnoPackage}
      */
-    public static UnoPackage createMinimalUnoPackage(IUnoidlProject pPrj, File pDest, File pDir) {
+    public static UnoPackage createMinimalUnoPackage(IUnoidlProject pPrj, File pDest) {
 
-        UnoPackage unoPackage = new UnoPackage(pDest, pDir);
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
+        UnoPackage unoPackage = new UnoPackage(pDest, prj);
         
         // Add content to the package
-        unoPackage.addTypelibraryFile(new File(pDir, "types.rdb"), "RDB"); //$NON-NLS-1$ //$NON-NLS-2$
+        unoPackage.addTypelibraryFile( pPrj.getFile( pPrj.getTypesPath() ), "RDB"); //$NON-NLS-1$
         pPrj.getLanguage().getLanguageBuidler().fillUnoPackage(unoPackage, pPrj);
         
         return unoPackage;

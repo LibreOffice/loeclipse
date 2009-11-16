@@ -57,7 +57,6 @@ public class ImagesConstants {
     public static final String ERROR = "ERROR"; //$NON-NLS-1$
     public static final String UNO_PROJECT = "UNO_PROJECT"; //$NON-NLS-1$
     public static final String NEWPROJECT_WIZ = "NEWPROJECT_WIZ"; //$NON-NLS-1$
-    public static final String NEWFILE_WIZ = "NEWFILE_WIZ"; //$NON-NLS-1$
     public static final String NEW_SERVICE_IMAGE = "NEW_SERVICE_IMAGE"; //$NON-NLS-1$
     public static final String CHECKED = "CHECKED"; //$NON-NLS-1$
     public static final String UNCHECKED = "UNCHECKED"; //$NON-NLS-1$
