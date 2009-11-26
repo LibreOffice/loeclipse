@@ -64,7 +64,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
@@ -149,7 +149,7 @@ public final class UnoFactory {
         String prjName = (String)pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         
-        ILanguage lang = (ILanguage)pData.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
+        AbstractLanguage lang = (AbstractLanguage)pData.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
         IProjectHandler langProjectHandler = lang.getProjectHandler();
         String languageOption = langProjectHandler.getSkeletonMakerLanguage(pData);
         
@@ -173,6 +173,7 @@ public final class UnoFactory {
             // Get the unorc file
             String unorc = "-env:BOOTSTRAPINI=\"" + prj.getOOo().getUnorcPath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
+            // Get the service for which to generate the skeleton
             UnoFactoryData[] inner =  pData.getInnerData();
             String service = ""; //$NON-NLS-1$
             int i = 0;
@@ -195,7 +196,7 @@ public final class UnoFactory {
             
             String implementationName = langProjectHandler.getImplementationName(prj, service);
             
-            
+            // Run the uno-skeletonmaker command
             String command = "uno-skeletonmaker" +    //$NON-NLS-1$
                 " " + unorc +  //$NON-NLS-1$
                 " component " + languageOption +  //$NON-NLS-1$
@@ -207,6 +208,7 @@ public final class UnoFactory {
 
             Process process = prj.getSdk().runTool(prj, command, pMonitor);
     
+            // Process the error output to add it to the log if needed
             InputStream err = process.getErrorStream();
             StringWriter writer = new StringWriter();
             
@@ -229,6 +231,7 @@ public final class UnoFactory {
                 } catch (java.io.IOException e) { }
             }
             
+            // Refresh the project to reflect the changes
             UnoidlProjectHelper.refreshProject(prj, null);
 
             // opens the generated files

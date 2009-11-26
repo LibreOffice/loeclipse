@@ -44,11 +44,14 @@
 package org.openoffice.ide.eclipse.java;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -57,6 +60,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
@@ -260,6 +264,31 @@ public class JavaProjectHandler implements IProjectHandler {
      */
     public String getRegistrationClassName(IUnoidlProject pProject) {
         return pProject.getProperty(P_REGISTRATION_CLASSNAME);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
+        ArrayList< IFolder > folders = new ArrayList<IFolder>();
+        
+        IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
+        IProject prj = workspace.getProject( pUnoidlProject.getName() );
+        IJavaProject javaPrj = JavaCore.create( prj );
+        try {
+            folders.add( workspace.getFolder( javaPrj.getOutputLocation() ) );
+        
+            IClasspathEntry[] entries = javaPrj.getRawClasspath();
+            for (IClasspathEntry entry : entries) {
+                if ( entry.getEntryKind() == IClasspathEntry.CPE_SOURCE  && 
+                        entry.getOutputLocation() != null ) {
+                    folders.add( workspace.getFolder( entry.getOutputLocation() ) );
+                }
+            }
+        } catch ( JavaModelException e ) {
+        }
+        
+        return folders.toArray( new IFolder[folders.size()] );
     }
     
     //--------------------------------------------- Jar finding private methods

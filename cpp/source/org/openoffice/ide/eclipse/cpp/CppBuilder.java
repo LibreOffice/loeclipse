@@ -60,21 +60,33 @@ public class CppBuilder implements ILanguageBuilder {
     
     public static final String INCLUDE = "include"; //$NON-NLS-1$
 
+    /**
+     * {@inheritDoc}
+     */
     public IPath createLibrary(IUnoidlProject pUnoProject) throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pPrj) {
         // TODO Auto-generated method stub
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String[] getBuildEnv(IUnoidlProject pUnoProject) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj,
             File pTypesFile, File pBuildFolder, String pRootModule,
             IProgressMonitor pMonitor) {

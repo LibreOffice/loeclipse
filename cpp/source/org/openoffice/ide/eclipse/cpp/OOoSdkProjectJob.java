@@ -155,35 +155,46 @@ public class OOoSdkProjectJob extends Job {
                     
                     File libFile = new File( dirPath.toFile(), syslibname );
                     if ( libFile.exists() ) {
-                        String dest = folder.getFile( libname ).getLocation().toOSString();
                         String orig = libFile.getAbsolutePath();
                         
                         // Run ln to link the files: present on all *NIX platforms
-                        String[] command = { 
-                            "ln", "-s", //$NON-NLS-1$ //$NON-NLS-2$
-                            orig, dest
-                        };
-                        try {
-                            Process proc = Runtime.getRuntime().exec( command );
-                            
-                            StringBuffer buf = getErrorString( proc );
-                            if ( !buf.toString().trim().equals( new String( ) ) ) {
-                                String msg = Messages.getString("OOoSdkProjectJob.LinkError") + //$NON-NLS-1$ 
-                                    libname + "\n"; //$NON-NLS-1$
-                                msg += buf.toString();
-                                PluginLogger. error( msg );
-                            }
-                            
-                            proc.waitFor();
-                            
-                        } catch ( Exception e ) {
-                            PluginLogger.error( Messages.getString("OOoSdkProjectJob.LinkError") + //$NON-NLS-1$ 
-                                    libname, e );
-                        }
+                        doLink( orig, folder, libname );
                     }
                 }
             }
             folder.refreshLocal( IResource.DEPTH_ONE, pMonitor );
+        }
+    }
+
+    /**
+     * Create the link for a library.
+     * 
+     * @param pOrig the file to link from
+     * @param pFolder the folder where to create the link
+     * @param pLibname the name of the library in the new folder
+     */
+    private void doLink( String pOrig, IFolder pFolder, String pLibname ) {
+        String dest = pFolder.getFile( pLibname ).getLocation().toOSString();
+        String[] command = { 
+            "ln", "-s", //$NON-NLS-1$ //$NON-NLS-2$
+            pOrig, dest
+        };
+        try {
+            Process proc = Runtime.getRuntime().exec( command );
+
+            StringBuffer buf = getErrorString( proc );
+            if ( !buf.toString().trim().equals( new String( ) ) ) {
+                String msg = Messages.getString("OOoSdkProjectJob.LinkError") + //$NON-NLS-1$ 
+                    pLibname + "\n"; //$NON-NLS-1$
+                msg += buf.toString();
+                PluginLogger. error( msg );
+            }
+
+            proc.waitFor();
+
+        } catch ( Exception e ) {
+            PluginLogger.error( Messages.getString("OOoSdkProjectJob.LinkError") + //$NON-NLS-1$ 
+                    pLibname, e );
         }
     }
 

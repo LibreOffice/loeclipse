@@ -357,7 +357,7 @@ public class OOoContainer {
         }
         
         // Fourth attempt: Get a registered OOo
-        if (found == null) {
+        if (found == null && sInstance.mElements.size() > 0) {
             found = sInstance.mElements.values().iterator().next();
         }
         

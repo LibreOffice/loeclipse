@@ -72,7 +72,7 @@ import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 
 /**
@@ -158,7 +158,7 @@ public class UnoidlProjectHelper {
         unoProject.setOutputExtension(comp);
 
         // Set the language
-        ILanguage language = (ILanguage)pData.getProperty(
+        AbstractLanguage language = (AbstractLanguage)pData.getProperty(
                 IUnoFactoryConstants.PROJECT_LANGUAGE);
         unoProject.setLanguage(language);
         
@@ -506,7 +506,6 @@ public class UnoidlProjectHelper {
      * 
      * @param pPrj the project to package
      * @param pDest the package destination file
-     * @param pDir the directory containing the files to package
      * 
      * @return the minimal {@link UnoPackage}
      */

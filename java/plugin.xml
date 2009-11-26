@@ -5,7 +5,14 @@
          point="org.openoffice.ide.eclipse.core.language">
       <language
             class="org.openoffice.ide.eclipse.java.Language"
-            name="Java"/>
+            name="Java">
+         <newWizardPage
+               class="org.openoffice.ide.eclipse.java.JavaWizardPage">
+         </newWizardPage>
+         <exportBuildPart
+               class="org.openoffice.ide.eclipse.java.JavaExportPart">
+         </exportBuildPart>
+      </language>
    </extension>
    <extension
          id="org.openoffice.ide.eclipse.java.builder"

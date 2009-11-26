@@ -79,12 +79,12 @@ import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.LabeledRow;
 import org.openoffice.ide.eclipse.core.gui.rows.TextRow;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
-import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
+import org.openoffice.ide.eclipse.core.model.language.LanguagesHelper;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
@@ -213,8 +213,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage
     /**
      * @return the chosen implementation language.
      */
-    public ILanguage getChosenLanguage() {
-        ILanguage language = null;
+    public AbstractLanguage getChosenLanguage() {
+        AbstractLanguage language = null;
         if (mLanguageRow != null) {
             String value = mLanguageRow.getValue();
             language = LanguagesHelper.getLanguageFromName(value);

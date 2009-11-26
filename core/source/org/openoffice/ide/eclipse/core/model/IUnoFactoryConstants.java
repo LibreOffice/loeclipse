@@ -46,7 +46,7 @@ package org.openoffice.ide.eclipse.core.model;
 // Imports used for the javadocs
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 
 /**
  * This interface contains the keys for the data to provide to the UNO
@@ -79,7 +79,7 @@ public interface IUnoFactoryConstants {
     public static final String PROJECT_COMP    = "project_comp"; //$NON-NLS-1$
     
     /**
-     * The object should be an instance of {@link ILanguage}.
+     * The object should be an instance of {@link AbstractLanguage}.
      */
     public static final String PROJECT_LANGUAGE = "project_language"; //$NON-NLS-1$
     

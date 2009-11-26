@@ -64,7 +64,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.core.wizards.pages.NewUnoProjectPage;
@@ -159,28 +159,8 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         
         if (mMainPage.equals(pPage)) {
             
-            // Create/Remove the language page if needed
-            ILanguage lang = mMainPage.getChosenLanguage();
-            if (lang != null) {
-                UnoFactoryData data = new UnoFactoryData();
-                setLanguagePage(lang.getLanguageUI().getWizardPage(
-                        mMainPage.fillData(data, false)));
-                
-                // Cleaning
-                data.dispose();
-            } else {
-                setLanguagePage(null);
-            }
-            
             // change the language page if possible
-            if (mLanguagePage != null) { 
-                UnoFactoryData data = new UnoFactoryData();
-                mLanguagePage.setProjectInfos(
-                        mMainPage.fillData(data, false));
-                
-                // cleaning
-                data.dispose();
-            }
+            updateLoanguagePage( );
         
             try {
                 // Compute the default service name
@@ -239,7 +219,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -324,6 +304,36 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         return OOEclipsePlugin.getDefault().getWorkbench();
     }
 
+    /**
+     * Adapts the language specific page using the selected language.
+     */
+    private void updateLoanguagePage() {
+        // Create/Remove the language page if needed
+        AbstractLanguage lang = mMainPage.getChosenLanguage();
+        if (lang != null) {
+            UnoFactoryData data = new UnoFactoryData();
+            LanguageWizardPage page = lang.getNewWizardPage();
+            if ( page != null ) {
+                page.setProjectInfos( mMainPage.fillData( data, false ) );
+            }
+            setLanguagePage( page );
+            
+            // Cleaning
+            data.dispose();
+        } else {
+            setLanguagePage(null);
+        }
+        
+        if (mLanguagePage != null) { 
+            UnoFactoryData data = new UnoFactoryData();
+            mLanguagePage.setProjectInfos(
+                    mMainPage.fillData(data, false));
+            
+            // cleaning
+            data.dispose();
+        }
+    }
+    
     /**
      * Thread executing the project creation tasks.
      * 

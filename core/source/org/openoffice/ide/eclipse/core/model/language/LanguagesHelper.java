@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.internal.helpers;
+package org.openoffice.ide.eclipse.core.model.language;
 
 import java.util.Vector;
 
@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
 
 /**
  * Helper class for implementation languages handling.
@@ -79,35 +78,8 @@ public class LanguagesHelper {
     }
     
     /**
-     * Returns the language name as specified in the <code>plugin.xml</code>
-     * file from the language object.
-     * 
-     * @param pLanguage the language object
-     * @return the language name
-     */
-    public static String getNameFromLanguage(ILanguage pLanguage) {
-        
-        String name = null;
-        
-        IConfigurationElement[] languages = getLanguagesDefs();
-        int i = 0;
-        
-        while (name == null && i < languages.length) {
-            IConfigurationElement languagei = languages[i];
-            if (languagei.getAttribute("class").equals( //$NON-NLS-1$
-                    pLanguage.getClass().getName())) {
-                
-                name = languagei.getAttribute("name"); //$NON-NLS-1$
-            }
-            i++;
-        }
-        
-        return name;
-    }
-    
-    /**
      * <p>Returns the language corresponding to a language name. The result may
-     * be null if:
+     * be <code>null</code> if:
      *   <ul>
      *       <li>There is no such language name</li>
      *      <li>The corresponding class cannot be found</li>
@@ -119,9 +91,9 @@ public class LanguagesHelper {
      * 
      * @return the language object if found, <code>null</code> otherwise.
      */
-    public static ILanguage getLanguageFromName(String pName) {
+    public static AbstractLanguage getLanguageFromName(String pName) {
         
-        ILanguage language = null;
+        AbstractLanguage language = null;
         
         IConfigurationElement[] languages = getLanguagesDefs();
         int i = 0;
@@ -130,11 +102,11 @@ public class LanguagesHelper {
             IConfigurationElement languagei = languages[i];
             if (languagei.getAttribute("name").equals(pName)) { //$NON-NLS-1$
                 try {
-                    Object oLanguage = languagei.
-                        createExecutableExtension("class"); //$NON-NLS-1$
+                    Object o = languagei.createExecutableExtension( "class" ); //$NON-NLS-1$
                     
-                    if (oLanguage instanceof ILanguage) {
-                        language = (ILanguage)oLanguage;
+                    if ( o instanceof AbstractLanguage ) {
+                        language = (AbstractLanguage)o;
+                        language.setConfigurationElement( languagei );
                     }
                     
                 } catch (Exception e) {

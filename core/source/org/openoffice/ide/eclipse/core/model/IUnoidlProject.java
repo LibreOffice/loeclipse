@@ -48,7 +48,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 
 /**
  * Interface for a UNO project.
@@ -75,7 +75,7 @@ public interface IUnoidlProject {
     /**
      * @return the project implementation language.
      */
-    public ILanguage getLanguage();
+    public AbstractLanguage getLanguage();
     
     /**
      * @return the project name.
@@ -98,7 +98,7 @@ public interface IUnoidlProject {
      * 
      * @param pLanguage the new language
      */
-    public void setLanguage(ILanguage pLanguage);
+    public void setLanguage(AbstractLanguage pLanguage);
     
     /**
      * Sets the selected OOo.
@@ -310,4 +310,9 @@ public interface IUnoidlProject {
      * Saves the UNO project configuration in a hidden file.
      */
     public void saveAllProperties();
+
+    /**
+     * @return the language dependent binaries folders.
+     */
+    public IFolder[] getBinFolders();
 }

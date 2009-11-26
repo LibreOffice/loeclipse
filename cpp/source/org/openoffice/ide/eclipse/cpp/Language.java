@@ -30,9 +30,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.cpp;
 
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageUI;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 /**
@@ -41,20 +40,13 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
  * @author cbosdonnat
  *
  */
-public class Language implements ILanguage {
+public class Language extends AbstractLanguage {
 
     /**
      * {@inheritDoc}
      */
     public ILanguageBuilder getLanguageBuidler() {
         return new CppBuilder( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ILanguageUI getLanguageUI() {
-        return new CppUI( );
     }
 
     /**

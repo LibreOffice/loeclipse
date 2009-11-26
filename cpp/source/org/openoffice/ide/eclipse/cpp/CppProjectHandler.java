@@ -195,6 +195,14 @@ public class CppProjectHandler implements IProjectHandler {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
+        // TODO Auto-generated method stub
+        return new IFolder[0];
+    }
+    
+    /**
      * Utility method providing the necessary macros to add depending on the OS.
      * 
      * @param pOs the OS for which to get the macros

@@ -104,7 +104,7 @@ public class UnoPackage {
      * </p>
      * 
      * @param pOut the file of the package.
-     * @param pDir the root directory of the package content. 
+     * @param pPrj the project to export 
      */
     public UnoPackage( File pOut, IProject pPrj ) {
         if (! (pOut.getName().endsWith(ZIP) || pOut.getName().endsWith(UNOPKG) || 
@@ -128,7 +128,6 @@ public class UnoPackage {
      */
     public void dispose() {
         mDestination = null;
-        mManifest.dispose();
         mZipEntries.clear();
     }
     
@@ -290,7 +289,7 @@ public class UnoPackage {
     /**
      * Add a localized description of the package.
      * 
-     * @param pDescriptionFile the file containing the description for that locale
+     * @param pFile the file containing the description for that locale
      * @param pLocale the locale of the description. Can be <code>null</code>.
      */
     public void addPackageDescription(IFile pFile, Locale pLocale) {

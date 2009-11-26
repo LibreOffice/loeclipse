@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.openoffice.ide.eclipse">
+<schema targetNamespace="org.openoffice.ide.eclipse.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.openoffice.ide.eclipse.core" id="language" name="Uno-idl project language binding Extension point"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="language"/>
@@ -49,6 +54,10 @@
          </documentation>
       </annotation>
       <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="newWizardPage" minOccurs="0" maxOccurs="1"/>
+            <element ref="exportBuildPart" minOccurs="0" maxOccurs="1"/>
+         </choice>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -62,7 +71,42 @@
                   Class implementing the org.openoffice.ide.eclipse.core.model.ILanguage.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.ILanguage"/>
+                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.language.AbstractLanguage:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="newWizardPage">
+      <annotation>
+         <documentation>
+            Sepcifies the language specific page to use in UNO project creation wizard
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="exportBuildPart">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Part at the end of the UNO export wizard. It generally contains build scripts related controls.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.language.LanguageExportPart:"/>
                </appInfo>
             </annotation>
          </attribute>

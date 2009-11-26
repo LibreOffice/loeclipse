@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -45,6 +44,12 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Class representing the data contained in the manifest.xml file.
+ * 
+ * @author Cédric Bosdonnat
+ *
+ */
 public class ManifestModel {
     
     private static final String EXT_XCS = ".xcs"; //$NON-NLS-1$
@@ -52,14 +57,6 @@ public class ManifestModel {
     private static final String EXT_RDB = ".rdb"; //$NON-NLS-1$
     
     private HashMap<String, FileType> mEntries = new HashMap<String, FileType>();
-    
-    public void dispose( ) {
-        Collection< FileType > values = mEntries.values();
-        for ( FileType value : values ) {
-            value.dispose( );
-        }
-        mEntries.clear();
-    }
     
     /**
      * Add a file or directory to the package.
@@ -240,14 +237,15 @@ public class ManifestModel {
     }
     
     /**
-     * Output the manifest.xml file
+     * Output the manifest.xml file.
      * 
      * @param pOut where to write the manifest.
      * @throws IOException if something happened when writing to the output stream
      */
     public void write( OutputStream pOut ) throws IOException {
         Iterator<Entry<String, FileType> > iter = mEntries.entrySet().iterator();
-        String entryPattern = "<manifest:file-entry manifest:full-path=\"{0}\" manifest:media-type=\"{1}\"/>\n"; //$NON-NLS-1$
+        String entryPattern = "<manifest:file-entry manifest:full-path=\"{0}\"" + //$NON-NLS-1$
+                " manifest:media-type=\"{1}\"/>\n"; //$NON-NLS-1$
         pOut.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes() ); //$NON-NLS-1$
         pOut.write( "<manifest:manifest>\n".getBytes() ); //$NON-NLS-1$
         while ( iter.hasNext() ) {

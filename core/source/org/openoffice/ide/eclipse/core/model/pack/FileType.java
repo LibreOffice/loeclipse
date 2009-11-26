@@ -35,6 +35,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+/**
+ * Class representing the file types for the entries of the manifest.xml file.
+ * 
+ * @author Cédric Bosdonnat
+ *
+ */
 public class FileType {
     
     public static final String MIME_XCU = "application/vnd.sun.star.configuration-data"; //$NON-NLS-1$
@@ -59,10 +65,6 @@ public class FileType {
      */
     public FileType( String pMime ) {
         mMimeType = pMime;
-    }
-    
-    public void dispose() {
-        mParams.clear();
     }
     
     /**

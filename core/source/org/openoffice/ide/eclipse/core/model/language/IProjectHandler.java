@@ -43,6 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.language;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -141,4 +142,11 @@ public interface IProjectHandler {
      * <code>File</code> class constructor.
      */
     public String getLibraryPath(IUnoidlProject pPrj);
+
+    /**
+     * @param pUnoidlProject the UNO project from which to get the binary folders
+     * 
+     * @return the binary folders
+     */
+    public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject);
 }

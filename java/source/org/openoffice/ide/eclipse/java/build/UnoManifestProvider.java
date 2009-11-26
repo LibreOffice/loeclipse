@@ -37,20 +37,34 @@ import java.util.jar.Attributes.Name;
 import org.eclipse.jdt.internal.ui.jarpackager.ManifestProvider;
 import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 
+/**
+ * Class providing the MANIFEST.MF contents to the Jar writer.
+ * 
+ * @author Cédric Bosdonnat
+ *
+ */
 @SuppressWarnings("restriction")
 public class UnoManifestProvider extends ManifestProvider {
 
     private String mRegClass;
 
+    /**
+     * Constructor.
+     * 
+     * @param pRegClassname the registration class name
+     */
     public UnoManifestProvider( String pRegClassname ) {
         mRegClass = pRegClassname;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void putAdditionalEntries(Manifest manifest,
-            JarPackageData jarPackage) {
+    protected void putAdditionalEntries(Manifest pManifest,
+            JarPackageData pJarPackage) {
         
         Name name = new Attributes.Name( "RegistrationClassName" ); //$NON-NLS-1$
-        manifest.getMainAttributes().put( name, mRegClass );
+        pManifest.getMainAttributes().put( name, mRegClass );
     }
 }

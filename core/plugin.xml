@@ -243,14 +243,17 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             class="org.openoffice.ide.eclipse.core.preferences.ProjectPropertiesPage"
             id="org.openoffice.ide.eclipse.core.projectproperties"
-            name="%project.propertypage.name"
-            objectClass="org.eclipse.core.resources.IProject">
+            name="%project.propertypage.name">
          <filter
                name="nature"
                value="org.openoffice.ide.eclipse.core.unonature"/>
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
       </page>
    </extension>
    <extension
@@ -286,6 +289,13 @@
             icon="/icons/export_package.gif"
             id="org.openoffice.ide.eclipse.core.export.package"
             name="OpenOffice.org package"/>
+      <wizard
+            category="org.openoffice.ide.eclipse.core.uno"
+            class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard2"
+            icon="icons/export_package.gif"
+            id="org.openoffice.ide.eclipse.core.wizard.test"
+            name="Test Wizard">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

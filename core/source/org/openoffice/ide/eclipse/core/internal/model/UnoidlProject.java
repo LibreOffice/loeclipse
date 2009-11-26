@@ -63,7 +63,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
-import org.openoffice.ide.eclipse.core.internal.helpers.LanguagesHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
@@ -71,8 +70,9 @@ import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
-import org.openoffice.ide.eclipse.core.model.language.ILanguage;
+import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
+import org.openoffice.ide.eclipse.core.model.language.LanguagesHelper;
 
 /**
  * This class implements the UNO-IDL and project nature interface.
@@ -144,7 +144,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     private IOOo mOOo;
     
-    private ILanguage mLanguage;
+    private AbstractLanguage mLanguage;
     
     private String mIdlDir;
     
@@ -256,7 +256,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
-    public ILanguage getLanguage() {
+    public AbstractLanguage getLanguage() {
         return mLanguage;
     }
     
@@ -284,7 +284,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
-    public void setLanguage(ILanguage pNewLanguage) {
+    public void setLanguage(AbstractLanguage pNewLanguage) {
         
         if (mLanguage == null && pNewLanguage != null) {
             mLanguage = pNewLanguage; 
@@ -604,7 +604,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             in = new FileInputStream(configFile);
             properties.load(in);
         
-            properties.setProperty(LANGUAGE, LanguagesHelper.getNameFromLanguage(mLanguage));
+            properties.setProperty(LANGUAGE, mLanguage.getName());
             properties.setProperty(OOO_NAME, mOOo.getName());
             properties.setProperty(SDK_NAME, mSdk.getId());
             properties.setProperty(IDL_DIR, mIdlDir);
@@ -624,6 +624,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             try { in.close(); } catch (Exception e) { }
             try { out.close(); } catch (Exception e) { }
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IFolder[] getBinFolders() {
+        return getLanguage().getProjectHandler().getBinFolders( this );
     }
     
     //*************************************************************************

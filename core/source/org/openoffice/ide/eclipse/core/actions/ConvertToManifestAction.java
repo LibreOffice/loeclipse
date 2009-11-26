@@ -55,14 +55,26 @@ import org.openoffice.ide.eclipse.core.model.pack.ManifestModel;
 import org.openoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 
+/**
+ * Action converting the legacy package.properties into manifest.xml file.
+ * 
+ * @author cbosdo
+ *
+ */
 public class ConvertToManifestAction implements IObjectActionDelegate {
 
     private IFile mPackageFile;
 
+    /**
+     * {@inheritDoc}
+     */
     public void setActivePart(IAction pAction, IWorkbenchPart pTargetPart) {
         // No need of the target part
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void run( IAction pAction ) {
         PackagePropertiesModel propsModel = new PackagePropertiesModel( mPackageFile );
         
@@ -111,11 +123,12 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
                 manifestFile.refreshLocal( IResource.DEPTH_ZERO, null );
             } catch (CoreException e) {
             }
-            
-            manifestModel.dispose();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void selectionChanged(IAction pAction, ISelection pSelection) {
         if ( !pSelection.isEmpty() && pSelection instanceof IStructuredSelection ) {
             IStructuredSelection sel = (IStructuredSelection)pSelection;

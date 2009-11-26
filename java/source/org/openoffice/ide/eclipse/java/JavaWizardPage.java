@@ -73,12 +73,9 @@ public class JavaWizardPage extends LanguageWizardPage {
     
     /**
      * Constructor.
-     * 
-     * @param pData the uno factory data to use to set the page.
      */
-    public JavaWizardPage(UnoFactoryData pData) {
+    public JavaWizardPage() {
         super();
-        setProjectInfos(pData);
         setImageDescriptor(OOoJavaPlugin.getDefault().getImageRegistry().
                 getDescriptor(OOoJavaPlugin.WIZBAN));
         setTitle(Messages.getString("JavaWizardPage.PageTitle")); //$NON-NLS-1$

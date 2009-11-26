@@ -104,7 +104,8 @@ public class JODContainerPage extends WizardPage implements
         body.setLayout( new GridLayout( LAYOUT_COLS, false ) );
         
         // SLF4J boolean row
-        mSlf4jRow = new BooleanRow( body, new String(), Messages.getString("JODContainerPage.SLF4JLabel") ); //$NON-NLS-1$
+        mSlf4jRow = new BooleanRow( body, new String(), 
+                Messages.getString("JODContainerPage.SLF4JLabel") ); //$NON-NLS-1$
         mSlf4jRow.setValue( mSlf4j );
         mSlf4jRow.setFieldChangedListener( new IFieldChangedListener() {
             
