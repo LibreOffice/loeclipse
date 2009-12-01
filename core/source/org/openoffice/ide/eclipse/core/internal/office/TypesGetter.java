@@ -43,6 +43,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.office;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -208,7 +209,12 @@ public class TypesGetter {
             String url = mConnection.convertToUrl(path);
             if (url != null) {
                 String oooKey = mConnection.getOOo().getName();
-                results.put(oooKey, getTypesFromRegistry(url, false));
+                List<InternalUnoType> types = results.get( oooKey );
+                if ( types == null ) {
+                    types = new ArrayList<InternalUnoType>();
+                    results.put( oooKey, types );
+                }
+                types.addAll( getTypesFromRegistry(url, false) );
             }
         }
 
