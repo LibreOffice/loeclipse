@@ -91,8 +91,6 @@ public class SDK implements ISdk, ITableElement {
      */
     private static final String F_DK_CONFIG = "dk.mk"; //$NON-NLS-1$
 
-    private static final String PATH_SEPARATOR = System.getProperty("path.separator"); //$NON-NLS-1$
-
     private static final String INCLUDE = "include"; //$NON-NLS-1$
     private static final String LIB = "lib"; //$NON-NLS-1$
 
@@ -397,7 +395,7 @@ public class SDK implements ISdk, ITableElement {
             if (m.matches()) {
                 String name = m.group(1);
                 String value = m.group(2);
-                vars = SystemHelper.addEnv(pBaseEnv, name, value, PATH_SEPARATOR);
+                vars = SystemHelper.addEnv(pBaseEnv, name, value, SystemHelper.PATH_SEPARATOR);
             }
         }
         return vars;
@@ -420,42 +418,34 @@ public class SDK implements ISdk, ITableElement {
      *      OpenOffice.org SDK is available.
      */
     private String[] updateEnvironment(String[] pVars, IOOo pOoo) throws Exception {
-        String binPath = getBinPath().toOSString();
+        String[] oooBinPaths = pOoo.getBinPath();
+        String[] binPaths = new String[ oooBinPaths.length + 1 ];
+        binPaths[ 0 ] = getBinPath().toOSString();
+        System.arraycopy( oooBinPaths, 0, binPaths, 1, oooBinPaths.length );
         
-        // Extract the libraries paths
-        String[] paths = pOoo.getLibsPath();
-        String oooLibs = ""; //$NON-NLS-1$
-        for (int i = 0; i < paths.length; i++) {
-            String path = paths[i];
-            String oooLibsPath = new Path(path).toOSString();
-            if (i < paths.length - 1) {
-                oooLibsPath += PATH_SEPARATOR;
-            }
-            oooLibs += oooLibsPath;
-        }
+        String[] oooLibs = pOoo.getLibsPath();
         
         // Create the exec parameters depending on the OS
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             
             // Definining path variables
-            pVars = SystemHelper.addEnv(pVars, "PATH", binPath + PATH_SEPARATOR +  //$NON-NLS-1$
-                    oooLibs, PATH_SEPARATOR);
+            pVars = SystemHelper.addPathEnv(pVars, "PATH", binPaths); //$NON-NLS-1$
             
         } else if (Platform.getOS().equals(Platform.OS_LINUX) ||
                 Platform.getOS().equals(Platform.OS_SOLARIS)) {
             
             // An UN*X platform   
-            String[] tmpVars = SystemHelper.addEnv(pVars, "PATH",  //$NON-NLS-1$
-                    binPath, PATH_SEPARATOR);
-            pVars = SystemHelper.addEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
-                    oooLibs, PATH_SEPARATOR);
+            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH",  //$NON-NLS-1$
+                    binPaths );
+            pVars = SystemHelper.addPathEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
+                    oooLibs );
             
         } else if (Platform.getOS().equals(Platform.OS_MACOSX)) { 
             
-            String[] tmpVars = SystemHelper.addEnv(pVars, "PATH",  //$NON-NLS-1$
-                    binPath, PATH_SEPARATOR);
-            pVars = SystemHelper.addEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
-                    oooLibs, PATH_SEPARATOR);
+            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH",  //$NON-NLS-1$
+                    binPaths );
+            pVars = SystemHelper.addPathEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
+                    oooLibs);
             
         } else {
             // Unmanaged OS

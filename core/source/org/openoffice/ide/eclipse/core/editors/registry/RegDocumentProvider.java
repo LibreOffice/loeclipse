@@ -94,7 +94,7 @@ public class RegDocumentProvider extends FileDocumentProvider {
             
             // Try to run regview on the file
         
-            String command = "regview " + file.getProjectRelativePath().toOSString();  //$NON-NLS-1$
+            String command = "regview " + file.getLocation().toOSString();  //$NON-NLS-1$
                     
             Process process = unoproject.getSdk().runTool(unoproject, command, null);
                         

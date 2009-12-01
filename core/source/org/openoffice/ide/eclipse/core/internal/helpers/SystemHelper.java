@@ -50,6 +50,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
@@ -61,8 +62,35 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
  */
 public class SystemHelper {
     
+    public static final String PATH_SEPARATOR = System.getProperty("path.separator"); //$NON-NLS-1$
+    
     private static final int COMMAND_ARGS_LENGTH = 3;
 
+    /**
+     * Add an environment variable to an array of existing variables.
+     * 
+     * @param pEnv the array of existing environment variables where to add the
+     *         new variable
+     * @param pName the name of the variable to add
+     * @param pValue    the value of the variable to add
+     * 
+     * @return the completed array
+     */
+    public static String[] addPathEnv( String[] pEnv, String pName, String[] pValue ) {
+        
+        String values = new String();
+        for (int i = 0; i < pValue.length; i++) {
+            String path = pValue[i];
+            String tmpValue = new Path(path).toOSString();
+            if (i < pValue.length - 1) {
+                tmpValue += PATH_SEPARATOR;
+            }
+            values += tmpValue;
+        }
+        
+        return addEnv( pEnv, pName, values, PATH_SEPARATOR );
+    }
+    
     /**
      * Add an environment variable to an array of existing variables.
      * 
