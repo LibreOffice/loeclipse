@@ -111,8 +111,8 @@ public class JavaBuilder implements ILanguageBuilder {
         getRegistrationClassName(pUnoProject);
         description.setManifestProvider( new UnoManifestProvider( regClassname ) );
         description.setManifestLocation( pUnoProject.getFile( "MANIFEST.MF" ).getFullPath() ); //$NON-NLS-1$
-        description.setSaveManifest( true );
-        description.setReuseManifest( true );
+        description.setSaveManifest( false );
+        description.setReuseManifest( false );
         description.setExportOutputFolders( true );
         description.setExportClassFiles( true );
         description.setExportWarnings( true );

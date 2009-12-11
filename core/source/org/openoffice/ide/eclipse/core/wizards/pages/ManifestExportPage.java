@@ -34,7 +34,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -58,6 +60,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.language.LanguageExportPart;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
@@ -110,6 +113,33 @@ public class ManifestExportPage extends WizardPage {
         reloadLanguagePart();
     }
 
+    /**
+     * Set the proper manifest.xml file to the package model from the user selection.
+     * 
+     * @param pModel the model to change
+     */
+    public void configureManifest(UnoPackage pModel) {
+        IFile saveFile = getSaveManifestFile( );
+        if ( saveFile != null ) {
+            pModel.setSaveManifestFile( saveFile );
+        }
+        
+        IFile readFile = getReadManifestFile( );
+        if ( readFile != null ) {
+            pModel.setReadManifestFile( readFile );
+        }
+    }
+
+    /**
+     * Create the build scripts for the package model if required by the user.
+     * 
+     * @param pModel the model to export
+     */
+    public void createBuildScripts(UnoPackage pModel) {
+        // TODO Auto-generated method stub
+        
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -341,5 +371,30 @@ public class ManifestExportPage extends WizardPage {
                 }
             }
         }
+    }
+
+    /**
+     * @return the selected file to reuse or <code>null</code>
+     */
+    private IFile getReadManifestFile() {
+        IFile file = null;
+        if ( mReuseManifestBtn.getSelection() ) {
+            IPath path = new Path( mLoadRowTxt.getText().trim() );
+            file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
+        }
+        
+        return file;
+    }
+
+    /**
+     * @return the selected file to generate or <code>null</code>
+     */
+    private IFile getSaveManifestFile() {
+        IFile file = null;
+        if ( mGenerateManifestBtn.getSelection() && mSaveManifestBtn.getSelection() ) {
+            IPath path = new Path( mSaveRowTxt.getText().trim() );
+            file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
+        }
+        return file;
     }
 }

@@ -30,6 +30,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards.pages;
 
+import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -58,8 +62,15 @@ import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.config.IOOo;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
@@ -101,6 +112,7 @@ public class UnoPackageExportPage extends WizardPage {
         
         setTitle( Messages.getString("UnoPackageExportPage.Title") ); //$NON-NLS-1$
         setDescription( Messages.getString("UnoPackageExportPage.Description") ); //$NON-NLS-1$
+        setImageDescriptor( OOEclipsePlugin.getImageDescriptor( ImagesConstants.PACKAGE_EXPORT_WIZ ) );
         
         mSelectedProject = pPrj;
         mManifestPage = pManifestPage;
@@ -120,8 +132,9 @@ public class UnoPackageExportPage extends WizardPage {
         createDestinationGroup( );
         createOptionsGroup( );
         
+        setPageComplete( checkPageCompletion() );
+        
         // Load the data into the fields
-        restoreWidgetValues();
         loadData( );
     }
 
@@ -143,9 +156,7 @@ public class UnoPackageExportPage extends WizardPage {
             i++;
         }
         
-        // TODO Load the previously selected paths
-        
-        // TODO Load the saved checkboxes states
+        restoreWidgetValues();
     }
 
     /**
@@ -180,6 +191,7 @@ public class UnoPackageExportPage extends WizardPage {
                 if ( id != -1 ) {
                     String name = mProjectsList.getItem( id );
                     IUnoidlProject unoprj = ProjectsManager.getProject( name );
+                    mSelectedProject = unoprj;
                     
                     // Change the project in the manifest page
                     mManifestPage.setProject( unoprj );
@@ -188,6 +200,8 @@ public class UnoPackageExportPage extends WizardPage {
                     input.addAll( getFilteredChildren( unoprj ) );
                     mResourceGroup.setRoot( input );
                 }
+                
+                setPageComplete( checkPageCompletion() );
             }
         });
     }
@@ -232,6 +246,12 @@ public class UnoPackageExportPage extends WizardPage {
         
         mDestinationCombo = new Combo( rowBody, SWT.DROP_DOWN );
         mDestinationCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
+        mDestinationCombo.addModifyListener( new ModifyListener() {
+            
+            public void modifyText(ModifyEvent pE) {
+                setPageComplete( checkPageCompletion() );
+            }
+        });
         
         Button btn = new Button( rowBody, SWT.PUSH );
         btn.setText( Messages.getString("UnoPackageExportPage.Browse") ); //$NON-NLS-1$
@@ -276,6 +296,13 @@ public class UnoPackageExportPage extends WizardPage {
         mAutodeployBox = new Button( rowsBody, SWT.CHECK );
         mAutodeployBox.setText( Messages.getString("UnoPackageExportPage.AutoDeploy") ); //$NON-NLS-1$
         mAutodeployBox.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+    }
+    
+    /**
+     * @return <code>true</code> if the page is complete, <code>false</code> otherwise.
+     */
+    private boolean checkPageCompletion() {
+        return !mDestinationCombo.getText().isEmpty() && mProjectsList.getSelectionIndex() != -1;
     }
     
     /*
@@ -329,6 +356,7 @@ public class UnoPackageExportPage extends WizardPage {
         hidden |= pRes.getName().equals( "description.xml" ); //$NON-NLS-1$
         hidden |= pRes.getName().equals( "MANIFEST.MF" ); //$NON-NLS-1$
         hidden |= pRes.getName().equals( "manifest.xml" ); //$NON-NLS-1$
+        hidden |= pRes.getName().equals( "types.rdb" ); //$NON-NLS-1$
         
         return hidden;
     }
@@ -381,11 +409,18 @@ public class UnoPackageExportPage extends WizardPage {
             settings.put( AUTODEPLOY, mAutodeployBox.getSelection() );
             
             String[] topItems = new String[ MAX_DESTINATION_STORED ];
-            topItems[0] = mDestinationCombo.getText();
-            int i = 0;
+            String firstItem = mDestinationCombo.getText().trim();
+            topItems[0] = firstItem;
+            int items_i = 0;
+            int top_i = 0;
             int count = mDestinationCombo.getItemCount();
-            while ( i < count && i < MAX_DESTINATION_STORED - 1 ) {
-                topItems[i + 1] = mDestinationCombo.getItem( i );
+            while ( top_i < MAX_DESTINATION_STORED - 1 && items_i < count ) {
+                String item = mDestinationCombo.getItem( items_i ).trim( );
+                if ( mDestinationCombo.getSelectionIndex() != items_i ) {
+                    topItems[ top_i + 1 ] = item;
+                    top_i++;
+                }
+                items_i++;
             }
             settings.put( DESTINATION_HISTORY, topItems );
         }
@@ -404,6 +439,88 @@ public class UnoPackageExportPage extends WizardPage {
                 if ( item != null && !item.isEmpty() ) {
                     mDestinationCombo.add( item );
                 }
+            }
+        }
+    }
+
+    /**
+     * @return the package model built from the data provided by the user or <code>null</code> if 
+     *          something blocked the process.
+     */
+    public UnoPackage getPackageModel() {
+        UnoPackage pack = null;
+        
+        try {
+            // Test the existence of the destination: warning may be needed
+            boolean doit = true;
+            File destFile = new File( mDestinationCombo.getText() );
+            if ( destFile.exists() && !mOverwriteBox.getSelection() ) {
+                String msg = MessageFormat.format( 
+                        Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$ 
+                        destFile.getPath() );
+                doit = MessageDialog.openQuestion( getShell(), getTitle(), msg);
+            }
+
+            if ( doit ) {
+                // Export the library
+                IPath libraryPath = null;
+                ILanguageBuilder langBuilder = mSelectedProject.getLanguage().getLanguageBuidler();
+                libraryPath = langBuilder.createLibrary( mSelectedProject );
+
+                // Create the package model
+                pack = UnoidlProjectHelper.createMinimalUnoPackage( mSelectedProject, destFile );
+                pack.addToClean( libraryPath );
+
+                // Add the additional content to the package
+                List<?> items = mResourceGroup.getAllWhiteCheckedItems();
+                for (Object item : items) {
+                    if ( item instanceof IResource ) {
+                        IResource res = (IResource)item;
+                        pack.addContent( res );
+                    }
+                }
+                
+                // Create the deployer instance
+                if ( mAutodeployBox.getSelection() ) {
+                    DeployerJob job = new DeployerJob( mSelectedProject.getOOo(), destFile );
+                    pack.setDeployJob( job );
+                }
+            }
+        } catch ( Exception e ) {
+            PluginLogger.error( Messages.getString("UnoPackageExportPage.LibraryCreationError"), e ); //$NON-NLS-1$
+        }
+        
+        return pack;
+    }
+    
+    /**
+     * Thread performing the package deployment into OpenOffice.org.
+     * 
+     * @author Cédric Bosdonnat
+     *
+     */
+    class DeployerJob implements Runnable {
+        
+        private IOOo mOOo;
+        private File mDest;
+        
+        /**
+         * Constructor.
+         * 
+         * @param pOoo the OpenOffice.org where to deploy
+         * @param pDest the package to deploy
+         */
+        DeployerJob(IOOo pOoo, File pDest) {
+            mOOo = pOoo;
+            mDest = pDest;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public void run() {
+            if (mOOo.canManagePackages()) {
+                mOOo.updatePackage(mDest);
             }
         }
     }

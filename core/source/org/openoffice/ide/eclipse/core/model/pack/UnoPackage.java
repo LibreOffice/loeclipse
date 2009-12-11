@@ -58,11 +58,15 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.Messages;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.utils.FileHelper;
 import org.openoffice.ide.eclipse.core.utils.ZipContent;
 
 /**
@@ -82,6 +86,9 @@ public class UnoPackage {
     public static final String ZIP = "zip"; //$NON-NLS-1$
     public static final String UNOPKG = "uno.pkg"; //$NON-NLS-1$
     public static final String OXT = "oxt"; //$NON-NLS-1$
+
+    private static final String BASIC_LIBRARY_INDEX = "script.xlb"; //$NON-NLS-1$
+    private static final String DIALOG_LIBRARY_INDEX = "dialog.xlb"; //$NON-NLS-1$
     
     private IProject mPrj;
     private File mDestination;
@@ -89,6 +96,12 @@ public class UnoPackage {
     
     private HashMap<String, ZipContent> mZipEntries = new HashMap<String, ZipContent>();
     private ManifestModel mManifest = new ManifestModel();
+    private ArrayList< IPath > mToClean = new ArrayList<IPath>( );
+
+    private IFile mReadManifestFile;
+    private IFile mSaveManifestFile;
+
+    private Runnable mDeployJob;
     
     /**
      * Create a new package object. 
@@ -139,6 +152,40 @@ public class UnoPackage {
     }
     
     /**
+     * Set the manifest.xml file to use for the package: setting this value will
+     * skip the manifest.xml file automatic generation.
+     * 
+     * <p><strong>Setting this value to a non-existing file is the same as setting it with
+     * <code>null</code>: the default value will be used.</strong></p>
+     * 
+     * @param pFile the file to read.
+     * 
+     * @see #MANIFEST_PATH The default path value relative to the project
+     */
+    public void setReadManifestFile( IFile pFile ) {
+        if ( pFile != null && pFile.exists( ) ) {
+            mReadManifestFile = pFile;
+        }
+    }
+    
+    /**
+     * @param pFile the file where to save the manifest.xml
+     */
+    public void setSaveManifestFile( IFile pFile ) {
+        if ( pFile != null ) {
+            mSaveManifestFile = pFile;
+        }
+    }
+
+    /**
+     * @param pJob the job to run to deploy the package, <code>null</code> 
+     *          can be used to remove any previously set deploy job.
+     */
+    public void setDeployJob( Runnable pJob ) {
+        mDeployJob = pJob;
+    }
+    
+    /**
      * Add a file or directory to the package.
      * 
      * <p>This method doesn't know about the different languages
@@ -158,6 +205,10 @@ public class UnoPackage {
             } else {
                 addOtherFile( file );
             }
+        } else if ( isBasicLibrary( pContent ) ) {
+            addBasicLibraryFile( ( IFolder ) pContent );
+        } else if ( isDialogLibrary( pContent ) ) {
+            addDialogLibraryFile( ( IFolder ) pContent );
         } else if ( pContent instanceof IContainer ) {
             // Recurse on the directory
             IContainer container = (IContainer) pContent;
@@ -171,7 +222,7 @@ public class UnoPackage {
             }
         }
     }
-    
+
     /**
      * Add a uno component file, for example a jar, shared library or python file
      * containing the uno implementation. The type of the file defines the 
@@ -315,17 +366,20 @@ public class UnoPackage {
     /**
      * Writes the package on the disk and cleans up the data. The UnoPackage
      * instance cannot be used after this operation: it should unreferenced.
+     * 
+     * @param pMonitor the progress monitor
      *
      * @return the file of the package or <code>null</code> if nothing happened.
      */
-    public File close() {
+    public File close( IProgressMonitor pMonitor ) {
         File result = null;
         
         if (mBuilding) {
             try {
-                // Write the manifest if it doesn't exist
-                IFile manifestFile = mPrj.getFile( MANIFEST_PATH );
-                if ( !manifestFile.exists() ) {
+                IFile manifestFile = mReadManifestFile;
+                if ( manifestFile == null ) {
+                    // Write the manifest if it doesn't exist
+                    manifestFile = getSaveManifestFile();
                     FileOutputStream writer = new FileOutputStream( manifestFile.getLocation().toFile() );
                     mManifest.write( writer );
                     writer.close();
@@ -356,11 +410,24 @@ public class UnoPackage {
             
             result = mDestination;
     
+            cleanResources();
+            
+            // Deploy the package if a job is set
+            if ( mDeployJob != null ) {
+                Display.getDefault().asyncExec( mDeployJob );
+            }
+            
+            // Refresh the project and return the status
+            try {
+                mPrj.refreshLocal( IResource.DEPTH_INFINITE, pMonitor );
+            } catch ( Exception e ) {
+            }
+            
             dispose();
         }
         return result;
     }
-    
+
     /**
      * @return a list of the files that are already queued for addition 
      *         to the package.
@@ -435,6 +502,16 @@ public class UnoPackage {
     }
     
     /**
+     * Add the path to a resource to clean after having exported the package.
+     * The resource won't be cleaned if the package isn't exported.
+     * 
+     * @param pPath the path to the resource to clean.
+     */
+    public void addToClean( IPath pPath ) {
+        mToClean.add( pPath );
+    }
+    
+    /**
      * Creates the main elements for the package creation. 
      * 
      * <p>After this step, the extension cannot be changed. Calling this 
@@ -467,5 +544,71 @@ public class UnoPackage {
                 mZipEntries.put(pRelativePath, content);
             }
         }
+    }
+    
+    /**
+     * Clean the resources added using {@link #addToClean(IPath)}.
+     */
+    private void cleanResources() {
+        for ( IPath path : mToClean ) {
+            FileHelper.remove( new File( path.toOSString() ) );
+        }
+        
+        // Remove the default manifest file if needed
+        IFile manifestFile = getSaveManifestFile();
+        if ( mSaveManifestFile == null && 
+                !manifestFile.equals( mReadManifestFile ) && 
+                manifestFile.exists() ) {
+            try {
+                manifestFile.delete( true, null );
+            } catch ( Exception e ) {
+            }
+        }
+    }
+    
+    /**
+     * Checks if the resource is a dialog library.
+     * 
+     * @param pRes the resource to check
+     * 
+     * @return <code>true</code> if the resource is a dialog library, 
+     *          <code>false</code> in any other case
+     */
+    private boolean isDialogLibrary( IResource pRes ) {
+        boolean result = false;
+        if ( pRes instanceof IFolder ) {
+            IFolder folder = ( IFolder ) pRes;
+            result = folder.getFile( DIALOG_LIBRARY_INDEX ).exists();
+        }
+        return result;
+    }
+
+    /**
+     * Checks if the resource is a basic library.
+     * 
+     * @param pRes the resource to check
+     * 
+     * @return <code>true</code> if the resource is a basic library, 
+     *          <code>false</code> in any other case
+     */
+    private boolean isBasicLibrary( IResource pRes ) {
+        boolean result = false;
+        if ( pRes instanceof IFolder ) {
+            IFolder folder = ( IFolder ) pRes;
+            result = folder.getFile( BASIC_LIBRARY_INDEX ).exists();
+        }
+        return result;
+    }
+    
+    /**
+     * @return the manifest file to write either defined by the setter or 
+     *          the default value.
+     */
+    private IFile getSaveManifestFile( ) {
+        IFile file = mSaveManifestFile;
+        if ( file == null ) {
+            file = mPrj.getFile( MANIFEST_PATH );
+        }
+        return file;
     }
 }

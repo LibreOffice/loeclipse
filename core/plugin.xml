@@ -289,13 +289,6 @@
             icon="/icons/export_package.gif"
             id="org.openoffice.ide.eclipse.core.export.package"
             name="OpenOffice.org package"/>
-      <wizard
-            category="org.openoffice.ide.eclipse.core.uno"
-            class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard2"
-            icon="icons/export_package.gif"
-            id="org.openoffice.ide.eclipse.core.wizard.test"
-            name="Test Wizard">
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
@@ -303,9 +296,10 @@
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
+         <!-- The xba and xdl types should have their own editor someday -->
       <file-association
             content-type="org.eclipse.core.runtime.xml"
-            file-extensions="xcu,xcs">
+            file-extensions="xcu,xcs,xlb,xba,xdl">
       </file-association>
    </extension>
    <extension
