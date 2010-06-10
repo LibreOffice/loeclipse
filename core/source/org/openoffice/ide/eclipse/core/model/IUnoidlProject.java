@@ -58,6 +58,8 @@ import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
  */
 public interface IUnoidlProject {
 
+    public static final String DESCRIPTION_FILENAME = "description.xml"; //$NON-NLS-1$
+    
     /**
      * <code>org.openoffice.ide.eclipse.idlfolder</code> is a
      * persistent folder property that determines whether the

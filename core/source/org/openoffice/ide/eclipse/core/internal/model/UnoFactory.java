@@ -95,7 +95,7 @@ public final class UnoFactory {
         prj.getFile("package.properties").getLocation().toFile().createNewFile(); //$NON-NLS-1$
         
         // Creates an empty description.xml file
-        File file = prj.getFile("description.xml").getLocation().toFile(); //$NON-NLS-1$
+        File file = prj.getFile( IUnoidlProject.DESCRIPTION_FILENAME ).getLocation().toFile();
         DescriptionModel descrModel = new DescriptionModel( );
         descrModel.getDisplayNames().put( Locale.ENGLISH, prj.getName() );
         descrModel.setId( prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$

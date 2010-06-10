@@ -28,8 +28,9 @@
  * All Rights Reserved.
  * 
  ************************************************************************/
-package org.openoffice.ide.eclipse.java;
+package org.openoffice.ide.eclipse.java.export;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -40,7 +41,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.openoffice.ide.eclipse.core.model.language.LanguageExportPart;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
+import org.openoffice.ide.eclipse.java.Messages;
 
 /**
  * Dialog part for the Ant scripts export configuration.
@@ -56,13 +59,24 @@ public class JavaExportPart extends LanguageExportPart {
     private Composite mNameRow;
     private Label mNameRowLbl;
     private Text mNameRowTxt;
-    
+        
     /**
      * {@inheritDoc}
      */
     @Override
     public void createControls(Composite pParent) {
-        mSaveScripts = new Button( pParent, SWT.CHECK );
+        
+        Label titleLbl = new Label( pParent, SWT.NONE );
+        titleLbl.setText( Messages.getString("JavaExportPart.Title") ); //$NON-NLS-1$
+        titleLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        
+        Composite content = new Composite( pParent, SWT.NONE );
+        GridData gd = new GridData( SWT.FILL, SWT.FILL, true, true );
+        gd.horizontalIndent = ManifestExportPage.HORIZONTAL_INDENT;
+        content.setLayoutData( gd );
+        content.setLayout( new GridLayout() );
+        
+        mSaveScripts = new Button( content, SWT.CHECK );
         mSaveScripts.setText( Messages.getString("JavaExportPart.SaveAntScript") ); //$NON-NLS-1$
         mSaveScripts.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
         mSaveScripts.addSelectionListener( new SelectionListener() {
@@ -71,6 +85,12 @@ public class JavaExportPart extends LanguageExportPart {
                 boolean enabled = mSaveScripts.getSelection();
                 mNameRowLbl.setEnabled( enabled );
                 mNameRowTxt.setEnabled( enabled );
+                
+                IFile file = null;
+                if ( enabled ) {
+                    file = getPage().getProject().getFile( ManifestExportPage.MANIFEST_FILENAME );
+                }
+                getPage().setManifestPath( file );
             }
             
             public void widgetDefaultSelected( SelectionEvent pE ) {
@@ -78,9 +98,9 @@ public class JavaExportPart extends LanguageExportPart {
             }
         });
 
-        mNameRow = new Composite( pParent, SWT.NONE );
+        mNameRow = new Composite( content, SWT.NONE );
         mNameRow.setLayout( new GridLayout( 2, false ) );
-        GridData gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
+        gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
         gd.horizontalIndent = ManifestExportPage.HORIZONTAL_INDENT;
         mNameRow.setLayoutData( gd );
         
@@ -106,4 +126,12 @@ public class JavaExportPart extends LanguageExportPart {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doFinish( UnoPackage pModel ) {
+        // TODO Auto-generated method stub
+        
+    }
 }

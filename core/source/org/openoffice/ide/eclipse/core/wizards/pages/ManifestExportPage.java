@@ -73,7 +73,7 @@ public class ManifestExportPage extends WizardPage {
 
     public static final int HORIZONTAL_INDENT = 20;
     
-    private static final String MANIFEST_FILENAME = "manifest.xml"; //$NON-NLS-1$
+    public static final String MANIFEST_FILENAME = "manifest.xml"; //$NON-NLS-1$
     
     private static final int LAYOUT_COLS = 3;
     
@@ -114,6 +114,13 @@ public class ManifestExportPage extends WizardPage {
     }
 
     /**
+     * @return the UNO project to export as a package
+     */
+    public IUnoidlProject getProject( ) {
+        return mProject;
+    }
+    
+    /**
      * Set the proper manifest.xml file to the package model from the user selection.
      * 
      * @param pModel the model to change
@@ -136,8 +143,40 @@ public class ManifestExportPage extends WizardPage {
      * @param pModel the model to export
      */
     public void createBuildScripts(UnoPackage pModel) {
-        // TODO Auto-generated method stub
-        
+        mLangPart.doFinish( pModel );
+    }
+    
+    
+    /**
+     * Define the manifest file to generate and force the dialog to this value.
+     * 
+     * @param pFile the file to set or <code>null</code> to remove the current 
+     *      existing value
+     */
+    public void setManifestPath(IFile pFile) {
+        // FIXME Ugly hack due to some bug in the GTK buttons events
+        if ( pFile != null && !pFile.exists() ) {
+            mSaveManifestBtn.setSelection( true );
+            mReuseManifestBtn.setSelection( false );
+            mGenerateManifestBtn.setSelection( true );
+            mSaveRowTxt.setText( pFile.getFullPath().toString() );
+            setSaveRowEnabled( true );
+            setLoadRowEnabled( false );
+        } else if ( pFile != null && pFile.exists() ) {
+            mGenerateManifestBtn.setSelection( false );
+            mReuseManifestBtn.setSelection( true );
+            mSaveManifestBtn.setSelection( false );
+            mLoadRowTxt.setText( pFile.getFullPath().toString() );
+            setLoadRowEnabled( true );
+            setSaveRowEnabled( false );
+        } else {
+            mGenerateManifestBtn.setSelection( true );
+            mReuseManifestBtn.setSelection( false );
+            mSaveManifestBtn.setSelection( true );
+            mSaveRowTxt.setText( new String( ) );
+            setSaveRowEnabled( true );
+            setLoadRowEnabled( false );
+        }
     }
     
     /**
@@ -163,6 +202,30 @@ public class ManifestExportPage extends WizardPage {
     }
 
     /**
+     * Enables the manifest save row.
+     * 
+     * @param pEnabled <code>true</code> to enable all the controls of the row
+     *      <code>false</code> otherwise.
+     */
+    private void setSaveRowEnabled( boolean pEnabled ) {
+        mSaveRowLbl.setEnabled( pEnabled );
+        mSaveRowTxt.setEnabled( pEnabled );
+        mSaveRowBtn.setEnabled( pEnabled );
+    }
+    
+    /**
+     * Enables the manifest load row.
+     * 
+     * @param pEnabled <code>true</code> to enable all the controls of the row
+     *      <code>false</code> otherwise.
+     */
+    private void setLoadRowEnabled( boolean pEnabled ) {
+        mLoadRowLbl.setEnabled( pEnabled );
+        mLoadRowTxt.setEnabled( pEnabled );
+        mLoadRowBtn.setEnabled( pEnabled );
+    }
+    
+    /**
      * Create the manifest save/reuse options.
      * 
      * @param pParent the parent composite where to create the controls
@@ -184,9 +247,7 @@ public class ManifestExportPage extends WizardPage {
                 mSaveManifestBtn.setEnabled( selection );
                 
                 boolean saveSelection = mSaveManifestBtn.getSelection();
-                mSaveRowLbl.setEnabled( selection && saveSelection );
-                mSaveRowTxt.setEnabled( selection && saveSelection );
-                mSaveRowBtn.setEnabled( selection && saveSelection );
+                setSaveRowEnabled( selection && saveSelection );
             }
             
             public void widgetDefaultSelected(SelectionEvent pE) {
@@ -210,9 +271,7 @@ public class ManifestExportPage extends WizardPage {
             
             public void widgetSelected(SelectionEvent pE) {
                 boolean enabled = mReuseManifestBtn.getSelection();
-                mLoadRowLbl.setEnabled( enabled );
-                mLoadRowTxt.setEnabled( enabled );
-                mLoadRowBtn.setEnabled( enabled );
+                setLoadRowEnabled( enabled );
             }
             
             public void widgetDefaultSelected(SelectionEvent pE) {
@@ -246,9 +305,7 @@ public class ManifestExportPage extends WizardPage {
             
             public void widgetSelected(SelectionEvent pE) {
                 boolean enabled = mSaveManifestBtn.getSelection();
-                mSaveRowLbl.setEnabled( enabled );
-                mSaveRowTxt.setEnabled( enabled );
-                mSaveRowBtn.setEnabled( enabled );
+                setSaveRowEnabled( enabled );
             }
             
             public void widgetDefaultSelected(SelectionEvent pE) {
@@ -259,30 +316,31 @@ public class ManifestExportPage extends WizardPage {
         mSaveRowLbl = new Label( pParent, SWT.NONE );
         mSaveRowLbl.setText( Messages.getString("ManifestExportPage.SaveRowLabel") ); //$NON-NLS-1$
         mSaveRowLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
-        mSaveRowLbl.setEnabled( false );
         
         mSaveRowTxt = new Text( pParent, SWT.SINGLE | SWT.BORDER );
         mSaveRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mSaveRowTxt.setEnabled( false );
         
         mSaveRowBtn = new Button( pParent, SWT.PUSH );
         mSaveRowBtn.setText( Messages.getString("ManifestExportPage.Browse") ); //$NON-NLS-1$
         mSaveRowBtn.setLayoutData( new GridData( SWT.END, SWT.CENTER, false, false ) );
-        mSaveRowBtn.setEnabled( false );
         mSaveRowBtn.addSelectionListener( new SelectionAdapter() {
             
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 SaveAsDialog dlg = new SaveAsDialog( getShell() );
+                dlg.setOriginalName( MANIFEST_FILENAME );
+                dlg.setOriginalFile( mProject.getFile( MANIFEST_FILENAME ) );
                 dlg.create();
                 dlg.getShell().setText( Messages.getString("ManifestExportPage.SaveDialogTitle") ); //$NON-NLS-1$
                 dlg.setMessage( Messages.getString("ManifestExportPage.SaveDialogMessage") ); //$NON-NLS-1$
-                dlg.setOriginalFile( mProject.getFile( MANIFEST_FILENAME ) );
+                
                 if ( dlg.open() == Window.OK ) {
                     mSaveRowTxt.setText( dlg.getResult().toString() );
                 }
             }
         });
+        
+        setSaveRowEnabled( false );
     }
     
     /**
@@ -294,16 +352,13 @@ public class ManifestExportPage extends WizardPage {
         mLoadRowLbl = new Label( pParent, SWT.NONE );
         mLoadRowLbl.setText( Messages.getString("ManifestExportPage.LoadRowLabel") ); //$NON-NLS-1$
         mLoadRowLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
-        mLoadRowLbl.setEnabled( false );
         
         mLoadRowTxt = new Text( pParent, SWT.SINGLE | SWT.BORDER );
         mLoadRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mLoadRowTxt.setEnabled( false );
         
         mLoadRowBtn = new Button( pParent, SWT.PUSH );
         mLoadRowBtn.setText( Messages.getString("ManifestExportPage.Browse") ); //$NON-NLS-1$
         mLoadRowBtn.setLayoutData( new GridData( SWT.END, SWT.CENTER, false, false ) );
-        mLoadRowBtn.setEnabled( false );
         mLoadRowBtn.addSelectionListener( new SelectionAdapter() {
             
             @Override
@@ -342,6 +397,7 @@ public class ManifestExportPage extends WizardPage {
                 dlg.setMessage( Messages.getString("ManifestExportPage.LoadDialogMessage") ); //$NON-NLS-1$
                 dlg.setStatusLineAboveButtons( true );
                 dlg.setInput( ResourcesPlugin.getWorkspace().getRoot() );
+                dlg.setInitialSelection( getProject().getFile( MANIFEST_FILENAME ) );
                 if ( dlg.open() == Window.OK ) {
                     Object result = dlg.getFirstResult();
                     IFile file = ( IFile )result;
@@ -349,6 +405,8 @@ public class ManifestExportPage extends WizardPage {
                 }
             }
         });
+        
+        setLoadRowEnabled( false );
     }
     
     /**
@@ -363,6 +421,7 @@ public class ManifestExportPage extends WizardPage {
         if ( mProject != null ) {
             mLangPart = mProject.getLanguage().getExportBuildPart();
             if ( mLangPart != null ) {
+                mLangPart.setPage( this );
                 Composite body = ( Composite ) getControl();
                 if ( body != null ) {
                     // The body can be null before the page creation

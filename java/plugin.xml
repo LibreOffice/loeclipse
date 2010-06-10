@@ -10,7 +10,7 @@
                class="org.openoffice.ide.eclipse.java.JavaWizardPage">
          </newWizardPage>
          <exportBuildPart
-               class="org.openoffice.ide.eclipse.java.JavaExportPart">
+               class="org.openoffice.ide.eclipse.java.export.JavaExportPart">
          </exportBuildPart>
       </language>
    </extension>

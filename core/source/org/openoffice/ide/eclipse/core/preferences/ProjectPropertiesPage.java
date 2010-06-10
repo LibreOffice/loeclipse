@@ -45,7 +45,6 @@ package org.openoffice.ide.eclipse.core.preferences;
 
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,13 +52,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.LabeledRow;
 import org.openoffice.ide.eclipse.core.gui.rows.OOoRow;
 import org.openoffice.ide.eclipse.core.gui.rows.SdkRow;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
+import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.SDKContainer;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
@@ -110,10 +109,11 @@ public class ProjectPropertiesPage extends PropertyPage
         super.setElement(pElement);
         
         try {
-            mProject = (UnoidlProject)((IProject)getElement()).
-                                getNature(OOEclipsePlugin.UNO_NATURE_ID);
-            
-        } catch (CoreException e) {
+            IProject prj = (IProject)pElement.getAdapter( IProject.class );
+            if ( prj != null ) {
+                mProject = (UnoidlProject)ProjectsManager.getProject( prj.getName() );
+            }
+        } catch (Exception e) {
             PluginLogger.debug(e.getMessage());
         }
     }

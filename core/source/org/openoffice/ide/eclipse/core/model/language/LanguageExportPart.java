@@ -31,6 +31,8 @@
 package org.openoffice.ide.eclipse.core.model.language;
 
 import org.eclipse.swt.widgets.Composite;
+import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
 
 /**
  * Abstract class for the language specific controls part in the OXT export
@@ -41,6 +43,8 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class LanguageExportPart {
 
+    private ManifestExportPage mPage;
+    
     /**
      * Create the controls in the part.
      * @param pParent the parent composite where to create the controls
@@ -52,4 +56,26 @@ public abstract class LanguageExportPart {
      */
     public abstract void dispose();
 
+    /**
+     * Run the export actions in a separate thread.
+     * 
+     * <strong>Note that the controls might be disposed when this methods
+     * is called.</strong>
+     * @param pModel  the model of the exported package
+     */
+    public abstract void doFinish( UnoPackage pModel );
+
+    /**
+     * @param pPage the manifest page containing this part.
+     */
+    public void setPage( ManifestExportPage pPage ) {
+        mPage = pPage;
+    }
+    
+    /** 
+     * @return the page containing this UI part.
+     */
+    protected ManifestExportPage getPage( ) {
+        return mPage;
+    }
 }

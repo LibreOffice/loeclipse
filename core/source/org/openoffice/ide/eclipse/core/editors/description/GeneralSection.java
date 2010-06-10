@@ -172,7 +172,7 @@ public class GeneralSection extends LocalizedSection< DescriptionModel > {
                     if ( res != null && res.getType() == IResource.FILE ) {
                         IFile file = (IFile)res;
                         String path = file.getProjectRelativePath().toString();
-                        mDescriptionBtn.setText( path );
+                        mDescriptionTxt.setText( path );
                     }
                 }
             } 

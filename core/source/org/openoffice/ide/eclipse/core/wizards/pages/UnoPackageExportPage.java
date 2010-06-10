@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -353,7 +354,7 @@ public class UnoPackageExportPage extends WizardPage {
         hidden |= pRes.getName().startsWith( "." ); //$NON-NLS-1$
         
         // Hide files which are always included in the package
-        hidden |= pRes.getName().equals( "description.xml" ); //$NON-NLS-1$
+        hidden |= pRes.getName().equals( IUnoidlProject.DESCRIPTION_FILENAME);
         hidden |= pRes.getName().equals( "MANIFEST.MF" ); //$NON-NLS-1$
         hidden |= pRes.getName().equals( "manifest.xml" ); //$NON-NLS-1$
         hidden |= pRes.getName().equals( "types.rdb" ); //$NON-NLS-1$
@@ -470,6 +471,11 @@ public class UnoPackageExportPage extends WizardPage {
                 // Create the package model
                 pack = UnoidlProjectHelper.createMinimalUnoPackage( mSelectedProject, destFile );
                 pack.addToClean( libraryPath );
+                
+                IFile descrFile = mSelectedProject.getFile( IUnoidlProject.DESCRIPTION_FILENAME );
+                if ( descrFile.exists() ) {
+                    pack.addContent( descrFile );
+                }
 
                 // Add the additional content to the package
                 List<?> items = mResourceGroup.getAllWhiteCheckedItems();
