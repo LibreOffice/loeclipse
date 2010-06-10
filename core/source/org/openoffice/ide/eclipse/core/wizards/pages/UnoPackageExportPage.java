@@ -33,6 +33,7 @@ package org.openoffice.ide.eclipse.core.wizards.pages;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -45,6 +46,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -72,6 +75,7 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.utils.FilesFinder;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
@@ -90,6 +94,9 @@ public class UnoPackageExportPage extends WizardPage {
     private static final String DESTINATION_HISTORY = "destination.history"; //$NON-NLS-1$
     
     private static final int MAX_DESTINATION_STORED = 5;
+
+    private static final String XCS_EXTENSION = "xcs"; //$NON-NLS-1$
+    private static final String XCU_EXTENSION = "xcu"; //$NON-NLS-1$
     
     private Combo mProjectsList;
     private ResourceTreeAndListGroup mResourceGroup;
@@ -157,6 +164,21 @@ public class UnoPackageExportPage extends WizardPage {
             i++;
         }
         
+        // Select the XCU / XCS files by default
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mSelectedProject.getName() );
+        FilesFinder finder = new FilesFinder( new String[] { XCU_EXTENSION, XCS_EXTENSION } );
+        try {
+            prj.accept( finder );
+        } catch (CoreException e) {
+            // Nothing to log here
+        }
+        
+        ArrayList< IFile > files = finder.getResults();
+        for (IFile file : files) {
+            mResourceGroup.initialCheckListItem( file );
+            mResourceGroup.initialCheckTreeItem( file );
+        }
+        
         restoreWidgetValues();
     }
 
@@ -188,7 +210,7 @@ public class UnoPackageExportPage extends WizardPage {
             
             public void modifyText(ModifyEvent pE) {
                 int id = mProjectsList.getSelectionIndex();
-                List<Object> input = new ArrayList<Object>();
+                IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mSelectedProject.getName() );
                 if ( id != -1 ) {
                     String name = mProjectsList.getItem( id );
                     IUnoidlProject unoprj = ProjectsManager.getProject( name );
@@ -197,9 +219,7 @@ public class UnoPackageExportPage extends WizardPage {
                     // Change the project in the manifest page
                     mManifestPage.setProject( unoprj );
                     
-                    // Change the resource group input
-                    input.addAll( getFilteredChildren( unoprj ) );
-                    mResourceGroup.setRoot( input );
+                    mResourceGroup.setRoot( prj );
                 }
                 
                 setPageComplete( checkPageCompletion() );
@@ -217,7 +237,7 @@ public class UnoPackageExportPage extends WizardPage {
         selectionBody.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
         
         mResourceGroup = new ResourceTreeAndListGroup(selectionBody, new ArrayList<Object>(),
-                getResourceProvider(IResource.FOLDER),
+                getResourceProvider(IResource.FOLDER | IResource.FILE),
                 WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
                 getResourceProvider(IResource.FILE), WorkbenchLabelProvider
                         .getDecoratingWorkbenchLabelProvider(), SWT.NONE,
@@ -309,28 +329,6 @@ public class UnoPackageExportPage extends WizardPage {
     /*
      * Data handling and filtering methods
      */
-    
-    /**
-     * Get the children of a projects without the ones to hide in the resource selection controls.
-     * 
-     * @param pUnoprj the project for which to get the children
-     * @return the resources to show
-     */
-    private List<Object> getFilteredChildren(IUnoidlProject pUnoprj) {
-        ArrayList<Object> result = new ArrayList<Object>();
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pUnoprj.getName() );
-        
-        try {
-            IResource[] members = prj.members();
-            for (int i = 0; i < members.length; i++) {
-                if ( !isHiddenResource( members[i] ) ) {
-                    result.add(members[i]);
-                }
-            }
-        } catch ( CoreException e ) {
-        }
-        return result;
-    }
     
     /**
      * @param pRes the resource to be checked
