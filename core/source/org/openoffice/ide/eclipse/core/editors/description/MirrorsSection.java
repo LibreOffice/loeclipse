@@ -140,7 +140,7 @@ public class MirrorsSection extends AbstractSection< DescriptionModel > {
         mUrlTxt.addModifyListener( new ModifyListener () {
 
             public void modifyText(ModifyEvent pE) {
-                mAddBtn.setEnabled( !mUrlTxt.getText().trim().isEmpty() );
+                mAddBtn.setEnabled( !(0 == mUrlTxt.getText().trim().length()) );
             }            
         });
         

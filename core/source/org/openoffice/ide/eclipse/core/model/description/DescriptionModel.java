@@ -571,8 +571,8 @@ public class DescriptionModel implements IModel {
      */
     private void writeDependencies(XMLWriter pWriter) {
         
-        boolean hasMin = !mMinOOo.trim().isEmpty();
-        boolean hasMax = !mMaxOOo.trim().isEmpty();
+        boolean hasMin = !(0 == mMinOOo.trim().length());
+        boolean hasMax = !(0 == mMaxOOo.trim().length());
         if ( hasMin || hasMax ) {
             pWriter.startTag( XMLTokens.ELEMENT_DEPENDENCIES, null );
 
@@ -629,7 +629,7 @@ public class DescriptionModel implements IModel {
         Iterator<String> i = mLicenses.values().iterator();
         while ( !hasLicenses && i.hasNext( ) ) {
             String value = i.next();
-            hasLicenses |= !value.trim().isEmpty();
+            hasLicenses |= !(0 == value.trim().length());
         }
         
         //Write the block
@@ -674,8 +674,8 @@ public class DescriptionModel implements IModel {
         Iterator<PublisherInfos> i = mPublisherInfos.values().iterator();
         while ( !hasInfos && i.hasNext() ) {
             PublisherInfos info = i.next();
-            boolean hasName = !info.getName().isEmpty();
-            boolean hasUrl = !info.getUrl().isEmpty();
+            boolean hasName = !(0 == info.getName().length());
+            boolean hasUrl = !(0 == info.getUrl().length());
             
             hasInfos |= hasName && hasUrl;
         }
@@ -692,8 +692,8 @@ public class DescriptionModel implements IModel {
                 attrs.clear();
                 
                 PublisherInfos info = entry.getValue();
-                boolean hasName = !info.getName().isEmpty();
-                boolean hasUrl = !info.getUrl().isEmpty();
+                boolean hasName = !(0 == info.getName().length());
+                boolean hasUrl = !(0 == info.getUrl().length());
                 
                 attrs.put( XMLTokens.createQName( XMLTokens.PREFIX_XLINK, XMLTokens.ATTR_HREF), 
                         info.getUrl() );
@@ -722,7 +722,7 @@ public class DescriptionModel implements IModel {
         Iterator<String> i = mReleaseNotes.values().iterator();
         while ( !hasReleaseNote && i.hasNext( ) ) {
             String value = i.next();
-            hasReleaseNote |= !value.trim().isEmpty();
+            hasReleaseNote |= !(0 == value.trim().length());
         }
         
         //Write the block
@@ -757,7 +757,7 @@ public class DescriptionModel implements IModel {
         Iterator<String> i = mDisplayNames.values().iterator();
         while ( !hasReleaseNote && i.hasNext( ) ) {
             String value = i.next();
-            hasReleaseNote |= !value.trim().isEmpty();
+            hasReleaseNote |= !(0 == value.trim().length());
         }
         
         //Write the block
@@ -786,8 +786,8 @@ public class DescriptionModel implements IModel {
      * @param pWriter the XML writer
      */
     private void writeIcons(XMLWriter pWriter) {
-        boolean hasDefault = !mDefaultIcon.trim().isEmpty();
-        boolean hasHC = !mHCIcon.trim().isEmpty();
+        boolean hasDefault = !(0 == mDefaultIcon.trim().length());
+        boolean hasHC = !(0 == mHCIcon.trim().length());
         
         if ( hasDefault || hasHC ) {
             pWriter.startTag( XMLTokens.ELEMENT_ICON, null );
@@ -822,7 +822,7 @@ public class DescriptionModel implements IModel {
         Iterator<String> i = mDescriptions.values().iterator();
         while ( !hasDescription && i.hasNext( ) ) {
             String value = i.next();
-            hasDescription |= !value.trim().isEmpty();
+            hasDescription |= !(0 == value.trim().length());
         }
         
         //Write the block

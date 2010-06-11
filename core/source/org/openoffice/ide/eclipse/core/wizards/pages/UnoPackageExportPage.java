@@ -323,7 +323,7 @@ public class UnoPackageExportPage extends WizardPage {
      * @return <code>true</code> if the page is complete, <code>false</code> otherwise.
      */
     private boolean checkPageCompletion() {
-        return !mDestinationCombo.getText().isEmpty() && mProjectsList.getSelectionIndex() != -1;
+        return !(0 == mDestinationCombo.getText().length()) && mProjectsList.getSelectionIndex() != -1;
     }
     
     /*
@@ -435,7 +435,7 @@ public class UnoPackageExportPage extends WizardPage {
             mAutodeployBox.setSelection( settings.getBoolean( AUTODEPLOY ) );
             String[] items = settings.getArray( DESTINATION_HISTORY );
             for (String item : items) {
-                if ( item != null && !item.isEmpty() ) {
+                if ( item != null && !(0 == item.length()) ) {
                     mDestinationCombo.add( item );
                 }
             }

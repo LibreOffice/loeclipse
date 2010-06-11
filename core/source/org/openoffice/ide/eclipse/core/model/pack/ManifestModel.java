@@ -217,7 +217,7 @@ public class ManifestModel {
 
         // Add the file entry to the manifest
         FileType type = new FileType( FileType.MIME_DESCRIPTION );
-        if ( !localeString.isEmpty() ) {
+        if ( !(0 == localeString.length()) ) {
             type.addParam( FileType.PARAM_LOCALE, localeString );
         }
         String relPath = pDescriptionFile.getProjectRelativePath().toString();
