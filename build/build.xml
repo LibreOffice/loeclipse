@@ -73,15 +73,27 @@
 	<target name="check-ooo-version">
         <property file="ant/build.properties"/>
         
-		<property name="office.basis.dir" value="${openoffice.home}${file.separator}basis-link"/>
-        <property name="office.ure.dir" value="${office.basis.dir}${file.separator}ure-link"/>
+		<property name="office.linux.basis.dir" value="${openoffice.home}${file.separator}basis-link"/>
+        <property name="office.linux.ure.dir" value="${office.linux.basis.dir}${file.separator}ure-link"/>
+		
+		<!-- this is not very nice -->
+		<loadfile property="office.win.basis.name" srcfile="${office.linux.basis.dir}" failonerror="false" quiet="true" />
+		<property name="office.win.basis.dir" value="${openoffice.home}${file.separator}${office.win.basis.name}"/>
+		<loadfile property="office.win.ure.name" srcfile="${office.win.basis.dir}${file.separator}ure-link" failonerror="false" quiet="true" />
+		<property name="office.win.ure.dir" value="${office.win.basis.dir}${file.separator}${office.win.ure.name}"/>
         
         <!-- test whether building against OOo3 or not -->
         <condition property="office.version3" value="true">
-            <and>
-                <available file="${office.basis.dir}" />
-                <available file="${office.ure.dir}"/>
-            </and>
+        	<or>
+	            <and>
+	                <available file="${office.linux.basis.dir}" />
+	                <available file="${office.linux.ure.dir}"/>
+	            </and>
+        		<and>
+					<available file="${office.win.basis.dir}" />
+					<available file="${office.win.ure.dir}"/>
+				</and>
+        	</or>
         </condition>
 		
 		<condition property="office.version3.win" value="true">
@@ -93,21 +105,28 @@
     </target>
 	
 	<target name="init-win-ooo3" depends="check-ooo-version" if="office.version3.win">
-		<loadfile property="office.win.basis" srcfile="${office.basis.dir}" failonerror="false" quiet="true" />
-		<loadfile property="office.win.ure" srcfile="${office.ure.dir}" failonerror="false" quiet="true" />
-		
-		<property name="office.basis.dir" value="${openoffice.home}${file.separator}${office.win.basis}"/>
-		<property name="office.ure.dir" value="${office.basis.dir}${file.separator}${office.win.ure}"/>
+		<property name="office.basis.dir" value="${office.win.basis.dir}" />
+		<property name="office.ure.dir" value="${office.win.ure.dir}"/>
 	</target>
 	
 	<target name="init-env-ooo3" depends="init-win-ooo3" if="office.version3">
 		<echo message="Initializing the properties for OpenOffice 3.x"/>
 
+		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java">
+			<not>
+				<isset property="office.version3.win"/>
+			</not>
+		</condition>
+		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}java">
+			<isset property="office.version3.win"/>
+		</condition>
+		
+		<property name="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java"/>
         <path id="office.class.path">
             <fileset dir="${office.basis.dir}${file.separator}program${file.separator}classes">
                 <include name="*.jar"/>
             </fileset>
-            <fileset dir="${office.ure.dir}${file.separator}share${file.separator}java">
+            <fileset dir="${office.ure.dir.java.folder}">
                 <include name="*.jar"/>
             </fileset>
         </path>
