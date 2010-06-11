@@ -83,10 +83,25 @@
                 <available file="${office.ure.dir}"/>
             </and>
         </condition>
+		
+		<condition property="office.version3.win" value="true">
+			<and>
+				<os family="windows"/>
+				<isset property="office.version3"/>
+			</and>
+		</condition>
     </target>
 	
-	<target name="init-env-ooo3" depends="check-ooo-version" if="office.version3">
-		<echo message="Initializing the properties for OpenOffice 3.0"/>
+	<target name="init-win-ooo3" depends="check-ooo-version" if="office.version3.win">
+		<loadfile property="office.win.basis" srcfile="${office.basis.dir}" failonerror="false" quiet="true" />
+		<loadfile property="office.win.ure" srcfile="${office.ure.dir}" failonerror="false" quiet="true" />
+		
+		<property name="office.basis.dir" value="${openoffice.home}${file.separator}${office.win.basis}"/>
+		<property name="office.ure.dir" value="${office.basis.dir}${file.separator}${office.win.ure}"/>
+	</target>
+	
+	<target name="init-env-ooo3" depends="init-win-ooo3" if="office.version3">
+		<echo message="Initializing the properties for OpenOffice 3.x"/>
 
         <path id="office.class.path">
             <fileset dir="${office.basis.dir}${file.separator}program${file.separator}classes">
@@ -99,8 +114,10 @@
     </target>
 
     <target name="init-env-ooo2" depends="check-ooo-version" unless="office.version3">
+    	<echo message="Initializing the properties for OpenOffice 2.x"/>
+
         <path id="office.class.path">
-            <fileset dir="${office.install.dir}${file.separator}program${file.separator}classes">
+            <fileset dir="${openoffice.home}${file.separator}program${file.separator}classes">
                 <include name="*.jar"/>
             </fileset>
         </path>
