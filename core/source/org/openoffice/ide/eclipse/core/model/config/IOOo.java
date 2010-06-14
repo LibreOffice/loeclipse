@@ -45,6 +45,7 @@ package org.openoffice.ide.eclipse.core.model.config;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -162,6 +163,9 @@ public interface IOOo {
      */
     public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, 
             ILaunch pLaunch, IProgressMonitor pMonitor);
+    
+    public void runOpenOffice(IUnoidlProject pPrj,  
+            ILaunch pLaunch, IPath userInstallation, IProgressMonitor pMonitor);
     
     /**
      * @return <code>true</code> if the OOo instance has a package manager.

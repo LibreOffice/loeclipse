@@ -50,6 +50,7 @@ import java.io.StringWriter;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -359,6 +360,34 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         
         Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
         DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.UreProcessName")  + pMain); //$NON-NLS-1$
+    }
+    
+    public void runOpenOffice(IUnoidlProject pPrj, 
+    		ILaunch pLaunch, IPath userInstallation, IProgressMonitor pMonitor) {
+    	IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
+    	String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
+    	
+    	String pathSeparator = System.getProperty("path.separator");
+    	String[] sPaths = pPrj.getOOo().getBinPath();
+    	StringBuilder sPathValue = new StringBuilder();
+		for (String sPath : sPaths) {
+    		sPathValue.append(sPath);
+    		sPathValue.append(pathSeparator);
+    	}
+    	
+		env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
+		if(null != userInstallation) {
+			env = SystemHelper.addEnv(env, "UserInstallation", userInstallation.toOSString(), null);
+		}
+		
+    	String command = "soffice.bin";
+//        	+
+//            " -c " + pMain + //$NON-NLS-1$
+//            " -l " + libpath +  //$NON-NLS-1$
+//            " -- " + pArgs; //$NON-NLS-1$
+    	
+    	Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
+        DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.OpenOfficeProcessName")); //$NON-NLS-1$    	
     }
     
     /**
