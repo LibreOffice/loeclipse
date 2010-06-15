@@ -164,6 +164,13 @@ public interface IOOo {
     public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, 
             ILaunch pLaunch, IProgressMonitor pMonitor);
     
+    /**
+     * 
+     * @param pPrj the project to run
+     * @param pLaunch the launcher to which we'll add our processes
+     * @param userInstallation the userInstallation folder to use. If null we'll go with the default system one.
+     * @param pMonitor a monitor to follow the progress
+     */
     public void runOpenOffice(IUnoidlProject pPrj,  
             ILaunch pLaunch, IPath userInstallation, IProgressMonitor pMonitor);
     

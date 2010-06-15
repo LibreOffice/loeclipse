@@ -53,6 +53,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
 		useCleanUserInstallation
 				.setText(Messages.OfficeTab_ChkUseCleanUserInstallation);
 		useCleanUserInstallation.addSelectionListener(mListener);
+		useCleanUserInstallation.setToolTipText(Messages.OfficeTab_ChkUseCleanUserInstallation_ToolTip);
 	}
 
 	private void createProjectGroup(Composite parent) {

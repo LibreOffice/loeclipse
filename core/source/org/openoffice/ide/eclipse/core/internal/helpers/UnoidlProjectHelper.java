@@ -102,6 +102,10 @@ public class UnoidlProjectHelper {
      * Project relative path to the idl root folder.
      */
     public static final String IDL_BASIS = "/idl"; //$NON-NLS-1$
+
+	public static final String DIST_BASIS = "dist";
+
+	public static final String OO_PROFILE_BASIS = ".ooo-debug";
     
     /**
      * Create a default configuration file for UNO-IDL projects.

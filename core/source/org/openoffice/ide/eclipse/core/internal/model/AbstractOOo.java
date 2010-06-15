@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URI;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -57,6 +58,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.swt.graphics.Image;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
 import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -364,30 +366,39 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     
     public void runOpenOffice(IUnoidlProject pPrj, 
     		ILaunch pLaunch, IPath userInstallation, IProgressMonitor pMonitor) {
-    	IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
-    	String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
-    	
-    	String pathSeparator = System.getProperty("path.separator");
-    	String[] sPaths = pPrj.getOOo().getBinPath();
-    	StringBuilder sPathValue = new StringBuilder();
-		for (String sPath : sPaths) {
-    		sPathValue.append(sPath);
-    		sPathValue.append(pathSeparator);
-    	}
-    	
-		env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
-		if(null != userInstallation) {
-			env = SystemHelper.addEnv(env, "UserInstallation", userInstallation.toOSString(), null);
+		try {
+			IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(
+					pPrj.getName());
+			String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(
+					pPrj);
+
+			String pathSeparator = System.getProperty("path.separator");
+			String[] sPaths = pPrj.getOOo().getBinPath();
+			StringBuilder sPathValue = new StringBuilder();
+			for (String sPath : sPaths) {
+				sPathValue.append(sPath);
+				sPathValue.append(pathSeparator);
+			}
+
+			String command = "soffice.bin";
+			
+			env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
+			if (null != userInstallation) {
+				// We have to turn the path to a URI something like file:///foo/bar/.ooo-debug
+				//TODO find a better way to get the proper URI.
+				URI userInstallationURI = new URI("file", "", userInstallation.toFile().toURI().getPath(), null);
+				env = SystemHelper.addEnv(env, "UserInstallation", userInstallationURI.toString(), null);
+				command += " -nofirststartwiozard ";
+			}
+
+			PluginLogger.debug("Launching OpenOffice from commandline: " + command);
+			Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(),
+					command, env, pMonitor);
+			DebugPlugin.newProcess(pLaunch, p, Messages
+					.getString("AbstractOOo.OpenOfficeProcessName")); //$NON-NLS-1$
+		} catch (Exception e) {
+			PluginLogger.error("Error running OpenOffice", e);
 		}
-		
-    	String command = "soffice.bin";
-//        	+
-//            " -c " + pMain + //$NON-NLS-1$
-//            " -l " + libpath +  //$NON-NLS-1$
-//            " -- " + pArgs; //$NON-NLS-1$
-    	
-    	Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
-        DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.OpenOfficeProcessName")); //$NON-NLS-1$    	
     }
     
     /**

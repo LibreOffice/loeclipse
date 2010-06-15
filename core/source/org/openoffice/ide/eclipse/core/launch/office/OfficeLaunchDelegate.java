@@ -2,7 +2,9 @@ package org.openoffice.ide.eclipse.core.launch.office;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -12,6 +14,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 
 public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -39,23 +42,39 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
 			String prjName = pConfiguration.getAttribute(
 					IOfficeLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+			boolean useCleanUserInstalation = pConfiguration.getAttribute(
+					IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
+			
 			IUnoidlProject prj = ProjectsManager.getProject(prjName);
 
 			if (null != prj) {
 				try {
-					// ILanguageBuilder langBuilder = prj.getLanguage()
-					// .getLanguageBuidler();
-					// langBuilder.createLibrary(prj);
+					ILanguageBuilder langBuilder = prj.getLanguage()
+							.getLanguageBuidler();
+					langBuilder.createLibrary(prj);
 
 					// Run an OpenOffice instance
-					prj.getOOo().runOpenOffice(prj, pLaunch, null, pMonitor);
+					IPath userInstallation = null;
+					if (useCleanUserInstalation) {
+						IFolder userInstallationFolder = prj.getFolder(prj
+								.getOpenOfficeUserProfilePath());
+						//TODO find  better way to make sure the folder exists.
+						if (!userInstallationFolder.exists()) {
+							((IFolder)userInstallationFolder.getParent()).create(true, true, null);
+							userInstallationFolder.create(true, true, null);
+						}
+						userInstallation = userInstallationFolder.getLocation();
+					}
+							
+					prj.getOOo().runOpenOffice(prj, pLaunch, userInstallation,
+							pMonitor);
 				} catch (Exception e) {
 					Display.getDefault().asyncExec(new Runnable() {
 
 						public void run() {
 							MessageDialog.openError(Display.getDefault()
-									.getActiveShell(), "Error Title", //$NON-NLS-1$
-									"Error Message"); //$NON-NLS-1$    
+									.getActiveShell(), Messages.OfficeLaunchDelegate_LaunchErrorTitle, 
+									Messages.OfficeLaunchDelegate_LaunchError);     
 						}
 					});
 				}
