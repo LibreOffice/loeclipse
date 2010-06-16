@@ -168,11 +168,11 @@ public interface IOOo {
      * 
      * @param pPrj the project to run
      * @param pLaunch the launcher to which we'll add our processes
-     * @param userInstallation the userInstallation folder to use. If null we'll go with the default system one.
+     * @param pUserInstallation the userInstallation folder to use. If null we'll go with the default system one.
      * @param pMonitor a monitor to follow the progress
      */
     public void runOpenOffice(IUnoidlProject pPrj,  
-            ILaunch pLaunch, IPath userInstallation, IProgressMonitor pMonitor);
+            ILaunch pLaunch, IPath pUserInstallation, IProgressMonitor pMonitor);
     
     /**
      * @return <code>true</code> if the OOo instance has a package manager.

@@ -33,7 +33,6 @@ package org.openoffice.ide.eclipse.core.wizards.pages;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -46,8 +45,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;

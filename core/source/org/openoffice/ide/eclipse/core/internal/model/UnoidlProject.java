@@ -471,16 +471,16 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         return getFolder(getBuildPath().append(UnoidlProjectHelper.URD_BASIS)).getProjectRelativePath();
     }
     
-	public IPath getDistPath() {
-		return getFolder(getBuildPath().append(UnoidlProjectHelper.DIST_BASIS))
-				.getProjectRelativePath();
-	}
-	
-	public IPath getOpenOfficeUserProfilePath() {
-		return getFolder(
-				getDistPath().append(UnoidlProjectHelper.OO_PROFILE_BASIS))
-				.getProjectRelativePath();
-	}
+    public IPath getDistPath() {
+        return getFolder(getBuildPath().append(UnoidlProjectHelper.DIST_BASIS))
+                .getProjectRelativePath();
+    }
+    
+    public IPath getOpenOfficeUserProfilePath() {
+        return getFolder(
+                getDistPath().append(UnoidlProjectHelper.OO_PROFILE_BASIS))
+                .getProjectRelativePath();
+    }
 
     /**
      * {@inheritDoc}

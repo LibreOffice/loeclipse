@@ -6,17 +6,16 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 public class LaunchConfigurationTabs extends
-		AbstractLaunchConfigurationTabGroup {
+        AbstractLaunchConfigurationTabGroup {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void createTabs(ILaunchConfigurationDialog pDialog, String pMode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-				new OfficeTab(), new CommonTab() };
+    /**
+     * {@inheritDoc}
+     */
+    public void createTabs(ILaunchConfigurationDialog pDialog, String pMode) {
+        ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
+            new OfficeTab(), new CommonTab() };
 
-		setTabs(tabs);
+        setTabs(tabs);
 
-	}
-
+    }
 }

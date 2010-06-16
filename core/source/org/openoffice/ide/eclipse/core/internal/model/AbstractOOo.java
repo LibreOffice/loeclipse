@@ -365,40 +365,41 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     }
     
     public void runOpenOffice(IUnoidlProject pPrj, 
-    		ILaunch pLaunch, IPath userInstallation, IProgressMonitor pMonitor) {
-		try {
-			IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(
-					pPrj.getName());
-			String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(
-					pPrj);
+            ILaunch pLaunch, IPath pUserInstallation, IProgressMonitor pMonitor) {
+        try {
+            IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(
+                    pPrj.getName());
+            String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(
+                    pPrj);
 
-			String pathSeparator = System.getProperty("path.separator");
-			String[] sPaths = pPrj.getOOo().getBinPath();
-			StringBuilder sPathValue = new StringBuilder();
-			for (String sPath : sPaths) {
-				sPathValue.append(sPath);
-				sPathValue.append(pathSeparator);
-			}
+            String pathSeparator = System.getProperty("path.separator"); //$NON-NLS-1$
+            String[] sPaths = pPrj.getOOo().getBinPath();
+            StringBuilder sPathValue = new StringBuilder();
+            for (String sPath : sPaths) {
+                sPathValue.append(sPath);
+                sPathValue.append(pathSeparator);
+            }
 
-			String command = "soffice.bin";
-			
-			env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
-			if (null != userInstallation) {
-				// We have to turn the path to a URI something like file:///foo/bar/.ooo-debug
-				//TODO find a better way to get the proper URI.
-				URI userInstallationURI = new URI("file", "", userInstallation.toFile().toURI().getPath(), null);
-				env = SystemHelper.addEnv(env, "UserInstallation", userInstallationURI.toString(), null);
-				command += " -nofirststartwiozard ";
-			}
+            String command = "soffice.bin"; //$NON-NLS-1$
+            
+            env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator); //$NON-NLS-1$
+            if (null != pUserInstallation) {
+                // We have to turn the path to a URI something like file:///foo/bar/.ooo-debug
+                //TODO find a better way to get the proper URI.
+                URI userInstallationURI = new URI("file", new String(), //$NON-NLS-1$
+                        pUserInstallation.toFile().toURI().getPath(), null);
+                env = SystemHelper.addEnv(env, "UserInstallation", userInstallationURI.toString(), null); //$NON-NLS-1$
+                command += " -nofirststartwiozard "; //$NON-NLS-1$
+            }
 
-			PluginLogger.debug("Launching OpenOffice from commandline: " + command);
-			Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(),
-					command, env, pMonitor);
-			DebugPlugin.newProcess(pLaunch, p, Messages
-					.getString("AbstractOOo.OpenOfficeProcessName")); //$NON-NLS-1$
-		} catch (Exception e) {
-			PluginLogger.error("Error running OpenOffice", e);
-		}
+            PluginLogger.debug("Launching OpenOffice from commandline: " + command); //$NON-NLS-1$
+            Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(),
+                    command, env, pMonitor);
+            DebugPlugin.newProcess(pLaunch, p, Messages
+                    .getString("AbstractOOo.OpenOfficeProcessName")); //$NON-NLS-1$
+        } catch (Exception e) {
+            PluginLogger.error("Error running OpenOffice", e);
+        }
     }
     
     /**

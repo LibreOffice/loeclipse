@@ -244,19 +244,19 @@ public interface IUnoidlProject {
      */
     public IPath getUrdPath();
     
-	/**
-	 * @return the path to the project's folder containing the distribution .oxf
-	 *         file.
-	 */
-	public IPath getDistPath();
-	
-	/**
-	 * @return the path to the project's folder used to store the user profile
-	 *         when running/debugging OpenOffice in a clean environment. This
-	 *         way we do not mangle with the system wide installed, OpenOffice
-	 *         settings.
-	 */
-	public IPath getOpenOfficeUserProfilePath();
+    /**
+     * @return the path to the project's folder containing the distribution .oxf
+     *         file.
+     */
+    public IPath getDistPath();
+    
+    /**
+     * @return the path to the project's folder used to store the user profile
+     *         when running/debugging OpenOffice in a clean environment. This
+     *         way we do not mangle with the system wide installed, OpenOffice
+     *         settings.
+     */
+    public IPath getOpenOfficeUserProfilePath();
     
     //----------------------------------------------- Project resources getters
     

@@ -103,9 +103,9 @@ public class UnoidlProjectHelper {
      */
     public static final String IDL_BASIS = "/idl"; //$NON-NLS-1$
 
-	public static final String DIST_BASIS = "dist";
+    public static final String DIST_BASIS = "dist"; //$NON-NLS-1$
 
-	public static final String OO_PROFILE_BASIS = ".ooo-debug";
+    public static final String OO_PROFILE_BASIS = ".ooo-debug"; //$NON-NLS-1$
     
     /**
      * Create a default configuration file for UNO-IDL projects.
