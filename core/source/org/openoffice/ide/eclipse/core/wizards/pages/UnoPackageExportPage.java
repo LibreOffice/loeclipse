@@ -92,9 +92,6 @@ public class UnoPackageExportPage extends WizardPage {
     
     private static final int MAX_DESTINATION_STORED = 5;
 
-    private static final String XCS_EXTENSION = "xcs"; //$NON-NLS-1$
-    private static final String XCU_EXTENSION = "xcu"; //$NON-NLS-1$
-    
     private Combo mProjectsList;
     private ResourceTreeAndListGroup mResourceGroup;
     private Combo mDestinationCombo;
@@ -163,11 +160,12 @@ public class UnoPackageExportPage extends WizardPage {
         
         // Select the XCU / XCS files by default
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mSelectedProject.getName() );
-        FilesFinder finder = new FilesFinder( new String[] { XCU_EXTENSION, XCS_EXTENSION } );
+        FilesFinder finder = new FilesFinder( new String[] { IUnoidlProject.XCU_EXTENSION, IUnoidlProject.XCS_EXTENSION } );
         try {
+        	finder.addExclude(mSelectedProject.getDistFolder().getFullPath());
             prj.accept( finder );
         } catch (CoreException e) {
-            // Nothing to log here
+            PluginLogger.error("Could not visit the project's content.", e);
         }
         
         ArrayList< IFile > files = finder.getResults();
@@ -521,7 +519,7 @@ public class UnoPackageExportPage extends WizardPage {
          */
         public void run() {
             if (mOOo.canManagePackages()) {
-                mOOo.updatePackage(mDest);
+                mOOo.updatePackage(mDest, null);
             }
         }
     }

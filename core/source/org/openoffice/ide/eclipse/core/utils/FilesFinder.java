@@ -1,11 +1,14 @@
 package org.openoffice.ide.eclipse.core.utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Visitor looking for all the files with given extensions.
@@ -17,6 +20,7 @@ public class FilesFinder implements IResourceVisitor {
 
     private String[] mExtensions;
     private ArrayList<IFile> mFiles;
+    private Set<IPath> excludedPaths = new HashSet<IPath>();
     
     /**
      * Constructor.
@@ -39,7 +43,12 @@ public class FilesFinder implements IResourceVisitor {
      * {@inheritDoc}
      */
     public boolean visit(IResource pResource) throws CoreException {
-        
+
+    	IPath resourcePath = pResource.getFullPath();
+		if(this.excludedPaths.contains(resourcePath)) {
+    		return false;
+    	}
+		
         if ( pResource.getType() == IResource.FILE ) {
             boolean matches = false;
             String name = pResource.getName();
@@ -57,4 +66,8 @@ public class FilesFinder implements IResourceVisitor {
         
         return true;
     }
+
+	public void addExclude(IPath pDistPath) {
+		this.excludedPaths.add(pDistPath);		
+	}
 }

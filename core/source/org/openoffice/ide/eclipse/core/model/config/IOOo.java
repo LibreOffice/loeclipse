@@ -51,8 +51,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Interface for an OpenOffice.org configuration instance. This can even
- * be implemented as an URE instance.
+ * Interface for an OpenOffice.org configuration instance. This can even be implemented as an URE instance.
  * 
  * @author cedricbosdo
  */
@@ -61,128 +60,150 @@ public interface IOOo {
     /**
      * Set the home directory.
      * 
-     * @param pHome the absolute path to the home directory
-     * @throws InvalidConfigException is thrown if the path doesn't match the 
-     *         implementation requirement for an OOo instance. The error code will
-     *         be {@link InvalidConfigException#INVALID_OOO_HOME}
+     * @param pHome
+     *            the absolute path to the home directory
+     * @throws InvalidConfigException
+     *             is thrown if the path doesn't match the implementation requirement for an OOo instance. The error
+     *             code will be {@link InvalidConfigException#INVALID_OOO_HOME}
      */
     public void setHome(String pHome) throws InvalidConfigException;
-    
+
     /**
-     * Returns the path to the OpenOffice.org home directory. This string could 
-     * be passed to the Path constructor to get the folder object. 
+     * Returns the path to the OpenOffice.org home directory. This string could be passed to the Path constructor to get
+     * the folder object.
      * 
      * @return path to the OpenOffice.org home directory.
      */
     public String getHome();
-    
+
     /**
      * Returns the OOo name. It should be a unique identifier
      * 
      * @return ooo name
      */
     public String getName();
-    
+
     /**
-     * <p>Returns the path to the OpenOffice.org classes directory. 
-     * These strings could be passed to the Path constructor to get the 
-     * folder object.</p> 
+     * <p>
+     * Returns the path to the OpenOffice.org classes directory. These strings could be passed to the Path constructor
+     * to get the folder object.
+     * </p>
      * 
-     * <p><em>This method should be used for future compatibility with 
-     * URE applications</em></p>
+     * <p>
+     * <em>This method should be used for future compatibility with 
+     * URE applications</em>
+     * </p>
      * 
      * @return path to the OpenOffice.org classes directory
      */
     public String[] getClassesPath();
-    
+
     /**
-     * <p>Returns the path to the OpenOffice.org shared libraries. This string
-     * could be passed to the Path constructor to get the folder object.</p>
+     * <p>
+     * Returns the path to the OpenOffice.org shared libraries. This string could be passed to the Path constructor to
+     * get the folder object.
+     * </p>
      * 
      * @return path to the OpenOffice.org libraries directory
      */
     public String[] getLibsPath();
-    
+
     /**
-     * <p>Returns the path to any folder containing binaries in the OOo installation. 
-     * This string could be passed to the Path constructor to get the folder object.</p>
+     * <p>
+     * Returns the path to any folder containing binaries in the OOo installation. This string could be passed to the
+     * Path constructor to get the folder object.
+     * </p>
      * 
      * @return paths to the OpenOffice.org binary directories
      */
     public String[] getBinPath();
-    
+
     /**
-     * @return the path to the <code>types.rdb</code> file of the OOo or URE
-     * instance.
+     * @return the path to the <code>types.rdb</code> file of the OOo or URE instance.
      */
     public String[] getTypesPath();
-    
+
     /**
-     * @return the path to the <code>services.rdb</code> file of the OOo or URE
-     * instance.
+     * @return the path to the <code>services.rdb</code> file of the OOo or URE instance.
      */
     public String[] getServicesPath();
-    
+
     /**
      * @return the path to the UNO bootstrap properties file.
      */
     public String getUnorcPath();
-    
+
     /**
      * @return the path to the UNO executable file
      */
     public String getUnoPath();
-    
+
     /**
-     * @return the path to the <code>javaldx</code> executable 
+     * @return the path to the <code>javaldx</code> executable
      */
     public String getJavaldxPath();
-    
+
     /**
      * Returns a command to execute a <code>uno</code> component.
      * 
-     * @param pImplementationName the name of the component implementation to run
-     * @param pLibLocation the name of the library containing the implementation
-     * @param pRegistriesPaths the path to the additional registries
-     * @param pArgs the argument for the component launch
+     * @param pImplementationName
+     *            the name of the component implementation to run
+     * @param pLibLocation
+     *            the name of the library containing the implementation
+     * @param pRegistriesPaths
+     *            the path to the additional registries
+     * @param pArgs
+     *            the argument for the component launch
      * 
      * @return the command to execute the <code>uno</code> binary
      */
-    public String createUnoCommand(String pImplementationName, 
-            String pLibLocation, String[] pRegistriesPaths, String[] pArgs);
-    
+    public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
+                    String[] pArgs);
+
     /**
-     * Run the <code>uno</code> executable with the given Main implementation, 
-     * the arguments and the launcher.
+     * Run the <code>uno</code> executable with the given Main implementation, the arguments and the launcher.
      * 
-     * @param pPrj the project to run
-     * @param pMain the main implementation
-     * @param pArgs the argument to pass to the main implementation
-     * @param pLaunch the launcher
-     * @param pMonitor a monitor to follow the progress
+     * @param pPrj
+     *            the project to run
+     * @param pMain
+     *            the main implementation
+     * @param pArgs
+     *            the argument to pass to the main implementation
+     * @param pLaunch
+     *            the launcher
+     * @param pMonitor
+     *            a monitor to follow the progress
      */
-    public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, 
-            ILaunch pLaunch, IProgressMonitor pMonitor);
-    
+    public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, ILaunch pLaunch, IProgressMonitor pMonitor);
+
     /**
      * 
-     * @param pPrj the project to run
-     * @param pLaunch the launcher to which we'll add our processes
-     * @param pUserInstallation the userInstallation folder to use. If null we'll go with the default system one.
-     * @param pMonitor a monitor to follow the progress
+     * @param pPrj
+     *            the project to run
+     * @param pLaunch
+     *            the launcher to which we'll add our processes
+     * @param pUserInstallation
+     *            the userInstallation folder to use. If null we'll go with the default system one.
+     * @param pExtraOptionsProvider
+     *            provider for extra env variables to be set before launching.
+     * @param pMonitor
+     *            a monitor to follow the progress
      */
-    public void runOpenOffice(IUnoidlProject pPrj,  
-            ILaunch pLaunch, IPath pUserInstallation, IProgressMonitor pMonitor);
-    
+    public void runOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+                    IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor);
+
     /**
      * @return <code>true</code> if the OOo instance has a package manager.
      */
     public boolean canManagePackages();
-    
+
     /**
      * Update a package in the OOo instance if it can manages packages.
      * 
-     * @param pPackageFile the package to add or update
+     * @param pPackageFile
+     *            the package to add or update
+     * @param pUserInstallation
+     *            path to the user profile folder.
      */
-    public void updatePackage(File pPackageFile);
+    public void updatePackage(File pPackageFile, IPath pUserInstallation);
 }

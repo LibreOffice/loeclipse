@@ -45,6 +45,7 @@ package org.openoffice.ide.eclipse.core.internal.model;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
@@ -53,16 +54,17 @@ import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
  * Class representing a URE installation.
  * 
  * @author cedricbosdo
- *
+ * 
  */
 public class URE extends AbstractOOo {
 
     /**
      * Creating a new URE instance specifying its home directory.
      * 
-     * @param pHome the URE home directory
-     * @throws InvalidConfigException is thrown if the home directory doesn't
-     *         contains the required files and directories
+     * @param pHome
+     *            the URE home directory
+     * @throws InvalidConfigException
+     *             is thrown if the home directory doesn't contains the required files and directories
      */
     public URE(String pHome) throws InvalidConfigException {
         super(pHome);
@@ -72,29 +74,31 @@ public class URE extends AbstractOOo {
     /**
      * Creating a new URE instance specifying its home directory and name.
      * 
-     * @param pHome the URE home directory
-     * @param pName the URE name
+     * @param pHome
+     *            the URE home directory
+     * @param pName
+     *            the URE name
      * 
-     * @throws InvalidConfigException is thrown if the home directory doesn't
-     *         contains the required files and directories
+     * @throws InvalidConfigException
+     *             is thrown if the home directory doesn't contains the required files and directories
      */
     public URE(String pHome, String pName) throws InvalidConfigException {
         super(pHome, pName);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     protected void setName(String pName) {
-        
+
         String name = pName;
         if (name == null || name.equals("")) { //$NON-NLS-1$
             name = "URE"; //$NON-NLS-1$
         }
-        
+
         super.setName(name);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -103,7 +107,7 @@ public class URE extends AbstractOOo {
         if (getPlatform().equals(Platform.OS_WIN32)) {
             jars = getHome() + FILE_SEP + "java"; //$NON-NLS-1$
         }
-        return new String[]{ jars };
+        return new String[] { jars };
     }
 
     /**
@@ -114,15 +118,15 @@ public class URE extends AbstractOOo {
         if (getPlatform().equals(Platform.OS_WIN32)) {
             libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
         }
-        return new String[]{ libs };
+        return new String[] { libs };
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String[] getBinPath() {
         String libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
-        return new String[]{ libs };
+        return new String[] { libs };
     }
 
     /**
@@ -130,11 +134,11 @@ public class URE extends AbstractOOo {
      */
     public String[] getTypesPath() {
         String types = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
-            FILE_SEP + "types.rdb"; //$NON-NLS-1$
+                        FILE_SEP + "types.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return new String[]{ types };
+        return new String[] { types };
     }
 
     /**
@@ -142,11 +146,11 @@ public class URE extends AbstractOOo {
      */
     public String[] getServicesPath() {
         String services = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
-                FILE_SEP + "services.rdb"; //$NON-NLS-1$
+                        FILE_SEP + "services.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return new String[]{ services };
+        return new String[] { services };
     }
 
     /**
@@ -159,60 +163,60 @@ public class URE extends AbstractOOo {
         }
         return path;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getUnoPath() {
         String uno = "uno.bin"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
-            uno = "uno.exe";  //$NON-NLS-1$
+            uno = "uno.exe"; //$NON-NLS-1$
         }
-        
+
         return getHome() + FILE_SEP + "bin" + FILE_SEP + uno; //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String toString() {
         return "URE " + getName(); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public String createUnoCommand(String pImplementationName, 
-            String pLibLocation, String[] pRegistriesPath, String[] pArgs) {
-        
+    public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPath,
+                    String[] pArgs) {
+
         String command = ""; //$NON-NLS-1$
-        
+
         // Put the args into one string
         String sArgs = ""; //$NON-NLS-1$
         for (int i = 0; i < pArgs.length; i++) {
             sArgs += pArgs[i];
-            
+
             if (i < pArgs.length - 1) {
                 sArgs += " "; //$NON-NLS-1$
             }
         }
-        
+
         // Transform the registries into a string to give to UNO
         String additionnalRegistries = ""; //$NON-NLS-1$
         for (int i = 0; i < pRegistriesPath.length; i++) {
             additionnalRegistries += "-ro " + pRegistriesPath[i]; //$NON-NLS-1$
-            
+
             if (i < pRegistriesPath.length - 1) {
                 additionnalRegistries += " "; //$NON-NLS-1$
             }
         }
-        
+
         // Get the paths to OOo instance types and services registries
         String typesArg = ""; //$NON-NLS-1$
         String[] paths = getTypesPath();
         for (String path : paths) {
             Path typesPath = new Path(path);
-            String sTypesPath = typesPath.toString().replace(" ", "%20");  //$NON-NLS-1$ //$NON-NLS-2$
+            String sTypesPath = typesPath.toString().replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
             typesArg += " -ro file:///" + sTypesPath; //$NON-NLS-1$
         }
 
@@ -223,40 +227,38 @@ public class URE extends AbstractOOo {
             String sServicesPath = servicesPath.toString().replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
             serviceArgs += " -ro file:///" + sServicesPath; //$NON-NLS-1$
         }
-        
+
         String unoPath = getUnoPath();
         if (Platform.OS_WIN32.equals(getPlatform())) {
-            unoPath = "\"" + unoPath + "\"";  // escape spaces in windows names //$NON-NLS-1$ //$NON-NLS-2$
+            unoPath = "\"" + unoPath + "\""; // escape spaces in windows names //$NON-NLS-1$ //$NON-NLS-2$
         }
-        
-        command = unoPath +
-            " -c " + pImplementationName +  //$NON-NLS-1$
-            " -l " + pLibLocation +  //$NON-NLS-1$
-            typesArg +
-            " -ro file:///" + serviceArgs +  //$NON-NLS-1$
-            " " + additionnalRegistries +  //$NON-NLS-1$
-            " -- " + sArgs;  //$NON-NLS-1$
-        
+
+        command = unoPath + " -c " + pImplementationName + //$NON-NLS-1$
+                        " -l " + pLibLocation + //$NON-NLS-1$
+                        typesArg + " -ro file:///" + serviceArgs + //$NON-NLS-1$
+                        " " + additionnalRegistries + //$NON-NLS-1$
+                        " -- " + sArgs; //$NON-NLS-1$
+
         return command;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getJavaldxPath() {
         return getHome() + FILE_SEP + "bin" + FILE_SEP + "javaldx"; //$NON-NLS-1$ //$NON-NLS-2$ 
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean canManagePackages() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public void updatePackage(File pPackageFile) {    
+    public void updatePackage(File pPackageFile, IPath userInstallation) {
     }
 }

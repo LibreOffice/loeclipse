@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.internal.helpers;
+package org.openoffice.ide.eclipse.core.helpers;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public class SystemHelper {
      */
     public static String[] addEnv(String[] pEnv, String pName, String pValue,
             String pSeparator) {
-        
+        //TODO cdan should add a test for this method (test that the case is preserved even on windows, but compare with ignoring case on windows) 
         String[] result = new String[1];  
         
         if (pEnv != null) { 
@@ -113,12 +113,13 @@ public class SystemHelper {
             boolean found = false;
             
             while (!found && i < pEnv.length) {
-                String tmpEnv = pEnv[i]; 
+                String tmpEnv = pEnv[i];
+                String tmpName = pName;
                 if (Platform.getOS().equals(Platform.OS_WIN32)) {
                     tmpEnv = tmpEnv.toLowerCase();
-                    pName = pName.toLowerCase();
+                    tmpName = pName.toLowerCase();
                 }
-                if (tmpEnv.startsWith(pName + "=")) { //$NON-NLS-1$
+                if (tmpEnv.startsWith(tmpName + "=")) { //$NON-NLS-1$
                     found = true;
                 } else {
                     i++;

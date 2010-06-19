@@ -3,7 +3,7 @@ package org.openoffice.ide.eclipse.core.launch.office;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    
+    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.launch.office.messages"; //$NON-NLS-1$
     public static String OfficeLaunchDelegate_LaunchError;
     public static String OfficeLaunchDelegate_LaunchErrorTitle;
     public static String OfficeTab_Options;
@@ -13,17 +13,11 @@ public class Messages extends NLS {
     public static String OfficeTab_UnoProject;
     public static String OfficeTab_ChkUseCleanUserInstallation;
     public static String OfficeTab_ChkUseCleanUserInstallation_ToolTip;
-    
-    private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.launch.office.messages"; //$NON-NLS-1$
-    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
     }
 
-    /**
-     * Private constructor.
-     */
     private Messages() {
     }
 }

@@ -62,7 +62,7 @@ import org.eclipse.swt.graphics.Image;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
-import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
+import org.openoffice.ide.eclipse.core.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
@@ -386,7 +386,7 @@ public class SDK implements ISdk, ITableElement {
      * @return the merged environment variables.
      */
     private String[] mergeVariables(String[] pBaseEnv, String[] pToMergeEnv) {
-
+        //TODO cdan should add a test for this method (all entries in pToMergeEnv should be found in the result) 
         // PATH merging
         String[] vars = pBaseEnv;
         for (int i = 0; i < pToMergeEnv.length; i++) {
@@ -395,7 +395,7 @@ public class SDK implements ISdk, ITableElement {
             if (m.matches()) {
                 String name = m.group(1);
                 String value = m.group(2);
-                vars = SystemHelper.addEnv(pBaseEnv, name, value, SystemHelper.PATH_SEPARATOR);
+                vars = SystemHelper.addEnv(vars, name, value, SystemHelper.PATH_SEPARATOR);
             }
         }
         return vars;

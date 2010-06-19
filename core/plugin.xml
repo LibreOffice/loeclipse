@@ -265,8 +265,10 @@
             name="URE Application"/>
       <launchConfigurationType
             delegate="org.openoffice.ide.eclipse.core.launch.office.OfficeLaunchDelegate"
+            delegateDescription="The Open Office launcher supports running and remote debugging Open Office extensions."
+            delegateName="Open Office Launcher"
             id="org.openoffice.ide.eclipse.core.launchOpenOffice"
-            modes="run"
+            modes="run,debug"
             name="Open Office Application">
       </launchConfigurationType>
    </extension>
