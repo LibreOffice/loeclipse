@@ -173,8 +173,8 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                 env = SystemHelper.addEnv(env, "PATH", 
                                 programFolder.getAbsolutePath(), pathsep); //$NON-NLS-1$
                 
-                System.err.println("Sourcing: " + shellCommand);
-                System.err.println("Sourcing.env: " + Arrays.toString(env));
+                PluginLogger.info("Sourcing: " + shellCommand);
+                PluginLogger.info("Sourcing.env: " + Arrays.toString(env));
                 
                 Process process = SystemHelper.runTool(shellCommand, env, null);
                 try {
