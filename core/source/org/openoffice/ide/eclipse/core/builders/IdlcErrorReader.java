@@ -47,8 +47,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,12 +76,16 @@ public class IdlcErrorReader {
     /**
      * Syntax error expression.
      *  
-     * <p><em>&lt;file&gt; (&lt;line number&gt;) : &lt;message&gt;</em></p>
+     * <p><em>&lt;file&gt;:&lt;line number&gt; [&lt;offsetStart&gt;,&lt;offsetEnd&gt;] : &lt;message&gt;</em></p>
      */
-    private static final String R_IDLC_ERROR  = "(.*)\\(([0-9]+)\\) : (WARNING, )?(.*)"; //$NON-NLS-1$
+    private static final String R_IDLC_ERROR  = "(.*):([0-9]+) \\[([0-9]+):([0-9]+)\\] :" +
+        " (WARNING, )?(.*)"; //$NON-NLS-1$
 
-    private static final int IDLC_ERROR_MESSAGE_GROUP = 3;
-
+    private static final int IDLC_ERROR_LINE_GROUP = 2;
+    private static final int IDLC_ERROR_OFFSET_START_GROUP = 3;
+    private static final int IDLC_ERROR_OFFSET_END_GROUP = 4;
+    private static final int IDLC_ERROR_MESSAGE_GROUP = 5;
+    
     private static final int IDLCPP_INCLUDE_PATH_GROUP = 4;
 
     private static final int IDLCPP_OPTIONAL_GROUP = 3;
@@ -136,11 +138,7 @@ public class IdlcErrorReader {
                     marker = analyseIdlcError(line);
                 } 
                 
-                if (null == marker) {
-                    PluginLogger.debug("Error line: " + line); //$NON-NLS-1$
-                    
-                } else {
-                    
+                if (null != marker) {
                     // Keep only the markers for the errors concerning the 
                     // file which is compiled
                     if (IResource.FILE == marker.getResource().getType() && 
@@ -195,7 +193,9 @@ public class IdlcErrorReader {
             
             // HELP the groups are indexed from 1. 0 is the whole string
             String filePath = mSyntax.group(1);
-            int lineNo = Integer.parseInt(mSyntax.group(2));
+            int lineNo = Integer.parseInt(mSyntax.group(IDLC_ERROR_LINE_GROUP));
+            int offsetStart = Integer.parseInt(mSyntax.group(IDLC_ERROR_OFFSET_START_GROUP));
+            int offsetEnd = Integer.parseInt(mSyntax.group(IDLC_ERROR_OFFSET_END_GROUP));
             String message = mSyntax.group(mSyntax.groupCount());
             
             // Get a handle on the bad file
@@ -227,11 +227,10 @@ public class IdlcErrorReader {
                 // But afterwards, pay attention when the marker should be located under 
                 // the bad words
                 
-                // Try to find the line or word that causes the error
-//                Map positions = getWrongWord(lineNo, message);
-//                
-//                marker.setAttribute(IMarker.CHAR_START, ((Integer)positions.get(IMarker.CHAR_START)).intValue());
-//                marker.setAttribute(IMarker.CHAR_END,  ((Integer)positions.get(IMarker.CHAR_END)).intValue());
+                int lineOffset = getLineOffset( lineNo );
+                
+                marker.setAttribute(IMarker.CHAR_START, lineOffset + offsetStart - 1);
+                marker.setAttribute(IMarker.CHAR_END,  lineOffset + offsetEnd);
                 
             } catch (CoreException e) {
                 PluginLogger.error(
@@ -262,7 +261,7 @@ public class IdlcErrorReader {
             IProject project = mCompiledFile.getProject();
 
             String errorFilePath = mInclude.group(1);
-            int lineNo = Integer.parseInt(mInclude.group(2));
+            int lineNo = Integer.parseInt(mInclude.group(IDLC_ERROR_LINE_GROUP));
             String badIncludePath = mInclude.group(IDLCPP_INCLUDE_PATH_GROUP);
             
             if (null == mInclude.group(IDLCPP_OPTIONAL_GROUP)) {
@@ -287,13 +286,10 @@ public class IdlcErrorReader {
                     marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
                     marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
                     
-                    // Try to find the line or Word that causes the error
-                    Map<String, Integer> positions = getWrongWord(lineNo, message);
+                    int lineOffset = getLineOffset( lineNo );
                     
-                    marker.setAttribute(IMarker.CHAR_START,
-                            positions.get(IMarker.CHAR_START).intValue());
-                    marker.setAttribute(IMarker.CHAR_END,  
-                            positions.get(IMarker.CHAR_END).intValue());
+                    marker.setAttribute(IMarker.CHAR_START, lineOffset);
+                    marker.setAttribute(IMarker.CHAR_END, lineOffset + getLineLength(lineNo));
                     
                 } catch (CoreException e) {
                     // Nothing to do. Do not create noise in the logs
@@ -305,46 +301,56 @@ public class IdlcErrorReader {
     }
     
     /**
-     * Computes the offset of the first and last characters of the word
-     * to underline.
+     * Get the offset of the line relatively to the document beginning.
      * 
-     * @param pLine the number of the line where the error is located
-     * @param pMessage the error message
+     * @param pLine the line number
      * 
-     * @return a map containing the offset of the first and last characters of the
-     *          word causing the error. 
+     * @return the computed offset
      */
-    private Map<String, Integer> getWrongWord(int pLine, String pMessage) {
-        HashMap<String, Integer> map = new HashMap<String, Integer>();
-        int start = 0;
-        int end = 0;
+    private int getLineOffset( int pLine ) {
+        int offset = 0;
         
         try {
-            
             // Get the line offset.
             LineNumberReader fileReader = new LineNumberReader(
                     new InputStreamReader(mCompiledFile.getContents()));
-            int offset = 0;
             
-            for (int i = 0, length = pLine; i < length; i++) {
+            for (int i = 0, length = pLine - 1; i < length; i++) {
                 String tmpLine = fileReader.readLine();
-                offset += tmpLine.length();
+                offset += tmpLine.length() + 1;
             }
-            
-            // TODO Get the character offset in the line
-            // The last character should be found using the next blank.
-            
-            start = offset;
-            end = offset;
         } catch (Exception e) {
             // Nothing to report: the marker will be bad placed perhaps...
         }
         
-        // Create the map content
-        map.put(IMarker.CHAR_START, new Integer(start));
-        map.put(IMarker.CHAR_END, new Integer(end));
-        
-        return map;
+        return offset;
     }
     
+    /**
+     * Get the length of the line.
+     * 
+     * @param pLine the line number
+     * 
+     * @return the length
+     */
+    private int getLineLength( int pLine ) {
+        int lineLen = 0;
+        
+        try {
+            // Get the line offset.
+            LineNumberReader fileReader = new LineNumberReader(
+                    new InputStreamReader(mCompiledFile.getContents()));
+            
+            for (int i = 0, length = pLine - 1; i < length; i++) {
+                fileReader.readLine();
+            }
+            
+            String line = fileReader.readLine();
+            lineLen = line.length();
+        } catch (Exception e) {
+            // Nothing to report: the marker will be bad placed perhaps...
+        }
+        
+        return lineLen;
+    }
 }

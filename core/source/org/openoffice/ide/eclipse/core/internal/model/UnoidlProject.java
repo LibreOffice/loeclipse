@@ -764,7 +764,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
                 marker.setAttribute(IMarker.MESSAGE, 
                     Messages.getString("UnoidlProject.NoOOoSdkError")); //$NON-NLS-1$
             } else {
-                prjRes.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+                prjRes.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
             }
         } catch (CoreException e) {
             if (pSet) {

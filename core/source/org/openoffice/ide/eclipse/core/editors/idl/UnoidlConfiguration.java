@@ -50,6 +50,8 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.DefaultAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.openoffice.ide.eclipse.core.editors.syntax.NonRuleBasedDamagerRepairer;
@@ -94,7 +96,19 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
         }
         return mDoubleClickStrategy;
     }
+    
 
+    @Override
+    public IAnnotationHover getAnnotationHover(ISourceViewer pSourceViewer) {
+        return new DefaultAnnotationHover(false);
+    }
+    
+    @Override
+    public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer pSourceViewer) {
+        return new DefaultAnnotationHover(true);
+    }
+    
+    
     //--------------------------------------------- Syntax highlighting support
     
     /**
