@@ -43,14 +43,11 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.idl;
 
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
+import org.openoffice.ide.eclipse.core.editors.utils.OOTextEditor;
 
 /**
  * Class handling the UNO-IDL text to render them in an Eclipse editor. In order
@@ -63,7 +60,7 @@ import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
  * @author cedricbosdo
  *
  */
-public class UnoidlEditor extends TextEditor {
+public class UnoidlEditor extends OOTextEditor {
     
     /**
      * Member that listens to the preferences property changes.
@@ -91,13 +88,6 @@ public class UnoidlEditor extends TextEditor {
         setSourceViewerConfiguration(new UnoidlConfiguration(mColorManager));
         setDocumentProvider(new UnoidlDocumentProvider());
         OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(mPropertyListener);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected ISourceViewer createSourceViewer(Composite pParent, IVerticalRuler pRuler, int pStyles) {
-        return super.createSourceViewer(pParent, pRuler, pStyles);
     }
     
     /**

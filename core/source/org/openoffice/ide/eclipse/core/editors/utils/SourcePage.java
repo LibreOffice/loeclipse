@@ -46,7 +46,6 @@ package org.openoffice.ide.eclipse.core.editors.utils;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -58,7 +57,7 @@ import org.eclipse.ui.ide.IDE;
  * @author cedricbosdo
  *
  */
-public class SourcePage extends TextEditor implements IFormPage {
+public class SourcePage extends OOTextEditor implements IFormPage {
 
     private FormEditor mEditor;
     private Control mControl;

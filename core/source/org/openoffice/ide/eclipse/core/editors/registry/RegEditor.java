@@ -46,7 +46,7 @@ package org.openoffice.ide.eclipse.core.editors.registry;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.editors.text.TextEditor;
+import org.openoffice.ide.eclipse.core.editors.utils.OOTextEditor;
 
 /**
  * Editor class to view the UNO registries, ie <code>.urd</code> and 
@@ -55,7 +55,7 @@ import org.eclipse.ui.editors.text.TextEditor;
  * 
  * @author cedricbosdo
  */
-public class RegEditor extends TextEditor {
+public class RegEditor extends OOTextEditor {
 
     /**
      * Default constructor, initializing the document provider.
