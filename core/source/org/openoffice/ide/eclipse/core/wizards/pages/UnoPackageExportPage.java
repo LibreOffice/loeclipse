@@ -33,7 +33,6 @@ package org.openoffice.ide.eclipse.core.wizards.pages;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -43,11 +42,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -60,6 +56,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.ide.DialogUtil;
@@ -74,9 +71,10 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.ide.eclipse.core.utils.FilesFinder;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * First page of the new UNO extension export wizard.
@@ -352,7 +350,7 @@ public class UnoPackageExportPage extends WizardPage {
         hidden |= pRes.getName().startsWith( "." ); //$NON-NLS-1$
         
         // Hide files which are always included in the package
-        hidden |= pRes.getName().equals( IUnoidlProject.DESCRIPTION_FILENAME);
+        hidden |= pRes.getName().equals( IUnoidlProject.DESCRIPTION_FILENAME );
         hidden |= pRes.getName().equals( "MANIFEST.MF" ); //$NON-NLS-1$
         hidden |= pRes.getName().equals( "manifest.xml" ); //$NON-NLS-1$
         hidden |= pRes.getName().equals( "types.rdb" ); //$NON-NLS-1$
@@ -461,33 +459,39 @@ public class UnoPackageExportPage extends WizardPage {
             }
 
             if ( doit ) {
+                File prjFile = SystemHelper.getFile( mSelectedProject );
+                
                 // Export the library
-                IPath libraryPath = null;
+                IFile library = null;
                 ILanguageBuilder langBuilder = mSelectedProject.getLanguage().getLanguageBuidler();
-                libraryPath = langBuilder.createLibrary( mSelectedProject );
+                library = langBuilder.createLibrary( mSelectedProject );
 
                 // Create the package model
                 pack = UnoidlProjectHelper.createMinimalUnoPackage( mSelectedProject, destFile );
-                pack.addToClean( libraryPath );
+                pack.addToClean( SystemHelper.getFile( library ) );
                 
                 IFile descrFile = mSelectedProject.getFile( IUnoidlProject.DESCRIPTION_FILENAME );
                 if ( descrFile.exists() ) {
-                    pack.addContent( descrFile );
+                    File resFile = SystemHelper.getFile( descrFile );
+                    pack.addContent( UnoPackage.getPathRelativeToBase( resFile, prjFile ),
+                                    resFile );
                 }
 
                 // Add the additional content to the package
                 List<?> items = mResourceGroup.getAllWhiteCheckedItems();
                 for (Object item : items) {
                     if ( item instanceof IResource ) {
-                        IResource res = (IResource)item;
-                        pack.addContent( res );
+                        File resFile = SystemHelper.getFile( (IResource)item );
+                        pack.addContent( UnoPackage.getPathRelativeToBase( resFile, prjFile ),
+                                        resFile );
                     }
                 }
                 
-                // Create the deployer instance
+                // Run the deployer
                 if ( mAutodeployBox.getSelection() ) {
                     DeployerJob job = new DeployerJob( mSelectedProject.getOOo(), destFile );
-                    pack.setDeployJob( job );
+                    
+                    Display.getDefault().asyncExec( job );
                 }
             }
         } catch ( Exception e ) {
@@ -495,6 +499,19 @@ public class UnoPackageExportPage extends WizardPage {
         }
         
         return pack;
+    }
+    
+    /**
+     * Refresh the selected project.
+     */
+    public void refreshProject() {
+        try {
+            // Refresh the project and return the status
+            String prjName = mSelectedProject.getName();
+            IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
+            prj.refreshLocal( IResource.DEPTH_INFINITE, null );
+        } catch (CoreException e) {
+        }
     }
     
     /**

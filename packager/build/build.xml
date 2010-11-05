@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+
+<project name="packager" default="packager.error">
+
+	
+	<target name="packager.error">
+		<fail>Wrong target!
+			
+			This script should not be executed directly.
+			Please, use the one in the build project
+		</fail>
+	</target>
+	
+	
+	<target name="init-env">
+		<dirname property="packager.basedir" file="${ant.file.packager}/.."/>
+		
+		<loadproperties srcfile="${packager.basedir}/build/build.properties" />
+		
+		<property name="packager.out.path" value="${packager.basedir}/bin/ant" />
+		<property name="packager.out.classes" value="${packager.out.path}/classes"/>
+        <property name="packager.sources" value="${packager.out.path}/source"/>
+
+		<path id="packager.dependencies.path">
+			<fileset dir="${eclipse.home}/plugins/">
+				<include name="org.apache.commons.lang*.jar"/>
+			</fileset>
+        </path>
+		
+		<mkdir dir="${packager.out.path}/features" />
+		<mkdir dir="${packager.out.path}/plugins" />
+        <mkdir dir="${packager.out.classes}" />
+
+        <condition property="packager.sources.cloned">
+            <resourceexists>
+                  <file file="${packager.sources}"/>
+            </resourceexists>
+        </condition>
+	</target>
+	
+	<target name="purge">
+		<dirname property="packager.basedir" file="${ant.file.packager}/.."/>
+		<property name="packager.out.path" value="${packager.basedir}/bin/ant" />
+		<delete dir="${packager.out.path}" />
+	</target>
+
+    <!--
+	<target name="packager.compile" depends="init-env">
+		<javac srcdir="${packager.sources}" destdir="${packager.out.classes}"
+			target="1.5" source="1.5" 
+			debug="${debug}"
+			classpathref="packager.dependencies.path" 
+			excludes="**/unittests/**"/>
+    </target>
+    -->
+
+    <target name="clone-sources" depends="init-env" unless="packager.sources.cloned">
+        <exec executable="git" dir="${packager.out.path}">
+            <arg line="clone ${packager.git.repo}"/>
+            <arg line="source"/>
+        </exec>
+    </target>
+    
+    <target name="pull-sources" depends="init-env, clone-sources" if="packager.sources.cloned">
+        <exec executable="git" dir="${packager.sources}">
+            <arg line="pull -r"/>
+        </exec>
+    </target>
+
+    <target name="compile-jar" depends="init-env, clone-sources, pull-sources">
+        
+    </target>
+
+
+	<target name="packager.plugin" depends="compile-jar">
+		<copy file="${packager.basedir}/build/MANIFEST.MF.in"
+			tofile="${packager.out.path}/MANIFEST.MF" />
+		<replace file="${packager.out.path}/MANIFEST.MF"
+			token="@VERSION@" value="${packager.plugin.version}" />
+		
+		<jar destfile="${packager.out.path}/plugins/${package.prefix}.java_${packager.plugin.version}.jar"
+			manifest="${packager.out.path}/MANIFEST.MF">
+			<zipfileset prefix="" dir="${packager.sources}">
+				<exclude name="**/*.java"/>
+			</zipfileset>
+			<zipfileset prefix="" dir="${packager.out.classes}"/>
+			
+			<zipfileset prefix="icons" dir="${packager.basedir}/icons"/>
+			<zipfileset prefix="" file="${packager.basedir}/plugin.xml" />
+		</jar>
+	</target>
+	
+</project>
+

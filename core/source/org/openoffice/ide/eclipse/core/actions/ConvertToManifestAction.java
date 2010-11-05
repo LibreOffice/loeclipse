@@ -51,14 +51,15 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.model.pack.ManifestModel;
 import org.openoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
+import org.openoffice.plugin.core.model.ManifestModel;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Action converting the legacy package.properties into manifest.xml file.
  * 
- * @author cbosdo
+ * @author Cédric Bosdonnat <cedric.bosdonnat@free.fr>
  *
  */
 public class ConvertToManifestAction implements IObjectActionDelegate {
@@ -80,26 +81,31 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
         
         String prjName = mPackageFile.getProject().getName();
         IUnoidlProject prj = ProjectsManager.getProject( prjName );
+        File prjFile = SystemHelper.getFile( prj );
+        
         // Create a dummy package to get the automatic entries of the manifest
         UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage( prj, new File( "foo.oxt" ) ); //$NON-NLS-1$
         ManifestModel manifestModel = unoPackage.getManifestModel();
         
         for (IFolder lib : propsModel.getBasicLibraries()) {
-            manifestModel.addBasicLibrary( lib );
+            manifestModel.addBasicLibrary( lib.getProjectRelativePath().toString() );
         }
         
         for (IFolder lib : propsModel.getDialogLibraries()) {
-            manifestModel.addDialogLibrary( lib );
+            manifestModel.addDialogLibrary( lib.getProjectRelativePath().toString() );
         }
         
         for (IResource content : propsModel.getContents()) {
-            manifestModel.addContent( content );
+            File contentFile = SystemHelper.getFile( content );
+            manifestModel.addContent( 
+                            UnoPackage.getPathRelativeToBase( contentFile, prjFile), 
+                            contentFile );
         }
         
         Iterator<Entry<Locale, IFile>> iter = propsModel.getDescriptionFiles().entrySet().iterator();
         while ( iter.hasNext() ) {
             Entry<Locale, IFile> entry = iter.next();
-            manifestModel.addDescription( entry.getValue(), entry.getKey() );
+            manifestModel.addDescription( entry.getValue().getProjectRelativePath().toString(), entry.getKey() );
         }
         
         // Serialize the manifest model into the manifest.xml file

@@ -41,7 +41,7 @@ import java.util.Map.Entry;
 
 import org.openoffice.ide.eclipse.core.model.utils.IModel;
 import org.openoffice.ide.eclipse.core.model.utils.IModelChangedListener;
-import org.openoffice.ide.eclipse.core.utils.XMLWriter;
+import org.openoffice.plugin.core.utils.XMLWriter;
 
 /**
  * Class representing the description.xml file.

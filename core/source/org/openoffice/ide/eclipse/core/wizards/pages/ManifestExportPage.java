@@ -60,8 +60,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.language.LanguageExportPart;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Second page of the new OXT package export wizard.
@@ -128,12 +129,12 @@ public class ManifestExportPage extends WizardPage {
     public void configureManifest(UnoPackage pModel) {
         IFile saveFile = getSaveManifestFile( );
         if ( saveFile != null ) {
-            pModel.setSaveManifestFile( saveFile );
+            pModel.setSaveManifestFile( SystemHelper.getFile( saveFile ) );
         }
         
         IFile readFile = getReadManifestFile( );
         if ( readFile != null ) {
-            pModel.setReadManifestFile( readFile );
+            pModel.setReadManifestFile( SystemHelper.getFile( readFile ) );
         }
     }
 

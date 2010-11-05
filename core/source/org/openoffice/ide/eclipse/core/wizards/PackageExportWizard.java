@@ -43,9 +43,9 @@ import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
 import org.openoffice.ide.eclipse.core.wizards.pages.UnoPackageExportPage;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class for the new OXT export wizard.
@@ -90,8 +90,10 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
             mManifestPage.createBuildScripts( model );
             
             // Export the package
-            File out = model.close( null );
+            File out = model.close( );
             finished = out != null;
+            
+            mMainPage.refreshProject();
             
             if ( mHasNewDialogSettings ) {
                 IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
@@ -101,7 +103,6 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
             }
 
             mMainPage.saveWidgetValues();
-            
         }
         
         return finished;

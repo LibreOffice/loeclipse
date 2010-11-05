@@ -73,9 +73,10 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.ide.eclipse.java.build.FilesVisitor;
 import org.openoffice.ide.eclipse.java.build.UnoManifestProvider;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * The language builder implementation for Java.
@@ -99,7 +100,7 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * {@inheritDoc}
      */
-    public IPath createLibrary(IUnoidlProject pUnoProject) throws Exception {
+    public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
 
         IFile jarFile = ((JavaProjectHandler)mLanguage.getProjectHandler()).getJarFile(pUnoProject);
         
@@ -130,7 +131,7 @@ public class JavaBuilder implements ILanguageBuilder {
         IJarExportRunnable runnable = description.createJarExportRunnable( null );
         runnable.run( new NullProgressMonitor() );
         
-        return jarFile.getLocation();
+        return jarFile;
     }
 
 
@@ -253,17 +254,25 @@ public class JavaBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
-                
+        
         // Add the component Jar file
         JavaProjectHandler handler = (JavaProjectHandler)mLanguage.getProjectHandler();
-        pUnoPackage.addComponentFile(handler.getJarFile(pUnoPrj), "Java"); //$NON-NLS-1$
+        File libFile = SystemHelper.getFile( handler.getJarFile(pUnoPrj) );
+        File prjFile = SystemHelper.getFile( pUnoPrj );
+        
+        pUnoPackage.addComponentFile(
+                        UnoPackage.getPathRelativeToBase( libFile, prjFile ),
+                        libFile, "Java"); //$NON-NLS-1$
         
         // Add all the jar dependencies
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
         ArrayList<IFile> libs = getLibs(javaPrj);
         for (IFile lib : libs) {
-            pUnoPackage.addTypelibraryFile(lib, "Java"); //$NON-NLS-1$
+            File jarFile = SystemHelper.getFile( lib );
+            pUnoPackage.addTypelibraryFile(
+                            UnoPackage.getPathRelativeToBase( jarFile, prjFile ),
+                            jarFile, "Java"); //$NON-NLS-1$
         }
     }
     

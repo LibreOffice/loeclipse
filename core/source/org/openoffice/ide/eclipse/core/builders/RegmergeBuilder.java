@@ -52,7 +52,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.openoffice.ide.eclipse.core.utils.FileHelper;
+import org.openoffice.plugin.core.utils.FileHelper;
 
 /**
  * Builder for the URD files generating the <code>types.rdb</code> registry.

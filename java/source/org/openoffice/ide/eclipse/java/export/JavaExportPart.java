@@ -41,9 +41,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.openoffice.ide.eclipse.core.model.language.LanguageExportPart;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
 import org.openoffice.ide.eclipse.java.Messages;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Dialog part for the Ant scripts export configuration.

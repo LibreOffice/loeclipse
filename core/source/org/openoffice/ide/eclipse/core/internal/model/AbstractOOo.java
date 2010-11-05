@@ -57,11 +57,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.swt.graphics.Image;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
-import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.OOoContainer;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 
 /**
  * Helper class to add the table element features to the OOo classes. All the

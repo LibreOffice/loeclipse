@@ -46,13 +46,15 @@ package org.openoffice.ide.eclipse.core.internal.helpers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -73,7 +75,8 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Helper class for UNO-IDL project handling.
@@ -511,13 +514,95 @@ public class UnoidlProjectHelper {
      */
     public static UnoPackage createMinimalUnoPackage(IUnoidlProject pPrj, File pDest) {
 
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
-        UnoPackage unoPackage = new UnoPackage(pDest, prj);
+        UnoPackage unoPackage = new UnoPackage(pDest);
+        
+        File libFile = SystemHelper.getFile( pPrj.getFile( pPrj.getTypesPath() ) );
+        File prjFile = SystemHelper.getFile( pPrj );
         
         // Add content to the package
-        unoPackage.addTypelibraryFile( pPrj.getFile( pPrj.getTypesPath() ), "RDB"); //$NON-NLS-1$
+        unoPackage.addTypelibraryFile( 
+                        UnoPackage.getPathRelativeToBase(libFile, prjFile),
+                        libFile,
+                        "RDB"); //$NON-NLS-1$
         pPrj.getLanguage().getLanguageBuidler().fillUnoPackage(unoPackage, pPrj);
         
         return unoPackage;
     }
+    
+    /**
+     * Checks if the resource is contained in the UNO package.
+     * 
+     * @param pRes the resource to check
+     * @return <code>true</code> if the resource is contained in the package
+     */
+    public static boolean isContainedInPackage(IResource pRes) {
+        boolean contained = false;
+
+        String prjName = pRes.getProject().getName();
+        IUnoidlProject prj = ProjectsManager.getProject(prjName); 
+
+        try {
+            URI resUri = pRes.getLocationURI();
+
+            if (prj != null) {
+
+                File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
+
+                File dest = new File(outputDir, prj.getName() + ".zip"); //$NON-NLS-1$
+                UnoPackage unoPackage = createMinimalUnoPackage(prj, dest);
+
+                List<File> files = unoPackage.getContainedFiles();
+                int i = 0;
+                while (i < files.size() && !contained) {
+                    URI uri = files.get(i).toURI();
+                    if ( uri.equals( resUri ) ) {
+                        contained = true;
+                    }
+                    i++;
+                }
+                unoPackage.dispose();
+            }
+        } catch ( Exception e ) {
+            contained = false;
+        }
+        
+        return contained;
+    }
+    
+    /**
+     * Get the list of the files contained in the minimal UNO package. 
+     * 
+     * @param pPrj the project for which to get the minimal resources
+     * @return the list of files
+     */
+    public static List<IResource> getContainedFile(IProject pPrj) {
+        ArrayList<IResource> resources = new ArrayList<IResource>();
+        
+        String prjName = pPrj.getName();
+        IUnoidlProject unoprj = ProjectsManager.getProject(prjName); 
+        
+        if (unoprj != null) {
+            
+            File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
+            
+            File dest = new File(outputDir, pPrj.getName() + ".zip"); //$NON-NLS-1$
+            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(unoprj, dest);
+            
+            List<File> files = unoPackage.getContainedFiles();
+            File prjFile = SystemHelper.getFile( pPrj );
+            for (File file : files) {
+                String relative = UnoPackage.getPathRelativeToBase( file, prjFile );
+                IResource res = pPrj.findMember( relative );
+                if ( res != null ) {
+                    resources.add( res );
+                }
+            }
+            
+            
+            unoPackage.dispose();
+        }
+        
+        return resources;
+    }
+
 }

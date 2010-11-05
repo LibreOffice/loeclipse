@@ -48,21 +48,23 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Pulldown action for the uno projects. The wizard has to be defined as follows:
- *        <wizard
+ * <pre>
+ *        &lt;wizard
  *           canFinishEarly="false"
  *           category="org.openoffice.ide.eclipse.core"
  *           hasPages="true"
  *           icon="icons/newunoproject.gif"
  *           id="org.openoffice.ide.eclipse.core.newunoproject"
  *           name="%wizards.unoidlproject"
- *           project="true">
- *        <class class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard">
- *            <parameter name="unoproject" value="true"/>
- *        </class>
- *        <description>
+ *           project="true"&gt;
+ *        &lt;class class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard"&gt;
+ *            &lt;parameter name="unoproject" value="true"/&gt;
+ *        &lt;/class&gt;
+ *        &lt;description&gt;
  *           Create an empty UNO component with a service and it's implementation.
- *        </description>
- *     </wizard>
+ *        &lt;/description&gt;
+ *     &lt;/wizard&gt;
+ * </pre>
  * 
  * @author cedricbosdo
  *

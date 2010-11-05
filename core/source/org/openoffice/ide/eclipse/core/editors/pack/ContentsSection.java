@@ -62,8 +62,8 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.openoffice.ide.eclipse.core.editors.Messages;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
 /**
@@ -138,7 +138,7 @@ public class ContentsSection extends SectionPart {
                         if (resource.getName().startsWith(".") ||  //$NON-NLS-1$
                                 resource.getName().equals("build") ||  //$NON-NLS-1$
                                 resource.getName().equals("bin") || //$NON-NLS-1$
-                                UnoPackage.isContainedInPackage(resource)) {
+                                UnoidlProjectHelper.isContainedInPackage(resource)) {
                             select = false;
                         }
                         

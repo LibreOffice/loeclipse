@@ -45,13 +45,13 @@ package org.openoffice.ide.eclipse.core.model.language;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Interface defining a set of methods for to do the language specific
@@ -78,7 +78,7 @@ public interface ILanguageBuilder {
      * @return the created library path
      * @throws Exception if anything wrong happened
      */
-    public IPath createLibrary(IUnoidlProject pUnoProject) throws Exception;
+    public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception;
 
     /**
      * <p>Generates the language specific interfaces corresponding

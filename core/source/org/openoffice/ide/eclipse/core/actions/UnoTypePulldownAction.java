@@ -53,7 +53,8 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
 
 /**
  * Pulldown action for the uno types. The wizard has to be defined as follows:
- *     <wizard
+ * <pre>
+ *     &lt;wizard
  *           canFinishEarly="false"
  *           category="org.openoffice.ide.eclipse.core"
  *           hasPages="true"
@@ -61,13 +62,14 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
  *           id="org.openoffice.ide.eclipse.core.newservice"
  *           name="%wizards.service"
  *           project="false">
- *        <class class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard">
- *            <parameter name="unotype" value="true"/>
- *        </class>
- *        <description>
+ *        &lt;class class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard"&gt;
+ *            &lt;parameter name="unotype" value="true"/&gt;
+ *        &lt;/class&gt;
+ *        &lt;description&gt;
  *           Creates a new 'new-styled' UNO service. A service will export one interface and define some constructors.
- *        </description>
- *     </wizard>
+ *        &lt;/description&gt;
+ *     &lt;/wizard&gt;
+ * </pre>
  * 
  * @author cedricbosdo
  *

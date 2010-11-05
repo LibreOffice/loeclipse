@@ -62,11 +62,11 @@ import org.eclipse.swt.graphics.Image;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.ITableElement;
-import org.openoffice.ide.eclipse.core.internal.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 
 /**
  * Class representing a SDK instance used in the UNO-IDL projects.

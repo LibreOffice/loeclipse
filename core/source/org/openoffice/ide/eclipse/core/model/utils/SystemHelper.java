@@ -41,7 +41,7 @@
  *
  *
  ************************************************************************/
-package org.openoffice.ide.eclipse.core.internal.helpers;
+package org.openoffice.ide.eclipse.core.model.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,9 +50,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Helper class for system variables handling.
@@ -66,6 +70,29 @@ public class SystemHelper {
     
     private static final int COMMAND_ARGS_LENGTH = 3;
 
+    /**
+     * Get a normal Java File from an Eclipse IResource.
+     * 
+     * @param pRes the IResource to convert
+     * 
+     * @return the equivalent File
+     */
+    public static File getFile( IResource pRes ) {
+        return pRes.getLocation().toFile();
+    }
+    
+    /**
+     * Get a normal Java File from an {@link IUnoidlProject}.
+     * 
+     * @param pPrj {@link IUnoidlProject} to convert
+     * 
+     * @return the equivalent File
+     */
+    public static File getFile( IUnoidlProject pPrj ) {
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
+        return getFile( prj );
+    }
+    
     /**
      * Add an environment variable to an array of existing variables.
      * 

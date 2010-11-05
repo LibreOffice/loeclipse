@@ -31,8 +31,8 @@
 package org.openoffice.ide.eclipse.core.model.language;
 
 import org.eclipse.swt.widgets.Composite;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
 import org.openoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Abstract class for the language specific controls part in the OXT export

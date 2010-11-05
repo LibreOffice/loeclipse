@@ -80,7 +80,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.openoffice.ide.eclipse.core.editors.Messages;
 import org.openoffice.ide.eclipse.core.gui.LocaleCellProvider;
 import org.openoffice.ide.eclipse.core.gui.ProjectSelectionDialog;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 
 /**
  * @author cedricbosdo
@@ -228,7 +228,7 @@ public class PackageDescriptionSection extends SectionPart {
                 hiddenResources.addAll(editor.getModel().getDialogLibraries());
                 hiddenResources.addAll(editor.getModel().getContents());
                 hiddenResources.addAll(editor.getModel().getDescriptionFiles().values());
-                hiddenResources.addAll(UnoPackage.getContainedFile(prj));
+                hiddenResources.addAll(UnoidlProjectHelper.getContainedFile(prj));
                 dlg.setFilteredElements(hiddenResources);
                 
                 if (ProjectSelectionDialog.OK == dlg.open()) {
