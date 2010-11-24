@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openoffice.ide.eclipse.cpp"
-      label="OpenOffice.org development plugin support for C++ implementation"
+      label="LibreOffice development plugin support for C++ implementation"
       version="@VERSION@"
       provider-name="Cédric Bosdonnat">
 
    <description>
-This plugin provides the support of C++ implementation for OpenOffice.org
-component development. This plugin depends on the OpenOffice.org development
+This plugin provides the support of C++ implementation for LibreOffice
+component development. This plugin depends on the LibreOffice development
 core plugin.
 
 Even if this is a important piece of work, there are still other
 features to add and bugs to correct, please do not hesitate to
-express your remarks and requests on the ooo-build@lists.freedesktop.org 
+express your remarks and requests on the LibreOffice development 
 mailing list.
    </description>
 
@@ -40,7 +40,7 @@ MA 02111-1307 USA
    </license>
 
    <url>
-      <discovery label="OpenOffice.org Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
+      <discovery label="LibreOffice Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
    </url>
 
    <requires>

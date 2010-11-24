@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openoffice.ide.eclipse.core"
-      label="OpenOffice.org development plugin core"
+      label="LibreOffice development plugin core"
       version="@VERSION@"
       provider-name="Cédric Bosdonnat">
 
    <description>
-      Tool to support OpenOffice.org development using Eclipse. It
+      Tool to support LibreOffice development using Eclipse. It
 provides two editors for UNO-IDL file edition and registry files
 viewing. The plugin helps the user to write it&apos;s UNO-IDL file
 with syntax highlighting and some wizards, it although generates
@@ -23,15 +23,12 @@ This plugin is user oriented and integrate some cheat sheets
 to guide the new user throught different steps.
 Even if this is a important piece of work, there are still other
 features to add and bugs to correct, please do not hesitate to
-express your remarks and requests on the dev@api openoffice mailing
-list.
+express your remarks and requests on the LibreOffice development 
+mailing list.
    </description>
 
    <copyright>
-      The Initial Developer of the Original Code is: Sun Microsystems,Inc..
-Copyright: 2002 by Sun Microsystems, Inc.
-All Rights Reserved.
-Contributor(s): Cedric Bosdonnat
+Copyright: (c) 2010 Cedric Bosdonnat
    </copyright>
 
    <license url="http://www.openoffice.org/license.html">
@@ -54,7 +51,7 @@ MA 02111-1307 USA
    </license>
 
    <url>
-      <update label="OpenOffice.org Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
+      <update label="LibreOffice Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
    </url>
 
    <plugin

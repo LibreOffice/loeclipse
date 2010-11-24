@@ -18,8 +18,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
- org.eclipse.ui,
- javax.xml
+ org.eclipse.ui;bundle-version="3.4.1",
+ javax.xml;bundle-version="1.3.4",
+ org.openoffice.ide.packager.core;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.actions,
@@ -52,5 +53,5 @@ Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.wizards,
  org.openoffice.ide.eclipse.core.wizards.pages,
  org.openoffice.ide.eclipse.core.wizards.utils
-Bundle-Vendor: OpenOffice.org
+Bundle-Vendor: Cédric Bosdonnat
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

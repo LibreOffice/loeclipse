@@ -61,6 +61,7 @@
 		<property name="cpp.sources" value="${cpp.basedir}/source"/>
 		
 		<path id="cpp.dependencies.path">
+			<pathelement location="${packager.out.classes}"/>
 			<pathelement location="${core.out.classes}"/>
 			
 			<fileset dir="${eclipse.home}/plugins/">

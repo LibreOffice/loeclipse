@@ -62,6 +62,7 @@
 		<property name="java.sources" value="${java.basedir}/source"/>
 		
 		<path id="java.dependencies.path">
+			<pathelement location="${packager.out.classes}"/>
 			<pathelement location="${core.out.classes}"/>
 			
 			<fileset dir="${eclipse.home}/plugins/">

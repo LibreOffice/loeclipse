@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openoffice.ide.eclipse.java"
-      label="OpenOffice.org development plugin support for Java implementation"
+      label="LibreOffice development plugin support for Java implementation"
       version="@VERSION@"
       provider-name="Cédric Bosdonnat">
 
    <description>
-This plugin provides the support of Java implementation for OpenOffice.org
-component development. This plugin depends on the OpenOffice.org development
+This plugin provides the support of Java implementation for LibreOffice
+component development. This plugin depends on the LibreOffice development
 core plugin.
 
 Even if this is a important piece of work, there are still other
 features to add and bugs to correct, please do not hesitate to
-express your remarks and requests on the dev@api openoffice mailing
-list.
+express your remarks and requests on the LibreOffice development
+mailing list.
    </description>
 
    <copyright>
-      The Initial Developer of the Original Code is: Sun Microsystems,Inc..
-Copyright: 2002 by Sun Microsystems, Inc.
-All Rights Reserved.
-Contributor(s): Cedric Bosdonnat
+Copyright: 2010 by Cedric Bosdonnat
    </copyright>
 
    <license url="http://www.openoffice.org/license.html">
@@ -43,7 +40,7 @@ MA 02111-1307 USA
    </license>
 
    <url>
-      <discovery label="OpenOffice.org Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
+      <discovery label="LibreOffice Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
    </url>
 
    <requires>

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: C++ extensions support for OOo
+Bundle-Name: C++ extensions support for LibreOffice
 Bundle-SymbolicName: org.openoffice.ide.eclipse.cpp;singleton:=true
 Bundle-Version: @VERSION@
 Bundle-Activator: org.openoffice.ide.eclipse.cpp.Activator

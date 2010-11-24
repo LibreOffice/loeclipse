@@ -53,5 +53,5 @@ Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.wizards,
  org.openoffice.ide.eclipse.core.wizards.pages,
  org.openoffice.ide.eclipse.core.wizards.utils
-Bundle-Vendor: OpenOffice.org
+Bundle-Vendor: LibreOffice
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

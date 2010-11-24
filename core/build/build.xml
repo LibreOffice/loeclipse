@@ -42,7 +42,7 @@
 
 <project name="core" default="core.error">
 	
-    <import file="../packager/build/build.xml"/>
+    <import file="../../packager/build/build.xml"/>
 
 	<target name="core.error">
 		<fail>Wrong target!
@@ -66,6 +66,10 @@
 
 			<fileset dir="${eclipse.home}/plugins/">
 				<include name="org.eclipse*.jar"/>
+			</fileset>
+			
+			<fileset dir="${core.basedir}/../packager">
+				<include name="*.jar"/>
 			</fileset>
 		</path>
 		

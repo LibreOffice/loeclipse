@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Java Plug-in for OOo eclipse integration
+Bundle-Name: Java Plug-in for OOEclipse
 Bundle-SymbolicName: org.openoffice.ide.eclipse.java; singleton:=true
 Bundle-Version: @VERSION@
 Bundle-Activator: org.openoffice.ide.eclipse.java.OOoJavaPlugin
-Bundle-Vendor: OpenOffice.org
+Bundle-Vendor: Cédric Bosdonnat
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.openoffice.ide.eclipse.core,

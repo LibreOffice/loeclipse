@@ -1,7 +1,7 @@
    <feature 
    		url="features/org.openoffice.ide.eclipse.java_@VERSION@.jar" 
    		id="org.openoffice.ide.eclipse.java" version="@VERSION@">
-      <category name="OpenOffice.org"/>
+      <category name="LibreOffice"/>
    </feature>
    
    
