@@ -6,8 +6,5 @@ Bundle-Version: @VERSION@
 Bundle-Vendor: Cédric Bosdonnat
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: ooo-plugin-packager-core-0.1.0-SNAPSHOT.jar,
- .
 Export-Package: org.openoffice.plugin.core.model,
  org.openoffice.plugin.core.utils
-Require-Bundle: org.apache.commons.lang;bundle-version="2.3.0"

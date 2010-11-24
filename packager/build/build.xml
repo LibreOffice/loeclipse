@@ -1,16 +1,35 @@
 <?xml version="1.0"?>
-
-<project name="packager" default="packager.error">
-
-	
-	<target name="packager.error">
-		<fail>Wrong target!
-			
-			This script should not be executed directly.
-			Please, use the one in the build project
-		</fail>
-	</target>
-	
+<!-- ======================================================================
+ *
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2009 by Cédric Bosdonnat.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ * 
+ * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ *
+ * Copyright: 2009 by Cédric Bosdonnat.
+ *
+ * All Rights Reserved.
+ * 
+  ====================================================================== -->
+<project name="packager" default="update-sources"> 
 	
 	<target name="init-env">
 		<dirname property="packager.basedir" file="${ant.file.packager}/.."/>
@@ -19,22 +38,14 @@
 		
 		<property name="packager.out.path" value="${packager.basedir}/bin/ant" />
 		<property name="packager.out.classes" value="${packager.out.path}/classes"/>
-        <property name="packager.sources" value="${packager.out.path}/source"/>
-
-		<path id="packager.dependencies.path">
-			<fileset dir="${eclipse.home}/plugins/">
-				<include name="org.apache.commons.lang*.jar"/>
-			</fileset>
-        </path>
+        <property name="packager.sources" value="${packager.basedir}/source"/>
 		
 		<mkdir dir="${packager.out.path}/features" />
 		<mkdir dir="${packager.out.path}/plugins" />
         <mkdir dir="${packager.out.classes}" />
 
         <condition property="packager.sources.cloned">
-            <resourceexists>
-                  <file file="${packager.sources}"/>
-            </resourceexists>
+        	<available file="${packager.sources}"/>
         </condition>
 	</target>
 	
@@ -44,18 +55,8 @@
 		<delete dir="${packager.out.path}" />
 	</target>
 
-    <!--
-	<target name="packager.compile" depends="init-env">
-		<javac srcdir="${packager.sources}" destdir="${packager.out.classes}"
-			target="1.5" source="1.5" 
-			debug="${debug}"
-			classpathref="packager.dependencies.path" 
-			excludes="**/unittests/**"/>
-    </target>
-    -->
-
     <target name="clone-sources" depends="init-env" unless="packager.sources.cloned">
-        <exec executable="git" dir="${packager.out.path}">
+        <exec executable="git" dir="${packager.basedir}">
             <arg line="clone ${packager.git.repo}"/>
             <arg line="source"/>
         </exec>
@@ -66,27 +67,28 @@
             <arg line="pull -r"/>
         </exec>
     </target>
-
-    <target name="compile-jar" depends="init-env, clone-sources, pull-sources">
-        
+	
+	<target name="update-sources" depends="clone-sources, pull-sources" description="Update the packager sources from git"/>
+	
+    <target name="packager-compile" depends="init-env, update-sources">
+    	<javac srcdir="${packager.sources}/ooo-plugin-packager-core/src/main" destdir="${packager.out.classes}"
+				target="1.5" source="1.5" 
+				debug="${debug}"/>
     </target>
 
 
-	<target name="packager.plugin" depends="compile-jar">
+	<target name="packager.plugin" depends="packager-compile">
 		<copy file="${packager.basedir}/build/MANIFEST.MF.in"
 			tofile="${packager.out.path}/MANIFEST.MF" />
 		<replace file="${packager.out.path}/MANIFEST.MF"
 			token="@VERSION@" value="${packager.plugin.version}" />
 		
-		<jar destfile="${packager.out.path}/plugins/${package.prefix}.java_${packager.plugin.version}.jar"
+		<jar destfile="${packager.out.path}/plugins/${package.prefix}.packager.core_${packager.plugin.version}.jar"
 			manifest="${packager.out.path}/MANIFEST.MF">
-			<zipfileset prefix="" dir="${packager.sources}">
+			<zipfileset prefix="" dir="${packager.sources}/ooo-plugin-packager-core/src/main">
 				<exclude name="**/*.java"/>
 			</zipfileset>
 			<zipfileset prefix="" dir="${packager.out.classes}"/>
-			
-			<zipfileset prefix="icons" dir="${packager.basedir}/icons"/>
-			<zipfileset prefix="" file="${packager.basedir}/plugin.xml" />
 		</jar>
 	</target>
 	
