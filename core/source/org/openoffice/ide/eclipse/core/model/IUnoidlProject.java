@@ -45,6 +45,7 @@ package org.openoffice.ide.eclipse.core.model;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
@@ -66,6 +67,10 @@ public interface IUnoidlProject {
      * folder can contain unoidl files or not. 
      */
     public static final String IDL_FOLDER = "idlfolder"; //$NON-NLS-1$
+    
+    public static final String XCS_EXTENSION = "xcs"; //$NON-NLS-1$
+    
+    public static final String XCU_EXTENSION = "xcu"; //$NON-NLS-1$
     
     /**
      * Cleans up the project before destroying it.
@@ -243,6 +248,36 @@ public interface IUnoidlProject {
      * urd files. This path is relative to the project folder.
      */
     public IPath getUrdPath();
+    
+	/**
+	 * @return the path to the project's folder containing the distribution .oxf
+	 *         file.
+	 */
+	public IPath getDistPath();
+
+    /**
+     * @return the folder folder containing the distribution .oxf file. If the folder does not exist then it is created.
+     * @throws CoreException
+     *             if we were unable to create the folder.
+     */
+	public IFolder getDistFolder() throws CoreException;
+	
+	/**
+	 * @return the path to the project's folder used to store the user profile
+	 *         when running/debugging OpenOffice in a clean environment. This
+	 *         way we do not mangle with the system wide installed, OpenOffice
+	 *         settings. 
+	 */
+	public IPath getOpenOfficeUserProfilePath();
+	
+	/**
+	 * @return the folder used to store the user profile
+	 *         when running/debugging OpenOffice in a clean environment. This
+	 *         way we do not mangle with the system wide installed, OpenOffice
+	 *         settings. If the folder does not exist then it is created. 
+	 * @throws CoreException if we were unable to create the folder. 
+	 */
+	public IFolder getOpenOfficeUserProfileFolder() throws CoreException;
     
     //----------------------------------------------- Project resources getters
     

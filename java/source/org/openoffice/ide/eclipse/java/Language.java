@@ -43,6 +43,29 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.java;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
+import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMConnector;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
+import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.launch.office.IOfficeLaunchConstants;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
@@ -53,6 +76,8 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
  * @author cedricbosdo
  */
 public class Language extends AbstractLanguage {
+
+    private static final String DEFAULT_JAVA_DEBUG_PORT = "7861";
 
     /**
      * {@inheritDoc}
@@ -67,4 +92,39 @@ public class Language extends AbstractLanguage {
     public IProjectHandler getProjectHandler() {
         return new JavaProjectHandler();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void connectDebuggerToOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+                    IProgressMonitor pMonitor) {
+
+        try {
+            // org.eclipse.jdt.launching.socketListenConnector
+            // SocketListenConnector
+            String connectorId = "org.eclipse.jdt.launching.socketListenConnector";
+            IVMConnector connector = JavaRuntime.getVMConnector(connectorId);
+            Map<String, String> argMap = new HashMap<String, String>();
+            argMap.put("timeout", "80000");
+            //FIXME implement some kind of port pickup/retry mechanism in case the default port is already used.
+            argMap.put("port", DEFAULT_JAVA_DEBUG_PORT);
+
+            connector.connect(argMap, pMonitor, pLaunch);
+
+            pPrj.getOOo().runOpenOffice(pPrj, pLaunch, pUserInstallation,
+                            new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
+        } catch (Exception e) {
+            PluginLogger.error("Could not start remote debugger.", e);
+        }
+    }
+
+    @Override
+    public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
+        String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
+        pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
+                        "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
+        pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
+                        "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
+        pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+    };
 }

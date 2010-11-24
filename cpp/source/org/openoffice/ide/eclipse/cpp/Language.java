@@ -30,6 +30,12 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.cpp;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
@@ -38,7 +44,7 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
  * Class for the extension point.
  * 
  * @author cbosdonnat
- *
+ * 
  */
 public class Language extends AbstractLanguage {
 
@@ -46,14 +52,26 @@ public class Language extends AbstractLanguage {
      * {@inheritDoc}
      */
     public ILanguageBuilder getLanguageBuidler() {
-        return new CppBuilder( );
+        return new CppBuilder();
     }
 
     /**
      * {@inheritDoc}
      */
     public IProjectHandler getProjectHandler() {
-        return new CppProjectHandler( );
+        return new CppProjectHandler();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void connectDebuggerToOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+                    IProgressMonitor pMonitor) {
+        throw new RuntimeException("Not yet supported!");
+    }
+
+    @Override
+    public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
+        throw new RuntimeException("Not yet implemented!");
+    };
 }

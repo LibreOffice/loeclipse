@@ -263,6 +263,14 @@
             id="org.openoffice.ide.eclipse.core.launchUreApplication"
             modes="run"
             name="URE Application"/>
+      <launchConfigurationType
+            delegate="org.openoffice.ide.eclipse.core.launch.office.OfficeLaunchDelegate"
+            delegateDescription="The Open Office launcher supports running and remote debugging Open Office extensions."
+            delegateName="Open Office Launcher"
+            id="org.openoffice.ide.eclipse.core.launchOpenOffice"
+            modes="run,debug"
+            name="Open Office Application">
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -270,6 +278,11 @@
             class="org.openoffice.ide.eclipse.core.launch.LaunchConfigurationTabs"
             id="org.openoffice.ide.eclipse.core.launchConfigurationTabGroup1"
             type="org.openoffice.ide.eclipse.core.launchUreApplication"/>
+      <launchConfigurationTabGroup
+            class="org.openoffice.ide.eclipse.core.launch.office.LaunchConfigurationTabs"
+            id="org.openoffice.ide.eclipse.core.OfficeLlaunchConfigurationTabGroup1"
+            type="org.openoffice.ide.eclipse.core.launchOpenOffice">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -277,6 +290,11 @@
             configTypeID="org.openoffice.ide.eclipse.core.launchUreApplication"
             icon="icons/ure_app.gif"
             id="org.openoffice.ide.eclipse.core.UreLaunchIcon"/>
+      <launchConfigurationTypeImage
+            configTypeID="org.openoffice.ide.eclipse.core.launchOpenOffice"
+            icon="icons/ooo16.png"
+            id="org.openoffice.ide.eclipse.core.OfficeLaunchIcon">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">

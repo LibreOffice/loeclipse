@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.openoffice.ide.eclipse.cpp;singleton:=true
 Bundle-Version: @VERSION@
 Bundle-Activator: org.openoffice.ide.eclipse.cpp.Activator
 Bundle-Vendor: Cédric Bosdonnat
-Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.openoffice.ide.eclipse.core;bundle-version="1.1.0",
@@ -14,6 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.managedbuilder.core;bundle-version="5.0.1",
  org.eclipse.cdt.ui,
  org.eclipse.ui.ide,
- org.eclipse.ui.cheatsheets
+ org.eclipse.ui.cheatsheets,
+ org.openoffice.ide.packager.core;bundle-version="0.1.0",
+ org.eclipse.debug.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
