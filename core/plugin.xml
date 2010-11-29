@@ -269,7 +269,7 @@
             delegateName="Open Office Launcher"
             id="org.openoffice.ide.eclipse.core.launchOpenOffice"
             modes="run,debug"
-            name="Open Office Application">
+            name="LibreOffice Application">
       </launchConfigurationType>
    </extension>
    <extension
@@ -292,7 +292,7 @@
             id="org.openoffice.ide.eclipse.core.UreLaunchIcon"/>
       <launchConfigurationTypeImage
             configTypeID="org.openoffice.ide.eclipse.core.launchOpenOffice"
-            icon="icons/ooo16.png"
+            icon="icons/libreoffice_16.png"
             id="org.openoffice.ide.eclipse.core.OfficeLaunchIcon">
       </launchConfigurationTypeImage>
    </extension>
@@ -306,7 +306,7 @@
             class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard"
             icon="/icons/export_package.gif"
             id="org.openoffice.ide.eclipse.core.export.package"
-            name="OpenOffice.org package"/>
+            name="LibreOffice package"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
