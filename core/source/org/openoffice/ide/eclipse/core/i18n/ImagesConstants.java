@@ -79,4 +79,6 @@ public class ImagesConstants {
     public static final String URE_APP_WIZ = "URE_APP_WIZ"; //$NON-NLS-1$
     public static final String ADD = "ADD"; //$NON-NLS-1$
     public static final String DELETE = "DELETE"; //$NON-NLS-1$
+    public static final String OFFICE_APP = "OFFICE_APP"; //$NON-NLS-1$
+    public static final String PACKAGE_CONTENT = "PACKAGE_CONTENT"; //$NON-NLS-1$
 }

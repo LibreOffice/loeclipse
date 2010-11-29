@@ -41,11 +41,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
+import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
@@ -77,6 +80,14 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
      */
     public String getName() {
         return "Package content";
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Image getImage() {
+        return OOEclipsePlugin.getImage(ImagesConstants.PACKAGE_CONTENT);
     }
 
     /**

@@ -49,8 +49,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.UnoProjectLabelProvider;
+import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
@@ -141,8 +143,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
      */
     @Override
     public Image getImage() {
-        // TODO Auto-generated method stub
-        return super.getImage();
+        return OOEclipsePlugin.getImage(ImagesConstants.OFFICE_APP);
     }
 
     /**
