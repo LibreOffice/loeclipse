@@ -1,7 +1,7 @@
 package org.openoffice.ide.eclipse.java;
 
-import org.openoffice.ide.eclipse.core.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.model.config.IExtraOptionsProvider;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 
 /**
  * Adds extra env variables to start OpenOffice with Java setup to run in debug mode.
