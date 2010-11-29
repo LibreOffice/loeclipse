@@ -1,21 +1,11 @@
 /*************************************************************************
  *
- * $RCSfile:  $
- *
- * $Revision:  $
- *
- * last change: $Author:  $ $Date:  $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
- * Sun Microsystems Inc., October, 2000
- *
- *
  * GNU Lesser General Public License Version 2.1
  * =============================================
- * Copyright 2000 by Sun Microsystems, Inc.
- * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ * Copyright 2010 by Dan Corneanu
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,15 +21,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  * 
- * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ * The Initial Developer of the Original Code is: Dan Corneanu.
  *
- * Copyright: 2002 by Sun Microsystems, Inc.
+ * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- *
- * Contributor(s): Cedric Bosdonnat, Dan Corneanu
- *
- *
+ * 
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -63,7 +50,6 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.PluginLogger;
-import org.openoffice.ide.eclipse.core.helpers.SystemHelper;
 import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -71,8 +57,9 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.NullExtraOptionsProvider;
 import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.model.pack.UnoPackage;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.ide.eclipse.core.utils.FilesFinder;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * OpenOffice launcher implementation.
@@ -216,37 +203,39 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      */
     private File exportComponent(IProgressMonitor pMonitor, IUnoidlProject pPrj) throws Exception {
 
-        ILanguageBuilder langBuilder = pPrj.getLanguage().getLanguageBuidler();
-        IPath libraryPath = langBuilder.createLibrary(pPrj);
-
-        IFolder distFolder = pPrj.getFolder(pPrj.getDistPath());
-
-        File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
-        UnoPackage pack = UnoidlProjectHelper.createMinimalUnoPackage(pPrj, destFile);
-        pack.addToClean(libraryPath);
-
-        // FIXME this code is duplicated.
-        IFile descrFile = pPrj.getFile(IUnoidlProject.DESCRIPTION_FILENAME);
-        if (descrFile.exists()) {
-            pack.addContent(descrFile);
-        }
-
-        // Select the XCU / XCS files by default
-        FilesFinder finder = new FilesFinder(
-                        new String[] { IUnoidlProject.XCU_EXTENSION, IUnoidlProject.XCS_EXTENSION });
-        finder.addExclude(pPrj.getDistFolder().getFullPath());
-        try {
-            ((UnoidlProject) pPrj).getProject().accept(finder);
-        } catch (CoreException e) {
-            // Nothing to log here
-        }
-        ArrayList<IFile> files = finder.getResults();
-        for (IFile aFile : files) {
-            pack.addContent(aFile);
-        }
-
-        pack.close(pMonitor);
-        return destFile;
+        // TODO Repair this one!
+//        ILanguageBuilder langBuilder = pPrj.getLanguage().getLanguageBuidler();
+//        IPath libraryPath = langBuilder.createLibrary(pPrj);
+//
+//        IFolder distFolder = pPrj.getFolder(pPrj.getDistPath());
+//
+//        File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
+//        UnoPackage pack = UnoidlProjectHelper.createMinimalUnoPackage(pPrj, destFile);
+//        pack.addToClean(libraryPath);
+//
+//        // FIXME this code is duplicated.
+//        IFile descrFile = pPrj.getFile(IUnoidlProject.DESCRIPTION_FILENAME);
+//        if (descrFile.exists()) {
+//            pack.addContent(descrFile);
+//        }
+//
+//        // Select the XCU / XCS files by default
+//        FilesFinder finder = new FilesFinder(
+//                        new String[] { IUnoidlProject.XCU_EXTENSION, IUnoidlProject.XCS_EXTENSION });
+//        finder.addExclude(pPrj.getDistFolder().getFullPath());
+//        try {
+//            ((UnoidlProject) pPrj).getProject().accept(finder);
+//        } catch (CoreException e) {
+//            // Nothing to log here
+//        }
+//        ArrayList<IFile> files = finder.getResults();
+//        for (IFile aFile : files) {
+//            pack.addContent(aFile);
+//        }
+//
+//        pack.close(pMonitor);
+//        return destFile;
+        return null;
     }
 
 }

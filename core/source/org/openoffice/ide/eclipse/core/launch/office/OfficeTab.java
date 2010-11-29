@@ -1,21 +1,11 @@
 /*************************************************************************
  *
- * $RCSfile:  $
- *
- * $Revision:  $
- *
- * last change: $Author:  $ $Date:  $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
- * Sun Microsystems Inc., October, 2000
- *
- *
  * GNU Lesser General Public License Version 2.1
  * =============================================
- * Copyright 2000 by Sun Microsystems, Inc.
- * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ * Copyright 2010 by Dan Corneanu
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,22 +21,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  * 
- * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ * The Initial Developer of the Original Code is: Dan Corneanu.
  *
- * Copyright: 2002 by Sun Microsystems, Inc.
+ * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- *
- * Contributor(s): Cedric Bosdonnat, Dan Corneanu
- *
- *
+ * 
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
@@ -54,6 +40,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -148,6 +135,15 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     public String getName() {
         return Messages.OfficeTab_Title;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Image getImage() {
+        // TODO Auto-generated method stub
+        return super.getImage();
+    }
 
     /**
      * {@inheritDoc}
@@ -221,8 +217,8 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
             if (pEvent.getSource().equals(mProjectBtn)) {
                 ILabelProvider labelProvider = new UnoProjectLabelProvider();
                 ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-                dialog.setTitle("ProjectChooserTitle"); //$NON-NLS-1$
-                dialog.setMessage("ProjectChooserMessage"); //$NON-NLS-1$
+                dialog.setTitle(Messages.OfficeTab_ProjectChooserTitle);
+                dialog.setMessage(Messages.OfficeTab_ProjectChooserMessage);
                 dialog.setElements(ProjectsManager.getProjects());
 
                 if (dialog.open() == Window.OK) {

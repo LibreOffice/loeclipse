@@ -129,7 +129,7 @@ public class ManifestExportPage extends WizardPage {
     public void configureManifest(UnoPackage pModel) {
         IFile saveFile = getSaveManifestFile( );
         if ( saveFile != null ) {
-            pModel.setSaveManifestFile( SystemHelper.getFile( saveFile ) );
+            pModel.setCopyManifestFileTo( SystemHelper.getFile( saveFile ) );
         }
         
         IFile readFile = getReadManifestFile( );
