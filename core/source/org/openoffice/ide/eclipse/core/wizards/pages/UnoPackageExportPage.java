@@ -32,9 +32,7 @@ package org.openoffice.ide.eclipse.core.wizards.pages;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -59,12 +57,9 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
-import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
-import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
-import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 import org.openoffice.plugin.core.model.UnoPackage;
 
@@ -150,7 +145,7 @@ public class UnoPackageExportPage extends WizardPage {
             i++;
         }
         
-        mContentSelector.loadData( mSelectedProject );
+        mContentSelector.loadDefaults( );
         
         restoreWidgetValues();
     }
@@ -183,7 +178,6 @@ public class UnoPackageExportPage extends WizardPage {
             
             public void modifyText(ModifyEvent pE) {
                 int id = mProjectsList.getSelectionIndex();
-                IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mSelectedProject.getName() );
                 if ( id != -1 ) {
                     String name = mProjectsList.getItem( id );
                     IUnoidlProject unoprj = ProjectsManager.getProject( name );
@@ -191,8 +185,7 @@ public class UnoPackageExportPage extends WizardPage {
                     
                     // Change the project in the manifest page
                     mManifestPage.setProject( unoprj );
-                    
-                    mContentSelector.setProject( prj );
+                    mContentSelector.setProject( unoprj );
                 }
                 
                 setPageComplete( checkPageCompletion() );
@@ -349,33 +342,8 @@ public class UnoPackageExportPage extends WizardPage {
             }
 
             if ( doit ) {
-                File prjFile = SystemHelper.getFile( mSelectedProject );
-                
-                // Export the library
-                IFile library = null;
-                ILanguageBuilder langBuilder = mSelectedProject.getLanguage().getLanguageBuidler();
-                library = langBuilder.createLibrary( mSelectedProject );
-
-                // Create the package model
-                pack = UnoidlProjectHelper.createMinimalUnoPackage( mSelectedProject, destFile );
-                pack.addToClean( SystemHelper.getFile( library ) );
-                
-                IFile descrFile = mSelectedProject.getFile( IUnoidlProject.DESCRIPTION_FILENAME );
-                if ( descrFile.exists() ) {
-                    File resFile = SystemHelper.getFile( descrFile );
-                    pack.addContent( UnoPackage.getPathRelativeToBase( resFile, prjFile ),
-                                    resFile );
-                }
-
-                // Add the additional content to the package
-                List<?> items = mContentSelector.getSelected();
-                for (Object item : items) {
-                    if ( item instanceof IResource ) {
-                        File resFile = SystemHelper.getFile( (IResource)item );
-                        pack.addContent( UnoPackage.getPathRelativeToBase( resFile, prjFile ),
-                                        resFile );
-                    }
-                }
+                pack = PackageContentSelector.createPackage( mSelectedProject, destFile, 
+                                mContentSelector.getSelected());
                 
                 // Run the deployer
                 if ( mAutodeployBox.getSelection() ) {

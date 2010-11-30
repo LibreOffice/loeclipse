@@ -62,6 +62,35 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     PackageContentSelector mContentSelector;
     
     /**
+     * Get the selected resources stored in a launch configuration.
+     *  
+     * @param pConfiguration the configuration to extract the infos from
+     * 
+     * @return the list of resources extracted
+     * 
+     * @throws CoreException if any of the needed properties is missing in 
+     *      the launch configuration
+     */
+    public static List<IResource> getResources( ILaunchConfiguration pConfiguration ) throws CoreException {
+        ArrayList<IResource> selected = new ArrayList<IResource>();
+        
+        String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
+        
+        String paths = pConfiguration.getAttribute( IOfficeLaunchConstants.CONTENT_PATHS, new String() );
+        String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
+            
+        for (String path : pathsItems) {
+            IResource res = prj.findMember( path );
+            if ( res != null ) {
+                selected.add( res );
+            }
+        }
+        
+        return selected;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public void createControl(Composite pParent) {
@@ -89,28 +118,19 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     public Image getImage() {
         return OOEclipsePlugin.getImage(ImagesConstants.PACKAGE_CONTENT);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
             String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
-            IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
-            mContentSelector.setProject( prj );
+            mContentSelector.setProject( ProjectsManager.getProject( prjName ) );
             
-            String paths = pConfiguration.getAttribute( IOfficeLaunchConstants.CONTENT_PATHS, new String() );
-            if ( paths.isEmpty() ) {
-                mContentSelector.loadData( ProjectsManager.getProject( prjName ) );
+            List<IResource> selected = getResources( pConfiguration );
+            if ( selected.isEmpty() ) {
+                mContentSelector.loadDefaults();
             } else {
-                String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
-                ArrayList<IResource> selected = new ArrayList<IResource>();
-                for (String path : pathsItems) {
-                    IResource res = prj.findMember( path );
-                    if ( res != null ) {
-                        selected.add( res );
-                    }
-                }
                 mContentSelector.setSelected( selected );
             }
         } catch (CoreException e) {
@@ -144,10 +164,9 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
         try {
             String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
             if ( !prjName.isEmpty() ) {
-                IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
-                mContentSelector.setProject( prj );
+                mContentSelector.setProject( ProjectsManager.getProject( prjName ) );
                 
-                mContentSelector.loadData( ProjectsManager.getProject( prjName ) );
+                mContentSelector.loadDefaults();
             }
         } catch (CoreException e) {
             // Don't do anything in that case

@@ -30,6 +30,7 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +51,13 @@ import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
+import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
+import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.ide.eclipse.core.utils.FilesFinder;
+import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Common helper GUI part to select elements to add in the UNO package to be exported.
@@ -64,6 +69,7 @@ import org.openoffice.ide.eclipse.core.utils.FilesFinder;
 public class PackageContentSelector extends Composite {
     
     private ResourceTreeAndListGroup mResourceGroup;
+    private IUnoidlProject mProject;
     
     /**
      * Constructor based on SWT composite's one.
@@ -90,22 +96,22 @@ public class PackageContentSelector extends Composite {
      * 
      * @param pPrj the project to show.
      */
-    public void setProject(IProject pPrj) {
-        mResourceGroup.setRoot( pPrj );
+    public void setProject(IUnoidlProject pPrj) {
+        mProject = pPrj;
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mProject.getName() );
+        mResourceGroup.setRoot( prj );
     }
     
     /**
-     * Populate the resource view with some fresh data.
-     * 
-     * @param pSelectedProject the UNO project for which to show the resources
+     * Populate the resource view with some default data (mainly the XCU / XCS files).
      */
-    public void loadData( IUnoidlProject pSelectedProject ) {
+    public void loadDefaults( ) {
         // Select the XCU / XCS files by default
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pSelectedProject.getName() );
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mProject.getName() );
         FilesFinder finder = new FilesFinder( 
             new String[] { IUnoidlProject.XCU_EXTENSION, IUnoidlProject.XCS_EXTENSION } );
         try {
-            finder.addExclude( pSelectedProject.getDistFolder().getFullPath() );
+            finder.addExclude( mProject.getDistFolder().getFullPath() );
             prj.accept( finder );
         } catch (CoreException e) {
             PluginLogger.error("Could not visit the project's content.", e);
@@ -134,6 +140,52 @@ public class PackageContentSelector extends Composite {
         for (IResource res : pSelected) {
             mResourceGroup.initialCheckTreeItem( res );   
         }
+    }
+    
+    /**
+     * Convenience method to create and populate the UnoPackage.
+     * 
+     * @param pProject the project to export
+     * @param pDestFile the file to export to
+     * @param pResources the files and folder to add to the OXT
+     * 
+     * @return the populated package model
+     * 
+     * @throws Exception if anything goes wrong.
+     */
+    public static UnoPackage createPackage( IUnoidlProject pProject, File pDestFile, 
+                    List<?> pResources ) throws Exception {
+        UnoPackage pack = null;
+        
+        File prjFile = SystemHelper.getFile( pProject );
+        
+        // Export the library
+        IFile library = null;
+        ILanguageBuilder langBuilder = pProject.getLanguage().getLanguageBuidler();
+        library = langBuilder.createLibrary( pProject );
+
+        // Create the package model
+        pack = UnoidlProjectHelper.createMinimalUnoPackage( pProject, pDestFile );
+        pack.addToClean( SystemHelper.getFile( library ) );
+        
+        IFile descrFile = pProject.getFile( IUnoidlProject.DESCRIPTION_FILENAME );
+        if ( descrFile.exists() ) {
+            File resFile = SystemHelper.getFile( descrFile );
+            pack.addContent( UnoPackage.getPathRelativeToBase( resFile, prjFile ),
+                            resFile );
+        }
+
+        // Add the additional content to the package
+        for (Object item : pResources) {
+            if ( item instanceof IResource ) {
+                File resFile = SystemHelper.getFile( (IResource)item );
+                pack.addContent( UnoPackage.getPathRelativeToBase( resFile, prjFile ),
+                                resFile );
+            }
+        }
+        
+        
+        return pack;
     }
     
     /**
