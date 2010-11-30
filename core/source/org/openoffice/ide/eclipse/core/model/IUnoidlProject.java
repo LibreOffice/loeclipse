@@ -249,35 +249,35 @@ public interface IUnoidlProject {
      */
     public IPath getUrdPath();
     
-	/**
-	 * @return the path to the project's folder containing the distribution .oxf
-	 *         file.
-	 */
-	public IPath getDistPath();
+    /**
+     * @return the path to the project's folder containing the distribution .oxf
+     *         file.
+     */
+    public IPath getDistPath();
 
     /**
      * @return the folder folder containing the distribution .oxf file. If the folder does not exist then it is created.
      * @throws CoreException
      *             if we were unable to create the folder.
      */
-	public IFolder getDistFolder() throws CoreException;
-	
-	/**
-	 * @return the path to the project's folder used to store the user profile
-	 *         when running/debugging OpenOffice in a clean environment. This
-	 *         way we do not mangle with the system wide installed, OpenOffice
-	 *         settings. 
-	 */
-	public IPath getOpenOfficeUserProfilePath();
-	
-	/**
-	 * @return the folder used to store the user profile
-	 *         when running/debugging OpenOffice in a clean environment. This
-	 *         way we do not mangle with the system wide installed, OpenOffice
-	 *         settings. If the folder does not exist then it is created. 
-	 * @throws CoreException if we were unable to create the folder. 
-	 */
-	public IFolder getOpenOfficeUserProfileFolder() throws CoreException;
+    public IFolder getDistFolder() throws CoreException;
+
+    /**
+     * @return the path to the project's folder used to store the user profile
+     *         when running/debugging OpenOffice in a clean environment. This
+     *         way we do not mangle with the system wide installed, OpenOffice
+     *         settings. 
+     */
+    public IPath getOpenOfficeUserProfilePath();
+
+    /**
+     * @return the folder used to store the user profile
+     *         when running/debugging OpenOffice in a clean environment. This
+     *         way we do not mangle with the system wide installed, OpenOffice
+     *         settings. If the folder does not exist then it is created. 
+     * @throws CoreException if we were unable to create the folder. 
+     */
+    public IFolder getOpenOfficeUserProfileFolder() throws CoreException;
     
     //----------------------------------------------- Project resources getters
     

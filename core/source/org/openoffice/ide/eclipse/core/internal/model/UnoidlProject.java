@@ -464,26 +464,36 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         return getFolder(getBuildPath().append(UnoidlProjectHelper.URD_BASIS)).getProjectRelativePath();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IPath getDistPath() {
         return getFolder(UnoidlProjectHelper.DIST_BASIS).getProjectRelativePath();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IFolder getDistFolder() throws CoreException {
         IFolder folder = getFolder(getDistPath());
-        // TODO find better way to make sure the folder exists.
         if (!folder.exists()) {
             folder.getLocation().toFile().mkdirs();
         }
         return folder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IPath getOpenOfficeUserProfilePath() {
         return getFolder(getDistPath().append(UnoidlProjectHelper.OO_PROFILE_BASIS)).getProjectRelativePath();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IFolder getOpenOfficeUserProfileFolder() throws CoreException {
         IFolder folder = getFolder(getOpenOfficeUserProfilePath());
-        // TODO find better way to make sure the folder exists.
         if (!folder.exists()) {
             folder.getLocation().toFile().mkdirs();
         }

@@ -31,9 +31,7 @@
 package org.openoffice.ide.eclipse.core.launch.office;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
@@ -42,20 +40,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.NullExtraOptionsProvider;
-import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.openoffice.plugin.core.model.UnoPackage;
 
 /**

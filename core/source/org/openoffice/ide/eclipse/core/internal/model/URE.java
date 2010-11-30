@@ -259,6 +259,6 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
-    public void updatePackage(File pPackageFile, IPath userInstallation) {
+    public void updatePackage(File pPackageFile, IPath pUserInstallation) {
     }
 }

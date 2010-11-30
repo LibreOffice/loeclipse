@@ -20,7 +20,7 @@ public class FilesFinder implements IResourceVisitor {
 
     private String[] mExtensions;
     private ArrayList<IFile> mFiles;
-    private Set<IPath> excludedPaths = new HashSet<IPath>();
+    private Set<IPath> mExcludedPaths = new HashSet<IPath>();
     
     /**
      * Constructor.
@@ -44,30 +44,35 @@ public class FilesFinder implements IResourceVisitor {
      */
     public boolean visit(IResource pResource) throws CoreException {
 
-    	IPath resourcePath = pResource.getFullPath();
-		if(this.excludedPaths.contains(resourcePath)) {
-    		return false;
-    	}
-		
-        if ( pResource.getType() == IResource.FILE ) {
-            boolean matches = false;
-            String name = pResource.getName();
+        boolean result = false; 
+        IPath resourcePath = pResource.getFullPath();
+        if (!this.mExcludedPaths.contains(resourcePath)) {
+            if ( pResource.getType() == IResource.FILE ) {
+                boolean matches = false;
+                String name = pResource.getName();
 
-            int i = 0;
-            while ( i < mExtensions.length && !matches ) {
-                matches = name.toLowerCase().endsWith( mExtensions[i].toLowerCase() );
-                i++;
-            }
+                int i = 0;
+                while ( i < mExtensions.length && !matches ) {
+                    matches = name.toLowerCase().endsWith( mExtensions[i].toLowerCase() );
+                    i++;
+                }
 
-            if ( matches ) {
-                mFiles.add( ( IFile )pResource );
+                if ( matches ) {
+                    mFiles.add( ( IFile )pResource );
+                }
             }
+            result = true;
         }
         
-        return true;
+        return result;
     }
 
-	public void addExclude(IPath pDistPath) {
-		this.excludedPaths.add(pDistPath);		
-	}
+    /**
+     * Add a path to exclude in the search.
+     * 
+     * @param pDistPath the path to exclude  
+     */
+    public void addExclude(IPath pDistPath) {
+        this.mExcludedPaths.add(pDistPath);
+    }
 }

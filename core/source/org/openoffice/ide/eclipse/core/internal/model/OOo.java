@@ -403,7 +403,7 @@ public class OOo extends AbstractOOo {
     /**
      * Add a Uno package to the OOo user packages.
      * 
-     * FIXME This method has to handle license ap proval
+     * FIXME This method has to handle license approval
      * 
      * @param pPackageFile
      *            the package file to add
@@ -452,19 +452,19 @@ public class OOo extends AbstractOOo {
      * 
      * @param pName
      *            the name of the package to remove
-     * @param pUuserInstallation
-     *            TODO
+     * @param pUserInstallation
+     *            the path to the office user installation to use 
      * @throws Exception
      *             if anything wrong happens
      */
-    private void removePackage(String pName, IPath pUuserInstallation) throws Exception {
+    private void removePackage(String pName, IPath pUserInstallation) throws Exception {
         String shellCommand = "unopkg remove " + pName; //$NON-NLS-1$
 
         String[] env = SystemHelper.getSystemEnvironement();
         String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
         env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
-        env = addUserProfile(pUuserInstallation, env);
+        env = addUserProfile(pUserInstallation, env);
 
         SystemHelper.runTool(shellCommand, env, null);
     }
