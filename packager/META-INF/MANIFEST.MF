@@ -8,3 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.plugin.core.model,
  org.openoffice.plugin.core.utils
+Bundle-ClassPath: source/ooo-plugin-packager-core/src/main/java/
