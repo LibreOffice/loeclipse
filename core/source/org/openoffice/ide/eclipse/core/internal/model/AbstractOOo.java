@@ -379,6 +379,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             String command = "soffice.bin";
 
             env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
+            env = SystemHelper.addEnv(env, "SAL_ALLOW_LINKOO_SYMLINKS", "1", null );
             env = addUserProfile(pUserInstallation, env);
             env = pExtraOptionsProvider.addEnv(env);
 

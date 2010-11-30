@@ -105,9 +105,6 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     List<IResource> resources = PackageConfigTab.getResources( pConfiguration );
                     File destFile = exportComponent( prj, resources );
                     pMonitor.worked(1);
-
-                    // Try to source ooenv if it exists
-                    sourceOOEnv(prj);
                     
                     // Deploy the component
                     deployComponent(prj, userInstallation, destFile);
@@ -138,41 +135,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
     }
 
     /**
-     * Tries to source ooenv if it exists and if we are on alinux OS.
-     * 
-     * @param pPrj the target project.
-     * @throws IOException if we were unable to start the command
-     */
-    private void sourceOOEnv(IUnoidlProject pPrj) throws IOException {
-        if (Platform.getOS().equals(Platform.OS_LINUX)) {
-            IOOo oo = pPrj.getOOo();
-            String home = oo.getHome();
-            File homeFolder = new File(home);
-            File programFolder = new File(homeFolder, "program");
-            File oooenvFile = new File(programFolder, "ooenv");
-            
-            if (oooenvFile.isFile()) {
-                String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
-                String shellCommand = "source ooenv"; //$NON-NLS-1$
-                String[] env = SystemHelper.getSystemEnvironement();
-                env = SystemHelper.addEnv(env, "PATH", 
-                                programFolder.getAbsolutePath(), pathsep); //$NON-NLS-1$
-                
-                PluginLogger.info("Sourcing: " + shellCommand);
-                PluginLogger.info("Sourcing.env: " + Arrays.toString(env));
-                
-                Process process = SystemHelper.runTool(shellCommand, env, null);
-                try {
-                    process.waitFor();
-                } catch (InterruptedException e) {
-                    PluginLogger.error("Interrupted while waiting for the source command to complete.", e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Deploys the .oxt component in an OpenOffice installation.
+     * Deploys the .oxt component in a LibreOffice installation.
      * 
      * @param pPrj
      *            target project
