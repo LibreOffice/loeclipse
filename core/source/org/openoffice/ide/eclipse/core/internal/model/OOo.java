@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
@@ -413,10 +414,7 @@ public class OOo extends AbstractOOo {
      */
     private void addPackage(File pPackageFile, IPath pUserInstallation) throws Exception {
         String path = pPackageFile.getAbsolutePath();
-        if (getPlatform().equals(Platform.OS_WIN32)) {
-            path = "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        String shellCommand = "unopkg gui -f " + path; //$NON-NLS-1$
+        String shellCommand = MessageFormat.format( "unopkg gui -f \"{0}\"", path ); //$NON-NLS-1$
 
         String[] env = SystemHelper.getSystemEnvironement();
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
