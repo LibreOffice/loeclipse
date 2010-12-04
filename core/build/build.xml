@@ -68,7 +68,7 @@
 				<include name="org.eclipse*.jar"/>
 			</fileset>
 			
-			<fileset dir="${core.basedir}/../packager">
+			<fileset dir="${packager.out.path}/plugins">
 				<include name="*.jar"/>
 			</fileset>
 		</path>
@@ -78,7 +78,7 @@
 		<mkdir dir="${core.out.classes}" />
 	</target>
 	
-	<target name="purge">
+	<target name="purge" depends="packager.purge">
 		<dirname property="core.basedir" file="${ant.file.core}/.."/>
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<delete dir="${core.out.path}" />
