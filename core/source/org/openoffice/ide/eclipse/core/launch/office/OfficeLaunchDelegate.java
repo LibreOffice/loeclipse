@@ -46,6 +46,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -114,6 +115,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     }
                     pMonitor.worked(1);
                 } catch (Exception e) {
+                    PluginLogger.error(Messages.OfficeLaunchDelegate_LaunchError, e);
                     Display.getDefault().asyncExec(new Runnable() {
 
                         public void run() {

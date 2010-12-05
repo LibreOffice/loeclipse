@@ -49,6 +49,7 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
+import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
@@ -78,15 +79,16 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
         
         String paths = pConfiguration.getAttribute( IOfficeLaunchConstants.CONTENT_PATHS, new String() );
-        String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
-            
-        for (String path : pathsItems) {
-            IResource res = prj.findMember( path );
-            if ( res != null ) {
-                selected.add( res );
+        if(!paths.isEmpty()) {
+            String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
+                
+            for (String path : pathsItems) {
+                IResource res = prj.findMember( path );
+                if ( res != null ) {
+                    selected.add( res );
+                }
             }
         }
-        
         return selected;
     }
     
@@ -125,13 +127,17 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
             String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
-            mContentSelector.setProject( ProjectsManager.getProject( prjName ) );
+            IUnoidlProject project = ProjectsManager.getProject( prjName );
             
-            List<IResource> selected = getResources( pConfiguration );
-            if ( selected.isEmpty() ) {
-                mContentSelector.loadDefaults();
-            } else {
-                mContentSelector.setSelected( selected );
+            if(null != project) {
+                mContentSelector.setProject( project );
+                
+                List<IResource> selected = getResources( pConfiguration );
+                if ( selected.isEmpty() ) {
+                    mContentSelector.loadDefaults();
+                } else {
+                    mContentSelector.setSelected( selected );
+                }
             }
         } catch (CoreException e) {
             PluginLogger.error(Messages.OfficeTab_Configurationerror, e);
