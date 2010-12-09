@@ -4,7 +4,7 @@ Bundle-Name: Java Plug-in for OOo eclipse integration
 Bundle-SymbolicName: org.openoffice.ide.eclipse.java; singleton:=true
 Bundle-Version: 1.0.3
 Bundle-Activator: org.openoffice.ide.eclipse.java.OOoJavaPlugin
-Bundle-Vendor: OpenOffice.org
+Bundle-Vendor: Cédric Bosdonnat
 Require-Bundle: org.eclipse.ui,
  org.openoffice.ide.eclipse.core,
  org.eclipse.core.resources,

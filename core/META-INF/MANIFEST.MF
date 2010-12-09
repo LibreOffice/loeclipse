@@ -15,11 +15,9 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.ui.cheatsheets,
  org.eclipse.help,
  org.eclipse.ui.forms,
- org.junit,
  org.eclipse.debug.core;visibility:=reexport,
  org.eclipse.debug.ui,
  org.eclipse.ui;bundle-version="3.4.1",
- javax.xml;bundle-version="1.3.4",
  org.openoffice.ide.packager.core;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.ide.eclipse.core,
@@ -54,5 +52,5 @@ Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.wizards,
  org.openoffice.ide.eclipse.core.wizards.pages,
  org.openoffice.ide.eclipse.core.wizards.utils
-Bundle-Vendor: LibreOffice
+Bundle-Vendor: Cédric Bosdonnat
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

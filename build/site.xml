@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <category-def name="LibreOffice" label="LibreOffice"/>
+   
+   <feature 
+   		url="features/org.openoffice.ide.eclipse.core_@CORE_VERSION@.jar" 
+   		id="org.openoffice.ide.eclipse.core" version="@CORE_VERSION@">
+      <category name="LibreOffice"/>
+   </feature>
+   
+   <feature 
+   		url="features/org.openoffice.ide.eclipse.java_@JAVA_VERSION@.jar" 
+   		id="org.openoffice.ide.eclipse.java" version="@JAVA_VERSION@">
+      <category name="LibreOffice"/>
+   </feature>
+   
+   <feature 
+        url="features/org.openoffice.ide.eclipse.cpp_@CPP_VERSION@.jar"
+        id="org.openoffice.ide.eclipse.cpp"
+        version="@CPP_VERSION@">
+      <category name="LibreOffice"/>
+   </feature>
+</site>

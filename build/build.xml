@@ -40,11 +40,13 @@
  * Contributor(s): Cedric Bosdonnat                                                              
  ====================================================================== -->
 
-<project name="ooeclipseintegration" default="site" basedir="..">
+<project name="ooeclipseintegration" default="site">
 
 	<import file="../core/build/build.xml"/>
 	<import file="../java/build/build.xml"/>
 	<import file="../cpp/build/build.xml"/>
+	
+	<property file="versions.properties"/>
 	
 	<target name="help" description="Tells how to run the script">
 		<echo>
@@ -71,7 +73,6 @@
 	</target>
 	
 	<target name="check-ooo-version">
-        <property file="ant/build.properties"/>
         
 		<property name="office.linux.basis.dir" value="${openoffice.home}${file.separator}basis-link"/>
         <property name="office.linux.ure.dir" value="${office.linux.basis.dir}${file.separator}ure-link"/>
@@ -151,7 +152,7 @@
 		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env, cpp.init-env">
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
-		<property name="out.path" value="site" />
+		<property name="out.path" value="../site" />
 		<condition property="debug" value="false">
 			<not>
 				<isset property="debug"/>
@@ -165,41 +166,99 @@
 	
 	<target name="purge" description="Cleans all the output results" 
 		depends="core.purge, java.purge, cpp.purge">
-		<delete file="ooeclipseintegration_site.zip" />
+		<delete dir="../site"/>
+		<delete file="../ooeclipseintegration_site.zip" />
 	</target>
 	
-	<target name="site" depends="init-env, core.site, java.site, cpp.site"
+	
+	<target name="core.feature">
+		<!-- Replace the @*_VERSION@ tokens to create the feature.xml file  -->
+		<copy file="features/core/feature.xml"
+			tofile="${out.path}/features/feature.xml" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@CORE_VERSION@" value="${core.plugin.version}" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+		
+		<jar destfile="${out.path}/features/${package.prefix}.core_${core.plugin.version}.jar">
+			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
+				<include name="feature.xml"/>
+			</zipfileset>
+		</jar>
+			
+		<delete file="${out.path}/features/feature.xml"/>
+	</target>
+	
+	<target name="java.feature">
+		<!-- Replace the @*_VERSION@ tokens to create the feature.xml file  -->
+		<copy file="features/java/feature.xml"
+			tofile="${out.path}/features/feature.xml" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@CORE_VERSION@" value="${core.plugin.version}" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+		
+		<jar destfile="${out.path}/features/${package.prefix}.java_${java.plugin.version}.jar">
+			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
+				<include name="feature.xml"/>
+			</zipfileset>
+		</jar>
+			
+		<delete file="${out.path}/features/feature.xml"/>
+	</target>
+	
+	<target name="cpp.feature">
+		<!-- Replace the @*_VERSION@ tokens to create the feature.xml file  -->
+		<copy file="features/cpp/feature.xml"
+			tofile="${out.path}/features/feature.xml" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@CORE_VERSION@" value="${core.plugin.version}" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+		<replace file="${out.path}/features/feature.xml" 
+			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+		
+		<jar destfile="${out.path}/features/${package.prefix}.cpp_${cpp.plugin.version}.jar">
+			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
+				<include name="feature.xml"/>
+			</zipfileset>
+		</jar>
+			
+		<delete file="${out.path}/features/feature.xml"/>
+	</target>
+	
+	<target name="features" depends="core.feature, java.feature, cpp.feature"/>
+	<target name="plugins" depends="core.plugin, java.plugin, cpp.plugin"/>
+	
+	<target name="site" depends="init-env, plugins, features"
 		description="Creates the Eclipse update site">
 		
-		<!-- Copying the features and plugins -->
-		<echo message="Copying the plugins feature JARs"/>
-		<copy todir="${out.path}/features" >
-			<fileset dir="."
-				includes="**/features/*.jar" />
-			<mapper type="flatten" />
-		</copy>
+		<!-- Replace the versions in the site.xml -->
+		<copy file="site.xml" 
+			tofile="${out.path}/site.xml" />
+   		<replace file="${out.path}/site.xml"
+			token="@CORE_VERSION@" value="${core.plugin.version}" />
+		<replace file="${out.path}/site.xml"
+			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+		<replace file="${out.path}/site.xml"
+			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
 		
-		<echo message="Copying the plugins plugin JARs"/>
+		<!-- Copying the plugins -->
+		<echo message="Copying the plugins JARs"/>
 		<copy todir="${out.path}/plugins">
-			<fileset dir="." 
+			<fileset dir=".." 
 				includes="**/plugins/*.jar" />
 			<mapper type="flatten" />
 		</copy>
-		
-		<!-- Site map generation -->
-		<echo message="Merging the site.xml fragments"/>
-		<concat destfile="${out.path}/site.xml">
-			<header file="build/site_header.xml" />
-			<fileset dir="."
-				includes="**/site_fragment.xml">
-			</fileset>
-			<footer file="build/site_footer.xml" />
-		</concat>
 	</target>
 
 	<target name="archive-site" description="Create a zip for the update site"
 		depends="site">
-		<zip destfile="ooeclipseintegration_site.zip"
+		<zip destfile="../ooeclipseintegration_site.zip"
 			basedir="${out.path}"
 			includes="plugins/**, features/**, site.xml" />
 	</target>

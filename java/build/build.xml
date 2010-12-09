@@ -55,8 +55,6 @@
 	<target name="init-env" unless="java.nobuild">
 		<dirname property="java.basedir" file="${ant.file.java}/.."/>
 		
-		<loadproperties srcfile="${java.basedir}/build/build.properties" />
-		
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<property name="java.out.classes" value="${java.out.path}/classes"/>
 		<property name="java.sources" value="${java.basedir}/source"/>
@@ -70,7 +68,6 @@
 			</fileset>
 		</path>
 		
-		<mkdir dir="${java.out.path}/features" />
 		<mkdir dir="${java.out.path}/plugins" />
 		<mkdir dir="${java.out.classes}" />
 	</target>
@@ -79,27 +76,6 @@
 		<dirname property="java.basedir" file="${ant.file.java}/.."/>
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<delete dir="${java.out.path}" />
-	</target>
-
-	<target name="site" depends="java.plugin, java.feature" unless="java.nobuild">
-		<copy file="${java.basedir}/build/site_fragment.xml.in" 
-			tofile="${java.out.path}/site_fragment.xml" />
-		<replace file="${java.out.path}/site_fragment.xml"
-			token="@VERSION@" value="${java.plugin.version}" />
-	</target>
-
-	<target name="java.feature" unless="java.nobuild">
-		<!-- Replace the @VERSION@ tokens to create the feature.xml file  -->
-		<copy file="${java.basedir}/build/feature.xml.in"
-			tofile="${java.out.path}/feature.xml" />
-		<replace file="${java.out.path}/feature.xml" 
-			token="@VERSION@" value="${java.plugin.version}" />
-		<replace file="${java.out.path}/feature.xml" 
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
-		
-		<jar destfile="${java.out.path}/features/${package.prefix}.java_${java.plugin.version}.jar">
-			<zipfileset prefix="" file="${java.out.path}/feature.xml"/>
-		</jar>
 	</target>
 
 	<target name="java.compile" depends="init-env" unless="java.nobuild">
@@ -114,7 +90,9 @@
 		<copy file="${java.basedir}/build/MANIFEST.MF.in"
 			tofile="${java.out.path}/MANIFEST.MF" />
 		<replace file="${java.out.path}/MANIFEST.MF"
-			token="@VERSION@" value="${java.plugin.version}" />
+			token="@CORE_VERSION@" value="${core.plugin.version}" />
+		<replace file="${java.out.path}/MANIFEST.MF"
+			token="@JAVA_VERSION@" value="${java.plugin.version}" />
 		
 		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.plugin.version}.jar"
 			manifest="${java.out.path}/MANIFEST.MF">
