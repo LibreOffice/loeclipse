@@ -53,7 +53,7 @@
 	
 	
 	<target name="init-env" unless="java.nobuild">
-		<dirname property="java.basedir" file="${ant.file.java}/.."/>
+		<dirname property="java.basedir" file="${ant.file.java}"/>
 		
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<property name="java.out.classes" value="${java.out.path}/classes"/>
@@ -72,8 +72,15 @@
 		<mkdir dir="${java.out.classes}" />
 	</target>
 	
-	<target name="purge">
-		<dirname property="java.basedir" file="${ant.file.java}/.."/>
+	<target name="java.version" depends="init-env">
+		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
+		<copy tofile="${manifest.properties}" file="${java.basedir}/META-INF/MANIFEST.MF"/>
+		<replace file="${manifest.properties}" token=":" value="="/>
+		<property file="${manifest.properties}" prefix="java"/>
+		<delete file="${manifest.properties}" />
+	</target>
+	
+	<target name="purge" depends="init-env">
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<delete dir="${java.out.path}" />
 	</target>
@@ -86,16 +93,9 @@
 			excludes="**/unittests/**"/>
 	</target>
 	
-	<target name="java.plugin" depends="java.compile" unless="java.nobuild">
-		<copy file="${java.basedir}/build/MANIFEST.MF.in"
-			tofile="${java.out.path}/MANIFEST.MF" />
-		<replace file="${java.out.path}/MANIFEST.MF"
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
-		<replace file="${java.out.path}/MANIFEST.MF"
-			token="@JAVA_VERSION@" value="${java.plugin.version}" />
-		
-		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.plugin.version}.jar"
-			manifest="${java.out.path}/MANIFEST.MF">
+	<target name="java.plugin" depends="java.version, java.compile" unless="java.nobuild">
+		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.Bundle-Version}.jar"
+			manifest="${java.basedir}/META-INF/MANIFEST.MF">
 			<zipfileset prefix="" dir="${java.sources}">
 				<exclude name="**/*.java"/>
 			</zipfileset>

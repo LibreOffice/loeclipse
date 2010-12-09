@@ -42,8 +42,8 @@
 
 <project name="core" default="core.error">
 	
-    <import file="../../packager/build/build.xml"/>
-
+    <import file="../packager/build/build.xml"/>
+	
 	<target name="core.error">
 		<fail>Wrong target!
 			
@@ -53,7 +53,7 @@
 	</target>
 	
 	<target name="init-env" depends="packager.init-env">
-		<dirname property="core.basedir" file="${ant.file.core}/.."/>
+		<dirname property="core.basedir" file="${ant.file.core}"/>
 		
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<property name="core.out.classes" value="${core.out.path}/classes"/>
@@ -75,8 +75,15 @@
 		<mkdir dir="${core.out.classes}" />
 	</target>
 	
-	<target name="purge" depends="packager.purge">
-		<dirname property="core.basedir" file="${ant.file.core}/.."/>
+	<target name="core.version" depends="init-env">
+		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
+		<copy tofile="${manifest.properties}" file="${core.basedir}/META-INF/MANIFEST.MF"/>
+		<replace file="${manifest.properties}" token=":" value="="/>
+		<property file="${manifest.properties}" prefix="core"/>
+		<delete file="${manifest.properties}" />
+	</target>
+	
+	<target name="purge" depends="init-env, packager.purge">
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<delete dir="${core.out.path}" />
 		<delete dir="${core.basedir}/doc/help/html/api" />
@@ -90,15 +97,9 @@
 			excludes="**/unittests/**"/>
 	</target>
 	
-	<target name="core.plugin" depends="core.compile, javadocs">
-		
-		<copy file="${core.basedir}/build/MANIFEST.MF.in"
-			tofile="${core.out.path}/MANIFEST.MF" />
-		<replace file="${core.out.path}/MANIFEST.MF"
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
-		
-		<jar destfile="${core.out.path}/plugins/${package.prefix}.core_${core.plugin.version}.jar"
-			manifest="${core.out.path}/MANIFEST.MF">
+	<target name="core.plugin" depends="core.version, core.compile, javadocs">
+		<jar destfile="${core.out.path}/plugins/${package.prefix}.core_${core.Bundle-Version}.jar"
+			manifest="${core.basedir}/META-INF/MANIFEST.MF">
 			
 			<zipfileset dir="${core.out.classes}" prefix=""/>
 			<zipfileset dir="${core.sources}" prefix="">
@@ -110,9 +111,6 @@
 			<zipfileset dir="${core.basedir}" defaultexcludes="true" prefix="">
 				<include name="about.*"/>
 				<include name="plugin.*"/>
-			</zipfileset>
-			<zipfileset dir="${core.out.path}" prefix="META-INF" defaultexcludes="true">
-				<include name="MANIFEST.MF"/>
 			</zipfileset>
 		</jar>
 	</target>

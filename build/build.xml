@@ -42,9 +42,9 @@
 
 <project name="ooeclipseintegration" default="site">
 
-	<import file="../core/build/build.xml"/>
-	<import file="../java/build/build.xml"/>
-	<import file="../cpp/build/build.xml"/>
+	<import file="../core/build.xml"/>
+	<import file="../java/build.xml"/>
+	<import file="../cpp/build.xml"/>
 	
 	<property file="versions.properties"/>
 	

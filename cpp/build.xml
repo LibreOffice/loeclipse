@@ -52,7 +52,7 @@
 	
 	
 	<target name="init-env"  unless="cpp.nobuild">
-		<dirname property="cpp.basedir" file="${ant.file.cpp}/.."/>
+		<dirname property="cpp.basedir" file="${ant.file.cpp}"/>
 		
 		<property name="cpp.out.path" value="${cpp.basedir}/bin/ant" />
 		<property name="cpp.out.classes" value="${cpp.out.path}/classes"/>
@@ -71,8 +71,15 @@
 		<mkdir dir="${cpp.out.classes}" />
 	</target>
 	
-	<target name="purge">
-		<dirname property="cpp.basedir" file="${ant.file.cpp}/.."/>
+	<target name="cpp.version" depends="init-env">
+		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
+		<copy tofile="${manifest.properties}" file="${cpp.basedir}/META-INF/MANIFEST.MF"/>
+		<replace file="${manifest.properties}" token=":" value="="/>
+		<property file="${manifest.properties}" prefix="cpp"/>
+		<delete file="${manifest.properties}" />
+	</target>
+	
+	<target name="purge" depends="init-env">
 		<property name="cpp.out.path" value="${cpp.basedir}/bin/ant" />
 		<delete dir="${cpp.out.path}" />
 	</target>
@@ -85,16 +92,9 @@
 			excludes="**/unittests/**"/>
 	</target>
 	
-	<target name="cpp.plugin" depends="cpp.compile" unless="cpp.nobuild">
-		<copy file="${cpp.basedir}/build/MANIFEST.MF.in"
-			tofile="${cpp.out.path}/MANIFEST.MF" />
-		<replace file="${cpp.out.path}/MANIFEST.MF"
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
-		<replace file="${cpp.out.path}/MANIFEST.MF"
-			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
-		
-		<jar destfile="${cpp.out.path}/plugins/${package.prefix}.cpp_${cpp.plugin.version}.jar"
-			manifest="${cpp.out.path}/MANIFEST.MF">
+	<target name="cpp.plugin" depends="cpp.version, cpp.compile" unless="cpp.nobuild">
+		<jar destfile="${cpp.out.path}/plugins/${package.prefix}.cpp_${cpp.Bundle-Version}.jar"
+			manifest="${cpp.basedir}/META-INF/MANIFEST.MF">
 			<zipfileset prefix="" dir="${cpp.sources}">
 				<exclude name="**/*.java"/>
 			</zipfileset>

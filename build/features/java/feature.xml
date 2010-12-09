@@ -2,7 +2,7 @@
 <feature
       id="org.openoffice.ide.eclipse.java"
       label="LibreOffice development plugin support for Java implementation"
-      version="@JAVA_VERSION@"
+      version="1.0.3"
       provider-name="Cédric Bosdonnat">
 
    <description>
@@ -20,7 +20,7 @@ mailing list.
       Copyright: (c) 2005-2010 Cedric Bosdonnat
    </copyright>
 
-  <license url="http://www.gnu.org/licenses/lgpl.txt">
+   <license url="http://www.gnu.org/licenses/lgpl.txt">
       GNU LESSER GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 Copyright (C) 2007 Free Software Foundation, Inc. http://fsf.org/
@@ -328,14 +328,14 @@ version for the Library.
 
    <requires>
       <import feature="org.eclipse.jdt" version="3.5.1.r351_v20090810-0600-7r88FEoFI0WTo6Az-1qFRHm37ChJ"/>
-      <import plugin="org.openoffice.ide.eclipse.core" version="@CORE_VERSION@"/>
+      <import plugin="org.openoffice.ide.eclipse.core" version="0.0.0"/>
    </requires>
 
    <plugin
          id="org.openoffice.ide.eclipse.java"
          download-size="0"
          install-size="0"
-         version="@JAVA_VERSION@"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
