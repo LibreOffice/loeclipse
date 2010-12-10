@@ -2,7 +2,7 @@
 <feature
       id="org.openoffice.ide.eclipse.java"
       label="LibreOffice development plugin support for Java implementation"
-      version="1.0.3"
+      version="0.0.0.java"
       provider-name="Cédric Bosdonnat">
 
    <description>
@@ -327,15 +327,15 @@ version for the Library.
    </url>
 
    <requires>
-      <import feature="org.eclipse.jdt" version="3.5.1.r351_v20090810-0600-7r88FEoFI0WTo6Az-1qFRHm37ChJ"/>
-      <import plugin="org.openoffice.ide.eclipse.core" version="0.0.0"/>
+      <import feature="org.eclipse.jdt"/>
+      <import plugin="org.openoffice.ide.eclipse.core" version="0.0.0.core"/>
    </requires>
 
    <plugin
          id="org.openoffice.ide.eclipse.java"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.0.java"
          unpack="false"/>
 
 </feature>

@@ -46,8 +46,6 @@
 	<import file="../java/build.xml"/>
 	<import file="../cpp/build.xml"/>
 	
-	<property file="versions.properties"/>
-	
 	<target name="help" description="Tells how to run the script">
 		<echo>
 		This ant file has to be called with the following parameters:
@@ -170,19 +168,20 @@
 		<delete file="../ooeclipseintegration_site.zip" />
 	</target>
 	
+	<target name="versions" depends="core.version, java.version, cpp.version" />
 	
-	<target name="core.feature">
-		<!-- Replace the @*_VERSION@ tokens to create the feature.xml file  -->
+	<target name="core.feature" depends="versions">
+		<!-- Replace the 0.0.0.* tokens to create the feature.xml file  -->
 		<copy file="features/core/feature.xml"
 			tofile="${out.path}/features/feature.xml" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
+			token="0.0.0.core" value="${core.Bundle-Version}" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+			token="0.0.0.java" value="${java.Bundle-Version}" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+			token="0.0.0.cpp" value="${cpp.Bundle-Version}" />
 		
-		<jar destfile="${out.path}/features/${package.prefix}.core_${core.plugin.version}.jar">
+		<jar destfile="${out.path}/features/${package.prefix}.core_${core.Bundle-Version}.jar">
 			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
 				<include name="feature.xml"/>
 			</zipfileset>
@@ -191,18 +190,18 @@
 		<delete file="${out.path}/features/feature.xml"/>
 	</target>
 	
-	<target name="java.feature">
-		<!-- Replace the @*_VERSION@ tokens to create the feature.xml file  -->
+	<target name="java.feature" depends="versions">
+		<!-- Replace the 0.0.0.* tokens to create the feature.xml file  -->
 		<copy file="features/java/feature.xml"
 			tofile="${out.path}/features/feature.xml" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
+			token="0.0.0.core" value="${core.Bundle-Version}" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+			token="0.0.0.java" value="${java.Bundle-Version}" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+			token="0.0.0.cpp" value="${cpp.Bundle-Version}" />
 		
-		<jar destfile="${out.path}/features/${package.prefix}.java_${java.plugin.version}.jar">
+		<jar destfile="${out.path}/features/${package.prefix}.java_${java.Bundle-Version}.jar">
 			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
 				<include name="feature.xml"/>
 			</zipfileset>
@@ -211,18 +210,18 @@
 		<delete file="${out.path}/features/feature.xml"/>
 	</target>
 	
-	<target name="cpp.feature">
-		<!-- Replace the @*_VERSION@ tokens to create the feature.xml file  -->
+	<target name="cpp.feature" depends="versions">
+		<!-- Replace the 0.0.0.* tokens to create the feature.xml file  -->
 		<copy file="features/cpp/feature.xml"
 			tofile="${out.path}/features/feature.xml" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
+			token="0.0.0.core" value="${core.Bundle-Version}" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+			token="0.0.0.java" value="${java.Bundle-Version}" />
 		<replace file="${out.path}/features/feature.xml" 
-			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+			token="0.0.0.cpp" value="${cpp.Bundle-Version}" />
 		
-		<jar destfile="${out.path}/features/${package.prefix}.cpp_${cpp.plugin.version}.jar">
+		<jar destfile="${out.path}/features/${package.prefix}.cpp_${cpp.Bundle-Version}.jar">
 			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
 				<include name="feature.xml"/>
 			</zipfileset>
@@ -231,7 +230,7 @@
 		<delete file="${out.path}/features/feature.xml"/>
 	</target>
 	
-	<target name="features" depends="core.feature, java.feature, cpp.feature"/>
+	<target name="features" depends="core.feature, versions, java.feature, cpp.feature"/>
 	<target name="plugins" depends="core.plugin, java.plugin, cpp.plugin"/>
 	
 	<target name="site" depends="init-env, plugins, features"
@@ -241,11 +240,11 @@
 		<copy file="site.xml" 
 			tofile="${out.path}/site.xml" />
    		<replace file="${out.path}/site.xml"
-			token="@CORE_VERSION@" value="${core.plugin.version}" />
+			token="0.0.0.core" value="${core.Bundle-Version}" />
 		<replace file="${out.path}/site.xml"
-			token="@JAVA_VERSION@" value="${java.plugin.version}" />
+			token="0.0.0.java" value="${java.Bundle-Version}" />
 		<replace file="${out.path}/site.xml"
-			token="@CPP_VERSION@" value="${cpp.plugin.version}" />
+			token="0.0.0.cpp" value="${cpp.Bundle-Version}" />
 		
 		<!-- Copying the plugins -->
 		<echo message="Copying the plugins JARs"/>

@@ -2,7 +2,7 @@
 <feature
       id="org.openoffice.ide.eclipse.cpp"
       label="LibreOffice development plugin support for C++ implementation"
-      version="0.5.0"
+      version="0.0.0.cpp"
       provider-name="Cédric Bosdonnat">
 
    <description>
@@ -327,15 +327,15 @@ version for the Library.
    </url>
 
    <requires>
-      <import feature="org.eclipse.cdt" version="6.0.0.200909110608"/>
-      <import plugin="org.openoffice.ide.eclipse.core" version="0.0.0"/>
+      <import feature="org.eclipse.cdt" version="6.0.0"/>
+      <import plugin="org.openoffice.ide.eclipse.core" version="0.0.0.core"/>
    </requires>
 
    <plugin
          id="org.openoffice.ide.eclipse.cpp"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.0.cpp"
          unpack="false"/>
 
 </feature>

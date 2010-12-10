@@ -2,7 +2,7 @@
 <feature
       id="org.openoffice.ide.eclipse.core"
       label="LibreOffice development plugin core"
-      version="1.2.0"
+      version="0.0.0.core"
       provider-name="Cédric Bosdonnat"
       plugin="org.openoffice.ide.eclipse.core">
 
@@ -340,19 +340,19 @@ version for the Library.
 
    <includes
          id="org.openoffice.ide.eclipse.java"
-         version="0.0.0"
+         version="0.0.0.java"
          optional="true"/>
 
    <includes
          id="org.openoffice.ide.eclipse.cpp"
-         version="0.0.0"
+         version="0.0.0.cpp"
          optional="true"/>
 
    <plugin
          id="org.openoffice.ide.eclipse.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.0.core"
          unpack="false"/>
 
 </feature>
