@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ooo-plugin-packager core
-Bundle-SymbolicName: org.openoffice.ide.packager.core
+Bundle-SymbolicName: org.openoffice.ide.eclipse.packager.core
 Bundle-Version: 0.1.0
 Bundle-Vendor: Cédric Bosdonnat
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
