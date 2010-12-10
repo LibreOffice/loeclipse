@@ -150,12 +150,18 @@
 		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env, cpp.init-env">
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
-		<property name="out.path" value="../site" />
+		<property name="out.path" value="${basedir}/../site" />
 		<condition property="debug" value="false">
 			<not>
 				<isset property="debug"/>
 			</not>
 		</condition>
+		
+		<path id="eclipse.classpath">
+			<fileset dir="${eclipse.home}/plugins">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
 		
 		<mkdir dir="${out.path}" />
 		<mkdir dir="${out.path}/plugins" />
@@ -233,8 +239,48 @@
 	<target name="features" depends="core.feature, versions, java.feature, cpp.feature"/>
 	<target name="plugins" depends="core.plugin, java.plugin, cpp.plugin"/>
 	
+	<macrodef name="equinoxLauncher">
+		<attribute name="application"/>
+		<element name="args"/>
+		<sequential>
+			<java classname="org.eclipse.equinox.launcher.Main"
+				classpathref="eclipse.classpath"
+				failonerror="true"
+				logerror="true"
+				fork="true"
+				newenvironment="true">
+				<arg value="-application"/>
+				<arg value="@{application}"/>
+				<args/>
+			</java>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="prepareJar">
+		<attribute name="jar"/>
+		<attribute name="outdir"/>
+		<sequential>
+			<equinoxLauncher application="org.eclipse.update.core.siteOptimizer">
+				<args>
+					<arg value="-jarProcessor"/>
+					<arg value="-verbose"/>
+					<arg value="-processAll"/>
+					<arg value="-repack"/>
+					<arg value="-outputDir"/>
+					<arg value="@{outdir}"/>
+					<arg value="@{jar}"/>
+				</args>
+			</equinoxLauncher>
+		</sequential>
+	</macrodef>
+	
 	<target name="site" depends="init-env, plugins, features"
 		description="Creates the Eclipse update site">
+		
+		<!-- 
+		  Instructions to create the update site are coming from this page:
+		  http://plosquare.blogspot.com/2009/05/migrating-eclipse-update-sites-to-p2.html
+	    -->
 		
 		<!-- Replace the versions in the site.xml -->
 		<copy file="site.xml" 
@@ -253,6 +299,52 @@
 				includes="**/plugins/*.jar" />
 			<mapper type="flatten" />
 		</copy>
+		
+		<!-- Preparing the plugins for p2 update site -->
+		<echo message="Preparing the plugins for the p2 update site"/>
+		<prepareJar jar="${out.path}/plugins/${package.prefix}.packager.core_${packager.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+		<prepareJar jar="${out.path}/plugins/${package.prefix}.core_${core.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+		<prepareJar jar="${out.path}/plugins/${package.prefix}.java_${java.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+		<prepareJar jar="${out.path}/plugins/${package.prefix}.cpp_${cpp.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+		
+		<!-- Generate p2's .jar.pack.gz and digest.zip -->
+		<echo message="Generating p2's .jar.pack.gz and digest.zip"/>
+		<equinoxLauncher application="org.eclipse.update.core.siteOptimizer">
+			<args>
+				<arg value="-digestBuilder"/>
+				<arg value="-digestOutputDir=${out.path}"/>
+				<arg value="-siteXML=${out.path}/site.xml"/>
+				<arg value="-jarProcessor"/>
+				<arg value="-pack"/>
+				<arg value="-outputDir"/>
+				<arg value="${out.path}"/>
+				<arg value="${out.path}"/>
+			</args>
+		</equinoxLauncher>
+		
+		<!-- Generate content.jar and artifacts.jar -->
+		<equinoxLauncher application="org.eclipse.equinox.p2.metadata.generator.EclipseGenerator">
+			<args>
+				<arg value="-updateSite"/>
+				<arg value="${out.path}"/>
+				<arg value="-site"/>
+				<arg value="file:/${out.path}/site.xml"/>
+				<arg value="-metadataRepository"/>
+				<arg value="file:${out.path}/"/>
+				<arg value="-metadataRepositoryName"/>
+				<arg value="OOEclipse Update Site"/>
+				<arg value="-artifactRepository"/>
+				<arg value="file:${out.path}/"/>
+				<arg value="-artifactRepositoryName"/>
+				<arg value="OOEclipse Artifacts"/>
+				<arg value="-compress"/>
+				<arg value="-reusePack200Files"/>
+				<arg value="-noDefaultIUs"/>
+				<arg value="-vmargs"/>
+				<arg value="-Xmx256M"/>
+			</args>
+		</equinoxLauncher>
+		
 	</target>
 
 	<target name="archive-site" description="Create a zip for the update site"
