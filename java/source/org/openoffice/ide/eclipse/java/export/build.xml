@@ -1,45 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- *   OpenOffice.org extension for syntax highlighting
- *   Copyright (C) 2008  Cédric Bosdonnat cedricbosdo@openoffice.org
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of 
+ * the License, or (at your option) any later version.
  *
- *   This library is free software; you can redistribute it and/or
- *   modify it under the terms of the GNU Library General Public
- *   License as published by the Free Software Foundation; 
- *   version 2 of the License.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *   This library is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   Library General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program. 
+ * If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright: 2009 by Cédric Bosdonnat
  *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this library; if not, write to the Free
- *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * All Rights Reserved.
  -->
 <project name="COOoder" default="package-oxt" basedir="..">
 
-    <target name="check-ooo-version">
-        <property file="ant/build.properties"/>
-        
-	<property name="office.basis.dir" value="${office.install.dir}${file.separator}basis-link"/>
-        <property name="office.ure.dir" value="${office.basis.dir}${file.separator}ure-link"/>
-        
-        <!-- test whether building against OOo3 or not -->
-        <condition property="office.version3" value="true">
-            <and>
-                <available file="${office.basis.dir}" />
-                <available file="${office.ure.dir}"/>
-            </and>
-        </condition>
-    </target>
-
-    <target name="init-env-ooo3" depends="check-ooo-version" if="office.version3">
-	<echo message="Initializing the properties for OpenOffice 3.0"/>
+    <target name="init-env">
+    	
+    	<!--  set properties from libreoffice install and its SDK -->
+    	<echo message="Initializing the properties for LibreOffice"/>
+    	
+    	<property name="office.basis.dir" value="${office.install.dir}${file.separator}basis-link"/>
+    	<property name="office.ure.dir" value="${office.basis.dir}${file.separator}ure-link"/>
 
         <property name="office.libs.path" value="${office.install.dir}${file.separator}program${path.separator}${office.basis.dir}${file.separator}program${path.separator}${office.ure.dir}${file.separator}lib"/>
 
-	<echo message="Office libs path: ${office.libs.path}"/>
+		<echo message="Office libs path: ${office.libs.path}"/>
 
         <path id="office.class.path">
             <fileset dir="${office.basis.dir}${file.separator}program${file.separator}classes">
@@ -55,23 +46,16 @@
 
         <property name="office.offapi.rdb"
             value="${office.basis.dir}${file.separator}program${file.separator}offapi.rdb"/>
-    </target>
-
-    <target name="init-env-ooo2" depends="check-ooo-version" unless="office.version3">
-        <property name="office.libs.path" value="${office.install.dir}${file.separator}program"/>
-        
-        <path id="office.class.path">
-            <fileset dir="${office.install.dir}${file.separator}program${file.separator}classes">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
-        
-        <property name="office.unotypes.rdb" 
-            value="${office.install.dir}${file.separator}program${file.separator}types.rdb"/>
-    </target>
-
-    <target name="init-env" depends="init-env-ooo3, init-env-ooo2">
-        <!-- set variables for the project structure -->
+    	
+    	<property name="sdk.idl.dir" location="${sdk.dir}${file.separator}idl"/> 
+        <property name="sdk.idlc" value="${sdk.dir}${file.separator}${sdk.bin.dir}${file.separator}idlc"/>
+        <property name="sdk.regmerge" value="${sdk.dir}${file.separator}${sdk.bin.dir}${file.separator}regmerge"/>
+        <property name="sdk.javamaker" value="${sdk.dir}${file.separator}${sdk.bin.dir}${file.separator}javamaker"/>
+    	
+    	<property environment="env"/>
+    	<property name="office.tool.path" value="${env.PATH}${path.separator}${office.libs.path}"/>
+    
+        <!-- set properties for the project structure -->
         <property file=".unoproject"/>
         <property file="package.properties"/>
         <dirname property="project.dir" file="package.properties"/>
@@ -80,17 +64,7 @@
         <property name="build.classes.dir" value="${build.dir}/classes"/>
         <property name="dist.dir" value="${build.dir}/dist"/>
         
-        <!-- set variables from SDK and Office -->
-        <echo message="setting up UNO environment ..."/>
-
-
-        <property environment="env"/>
-        <property name="office.tool.path" value="${env.PATH}${path.separator}${office.libs.path}"/>
-    
-        <property name="sdk.idl.dir" location="${sdk.dir}${file.separator}idl"/> 
-        <property name="sdk.idlc" value="${sdk.dir}${file.separator}${sdk.bin.dir}${file.separator}idlc"/>
-        <property name="sdk.regmerge" value="${sdk.dir}${file.separator}${sdk.bin.dir}${file.separator}regmerge"/>
-        <property name="sdk.javamaker" value="${sdk.dir}${file.separator}${sdk.bin.dir}${file.separator}javamaker"/>
+        <!-- set properties for the output structure -->
     
         <property name="uno.package.name" value="${project.dir}${file.separator}${dist.dir}${file.separator}${ant.project.name}.oxt"/>
         <property name="src.dir.absolute" value="${project.dir}${project.srcdir}"/>
@@ -102,6 +76,8 @@
         <property name="idl.rdb.name" value="types.rdb"/>
         <property name="idl.rdb.fullpath" value="${idl.out.rdb}${file.separator}${idl.rdb.name}"/>
     
+    	<!-- create a few empty directories -->
+    	
         <mkdir dir="${build.dir}" />
         <mkdir dir="${idl.out}"/>
         <mkdir dir="${idl.out.urd}"/>
