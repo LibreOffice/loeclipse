@@ -90,7 +90,7 @@
 			target="1.5" source="1.5" 
 			debug="${debug}"
 			classpathref="java.dependencies.path" 
-			excludes="**/unittests/**"/>
+			excludes="**/*Test.*"/>
 	</target>
 	
 	<target name="java.plugin" depends="java.version, java.compile" unless="java.nobuild">

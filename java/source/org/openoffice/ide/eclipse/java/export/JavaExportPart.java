@@ -30,8 +30,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.export;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -53,18 +54,20 @@ import org.openoffice.plugin.core.model.UnoPackage;
  */
 public class JavaExportPart extends LanguageExportPart {
 
-    private static final String DEFAULT_ANT_FILENAME = "build.xml"; //$NON-NLS-1$
-    
     private Button mSaveScripts;
     private Composite mNameRow;
     private Label mNameRowLbl;
     private Text mNameRowTxt;
-        
+
+    private JavaExportPageControl mController;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void createControls(Composite pParent) {
+        
+        mController = new JavaExportPageControl();
         
         Label titleLbl = new Label( pParent, SWT.NONE );
         titleLbl.setText( Messages.getString("JavaExportPart.Title") ); //$NON-NLS-1$
@@ -82,15 +85,11 @@ public class JavaExportPart extends LanguageExportPart {
         mSaveScripts.addSelectionListener( new SelectionListener() {
             
             public void widgetSelected( SelectionEvent pE ) {
-                boolean enabled = mSaveScripts.getSelection();
-                mNameRowLbl.setEnabled( enabled );
-                mNameRowTxt.setEnabled( enabled );
                 
-                IFile file = null;
-                if ( enabled ) {
-                    file = getPage().getProject().getFile( ManifestExportPage.MANIFEST_FILENAME );
-                }
-                getPage().setManifestPath( file );
+                mController.setSaveAntScript( mSaveScripts.getSelection() );
+                
+                mNameRowLbl.setEnabled( mController.isSavePathEnabled() );
+                mNameRowTxt.setEnabled( mController.isSavePathEnabled() );
             }
             
             public void widgetDefaultSelected( SelectionEvent pE ) {
@@ -107,12 +106,21 @@ public class JavaExportPart extends LanguageExportPart {
         mNameRowLbl = new Label( mNameRow, SWT.NONE );
         mNameRowLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
         mNameRowLbl.setText( Messages.getString("JavaExportPart.AntFile") ); //$NON-NLS-1$
-        mNameRowLbl.setEnabled( false );
         
         mNameRowTxt = new Text( mNameRow, SWT.BORDER | SWT.SINGLE );
         mNameRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mNameRowTxt.setText( DEFAULT_ANT_FILENAME );
-        mNameRowTxt.setEnabled( false );
+        mNameRowTxt.addModifyListener( new ModifyListener() {
+            
+            public void modifyText( ModifyEvent pEvent ) {
+                mController.setSavePath( mNameRowTxt.getText() );
+            }
+        });
+        
+        // Load the default values
+        mSaveScripts.setSelection( mController.isSavePathEnabled() );
+        mNameRowTxt.setText( mController.getSavePath() );
+        mNameRowTxt.setEnabled( mController.isSavePathEnabled() );
+        mNameRowLbl.setEnabled( mController.isSavePathEnabled() );
     }
 
     /**
@@ -131,7 +139,8 @@ public class JavaExportPart extends LanguageExportPart {
      */
     @Override
     public void doFinish( UnoPackage pModel ) {
-        // TODO Auto-generated method stub
-        
+        if ( mController.getSaveAntScript() ) {
+            // TODO Generate the build script
+        }
     }
 }
