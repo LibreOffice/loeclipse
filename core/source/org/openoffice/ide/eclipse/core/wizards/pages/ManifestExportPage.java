@@ -43,6 +43,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -91,6 +93,8 @@ public class ManifestExportPage extends WizardPage {
     private Label mLoadRowLbl;
     private Text mLoadRowTxt;
     private Button mLoadRowBtn;
+    
+    private ManifestExportPageController mController;
 
     /**
      * Constructor.
@@ -100,6 +104,9 @@ public class ManifestExportPage extends WizardPage {
      */
     public ManifestExportPage( String pPageName, IUnoidlProject pProject ) {
         super(pPageName);
+        
+        mController = new ManifestExportPageController();
+        
         setTitle( Messages.getString("ManifestExportPage.Title") ); //$NON-NLS-1$
         setDescription( Messages.getString("ManifestExportPage.Description") ); //$NON-NLS-1$
         
@@ -155,29 +162,12 @@ public class ManifestExportPage extends WizardPage {
      *      existing value
      */
     public void setManifestPath(IFile pFile) {
-        // FIXME Ugly hack due to some bug in the GTK buttons events
-        if ( pFile != null && !pFile.exists() ) {
-            mSaveManifestBtn.setSelection( true );
-            mReuseManifestBtn.setSelection( false );
-            mGenerateManifestBtn.setSelection( true );
-            mSaveRowTxt.setText( pFile.getFullPath().toString() );
-            setSaveRowEnabled( true );
-            setLoadRowEnabled( false );
-        } else if ( pFile != null && pFile.exists() ) {
-            mGenerateManifestBtn.setSelection( false );
-            mReuseManifestBtn.setSelection( true );
-            mSaveManifestBtn.setSelection( false );
-            mLoadRowTxt.setText( pFile.getFullPath().toString() );
-            setLoadRowEnabled( true );
-            setSaveRowEnabled( false );
-        } else {
-            mGenerateManifestBtn.setSelection( true );
-            mReuseManifestBtn.setSelection( false );
-            mSaveManifestBtn.setSelection( true );
-            mSaveRowTxt.setText( new String( ) );
-            setSaveRowEnabled( true );
-            setLoadRowEnabled( false );
-        }
+        
+        mController.setGenerateManifest( true );
+        mController.setSaveManifest( true );
+        mController.setSaveManifestPath( pFile.getFullPath().toString() );
+        
+        updateControls();
     }
     
     /**
@@ -199,33 +189,31 @@ public class ManifestExportPage extends WizardPage {
         reloadLanguagePart();
         
         // Load the default values
-        mGenerateManifestBtn.setSelection( true );
+        updateControls();
     }
 
     /**
-     * Enables the manifest save row.
-     * 
-     * @param pEnabled <code>true</code> to enable all the controls of the row
-     *      <code>false</code> otherwise.
+     * Update the controls state and values according to the controller.
      */
-    private void setSaveRowEnabled( boolean pEnabled ) {
-        mSaveRowLbl.setEnabled( pEnabled );
-        mSaveRowTxt.setEnabled( pEnabled );
-        mSaveRowBtn.setEnabled( pEnabled );
+    private void updateControls( ) {
+        mGenerateManifestBtn.setSelection( mController.getGenerateManifest() );
+        
+        mSaveManifestBtn.setSelection( mController.getSaveManifest() );
+        mSaveManifestBtn.setEnabled( mController.isSaveManifestEnabled() );
+        
+        mSaveRowTxt.setText( mController.getSaveManifestPath() );
+        mSaveRowLbl.setEnabled( mController.isSaveManifestPathEnabled() );
+        mSaveRowTxt.setEnabled( mController.isSaveManifestPathEnabled() );
+        mSaveRowBtn.setEnabled( mController.isSaveManifestPathEnabled() );
+        
+        mReuseManifestBtn.setSelection( !mController.getGenerateManifest() );
+        
+        mLoadRowTxt.setText( mController.getLoadManifestPath() );
+        mLoadRowLbl.setEnabled( mController.isLoadManifestPathEnabled() );
+        mLoadRowTxt.setEnabled( mController.isLoadManifestPathEnabled() );
+        mLoadRowBtn.setEnabled( mController.isLoadManifestPathEnabled() );
     }
-    
-    /**
-     * Enables the manifest load row.
-     * 
-     * @param pEnabled <code>true</code> to enable all the controls of the row
-     *      <code>false</code> otherwise.
-     */
-    private void setLoadRowEnabled( boolean pEnabled ) {
-        mLoadRowLbl.setEnabled( pEnabled );
-        mLoadRowTxt.setEnabled( pEnabled );
-        mLoadRowBtn.setEnabled( pEnabled );
-    }
-    
+
     /**
      * Create the manifest save/reuse options.
      * 
@@ -244,11 +232,8 @@ public class ManifestExportPage extends WizardPage {
         mGenerateManifestBtn.addSelectionListener( new SelectionListener() {
             
             public void widgetSelected(SelectionEvent pE) {
-                boolean selection = mGenerateManifestBtn.getSelection();
-                mSaveManifestBtn.setEnabled( selection );
-                
-                boolean saveSelection = mSaveManifestBtn.getSelection();
-                setSaveRowEnabled( selection && saveSelection );
+                mController.setGenerateManifest( mGenerateManifestBtn.getSelection() );
+                updateControls();
             }
             
             public void widgetDefaultSelected(SelectionEvent pE) {
@@ -271,8 +256,8 @@ public class ManifestExportPage extends WizardPage {
         mReuseManifestBtn.addSelectionListener( new SelectionListener() {
             
             public void widgetSelected(SelectionEvent pE) {
-                boolean enabled = mReuseManifestBtn.getSelection();
-                setLoadRowEnabled( enabled );
+                mController.setGenerateManifest( !mReuseManifestBtn.getSelection() );
+                updateControls();
             }
             
             public void widgetDefaultSelected(SelectionEvent pE) {
@@ -305,8 +290,8 @@ public class ManifestExportPage extends WizardPage {
         mSaveManifestBtn.addSelectionListener( new SelectionListener() {
             
             public void widgetSelected(SelectionEvent pE) {
-                boolean enabled = mSaveManifestBtn.getSelection();
-                setSaveRowEnabled( enabled );
+                mController.setSaveManifest( mSaveManifestBtn.getSelection() );
+                updateControls();
             }
             
             public void widgetDefaultSelected(SelectionEvent pE) {
@@ -320,6 +305,12 @@ public class ManifestExportPage extends WizardPage {
         
         mSaveRowTxt = new Text( pParent, SWT.SINGLE | SWT.BORDER );
         mSaveRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
+        mSaveRowTxt.addModifyListener( new ModifyListener() {
+            
+            public void modifyText(ModifyEvent pE) {
+                mController.setSaveManifestPath( mSaveRowTxt.getText() );
+            }
+        });
         
         mSaveRowBtn = new Button( pParent, SWT.PUSH );
         mSaveRowBtn.setText( Messages.getString("ManifestExportPage.Browse") ); //$NON-NLS-1$
@@ -336,12 +327,11 @@ public class ManifestExportPage extends WizardPage {
                 dlg.setMessage( Messages.getString("ManifestExportPage.SaveDialogMessage") ); //$NON-NLS-1$
                 
                 if ( dlg.open() == Window.OK ) {
-                    mSaveRowTxt.setText( dlg.getResult().toString() );
+                    mController.setSaveManifestPath( dlg.getResult().toString() );
+                    updateControls();
                 }
             }
         });
-        
-        setSaveRowEnabled( false );
     }
     
     /**
@@ -356,6 +346,12 @@ public class ManifestExportPage extends WizardPage {
         
         mLoadRowTxt = new Text( pParent, SWT.SINGLE | SWT.BORDER );
         mLoadRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
+        mLoadRowTxt.addModifyListener( new ModifyListener( ) {
+            
+            public void modifyText(ModifyEvent pE) {
+                mController.setLoadManifestPath( mLoadRowTxt.getText() );
+            }
+        });
         
         mLoadRowBtn = new Button( pParent, SWT.PUSH );
         mLoadRowBtn.setText( Messages.getString("ManifestExportPage.Browse") ); //$NON-NLS-1$
@@ -402,12 +398,11 @@ public class ManifestExportPage extends WizardPage {
                 if ( dlg.open() == Window.OK ) {
                     Object result = dlg.getFirstResult();
                     IFile file = ( IFile )result;
-                    mLoadRowTxt.setText( file.getFullPath().toString() );
+                    mController.setLoadManifestPath( file.getFullPath().toString() );
+                    updateControls();
                 }
             }
         });
-        
-        setLoadRowEnabled( false );
     }
     
     /**
@@ -438,8 +433,8 @@ public class ManifestExportPage extends WizardPage {
      */
     private IFile getReadManifestFile() {
         IFile file = null;
-        if ( mReuseManifestBtn.getSelection() ) {
-            IPath path = new Path( mLoadRowTxt.getText().trim() );
+        if ( !mController.getGenerateManifest() ) {
+            IPath path = new Path( mController.getLoadManifestPath().trim() );
             file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
         }
         
@@ -451,8 +446,8 @@ public class ManifestExportPage extends WizardPage {
      */
     private IFile getSaveManifestFile() {
         IFile file = null;
-        if ( mGenerateManifestBtn.getSelection() && mSaveManifestBtn.getSelection() ) {
-            IPath path = new Path( mSaveRowTxt.getText().trim() );
+        if ( mController.isSaveManifestPathEnabled() ) {
+            IPath path = new Path( mController.getSaveManifestPath().trim() );
             file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
         }
         return file;
