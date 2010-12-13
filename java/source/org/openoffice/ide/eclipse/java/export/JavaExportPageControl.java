@@ -34,8 +34,6 @@ public class JavaExportPageControl {
     private boolean mSaveAntScript;
     private String mSavePath;
     
-    private boolean mSavePathEnabled;
-    
     /**
      * Default constructor.
      */
@@ -49,9 +47,6 @@ public class JavaExportPageControl {
      */
     public void setSaveAntScript( boolean pSave ) {
         mSaveAntScript = pSave;
-        
-        // Don't activate the path field unless the save is selected
-        mSavePathEnabled = pSave;
     }
     
     /**
@@ -79,6 +74,6 @@ public class JavaExportPageControl {
      * @return whether the save path field is enabled
      */
     public boolean isSavePathEnabled( ) {
-        return mSavePathEnabled;
+        return mSaveAntScript;
     }
 }
