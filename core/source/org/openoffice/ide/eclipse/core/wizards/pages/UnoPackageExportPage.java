@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -402,5 +403,16 @@ public class UnoPackageExportPage extends WizardPage {
                 mOOo.updatePackage(mDest, null);
             }
         }
+    }
+
+    /**
+     * Force a build of the selected project.
+     * 
+     * @throws Exception if the project couldn't be built.
+     */
+    public void forceBuild( ) throws Exception {
+        String prjName = mSelectedProject.getName();
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
+        TypesBuilder.build( prj, null );
     }
 }

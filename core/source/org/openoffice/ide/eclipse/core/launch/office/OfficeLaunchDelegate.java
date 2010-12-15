@@ -35,7 +35,9 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,6 +49,7 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.openoffice.ide.eclipse.core.PluginLogger;
+import org.openoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.openoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
@@ -88,29 +91,33 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
             boolean useCleanUserInstalation = pConfiguration.getAttribute(
                             IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
 
-            IUnoidlProject prj = ProjectsManager.getProject(prjName);
+            IUnoidlProject unoprj = ProjectsManager.getProject(prjName);
 
-            if (null != prj) {
+            if (null != unoprj) {
                 try {
                     IPath userInstallation = null;
                     if (useCleanUserInstalation) {
-                        IFolder userInstallationFolder = prj.getOpenOfficeUserProfileFolder();
+                        IFolder userInstallationFolder = unoprj.getOpenOfficeUserProfileFolder();
                         userInstallation = userInstallationFolder.getLocation();
                     }
 
+                    // Force the build
+                    IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
+                    TypesBuilder.build( prj, pMonitor );
+                    
                     List<IResource> resources = PackageConfigTab.getResources( pConfiguration );
-                    File destFile = exportComponent( prj, resources );
+                    File destFile = exportComponent( unoprj, resources );
                     pMonitor.worked(1);
                     
                     // Deploy the component
-                    deployComponent(prj, userInstallation, destFile);
+                    deployComponent(unoprj, userInstallation, destFile);
                     pMonitor.worked(1);
 
                     // Run an OpenOffice instance
                     if (ILaunchManager.DEBUG_MODE.equals(pMode)) {
-                        prj.getLanguage().connectDebuggerToOpenOffice(prj, pLaunch, userInstallation, pMonitor);
+                        unoprj.getLanguage().connectDebuggerToOpenOffice(unoprj, pLaunch, userInstallation, pMonitor);
                     } else {
-                        prj.getOOo().runOpenOffice(prj, pLaunch, userInstallation, new NullExtraOptionsProvider(),
+                        unoprj.getOOo().runOpenOffice(unoprj, pLaunch, userInstallation, new NullExtraOptionsProvider(),
                                         pMonitor);
                     }
                     pMonitor.worked(1);
@@ -161,7 +168,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      *             if something goes wrong.
      */
     private File exportComponent(IUnoidlProject pPrj, List<IResource> pResources) throws Exception {
-
+        
         IFolder distFolder = pPrj.getFolder(pPrj.getDistPath());
         File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
         

@@ -41,6 +41,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 import org.openoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
@@ -81,28 +82,35 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
         boolean finished = false;
         UnoPackage model = mMainPage.getPackageModel( );
         if ( model != null ) {
-            // Configure the manifest.xml for the model
-            mManifestPage.configureManifest( model );
-            
-            // TODO Run the next operations in a job
-            
-            // Write the build scripts if needed
-            mManifestPage.createBuildScripts( model );
-            
-            // Export the package
-            File out = model.close( );
-            finished = out != null;
-            
-            mMainPage.refreshProject();
-            
-            if ( mHasNewDialogSettings ) {
-                IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-                IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-                section = workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
-                setDialogSettings(section);
-            }
+            try {
+                // Force a build on the project
+                mMainPage.forceBuild();
 
-            mMainPage.saveWidgetValues();
+                // Configure the manifest.xml for the model
+                mManifestPage.configureManifest( model );
+
+                // TODO Run the next operations in a job
+
+                // Write the build scripts if needed
+                mManifestPage.createBuildScripts( model );
+
+                // Export the package
+                File out = model.close( );
+                finished = out != null;
+
+                mMainPage.refreshProject();
+
+                if ( mHasNewDialogSettings ) {
+                    IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
+                    IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
+                    section = workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
+                    setDialogSettings(section);
+                }
+
+                mMainPage.saveWidgetValues();
+            } catch ( Exception e ) {
+                PluginLogger.error( "Project couldn't be built", e );
+            }
         }
         
         return finished;
