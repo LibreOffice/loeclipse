@@ -155,7 +155,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
                     CoreException thrown = new CoreException(new Status(
                             Status.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
                             Messages.getString("TypesBuilder.BuildError0"), e)); //$NON-NLS-1$
-                    if (!(e instanceof CoreException)) {
+                    if ( e instanceof CoreException ) {
                         thrown = (CoreException)e;
                     }
                     throw thrown;
@@ -275,6 +275,10 @@ public class TypesBuilder extends IncrementalProjectBuilder {
             
             Path sdkPath = new Path(sdkHome);
             int segmentCount = project.getIdlPath().segmentCount();
+            
+            if ( !project.getUrdPath().toFile().exists() ) {
+                project.getUrdPath().toFile().mkdirs();
+            }
             
             IPath outputLocation = project.getUrdPath().append(
                     pFile.getProjectRelativePath().removeLastSegments(1).
