@@ -335,4 +335,29 @@
          </action>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.openoffice.ide.eclipse.core.launch.office.OfficeLaunchShortcut"
+            icon="icons/libreoffice_16.png"
+            id="org.openoffice.ide.eclipse.core.launch.shortcut"
+            label="LibreOffice extension"
+            modes="run, debug">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1" />
+                  <iterate>
+                     <and>
+                        <adapt type="org.eclipse.core.resources.IProject" />
+                        <test property="org.eclipse.debug.ui.projectNature"
+                              value="org.openoffice.ide.eclipse.core.unonature" />
+                     </and>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+         <configurationType id="org.openoffice.ide.eclipse.core.launchOpenOffice" />
+      </shortcut>
+   </extension>
 </plugin>

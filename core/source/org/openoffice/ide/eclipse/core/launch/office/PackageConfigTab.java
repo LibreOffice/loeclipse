@@ -79,7 +79,7 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
         
         String paths = pConfiguration.getAttribute( IOfficeLaunchConstants.CONTENT_PATHS, new String() );
-        if(!paths.isEmpty()) {
+        if ( !paths.isEmpty() ) {
             String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
                 
             for (String path : pathsItems) {
@@ -129,7 +129,7 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
             String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
             IUnoidlProject project = ProjectsManager.getProject( prjName );
             
-            if(null != project) {
+            if ( null != project ) {
                 mContentSelector.setProject( project );
                 
                 List<IResource> selected = getResources( pConfiguration );

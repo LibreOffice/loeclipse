@@ -106,18 +106,7 @@ public class PackageContentSelector extends Composite {
      * Populate the resource view with some default data (mainly the XCU / XCS files).
      */
     public void loadDefaults( ) {
-        // Select the XCU / XCS files by default
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( mProject.getName() );
-        FilesFinder finder = new FilesFinder( 
-            new String[] { IUnoidlProject.XCU_EXTENSION, IUnoidlProject.XCS_EXTENSION } );
-        try {
-            finder.addExclude( mProject.getDistFolder().getFullPath() );
-            prj.accept( finder );
-        } catch (CoreException e) {
-            PluginLogger.error("Could not visit the project's content.", e);
-        }
-        
-        ArrayList< IFile > files = finder.getResults();
+        List< IFile > files = getDefaultContent( mProject );
         for (IFile file : files) {
             mResourceGroup.initialCheckListItem( file );
             mResourceGroup.initialCheckTreeItem( file );
@@ -140,6 +129,28 @@ public class PackageContentSelector extends Composite {
         for (IResource res : pSelected) {
             mResourceGroup.initialCheckTreeItem( res );   
         }
+    }
+    
+    /**
+     * Get the default files to include in a package (mainly the XCU / XCS files).
+     * 
+     * @param pUnoPrj the uno project to get the defaults from
+     * 
+     * @return the list of the files to include by default
+     */
+    public static List<IFile> getDefaultContent( IUnoidlProject pUnoPrj ) {
+        // Select the XCU / XCS files by default
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pUnoPrj.getName() );
+        FilesFinder finder = new FilesFinder( 
+            new String[] { IUnoidlProject.XCU_EXTENSION, IUnoidlProject.XCS_EXTENSION } );
+        try {
+            finder.addExclude( pUnoPrj.getDistFolder().getFullPath() );
+            prj.accept( finder );
+        } catch (CoreException e) {
+            PluginLogger.error("Could not visit the project's content.", e);
+        }
+        
+        return finder.getResults();
     }
     
     /**
