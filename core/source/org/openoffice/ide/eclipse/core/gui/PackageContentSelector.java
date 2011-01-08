@@ -177,7 +177,13 @@ public class PackageContentSelector extends Composite {
 
         // Create the package model
         pack = UnoidlProjectHelper.createMinimalUnoPackage( pProject, pDestFile );
-        pack.addToClean( SystemHelper.getFile( library ) );
+
+        if(library.exists()){
+            pack.addToClean( SystemHelper.getFile( library ) );
+            File libraryFile = SystemHelper.getFile(library);
+            pack.addFile(UnoPackage.getPathRelativeToBase(libraryFile, prjFile), 
+                            libraryFile);
+        }
         
         IFile descrFile = pProject.getFile( IUnoidlProject.DESCRIPTION_FILENAME );
         if ( descrFile.exists() ) {
