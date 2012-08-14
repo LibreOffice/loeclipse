@@ -32,9 +32,9 @@
 <project name="packager" default="update-sources"> 
 	
 	<target name="init-env">
-		<dirname property="packager.basedir" file="${ant.file.packager}/.."/>
+		<dirname property="packager.basedir" file="${ant.file.packager}"/>
 		
-		<loadproperties srcfile="${packager.basedir}/build/build.properties" />
+		<property name="packager.git.repo" value="git://github.com/cbosdo/ooo-plugin-packager.git" />
 		
 		<property name="packager.out.path" value="${packager.basedir}/bin/ant" />
 		<property name="packager.out.classes" value="${packager.out.path}/classes"/>
@@ -57,7 +57,7 @@
 		<delete file="${manifest.properties}" />
 	</target>
 	
-	<target name="purge" depends="init-env">
+	<target name="packager.purge" depends="init-env">
 		<property name="packager.out.path" value="${packager.basedir}/bin/ant" />
 		<delete dir="${packager.out.path}" />
 	</target>
@@ -93,6 +93,19 @@
 			<zipfileset prefix="" dir="${packager.out.classes}"/>
 		</jar>
 	</target>
+	
+    <target name="packager.site" depends="packager.plugin">
+
+		<!-- Copying the plugins -->
+		<copy todir="${out.path}/plugins">
+            <fileset dir="${packager.out.path}/plugins/"
+				includes="*.jar" />
+			<mapper type="flatten" />
+        </copy>
+
+		<!-- Preparing the plugins for p2 update site -->
+        <prepareJar jar="${out.path}/plugins/${package.prefix}.packager.core_${packager.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+    </target>
 	
 </project>
 
