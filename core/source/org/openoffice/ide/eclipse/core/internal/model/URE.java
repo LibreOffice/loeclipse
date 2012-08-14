@@ -168,14 +168,18 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     public String getUnoPath() {
-        String uno = "uno.bin"; //$NON-NLS-1$
-        if (getPlatform().equals(Platform.OS_WIN32)) {
-            uno = "uno.exe"; //$NON-NLS-1$
-        }
-
-        return getHome() + FILE_SEP + "bin" + FILE_SEP + uno; //$NON-NLS-1$
+        return getHome() + FILE_SEP + "bin" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
     }
 
+    public static String getUnoExecutable(){
+        String uno = "uno.bin"; //$NON-NLS-1$
+        if (getPlatformOS().equals(Platform.OS_WIN32)) {
+            uno = "uno.exe"; //$NON-NLS-1$
+        }
+        return uno;
+    }
+    
+    
     /**
      * {@inheritDoc}
      */

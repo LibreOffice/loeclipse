@@ -71,12 +71,12 @@
 		<mkdir dir="${cpp.out.classes}" />
 	</target>
 	
-	<target name="cpp.version" depends="init-env">
+	<target name="cpp.version" depends="init-env" unless="cpp.nobuild">
 		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
 		<copy tofile="${manifest.properties}" file="${cpp.basedir}/META-INF/MANIFEST.MF"/>
 		<replace file="${manifest.properties}" token=":" value="="/>
 		<property file="${manifest.properties}" prefix="cpp"/>
-		<delete file="${manifest.properties}" />
+        <delete file="${manifest.properties}" />
 	</target>
 	
 	<target name="purge" depends="init-env">
@@ -103,7 +103,26 @@
 			<zipfileset prefix="icons" dir="${cpp.basedir}/icons"/>
 			<zipfileset prefix="" file="${cpp.basedir}/plugin.xml" />
 		</jar>
-	</target>
+    </target>
+
+    <target name="cpp.site" depends="cpp.plugin" unless="cpp.nobuild">
+
+        <!-- Echo the needed bits for site.xml -->
+        <copy tofile="${out.path}/site-cpp.xml" file="${build.basedir}/site-feature.xml" />
+        <replace file="${out.path}/site-cpp.xml" token="@@URL@@" value="features/org.openoffice.ide.eclipse.cpp_${cpp.Bundle-Version}.jar"/>
+        <replace file="${out.path}/site-cpp.xml" token="@@ID@@" value="org.openoffice.ide.eclipse.cpp"/>
+        <replace file="${out.path}/site-cpp.xml" token="@@VERSION@@" value="${cpp.Bundle-Version}"/>
+
+		<!-- Copying the plugins -->
+		<copy todir="${out.path}/plugins">
+            <fileset dir="${cpp.out.path}/plugins/" 
+				includes="*.jar" />
+			<mapper type="flatten" />
+        </copy>
+
+		<!-- Preparing the plugins for p2 update site -->
+        <prepareJar jar="${out.path}/plugins/${package.prefix}.cpp_${cpp.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+    </target>
 	
 </project>
 

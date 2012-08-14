@@ -143,6 +143,7 @@ public interface IOOo {
      */
     public String getJavaldxPath();
 
+    
     /**
      * Returns a command to execute a <code>uno</code> component.
      * 

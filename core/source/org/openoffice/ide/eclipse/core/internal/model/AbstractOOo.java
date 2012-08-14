@@ -433,4 +433,37 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         }
         return result;
     }
+    
+    protected static String getPlatformOS(){
+        return Platform.getOS();
+    }
+    
+    /**
+     * indicates if a code is a symbolic link or not.
+     * The code is an adaptation from apache commons
+     * @param file
+     * @return true if the file is a symbolic link, false otherwise
+     * @throws IOException
+     */
+    protected static boolean isSymbolicLink(File file) throws IOException{
+        if(file == null){
+            return false;
+        }
+        File fileInCanonicalParent = null;
+        if(file.getParentFile() == null){
+            fileInCanonicalParent = file;
+        }
+        else{
+            File canonicalParent= file.getParentFile().getCanonicalFile();
+            fileInCanonicalParent = new File(canonicalParent, file.getName());
+        }        
+        return !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
+    }
+
+    public static File getTargetLink(File link) throws IOException {
+        if(link == null){
+            return null;
+        }
+        return new File(link.getCanonicalPath());
+    }
 }

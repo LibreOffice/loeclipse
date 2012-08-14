@@ -111,6 +111,12 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     
                     // Deploy the component
                     deployComponent(unoprj, userInstallation, destFile);
+
+                    //remove lock file not cleaned by unopkg gui
+                    File lockFile = new File(userInstallation.toFile(), ".lock");
+                    if (lockFile.exists()) {
+                        lockFile.delete();
+                    }
                     pMonitor.worked(1);
 
                     // Run an OpenOffice instance

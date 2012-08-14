@@ -12,6 +12,7 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
 
     private String mPort;
+    private String OOO_EXTRA_JAVA_TOOL_OPTIONS = "OOO_EXTRA_JAVA_TOOL_OPTIONS"; //$NON-NLS-1$
 
     /**
      * 
@@ -26,8 +27,16 @@ public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
      * {@inheritDoc}
      */
     public String[] addEnv(String[] pEnv) {
-        pEnv = SystemHelper.addEnv(pEnv, "JAVA_TOOL_OPTIONS", "\"-Xdebug\" "
-                        + "\"-Xrunjdwp:transport=dt_socket,address=localhost:" + mPort + "\"", null);
+        String extraJavaOptEnv = System.getenv(OOO_EXTRA_JAVA_TOOL_OPTIONS);
+        if ( extraJavaOptEnv == null )
+            extraJavaOptEnv = new String( );
+        else
+            extraJavaOptEnv = extraJavaOptEnv.replaceAll("\"","\\\"");  //$NON-NLS-1$//$NON-NLS-2$
+            
+                
+        pEnv = SystemHelper.addEnv(pEnv, "JAVA_TOOL_OPTIONS", //$NON-NLS-1$
+                         extraJavaOptEnv + "\"-Xdebug\" " + //$NON-NLS-1$
+                         "\"-Xrunjdwp:transport=dt_socket,address=localhost:" + mPort + "\"", null); //$NON-NLS-1$ //$NON-NLS-2$
         return pEnv;
     }
 

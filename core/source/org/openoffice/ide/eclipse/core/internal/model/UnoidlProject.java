@@ -633,6 +633,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      */
     public void saveAllProperties() {
 
+        if( mLanguage == null || mOOo == null || mSdk == null){
+            PluginLogger.warning(Messages.getString("UnoidlProject.InconsistentConfigurationError")); //$NON-NLS-1$
+            return;
+        }
+        
         Properties properties = new Properties();
         File configFile = getConfigFile();
 
@@ -646,7 +651,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         try {
             in = new FileInputStream(configFile);
             properties.load(in);
-
+            
             properties.setProperty(LANGUAGE, mLanguage.getName());
             properties.setProperty(OOO_NAME, mOOo.getName());
             properties.setProperty(SDK_NAME, mSdk.getId());

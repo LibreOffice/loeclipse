@@ -121,6 +121,9 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 
                         IProject prj = getProject();
                         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+                        if(unoprj == null){
+                            return false;
+                        }
                         IPath idlPath = unoprj.getIdlPath();
                         IPath resPath = pDelta.getResource().getProjectRelativePath();
 
@@ -216,6 +219,10 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         
         IUnoidlProject unoprj = ProjectsManager.getProject(
                 pPrj.getName());
+        
+        if(unoprj == null){
+            return ; 
+        }
         
         try {
             IPath rdbPath = unoprj.getTypesPath();

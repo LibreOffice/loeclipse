@@ -106,5 +106,24 @@
 		</jar>
 	</target>
 	
+    <target name="java.site" depends="java.plugin" unless="java.nobuild">
+
+        <!-- Echo the needed bits for site.xml -->
+        <copy tofile="${out.path}/site-java.xml" file="${build.basedir}/site-feature.xml" />
+        <replace file="${out.path}/site-java.xml" token="@@URL@@" value="features/org.openoffice.ide.eclipse.java_${java.Bundle-Version}.jar"/>
+        <replace file="${out.path}/site-java.xml" token="@@ID@@" value="org.openoffice.ide.eclipse.java"/>
+        <replace file="${out.path}/site-java.xml" token="@@VERSION@@" value="${java.Bundle-Version}"/>
+
+		<!-- Copying the plugins -->
+		<copy todir="${out.path}/plugins">
+            <fileset dir="${java.out.path}/plugins/"
+				includes="*.jar" />
+			<mapper type="flatten" />
+        </copy>
+
+		<!-- Preparing the plugins for p2 update site -->
+        <prepareJar jar="${out.path}/plugins/${package.prefix}.java_${java.Bundle-Version}.jar" outdir="${out.path}/plugins"/>
+    </target>
+	
 </project>
 

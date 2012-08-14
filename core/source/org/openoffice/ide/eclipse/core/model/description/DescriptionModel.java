@@ -540,9 +540,13 @@ public class DescriptionModel implements IModel {
             writer.startTag( XMLTokens.ELEMENT_DESCRIPTION, mapping );
             
             // Write the version element
-            printValueElement( writer, XMLTokens.ELEMENT_VERSION, mVersion );
+            if(mVersion != null && !"".equals(mVersion)){
+                printValueElement( writer, XMLTokens.ELEMENT_VERSION, mVersion );
+            }
             printValueElement( writer, XMLTokens.ELEMENT_IDENTIFIER, mId );
-            printValueElement( writer, XMLTokens.ELEMENT_PLATFORM, mPlatforms );
+            if(mPlatforms != null && !"".equals(mPlatforms)){
+                printValueElement( writer, XMLTokens.ELEMENT_PLATFORM, mPlatforms );
+            }
             
             writeDependencies( writer );
             writeUpdateInfos( writer );

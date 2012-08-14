@@ -45,9 +45,13 @@ package org.openoffice.ide.eclipse.core.internal.model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
@@ -144,15 +148,7 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     public String[] getClassesPath() {
-
-        String[] paths = new String[] { getLibsPath()[0] + FILE_SEP + "classes" //$NON-NLS-1$
-        };
-
-        if (mMapper.isVersion3()) {
-            paths = mMapper.getClasses();
-        }
-
-        return paths;
+        return mMapper.getClasses();
     }
 
     /**
@@ -161,7 +157,6 @@ public class OOo extends AbstractOOo {
     public String[] getLibsPath() {
         // Nothing if not OOo3
         String[] otherPaths = mMapper.getAdditionnalLibs();
-
         String libs = getHome() + FILE_SEP + "program"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_MACOSX)) {
             libs = getHome() + FILE_SEP + "MacOS"; //$NON-NLS-1$
@@ -189,28 +184,14 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     public String[] getTypesPath() {
-        String[] paths = { getLibsPath()[0] + FILE_SEP + "types.rdb" //$NON-NLS-1$ 
-        };
-
-        if (mMapper.isVersion3()) {
-            paths = mMapper.getTypes();
-        }
-
-        return paths;
+        return mMapper.getTypes();
     }
 
     /**
      * {@inheritDoc}
      */
     public String[] getServicesPath() {
-        String[] paths = new String[] { getLibsPath()[0] + FILE_SEP + "services.rdb" //$NON-NLS-1$
-        };
-
-        // Change the paths for OOo3 installs
-        if (mMapper.isVersion3()) {
-            paths = mMapper.getServices();
-        }
-        return paths;
+        return mMapper.getServices();
     }
 
     /**
@@ -230,17 +211,7 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     public String getUnoPath() {
-        String uno = "uno.bin"; //$NON-NLS-1$
-        if (getPlatform().equals(Platform.OS_WIN32)) {
-            uno = "uno.exe"; //$NON-NLS-1$
-        }
-        String unoPath = getLibsPath()[0] + FILE_SEP + uno;
-
-        if (mMapper.isVersion3()) {
-            unoPath = mMapper.getUnoPath();
-        }
-
-        return unoPath;
+        return mMapper.getUnoPath();
     }
 
     /**
@@ -374,8 +345,8 @@ public class OOo extends AbstractOOo {
                 mDoRemovePackage = false;
                 Display.getDefault().syncExec(new Runnable() {
                     public void run() {
-                        mDoRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), Messages
-                                        .getString("OOo.PackageExportTitle"), //$NON-NLS-1$
+                        mDoRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+                                        Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
                                         Messages.getString("OOo.PackageAlreadyInstalled")); //$NON-NLS-1$
                     }
                 });
@@ -391,8 +362,8 @@ public class OOo extends AbstractOOo {
         } catch (Exception e) {
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    MessageDialog.openError(Display.getDefault().getActiveShell(), Messages
-                                    .getString("OOo.PackageExportTitle"), //$NON-NLS-1$
+                    MessageDialog.openError(Display.getDefault().getActiveShell(),
+                                    Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
                                     Messages.getString("OOo.DeploymentError")); //$NON-NLS-1$
                 }
             });
@@ -453,7 +424,7 @@ public class OOo extends AbstractOOo {
      * @param pName
      *            the name of the package to remove
      * @param pUserInstallation
-     *            the path to the office user installation to use 
+     *            the path to the office user installation to use
      * @throws Exception
      *             if anything wrong happens
      */
@@ -521,69 +492,155 @@ public class OOo extends AbstractOOo {
     private class OOo3PathMapper {
 
         private String mHome;
-        private String mBasis;
-
-        private boolean mVersionChecked = false;
 
         /**
          * This field holds the URE instance to use for OOo3.
          */
         private URE mUre;
 
+        // private fields
+        private File mapperBasisLibs;
+        private File mapperBasisBins;
+        private File mapperBasisClasses;
+        private List<File> mapperBasisTypes;
+        private List<File> mapperBasisServices;
+        
         /**
          * Create a new mapper object to get the OOo3 layers paths.
          * 
          * @param pHome
          *            the OOo install home
+         * @throws InvalidConfigException
          */
-        public OOo3PathMapper(String pHome) {
+        public OOo3PathMapper(String pHome) throws InvalidConfigException {
             mHome = pHome;
+            initPaths();
         }
 
-        /**
-         * @return <code>true</code> if the openoffice install corresponds to a 3.0 installation layout,
-         *         <code>false</code> otherwise.
-         */
-        public boolean isVersion3() {
-            boolean version3 = false;
-
-            if (!mVersionChecked) {
-                try {
-                    Path homePath = new Path(mHome);
-                    File homeFile = homePath.toFile();
-
-                    File basis = getPortableLink("basis-link", homeFile); //$NON-NLS-1$
-                    File ure = getPortableLink("ure-link", basis); //$NON-NLS-1$
-
-                    version3 = basis.isDirectory() && ure.isDirectory();
-
-                    if (version3) {
-                        mBasis = basis.getCanonicalPath();
-                        mUre = new URE(ure.getCanonicalPath());
-                    }
-                } catch (Exception e) {
-                    version3 = false;
-                }
-
-                mVersionChecked = true;
-            } else {
-                version3 = mUre != null;
+        private void initPaths() throws InvalidConfigException {
+            // locate ure directory (directory which contains bin/uno.bin or bin/uno.exe
+            String unoRelativePath = "bin/" + URE.getUnoExecutable();
+            File ureDir = locateUniqueContainer(mHome, unoRelativePath);
+            if (ureDir == null) {
+                mHome = null;
+                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + unoRelativePath,
+                                InvalidConfigException.INVALID_OOO_HOME);
             }
-
-            return version3;
+            mUre = new URE(ureDir.getAbsolutePath());
         }
 
+        private File locateUniqueContainer(String baseDir, String pUnoRelativePath) throws InvalidConfigException {
+            try {
+                File base = new File(baseDir);
+                if (!base.exists() || !base.isDirectory() || !base.canRead()) {
+                    return null;
+                }
+                List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
+                if (dirs == null) {
+                    throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                                    InvalidConfigException.INVALID_OOO_HOME);
+                }
+                // remove link if there is duplicate
+                if (dirs.size() > 1) {
+                    List<File> linksList = new ArrayList<File>();
+                    for (File tmpFile : dirs) {
+                        if (AbstractOOo.isSymbolicLink(tmpFile)) {
+                            linksList.add(tmpFile);
+                        }
+                    }
+                    if(!linksList.isEmpty()) {
+                        for(File link : linksList){
+                            File linkTarget = AbstractOOo.getTargetLink(link);
+                            if(dirs.contains(linkTarget)){
+                                dirs.remove(linkTarget);
+                            }
+                        }                                                
+                    }
+                }
+                if (dirs.size() != 1) {
+                    throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                                    InvalidConfigException.INVALID_OOO_HOME);
+                } else {
+                    return dirs.get(0);
+                }
+            } catch (IOException e) {
+                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                                InvalidConfigException.INVALID_OOO_HOME);
+            }
+        }
+
+        private List<File> locateFiles(String baseDir, String pUnoRelativePath) throws InvalidConfigException {
+            try {
+                File base = new File(baseDir);
+                if (!base.exists() || !base.isDirectory() || !base.canRead()) {
+                    return null;
+                }
+                List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
+                if (dirs == null) {
+                    return Collections.emptyList();
+                }
+                // remove link if there is duplicate
+                if (dirs.size() > 1) {
+                    List<File> linksList = new ArrayList<File>();
+                    for (File tmpFile : dirs) {
+                        if (AbstractOOo.isSymbolicLink(tmpFile)) {
+                            linksList.add(tmpFile);
+                        }
+                    }
+                    if(!linksList.isEmpty()) {
+                        for(File link : linksList){
+                            File linkTarget = AbstractOOo.getTargetLink(link);
+                            if(dirs.contains(linkTarget)){
+                                dirs.remove(linkTarget);
+                            }
+                        }                                                
+                    }
+                }
+                if(dirs.size() == 0){
+                    return Collections.emptyList();
+                }
+                List<File> returnList = new ArrayList<File>();
+                for (File tmpFile : dirs) {
+                    returnList.add(new File(tmpFile, pUnoRelativePath));
+                }
+                return returnList;
+            } catch (IOException e) {
+                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                                InvalidConfigException.INVALID_OOO_HOME);
+            }
+        }
+        
         /**
          * @return the libraries path to add for OOo3 or an empty array if not an OOo3 install.
+         * @throws InvalidConfigException
          */
         public String[] getAdditionnalLibs() {
             String[] additionnal = new String[0];
 
-            if (isVersion3()) {
-                String[] ureLibs = mUre.getLibsPath();
-                String basisLibs = mBasis + FILE_SEP + "program"; //$NON-NLS-1$
+            String[] ureLibs = new String[0];
+            if (mUre != null) {
+                ureLibs = mUre.getLibsPath();
+            }
 
-                additionnal = mergeArrays(ureLibs, new String[] { basisLibs });
+            File basisLibs = this.mapperBasisLibs;
+            if(basisLibs == null){
+                try {
+                    String extension = ".so";
+                    if (getPlatform().equals(Platform.OS_WIN32)) {
+                        extension = ".dll";
+                    } else if (getPlatform().equals(Platform.OS_MACOSX)) {
+                        extension = ".dylib";
+                    }
+                    basisLibs = locateUniqueContainer(mHome, "libpyuno" + extension);
+                    this.mapperBasisLibs = basisLibs;
+                } catch (InvalidConfigException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (basisLibs != null) {
+                additionnal = mergeArrays(ureLibs, new String[] { basisLibs.getAbsolutePath() });
+            } else {
+                additionnal = ureLibs;
             }
 
             return additionnal;
@@ -595,11 +652,25 @@ public class OOo extends AbstractOOo {
         public String[] getAdditionnalBins() {
             String[] additionnal = new String[0];
 
-            if (isVersion3()) {
-                String[] ureBins = mUre.getBinPath();
-                String basisBins = mBasis + FILE_SEP + "program"; //$NON-NLS-1$
+            String[] ureLibs = new String[0];
+            if (mUre != null) {
+                ureLibs = mUre.getBinPath();
+            }
 
-                additionnal = mergeArrays(ureBins, new String[] { basisBins });
+            File basisLibs = this.mapperBasisBins;
+            if(basisLibs == null){
+                try {
+                    basisLibs = locateUniqueContainer(mHome, "uno.pyc");
+                    this.mapperBasisBins = basisLibs;
+                } catch (InvalidConfigException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (basisLibs != null) {
+                additionnal = mergeArrays(ureLibs, new String[] { basisLibs.getAbsolutePath() });
+            } else {
+                additionnal = ureLibs;
             }
 
             return additionnal;
@@ -611,12 +682,25 @@ public class OOo extends AbstractOOo {
         public String[] getClasses() {
             String[] classes = new String[0];
 
-            if (isVersion3()) {
-                String[] ureClasses = mUre.getClassesPath();
-                String basisClasses = mBasis + FILE_SEP + "program" + //$NON-NLS-1$ 
-                                FILE_SEP + "classes"; //$NON-NLS-1$
+            String[] ureClasses = new String[0];
+            if (mUre != null) {
+                ureClasses = mUre.getClassesPath();
+            }
 
-                classes = mergeArrays(ureClasses, new String[] { basisClasses });
+            File basisClasses =  this.mapperBasisClasses;
+            if(mapperBasisClasses == null){
+                try {
+                    basisClasses = locateUniqueContainer(mHome, "unoil.jar");
+                    mapperBasisClasses= basisClasses;
+                } catch (InvalidConfigException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (basisClasses != null) {
+                classes = mergeArrays(ureClasses, new String[] { basisClasses.getAbsolutePath() });
+            } else {
+                classes = ureClasses;
             }
 
             return classes;
@@ -628,12 +712,31 @@ public class OOo extends AbstractOOo {
         public String[] getTypes() {
             String[] types = new String[0];
 
-            if (isVersion3()) {
-                String[] ureTypes = mUre.getTypesPath();
-                String basisTypes = mBasis + FILE_SEP + "program" + //$NON-NLS-1$ 
-                                FILE_SEP + "offapi.rdb"; //$NON-NLS-1$
+            String[] ureTypes = new String[0];
+            if (mUre != null) {
+                ureTypes = mUre.getTypesPath();
+            }
 
-                types = mergeArrays(ureTypes, new String[] { basisTypes });
+            List<File> basisTypes = this.mapperBasisTypes;
+            if(mapperBasisTypes == null){
+                try {
+                    basisTypes = locateFiles(mHome, "offapi.rdb");
+                    mapperBasisTypes = basisTypes;
+                } catch (InvalidConfigException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (basisTypes != null && basisTypes.size() > 0) {
+                List<String> servicesPathList = new ArrayList<String>();    
+                for(File typeFile : basisTypes){
+                    if(typeFile != null){
+                        servicesPathList.add(typeFile.getAbsolutePath());    
+                    }                    
+                }                
+                types = mergeArrays(ureTypes, (String[]) servicesPathList.toArray(new String[servicesPathList.size()]));
+            } else {
+                types = ureTypes;
             }
 
             return types;
@@ -645,12 +748,31 @@ public class OOo extends AbstractOOo {
         public String[] getServices() {
             String[] types = new String[0];
 
-            if (isVersion3()) {
-                String[] ureTypes = mUre.getServicesPath();
-                String basisTypes = mBasis + FILE_SEP + "program" + //$NON-NLS-1$ 
-                                FILE_SEP + "services.rdb"; //$NON-NLS-1$
+            String[] ureTypes = new String[0];
+            if (mUre != null) {
+                ureTypes = mUre.getServicesPath();
+            }
 
-                types = mergeArrays(ureTypes, new String[] { basisTypes });
+            List<File> basisTypes = this.mapperBasisServices;
+            if(mapperBasisServices == null){
+                try {
+                    basisTypes = locateFiles(mHome, "services.rdb");
+                    mapperBasisServices = basisTypes;
+                } catch (InvalidConfigException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (basisTypes != null && basisTypes.size() > 0) {
+                List<String> servicesPathList = new ArrayList<String>();    
+                for(File typeFile : basisTypes){
+                    if(typeFile != null){
+                        servicesPathList.add(typeFile.getAbsolutePath());    
+                    }                    
+                }                
+                types = mergeArrays(ureTypes, (String[]) servicesPathList.toArray(new String[servicesPathList.size()]));
+            } else {
+                types = ureTypes;
             }
 
             return types;
@@ -661,7 +783,7 @@ public class OOo extends AbstractOOo {
          */
         public String getUnoPath() {
             String path = null;
-            if (isVersion3()) {
+            if (mUre != null) {
                 path = mUre.getUnoPath();
             }
 
@@ -681,49 +803,18 @@ public class OOo extends AbstractOOo {
          * @return the array with the elements of both arrays
          */
         public String[] mergeArrays(String[] pArray1, String[] pArray2) {
+            if (pArray1 == null) {
+                return pArray2;
+            }
+            if (pArray2 == null) {
+                return pArray1;
+            }
             String[] result = new String[pArray1.length + pArray2.length];
 
             System.arraycopy(pArray1, 0, result, 0, pArray1.length);
             System.arraycopy(pArray2, 0, result, pArray1.length, pArray2.length);
 
             return result;
-        }
-
-        /**
-         * Get the file object for the link defined as a child of a folder.
-         * 
-         * On Windows platform, the link relative location is specified as the content of a file named after the link
-         * name. On Unix-based systems symbolic links are supported.
-         * 
-         * @param pName
-         *            the name of the symbolic link
-         * @param pParent
-         *            the parent directory file
-         * 
-         * @return the file representing the link target or <code>null</code>
-         */
-        private File getPortableLink(String pName, File pParent) {
-            File link = null;
-
-            File linkFile = new File(pParent, pName);
-            if (getPlatform().equals(Platform.OS_WIN32)) {
-                // Read the content of the file to get the true folder
-                try {
-                    FileInputStream is = new FileInputStream(linkFile);
-                    byte[] buf = new byte[is.available()];
-                    is.read(buf);
-
-                    String relativePath = new String(buf);
-                    linkFile = new File(pParent, relativePath);
-                    link = linkFile;
-                } catch (Exception e) {
-                    // the returned link is null to show the error
-                }
-            } else {
-                link = linkFile;
-            }
-
-            return link;
         }
     }
 }
