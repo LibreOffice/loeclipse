@@ -108,7 +108,7 @@ public class SDK implements ISdk, ITableElement {
      * @param pSdkHome absolute path of the SDK root
      * 
      * @throws InvalidConfigException if the path doesn't points to a valid 
-     *      OpenOffice.org SDK installation directory.
+     *      LibreOffice SDK installation directory.
      */
     public SDK (String pSdkHome) throws InvalidConfigException {
         
@@ -410,12 +410,12 @@ public class SDK implements ISdk, ITableElement {
      * <code>DYLD_LIBRARY_PATH</code> depending on the platform.</p>
      * 
      * @param pVars the environment variables to update
-     * @param pOoo the OpenOffice.org instance to use along with the SDK
+     * @param pOoo the LibreOffice instance to use along with the SDK
      * 
      * @return the update environment variables. 
      * 
      * @throws Exception if the platform isn't among the platforms for which the
-     *      OpenOffice.org SDK is available.
+     *      LibreOffice SDK is available.
      */
     private String[] updateEnvironment(String[] pVars, IOOo pOoo) throws Exception {
         String[] oooBinPaths = pOoo.getBinPath();

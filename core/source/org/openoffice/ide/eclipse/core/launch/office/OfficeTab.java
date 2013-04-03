@@ -57,7 +57,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * Tab for configuring the OpenOffice launch properties.
+ * Tab for configuring the LibreOffice launch properties.
  * 
  * @author cdan
  * 

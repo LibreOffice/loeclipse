@@ -63,9 +63,9 @@ public interface IUnoidlSyntax {
      * The UNO-IDL reserved words: they will be rendered as keywords.
      */
     public static final String[] RESERVED_WORDS = {
-        "published",      // new with the OpenOffice.org 2.0 SDK  //$NON-NLS-1$
-        "get",            // new with the OpenOffice.org 2.0 SDK  //$NON-NLS-1$
-        "set",              // new with the OpenOffice.org 2.0 SDK //$NON-NLS-1$
+        "published",      //$NON-NLS-1$
+        "get",            //$NON-NLS-1$
+        "set",            //$NON-NLS-1$
         "service", //$NON-NLS-1$
         "singleton", //$NON-NLS-1$
         "type", //$NON-NLS-1$

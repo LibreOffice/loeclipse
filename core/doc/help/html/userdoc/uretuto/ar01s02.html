@@ -27,7 +27,7 @@ comparison, this interface is to UNO what the static main method is to
 C/C++ or Java. Running an URE application is telling UNO which <code
 	class="literal">Xmain:run()</code> method to run, then your application
 is started and you can do your job.</p>
-<p>The OpenOffice.org Eclipse integration provides a simple wizard
+<p>The LibreOffice Eclipse integration provides a simple wizard
 to create a URE application: this helps you to remember which interface
 has to be implemented and how to register it to the URE. It provides an
 easy way to run your URE applications in the Eclipse fashion.</p>
@@ -55,8 +55,8 @@ example, you could change the opened file into the following:</p>
 <pre class="programlisting">// com.sun.star.lang.XMain:
 public int run(String[] aArguments)
 {
-     System.out.println( "Here is a postcard from the URE world !" );
-     return 0;
+     System.out.println( "Here is a postcard from the URE world !" );
+     return 0;
 }</pre></div>
 <div class="section" lang="en-GB">
 <div class="titlepage">

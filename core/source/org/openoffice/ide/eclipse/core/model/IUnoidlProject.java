@@ -90,7 +90,7 @@ public interface IUnoidlProject {
     public String getName();
     
     /**
-     * @return the selected OOo
+     * @return the selected LibreOffice
      */
     public IOOo getOOo();
     
@@ -108,9 +108,9 @@ public interface IUnoidlProject {
     public void setLanguage(AbstractLanguage pLanguage);
     
     /**
-     * Sets the selected OOo.
+     * Sets the selected LibreOffice.
      * 
-     * @param pOOo the selected OpenOffice.org
+     * @param pOOo the selected LibreOffice
      */
     public void setOOo(IOOo pOOo);
     
@@ -176,7 +176,7 @@ public interface IUnoidlProject {
     /**
      * Returns the company prefix used in the idl modules and implementation 
      * trees. For example, it could be <code>org.openoffice</code> for any code
-     * created by the OpenOffice.org community. 
+     * created by the LibreOffice community. 
      * 
      * @return the company prefix
      */
@@ -264,20 +264,20 @@ public interface IUnoidlProject {
 
     /**
      * @return the path to the project's folder used to store the user profile
-     *         when running/debugging OpenOffice in a clean environment. This
-     *         way we do not mangle with the system wide installed, OpenOffice
+     *         when running/debugging LibreOffice in a clean environment. This
+     *         way we do not mangle with the system wide installed, LibreOffice
      *         settings. 
      */
-    public IPath getOpenOfficeUserProfilePath();
+    public IPath getOfficeUserProfilePath();
 
     /**
      * @return the folder used to store the user profile
-     *         when running/debugging OpenOffice in a clean environment. This
-     *         way we do not mangle with the system wide installed, OpenOffice
+     *         when running/debugging LibreOffice in a clean environment. This
+     *         way we do not mangle with the system wide installed, LibreOffice
      *         settings. If the folder does not exist then it is created. 
      * @throws CoreException if we were unable to create the folder. 
      */
-    public IFolder getOpenOfficeUserProfileFolder() throws CoreException;
+    public IFolder getOfficeUserProfileFolder() throws CoreException;
     
     //----------------------------------------------- Project resources getters
     

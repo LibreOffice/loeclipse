@@ -374,7 +374,7 @@ public class UnoPackageExportPage extends WizardPage {
     }
     
     /**
-     * Thread performing the package deployment into OpenOffice.org.
+     * Thread performing the package deployment into LibreOffice.
      * 
      * @author Cédric Bosdonnat
      *
@@ -387,7 +387,7 @@ public class UnoPackageExportPage extends WizardPage {
         /**
          * Constructor.
          * 
-         * @param pOoo the OpenOffice.org where to deploy
+         * @param pOoo the LibreOffice where to deploy
          * @param pDest the package to deploy
          */
         DeployerJob(IOOo pOoo, File pDest) {

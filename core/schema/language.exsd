@@ -6,7 +6,7 @@
          <meta.schema plugin="org.openoffice.ide.eclipse.core" id="language" name="Uno-idl project language binding Extension point"/>
       </appInfo>
       <documentation>
-         This extension point has to be used for the definition of a new language supported by the OpenOffice.org development plugin.
+         This extension point has to be used for the definition of a new language supported by the LibreOffice development plugin.
       </documentation>
    </annotation>
 

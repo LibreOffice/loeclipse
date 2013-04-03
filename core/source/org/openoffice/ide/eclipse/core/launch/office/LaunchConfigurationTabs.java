@@ -38,7 +38,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
 /**
- * Creates tabs in the OpenOffice launcher.
+ * Creates tabs in the LibreOffice launcher.
  * 
  * @author cdan
  * 

@@ -12,7 +12,7 @@ HOWTO Install this plugin
 FEATURES
   
   - UNO-IDL syntax highlighting
-  - SDK and OpenOffice.org Configuration
+  - SDK and LibreOffice Configuration
   - Java code generation
   - New UNO project wizard
   - New UNO file wizard

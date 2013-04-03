@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Java Plug-in for OOo eclipse integration
+Bundle-Name: Java Plug-in for LibreOffice eclipse integration
 Bundle-SymbolicName: org.openoffice.ide.eclipse.java; singleton:=true
 Bundle-Version: 1.0.3
 Bundle-Activator: org.openoffice.ide.eclipse.java.OOoJavaPlugin

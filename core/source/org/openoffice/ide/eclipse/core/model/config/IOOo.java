@@ -51,7 +51,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Interface for an OpenOffice.org configuration instance. This can even be implemented as an URE instance.
+ * Interface for a LibreOffice configuration instance. This can even be implemented as an URE instance.
  * 
  * @author cedricbosdo
  */
@@ -63,29 +63,29 @@ public interface IOOo {
      * @param pHome
      *            the absolute path to the home directory
      * @throws InvalidConfigException
-     *             is thrown if the path doesn't match the implementation requirement for an OOo instance. The error
+     *             is thrown if the path doesn't match the implementation requirement for a LibreOffice instance. The error
      *             code will be {@link InvalidConfigException#INVALID_OOO_HOME}
      */
     public void setHome(String pHome) throws InvalidConfigException;
 
     /**
-     * Returns the path to the OpenOffice.org home directory. This string could be passed to the Path constructor to get
+     * Returns the path to the LibreOffice home directory. This string could be passed to the Path constructor to get
      * the folder object.
      * 
-     * @return path to the OpenOffice.org home directory.
+     * @return path to the LibreOffice home directory.
      */
     public String getHome();
 
     /**
-     * Returns the OOo name. It should be a unique identifier
+     * Returns the LibreOffice name. It should be a unique identifier
      * 
-     * @return ooo name
+     * @return LibreOffice name
      */
     public String getName();
 
     /**
      * <p>
-     * Returns the path to the OpenOffice.org classes directory. These strings could be passed to the Path constructor
+     * Returns the path to the LibreOffice classes directory. These strings could be passed to the Path constructor
      * to get the folder object.
      * </p>
      * 
@@ -94,37 +94,37 @@ public interface IOOo {
      * URE applications</em>
      * </p>
      * 
-     * @return path to the OpenOffice.org classes directory
+     * @return path to the LibreOffice classes directory
      */
     public String[] getClassesPath();
 
     /**
      * <p>
-     * Returns the path to the OpenOffice.org shared libraries. This string could be passed to the Path constructor to
+     * Returns the path to the LibreOffice shared libraries. This string could be passed to the Path constructor to
      * get the folder object.
      * </p>
      * 
-     * @return path to the OpenOffice.org libraries directory
+     * @return path to the LibreOffice libraries directory
      */
     public String[] getLibsPath();
 
     /**
      * <p>
-     * Returns the path to any folder containing binaries in the OOo installation. This string could be passed to the
+     * Returns the path to any folder containing binaries in the LibreOffice installation. This string could be passed to the
      * Path constructor to get the folder object.
      * </p>
      * 
-     * @return paths to the OpenOffice.org binary directories
+     * @return paths to the LibreOffice binary directories
      */
     public String[] getBinPath();
 
     /**
-     * @return the path to the <code>types.rdb</code> file of the OOo or URE instance.
+     * @return the path to the <code>types.rdb</code> file of the LibreOffice or URE instance.
      */
     public String[] getTypesPath();
 
     /**
-     * @return the path to the <code>services.rdb</code> file of the OOo or URE instance.
+     * @return the path to the <code>services.rdb</code> file of the LibreOffice or URE instance.
      */
     public String[] getServicesPath();
 
@@ -190,16 +190,16 @@ public interface IOOo {
      * @param pMonitor
      *            a monitor to follow the progress
      */
-    public void runOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+    public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
                     IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor);
 
     /**
-     * @return <code>true</code> if the OOo instance has a package manager.
+     * @return <code>true</code> if the LibreOffice instance has a package manager.
      */
     public boolean canManagePackages();
 
     /**
-     * Update a package in the OOo instance if it can manages packages.
+     * Update a package in the LibreOffice instance if it can manages packages.
      * 
      * @param pPackageFile
      *            the package to add or update

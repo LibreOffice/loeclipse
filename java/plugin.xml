@@ -43,12 +43,12 @@
       <classpathContainerPage
             class="org.openoffice.ide.eclipse.java.build.OOoContainerPage"
             id="org.openoffice.ide.eclipse.java.OOO_CONTAINER"
-            name="OpenOffice.org Libraries">
+            name="LibreOffice Libraries">
       </classpathContainerPage>
       <classpathContainerPage
             class="org.openoffice.ide.eclipse.java.client.JODContainerPage"
             id="org.openoffice.ide.eclipse.java.JOD_CONTAINER"
-            name="OpenOffice.org UNO connector">
+            name="LibreOffice UNO connector">
       </classpathContainerPage>
    </extension>
    <extension

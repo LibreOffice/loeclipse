@@ -60,7 +60,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
- * Singleton object containing the OOo configurations.
+ * Singleton object containing the LibreOffice configurations.
  * 
  * @author cedricbosdo
  *
@@ -153,7 +153,7 @@ public class OOoContainer {
     }
     
     /**
-     * Notify every listener that an OpenOffice.org instance configuration
+     * Notify every listener that a LibreOffice instance configuration
      * has been added.
      * 
      * @param pOoo the added OOo
@@ -199,7 +199,7 @@ public class OOoContainer {
     }
     
     /**
-     * Checks whether the corresponding OOo name already exists.
+     * Checks whether the corresponding LibreOffice name already exists.
      * 
      * @param pName the OOo Name to check
      * @return <code>true</code> if the name is already present, 
@@ -240,10 +240,10 @@ public class OOoContainer {
     }
     
     /**
-     * Notify all the listeners that an OpenOffice.org instance configuration
+     * Notify all the listeners that a LibreOffice instance configuration
      * has been removed.
      * 
-     * @param pOoo the removed OpenOffice.org
+     * @param pOoo the removed LibreOffice
      */
     private void fireOOoRemoved(IOOo pOoo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -277,10 +277,10 @@ public class OOoContainer {
     }
     
     /**
-     * Notify every listener that an OpenOffice.org instance configuration
+     * Notify every listener that a LibreOffice instance configuration
      * has been updated.
      * 
-     * @param pOoo the updated OOo
+     * @param pOoo the updated LibreOffice
      */
     private void fireOOoUpdated(IOOo pOoo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -383,7 +383,7 @@ public class OOoContainer {
     }
     
     /**
-     * Loads the OpenOffice.org already configured instances from the 
+     * Loads the LibreOffice already configured instances from the 
      * preferences.
      */
     public static void load() {
@@ -395,7 +395,7 @@ public class OOoContainer {
     }
     
     /**
-     * Saves the OpenOffice.org already configured instances to the 
+     * Saves the LibreOffice already configured instances to the 
      * preferences.
      */
     public static void saveOOos() {

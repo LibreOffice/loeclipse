@@ -67,7 +67,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.java.OOoJavaPlugin;
 
 /**
- * Edition and creation page for the OpenOffice.org libraries container.
+ * Edition and creation page for the LibreOffice libraries container.
  * 
  * @author cedricbosdo
  *
@@ -206,7 +206,7 @@ public class OOoContainerPage extends WizardPage implements
     }
     
     /**
-     * Add the OpenOffice.org common JARs to a projects build path.
+     * Add the LibreOffice common JARs to a projects build path.
      * 
      * @param pOoo the ooo to use for the classpath
      * @param pProject the project to change

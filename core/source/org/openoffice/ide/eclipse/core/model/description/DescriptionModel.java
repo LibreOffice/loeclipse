@@ -584,7 +584,7 @@ public class DescriptionModel implements IModel {
                 HashMap<String, String> attrs = new HashMap<String, String>( );
                 attrs.put( XMLTokens.ATTR_VALUE, mMinOOo.trim() );
                 attrs.put( XMLTokens.createQName(XMLTokens.PREFIX_DESCRIPTION, XMLTokens.ELEMENT_NAME ),
-                        "OpenOffice.org " + mMinOOo.trim() ); //$NON-NLS-1$
+                        mMinOOo.trim() );
                 pWriter.printSingleTag( XMLTokens.ELEMENT_OOO_MIN, attrs );
             }
 
@@ -592,7 +592,7 @@ public class DescriptionModel implements IModel {
                 HashMap<String, String> attrs = new HashMap<String, String>( );
                 attrs.put( XMLTokens.ATTR_VALUE, mMaxOOo.trim() );
                 attrs.put( XMLTokens.createQName(XMLTokens.PREFIX_DESCRIPTION, XMLTokens.ELEMENT_NAME ),
-                        "OpenOffice.org " + mMaxOOo.trim( ) ); //$NON-NLS-1$
+                        mMaxOOo.trim( ) );
                 pWriter.printSingleTag( XMLTokens.ELEMENT_OOO_MAX, attrs );
             }
             

@@ -103,7 +103,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     public static final String SDK_NAME = "project.sdk"; //$NON-NLS-1$
 
     /**
-     * Project property that stores the name of the OpenOffice.org instance used to run / deploy the project.
+     * Project property that stores the name of the LibreOffice instance used to run / deploy the project.
      */
     public static final String OOO_NAME = "project.ooo"; //$NON-NLS-1$
 
@@ -485,15 +485,15 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
-    public IPath getOpenOfficeUserProfilePath() {
+    public IPath getOfficeUserProfilePath() {
         return getFolder(getDistPath().append(UnoidlProjectHelper.OO_PROFILE_BASIS)).getProjectRelativePath();
     }
 
     /**
      * {@inheritDoc}
      */
-    public IFolder getOpenOfficeUserProfileFolder() throws CoreException {
-        IFolder folder = getFolder(getOpenOfficeUserProfilePath());
+    public IFolder getOfficeUserProfileFolder() throws CoreException {
+        IFolder folder = getFolder(getOfficeUserProfilePath());
         if (!folder.exists()) {
             folder.getLocation().toFile().mkdirs();
         }
@@ -800,7 +800,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     }
 
     /**
-     * Toggle an error marker on the project indicating that the there is either no OpenOffice.org nor SDK set.
+     * Toggle an error marker on the project indicating that the there is either no LibreOffice nor SDK set.
      * 
      * @param pSet
      *            <code>true</code> if the error marker should be set, <code>false</code> otherwise.

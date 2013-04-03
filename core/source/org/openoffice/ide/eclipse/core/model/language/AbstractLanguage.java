@@ -121,7 +121,7 @@ public abstract class AbstractLanguage {
      * @param pUserInstallation user profile.
      * @param pMonitor monitor to report progress to.
      */
-    public abstract void connectDebuggerToOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+    public abstract void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
                     IProgressMonitor pMonitor);
 
     /**

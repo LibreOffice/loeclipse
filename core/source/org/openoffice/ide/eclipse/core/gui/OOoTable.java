@@ -172,14 +172,14 @@ public class OOoTable extends AbstractTable {
     }
     
     /**
-     * This method create and calls the dialog box to be launched on OOo edition
-     * or OOo creation. The parameter <code>pOoo</code> could be null: in this 
+     * This method create and calls the dialog box to be launched on LibreOffice edition
+     * or LibreOffice creation. The parameter <code>pOoo</code> could be null: in this 
      * case, a new one will be created. Otherwise the fields of the old one will
      * be changed. This is useful for OOo editing: the object reference is the
      * same.
      * 
-     * @param pOoo the OpenOffice.org instance to show in the dialog
-     * @return the modified or created OpenOffice.org instance
+     * @param pOoo the LibreOffice instance to show in the dialog
+     * @return the modified or created LibreOffice instance
      */
     protected AbstractOOo openDialog(AbstractOOo pOoo) {
         
@@ -296,7 +296,7 @@ public class OOoTable extends AbstractTable {
     }
     
     /**
-     * Class for the OOo add/edit dialog. 
+     * Class for the LibreOffice add/edit dialog. 
      * 
      * @author cedricbosdo
      */
@@ -315,7 +315,7 @@ public class OOoTable extends AbstractTable {
         private AbstractOOo mOOo;
         
         /**
-         * Create the OOo dialog without any OOo instance.
+         * Create the LibreOffice dialog without any Ooo instance.
          * 
          * @param pParentShell the shell where to put the dialog 
          */
@@ -324,7 +324,7 @@ public class OOoTable extends AbstractTable {
         }
         
         /**
-         * Create the OOo dialog with an OOo instance to edit.
+         * Create the LibreOffice dialog with an OOo instance to edit.
          * 
          * @param pParentShell the shell where to put the dialog 
          * @param pOoo the OOo instance to edit

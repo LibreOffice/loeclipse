@@ -32,7 +32,7 @@ Eclipse</i></h3>
 </div>
 <p>This paper is a tutorial to guide UNO newcomers to create their
 first Java component. This tutorial will use Eclipse and it's plugin for
-the OpenOffice.org development. Of course, every step will be detailed,
+the LibreOffice development. Of course, every step will be detailed,
 but if your are still an experienced UNO programmer, you can have a look
 at the next pages to have a better view of how to use the Eclipse
 plugin.</p>
@@ -103,14 +103,14 @@ process</h4>
 </div>
 </div>
 <div class="figure"><a name="refIllustration0"></a>
-<p class="title"><b>Figure 1. : UNO component build chain</b></p>
+<p class="title"><b>Figure 1.: UNO component build chain</b></p>
 <div class="mediaobject"><img src="img/img000.png"
 	alt=": UNO component build chain"></div>
 </div>
 <p>To help you better understand what should be done to get a
 component from it's specification and sources, you should have a look at
-the illustration <a href="index.html#refIllustration0"
-	title="Figure 1. : UNO component build chain">1</a>. As shown by the
+the illustration <a href="index.html#refIllustration0"
+	title="Figure 1.: UNO component build chain">1</a>. As shown by the
 diagram, the specifications are compiled and merged into one <code
 	class="literal">types.rdb</code> registry. <code class="literal">Class</code>
 files are generated from that file to translate the specifications into
@@ -118,7 +118,7 @@ a Java class definition file which is build with the implementation into
 class using the <code class="literal">java</code> compiler. All the
 classes are delivered as a <code class="literal">jar</code> file with a
 specific manifest as we will see further in this tutorial. This doesn't
-make a usable OpenOffice.org: the <code class="literal">types.rdb</code>
+make a usable LibreOffice: the <code class="literal">types.rdb</code>
 and <code class="literal">jar</code> file will have to be zipped into a
 <code class="literal">.uno.pkg</code> file described with another
 manifest.</p>
@@ -140,22 +140,21 @@ development platform</h3>
 configure the development tools. This is quite simple but you might be
 trapped into some problems if you don't read the next lines carefully. I
 will now assume that you have none of the development tools. The
-OpenOffice.org Eclipse integration minimal requirements are the
+LibreOffice Eclipse integration minimal requirements are the
 following one:</p>
 <div class="itemizedlist">
 <ul type="disc">
 	<li>
-	<p>OpenOffice.org 2.0</p>
+	<p>LibreOffice</p>
 	</li>
 	<li>
-	<p>OpenOffice.org SDK 2.0.4</p>
+	<p>LibreOffice</p>
 	</li>
 	<li>
-	<p>Eclipse 3.2</p>
+	<p>Eclipse</p>
 	</li>
 	<li>
-	<p>Java 1.5 (the GNU Java doesn't work with the Eclipse
-	integration)</p>
+	<p>Java</p>
 	</li>
 </ul>
 </div>
@@ -163,21 +162,14 @@ following one:</p>
 <div class="titlepage">
 <div>
 <div>
-<h4 class="title"><a name="id2473592"></a>OpenOffice.org</h4>
+<h4 class="title"><a name="id2473592"></a>LibreOffice</h4>
 </div>
 </div>
 </div>
-<p>First of all, you will need to have a working OpenOffice.org 2.0
+<p>First of all, you will need to have a working LibreOffice
 and it's Software Development Kit (SDK). The last version are available
-on the <a href="http://download.openoffice.org/" target="_top">OpenOffice.org
-download pages</a> for the most current platforms. The OpenOffice.org SDK
-version 2.0.4 is mandatory to use the plugin correctly. It includes a
-new tool used by the plugin: the <code class="literal">uno-skeletonmaker</code>.
-This tool will generate the implementation skeleton to help you to
-concentrate only on your code.</p>
-<p>This tutorial assumes that you used the &#8220;Official&#8221;
-OpenOffice.org distribution from the project's website. Other
-distributions may not work with the Eclipse integration.</p>
+on the <a href="http://www.libreoffice.org/download" target="_top">LibreOffice
+download pages</a> for the most current platforms. </p>
 </div>
 <div class="section" lang="en-GB">
 <div class="titlepage">
@@ -192,17 +184,17 @@ last Eclipse SDK. You will have Eclipse and it's SDK. Of course, you
 might want to download only the binary runtime, but you will have to
 follow more links. Once you have Eclipse, unzip it on your computer and
 that's it: eclipse has a Java plugin to help you program in Java.</p>
-<p>Now we will install the OpenOffice.org development plugin for
+<p>Now we will install the LibreOffice development plugin for
 Eclipse using the Eclipse software update system. <span class="strong"><strong>Do
 not try to download an archive somewhere: Eclipse will do it for you
 during the next steps.</strong></span> Select the <span class="strong"><strong>Help
 &gt; Software updates &gt; Find and install</strong></span> menu to get the window of
-the illustration <a href="index.html#refIllustration1"
-	title='Figure 2. : "Find &amp; Install" window'>2</a>. Check the second
+the illustration <a href="index.html#refIllustration1"
+	title='Figure 2.: "Find &amp; Install" window'>2</a>. Check the second
 option on this window and click on the <span class="strong"><strong>Next</strong></span>
 button.</p>
 <div class="figure"><a name="refIllustration1"></a>
-<p class="title"><b>Figure 2. : "Find &amp; Install" window</b></p>
+<p class="title"><b>Figure 2.: "Find &amp; Install" window</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="384">
@@ -218,45 +210,45 @@ button.</p>
 pointing to directories containing plugins informations and archives.
 Now click on the <span class="strong"><strong>Add remote
 site</strong></span> button to get a small window asking for a name that will be
-displayed in the list and an URL. The URL of OpenOffice.org plugin
+displayed in the list and an URL. The URL of LibreOffice plugin
 update site is <a
 	href="http://cedric.bosdonnat.free.fr/ooeclipseintegration"
 	target="_top">http://cedric.bosdonnat.free.fr/ooeclipseintegration</a>.
 <span class="strong"><strong>Do not hope to get an
 archive to download here: it's the update site for Eclipse.</strong></span></p>
 <p>Then validate the new update site parameters and be sure that the
-OpenOffice.org site is checked before clicking on the <span
+LibreOffice site is checked before clicking on the <span
 	class="strong"><strong>Finish</strong></span> button. You should now
-see a window like the one of the illustration <a
+see a window like the one of the illustration <a
 	href="index.html#refIllustration2"
-	title="Figure 3. : OpenOffice.org update site contents">3</a>. <span
-	class="strong"><strong>Select the OpenOffice.org plugin
+	title="Figure 3.: LibreOffice update site contents">3</a>. <span
+	class="strong"><strong>Select the LibreOffice plugin
 Core and Java plugins</strong></span>, click next and let the wizard guide you through
 the end of the process. You will be asked to accept the plugin licence
 and validate the installation archives which are not signed.</p>
 <div class="figure"><a name="refIllustration2"></a>
-<p class="title"><b>Figure 3. : OpenOffice.org update site
+<p class="title"><b>Figure 3.: LibreOffice update site
 contents</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="355">
 	<tr style="height: 243px">
 		<td><img src="img/img002.png" width="355"
-			alt=": OpenOffice.org update site contents"></td>
+			alt=": LibreOffice update site contents"></td>
 	</tr>
 </table>
 </div>
 </div>
-<p>Congratulations, you have installed the OpenOffice.org plugin
+<p>Congratulations, you have installed the LibreOffice plugin
 successfully, there is now to configure it. The following steps will
 guide you through this task. Go to the Eclipse options via the <span
 	class="strong"><strong>Window &gt; Preferences...</strong></span> menu.
-In the list on the left, select the <span class="strong"><strong>OpenOffice.org
+In the list on the left, select the <span class="strong"><strong>LibreOffice
 plugin &gt; SDK configuration</strong></span> item to get a window like the one shown by
-the illustration <a href="index.html#refIllustration3"
-	title="Figure 4. : SDK configuration window">4</a>.</p>
+the illustration <a href="index.html#refIllustration3"
+	title="Figure 4.: SDK configuration window">4</a>.</p>
 <div class="figure"><a name="refIllustration3"></a>
-<p class="title"><b>Figure 4. : SDK configuration window</b></p>
+<p class="title"><b>Figure 4.: SDK configuration window</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="371">
@@ -268,22 +260,22 @@ the illustration <a href="index.html#refIllustration3"
 </div>
 </div>
 <p>In this window you will have to configure the path to your
-OpenOffice.org and to it's SDK. So let us begin with the SDK path: click
+LibreOffice and to it's SDK. So let us begin with the SDK path: click
 on the <span class="strong"><strong>Add</strong></span> button next to
-the SDKs list. You will have a window like the illustration <a
+the SDKs list. You will have a window like the illustration <a
 	href="index.html#refIllustration4"
-	title="Figure 5. : New SDK path window">5</a>, browse to your
-OpenOffice.org 2.0 SDK and validate. Then you will have to do the same
-for the OpenOffice.org path using the other <span class="strong"><strong>Add</strong></span>
+	title="Figure 5.: New SDK path window">5</a>, browse to your
+LibreOffice SDK and validate. Then you will have to do the same
+for the LibreOffice path using the other <span class="strong"><strong>Add</strong></span>
 button.</p>
 <p>Note that a URE installation can be selected instead of a
-complete OpenOffice.org installation. Please report to the Java URE
+complete LibreOffice installation. Please report to the Java URE
 application tutorial for more details on the plugin's URE support.</p>
 <p><span class="strong"><strong>Please make sure
 that the path to the SDK doesn't contains any space on Windows: it could
 cause some problems when building your UNO projects afterwards.</strong></span></p>
 <div class="figure"><a name="refIllustration4"></a>
-<p class="title"><b>Figure 5. : New SDK path window</b></p>
+<p class="title"><b>Figure 5.: New SDK path window</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="244">
@@ -294,11 +286,10 @@ cause some problems when building your UNO projects afterwards.</strong></span><
 </table>
 </div>
 </div>
-<p>Now your OpenOffice.org plugin is ready to work: you can begin to
+<p>Now your LibreOffice plugin is ready to work: you can begin to
 create your new component. If there was any problem during the plugin
 installation, do not hesitate to report it to the <a
-	href="mailto:dev@api.openoffice.org" target="_top">dev@api.openoffice.org</a>
-mailing-list.</p>
+	href="mailto:cedric.bosdonnat.ooo@free.fr" target="_top">author</a>.</p>
 </div>
 </div>
 </div>

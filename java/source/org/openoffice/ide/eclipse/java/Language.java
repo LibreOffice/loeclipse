@@ -96,7 +96,7 @@ public class Language extends AbstractLanguage {
     /**
      * {@inheritDoc}
      */
-    public void connectDebuggerToOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+    public void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
                     IProgressMonitor pMonitor) {
 
         try {
@@ -111,7 +111,7 @@ public class Language extends AbstractLanguage {
 
             connector.connect(argMap, pMonitor, pLaunch);
 
-            pPrj.getOOo().runOpenOffice(pPrj, pLaunch, pUserInstallation,
+            pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation,
                             new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
         } catch (Exception e) {
             PluginLogger.error("Could not start remote debugger.", e);

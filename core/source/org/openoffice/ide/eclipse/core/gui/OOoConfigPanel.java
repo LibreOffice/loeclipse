@@ -39,7 +39,7 @@ import org.openoffice.ide.eclipse.core.gui.rows.OOoRow;
 import org.openoffice.ide.eclipse.core.gui.rows.SdkRow;
 
 /**
- * Class providing the OOo and SDK configuration rows.
+ * Class providing the LibreOffice and SDK configuration rows.
  * 
  * @author cbosdonnat
  *

@@ -1,13 +1,13 @@
 Building OOoEclipse Integration
 
 in order to build OOoEclipseIntegration to produce an update site,
-you need to have installed OpenOffice.org and Eclipse.You may install
-only the necesary jars, but you'll have to hack the ant build.xml
+you need to have installed LibreOffice and Eclipse.You may install
+only the necessary jars, but you'll have to hack the ant build.xml
 files.
 
 Define the ANT_ARGS variable to the following:
-   -Dopenoffice.home=/path/to/you/ooo -Declipse.home=/path/to/your/eclipse
-Then you will just have to cd in the build CVS module and execute:
+   -Dlibreoffice.home=/path/to/you/libreoffice -Declipse.home=/path/to/your/eclipse
+Then you will just have to cd in the build folder and execute:
    prompt$ ant
 
 Please run ant help to get the available targets

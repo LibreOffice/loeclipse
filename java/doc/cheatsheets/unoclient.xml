@@ -3,7 +3,7 @@
       title="Create a Java UNO client">
    <intro>
       <description>
-         OpenOffice.org can be used as well as a server. Creating clients connecting to it is not an easy task for beginners and the informations are split all over the web.
+         LibreOffice can be used as well as a server. Creating clients connecting to it is not an easy task for beginners and the informations are split all over the web.
 <br/><br/>
 <b>Follow the next steps to create a new Java UNO Client really quickly.</b>
       </description>
@@ -13,7 +13,7 @@
       <description>
          Create a new project of type <b>Java UNO Client application</b> .
 <br/><br/>
-Configure the OpenOffice.org instance and SDK used to build to program and configure the OpenOffice.org connection.
+Configure the LibreOffice instance and SDK used to build to program and configure the LibreOffice connection.
       </description>
       <command
             required="true"
@@ -22,13 +22,13 @@ Configure the OpenOffice.org instance and SDK used to build to program and confi
    <item
          title="Write the client code">
       <description>
-         <b>Replace the TODO comment</b> by the code using the UNO connection to OpenOffice.org.
+         <b>Replace the TODO comment</b> by the code using the UNO connection to LibreOffice.
       </description>
    </item>
    <item
-         title="Start OpenOffice.org">
+         title="Start LibreOffice">
       <description>
-         OpenOffice.org needs to be started with the following parameter depending on your connection configuration:
+         LibreOffice needs to be started with the following parameter depending on your connection configuration:
 <br/><br/>
 <b>Pipe connection: </b><br/> -accept=&quot;pipe,name=<b>pipename</b>;urp;StarOffice.ServiceManager&quot;
 <br/><br/>

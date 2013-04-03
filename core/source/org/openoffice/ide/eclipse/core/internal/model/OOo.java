@@ -64,10 +64,10 @@ import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 
 /**
- * Representing an OpenOffice.org instance for use in the UNO-IDL projects.
+ * Representing an LibreOffice instance for use in the UNO-IDL projects.
  * 
  * <p>
- * An OpenOffice.org instance is recognized to the following files:
+ * A LibreOffice instance is recognized to the following files:
  * <ul>
  * <li><code>program/classes</code> directory</li>
  * <li><code>program/types.rdb</code> registry</li>
@@ -76,8 +76,8 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
  * </p>
  * 
  * <p>
- * A MacOS installation of OpenOffice.org will have some different paths, and of course the windows installation too.
- * This class is used to abstract the platform OOo is installed on.
+ * A MacOS installation of LibreOffice will have some different paths, and of course the windows installation too.
+ * This class is used to abstract the platform LibreOffice is installed on.
  * </p>
  * 
  * @author cedricbosdo
@@ -86,7 +86,7 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 public class OOo extends AbstractOOo {
 
     /**
-     * private constant that holds the ooo name key in the bootstrap properties file.
+     * private constant that holds the LibreOffice name key in the bootstrap properties file.
      */
     private static final String K_PRODUCTKEY = "ProductKey"; //$NON-NLS-1$
 
@@ -95,10 +95,10 @@ public class OOo extends AbstractOOo {
     private OOo3PathMapper mMapper;
 
     /**
-     * Creating a new OOo instance specifying its home directory.
+     * Creating a new LibreOffice instance specifying its home directory.
      * 
      * @param pOooHome
-     *            the OpenOffice.org home directory
+     *            the LibreOffice home directory
      * 
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
@@ -108,12 +108,12 @@ public class OOo extends AbstractOOo {
     }
 
     /**
-     * Creating a new OOo instance specifying its home directory and name.
+     * Creating a new LibreOffice instance specifying its home directory and name.
      * 
      * @param pOooHome
-     *            the OpenOffice.org installation path
+     *            the LibreOffice installation path
      * @param pOooName
-     *            the OpenOffice.org instance name
+     *            the LibreOffice instance name
      * 
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
@@ -128,10 +128,10 @@ public class OOo extends AbstractOOo {
      * Overridden to initialize the path mapper for 00o3 installations.
      * 
      * @param pHome
-     *            the OOo installation path to set.
+     *            the LibreOffice installation path to set.
      * 
      * @throws InvalidConfigException
-     *             if the path doesn't point to a valid OOo installation.
+     *             if the path doesn't point to a valid LibreOffice installation.
      */
     @Override
     public void setHome(String pHome) throws InvalidConfigException {
@@ -228,7 +228,7 @@ public class OOo extends AbstractOOo {
     }
 
     /**
-     * @return The OOo name as defined in Bootstraprc or <code>null</code>.
+     * @return The LibreOffice name as defined in Bootstraprc or <code>null</code>.
      */
     private String getOOoName() {
 
@@ -372,7 +372,7 @@ public class OOo extends AbstractOOo {
     }
 
     /**
-     * Add a Uno package to the OOo user packages.
+     * Add a Uno package to the LibreOffice user packages.
      * 
      * FIXME This method has to handle license approval
      * 
@@ -419,7 +419,7 @@ public class OOo extends AbstractOOo {
     }
 
     /**
-     * Remove the named package from the OOo packages.
+     * Remove the named package from the LibreOffice packages.
      * 
      * @param pName
      *            the name of the package to remove
@@ -441,7 +441,7 @@ public class OOo extends AbstractOOo {
     }
 
     /**
-     * Check if the named package is already installed on OOo.
+     * Check if the named package is already installed on LibreOffice.
      * 
      * @param pName
      *            the package name to look for
@@ -509,7 +509,7 @@ public class OOo extends AbstractOOo {
          * Create a new mapper object to get the OOo3 layers paths.
          * 
          * @param pHome
-         *            the OOo install home
+         *            the LibreOffice install home
          * @throws InvalidConfigException
          */
         public OOo3PathMapper(String pHome) throws InvalidConfigException {

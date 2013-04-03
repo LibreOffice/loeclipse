@@ -37,7 +37,7 @@ the plugin:</p>
 <ul type="disc">
 	<li>
 	<div class="figure"><a name="refIllustration5"></a>
-	<p class="title"><b>Figure 6. : New UNO-IDL project item</b></p>
+	<p class="title"><b>Figure 6.: New UNO-IDL project item</b></p>
 	<div class="mediaobject">
 	<table border="0" summary="manufactured viewport for HTML img"
 		cellspacing="0" cellpadding="0" width="141">
@@ -50,20 +50,20 @@ the plugin:</p>
 	</div>
 	<p>the first one is the <span class="strong"><strong>File
 	&gt; New &gt; Project</strong></span> menu entry and choose the <span class="strong"><strong>UNO
-	&gt; UNO-IDL Project</strong></span> item as shown by the illustration <a
+	&gt; UNO-IDL Project</strong></span> item as shown by the illustration <a
 		href="ar01s02.html#refIllustration5"
-		title="Figure 6. : New UNO-IDL project item">6</a>.</p>
+		title="Figure6.: New UNO-IDL project item">6</a>.</p>
 	</li>
 	<li>
 	<p>the second one is the icon in the toolbar representing a blue
-	folder with a star as shown by the illustration <a
+	folder with a star as shown by the illustration <a
 		href="ar01s02.html#refIllustration6"
-		title="Figure 7. : New UNO-IDL project icon">7</a>.</p>
+		title="Figure 7.: New UNO-IDL project icon">7</a>.</p>
 	</li>
 </ul>
 </div>
 <div class="figure"><a name="refIllustration6"></a>
-<p class="title"><b>Figure 7. : New UNO-IDL project icon</b></p>
+<p class="title"><b>Figure 7.: New UNO-IDL project icon</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="22">
@@ -115,7 +115,7 @@ in our component.</p>
 <ul type="disc">
 	<li>
 	<div class="figure"><a name="refIllustration7"></a>
-	<p class="title"><b>Figure 8. : New UNO-IDL project wizard page</b></p>
+	<p class="title"><b>Figure 8.: New UNO-IDL project wizard page</b></p>
 	<div class="mediaobject">
 	<table border="0" summary="manufactured viewport for HTML img"
 		cellspacing="0" cellpadding="0" width="332">
@@ -142,21 +142,21 @@ in our component.</p>
 	<li>
 	<p><span class="strong"><strong>Root package:</strong></span> is
 	the name of the first module of your component. It generally composed
-	of two parts: the vendor name (here <code class="literal">org.openoffice</code>)
+	of two parts: the vendor name (here <code class="literal">my.company</code>)
 	and the project name (here <code class="literal">helloworld</code>).</p>
 	</li>
 	<li>
 	<p><span class="strong"><strong>Used SDK:</strong></span> selects
-	the OpenOffice.org SDK which will be used to develop the component. You
+	the LibreOffice SDK which will be used to develop the component. You
 	generally will have only one SDK in the list, but you can add others in
 	the preferences or by clicking on the <span class="strong"><strong>Configure
 	SDKs</strong></span> button.</p>
 	</li>
 	<li>
-	<p><span class="strong"><strong>Used OOo:</strong></span> selects
-	the version of OpenOffice.org to use to develop the component. As for
+	<p><span class="strong"><strong>Used LibreOffice:</strong></span> selects
+	the version of LibreOffice to use to develop the component. As for
 	the SDK, you will generally have only one entry in the list, but you
-	can add others in the preferences or by clicking on the OOo
+	can add others in the preferences or by clicking on the LibreOffice
 	Installations button.</p>
 	</li>
 	<li>
@@ -192,7 +192,7 @@ page</h3>
 </div>
 </div>
 <div class="figure"><a name="refIllustration8"></a>
-<p class="title"><b>Figure 9. : Service configuration page</b></p>
+<p class="title"><b>Figure 9.: Service configuration page</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="333">
@@ -239,7 +239,7 @@ configuration page</h3>
 </div>
 </div>
 <div class="figure"><a name="refIllustration9"></a>
-<p class="title"><b>Figure 10. : Interface configuration page</b></p>
+<p class="title"><b>Figure 10.: Interface configuration page</b></p>
 <div class="mediaobject">
 <table border="0" summary="manufactured viewport for HTML img"
 	cellspacing="0" cellpadding="0" width="436">
@@ -268,9 +268,7 @@ configuration page</h3>
 	<li>
 	<p><span class="strong"><strong>Inherited
 	interfaces:</strong></span> is a list of all the interfaces from which the one that is
-	about to be created will inherit. This is one of the changes in UNO-IDL
-	between OpenOffice.org 1.1.x and 2.0: that is why the plugin does not
-	support OpenOffice.org version prior to 2.0. All the UNO-IDL interfaces
+	about to be created will inherit. All the UNO-IDL interfaces
 	are inheriting more or less directly from the <code class="literal">com::sun::star::uno::XInterface</code>
 	type. As the <code class="literal">XHelloworld</code> interface is very
 	easy, no super interface will be added: that will implicitly define <code
@@ -323,7 +321,7 @@ different for a method and a property.</p>
 <ul type="disc">
 	<li>
 	<div class="figure"><a name="refIllustration10"></a>
-	<p class="title"><b>Figure 11. : Interface member creation
+	<p class="title"><b>Figure 11.: Interface member creation
 	dialog</b></p>
 	<div class="mediaobject">
 	<table border="0" summary="manufactured viewport for HTML img"
@@ -392,8 +390,8 @@ know:</p>
 	<li>
 	<p><span class="strong"><strong>JRE and the jars:</strong></span>
 	are describing the classpath of the component. They are visible only in
-	the Java package explorer. The OpenOffice.org jars are changed if the
-	OpenOffice.org version associated to the project is changed. <span
+	the Java package explorer. The LibreOffice jars are changed if the
+	LibreOffice version associated to the project is changed. <span
 		class="emphasis"><em>In a future version, they will be
 	packed in a user library to take less space in the tree.</em></span></p>
 	</li>
@@ -420,9 +418,9 @@ Apache website, and import the <code class="literal">common-math-1.1.jar</code>
 file into your component project: for example in a <code class="literal">lib</code>
 directory. Add the jar to the project build path in the same way than in
 any other Eclipse Java project and use it:</p>
-<pre class="programlisting">// org.openoffice.helloworld.XHelloworld:
+<pre class="programlisting">// my.company.helloworld.XHelloworld:
 private String mLadyName = "";
-           
+
 public String getLadyName()
 {
     return mLadyName;

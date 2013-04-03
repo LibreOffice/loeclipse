@@ -57,7 +57,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.office.TypesGetter;
 
 /**
- * Class providing UNO types from an OpenOffice.org instance and optionally
+ * Class providing UNO types from a LibreOffice instance and optionally
  * from a UNO project.
  * 
  * @author cedricbosdo
@@ -130,7 +130,7 @@ public class UnoTypeProvider {
      * 
      * @param pScopedName the type name to match
      * @param pContainers the UNO types containers to look in. These have to be either
-     *          the path to a project RDB file or an OpenOffice.org name
+     *          the path to a project RDB file or a LibreOffice name
      * 
      * @return <code>true</code> if the list contains a type with this name
      */
@@ -156,7 +156,7 @@ public class UnoTypeProvider {
         return result;
     }
     
-    //------------------------------------------------------- Project managment
+    //------------------------------------------------------- Project management
     
     /**
      * Set the UNO project for which to get the UNO types. This project's
@@ -180,7 +180,7 @@ public class UnoTypeProvider {
     /**
      * Sets the OOo if the new one is different from the old one.
      * 
-     *  @param pOOoInstance OpenOffice.org instance to bootstrap
+     *  @param pOOoInstance LibreOffice instance to bootstrap
      */
     public void setOOoInstance(IOOo pOOoInstance) {
         
@@ -281,7 +281,7 @@ public class UnoTypeProvider {
     }
     
     /**
-     * The job extracting the types from OpenOffice.org.
+     * The job extracting the types from LibreOffice.
      * 
      * @author cedricbosdo
      *

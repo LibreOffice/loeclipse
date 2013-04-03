@@ -55,7 +55,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 
 /**
- * Facade class loading all the methods using an OpenOffice.org instance.
+ * Facade class loading all the methods using a LibreOffice instance.
  * 
  * @author cedricbosdo
  *
@@ -69,16 +69,16 @@ public class TypesGetter {
     private List<String> mLocalRegs;
 
     /**
-     * Set the OOo instance to use for the different operations.
+     * Set the LibreOffice instance to use for the different operations.
      * 
-     * @param pOOo the OpenOffice.org instance to set.
+     * @param pOOo the LibreOffice instance to set.
      */
     public void setOOo(IOOo pOOo) {
         mOOo = pOOo;
     }
     
     /**
-     * @return the OpenOffice.org to use for the different operations.
+     * @return the LibreOffice to use for the different operations.
      */
     public IOOo getOOo() {
         return mOOo;

@@ -49,7 +49,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Interface defining an OpenOffice.org SDK.
+ * Interface defining a LibreOffice SDK.
  * 
  * @author cedricbosdo
  *

@@ -22,7 +22,7 @@ Eclipse features</h2>
 </div>
 </div>
 </div>
-<p>The OpenOffice.org Eclipse integration development uses some
+<p>The LibreOffice Eclipse integration development uses some
 interesting features. The most important are detailed below: running a
 new Eclipse instance for debug sessions and update site mechanism for
 the plugins installation.</p>
@@ -61,9 +61,9 @@ generation target (see next section).</p>
 <p>In order to deliver or test the plugins in a normal Eclipse
 installation, it is necessary to generate an update site containing the
 plugins to install or update. Eclipse provides update site and features
-projects, but these should not be used for the OpenOffice.org Eclipse
+projects, but these should not be used for the LibreOffice Eclipse
 integration. To generate the update site use the build project as
-follow :</p>
+follow:</p>
 <div class="orderedlist">
 <ul>
 	<li>
@@ -85,7 +85,7 @@ follow :</p>
 		<p>Select the build file</p>
 		</li>
 		<li>
-		<p>Add <code class="literal">-Dopenoffice.home=/path/to/you/ooo
+		<p>Add <code class="literal">-Dlibreoffice.home=/path/to/you/libreoffice
 		-Declipse.home=/path/to/your/eclipse</code> in the arguments. Do not forget
 		to place the path inside quotes on windows.</p>
 		</li>
@@ -100,7 +100,7 @@ follow :</p>
 <p>This script generates a site directory and
 <code class="literal">ooeclipseintegration_site.zip</code> file which are the update site in an
 uncompressed and compressed form. To generate a debug update site, just
-add the <code class="literal">-Ddebug=true</code> argument to the ant launch configuration : this is
+add the <code class="literal">-Ddebug=true</code> argument to the ant launch configuration: this is
 useful when testing the plugins on a fresh Eclipse installation.</p>
 </div>
 </div>

@@ -22,21 +22,21 @@ and testing the component</h2>
 </div>
 </div>
 </div>
-<p>The next lines will show you how to export your component into an
-OpenOffice.org package. There is quite nothing to do apart from
+<p>The next lines will show you how to export your component into a LibreOffice
+ package. There is quite nothing to do apart from
 following these small steps:</p>
 <div class="itemizedlist">
 <ul type="disc">
 	<li>
 	<p>Select the <span class="strong"><strong>File
 	&gt; Export</strong></span> menu. Then choose the <span class="strong"><strong>UNO
-	&gt; OpenOffice.org</strong></span> package export type.</p>
+	&gt; LibreOffice</strong></span> package export type.</p>
 	</li>
 	<li>
 	<p>The next page of the wizard, asks for the UNO project to export
 	(already selected), the directory where to export the package and the
-	OpenOffice.org minimum compatibility version for the package. Depending
-	of the selected OpenOffice.org version, the package will get a
+	LibreOffice minimum compatibility version for the package. Depending
+	of the selected LibreOffice version, the package will get a
 	different name and a different structure.</p>
 	</li>
 	<li>
@@ -47,13 +47,13 @@ following these small steps:</p>
 </ul>
 </div>
 <p>Then we will suppose that the package is deployed on the
-OpenOffice.org installation and we will test it using the following <code
+LibreOffice installation and we will test it using the following <code
 	class="literal">OooBasic</code> macro.</p>
 <pre class="programlisting">Sub testHelloworld
-    oHelloworld = createUnoService( "org.openoffice.helloworld.Helloworld" )
-    oHelloworld.LadyName = "Robinson"
-    print oHelloworld.sayHello( false )
-    print oHelloworld.sayHello( True )
+    oHelloworld = createUnoService( "my.company.helloworld.Helloworld" )
+    oHelloworld.LadyName = "Robinson"
+    print oHelloworld.sayHello( false )
+    print oHelloworld.sayHello( True )
 End Sub</pre>
 <p>This macro should open two message windows with <span
 	class="emphasis"><em>&#8220;Hello Mrs. Robinson&#8221;</em></span> and

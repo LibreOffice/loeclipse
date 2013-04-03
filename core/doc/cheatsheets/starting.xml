@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
-<cheatsheet title="Starting to use OpenOffice.org plugin">
+<cheatsheet title="Starting to use LibreOffice plugin">
 
 	<intro>
 		<description>
-			This tutorial will guide you through the OpenOffice.org plugin. This
+			This tutorial will guide you through the LibreOffice plugin. This
 			way, you will get used to the different features available.
 			<br/>
 			
@@ -13,10 +13,10 @@
 	
 	<item title="SDK Configuration">
 	    <description>
-	       First of all is to configure the available OpenOffice.org SDKs. You can 
+	       First of all is to configure the available LibreOffice SDKs. You can 
 	       add, remove and edit the SDKs that can be used in the plugin in the
 	       preferences. Open the <b>Window-&gt;Preferences</b> menu item to get the preferences.
-	       Afterwards, select the <b>OpenOffice.org-&gt;SDK Configuration</b> node.
+	       Afterwards, select the <b>LibreOffice-&gt;SDK Configuration</b> node.
 	       <br />
 	       Then add, remove and/or edit your SDKs, but remember that you need at least one.
 	    </description>

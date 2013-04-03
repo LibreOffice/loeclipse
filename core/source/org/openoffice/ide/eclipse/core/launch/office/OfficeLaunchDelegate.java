@@ -58,7 +58,7 @@ import org.openoffice.ide.eclipse.core.model.config.NullExtraOptionsProvider;
 import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
- * OpenOffice launcher implementation.
+ * LibreOffice launcher implementation.
  * 
  * @author cdan
  * 
@@ -66,7 +66,7 @@ import org.openoffice.plugin.core.model.UnoPackage;
 public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
     /**
-     * Export the .oxt file, deploy it in openoffice, run openoffice.
+     * Export the .oxt file, deploy it in LibreOffice, run LibreOffice.
      */
     private static final int TASK_UNITS = 3;
 
@@ -97,7 +97,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                 try {
                     IPath userInstallation = null;
                     if (useCleanUserInstalation) {
-                        IFolder userInstallationFolder = unoprj.getOpenOfficeUserProfileFolder();
+                        IFolder userInstallationFolder = unoprj.getOfficeUserProfileFolder();
                         userInstallation = userInstallationFolder.getLocation();
                     }
 
@@ -119,11 +119,11 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     }
                     pMonitor.worked(1);
 
-                    // Run an OpenOffice instance
+                    // Run an LibreOffice instance
                     if (ILaunchManager.DEBUG_MODE.equals(pMode)) {
-                        unoprj.getLanguage().connectDebuggerToOpenOffice(unoprj, pLaunch, userInstallation, pMonitor);
+                        unoprj.getLanguage().connectDebuggerToOffice(unoprj, pLaunch, userInstallation, pMonitor);
                     } else {
-                        unoprj.getOOo().runOpenOffice(unoprj, pLaunch, userInstallation, new NullExtraOptionsProvider(),
+                        unoprj.getOOo().runOffice(unoprj, pLaunch, userInstallation, new NullExtraOptionsProvider(),
                                         pMonitor);
                     }
                     pMonitor.worked(1);

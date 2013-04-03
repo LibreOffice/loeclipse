@@ -58,7 +58,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 /**
  * Special class loader to use to load OOo related classes.
  * 
- * This class loader is important to bootstrap OpenOffice.org.
+ * This class loader is important to bootstrap LibreOffice.
  * 
  * @author cedricbosdo
  *
@@ -70,7 +70,7 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Creates and initializes an {@link OfficeClassLoader} for a given office instance.
      * 
-     * @param pOOo the OpenOffice.org instance to use for the class loader
+     * @param pOOo the LibreOffice instance to use for the class loader
      * @param pParent the parent class loader to set
      */
     private OfficeClassLoader(IOOo pOOo, ClassLoader pParent) {
@@ -78,12 +78,12 @@ public class OfficeClassLoader extends URLClassLoader {
     }
     
     /**
-     * Create or load the classloader for the given OpenOffice instance.
+     * Create or load the classloader for the given LibreOffice instance.
      * 
-     * @param pOOo the OpenOffice instance to load
+     * @param pOOo the LibreOffice instance to load
      * @param pParent the parent classloader to use if the classloader has to be created.
      * 
-     * @return the classloader corresponding to the OpenOffice.org instance
+     * @return the classloader corresponding to the LibreOffice instance
      */
     public static OfficeClassLoader getClassLoader(IOOo pOOo, ClassLoader pParent) {
         // First try the class loaders cache
@@ -135,7 +135,7 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Get the URLs to add to the class loader from an office instance.
      * 
-     * @param pOOo the OpenOffice.org instance
+     * @param pOOo the LibreOffice instance
      * 
      * @return the URL to set to the class loader
      */

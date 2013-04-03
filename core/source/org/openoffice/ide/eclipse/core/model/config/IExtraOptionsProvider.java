@@ -1,7 +1,7 @@
 package org.openoffice.ide.eclipse.core.model.config;
 
 /**
- * Gets a chance to add some more env variables just before starting an OpenOffice process.
+ * Gets a chance to add some more env variables just before starting an LibreOffice process.
  * 
  * @author cdan
  * 

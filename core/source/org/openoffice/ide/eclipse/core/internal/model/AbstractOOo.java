@@ -92,7 +92,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * Creating a new OOo or URE instance specifying its home directory.
      * 
      * @param pOooHome
-     *            the OpenOffice.org or URE home directory
+     *            the LibreOffice or URE home directory
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
@@ -104,9 +104,9 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * Creating a new OOo or URE instance specifying its home directory and name.
      * 
      * @param pOooHome
-     *            the OpenOffice.org or URE installation directory
+     *            the LibreOffice or URE installation directory
      * @param pName
-     *            the OpenOffice.org or URE instance name
+     *            the LibreOffice or URE instance name
      * 
      * @throws InvalidConfigException
      *             if the home directory doesn't contains the required files and directories
@@ -362,7 +362,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
-    public void runOpenOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+    public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
                     IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor) {
         try {
             IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
@@ -383,12 +383,12 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             env = addUserProfile(pUserInstallation, env);
             env = pExtraOptionsProvider.addEnv(env);
 
-            PluginLogger.debug("Launching OpenOffice from commandline: " + command);
+            PluginLogger.debug("Launching LibreOffice from commandline: " + command);
             Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
-            DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.OpenOfficeProcessName")); //$NON-NLS-1$
+            DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.LibreOfficeProcessName")); //$NON-NLS-1$
         } catch (Exception e) {
             e.printStackTrace();
-            PluginLogger.error("Error running OpenOffice", e);
+            PluginLogger.error("Error running LibreOffice", e);
         }
     }
 

@@ -69,7 +69,7 @@ public class RegmergeBuilder {
         
     /**
      * Root of the generated types, used by regmerge and javamaker. UCR 
-     * is chosen for OpenOffice.org compatibility 
+     * is chosen for LibreOffice compatibility 
      */
     public static final String TYPE_ROOT_KEY = "/UCR"; //$NON-NLS-1$
     

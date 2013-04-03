@@ -184,7 +184,7 @@ public class TypesGetter {
      * Query the types and return them in a map..
      * 
      * <p>The types are mapped to an identifier indicating where they have been
-     * extracted from. For an OpenOffice.org instance, the key in the map will be the 
+     * extracted from. For a LibreOffice instance, the key in the map will be the 
      * OOo name. For any external registry, the key in the map will be the OS
      * specific path to the registry.</p>
      * 

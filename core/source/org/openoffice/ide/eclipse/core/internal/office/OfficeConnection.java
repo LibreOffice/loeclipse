@@ -128,7 +128,7 @@ public class OfficeConnection {
      *  
      * @param pPath the OS dependent path to convert
      * 
-     * @return the resulting OpenOffice.org URL
+     * @return the resulting LibreOffice URL
      */
     public String convertToUrl(String pPath) {
         String internalUrl = null;
