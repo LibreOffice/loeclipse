@@ -44,19 +44,17 @@
 
 	<import file="../core/build.xml"/>
 	<import file="../java/build.xml"/>
-	<import file="../cpp/build.xml"/>
 	
 	<target name="help" description="Tells how to run the script">
 		<echo>
 		This ant file has to be called with the following parameters:
-			-Dopenoffice.home=/path/to/your/ooo/
+			-Dlibreoffice.home=/path/to/your/libreoffice/
 			-Declipse.home=/path/to/your/eclipse/
 			
 			To disable the build of a language plugin, define the corresponding
 			variable amongst the following ones. By default all the plugins are
 			built. The value of these parameters can be anything: they only have
 			to be defined.
-			-Dcpp.nobuild=true
 			-Djava.nobuild=true
 			
 			These arguments can be either put in the command line or in an
@@ -72,12 +70,12 @@
 	
 	<target name="check-ooo-version">
         
-		<property name="office.linux.basis.dir" value="${openoffice.home}"/>
+		<property name="office.linux.basis.dir" value="${libreoffice.home}"/>
         <property name="office.linux.ure.dir" value="${office.linux.basis.dir}${file.separator}ure-link"/>
 		
 		<!-- Needed due to some differences between Windows and Linux installs -->
 		<loadfile property="office.win.basis.name" srcfile="${office.linux.basis.dir}" failonerror="false" quiet="true" />
-		<property name="office.win.basis.dir" value="${openoffice.home}${file.separator}${office.win.basis.name}"/>
+		<property name="office.win.basis.dir" value="${libreoffice.home}${file.separator}${office.win.basis.name}"/>
 		<loadfile property="office.win.ure.name" srcfile="${office.win.basis.dir}${file.separator}ure-link" failonerror="false" quiet="true" />
 		<property name="office.win.ure.dir" value="${office.win.basis.dir}${file.separator}${office.win.ure.name}"/>
         
@@ -114,7 +112,7 @@
 	</target>
 	
 	<target name="init-env-ooo3" depends="init-win-ooo3, init-linux-ooo3" if="office.version3">
-		<echo message="Initializing the properties for OpenOffice 3.x"/>
+		<echo message="Initializing the properties for LibreOffice 3.x"/>
 
 		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java">
 			<not>
@@ -140,14 +138,14 @@
     	<echo message="Initializing the properties for OpenOffice 2.x"/>
 
         <path id="office.class.path">
-            <fileset dir="${openoffice.home}${file.separator}program${file.separator}classes">
+            <fileset dir="${libreoffice.home}${file.separator}program${file.separator}classes">
                 <include name="*.jar"/>
             </fileset>
         </path>
     </target>
 	
 	<target name="init-env" 
-		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env, cpp.init-env">
+		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env">
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
         <dirname property="build.basedir" file="${ant.file.ooeclipseintegration}"/>
@@ -170,14 +168,14 @@
 	</target>
 	
 	<target name="purge" description="Cleans all the output results" 
-		depends="core.purge, java.purge, cpp.purge">
+		depends="core.purge, java.purge">
 		<delete dir="../site"/>
 		<delete file="../ooeclipseintegration_site.zip" />
 	</target>
 	
-	<target name="versions" depends="core.version, java.version, cpp.version" />
+	<target name="versions" depends="core.version, java.version" />
 	
-	<target name="core.feature" depends="versions, java.feature, cpp.feature">
+	<target name="core.feature" depends="versions, java.feature">
 		<copy file="features/core/feature.xml"
             tofile="${out.path}/features/feature.xml">
             <filterchain>
@@ -225,38 +223,8 @@
 
     <target name="java.feature" depends="java.feature.build, java.feature.nobuild"/>
 
-    <target name="cpp.feature.nobuild" if="cpp.nobuild">
-        <property name="includes.cpp" value="" />
-    </target>
-
-	<target name="cpp.feature.build" depends="versions" unless="cpp.nobuild">
-		<copy file="features/cpp/feature.xml"
-            tofile="${out.path}/features/feature.xml">
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </copy>
-		
-		<jar destfile="${out.path}/features/${package.prefix}.cpp_${cpp.Bundle-Version}.jar">
-			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
-				<include name="feature.xml"/>
-			</zipfileset>
-		</jar>
-
-        <loadfile property="includes.cpp"
-            srcfile="features/cpp/includes.xml">
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </loadfile>
-			
-		<delete file="${out.path}/features/feature.xml"/>
-    </target>
-
-    <target name="cpp.feature" depends="cpp.feature.build, cpp.feature.nobuild"/>
-	
-	<target name="features" depends="versions, java.feature, cpp.feature, core.feature"/>
-	<target name="plugins" depends="core.plugin, java.plugin, cpp.plugin"/>
+	<target name="features" depends="versions, java.feature, core.feature"/>
+	<target name="plugins" depends="core.plugin, java.plugin"/>
 	
 	<macrodef name="equinoxLauncher">
 		<attribute name="application"/>
@@ -293,7 +261,7 @@
 		</sequential>
 	</macrodef>
 	
-	<target name="site" depends="init-env, plugins, features, core.site, java.site, cpp.site"
+	<target name="site" depends="init-env, plugins, features, core.site, java.site"
 		description="Creates the Eclipse update site">
 		
 		<!-- 
