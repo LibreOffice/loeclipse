@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="language" name="Uno-idl project language binding Extension point" schema="schema/language.exsd"/>
-   <extension-point id="MainProvider" name="Provides XMain implementations for different languages" schema="schema/MainProvider.exsd"/>
+   <extension-point id="language" name="%extension-point.name" schema="schema/language.exsd"/>
+   <extension-point id="MainProvider" name="%extension-point.name.0" schema="schema/MainProvider.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -262,14 +262,14 @@
             delegate="org.openoffice.ide.eclipse.core.launch.UreLaunchDelegate"
             id="org.openoffice.ide.eclipse.core.launchUreApplication"
             modes="run"
-            name="URE Application"/>
+            name="%launch.ure"/>
       <launchConfigurationType
             delegate="org.openoffice.ide.eclipse.core.launch.office.OfficeLaunchDelegate"
             delegateDescription="The Open Office launcher supports running and remote debugging Open Office extensions."
             delegateName="Open Office Launcher"
             id="org.openoffice.ide.eclipse.core.launchOpenOffice"
             modes="run,debug"
-            name="LibreOffice Application">
+            name="%launch.libreoffice">
       </launchConfigurationType>
    </extension>
    <extension
@@ -300,13 +300,13 @@
          point="org.eclipse.ui.exportWizards">
       <category
             id="org.openoffice.ide.eclipse.core.uno"
-            name="UNO"/>
+            name="%wizards"/>
       <wizard
             category="org.openoffice.ide.eclipse.core.uno"
             class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard"
             icon="/icons/export_package.gif"
             id="org.openoffice.ide.eclipse.core.export.package"
-            name="LibreOffice package"/>
+            name="%wizards.export"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
@@ -331,7 +331,7 @@
                class="org.openoffice.ide.eclipse.core.actions.ConvertToManifestAction"
                enablesFor="1"
                id="org.openoffice.ide.eclipse.core.actions.create_manifest"
-               label="Convert to manifest">
+               label="%action.tomanifest">
          </action>
       </objectContribution>
    </extension>
