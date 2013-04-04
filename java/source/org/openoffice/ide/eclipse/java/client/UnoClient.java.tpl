@@ -6,6 +6,10 @@ import com.artofsolving.jodconverter.openoffice.connection.PipeOpenOfficeConnect
 
 import com.sun.star.uno.XComponentContext;
 
+// Make sure LibreOffice is started with the proper arguments to have it listen before
+// running this client application. Use one of the following commands to start it:
+//  * For socket connection: soffice --accept="socket,host=localhost,port=8100,tcpNoDelay=1;urp;"
+//  * For pipe connection:   soffice --accept="pipe,name=yourpipename;urp;" 
 public class UnoClient '{'
 
     public static void main(String[] args) '{'

@@ -59,13 +59,12 @@ import org.openoffice.ide.eclipse.java.utils.TemplatesHelper;
  */
 public class ClientWizard extends BasicNewResourceWizard {
 
+    public static final String JODCONNECTOR_LIBNAME = "jodconnector.jar"; //$NON-NLS-1$
     private static final String DEST_PACKAGE = "org.openoffice.client"; //$NON-NLS-1$
     private static final String CLIENT_CLASS = "UnoClient"; //$NON-NLS-1$
     private static final String LICENSE_DIR = "third-party licenses"; //$NON-NLS-1$
     private static final String[] LICENSE_FILES = new String[] {
         "license-jodconnector.txt", //$NON-NLS-1$
-        "license-openoffice.org.txt", //$NON-NLS-1$
-        "license-slf4j.txt", //$NON-NLS-1$
     };
 
     private IWorkbenchPage mActivePage;
@@ -81,6 +80,13 @@ public class ClientWizard extends BasicNewResourceWizard {
         super();
         setWindowTitle( Messages.getString("ClientWizard.Title") ); //$NON-NLS-1$
         mActivePage = WorkbenchHelper.getActivePage();
+    }
+    
+    @Override
+    public boolean performCancel() {
+        boolean ret = super.performCancel();
+        mThirdPage.performCancel();
+        return ret;
     }
     
     @Override
@@ -110,7 +116,7 @@ public class ClientWizard extends BasicNewResourceWizard {
         
         return res;
     }
-
+    
     /**
      * Configure the Java project in order to have a Java UNO client project.
      *
@@ -123,6 +129,7 @@ public class ClientWizard extends BasicNewResourceWizard {
         
         // Generate the sample classes in org.openoffice.connection
         IProject prj = pJavaProject.getProject();
+
         
         IClasspathEntry[] srcEntries = mFirstPage.getSourceClasspathEntries();
         IFolder srcFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder( srcEntries[0].getPath() ); 
@@ -157,12 +164,12 @@ public class ClientWizard extends BasicNewResourceWizard {
     public void addPages() {
         
         mCnxPage = new UnoConnectionPage();
-        mFirstPage = new ClientWizardPageOne( mCnxPage );
+        mFirstPage = new NewJavaProjectWizardPageOne( );
         addPage( mFirstPage );
         
         addPage( mCnxPage );
         
-        mThirdPage = new NewJavaProjectWizardPageTwo( mFirstPage );
+        mThirdPage = new ClientWizardPageTwo( mFirstPage, mCnxPage );
         addPage( mThirdPage );
     }
 }

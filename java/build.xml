@@ -58,6 +58,7 @@
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<property name="java.out.classes" value="${java.out.path}/classes"/>
 		<property name="java.sources" value="${java.basedir}/source"/>
+		<property name="jodconnector.classes" value="${java.out.path}/jodconnector"/>
 		
 		<path id="java.dependencies.path">
 			<pathelement location="${packager.out.classes}"/>
@@ -83,17 +84,36 @@
 	<target name="purge" depends="init-env">
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<delete dir="${java.out.path}" />
+		<delete file="${java.basedir}/jodconnector.jar" />
 	</target>
 
+	<target name="jodconnector.compile">
+		<mkdir dir="${jodconnector.classes}"/>
+		<javac srcdir="${java.sources}" destdir="${jodconnector.classes}"
+			target="1.5" source="1.5" 
+			debug="true"
+			classpathref="office.class.path" 
+			includes="com/artofsolving/**" defaultexcludes="true">
+		</javac>
+	</target>
+	
+	<target name="jodconnector.package" depends="jodconnector.compile">
+		<jar destfile="${java.basedir}/jodconnector.jar">
+			<zipfileset prefix="" dir="${jodconnector.classes}"/>
+			<zipfileset prefix="" dir="${java.sources}" defaultexcludes="true" includes="com/artofsolving/**"/>
+		</jar>
+	</target>
+	
 	<target name="java.compile" depends="init-env" unless="java.nobuild">
 		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
 			target="1.5" source="1.5" 
 			debug="${debug}"
 			classpathref="java.dependencies.path" 
-			excludes="**/*Test.*"/>
+			excludes="**/*Test.*,com/artofsolving/**">
+		</javac>
 	</target>
 	
-	<target name="java.plugin" depends="java.version, java.compile" unless="java.nobuild">
+	<target name="java.plugin" depends="java.version, java.compile, jodconnector.package" unless="java.nobuild">
 		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.Bundle-Version}.jar"
 			manifest="${java.basedir}/META-INF/MANIFEST.MF">
 			<zipfileset prefix="" dir="${java.sources}">
