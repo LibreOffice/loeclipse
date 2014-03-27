@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
@@ -80,34 +81,34 @@ import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * The language builder implementation for Java.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class JavaBuilder implements ILanguageBuilder {
 
     private Language mLanguage;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param pLanguage the Java Language object
      */
     public JavaBuilder(Language pLanguage) {
         mLanguage = pLanguage;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
 
         IFile jarFile = ((JavaProjectHandler)mLanguage.getProjectHandler()).getJarFile(pUnoProject);
-        
+
         JarPackageData description = new JarPackageData();
         description.setGenerateManifest( true );
         description.setJarLocation( jarFile.getLocation() );
-        
+
         String regClassname = ((JavaProjectHandler)mLanguage.getProjectHandler()).
         getRegistrationClassName(pUnoProject);
         description.setManifestProvider( new UnoManifestProvider( regClassname ) );
@@ -118,19 +119,19 @@ public class JavaBuilder implements ILanguageBuilder {
         description.setExportClassFiles( true );
         description.setExportWarnings( true );
         description.setOverwrite( true );
-        
+
         // Get the files to export: javamaker output + project classes
         FilesVisitor visitor = new FilesVisitor( );
         visitor.addException( pUnoProject.getFolder( pUnoProject.getUrdPath( ) ) );
-        
+
         IFolder buildDir = pUnoProject.getFolder( pUnoProject.getBuildPath() );
         buildDir.accept( visitor );
         description.setElements( visitor.getFiles() );
-        
+
         // Create the Jar file
         IJarExportRunnable runnable = description.createJarExportRunnable( null );
         runnable.run( new NullProgressMonitor() );
-        
+
         return jarFile;
     }
 
@@ -140,73 +141,94 @@ public class JavaBuilder implements ILanguageBuilder {
      */
     public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
             File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
-        
+
         if (pTypesFile.exists()) {
-            
-            try {
-                
-                if (null != pSdk && null != pOoo) {
-                    
-                    String[] paths = pOoo.getTypesPath();
-                    String oooTypesArgs = ""; //$NON-NLS-1$
-                    for (String path : paths) {
-                        IPath ooTypesPath = new Path (path);
-                        oooTypesArgs += " -X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    
-                    
-                    // TODO What if the user creates other root modules ?
-                    String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
-                    
-                    String command = "javamaker -T" + firstModule +  //$NON-NLS-1$
-                        ".* -nD -Gc -BUCR " +  //$NON-NLS-1$
-                        "-O \"" + pBuildFolder.getAbsolutePath() + "\" \"" + //$NON-NLS-1$ //$NON-NLS-2$
-                        pTypesFile.getAbsolutePath() + "\" " + //$NON-NLS-1$
-                        oooTypesArgs; 
-                    
-                    IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
-                    Process process = pSdk.runTool(unoprj,command, pMonitor);
-                    
-                    LineNumberReader lineReader = new LineNumberReader(
-                            new InputStreamReader(process.getErrorStream()));
-                    
-                    // Only for debugging purpose
-                    if (PluginLogger.isLevel(LogLevels.DEBUG)) {
-                    
-                        String line = lineReader.readLine();
-                        while (null != line) {
-                            System.out.println(line);
-                            line = lineReader.readLine();
-                        }
-                    }
-                    
-                    process.waitFor();
+
+            if (null != pSdk && null != pOoo) {
+
+                String[] paths = pOoo.getTypesPath();
+                String oooTypesArgs = ""; //$NON-NLS-1$
+                for (String path : paths) {
+                    IPath ooTypesPath = new Path (path);
+                    oooTypesArgs += " -X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-            } catch (InterruptedException e) {
-                PluginLogger.error(
-                        Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
-            } catch (IOException e) {
-                PluginLogger.warning(
-                        Messages.getString("Language.UnreadableOutputError")); //$NON-NLS-1$
+
+
+                // TODO What if the user creates other root modules ?
+                String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
+
+                String error = runJavamaker(firstModule, "UCR", oooTypesArgs, pSdk, pPrj,
+                                            pTypesFile, pBuildFolder, pMonitor);
+                if (!error.isEmpty() && error.contains("-BUCR")) {
+                    runJavamaker(firstModule, "", oooTypesArgs, pSdk, pPrj,
+                                 pTypesFile, pBuildFolder, pMonitor);
+                }
             }
         }
+    }
+
+    private String runJavamaker(String firstModule, String prefix, String oooTypesArgs,
+                                 ISdk pSdk, IProject pPrj, File pTypesFile,
+                                 File pBuildFolder, IProgressMonitor pMonitor) {
+        StringBuffer errBuf = new StringBuffer();
+
+        try {
+            String bflag = new String();
+            if (!prefix.isEmpty())
+                bflag = "-B" + prefix; //$NON-NLS-1$
+
+            String cmdPattern = "javamaker -T {0}.* -nD -Gc {1} -O \"{2}\" \"{3}\" {4}"; //$NON-NLS-1$
+            String command = MessageFormat.format(cmdPattern, firstModule, bflag,
+                                                  pBuildFolder.getAbsolutePath(),
+                                                  pTypesFile.getAbsolutePath(),
+                                                  oooTypesArgs);
+
+            IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
+            Process process = pSdk.runTool(unoprj,command, pMonitor);
+
+            process.waitFor();
+
+            LineNumberReader lineReader = new LineNumberReader(
+                    new InputStreamReader(process.getErrorStream()));
+
+
+
+            String line = lineReader.readLine();
+            while (null != line) {
+                errBuf.append(line + '\n');
+                line = lineReader.readLine();
+            }
+
+            // Only for debugging purpose
+            if (PluginLogger.isLevel(LogLevels.DEBUG)) {
+                System.out.println(errBuf);
+            }
+        } catch (InterruptedException e) {
+            PluginLogger.error(
+                    Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
+        } catch (IOException e) {
+            PluginLogger.warning(
+                            Messages.getString("Language.UnreadableOutputError")); //$NON-NLS-1$
+        }
+
+        return errBuf.toString();
     }
 
     /**
      * {@inheritDoc}
      */
     public String[] getBuildEnv(IUnoidlProject pUnoProject) {
-        
+
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
-        
+
         String[] env = new String[2];
-        
+
         // compute the classpath for the project's OOo instance
         String classpath = "CLASSPATH="; //$NON-NLS-1$
         String sep = System.getProperty("path.separator"); //$NON-NLS-1$
-        
+
         File javaHomeFile = null;
-        
+
         // Compute the classpath for the project dependencies
         IJavaProject javaProject = JavaCore.create(project);
         if (javaProject != null) {
@@ -214,7 +236,7 @@ public class JavaBuilder implements ILanguageBuilder {
                 IClasspathEntry[] cpEntry = javaProject.getResolvedClasspath(true);
                 for (int i = 0; i < cpEntry.length; i++) {
                     IClasspathEntry entry = cpEntry[i];
-                    
+
                     // Transform into the correct path for the entry.
                     if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
                         classpath += entry.getPath().toOSString();
@@ -223,10 +245,10 @@ public class JavaBuilder implements ILanguageBuilder {
                         classpath += sep;
                     }
                 }
-                
+
                 IVMInstall vmInstall = JavaRuntime.getVMInstall(javaProject);
                 javaHomeFile = vmInstall.getInstallLocation();
-                
+
             } catch (JavaModelException e) {
                 PluginLogger.error(
                         Messages.getString("Language.GetClasspathError"), e); //$NON-NLS-1$
@@ -234,7 +256,7 @@ public class JavaBuilder implements ILanguageBuilder {
                 // TODO log a problem to find the JVM associated to the project
             }
         }
-        
+
         env[0] = classpath;
         if (javaHomeFile != null) {
             String libs = ""; //$NON-NLS-1$
@@ -246,24 +268,24 @@ public class JavaBuilder implements ILanguageBuilder {
             }
             env[1] = "LD_LIBRARY_PATH=" + libs; //$NON-NLS-1$
         }
-        
+
         return env;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
-        
+
         // Add the component Jar file
         JavaProjectHandler handler = (JavaProjectHandler)mLanguage.getProjectHandler();
         File libFile = SystemHelper.getFile( handler.getJarFile(pUnoPrj) );
         File prjFile = SystemHelper.getFile( pUnoPrj );
-        
+
         pUnoPackage.addComponentFile(
                         UnoPackage.getPathRelativeToBase( libFile, prjFile ),
                         libFile, "Java"); //$NON-NLS-1$
-        
+
         // Add all the jar dependencies
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
@@ -275,11 +297,11 @@ public class JavaBuilder implements ILanguageBuilder {
                             jarFile, "Java"); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Get the libraries in the classpath that are located in the project
-     * directory or one of its subfolder. 
-     * 
+     * directory or one of its subfolder.
+     *
      * @param pJavaPrj the project from which to extract the libraries
      * @return a list of all the File pointing to the libraries.
      */
@@ -305,11 +327,11 @@ public class JavaBuilder implements ILanguageBuilder {
                     }
                 }
             }
-            
+
         } catch (JavaModelException e) {
             // Enable to add some missing library
         }
-        
+
         return libs;
     }
 }
