@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -65,7 +65,7 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 
 /**
  * Representing an LibreOffice instance for use in the UNO-IDL projects.
- * 
+ *
  * <p>
  * A LibreOffice instance is recognized to the following files:
  * <ul>
@@ -74,14 +74,14 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
  * <li><code>program/bootstraprc</code> file</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>
  * A MacOS installation of LibreOffice will have some different paths, and of course the windows installation too.
  * This class is used to abstract the platform LibreOffice is installed on.
  * </p>
- * 
+ *
  * @author cedricbosdo
- * 
+ *
  */
 public class OOo extends AbstractOOo {
 
@@ -96,10 +96,10 @@ public class OOo extends AbstractOOo {
 
     /**
      * Creating a new LibreOffice instance specifying its home directory.
-     * 
+     *
      * @param pOooHome
      *            the LibreOffice home directory
-     * 
+     *
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
@@ -109,12 +109,12 @@ public class OOo extends AbstractOOo {
 
     /**
      * Creating a new LibreOffice instance specifying its home directory and name.
-     * 
+     *
      * @param pOooHome
      *            the LibreOffice installation path
      * @param pOooName
      *            the LibreOffice instance name
-     * 
+     *
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
@@ -126,10 +126,10 @@ public class OOo extends AbstractOOo {
 
     /**
      * Overridden to initialize the path mapper for 00o3 installations.
-     * 
+     *
      * @param pHome
      *            the LibreOffice installation path to set.
-     * 
+     *
      * @throws InvalidConfigException
      *             if the path doesn't point to a valid LibreOffice installation.
      */
@@ -373,9 +373,9 @@ public class OOo extends AbstractOOo {
 
     /**
      * Add a Uno package to the LibreOffice user packages.
-     * 
+     *
      * FIXME This method has to handle license approval
-     * 
+     *
      * @param pPackageFile
      *            the package file to add
      * @param pUserInstallation
@@ -420,7 +420,7 @@ public class OOo extends AbstractOOo {
 
     /**
      * Remove the named package from the LibreOffice packages.
-     * 
+     *
      * @param pName
      *            the name of the package to remove
      * @param pUserInstallation
@@ -442,7 +442,7 @@ public class OOo extends AbstractOOo {
 
     /**
      * Check if the named package is already installed on LibreOffice.
-     * 
+     *
      * @param pName
      *            the package name to look for
      * @param pUserInstallation
@@ -485,9 +485,9 @@ public class OOo extends AbstractOOo {
 
     /**
      * A class providing the paths for the OOo3 installation.
-     * 
+     *
      * @author cbosdonnat
-     * 
+     *
      */
     private class OOo3PathMapper {
 
@@ -504,10 +504,10 @@ public class OOo extends AbstractOOo {
         private File mapperBasisClasses;
         private List<File> mapperBasisTypes;
         private List<File> mapperBasisServices;
-        
+
         /**
          * Create a new mapper object to get the OOo3 layers paths.
-         * 
+         *
          * @param pHome
          *            the LibreOffice install home
          * @throws InvalidConfigException
@@ -554,7 +554,7 @@ public class OOo extends AbstractOOo {
                             if(dirs.contains(linkTarget)){
                                 dirs.remove(linkTarget);
                             }
-                        }                                                
+                        }
                     }
                 }
                 if (dirs.size() != 1) {
@@ -593,7 +593,7 @@ public class OOo extends AbstractOOo {
                             if(dirs.contains(linkTarget)){
                                 dirs.remove(linkTarget);
                             }
-                        }                                                
+                        }
                     }
                 }
                 if(dirs.size() == 0){
@@ -609,7 +609,7 @@ public class OOo extends AbstractOOo {
                                 InvalidConfigException.INVALID_OOO_HOME);
             }
         }
-        
+
         /**
          * @return the libraries path to add for OOo3 or an empty array if not an OOo3 install.
          * @throws InvalidConfigException
@@ -660,7 +660,7 @@ public class OOo extends AbstractOOo {
             File basisLibs = this.mapperBasisBins;
             if(basisLibs == null){
                 try {
-                    basisLibs = locateUniqueContainer(mHome, "uno.pyc");
+                    basisLibs = locateUniqueContainer(mHome, "soffice.bin");
                     this.mapperBasisBins = basisLibs;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
@@ -728,13 +728,13 @@ public class OOo extends AbstractOOo {
             }
 
             if (basisTypes != null && basisTypes.size() > 0) {
-                List<String> servicesPathList = new ArrayList<String>();    
+                List<String> servicesPathList = new ArrayList<String>();
                 for(File typeFile : basisTypes){
                     if(typeFile != null){
-                        servicesPathList.add(typeFile.getAbsolutePath());    
-                    }                    
-                }                
-                types = mergeArrays(ureTypes, (String[]) servicesPathList.toArray(new String[servicesPathList.size()]));
+                        servicesPathList.add(typeFile.getAbsolutePath());
+                    }
+                }
+                types = mergeArrays(ureTypes, servicesPathList.toArray(new String[servicesPathList.size()]));
             } else {
                 types = ureTypes;
             }
@@ -764,13 +764,13 @@ public class OOo extends AbstractOOo {
             }
 
             if (basisTypes != null && basisTypes.size() > 0) {
-                List<String> servicesPathList = new ArrayList<String>();    
+                List<String> servicesPathList = new ArrayList<String>();
                 for(File typeFile : basisTypes){
                     if(typeFile != null){
-                        servicesPathList.add(typeFile.getAbsolutePath());    
-                    }                    
-                }                
-                types = mergeArrays(ureTypes, (String[]) servicesPathList.toArray(new String[servicesPathList.size()]));
+                        servicesPathList.add(typeFile.getAbsolutePath());
+                    }
+                }
+                types = mergeArrays(ureTypes, servicesPathList.toArray(new String[servicesPathList.size()]));
             } else {
                 types = ureTypes;
             }
@@ -792,14 +792,14 @@ public class OOo extends AbstractOOo {
 
         /**
          * Merge two string arrays into one.
-         * 
+         *
          * The duplicated elements are not removed.
-         * 
+         *
          * @param pArray1
          *            the first array to merge
          * @param pArray2
          *            the second array to merge
-         * 
+         *
          * @return the array with the elements of both arrays
          */
         public String[] mergeArrays(String[] pArray1, String[] pArray2) {
