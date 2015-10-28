@@ -103,7 +103,7 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     public String[] getClassesPath() {
-        String jars = getHome() + FILE_SEP + "share" + FILE_SEP + "java"; //$NON-NLS-1$ //$NON-NLS-2$
+        String jars = getHome() + FILE_SEP + "program" + FILE_SEP + "share" + FILE_SEP + "java"; //$NON-NLS-1$ //$NON-NLS-2$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             jars = getHome() + FILE_SEP + "java"; //$NON-NLS-1$
         }
@@ -133,8 +133,8 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     public String[] getTypesPath() {
-        String types = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
-                        FILE_SEP + "types.rdb"; //$NON-NLS-1$
+        String types = getHome() + FILE_SEP + "program" + //$NON-NLS-1$ //$NON-NLS-2$
+                FILE_SEP + "types.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -145,8 +145,8 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     public String[] getServicesPath() {
-        String services = getHome() + FILE_SEP + "share" + FILE_SEP + "misc" + //$NON-NLS-1$ //$NON-NLS-2$ 
-                        FILE_SEP + "services.rdb"; //$NON-NLS-1$
+        String services = getHome() + FILE_SEP + "program" + //$NON-NLS-1$ //$NON-NLS-2$
+                FILE_SEP + "services.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -157,7 +157,7 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     public String getUnorcPath() {
-        String path = getHome() + FILE_SEP + "lib" + FILE_SEP + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
+        String path = getHome() + FILE_SEP + "program" + FILE_SEP + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             path = getHome() + FILE_SEP + "bin" + FILE_SEP + "uno.ini"; //$NON-NLS-1$ //$NON-NLS-2$
         }

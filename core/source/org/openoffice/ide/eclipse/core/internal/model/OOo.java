@@ -519,7 +519,7 @@ public class OOo extends AbstractOOo {
 
         private void initPaths() throws InvalidConfigException {
             // locate ure directory (directory which contains bin/uno.bin or bin/uno.exe
-            String unoRelativePath = "bin/" + URE.getUnoExecutable();
+            String unoRelativePath = "program/" + URE.getUnoExecutable();
             File ureDir = locateUniqueContainer(mHome, unoRelativePath);
             if (ureDir == null) {
                 mHome = null;
