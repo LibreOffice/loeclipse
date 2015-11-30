@@ -73,7 +73,7 @@
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 
 		<property name="office.basis.dir" value="${libreoffice.home}" />
-		<property name="office.ure.dir" value="${office.win.basis.dir}${file.separator}program"/>
+		<property name="office.ure.dir" value="${office.basis.dir}${file.separator}program"/>
 
 		<path id="office.class.path">
             <fileset dir="${office.ure.dir}${file.separator}classes">
