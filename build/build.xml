@@ -68,8 +68,9 @@
 		</echo>
 	</target>
 	
-	<target name="init-env-ooo3">
-		<echo message="Initializing the properties for LibreOffice >= 3.x"/>
+	<target name="init-env" depends="core.init-env, java.init-env">
+
+		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 
 		<property name="office.basis.dir" value="${libreoffice.home}" />
 		<property name="office.ure.dir" value="${office.win.basis.dir}${file.separator}program"/>
@@ -79,11 +80,6 @@
                 <include name="*.jar"/>
             </fileset>
         </path>
-    </target>
-	
-	<target name="init-env" 
-		depends="init-env-ooo3, core.init-env, java.init-env">
-		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
         <dirname property="build.basedir" file="${ant.file.ooeclipseintegration}"/>
 		<property name="out.path" value="${basedir}/../site" />
@@ -92,7 +88,7 @@
 				<isset property="debug"/>
 			</not>
 		</condition>
-		
+
 		<path id="eclipse.classpath">
 			<fileset dir="${eclipse.home}/plugins">
 				<include name="*.jar"/>
