@@ -68,48 +68,11 @@
 		</echo>
 	</target>
 	
-	<target name="check-ooo-version">
-        
-		<property name="office.linux.basis.dir" value="${libreoffice.home}"/>
-		<property name="office.linux.ure.dir" value="${office.linux.basis.dir}${file.separator}program"/>
-		<!-- Needed due to some differences between Windows and Linux installs -->
-		<property name="office.win.basis.dir" value="${libreoffice.home}"/>
-		<property name="office.win.ure.dir" value="${office.win.basis.dir}${file.separator}program"/>
-        
-        <!-- test whether building against OOo3 or not -->
-        <condition property="office.version3" value="true">
-        	<or>
-	            <and>
-	                <available file="${office.linux.basis.dir}" />
-	                <available file="${office.linux.ure.dir}"/>
-	            </and>
-        		<and>
-					<available file="${office.win.basis.dir}" />
-					<available file="${office.win.ure.dir}"/>
-				</and>
-        	</or>
-        </condition>
-		
-		<condition property="office.version3.win" value="true">
-			<and>
-				<os family="windows"/>
-				<isset property="office.version3"/>
-			</and>
-		</condition>
-    </target>
-	
-	<target name="init-win-ooo3" depends="check-ooo-version" if="office.version3.win">
-		<property name="office.basis.dir" value="${office.win.basis.dir}" />
-		<property name="office.ure.dir" value="${office.win.ure.dir}"/>
-	</target>
-	
-	<target name="init-linux-ooo3" depends="check-ooo-version" unless="office.version3.win">
-		<property name="office.basis.dir" value="${office.linux.basis.dir}" />
-		<property name="office.ure.dir" value="${office.linux.ure.dir}"/>
-	</target>
-	
-	<target name="init-env-ooo3" depends="init-win-ooo3, init-linux-ooo3" if="office.version3">
+	<target name="init-env-ooo3">
 		<echo message="Initializing the properties for LibreOffice >= 3.x"/>
+
+		<property name="office.basis.dir" value="${libreoffice.home}" />
+		<property name="office.ure.dir" value="${office.win.basis.dir}${file.separator}program"/>
 
 		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java">
 			<not>
