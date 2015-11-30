@@ -73,10 +73,8 @@
 		<property name="office.linux.basis.dir" value="${libreoffice.home}"/>
 		<property name="office.linux.ure.dir" value="${office.linux.basis.dir}${file.separator}program"/>
 		<!-- Needed due to some differences between Windows and Linux installs -->
-		<loadfile property="office.win.basis.name" srcfile="${office.linux.basis.dir}" failonerror="false" quiet="true" />
-		<property name="office.win.basis.dir" value="${libreoffice.home}${file.separator}${office.win.basis.name}"/>
-		<loadfile property="office.win.ure.name" srcfile="${office.win.basis.dir}${file.separator}ure-link" failonerror="false" quiet="true" />
-		<property name="office.win.ure.dir" value="${office.win.basis.dir}${file.separator}${office.win.ure.name}"/>
+		<property name="office.win.basis.dir" value="${libreoffice.home}"/>
+		<property name="office.win.ure.dir" value="${office.win.basis.dir}${file.separator}program"/>
         
         <!-- test whether building against OOo3 or not -->
         <condition property="office.version3" value="true">
