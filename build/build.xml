@@ -74,21 +74,8 @@
 		<property name="office.basis.dir" value="${libreoffice.home}" />
 		<property name="office.ure.dir" value="${office.win.basis.dir}${file.separator}program"/>
 
-		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java">
-			<not>
-				<isset property="office.version3.win"/>
-			</not>
-		</condition>
-		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}java">
-			<isset property="office.version3.win"/>
-		</condition>
-		
-		<property name="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java"/>
-        <path id="office.class.path">
-            <fileset dir="${office.basis.dir}${file.separator}program${file.separator}classes">
-                <include name="*.jar"/>
-            </fileset>
-            <fileset dir="${office.ure.dir.java.folder}">
+		<path id="office.class.path">
+            <fileset dir="${office.ure.dir}${file.separator}classes">
                 <include name="*.jar"/>
             </fileset>
         </path>
