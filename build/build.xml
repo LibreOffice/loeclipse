@@ -109,7 +109,7 @@
 	</target>
 	
 	<target name="init-env-ooo3" depends="init-win-ooo3, init-linux-ooo3" if="office.version3">
-		<echo message="Initializing the properties for LibreOffice 3.x"/>
+		<echo message="Initializing the properties for LibreOffice >= 3.x"/>
 
 		<condition property="office.ure.dir.java.folder" value="${office.ure.dir}${file.separator}share${file.separator}java">
 			<not>
