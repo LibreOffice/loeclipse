@@ -130,19 +130,9 @@
             </fileset>
         </path>
     </target>
-
-    <target name="init-env-ooo2" depends="check-ooo-version" unless="office.version3">
-    	<echo message="Initializing the properties for OpenOffice 2.x"/>
-
-        <path id="office.class.path">
-            <fileset dir="${libreoffice.home}${file.separator}program${file.separator}classes">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
-    </target>
 	
 	<target name="init-env" 
-		depends="init-env-ooo2, init-env-ooo3, core.init-env, java.init-env">
+		depends="init-env-ooo3, core.init-env, java.init-env">
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 		
         <dirname property="build.basedir" file="${ant.file.ooeclipseintegration}"/>
