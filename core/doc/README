@@ -26,8 +26,9 @@ FEATURES
 COMING MORE OR LESS SOON
  
   - Cheat sheets to improve the user experience
-  - Addind C++ language support
+  - Adding C++ language support
   - New UNO wizard for other IDL types
   - Easy support of several services implementations in a component
   - Outline view for UNOIDL file
-  - Addind Python language support
+  - Adding Python language support
+
