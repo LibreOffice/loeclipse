@@ -329,6 +329,5 @@ version for the Library.
     <update label="LibreOffice Plugin update site" url="http://cedric.bosdonnat.free.fr/ooeclipseintegration"/>
   </url>
   ${includes.java}
-  ${includes.cpp}
   <plugin id="org.openoffice.ide.eclipse.core" download-size="0" install-size="0" version="${core.Bundle-Version}" unpack="false"/>
 </feature>
