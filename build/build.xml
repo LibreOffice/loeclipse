@@ -91,7 +91,20 @@
 
 		<path id="eclipse.classpath">
 			<fileset dir="${eclipse.home}/plugins">
-				<include name="*.jar"/>
+				<include name="org.eclipse.equinox*"/>
+				<include name="org.eclipse.core.runtime*"/>
+				<include name="org.eclipse.jface.text*"/>
+				<include name="org.eclipse.core.resources*"/>
+				<include name="org.eclipse.ui.editors*"/>
+				<include name="org.eclipse.ui.ide*"/>
+				<include name="org.eclipse.ui.workbench.texteditor*"/>
+				<include name="org.eclipse.ui.views*"/>
+				<include name="org.eclipse.ui.cheatsheets*"/>
+				<include name="org.eclipse.help*"/>
+				<include name="org.eclipse.ui.forms*"/>
+				<include name="org.eclipse.debug.core*"/>
+				<include name="org.eclipse.debug.ui*"/>
+				<include name="org.eclipse.ui*"/>
 			</fileset>
 		</path>
 		
