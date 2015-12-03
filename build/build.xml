@@ -69,6 +69,7 @@
 	</target>
 	
 	<target name="init-env" depends="core.init-env, java.init-env">
+
 		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
 
 		<property name="office.basis.dir" value="${libreoffice.home}" />
@@ -162,7 +163,7 @@
             </filterchain>
         </loadfile>
         <echo>${includes.java}</echo>
-
+			
 		<delete file="${out.path}/features/feature.xml"/>
     </target>
 
@@ -187,25 +188,6 @@
 			</java>
 		</sequential>
 	</macrodef>
-
-	<macrodef name="prepareJar">
-		<attribute name="jar"/>
-		<attribute name="outdir"/>
-		<sequential>
-			<equinoxLauncher application="org.eclipse.update.core.siteOptimizer">
-				<args>
-					<arg value="-jarProcessor"/>
-					<arg value="-verbose"/>
-					<arg value="-processAll"/>
-					<arg value="-repack"/>
-					<arg value="-outputDir"/>
-					<arg value="@{outdir}"/>
-					<arg value="@{jar}"/>
-				</args>
-			</equinoxLauncher>
-		</sequential>
-	</macrodef>
-
 	<target name="site" depends="init-env, plugins, features, core.site, java.site"
 		description="Creates the Eclipse update site">
 		
@@ -226,21 +208,6 @@
             <fileset dir="${out.path}" includes="site-*.xml"/>
         </delete>
 		
-		<!-- Generate p2's .jar.pack.gz and digest.zip -->
-		<echo message="Generating p2's .jar.pack.gz and digest.zip"/>
-		<equinoxLauncher application="org.eclipse.update.core.siteOptimizer">
-			<args>
-				<arg value="-digestBuilder"/>
-				<arg value="-digestOutputDir=${out.path}"/>
-				<arg value="-siteXML=${out.path}/site.xml"/>
-				<arg value="-jarProcessor"/>
-				<arg value="-pack"/>
-				<arg value="-outputDir"/>
-				<arg value="${out.path}"/>
-				<arg value="${out.path}"/>
-			</args>
-		</equinoxLauncher>
-
 		<!-- Generate content.jar and artifacts.jar -->
 		<equinoxLauncher application="org.eclipse.equinox.p2.publisher.UpdateSitePublisher">
 			<args>
