@@ -25,13 +25,10 @@
             <fileset dir="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}classes">
                 <include name="*.jar"/>
             </fileset>
-            <fileset dir="$'{'office.ure.dir}$'{'file.separator}share$'{'file.separator}java">
-                <include name="*.jar"/>
-            </fileset>
         </path>
 
         <property name="office.unotypes.rdb" 
-            value="$'{'office.ure.dir}$'{'file.separator}share$'{'file.separator}misc$'{'file.separator}types.rdb"/>
+            value="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}types.rdb"/>
 
         <first id="offapirdbPaths">
             <fileset dir="$'{'office.install.dir}" includes="**/offapi.rdb" />

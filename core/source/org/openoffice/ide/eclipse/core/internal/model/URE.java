@@ -103,10 +103,7 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     public String[] getClassesPath() {
-        String jars = getHome() + FILE_SEP + "program" + FILE_SEP + "share" + FILE_SEP + "java"; //$NON-NLS-1$ //$NON-NLS-2$
-        if (getPlatform().equals(Platform.OS_WIN32)) {
-            jars = getHome() + FILE_SEP + "java"; //$NON-NLS-1$
-        }
+        String jars = getHome() + FILE_SEP + "program" + FILE_SEP + "classes"; //$NON-NLS-1$ //$NON-NLS-2$
         return new String[] { jars };
     }
 
