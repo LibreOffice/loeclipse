@@ -48,7 +48,7 @@ LibreOffice Eclipse integration development needs:</p>
 </div>
 </div>
 </div>
-<p>The only important thin to recall is to be sure that the
+<p>The only important thing to recall is to be sure that the
 LibreOffice SDK will path will not contain any white space on the
 windows platform. For more details on the different tools installations,
 please refer to their official documentation.</p>
@@ -59,11 +59,11 @@ in Eclipse and open the <span class="strong"><strong>Java &gt; Build path &gt; U
 configuration page. Then add a new library named <code class="literal">OOo Classes</code> including the following 
 jars in the LibreOffice installation. This is necessary in order to correctly build the sources.
 <ul>
-	<li><tt>/path/to/libreoffice/install/basis-link/program/classes/unoil.jar</tt></li>
-	<li><tt>/path/to/libreoffice/install/basis-link/ure-link/share/java/juh.jar</tt></li>
-	<li><tt>/path/to/libreoffice/install/basis-link/ure-link/share/java/jurt.jar</tt></li>
-	<li><tt>/path/to/libreoffice/install/basis-link/ure-link/share/java/ridl.jar</tt></li>
-	<li><tt>/path/to/libreoffice/install/basis-link/ure-link/share/java/unoloader.jar</tt></li>
+	<li><tt>/path/to/libreoffice/install/program/classes/unoil.jar</tt></li>
+	<li><tt>/path/to/libreoffice/install/program/classes/juh.jar</tt></li>
+	<li><tt>/path/to/libreoffice/install/program/classes/jurt.jar</tt></li>
+	<li><tt>/path/to/libreoffice/install/program/classes/ridl.jar</tt></li>
+	<li><tt>/path/to/libreoffice/install/program/classes/unoloader.jar</tt></li>
 </ul></p>
 </div>
 <div class="sect2" lang="en-GB">
@@ -76,7 +76,7 @@ jars in the LibreOffice installation. This is necessary in order to correctly bu
 </div>
 <p>The next step is to get the plugins sources as Eclipse projects.
 First check the sources from the Git repository using command
-<code class="literal">git clone git://anongit.freedesktop.org/libreoffice/contrib/ooeclipse</code>.
+<code class="literal">git clone https://github.com/LibreOffice/loeclipse.git</code>.
 <p>The second step is to import the sources as Eclipse projects. For
 this open the <span class="strong"><strong>File &gt; Import</strong></span> menu and choose 
 <span class="strong"><strong>General &gt; Existing
