@@ -92,7 +92,7 @@
 
     <target name="core.compile" depends="init-env, packager.plugin">
 		<javac srcdir="${core.basedir}/source" destdir="${core.out.classes}"
-			target="1.5" source="1.5" 
+			target="1.7" source="1.7"
 			debug="${debug}"
 			classpathref="core.dependencies.path" 
 			excludes="**/unittests/**"/>

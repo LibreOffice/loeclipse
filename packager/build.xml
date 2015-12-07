@@ -79,7 +79,7 @@
 	
     <target name="packager-compile" depends="init-env, update-sources">
     	<javac srcdir="${packager.sources}/ooo-plugin-packager-core/src/main" destdir="${packager.out.classes}"
-				target="1.5" source="1.5" 
+				target="1.7" source="1.7"
 				debug="${debug}"/>
     </target>
 

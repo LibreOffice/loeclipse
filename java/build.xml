@@ -90,7 +90,7 @@
 	<target name="jodconnector.compile">
 		<mkdir dir="${jodconnector.classes}"/>
 		<javac srcdir="${java.sources}" destdir="${jodconnector.classes}"
-			target="1.5" source="1.5" 
+			target="1.7" source="1.7"
 			debug="true"
 			classpathref="office.class.path" 
 			includes="com/artofsolving/**" defaultexcludes="true">
@@ -106,7 +106,7 @@
 	
 	<target name="java.compile" depends="init-env" unless="java.nobuild">
 		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
-			target="1.5" source="1.5" 
+			target="1.7" source="1.7"
 			debug="${debug}"
 			classpathref="java.dependencies.path" 
 			excludes="**/*Test.*,com/artofsolving/**">
