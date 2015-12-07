@@ -171,23 +171,7 @@
 
 	<target name="features" depends="versions, java.feature, core.feature"/>
 	<target name="plugins" depends="core.plugin, java.plugin"/>
-	
-	<macrodef name="equinoxLauncher">
-		<attribute name="application"/>
-		<element name="args"/>
-		<sequential>
-			<java classname="org.eclipse.equinox.launcher.Main"
-				classpathref="eclipse.classpath"
-				failonerror="true"
-				logerror="true"
-				fork="true"
-				newenvironment="true">
-				<arg value="-application"/>
-				<arg value="@{application}"/>
-				<args/>
-			</java>
-		</sequential>
-	</macrodef>
+
 	<target name="site" depends="init-env, plugins, features, core.site, java.site"
 		description="Creates the Eclipse update site">
 		
@@ -207,21 +191,6 @@
         <delete>
             <fileset dir="${out.path}" includes="site-*.xml"/>
         </delete>
-		
-		<!-- Generate content.jar and artifacts.jar -->
-		<equinoxLauncher application="org.eclipse.equinox.p2.publisher.UpdateSitePublisher">
-			<args>
-				<arg value="-metadataRepository"/>
-                <arg value="file:${out.path}/"/>
-				<arg value="-artifactRepository"/>
-				<arg value="file:${out.path}/"/>
-				<arg value="-source"/>
-				<arg value="${out.path}"/>
-				<arg value="-compress"/>
-				<arg value="-publishArtifacts"/>
-			</args>
-		</equinoxLauncher>
-		
 	</target>
 
 	<target name="archive-site" description="Create a zip for the update site"
