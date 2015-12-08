@@ -41,6 +41,9 @@
  ====================================================================== -->
 
 <project name="ooeclipseintegration" default="site">
+	<presetdef name="javac">
+		<javac includeantruntime="false" />
+	</presetdef>
 
 	<import file="../core/build.xml"/>
 	<import file="../java/build.xml"/>
