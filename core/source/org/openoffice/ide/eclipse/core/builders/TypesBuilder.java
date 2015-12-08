@@ -106,7 +106,6 @@ public class TypesBuilder extends IncrementalProjectBuilder {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     protected IProject[] build(int pKind, Map pArgs, IProgressMonitor pMonitor) throws CoreException {
         
         mChangedIdl = false;
