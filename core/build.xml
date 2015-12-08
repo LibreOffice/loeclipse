@@ -117,13 +117,6 @@
 	</target>
 	
     <target name="core.site" depends="core.plugin, packager.site">
-
-        <!-- Echo the needed bits for site.xml -->
-        <copy tofile="${out.path}/site-core.xml" file="${build.basedir}/site-feature.xml" />
-        <replace file="${out.path}/site-core.xml" token="@@URL@@" value="features/org.openoffice.ide.eclipse.core_${core.Bundle-Version}.jar"/>
-        <replace file="${out.path}/site-core.xml" token="@@ID@@" value="org.openoffice.ide.eclipse.core"/>
-        <replace file="${out.path}/site-core.xml" token="@@VERSION@@" value="${core.Bundle-Version}"/>
-
 		<!-- Copying the plugins -->
 		<copy todir="${out.path}/plugins">
             <fileset dir="${core.out.path}/plugins/"

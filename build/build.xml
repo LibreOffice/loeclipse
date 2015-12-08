@@ -104,23 +104,6 @@
 	</target>
 	
 	<target name="versions" depends="core.version, java.version" />
-	
-	<target name="core.feature" depends="versions, java.feature">
-		<copy file="features/core/feature.xml"
-            tofile="${out.path}/features/feature.xml">
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </copy>
-		
-		<jar destfile="${out.path}/features/${package.prefix}.core_${core.Bundle-Version}.jar">
-			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
-				<include name="feature.xml"/>
-			</zipfileset>
-		</jar>
-			
-		<delete file="${out.path}/features/feature.xml"/>
-	</target>
 
     <target name="java.feature.nobuild" if="java.nobuild">
         <property name="includes.java" value=""/>
@@ -139,21 +122,13 @@
 				<include name="feature.xml"/>
 			</zipfileset>
         </jar>
-
-        <loadfile property="includes.java"
-            srcfile="features/java/includes.xml">
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </loadfile>
-        <echo>${includes.java}</echo>
 			
 		<delete file="${out.path}/features/feature.xml"/>
     </target>
 
     <target name="java.feature" depends="java.feature.build, java.feature.nobuild"/>
 
-	<target name="features" depends="versions, java.feature, core.feature"/>
+	<target name="features" depends="versions, java.feature"/>
 	<target name="plugins" depends="core.plugin, java.plugin"/>
 
 	<target name="site" depends="init-env, plugins, features, core.site, java.site"

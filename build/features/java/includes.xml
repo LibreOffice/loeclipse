@@ -1,1 +1,0 @@
-  <includes id="org.openoffice.ide.eclipse.java" version="${java.Bundle-Version}" optional="true"/>
