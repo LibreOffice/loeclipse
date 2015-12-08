@@ -322,5 +322,4 @@ version for the Library.
   </requires>
   <plugin id="org.openoffice.ide.eclipse.java" download-size="0" install-size="0" version="${java.Bundle-Version}" unpack="false"/>
   <plugin id="org.openoffice.ide.eclipse.core" download-size="0" install-size="0" version="${core.Bundle-Version}" unpack="false"/>
-  <plugin id="org.openoffice.ide.eclipse.packager.core" download-size="0" install-size="0" version="${packager.Bundle-Version}" unpack="false"/>
 </feature>

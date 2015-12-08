@@ -17,8 +17,7 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.ui.forms,
  org.eclipse.debug.core;visibility:=reexport,
  org.eclipse.debug.ui,
- org.eclipse.ui;bundle-version="3.4.1",
- org.openoffice.ide.eclipse.packager.core;bundle-version="0.1.0"
+ org.eclipse.ui
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.actions,
@@ -51,6 +50,7 @@ Export-Package: org.openoffice.ide.eclipse.core,
  org.openoffice.ide.eclipse.core.utils,
  org.openoffice.ide.eclipse.core.wizards,
  org.openoffice.ide.eclipse.core.wizards.pages,
- org.openoffice.ide.eclipse.core.wizards.utils
+ org.openoffice.plugin.core.model,
+ org.openoffice.plugin.core.utils
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -41,9 +41,6 @@
  ====================================================================== -->
 
 <project name="core" default="core.error">
-	
-    <import file="../packager/build.xml"/>
-	
 	<target name="core.error">
 		<fail>Wrong target!
 			
@@ -52,7 +49,7 @@
 		</fail>
 	</target>
 	
-	<target name="init-env" depends="packager.init-env">
+	<target name="init-env">
 		<dirname property="core.basedir" file="${ant.file.core}"/>
 		
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
@@ -65,10 +62,6 @@
 			<fileset dir="${eclipse.home}/plugins/">
 				<include name="org.eclipse*.jar"/>
 				<include name="org.junit*/*.jar"/>
-			</fileset>
-			
-			<fileset dir="${packager.basedir}">
-				<include name="**/*.jar"/>
 			</fileset>
 		</path>
 		
@@ -84,13 +77,13 @@
 		<delete file="${manifest.properties}" />
 	</target>
 	
-	<target name="purge" depends="init-env, packager.purge">
+	<target name="purge" depends="init-env">
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<delete dir="${core.out.path}" />
 		<delete dir="${core.basedir}/doc/help/html/api" />
 	</target>
 
-    <target name="core.compile" depends="init-env, packager.plugin">
+    <target name="core.compile" depends="init-env">
 		<javac srcdir="${core.basedir}/source" destdir="${core.out.classes}"
 			target="1.7" source="1.7"
 			debug="${debug}"
@@ -116,7 +109,7 @@
 		</jar>
 	</target>
 	
-    <target name="core.site" depends="core.plugin, packager.site">
+    <target name="core.site" depends="core.plugin">
 		<!-- Copying the plugins -->
 		<copy todir="${out.path}/plugins">
             <fileset dir="${core.out.path}/plugins/"

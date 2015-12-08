@@ -61,7 +61,6 @@
 		<property name="jodconnector.classes" value="${java.out.path}/jodconnector"/>
 		
 		<path id="java.dependencies.path">
-			<pathelement location="${packager.out.classes}"/>
 			<pathelement location="${core.out.classes}"/>
 			
 			<fileset dir="${eclipse.home}/plugins/">

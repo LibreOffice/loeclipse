@@ -16,7 +16,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.junit;bundle-version="3.5.0",
  org.eclipse.ui.ide,
  org.eclipse.ui.cheatsheets,
- org.openoffice.ide.eclipse.packager.core;bundle-version="0.1.0",
  org.eclipse.jdt.debug.ui;bundle-version="3.4.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
