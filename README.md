@@ -26,8 +26,10 @@ In order to build LOEclipseIntegration to produce an update site, you need to ha
 
 On Ubuntu for example you need `libreoffice-dev` and `libreoffice-java-common`.
 
+Also you need to add some jar files to the build path in Eclipse. Select the *Window->Preferences* menu in Eclipse and open the *Java->Build path->User Library* configuration page. Then add a new library named `LO-Classes` and add the following jars from the LibreOffice installation (found in `program/classes`): `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. This is necessary in order to correctly build the sources.
+
 ### Working with Eclipse
-You can run and debug this extension with Eclipse. Just import the projects using "File->Import" and configure the run/debug settings.
+You can run and debug this extension with Eclipse. Just import the projects using *File->Import* and run/debug the project as an *Eclipse installation*.
 
 ### Building an update site
 To build an update site, run the following command in the `build` folder:
