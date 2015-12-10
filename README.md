@@ -11,13 +11,13 @@ Using update sites
 * Help->Software updates->Find & install
 * Select the "Add new features" option
 * Add a new update site pointing to one of:
-  * http://cedric.bosdonnat.free.fr/ooeclipseintegration/ (to install a released version)
+  * `http://cedric.bosdonnat.free.fr/ooeclipseintegration/` (to install a released version)
   * the `site` directory (when building from source)
 * Now click Next and follow the wizard's instructions
 
 ## Documentation
 
-Developer and User Documentation is found in (core/doc/help/html)[https://github.com/LibreOffice/loeclipse/tree/master/core/doc/help/html].
+Developer and User Documentation is found in [core/doc/help/html](https://github.com/LibreOffice/loeclipse/tree/master/core/doc/help/html).
 
 ## Development
 
