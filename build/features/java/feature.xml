@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.libreoffice.ide.eclipse.java" label="LibreOffice development plugin support for Java implementation" version="${java.Bundle-Version}" provider-name="Cédric Bosdonnat">
+<feature id="org.libreoffice.ide.eclipse.java" label="LibreOffice Extension/Component Development - Java" version="${java.Bundle-Version}" provider-name="Cédric Bosdonnat">
   <description>
-      This plugin provides the support of Java implementation for LibreOffice
-component development. This plugin depends on the LibreOffice development
-core plugin.
-
-Even if this is a important piece of work, there are still other
-features to add and bugs to correct, please do not hesitate to
-express your remarks and requests on the LibreOffice development
-mailing list.
+      This plugin provides helps with developing Java extensions or components for LibreOffice.
    </description>
   <copyright>
       Copyright: (c) 2005-2010 Cedric Bosdonnat

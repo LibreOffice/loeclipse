@@ -144,7 +144,7 @@
             <path path="site-header.xml"/>
             <fileset dir="${out.path}" includes="site-*.xml"/>
             <path path="site-footer.xml"/>
-        </concat> 
+        </concat>
 
         <!-- Remove the site-*.xml fragments -->
         <delete>
