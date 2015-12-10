@@ -15,11 +15,22 @@ Using update sites
   * the `site` directory (when building from source)
 * Now click Next and follow the wizard's instructions
 
+## Documentation
+
+Developer and User Documentation is found in (core/doc/help/html)[https://github.com/LibreOffice/loeclipse/tree/master/core/doc/help/html].
+
 ## Development
 
-In order to build LOEclipseIntegration to produce an update site, you need to have LibreOffice and Eclipse installed. Note that on Linux, you might need to install extra dependencies (`libreoffice-java-common` on Ubuntu).
+### Prerequisites
+In order to build LOEclipseIntegration to produce an update site, you need to have LibreOffice, the LibreOffice SDK and Eclipse installed.
 
-After checkout, run the following command in the `build` folder:
+On Ubuntu for example you need `libreoffice-dev` and `libreoffice-java-common`.
+
+### Working with Eclipse
+You can run and debug this extension with Eclipse. Just import the projects using "File->Import" and configure the run/debug settings.
+
+### Building an update site
+To build an update site, run the following command in the `build` folder:
 
 `ant -Dlibreoffice.home=... -Declipse.home=...`
 
@@ -29,6 +40,7 @@ You can also persist the options by setting the `ANT_ARGS` variable to
 
 `-Dlibreoffice.home=... -Declipse.home=...`.
 
+### Available build targets
 Run `ant help` to see the available build targets.
 
 ## Features
@@ -43,12 +55,12 @@ Run `ant help` to see the available build targets.
 * URE configuration
 * New URE application wizard
 * Automatic component build and packaging
+* Automatic deployment to an existing LibreOffice installation
+* Remote debugging using the Eclipse debugger
 
-**Planned features:**
+**Nice to have features:**
  * Adding C++ language support
+ * Adding Python language support
  * New UNO wizard for other IDL types
  * Easy support of several services implementations in a component
  * Outline view for UNOIDL file
- * Automatic deployment to an existing LibreOffice installation
- * Remote debugging using the Eclipse debugger
- * Adding Python language support
