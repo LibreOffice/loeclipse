@@ -1,8 +1,8 @@
 /*************************************************************************
  *
  * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 3 of 
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
@@ -11,13 +11,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this program. 
+ * License along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright: 2012 by Ludovic Smadja
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.internal.model;
 
@@ -30,7 +30,7 @@ public class RelativeFileLocator {
 
     private File mBaseDir = null;
     private String mRelativePath = null;
-        
+
     public RelativeFileLocator(File baseDir, String pRelativePath) {
         super();
         this.mBaseDir = baseDir;
@@ -58,13 +58,13 @@ public class RelativeFileLocator {
                 File tmpFile = new File(scanFile, relativePath);
                 if(tmpFile.exists()){
                     fileList.add(scanFile);
-                }                
+                }
                 File[] children = scanFile.listFiles();
                 if(children != null && children.length > 0){
                     newScannedDirList.addAll(Arrays.asList(children));
                 }
-            }            
-        }    
+            }
+        }
         if(!newScannedDirList.isEmpty()){
             locateRelativeFile(newScannedDirList,fileList,relativePath);
         }

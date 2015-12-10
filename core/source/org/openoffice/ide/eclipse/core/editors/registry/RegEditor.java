@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -49,33 +49,34 @@ import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.editors.utils.OOTextEditor;
 
 /**
- * Editor class to view the UNO registries, ie <code>.urd</code> and 
+ * Editor class to view the UNO registries, ie <code>.urd</code> and
  * <code>.rdb</code> files. This editor is read-only and simply shows
- * the registry content without syntax highlighting. 
- * 
+ * the registry content without syntax highlighting.
+ *
  * @author cedricbosdo
  */
 public class RegEditor extends OOTextEditor {
 
     /**
      * Default constructor, initializing the document provider.
-     * 
+     *
      * @see RegDocumentProvider for the document provider
      */
     public RegEditor() {
         super();
         setDocumentProvider(new RegDocumentProvider());
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ISourceViewer createSourceViewer(Composite pParent, IVerticalRuler pRuler, int pStyles) {
         ISourceViewer sourceViewer = super.createSourceViewer(pParent, pRuler, pStyles);
-        
+
         // The database viewer only shows the result of regview, thus the file isn't editable
         sourceViewer.setEditable(false);
-        
+
         return sourceViewer;
     }
 }

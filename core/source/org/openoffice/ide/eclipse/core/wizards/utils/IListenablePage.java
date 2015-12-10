@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -44,8 +44,8 @@
 package org.openoffice.ide.eclipse.core.wizards.utils;
 
 /**
- * Interface that pages have to implement to be listened using {@link IPageListener}. 
- * 
+ * Interface that pages have to implement to be listened using {@link IPageListener}.
+ *
  * @author cedricbosdo
  *
  */
@@ -53,16 +53,16 @@ public interface IListenablePage {
 
     /**
      * Add the page listener.
-     * 
+     *
      * @param pListener the page listener to add
      */
     public void addPageListener(IPageListener pListener);
-    
+
     /**
      * Remove the page listener.
-     * 
+     *
      * @param pListener the listener to remove.
      */
     public void removePageListener(IPageListener pListener);
-    
+
 }

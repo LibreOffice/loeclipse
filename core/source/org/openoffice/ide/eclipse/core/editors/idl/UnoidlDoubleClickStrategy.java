@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -51,17 +51,18 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * This class is responsible for the selection of words using double-clics
  * in the UNO-IDL editor.
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
-    
+
     protected ITextViewer mText;
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void doubleClicked(ITextViewer pPart) {
         int pos = pPart.getSelectedRange().x;
 
@@ -75,27 +76,27 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
             selectWord(pos);
         }
     }
-    
+
     /**
      * Test if the caret is positioned in a comment partition.
-     * 
+     *
      * @param pCaretPos the caret position
-     * @return <code>true</code> if the cursor is in a comment, 
+     * @return <code>true</code> if the cursor is in a comment,
      *         <code>false</code> otherwise
      */
     protected boolean selectComment(int pCaretPos) {
-        
+
         boolean selected = false;
-        
+
         IDocument doc = mText.getDocument();
         int startPos, endPos;
 
         try {
-            
+
 
             int pos = getCommentStartPosition(pCaretPos, doc);
             int c = doc.getChar(pos);
-            
+
             if (c == '\"') {
                 startPos = pos;
 
@@ -125,20 +126,20 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
         return selected;
     }
-    
+
     /**
      * Get the position of the start of the current comment or the same position than the caret.
-     * 
+     *
      * @param pCaretPos the position of the caret
      * @param pDoc the edited document
      * @return the start of the comment or the caret position
-     * 
+     *
      * @throws BadLocationException if something wrong happens during the document reading
      */
     private int getCommentStartPosition(int pCaretPos, IDocument pDoc) throws BadLocationException {
         int pos = pCaretPos;
         char c = ' ';
-        
+
         while (pos >= 0) {
             c = pDoc.getChar(pos);
             if (c == '\\') {
@@ -150,21 +151,21 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
             }
             --pos;
         }
-        
+
         return pos;
     }
 
     /**
      * Test if the caret is positioned in a word partition.
-     * 
+     *
      * @param pCaretPos the caret position
-     * @return <code>true</code> if the cursor is in a word, 
+     * @return <code>true</code> if the cursor is in a word,
      *         <code>false</code> ortherwise
      */
     protected boolean selectWord(int pCaretPos) {
 
         boolean selected = false;
-        
+
         IDocument doc = mText.getDocument();
         int startPos, endPos;
 
@@ -206,7 +207,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
     /**
      * Define the text selection using a range.
-     * 
+     *
      * @param pStartPos the position of the selection start
      * @param pStopPos the position of the selection end
      */

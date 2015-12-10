@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,9 +47,9 @@ import java.util.HashMap;
 import java.util.Vector;
 
 /**
- * This class contains the data describing a the object to create by the 
+ * This class contains the data describing a the object to create by the
  * Uno factory.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -57,11 +57,11 @@ public class UnoFactoryData {
 
     private HashMap<String, Object> mProperties = new HashMap<String, Object>();
     private Vector<UnoFactoryData> mInnerData = new Vector<UnoFactoryData>();
-    
+
     /**
      * Add or replace the property value associated with the key. Nothing
-     * happens if the key is <code>null</code> or an empty string. 
-     * 
+     * happens if the key is <code>null</code> or an empty string.
+     *
      * @param pKey the name of the property
      * @param pValue the value of the property
      */
@@ -70,10 +70,10 @@ public class UnoFactoryData {
             mProperties.put(pKey, pValue);
         }
     }
-    
+
     /**
      * @param pKey the key of the property to get.
-     * 
+     *
      * @return the property corresponding to the key or <code>null</code> if
      *     the key is null or an empty string or if there is such a key.
      */
@@ -84,7 +84,7 @@ public class UnoFactoryData {
         }
         return result;
     }
-    
+
     /**
      * @return an array of all the contained property keys
      */
@@ -96,7 +96,7 @@ public class UnoFactoryData {
         }
         return sKeys;
     }
-    
+
     /**
      * @return an array of all the data contained by this data.
      */
@@ -107,11 +107,11 @@ public class UnoFactoryData {
         }
         return data;
     }
-    
+
     /**
      * Adds an inner data if it is neither <code>null</code> nor already
      * present in the inner data.
-     * 
+     *
      * @param pData the data to add
      */
     public void addInnerData(UnoFactoryData pData) {
@@ -119,11 +119,11 @@ public class UnoFactoryData {
             mInnerData.add(pData);
         }
     }
-    
+
     /**
      * Removes an inner data if it isn't <code>null</code> and already
      * present in the inner data.
-     * 
+     *
      * @param pData the data to remove
      */
     public void removeInnerData(UnoFactoryData pData) {
@@ -131,18 +131,18 @@ public class UnoFactoryData {
             mInnerData.remove(pData);
         }
     }
-    
+
     /**
      * Destroy the data content before being garbage collected.
      */
     public void dispose() {
-        
+
         for (int i = 0, length = mInnerData.size(); i < length; i++) {
             mInnerData.get(i).dispose();
         }
         mInnerData.clear();
         mInnerData = null;
-        
+
         mProperties.clear();
         mProperties = null;
     }

@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -52,15 +52,15 @@ import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Class representing a URE installation.
- * 
+ *
  * @author cedricbosdo
- * 
+ *
  */
 public class URE extends AbstractOOo {
 
     /**
      * Creating a new URE instance specifying its home directory.
-     * 
+     *
      * @param pHome
      *            the URE home directory
      * @throws InvalidConfigException
@@ -73,12 +73,12 @@ public class URE extends AbstractOOo {
 
     /**
      * Creating a new URE instance specifying its home directory and name.
-     * 
+     *
      * @param pHome
      *            the URE home directory
      * @param pName
      *            the URE name
-     * 
+     *
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
@@ -89,6 +89,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void setName(String pName) {
 
         String name = pName;
@@ -102,6 +103,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getClassesPath() {
         String jars = getHome() + FILE_SEP + "program" + FILE_SEP + "classes"; //$NON-NLS-1$ //$NON-NLS-2$
         return new String[] { jars };
@@ -110,6 +112,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getLibsPath() {
         String libs = getHome() + FILE_SEP + "lib"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
@@ -121,6 +124,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getBinPath() {
         String libs = getHome() + FILE_SEP + "bin"; //$NON-NLS-1$
         return new String[] { libs };
@@ -129,9 +133,10 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getTypesPath() {
-        String types = getHome() + FILE_SEP + "program" + //$NON-NLS-1$ //$NON-NLS-2$
-                FILE_SEP + "types.rdb"; //$NON-NLS-1$
+        String types = getHome() + FILE_SEP + "program" + //$NON-NLS-1$
+                        FILE_SEP + "types.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -141,9 +146,10 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getServicesPath() {
-        String services = getHome() + FILE_SEP + "program" + //$NON-NLS-1$ //$NON-NLS-2$
-                FILE_SEP + "services.rdb"; //$NON-NLS-1$
+        String services = getHome() + FILE_SEP + "program" + //$NON-NLS-1$
+                        FILE_SEP + "services.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -153,6 +159,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getUnorcPath() {
         String path = getHome() + FILE_SEP + "program" + FILE_SEP + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
         if (getPlatform().equals(Platform.OS_WIN32)) {
@@ -164,6 +171,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getUnoPath() {
         return getHome() + FILE_SEP + "bin" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
     }
@@ -175,11 +183,12 @@ public class URE extends AbstractOOo {
         }
         return uno;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "URE " + getName(); //$NON-NLS-1$
     }
@@ -187,6 +196,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPath,
                     String[] pArgs) {
 
@@ -246,13 +256,15 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getJavaldxPath() {
-        return getHome() + FILE_SEP + "bin" + FILE_SEP + "javaldx"; //$NON-NLS-1$ //$NON-NLS-2$ 
+        return getHome() + FILE_SEP + "bin" + FILE_SEP + "javaldx"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canManagePackages() {
         return false;
     }
@@ -260,6 +272,7 @@ public class URE extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updatePackage(File pPackageFile, IPath pUserInstallation) {
     }
 }

@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2010 by Cédric Bosdonnat
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -54,34 +54,34 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Tab for selecting the content of the package to test.
- * 
+ *
  * @author Cédric Bosdonnat
  *
  */
 public class PackageConfigTab extends AbstractLaunchConfigurationTab {
 
     PackageContentSelector mContentSelector;
-    
+
     /**
      * Get the selected resources stored in a launch configuration.
-     *  
+     *
      * @param pConfiguration the configuration to extract the infos from
-     * 
+     *
      * @return the list of resources extracted
-     * 
-     * @throws CoreException if any of the needed properties is missing in 
+     *
+     * @throws CoreException if any of the needed properties is missing in
      *      the launch configuration
      */
     public static List<IResource> getResources( ILaunchConfiguration pConfiguration ) throws CoreException {
         ArrayList<IResource> selected = new ArrayList<IResource>();
-        
+
         String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
-        
+
         String paths = pConfiguration.getAttribute( IOfficeLaunchConstants.CONTENT_PATHS, new String() );
         if ( !paths.isEmpty() ) {
             String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
-                
+
             for (String path : pathsItems) {
                 IResource res = prj.findMember( path );
                 if ( res != null ) {
@@ -91,28 +91,30 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
         }
         return selected;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createControl(Composite pParent) {
-        
+
         Composite body = new Composite( pParent, SWT.NONE );
         body.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
         body.setLayout( new GridLayout() );
-        
+
         mContentSelector = new PackageContentSelector( body, SWT.NONE );
-        
+
         setControl( body );
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return "Package content";
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -120,18 +122,19 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     public Image getImage() {
         return OOEclipsePlugin.getImage(ImagesConstants.PACKAGE_CONTENT);
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
             String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
             IUnoidlProject project = ProjectsManager.getProject( prjName );
-            
+
             if ( null != project ) {
                 mContentSelector.setProject( project );
-                
+
                 List<IResource> selected = getResources( pConfiguration );
                 if ( selected.isEmpty() ) {
                     mContentSelector.loadDefaults();
@@ -147,13 +150,14 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void performApply(ILaunchConfigurationWorkingCopy pConfiguration) {
         List<?> selected = mContentSelector.getSelected();
         String paths = new String();
         for (Object obj : selected) {
             if ( obj instanceof IResource ) {
                 IResource res = (IResource)obj;
-                
+
                 if ( !paths.isEmpty() ) {
                     paths += IOfficeLaunchConstants.PATHS_SEPARATOR;
                 }
@@ -166,12 +170,13 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy pConfiguration) {
         try {
             String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
             if ( !prjName.isEmpty() ) {
                 mContentSelector.setProject( ProjectsManager.getProject( prjName ) );
-                
+
                 mContentSelector.loadDefaults();
             }
         } catch (CoreException e) {

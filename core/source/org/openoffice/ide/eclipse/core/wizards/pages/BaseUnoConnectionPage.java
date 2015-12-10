@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards.pages;
 
@@ -45,15 +45,15 @@ import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Base wizard page for the UNO Client configuration.
- * 
- * <p>This class has to be sub-classed by clients to change the pages order 
+ *
+ * <p>This class has to be sub-classed by clients to change the pages order
  * and set the patterns for the code to open the UNO connection.</p>
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class BaseUnoConnectionPage extends WizardPage {
-    
+
     private OOoConfigPanel mOOoConfigPanel;
     private ConnectionConfigPanel mCnxConfigPanel;
 
@@ -65,54 +65,55 @@ public class BaseUnoConnectionPage extends WizardPage {
         setTitle( Messages.getString("BaseUnoConnectionPage.Title") ); //$NON-NLS-1$
         setDescription( Messages.getString("BaseUnoConnectionPage.Description") ); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createControl(Composite pParent) {
 
         Composite body = new Composite( pParent, SWT.NONE );
         body.setLayout( new GridLayout( ) );
         body.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-        
+
         mOOoConfigPanel = new OOoConfigPanel( body );
-        
+
         mCnxConfigPanel = new ConnectionConfigPanel( body );
         setControl( body );
     }
-    
+
     /**
      * Defines the patterns of code to instantiate a pipe or socket UNO connection.
-     * 
+     *
      * <p>For a pipe connection, the only parameter is the pipe's name.</p>
-     * 
+     *
      * <p>For a socket connection: the parameters are:</p>
      * <ul>
      *   <li><b>{0}</b>: the host name</li>
      *   <li><b>{1}</b>: the port name</li>
      * </ul>
-     * 
+     *
      * @param pPipe the pattern for the pipe connection
      * @param pSocket the pattern for the socket connection
      */
     public void setConnectionPatterns( String pPipe, String pSocket ) {
         mCnxConfigPanel.setPatterns( pPipe, pSocket );
     }
-    
+
     /**
      * @return the selected OOo instance
      */
     public IOOo getOoo( ) {
         return OOoContainer.getOOo( mOOoConfigPanel.getOOoName() );
     }
-    
+
     /**
      * @return the selected SDK instance
      */
     public ISdk getSdk( ) {
         return SDKContainer.getSDK( mOOoConfigPanel.getSDKName() );
     }
-    
+
     /**
      * @return the C++ connection code for the sample client
      */

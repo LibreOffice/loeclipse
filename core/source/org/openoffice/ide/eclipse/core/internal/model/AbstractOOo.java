@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -71,9 +71,9 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
 /**
  * Helper class to add the table element features to the OOo classes. All the {@link IOOo} interface still has to be
  * implemented by the subclasses
- * 
+ *
  * @author cbosdonnat
- * 
+ *
  */
 public abstract class AbstractOOo implements IOOo, ITableElement {
 
@@ -90,7 +90,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Creating a new OOo or URE instance specifying its home directory.
-     * 
+     *
      * @param pOooHome
      *            the LibreOffice or URE home directory
      * @throws InvalidConfigException
@@ -102,12 +102,12 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Creating a new OOo or URE instance specifying its home directory and name.
-     * 
+     *
      * @param pOooHome
      *            the LibreOffice or URE installation directory
      * @param pName
      *            the LibreOffice or URE instance name
-     * 
+     *
      * @throws InvalidConfigException
      *             if the home directory doesn't contains the required files and directories
      */
@@ -119,6 +119,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setHome(String pHome) throws InvalidConfigException {
 
         Path homePath = new Path(pHome);
@@ -149,6 +150,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getHome() {
         return mHome;
     }
@@ -156,6 +158,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return mName;
     }
@@ -163,7 +166,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * Set the new name only if it's neither null nor the empty string. The name will be rendered unique and therefore
      * may be changed.
-     * 
+     *
      * @param pName
      *            the name to set
      */
@@ -175,7 +178,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Check if the UNO configuration file is present in the OOo installation directory.
-     * 
+     *
      * @throws InvalidConfigException
      *             if the UNO configuration file isn't present.
      */
@@ -192,7 +195,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Check if the <code>services.rdb</code> file is present in the OOo installation directory.
-     * 
+     *
      * @throws InvalidConfigException
      *             if the <code>services.rdb</code> file isn't present
      */
@@ -213,7 +216,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Check if the <code>types.rdb</code> file is present in the OOo installation directory.
-     * 
+     *
      * @throws InvalidConfigException
      *             if the <code>types.rdb</code> file isn't present
      */
@@ -233,7 +236,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Check if the classes directory exits in the OOo installation folder.
-     * 
+     *
      * @throws InvalidConfigException
      *             if the classes directory can't be found
      */
@@ -256,6 +259,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Image getImage(String pProperty) {
         return null;
     }
@@ -263,6 +267,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getLabel(String pProperty) {
         String result = ""; //$NON-NLS-1$
         if (pProperty.equals(NAME)) {
@@ -276,6 +281,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getProperties() {
         return new String[] { NAME, PATH };
     }
@@ -283,6 +289,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canModify(String pProperty) {
         return false;
     }
@@ -290,6 +297,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getValue(String pProperty) {
         return null;
     }
@@ -297,13 +305,14 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setValue(String pProperty, Object pValue) {
         // Nothing to do
     }
 
     /**
      * Run a UNO application using an implementation of the <code>XMain</code> interface.
-     * 
+     *
      * @param pPrj
      *            the UNO project to run
      * @param pMain
@@ -315,6 +324,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * @param pMonitor
      *            the monitor reporting the run progress
      */
+    @Override
     public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, ILaunch pLaunch, IProgressMonitor pMonitor) {
 
         String libpath = pPrj.getLanguage().getProjectHandler().getLibraryPath(pPrj);
@@ -362,6 +372,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
                     IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor) {
         try {
@@ -394,7 +405,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Adds the proper env variables for the user profile.
-     * 
+     *
      * @param pUserInstallation
      *            the path to the user profile foldr.
      * @param pEnv
@@ -415,7 +426,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * Sets the target platform for tests.
-     * 
+     *
      * @param pPlatform
      *            the target platform
      */
@@ -433,11 +444,11 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         }
         return result;
     }
-    
+
     protected static String getPlatformOS(){
         return Platform.getOS();
     }
-    
+
     /**
      * indicates if a code is a symbolic link or not.
      * The code is an adaptation from apache commons
@@ -456,7 +467,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         else{
             File canonicalParent= file.getParentFile().getCanonicalFile();
             fileInCanonicalParent = new File(canonicalParent, file.getName());
-        }        
+        }
         return !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
     }
 

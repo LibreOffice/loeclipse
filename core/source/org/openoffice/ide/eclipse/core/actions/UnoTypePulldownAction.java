@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -70,7 +70,7 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
  *        &lt;/description&gt;
  *     &lt;/wizard&gt;
  * </pre>
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -82,10 +82,11 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
     public UnoTypePulldownAction() {
         super("unotype"); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run(IAction pAction) {
         openWizard(new NewServiceWizard());
     }
@@ -95,19 +96,19 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
      */
     @Override
     public boolean isValidSelection(IStructuredSelection pSelection) {
-        
+
         boolean isValid = false;
         if (!pSelection.isEmpty() && pSelection.getFirstElement() instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable)pSelection.getFirstElement();
             if (adaptable.getAdapter(IResource.class) != null) {
-                IResource res = (IResource)adaptable.getAdapter(IResource.class);
+                IResource res = adaptable.getAdapter(IResource.class);
                 IProject prj = res.getProject();
                 if (null != ProjectsManager.getProject(prj.getName())) {
                     isValid = true;
                 }
             }
         }
-        
+
         return isValid;
-    }    
+    }
 }

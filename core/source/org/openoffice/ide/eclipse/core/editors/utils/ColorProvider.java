@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,7 +47,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -58,29 +57,30 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
  * This class provides colors of the editor to all the other objects.
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class ColorProvider {
     protected Map<String, Color> mColorTable = new HashMap<String, Color>();
     private IPreferenceStore mStore;
-    
+
     private final IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
+        @Override
         public void propertyChange(PropertyChangeEvent pEvent) {
             mColorTable.clear();
         }
     };
-    
+
     /**
      * Default constructor getting the preferences.
      */
     public ColorProvider() {
         OOEclipsePlugin.getDefault().getPreferenceStore()
-            .addPropertyChangeListener(mPropertyListener);
+        .addPropertyChangeListener(mPropertyListener);
         mStore = OOEclipsePlugin.getDefault().getPreferenceStore();
     }
-    
+
     /**
      * Disposing the color provider.
      */
@@ -90,21 +90,21 @@ public class ColorProvider {
             e.next().dispose();
         }
         OOEclipsePlugin.getDefault().getPreferenceStore()
-            .removePropertyChangeListener(mPropertyListener);
+        .removePropertyChangeListener(mPropertyListener);
     }
-    
+
     /**
      * Returns the color corresponding to the given name.
-     * 
+     *
      * @param pColorString name of the color to get
-     * @return the color from the preferences or the eclipse default color 
+     * @return the color from the preferences or the eclipse default color
      */
     public Color getColor(String pColorString) {
-        
+
         Color color = mColorTable.get(pColorString);
         if (color == null) {
-            color = new Color(Display.getCurrent(), 
-                    PreferenceConverter.getColor(mStore, pColorString));
+            color = new Color(Display.getCurrent(),
+                            PreferenceConverter.getColor(mStore, pColorString));
             mColorTable.put(pColorString, color);
         }
         return color;

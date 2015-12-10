@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -60,48 +60,48 @@ import com.sun.star.uri.XExternalUriReferenceTranslator;
 
 /**
  * Abstract class for tasks requiring an office connection.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class OfficeConnection {
-    
+
     private IOOo mOOo;
     private XComponentContext mContext;
-    
+
     /**
      * Creates a connection representation for a given office.
-     * 
+     *
      * @param pOOo the office to connect to
      */
     public OfficeConnection(IOOo pOOo) {
         mOOo = pOOo;
     }
-    
+
     /**
      * @return the office instance on which to run the task.
      */
     public IOOo getOOo() {
         return mOOo;
     }
-    
+
     /**
-     * @return the remote office context 
+     * @return the remote office context
      */
     public XComponentContext getContext() {
         return mContext;
     }
-    
+
     /**
      * Starts the office connection and initializes the component context.
-     * 
+     *
      * @throws BootstrapException if the office could be bootstrapped
      */
     public void startOffice() throws BootstrapException {
         mContext = Bootstrap.bootstrap();
         PluginLogger.info("Office bootstrapped"); //$NON-NLS-1$
     }
-    
+
     /**
      * Stops the office if it is running.
      */
@@ -111,9 +111,9 @@ public class OfficeConnection {
                 // Only the uno test suite which started the office can stop it
                 XMultiComponentFactory xMngr = mContext.getServiceManager();
                 Object oDesktop = xMngr.createInstanceWithContext(
-                        "com.sun.star.frame.Desktop", mContext); //$NON-NLS-1$
-                XDesktop xDesktop = (XDesktop)UnoRuntime.queryInterface(XDesktop.class, oDesktop);
-                
+                                "com.sun.star.frame.Desktop", mContext); //$NON-NLS-1$
+                XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, oDesktop);
+
                 xDesktop.terminate();
                 mContext = null;
                 PluginLogger.info("Office stopped"); //$NON-NLS-1$
@@ -122,17 +122,17 @@ public class OfficeConnection {
             PluginLogger.error(Messages.getString("OfficeConnection.ERROR_STOP"), e); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Convert an OS dependent file path to an OOo valid URL.
-     *  
+     *
      * @param pPath the OS dependent path to convert
-     * 
+     *
      * @return the resulting LibreOffice URL
      */
     public String convertToUrl(String pPath) {
         String internalUrl = null;
-        
+
         try {
             if (pPath != null) {
                 URL externalUrl = new File(pPath).toURI().toURL();
@@ -142,7 +142,7 @@ public class OfficeConnection {
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("OfficeConnection.ERROR_CONVERT_URL") + pPath, e); //$NON-NLS-1$
         }
-     
+
         return internalUrl;
     }
 }

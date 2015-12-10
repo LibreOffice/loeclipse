@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,26 +56,27 @@ import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
 /**
  * This action launches the New UNO Project wizard.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
-    
+
     private IWorkbenchWindow mWindow;
 
-    
+
     /**
      * Default constructor just initializing the action.
      */
     public NewUnoProjectAction() {
         init(OOEclipsePlugin.getDefault().getWorkbench().
-                getActiveWorkbenchWindow());
+                        getActiveWorkbenchWindow());
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void dispose() {
         // Nothing to do on dispose
     }
@@ -83,6 +84,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbenchWindow pWindow) {
         this.mWindow = pWindow;
     }
@@ -90,25 +92,27 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run(IAction pAction) {
-        
+
         // Launch the new IDL Project wizard
         NewUnoProjectWizard wizard = new NewUnoProjectWizard();
         WizardDialog dialog = new WizardDialog(mWindow.getShell(), wizard);
-        
+
         dialog.setBlockOnOpen(false);
         dialog.open();
-    
+
         Point size = dialog.getShell().getSize();
         Rectangle bounds = Display.getDefault().getClientArea();
-        dialog.getShell().setBounds((bounds.width - size.x) / 2, 
-                (bounds.height - size.y) / 2, size.x, size.y);
-    
+        dialog.getShell().setBounds((bounds.width - size.x) / 2,
+                        (bounds.height - size.y) / 2, size.x, size.y);
+
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void selectionChanged(IAction pAction, ISelection pSelection) {
         // Nothing to do on selection changed
     }

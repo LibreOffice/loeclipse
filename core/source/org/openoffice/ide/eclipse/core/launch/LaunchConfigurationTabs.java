@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -50,22 +50,23 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * Tabs in the URE launch configuration dialog.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class LaunchConfigurationTabs extends AbstractLaunchConfigurationTabGroup {
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createTabs(ILaunchConfigurationDialog pDialog, String pMode) {
 
         ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[]{
-            new UreTab(),
-            new CommonTab()
+                        new UreTab(),
+                        new CommonTab()
         };
-        
+
         setTabs(tabs);
     }
 

@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Dan Corneanu.
  *
  * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -59,9 +59,9 @@ import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * LibreOffice launcher implementation.
- * 
+ *
  * @author cdan
- * 
+ *
  */
 public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -73,8 +73,9 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void launch(ILaunchConfiguration pConfiguration, String pMode, ILaunch pLaunch, IProgressMonitor pMonitor)
-        throws CoreException {
+                    throws CoreException {
         if (pMonitor == null) {
             pMonitor = new NullProgressMonitor();
         }
@@ -104,11 +105,11 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     // Force the build
                     IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
                     TypesBuilder.build( prj, pMonitor );
-                    
+
                     List<IResource> resources = PackageConfigTab.getResources( pConfiguration );
                     File destFile = exportComponent( unoprj, resources );
                     pMonitor.worked(1);
-                    
+
                     // Deploy the component
                     deployComponent(unoprj, userInstallation, destFile);
 
@@ -131,6 +132,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     PluginLogger.error(Messages.OfficeLaunchDelegate_LaunchError, e);
                     Display.getDefault().asyncExec(new Runnable() {
 
+                        @Override
                         public void run() {
                             MessageDialog.openError(Display.getDefault().getActiveShell(),
                                             Messages.OfficeLaunchDelegate_LaunchErrorTitle,
@@ -146,7 +148,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
     /**
      * Deploys the .oxt component in a LibreOffice installation.
-     * 
+     *
      * @param pPrj
      *            target project
      * @param pUserInstallation
@@ -163,21 +165,21 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
     /**
      * Will build and export the .oxt file.
-     * 
+     *
      * @param pPrj
      *            the target project.
      * @param pResources
      *            the resources to add to the package
-     *            
+     *
      * @return the file containing the .oxt file.
      * @throws Exception
      *             if something goes wrong.
      */
     private File exportComponent(IUnoidlProject pPrj, List<IResource> pResources) throws Exception {
-        
+
         IFolder distFolder = pPrj.getFolder(pPrj.getDistPath());
         File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
-        
+
         UnoPackage pack = PackageContentSelector.createPackage( pPrj, destFile, pResources );
 
         pack.close( );

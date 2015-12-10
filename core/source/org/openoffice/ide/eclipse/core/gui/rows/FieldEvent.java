@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -44,9 +44,9 @@
 package org.openoffice.ide.eclipse.core.gui.rows;
 
 /**
- * Event describing a raw change. Each row is associated to one property in 
+ * Event describing a raw change. Each row is associated to one property in
  * order to recognize it when it changes.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -54,10 +54,10 @@ public class FieldEvent {
 
     private String mProperty;
     private String mValue;
-    
+
     /**
      * Creates a new row change event.
-     * 
+     *
      * @param pProperty the property associated to the changed row
      * @param pValue the new value of the row
      */

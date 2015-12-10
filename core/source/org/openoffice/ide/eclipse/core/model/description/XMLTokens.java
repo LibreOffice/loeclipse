@@ -20,29 +20,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.description;
 
 /**
  * Class defining constants for the XML tokens contained in description.xml file.
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class XMLTokens {
-    
+
     public static final String ATTR_XMLNS = "xmlns"; //$NON-NLS-1$
 
     public static final String URI_DESCRIPTION = "http://openoffice.org/extensions/description/2006"; //$NON-NLS-1$
     public static final String PREFIX_DESCRIPTION = "d"; //$NON-NLS-1$
-    
+
     public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
     public static final String ELEMENT_VERSION = "version"; //$NON-NLS-1$
     public static final String ELEMENT_IDENTIFIER = "identifier"; //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class XMLTokens {
     public static final String ELEMENT_DISPLAY_NAME = "display-name"; //$NON-NLS-1$
     public static final String ELEMENT_ICON = "icon"; //$NON-NLS-1$
     public static final String ELEMENT_EXTENSION_DESCRIPTION = "extension-description"; //$NON-NLS-1$
-    
+
     public static final String ELEMENT_OOO_MIN = "OpenOffice.org-minimal-version"; //$NON-NLS-1$
     public static final String ELEMENT_OOO_MAX = "OpenOffice.org-maximal-version"; //$NON-NLS-1$
     public static final String ELEMENT_NAME = "name"; //$NON-NLS-1$
@@ -72,17 +72,17 @@ public class XMLTokens {
 
     public static final String VALUE_USER = "user"; //$NON-NLS-1$
     public static final String VALUE_ADMIN = "admin"; //$NON-NLS-1$
-    
+
     public static final String URI_XLINK = "http://www.w3.org/1999/xlink"; //$NON-NLS-1$
     public static final String PREFIX_XLINK = "xlink"; //$NON-NLS-1$
     public static final String ATTR_HREF = "href"; //$NON-NLS-1$
-    
+
     /**
      * Returns the XML qname corresponding to the given prefix and local name.
-     *  
+     *
      * @param pPrefix the prefix (can be <code>null</code>)
      * @param pLocalName the element local name
-     * 
+     *
      * @return the qname
      */
     public static String createQName( String pPrefix, String pLocalName ) {
@@ -92,5 +92,5 @@ public class XMLTokens {
         }
         return qname;
     }
-    
+
 }

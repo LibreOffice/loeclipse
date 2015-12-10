@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -72,7 +72,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Dialog used to select a file or folder in a UNO project.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -84,13 +84,13 @@ public class ProjectSelectionDialog extends Dialog {
     private IProject mProject;
     private String mDescription;
     private List<IResource> mNotShownResources = new ArrayList<IResource>();
-    
+
     private boolean mFoldersOnly = false;
     private IResource mSelected;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param pPrj the UNO project where to select the resource
      * @param pDescription a message explaining the selection to the user
      */
@@ -98,48 +98,49 @@ public class ProjectSelectionDialog extends Dialog {
         super(Display.getDefault().getActiveShell());
         mProject = pPrj;
         mDescription = pDescription;
-        
+
         setShellStyle(SWT.RESIZE | SWT.APPLICATION_MODAL);
     }
-    
+
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void configureShell(Shell pNewShell) {
-        
+
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        
+
         Rectangle screenBounds  = Display.getDefault().getClientArea();
         int x = (screenBounds.width - width) / 2;
         int y = (screenBounds.height - height) / 2;
-        
+
         pNewShell.setBounds(x, y, width, height);
         super.configureShell(pNewShell);
         pNewShell.setText(Messages.getString("ProjectSelectionDialog.Title")); //$NON-NLS-1$
     }
-    
+
     /**
      * Set whether to show or hide the files.
-     * 
+     *
      * @param pOnlyFolders <code>true</code> to show only the folder,
      *      <code>false</code> to see everything.
      */
     public void setShowOnlyFolders(boolean pOnlyFolders) {
         mFoldersOnly = pOnlyFolders;
     }
-    
+
     /**
      * @return the selected resource.
      */
     public IResource getSelected() {
         return mSelected;
     }
-    
+
     /**
      * Set the list of elements which should be shown in the dialog.
-     * 
+     *
      * @param pNotToShow the list of resources to hide.
      */
     public void setFilteredElements(List<IResource> pNotToShow) {
@@ -148,7 +149,7 @@ public class ProjectSelectionDialog extends Dialog {
         }
         mNotShownResources = pNotToShow;
     }
-   
+
     /**
      * {@inheritDoc}
      */
@@ -156,11 +157,11 @@ public class ProjectSelectionDialog extends Dialog {
     protected Control createDialogArea(Composite pParent) {
         Composite body = (Composite)super.createDialogArea(pParent);
         body.setLayout(new GridLayout());
-        
+
         Label label = new Label(body, SWT.WRAP);
         label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         label.setText(mDescription);
-        
+
         mTreeViewer = new TreeViewer(body);
         mTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
         mTreeViewer.setContentProvider(new WorkbenchContentProvider());
@@ -171,16 +172,16 @@ public class ProjectSelectionDialog extends Dialog {
             public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
                 boolean select = true;
                 if (pElement instanceof IAdaptable) {
-                    IAdaptable adaptable = (IAdaptable)pElement;    
+                    IAdaptable adaptable = (IAdaptable)pElement;
                     select = adaptable.getAdapter(IFolder.class) != null;
-                    
+
                     if (!mFoldersOnly) {
-                        IFile file = (IFile)adaptable.getAdapter(IFile.class);
+                        IFile file = adaptable.getAdapter(IFile.class);
                         if (file != null) {
                             select = !file.getName().startsWith("."); //$NON-NLS-1$
                         }
                     }
-                    
+
                     // Test if the resource has to be hidden
                     if (select && mNotShownResources.contains(pElement)) {
                         select = false;
@@ -188,11 +189,12 @@ public class ProjectSelectionDialog extends Dialog {
                 }
                 return select;
             }
-            
+
         });
         mTreeViewer.setInput(mProject);
         mTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+            @Override
             public void selectionChanged(SelectionChangedEvent pEvent) {
                 if (pEvent.getSelection() instanceof IStructuredSelection) {
                     IStructuredSelection sel = (IStructuredSelection)pEvent.getSelection();
@@ -204,9 +206,9 @@ public class ProjectSelectionDialog extends Dialog {
                     }
                 }
             }
-            
+
         });
-        
+
         return body;
     }
 }

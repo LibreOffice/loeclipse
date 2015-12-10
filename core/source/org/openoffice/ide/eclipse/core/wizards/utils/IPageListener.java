@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,7 +47,7 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**
  * Interface to implement to listen to the changes of a {@link WizardPageSet} page changes.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -55,7 +55,7 @@ public interface IPageListener {
 
     /**
      * Event raised when one of the listened page has changed.
-     * 
+     *
      * @param pData the new data of the page.
      */
     public void pageChanged(UnoFactoryData pData);

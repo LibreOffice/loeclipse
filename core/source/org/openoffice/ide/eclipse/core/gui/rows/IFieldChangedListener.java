@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,10 +47,10 @@ package org.openoffice.ide.eclipse.core.gui.rows;
 /**
  * is an interface that will be used to get notified when a GUI field (row)
  * has changed.
- * 
+ *
  * @see FieldEvent for the notification event description
  * @see LabeledRow for the base class of the listened rows
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -58,7 +58,7 @@ public interface IFieldChangedListener {
 
     /**
      * Method called when the row has changed.
-     * 
+     *
      * @param pEvent the field event thrown
      */
     public void fieldChanged(FieldEvent pEvent);

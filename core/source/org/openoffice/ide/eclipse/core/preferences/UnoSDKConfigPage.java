@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -53,53 +53,57 @@ import org.openoffice.ide.eclipse.core.gui.SDKTable;
 
 /**
  * Preference page to configure the plugin available OOo and SDK instances.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class UnoSDKConfigPage extends PreferencePage implements
-        IWorkbenchPreferencePage {
-    
+IWorkbenchPreferencePage {
+
     private SDKTable mSdkTable;
     private OOoTable mOOoTable;
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Control createContents(Composite pParent) {
         noDefaultAndApplyButton();
-        
+
         mSdkTable = new SDKTable(pParent);
         mSdkTable.getPreferences();
-        
+
         mOOoTable = new OOoTable(pParent);
         mOOoTable.getPreferences();
-        
+
         return pParent;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean performOk() {
         mSdkTable.savePreferences();
         mOOoTable.savePreferences();
-        
+
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void dispose() {
         mSdkTable.dispose();
         mOOoTable.dispose();
         super.dispose();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbench pWorkbench) {
     }
 }

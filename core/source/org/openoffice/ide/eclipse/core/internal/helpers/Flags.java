@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -45,20 +45,20 @@ package org.openoffice.ide.eclipse.core.internal.helpers;
 
 /**
  * Class handling a set of bit-ORed flags.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class Flags {
-    
+
     private int mFlags;
     private int mMax;
     private int mAllowed;
-    
+
     /**
      * Initializes the flags structure with a default value and a maximum
      * number of bits to use for the flags.
-     * 
+     *
      * @param pMax the number value of the flags
      * @param pAllowed the allowed flags
      * @param pDefault the default value
@@ -73,7 +73,7 @@ public class Flags {
      * Set one or more types. To specify more than one types give the bit or
      * of all the types, e.g. <code>INTERFACE | SERVICE</code>. The non-allowed
      * flags are automatically stripped.
-     * 
+     *
      * @param pValue the bit or of the types
      */
     public void setTypes(int pValue) {
@@ -96,7 +96,7 @@ public class Flags {
 
     /**
      * Checks if the given flag will be queried.
-     * 
+     *
      * @param pFlag the flag to match
      * @return <code>true</code> if the flag is one of the flags set
      */

@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -72,33 +72,33 @@ import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
 /**
  * Abstract class to create a pulldown menu action.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldownDelegate {
-    
+
     private String mParameterName = ""; //$NON-NLS-1$
-    
+
     /**
      * Pulldown action.
-     * 
+     *
      * @param pParameterName the action parameter
      */
     public AbstractPulldownAction(String pParameterName) {
         mParameterName = pParameterName;
     }
-    
+
     /**
      * Check if the selection is valid, and if the pulldown action can be enabled.
      * @param pSelection the current selection
      * @return <code>true</code> if the wizards can be launched.
      */
     public abstract boolean isValidSelection(IStructuredSelection pSelection);
-    
+
     /**
      * Open the new wizard dialog.
-     * 
+     *
      * @param pWizard the wizard to open
      */
     protected void openWizard(INewWizard pWizard) {
@@ -113,50 +113,54 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
             dialog.open();
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public Menu getMenu(Control pParent) {
-        
+
         MenuManager menuMngr = new MenuManager();
-        
+
         // Fill the menu from the new wizards with parameter unoproject
         Action[] actions = getActionsFromConfig();
         for (Action action : actions) {
             menuMngr.add(action);
         }
         Menu menu = menuMngr.createContextMenu(pParent);
-        
+
         return menu;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void dispose() {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbenchWindow pWindow) {
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void selectionChanged(IAction pAction, ISelection pSelection) {
     }
-    
+
     /**
      * @return the actions to put in the popup menu
      */
     private Action[] getActionsFromConfig() {
         ArrayList<Action> containers = new ArrayList<Action>();
-        
+
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
-                PlatformUI.PLUGIN_ID, "newWizards"); //$NON-NLS-1$
+                        PlatformUI.PLUGIN_ID, "newWizards"); //$NON-NLS-1$
         if (extensionPoint != null) {
             IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
             for (int i = 0; i < elements.length; i++) {
@@ -168,18 +172,18 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         }
         return containers.toArray(new Action[containers.size()]);
     }
-    
+
     /**
      * Check if the wizard defined by the configuration element has to be added
      * to the pulldown button menu.
-     * 
+     *
      * @param pElement the wizard configuration element to check
-     * @return <code>true</code> if the wizard has to be added, 
+     * @return <code>true</code> if the wizard has to be added,
      *             <code>false</code> otherwise.
      */
     private boolean isCorrectWizard(IConfigurationElement pElement) {
         boolean isCorrect = false;
-        
+
         IConfigurationElement[] classElements = pElement.getChildren("class"); //$NON-NLS-1$
         if (classElements.length > 0) {
             for (int i = 0; i < classElements.length; i++) {
@@ -198,13 +202,13 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         }
         return isCorrect;
     }
-    
+
     /**
      * @return The current selection in the workbench
      */
     private IStructuredSelection getSelection() {
         IStructuredSelection strucSelection = StructuredSelection.EMPTY;
-        
+
         IWorkbenchWindow window = WorkbenchHelper.getActivePage().getWorkbenchWindow();
         if (window != null) {
             ISelection selection = window.getSelectionService().getSelection();
@@ -214,51 +218,51 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         }
         return strucSelection;
     }
-    
+
     /**
      * Center the new wizard on the screen.
-     * 
+     *
      * @param pDialog the wizard dialog to center
      */
     private void centerOnScreen(WizardDialog pDialog) {
         Shell shell = pDialog.getShell();
         Point size = shell.getSize();
         Rectangle screenBounds = Display.getDefault().getBounds();
-        
+
         int x = (screenBounds.width - size.y) / 2;
         int y = (screenBounds.height - size.y) / 2;
         Rectangle bounds = new Rectangle(x, y, size.x, size.y);
         shell.setBounds(bounds);
     }
-    
+
     /**
      * Action class used in the pulldown action's menu. This action is configured
-     * using the newWizard configuration. 
-     * 
+     * using the newWizard configuration.
+     *
      * @author cedricbosdo
      */
     private class OpenUnoProjectWizardAction extends Action {
-        
+
         private IConfigurationElement mConfigurationElement;
-        
+
         /**
          * Create a new action associated with a new wizard configuration element.
-         * 
+         *
          * @param pElement the configuration element representing the wizard.
          */
         public OpenUnoProjectWizardAction(IConfigurationElement pElement) {
             mConfigurationElement = pElement;
             setText(pElement.getAttribute("name")); //$NON-NLS-1$
-            
+
             String description = getDescriptionFromConfig(mConfigurationElement);
             setDescription(description);
             setToolTipText(description);
             setImageDescriptor(getIconFromConfig(mConfigurationElement));
         }
-        
+
         /**
-         * Get the action text from the new wizard configuration. 
-         * 
+         * Get the action text from the new wizard configuration.
+         *
          * @param pConfig the configuration element where to look for the description
          * @return the text of the description or <code>""</code> if not defined
          */
@@ -273,29 +277,29 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 
         /**
          * Get the action's icon from the new wizard configuration.
-         *  
+         *
          * @param pConfig the element from which to find the icon
          * @return the image descriptor or <code>null</code> if no icon is defined.
          */
         private ImageDescriptor getIconFromConfig(IConfigurationElement pConfig) {
             ImageDescriptor icon = null;
             String iconName = pConfig.getAttribute("icon"); //$NON-NLS-1$
-            if (iconName != null) {    
+            if (iconName != null) {
                 icon = OOEclipsePlugin.getDefault().getImageManager().getImageDescriptorFromPath(iconName);
             }
             return icon;
         }
-        
+
         /**
          * Creates the new wizard from the configuration.
-         * 
+         *
          * @return the created wizard
          * @throws CoreException if anything wrong happens
          */
         private INewWizard createWizard() throws CoreException {
             return (INewWizard)mConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -306,7 +310,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
             } catch (CoreException e) {
             }
         }
-        
-        
+
+
     }
 }

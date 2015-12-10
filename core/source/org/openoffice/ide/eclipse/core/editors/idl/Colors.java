@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -45,7 +45,7 @@ package org.openoffice.ide.eclipse.core.editors.idl;
 
 /**
  * Interface defining the Color constants for the Idl editor partitionning.
- * 
+ *
  * @author cedricbosdo
  */
 public interface Colors {

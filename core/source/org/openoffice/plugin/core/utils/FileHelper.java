@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -50,15 +50,15 @@ import java.io.IOException;
 
 /**
  * Utility class for file handling.
- * 
+ *
  * @author cedricbosdo
- * 
+ *
  */
 public class FileHelper {
 
     /**
      * Converts all separators to the Unix separator of forward slash.
-     * 
+     *
      * @param path  the path to be changed, null ignored
      * @return the updated path
      */
@@ -68,17 +68,17 @@ public class FileHelper {
         }
         return path.replace('\\', '/');
     }
-	
+
     /**
      * Moves the src directory or file to the dst container.
-     * 
+     *
      * @param pSrc
      *            the file or directory to move
      * @param pDst
      *            the destination directory
      * @param pForce
      *            if set to <code>true</code>, overwrites the existing files
-     * 
+     *
      * @throws IOException
      *             is thrown when one of the parameters is null or the
      *             underlying file doesn't exists. This exception can also be
@@ -124,14 +124,14 @@ public class FileHelper {
      * Copy the file src into the file dst. If the dst file already exists, it
      * will be deleted before to start copying if force is set to
      * <code>true</code>, otherwise nothing will be done.
-     * 
+     *
      * @param pSrc
      *            the original file
      * @param pDst
      *            the file to create
      * @param pForce
      *            overwrite the existing destination if any
-     * 
+     *
      * @throws IOException
      *             is thrown if <ul> <li>the src file is <code>null</code> or
      *             isn't readable,</li> <li>dst is <code>null</code></li>
@@ -176,7 +176,7 @@ public class FileHelper {
 
     /**
      * Removes a file or directory.
-     * 
+     *
      * @param pFile
      *            the file or directory to remove
      */

@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -53,30 +53,30 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
  * LibreOffice has to be in the {@value #OOO_PACKAGE} package. These classes have
  * to be loaded by the {@link OfficeClassLoader}. All the classes facade classes have
  * to be in the same package than this class.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class OfficeHelper {
-    
+
     static final String OOO_PACKAGE = "org.openoffice.ide.eclipse.core.internal.office"; //$NON-NLS-1$
-    
+
     static final String CLASS_CONNECTION = OOO_PACKAGE + ".OfficeConnection"; //$NON-NLS-1$
-    
+
     /**
      * Create an office connection object using a given class loader.
-     * 
+     *
      * @param pClassLoader the class loader to use
      * @param pOOo the office to set in the connection
-     * 
+     *
      * @return the office connection object
-     * 
+     *
      * @throws Exception if the class cannot be found or the constructor cannot be called.
      */
     static Object createConnection(URLClassLoader pClassLoader, IOOo pOOo) throws Exception {
         String className = CLASS_CONNECTION;
         Class<?> clazz = pClassLoader.loadClass(className);
-        
+
         Constructor<?> constr = clazz.getConstructor(IOOo.class);
         return constr.newInstance(pOOo);
     }

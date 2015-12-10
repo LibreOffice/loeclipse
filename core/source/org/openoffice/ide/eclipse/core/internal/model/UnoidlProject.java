@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -76,9 +76,9 @@ import org.openoffice.ide.eclipse.core.model.language.LanguagesHelper;
 
 /**
  * This class implements the UNO-IDL and project nature interface.
- * 
+ *
  * @author cedricbosdo
- * 
+ *
  */
 public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
@@ -89,7 +89,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     /**
      * Project property that stores the output path extension.
-     * 
+     *
      * <p>
      * If the company prefix is <code>org.openoffice.sample</code> and this property value is <code>impl</code>, the
      * root package of the implementations classes is <code>org.openoffice.sample.impl</code>.
@@ -152,7 +152,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     /**
      * Listener for the configuration to handle the changes on SDK and OOo instances.
-     * 
+     *
      * @author cedricbosdo
      */
     private class configListener implements IConfigListener {
@@ -160,6 +160,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void ConfigAdded(Object pElement) {
             // the selected SDK or OOo cannot be added again...
         }
@@ -167,6 +168,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void ConfigRemoved(Object pElement) {
             if (pElement instanceof ISdk) {
                 if (pElement == getSdk()) {
@@ -189,6 +191,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void ConfigUpdated(Object pElement) {
             if (pElement instanceof IOOo) {
                 if (pElement == getOOo()) {
@@ -219,6 +222,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * Removes the listeners needed by the UNO project.
      */
+    @Override
     public void dispose() {
         SDKContainer.removeListener(mConfigListener);
         OOoContainer.removeListener(mConfigListener);
@@ -227,7 +231,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * Return the path of the file in the idl folder. If the given file doesn't belong to the idl folder,
      * <code>null</code> is returned.
-     * 
+     *
      * @param pResource
      *            resource of which the idl path is asked
      * @return idl relative path or <code>null</code>
@@ -250,6 +254,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbstractLanguage getLanguage() {
         return mLanguage;
     }
@@ -257,6 +262,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return getProject().getName();
     }
@@ -264,6 +270,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IOOo getOOo() {
         return mOOo;
     }
@@ -271,6 +278,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ISdk getSdk() {
         return mSdk;
     }
@@ -278,6 +286,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setLanguage(AbstractLanguage pNewLanguage) {
 
         if (mLanguage == null && pNewLanguage != null) {
@@ -290,6 +299,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setOOo(IOOo pOoo) {
 
         setErrorMarker(null == pOoo || null == getSdk());
@@ -312,6 +322,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setSdk(ISdk pSdk) {
 
         setErrorMarker(pSdk == null || null == getOOo());
@@ -322,6 +333,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setIdlDir(String pIdlDir) {
         mIdlDir = pIdlDir;
     }
@@ -329,6 +341,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setSourcesDir(String pSourcesDir) {
         if (pSourcesDir == null || pSourcesDir.equals("")) { //$NON-NLS-1$
             pSourcesDir = UnoidlProjectHelper.SOURCE_BASIS;
@@ -345,6 +358,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getRootModule() {
         String result = ""; //$NON-NLS-1$
 
@@ -357,6 +371,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getRootModulePath() {
         IPath result = null;
 
@@ -369,6 +384,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setCompanyPrefix(String pPrefix) {
         mCompanyPrefix = pPrefix;
     }
@@ -376,6 +392,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getCompanyPrefix() {
         return mCompanyPrefix;
     }
@@ -383,6 +400,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setOutputExtension(String pOutputExt) {
         mOutputExtension = pOutputExt;
     }
@@ -390,6 +408,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getOutputExtension() {
         return mOutputExtension;
     }
@@ -397,6 +416,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getBuildPath() {
         String buildDir = getProperty(BUILD_DIR);
         if (!buildDir.startsWith("/")) { //$NON-NLS-1$
@@ -409,6 +429,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getIdlPath() {
         String idlDir = getProperty(IDL_DIR);
         if (!idlDir.startsWith("/")) { //$NON-NLS-1$
@@ -421,6 +442,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getImplementationPath() {
         String path = new String(mCompanyPrefix + "." + mOutputExtension).replace('.', '/'); //$NON-NLS-1$
         return getSourcePath().append(path);
@@ -429,6 +451,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getProjectPath() {
         return getProject().getLocation();
     }
@@ -436,6 +459,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getTypesPath() {
         return new Path("types.rdb"); //$NON-NLS-1$
     }
@@ -443,6 +467,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getServicesPath() {
         return new Path("services.rdb"); //$NON-NLS-1$
     }
@@ -450,6 +475,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getSourcePath() {
         if (mSourcesDir == null) {
             mSourcesDir = getProperty(SRC_DIRECTORY);
@@ -460,6 +486,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getUrdPath() {
         return getFolder(getBuildPath().append(UnoidlProjectHelper.URD_BASIS)).getProjectRelativePath();
     }
@@ -467,6 +494,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getDistPath() {
         return getFolder(UnoidlProjectHelper.DIST_BASIS).getProjectRelativePath();
     }
@@ -474,6 +502,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFolder getDistFolder() throws CoreException {
         IFolder folder = getFolder(getDistPath());
         if (!folder.exists()) {
@@ -485,6 +514,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getOfficeUserProfilePath() {
         return getFolder(getDistPath().append(UnoidlProjectHelper.OO_PROFILE_BASIS)).getProjectRelativePath();
     }
@@ -492,6 +522,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFolder getOfficeUserProfileFolder() throws CoreException {
         IFolder folder = getFolder(getOfficeUserProfilePath());
         if (!folder.exists()) {
@@ -503,6 +534,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFile getFile(IPath pPath) {
         return getProject().getFile(pPath);
     }
@@ -510,6 +542,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFile getFile(String pPath) {
         return getProject().getFile(pPath);
     }
@@ -517,6 +550,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFolder getFolder(IPath pPath) {
         return getProject().getFolder(pPath);
     }
@@ -524,13 +558,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFolder getFolder(String pPath) {
         return getProject().getFolder(pPath);
     }
 
     /**
      * @return the UNO project configuration file
-     * 
+     *
      * @see #CONFIG_FILE for the configuration file name
      */
     public File getConfigFile() {
@@ -539,18 +574,19 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     /**
      * Reads a property from the UNO project configuration file.
-     * 
+     *
      * <p>
      * Returns the property corresponding to the given name. If the configuration file doesn't exists, a default one
      * will be created.
      * </p>
-     * 
+     *
      * @param pPropertyName
      *            the name of the property to get
      * @return the property value or <code>null</code> if not found.
-     * 
+     *
      * @see #CONFIG_FILE for the configuration file name
      */
+    @Override
     public String getProperty(String pPropertyName) {
 
         Properties properties = new Properties();
@@ -583,12 +619,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     /**
      * Define a property in the UNO project configuration file.
-     * 
+     *
      * @param pName
      *            the property name
      * @param pValue
      *            the property value
      */
+    @Override
     public void setProperty(String pName, String pValue) {
         Properties properties = new Properties();
         File configFile = getConfigFile();
@@ -631,13 +668,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void saveAllProperties() {
 
         if( mLanguage == null || mOOo == null || mSdk == null){
             PluginLogger.warning(Messages.getString("UnoidlProject.InconsistentConfigurationError")); //$NON-NLS-1$
             return;
         }
-        
+
         Properties properties = new Properties();
         File configFile = getConfigFile();
 
@@ -651,7 +689,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         try {
             in = new FileInputStream(configFile);
             properties.load(in);
-            
+
             properties.setProperty(LANGUAGE, mLanguage.getName());
             properties.setProperty(OOO_NAME, mOOo.getName());
             properties.setProperty(SDK_NAME, mSdk.getId());
@@ -683,6 +721,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFolder[] getBinFolders() {
         return getLanguage().getProjectHandler().getBinFolders(this);
     }
@@ -694,6 +733,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void configure() throws CoreException {
 
         // Load all the persistent properties into the members
@@ -741,6 +781,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deconfigure() throws CoreException {
         dispose();
     }
@@ -748,6 +789,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IProject getProject() {
         return mProject;
     }
@@ -755,6 +797,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setProject(IProject pProject) {
         mProject = pProject;
     }
@@ -765,11 +808,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     /**
      * Set the builders for the project.
-     * 
+     *
      * <p>
      * This method configures the builders using the implementation language informations
      * </p>
-     * 
+     *
      * @throws CoreException
      *             if the builders can't be set.
      */
@@ -795,13 +838,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "UNO Project " + getName(); //$NON-NLS-1$
     }
 
     /**
      * Toggle an error marker on the project indicating that the there is either no LibreOffice nor SDK set.
-     * 
+     *
      * @param pSet
      *            <code>true</code> if the error marker should be set, <code>false</code> otherwise.
      */

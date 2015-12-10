@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -52,21 +52,21 @@ import org.eclipse.jface.text.rules.Token;
 
 /**
  * A scanning rule matching a regular expression.
- * 
+ *
  * @author cedricbosdo
  */
 public class RegexRule implements IRule {
 
     private IToken mToken;
     private String mRegex;
-    
+
     private int mCharReadNb = 0;
     private char[][] mDelimiters;
-    
+
     /**
      * Constructor, initializing the token to return and the regex to
      * match.
-     * 
+     *
      * @param pRegex the regular expression to match
      * @param pToken the token to associate
      */
@@ -74,26 +74,27 @@ public class RegexRule implements IRule {
         mToken = pToken;
         mRegex = pRegex;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public IToken evaluate(ICharacterScanner pScanner) {
         mCharReadNb = 0;
         IToken result = Token.UNDEFINED;
         mDelimiters = pScanner.getLegalLineDelimiters();
-        
+
         // Reads the characters and test the pattern matching
         String line = new String();
         boolean matchingDone = false;
         boolean matchingBegun = false;
         int c;
-        
+
         do {
             c = pScanner.read();
             line = line + new Character((char)c);
             mCharReadNb++;
-            
+
             if (!isEOL(c)) {
                 if (Pattern.matches(mRegex, line)) {
                     matchingBegun = true;
@@ -114,36 +115,36 @@ public class RegexRule implements IRule {
                 }
             }
         } while (!isEOL(c) && !matchingDone);
-        
+
         // Unread all the line except the first character if the line is not valid
         if (result != mToken) {
             for (int i = 0; i < mCharReadNb; i++) {
                 pScanner.unread();
             }
         }
-        
+
         return result;
     }
-  
+
     /**
      * @return the associated token.
      */
     protected IToken getToken() {
         return mToken;
     }
-    
+
     /**
      * Convenience method to determine if a character corresponds to an end
      * of line.
-     * 
+     *
      * @param pChar the character to check
-     * 
+     *
      * @return <code>true</code> if the character is an end of line,
      *      <code>false</code> otherwise.
      */
     protected boolean isEOL (int pChar) {
         boolean isEol = false;
-        
+
         for (int i = 0; i < mDelimiters.length; i++) {
             if (pChar == mDelimiters[i][0] || isEOF(pChar)) {
                 isEol = true;
@@ -151,13 +152,13 @@ public class RegexRule implements IRule {
         }
         return isEol;
     }
-    
+
     /**
      * Convenience method to determine if a character corresponds to an end
      * of file.
-     * 
+     *
      * @param pChar the character to check
-     * 
+     *
      * @return <code>true</code> if the character is an end of file,
      *      <code>false</code> otherwise.
      */

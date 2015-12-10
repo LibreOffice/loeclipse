@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -50,24 +50,24 @@ import org.eclipse.swt.graphics.Point;
 
 /**
  * This class is used for overlaying image icons.
- * 
+ *
  * @author cedricbosdo
  */
 public class OverlayImageIcon extends CompositeImageDescriptor {
-    
+
     public static final int TOP_LEFT = 0;
     public static final int TOP_RIGHT = 1;
     public static final int BOTTOM_LEFT = 2;
     public static final int BOTTOM_RIGHT = 3;
-    
+
     /**
      * Base image of the object.
-     */ 
+     */
     private Image mBaseImage;
 
     /**
      * Size of the base image.
-     */ 
+     */
     private Point mSizeOfImage;
 
     /**
@@ -79,7 +79,7 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pBaseImage the image to decorate
      * @param pImage the decorator image
      * @param pLocation the location of the decorator image on the base image.
@@ -89,21 +89,22 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
         mBaseImage = pBaseImage;
 
         mImage = pImage;
-        mLocation = pLocation; 
-        mSizeOfImage = new Point(pBaseImage.getBounds().width, 
-                pBaseImage.getBounds().height);
+        mLocation = pLocation;
+        mSizeOfImage = new Point(pBaseImage.getBounds().width,
+                        pBaseImage.getBounds().height);
     }
 
     /**
      * this method is called to draw the composite image.
-     * 
+     *
      * @param pLower the first image to draw
-     * @param pUpper the top image to draw 
-     * 
+     * @param pUpper the top image to draw
+     *
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
-     * 
-     * 
+     *
+     *
      */
+    @Override
     protected void drawCompositeImage(int pLower, int pUpper) {
         // Draw the base image
         drawImage(mBaseImage.getImageData(), 0, 0);
@@ -115,20 +116,20 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
                 drawImage(imageData, 0, 0);
                 break;
 
-            // Draw on top right corner  
+                // Draw on top right corner
             case TOP_RIGHT:
                 drawImage(imageData, mSizeOfImage.x - imageData.width, 0);
                 break;
 
-            // Draw on bottom left  
+                // Draw on bottom left
             case BOTTOM_LEFT:
                 drawImage(imageData, 0, mSizeOfImage.y - imageData.height);
                 break;
 
-            // Draw on bottom right corner  
+                // Draw on bottom right corner
             case BOTTOM_RIGHT:
                 drawImage(imageData, mSizeOfImage.x - imageData.width,
-                        mSizeOfImage.y - imageData.height);
+                                mSizeOfImage.y - imageData.height);
                 break;
 
         }
@@ -137,18 +138,19 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
 
     /**
      * @return Get the size of the composite image
-     * 
+     *
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
      */
+    @Override
     protected Point getSize() {
         return mSizeOfImage;
     }
 
     /**
      * Get the image formed by overlaying different images on the base image.
-     * 
+     *
      * @return composite image
-     */ 
+     */
     public Image getImage() {
         return createImage();
     }

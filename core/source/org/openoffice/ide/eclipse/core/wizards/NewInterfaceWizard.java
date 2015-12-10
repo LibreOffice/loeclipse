@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -71,88 +71,91 @@ import org.openoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
 
 /**
  * Interface creation wizard. This class uses a {@link NewInterfaceWizardPage}
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class NewInterfaceWizard extends BasicNewResourceWizard implements
-        INewWizard {
+INewWizard {
 
     private IWorkbenchPage mActivePage;
     private NewInterfaceWizardPage mPage;
-    
+
     /**
      * Creates the wizard.
      */
     public NewInterfaceWizard() {
         super();
-        
+
         mActivePage = WorkbenchHelper.getActivePage();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean performFinish() {
-        
+
         final UnoFactoryData data = mPage.fillData(new UnoFactoryData());
-        
+
         Job serviceJob = new Job(Messages.getString("NewInterfaceWizard.JobName")) { //$NON-NLS-1$
 
+            @Override
             protected IStatus run(IProgressMonitor pMonitor) {
-                
+
                 pMonitor.beginTask(Messages.getString("NewInterfaceWizard.TaskName"), 1); //$NON-NLS-1$
                 IStatus status = new Status(IStatus.OK,
-                        OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                        IStatus.OK, "", null); //$NON-NLS-1$
+                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                                IStatus.OK, "", null); //$NON-NLS-1$
                 try {
                     IUnoidlProject prj = mPage.getProject();
                     UnoFactory.createInterface(data, prj, mActivePage, pMonitor);
-                
+
                     // Releasing the data informations
                     data.dispose();
                     pMonitor.worked(1);
                 } catch (Exception e) {
                     status = new Status(IStatus.CANCEL,
-                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                            IStatus.OK, 
-                            Messages.getString("NewInterfaceWizard.InterfaceCreationError"), e); //$NON-NLS-1$
+                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                                    IStatus.OK,
+                                    Messages.getString("NewInterfaceWizard.InterfaceCreationError"), e); //$NON-NLS-1$
                     pMonitor.setCanceled(true);
                 }
-                
+
                 pMonitor.done();
                 return status;
             }
-            
+
         };
-        
+
         serviceJob.setPriority(Job.INTERACTIVE);
         serviceJob.schedule();
-        
+
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbench pWorkbench, IStructuredSelection pSelection) {
-        
+
         super.init(pWorkbench, pSelection);
-        
+
         if  (pSelection.getFirstElement() instanceof IAdaptable) {
-            
+
             IAdaptable adapter = (IAdaptable)pSelection.getFirstElement();
-            IResource resource = (IResource)adapter.getAdapter(IResource.class);
-            
+            IResource resource = adapter.getAdapter(IResource.class);
+
             if (resource != null) {
                 createPages(resource.getProject());
             }
         }
     }
-    
+
     /**
      * Creates the new interface page.
-     * 
+     *
      * @param pProject the project in which to create the interface
      */
     private void createPages(IProject pProject) {
@@ -160,10 +163,10 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
             try {
                 if (pProject.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
                     UnoidlProject unoProject = (UnoidlProject)pProject.getNature(
-                            OOEclipsePlugin.UNO_NATURE_ID);
-                    
+                                    OOEclipsePlugin.UNO_NATURE_ID);
+
                     mPage = new NewInterfaceWizardPage("newiface", unoProject); //$NON-NLS-1$
-                    
+
                     addPage(mPage);
                 }
             } catch (CoreException e) {
@@ -171,18 +174,19 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements
             }
         }
     }
-    
+
     /**
      * Method opening a file in an UNO-IDL editor.
-     * 
+     *
      * @param pResource the file to open
      */
     protected void openResource(final IFile pResource) {
-        
+
         if (mActivePage != null) {
             final Display display = getShell().getDisplay();
             if (display != null) {
                 display.asyncExec(new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             IDE.openEditor(mActivePage, pResource, true);

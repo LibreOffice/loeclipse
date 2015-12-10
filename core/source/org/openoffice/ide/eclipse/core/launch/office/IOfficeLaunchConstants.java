@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Dan Corneanu.
  *
  * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -34,9 +34,9 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
  * Just a bunch of constants.
- * 
+ *
  * @author cdan
- * 
+ *
  */
 public interface IOfficeLaunchConstants {
 

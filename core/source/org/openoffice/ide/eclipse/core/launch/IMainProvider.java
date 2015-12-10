@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -48,8 +48,8 @@ import java.util.Vector;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Provides the name of the XMain interface implementations. 
- * 
+ * Provides the name of the XMain interface implementations.
+ *
  * @author cedricbosdo
  *
  */
@@ -57,7 +57,7 @@ public interface IMainProvider {
 
     /**
      * Get the names of the XMain implementations in the project.
-     *  
+     *
      * @param pProject the UnoIdl project where to look for implementations
      * @return the names of the implementations found.
      */

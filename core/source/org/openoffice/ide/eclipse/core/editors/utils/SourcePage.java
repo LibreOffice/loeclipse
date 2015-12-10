@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -53,7 +53,7 @@ import org.eclipse.ui.ide.IDE;
 
 /**
  * A Text editor to use as a tab in multiple page editors.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -63,10 +63,10 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     private Control mControl;
     private int mIndex;
     private String mId;
-    
+
     /**
      * Source editor page constructor.
-     * 
+     *
      * @param pFormEditor the editor hosting the page.
      * @param pId the page identifier
      * @param pTitle the page title
@@ -75,10 +75,11 @@ public class SourcePage extends OOTextEditor implements IFormPage {
         mId = pId;
         initialize(pFormEditor);
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canLeaveThePage() {
         return true;
     }
@@ -86,6 +87,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public FormEditor getEditor() {
         return mEditor;
     }
@@ -93,6 +95,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getId() {
         return mId;
     }
@@ -100,6 +103,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getIndex() {
         return mIndex;
     }
@@ -107,6 +111,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IManagedForm getManagedForm() {
         // Not a form page
         return null;
@@ -115,15 +120,17 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createPartControl(Composite pParent) {
         super.createPartControl(pParent);
         Control[] children = pParent.getChildren();
         mControl = children[children.length - 1];
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public Control getPartControl() {
         return mControl;
     }
@@ -131,6 +138,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize(FormEditor pEditor) {
         mEditor = pEditor;
     }
@@ -138,6 +146,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isActive() {
         return this.equals(mEditor.getActivePageInstance());
     }
@@ -145,13 +154,15 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEditor() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean selectReveal(Object pObject) {
         boolean reveal = false;
         if (pObject instanceof IMarker) {
@@ -164,12 +175,14 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setActive(boolean pActive) {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setIndex(int pIndex) {
         mIndex = pIndex;
     }

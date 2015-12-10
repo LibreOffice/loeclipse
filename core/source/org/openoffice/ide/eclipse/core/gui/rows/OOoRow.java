@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -54,7 +54,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Row displaying the selection of an OOo instance.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -62,7 +62,7 @@ public class OOoRow extends AbstractConfigRow {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pParent the composite where to create the row
      * @param pProperty the property for the row events
      * @param pToSelect the configuration element to select first
@@ -70,7 +70,7 @@ public class OOoRow extends AbstractConfigRow {
     public OOoRow(final Composite pParent, String pProperty, IOOo pToSelect) {
         super(pParent, pProperty, Messages.getString("OOoRow.Browse"), pToSelect); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -78,7 +78,7 @@ public class OOoRow extends AbstractConfigRow {
     protected void addListener(IConfigListener pConfigListener) {
         OOoContainer.addListener(pConfigListener);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -86,7 +86,7 @@ public class OOoRow extends AbstractConfigRow {
     protected void removeListener(IConfigListener pConfigListener) {
         OOoContainer.removeListener(pConfigListener);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -94,23 +94,23 @@ public class OOoRow extends AbstractConfigRow {
     protected String getRowLabel() {
         return Messages.getString("OOoRow.Label"); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected String[] getConfigValues() {
-        // Adding the OOo names to the combo box 
+        // Adding the OOo names to the combo box
         String[] ooos = new String[OOoContainer.getOOoCount()];
         Vector<String> oooKeys = OOoContainer.getOOoKeys();
         for (int i = 0, length = OOoContainer.getOOoCount(); i < length; i++) {
             ooos[i] = oooKeys.get(i);
         }
         oooKeys.clear();
-        
+
         return ooos;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -118,7 +118,7 @@ public class OOoRow extends AbstractConfigRow {
     protected String getElementName(Object pToSelect) {
         return ((IOOo)pToSelect).getName();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -126,7 +126,7 @@ public class OOoRow extends AbstractConfigRow {
     protected String getTableDialogTitle() {
         return Messages.getString("OOoRow.DialogTitle"); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -134,10 +134,10 @@ public class OOoRow extends AbstractConfigRow {
     protected AbstractTable createTable(Composite pParent) {
         OOoTable table = new OOoTable(pParent);
         table.getPreferences();
-        
+
         return table;
     }
-    
+
     /**
      * {@inheritDoc}
      */

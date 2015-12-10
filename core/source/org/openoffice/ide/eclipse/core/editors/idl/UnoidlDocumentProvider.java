@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,33 +56,34 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
  * defined in the document configuration {@link UnoidlConfiguration}. In order
  * to fully understand the editor mechanisms, please report to Eclipse plugin
  * developer's guide.
- * 
+ *
  * @author cbosdonnat
  */
 public class UnoidlDocumentProvider extends FileDocumentProvider {
 
     private static UnoidlPartitionScanner sScanner = null;
-    
+
     /**
      * The scannable partitions in the idl text. Each one should have an
-     * associated scanner in the configuration. 
+     * associated scanner in the configuration.
      */
     private static final String[] TYPES = new String[] {
-        UnoidlPartitionScanner.IDL_AUTOCOMMENT,
-        UnoidlPartitionScanner.IDL_COMMENT,
-        UnoidlPartitionScanner.IDL_PREPROCESSOR
+                    UnoidlPartitionScanner.IDL_AUTOCOMMENT,
+                    UnoidlPartitionScanner.IDL_COMMENT,
+                    UnoidlPartitionScanner.IDL_PREPROCESSOR
     };
-    
+
     /**
      * Default constructor.
      */
     public UnoidlDocumentProvider() {
         super();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected IDocument createDocument(Object pElement) throws CoreException {
         IDocument document = super.createDocument(pElement);
         if (document != null) {
@@ -92,16 +93,16 @@ public class UnoidlDocumentProvider extends FileDocumentProvider {
         }
         return document;
     }
-    
+
     /**
      * @return the IDL partitioner to cut the file text into scannable partitions.
      */
     private FastPartitioner createIDLPartitioner() {
         return new FastPartitioner(
-            getIDLPartitionScanner(), TYPES
-        );
+                        getIDLPartitionScanner(), TYPES
+                        );
     }
-    
+
     /**
      * @return the IDL partition scanner if it's not alread created
      */

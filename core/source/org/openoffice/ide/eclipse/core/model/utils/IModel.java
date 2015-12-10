@@ -20,19 +20,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.utils;
 
 /**
  * Interface for listened models.
- * 
+ *
  * @author cbosdonnat
  *
  */
@@ -40,23 +40,23 @@ public interface IModel {
 
     /**
      * Add a model listener.
-     * 
+     *
      * @param pListener the listener to add
      */
     public void addListener( IModelChangedListener pListener );
-    
+
     /**
      * Remove a model listener.
-     * 
+     *
      * @param pListener the listener to remove
      */
     public void removeListener( IModelChangedListener pListener );
-    
+
     /**
      * @return whether the model has been changed without being saved or not.
      */
     public boolean isDirty( );
-    
+
     /**
      * @param pSuspend <code>true</code> to suspend the events for the model
      */

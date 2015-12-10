@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -58,25 +58,25 @@ import org.openoffice.ide.eclipse.core.editors.Messages;
 
 /**
  * Page displaying the Package properties in a more user friendly way.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class PackageFormPage extends FormPage {
-    
+
     private ContentsSection mContents;
     private LibsSection mLibs;
     private PackageDescriptionSection mDescriptions;
-    
+
     /**
      * Content form page constructor.
-     * 
+     *
      * @param pEditor the editor where to create the form page
      * @param pId the page identifier
      */
     public PackageFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId, 
-                Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
+        super(pEditor, pId,
+                        Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
     }
 
     /**
@@ -89,7 +89,7 @@ public class PackageFormPage extends FormPage {
         }
         return prj;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -97,33 +97,33 @@ public class PackageFormPage extends FormPage {
     protected void createFormContent(IManagedForm pManagedForm) {
         super.createFormContent(pManagedForm);
         ScrolledForm form = pManagedForm.getForm();
-        
+
         FormToolkit toolkit = pManagedForm.getToolkit();
         toolkit.decorateFormHeading( form.getForm() );
-        
+
         form.setText(Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
-        
-        // Create the only section with a tree representing the files 
+
+        // Create the only section with a tree representing the files
         // and dirs in its client area
         form.getBody().setLayout(new GridLayout(2, true));
-        
+
         mContents = new ContentsSection(this);
         mLibs = new LibsSection(this);
         mDescriptions = new PackageDescriptionSection(this);
-        
+
         // update the model from the source
         PackagePropertiesEditor editor = (PackagePropertiesEditor)getEditor();
         editor.getModel().setQuiet(true);
-        
+
         editor.loadFromSource();
 
         List<IResource> contents = editor.getModel().getContents();
         mContents.setContents(contents);
-        
+
         // Get the Libs and Descriptions properties from the document
-        
+
         mLibs.setLibraries(editor.getModel());
-        
+
         mDescriptions.setDescriptions(editor.getModel().getDescriptionFiles());
         editor.getModel().setQuiet(false);
     }

@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -45,9 +45,9 @@ package org.openoffice.ide.eclipse.core.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,14 +61,14 @@ import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Singleton object containing the LibreOffice configurations.
- * 
+ *
  * @author cedricbosdo
  *
  */
-public class OOoContainer { 
-    
+public class OOoContainer {
+
     private static OOoContainer sInstance = new OOoContainer();
-    
+
     /**
      * Vector of the configuration container listeners.
      */
@@ -78,35 +78,35 @@ public class OOoContainer {
      * HashMap containing the ooo lines referenced by their path.
      */
     private HashMap<String, IOOo> mElements;
-    
-    
+
+
     /**
      * The SDK Container should not be created by another object.
      */
     private OOoContainer() {
-        
+
         // Initialize the members
         mElements = new HashMap<String, IOOo>();
         mListeners = new Vector<IConfigListener>();
     }
-    
-    
+
+
     //-------------------------- Methods to manage the listeners
-    
+
     /**
      * Add a configuration listener to the container.
-     * 
-     *  @param pListener configuration listener to add 
+     *
+     *  @param pListener configuration listener to add
      */
     public static void addListener(IConfigListener pListener) {
         if (null != pListener) {
             sInstance.mListeners.add(pListener);
         }
     }
-    
+
     /**
      * Removes a configuration listener from the container.
-     * 
+     *
      * @param pListener configuration listener to remove
      */
     public static void removeListener(IConfigListener pListener) {
@@ -114,33 +114,33 @@ public class OOoContainer {
             sInstance.mListeners.remove(pListener);
         }
     }
-    
+
     /* Methods to manage the ooos */
-    
+
     /**
      * @return the ooos elements in an array.
      */
     public static Object[] toArray() {
         Vector<IOOo> vElements = toVector();
         Object[] elements = vElements.toArray();
-        
+
         vElements.clear();
         return elements;
     }
-    
+
     /**
-     * Add the OOo given in parameter to the list of the others. Do not use 
+     * Add the OOo given in parameter to the list of the others. Do not use
      * directly the private field to handle OOos
-     * 
+     *
      * @param pOoo OOo to add
      */
     public static void addOOo(IOOo pOoo) {
-        
-        /** 
-         * If there already is a OOo with such an identifier, replace the 
+
+        /**
+         * If there already is a OOo with such an identifier, replace the
          * values, not the object to keep the references on it
-         */ 
-        
+         */
+
         if (null != pOoo) {
             if (!sInstance.mElements.containsKey(pOoo.getName())) {
                 sInstance.mElements.put(pOoo.getName(), pOoo);
@@ -151,11 +151,11 @@ public class OOoContainer {
             }
         }
     }
-    
+
     /**
      * Notify every listener that a LibreOffice instance configuration
      * has been added.
-     * 
+     *
      * @param pOoo the added OOo
      */
     private void fireOOoAdded(IOOo pOoo) {
@@ -166,9 +166,9 @@ public class OOoContainer {
     }
 
     /**
-     * remove the given OOo from the list. Do not use directly the private 
+     * remove the given OOo from the list. Do not use directly the private
      * field to handle OOos
-     *  
+     *
      * @param pOoo OOo to remove
      */
     public static void delOOo(IOOo pOoo) {
@@ -179,7 +179,7 @@ public class OOoContainer {
             }
         }
     }
-    
+
     /**
      * Removes all the OOo contained.
      */
@@ -187,49 +187,49 @@ public class OOoContainer {
         sInstance.mElements.clear();
         sInstance.fireOOoRemoved(null);
     }
-    
+
     /**
      * Returns a vector containing the unique identifiers of the contained OOos.
-     * 
+     *
      * @return names of the contained OOos
      */
     public static Vector<String> getOOoKeys() {
         Set<String> paths = sInstance.mElements.keySet();
         return new Vector<String>(paths);
     }
-    
+
     /**
      * Checks whether the corresponding LibreOffice name already exists.
-     * 
+     *
      * @param pName the OOo Name to check
-     * @return <code>true</code> if the name is already present, 
+     * @return <code>true</code> if the name is already present,
      *         <code>false</code> otherwise.
      */
     public static boolean containsName(String pName) {
         return sInstance.mElements.containsKey(pName);
     }
-    
+
     /**
      * Computes a unique name from the given one.
-     * 
+     *
      * @param pName the name to render unique
      * @return the unique name
      */
     public static String getUniqueName(String pName) {
-        
+
         String newName = pName;
         if (containsName(newName)) {
             Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName); //$NON-NLS-1$
-            
+
             // initialise as if the name contains no #i at its end
             int number = 0;
             String nameRoot = new String(newName);
-            
+
             if (m.matches()) {
                 number = Integer.parseInt(m.group(2));
                 nameRoot = m.group(1);
             }
-            
+
             // Check for the last number
             do {
                 number += 1;
@@ -238,11 +238,11 @@ public class OOoContainer {
         }
         return newName;
     }
-    
+
     /**
      * Notify all the listeners that a LibreOffice instance configuration
      * has been removed.
-     * 
+     *
      * @param pOoo the removed LibreOffice
      */
     private void fireOOoRemoved(IOOo pOoo) {
@@ -251,35 +251,35 @@ public class OOoContainer {
             listeneri.ConfigRemoved(pOoo);
         }
     }
-    
+
     /**
      * Update the with OOo from the list with the given OOo.
-     * 
+     *
      * @param pOookey position of the ooo to update
      * @param pOoo new value for the OOo
      */
     public static void updateOOo(String pOookey, IOOo pOoo) {
         if (sInstance.mElements.containsKey(pOookey) && null != pOoo) {
-            
+
             IOOo oooref = sInstance.mElements.get(pOookey);
-            
+
             // update the attributes
             try {
                 oooref.setHome(pOoo.getHome());
             } catch (InvalidConfigException e) {
                 PluginLogger.error(e.getLocalizedMessage(), e);
             }
-            
+
             // Reassign the element in the hashmap
             sInstance.mElements.put(pOookey, oooref);
             sInstance.fireOOoUpdated(pOoo);
         }
     }
-    
+
     /**
      * Notify every listener that a LibreOffice instance configuration
      * has been updated.
-     * 
+     *
      * @param pOoo the updated LibreOffice
      */
     private void fireOOoUpdated(IOOo pOoo) {
@@ -288,26 +288,26 @@ public class OOoContainer {
             listeneri.ConfigUpdated(pOoo);
         }
     }
-    
+
     /**
      * Returns the ooo that corresponds to the given ooo name and buildid.
-     * 
+     *
      * @param pOookey unique identifier of the wanted ooo
      * @return OOo which name equals the one provided
      */
     public static IOOo getOOo(String pOookey) {
         IOOo ooo = null;
-        
+
         if (sInstance.mElements.containsKey(pOookey)) {
             ooo = sInstance.mElements.get(pOookey);
-        } 
+        }
         return ooo;
     }
-    
+
     /**
      * Leniently return an OOo instance descriptor from a given value.
-     * 
-     * <p>This method will try several ways to find an OOo. These are 
+     *
+     * <p>This method will try several ways to find an OOo. These are
      * the following:
      *  <ol>
      *      <li>Check if there is a configured OOo with a name like <code>pValue</code></li>
@@ -317,16 +317,16 @@ public class OOoContainer {
      *  </ol>
      * If no OOo instance can be found using one of the previous ways, <code>null</code>
      * will be returned.</p>
-     * 
+     *
      * @param pValue the value helping to find the OOo instance.
      * @return the OOo instance or <code>null</code> if not found
      */
     public static IOOo getSomeOOo(String pValue) {
         IOOo found = null;
-        
+
         // First attempt: try to look by OOo name.
         found = getOOo(pValue);
-        
+
         // Second attempt: try by path amongst the registered OOos
         if (found == null) {
             Iterator<IOOo> iter = sInstance.mElements.values().iterator();
@@ -337,7 +337,7 @@ public class OOoContainer {
                 }
             }
         }
-        
+
         // Third attempt: Try to create a new OOo an register it.
         if (found == null) {
             try {
@@ -349,30 +349,30 @@ public class OOoContainer {
                     // Still not found: nothing to log
                 }
             }
-            
+
             // Register the OOo
             if (found != null) {
                 addOOo(found);
             }
         }
-        
+
         // Fourth attempt: Get a registered OOo
         if (found == null && sInstance.mElements.size() > 0) {
             found = sInstance.mElements.values().iterator().next();
         }
-        
+
         return found;
     }
-    
+
     /**
      * Returns the number of OOo in the list.
-     * 
+     *
      * @return number of OOo in the list
      */
     public static int getOOoCount() {
         return sInstance.mElements.size();
     }
-        
+
     /**
      * Dispose the vector used.
      *
@@ -381,39 +381,39 @@ public class OOoContainer {
         sInstance.mListeners.clear();
         sInstance.mElements.clear();
     }
-    
+
     /**
-     * Loads the LibreOffice already configured instances from the 
+     * Loads the LibreOffice already configured instances from the
      * preferences.
      */
     public static void load() {
-        
+
         IOOo[] ooos = PropertiesManager.loadOOos();
         for (int i = 0; i < ooos.length; i++) {
             addOOo(ooos[i]);
         }
     }
-    
+
     /**
-     * Saves the LibreOffice already configured instances to the 
+     * Saves the LibreOffice already configured instances to the
      * preferences.
      */
     public static void saveOOos() {
-        
-        // Saving the new OOos 
+
+        // Saving the new OOos
         Vector<IOOo> vElements = toVector();
         IOOo[] ooos = new IOOo[getOOoCount()];
-        
+
         for (int i = 0, length = getOOoCount(); i < length; i++) {
             ooos[i] = vElements.get(i);
         }
-        
+
         // clean vector
         vElements.clear();
-        
+
         PropertiesManager.saveOOos(ooos);
     }
-    
+
     /**
      * @return the OOoContainer singleton instance
      */
@@ -423,17 +423,17 @@ public class OOoContainer {
         }
         return sInstance;
     }
-    
+
     /**
      * Returns a unordered vector with the hash map of the elements.
-     *  
+     *
      * @return vector where the elements order isn't guaranteed
      */
     private static Vector<IOOo> toVector() {
         Vector<IOOo> result = new Vector<IOOo>();
         Set<Entry<String, IOOo>> entries = sInstance.mElements.entrySet();
         Iterator<Entry<String, IOOo>> iter = entries.iterator();
-        
+
         while (iter.hasNext()) {
             IOOo value = iter.next().getValue();
             result.add(value);

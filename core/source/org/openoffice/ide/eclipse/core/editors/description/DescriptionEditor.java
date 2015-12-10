@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.description;
 
@@ -58,15 +58,15 @@ import org.xml.sax.InputSource;
 
 /**
  * Editor for the description.xml file.
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class DescriptionEditor extends FormEditor {
-    
+
     private DescriptionSourcePage mSourcePage;
     private DescriptionFormPage mFormPage;
-    
+
     private DescriptionModel mDescriptionModel;
 
     /**
@@ -74,57 +74,57 @@ public class DescriptionEditor extends FormEditor {
      */
     @Override
     protected void addPages() {
-        
+
         try {
             // Add the overview page
             mFormPage = new DescriptionFormPage( this, "form" ); //$NON-NLS-1$
             addPage( mFormPage );
             mFormPage.setModel( getDescriptionModel( ) );
-            
+
             // Add the description.xml source page
-            mSourcePage = new DescriptionSourcePage( this, 
-                    "description", "source" ); //$NON-NLS-1$ //$NON-NLS-2$
+            mSourcePage = new DescriptionSourcePage( this,
+                            "description", "source" ); //$NON-NLS-1$ //$NON-NLS-2$
             mSourcePage.init( getEditorSite(), getEditorInput() );
             addPage( mSourcePage );
         } catch (PartInitException e) {
             // log ?
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void init(IEditorSite pSite, IEditorInput pInput) throws PartInitException {
         super.init(pSite, pInput);
-        
+
         if (pInput instanceof IFileEditorInput) {
-            
+
             IFileEditorInput fileInput = (IFileEditorInput)pInput;
-            
+
             setPartName( fileInput.getName() );
-            
+
             // Load the description.xml file
             try {
                 SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
                 // Enables the namespaces mapping
                 parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespaces" , true ); //$NON-NLS-1$
-                parser.getXMLReader().setFeature( 
-                        "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
+                parser.getXMLReader().setFeature(
+                                "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
                 DescriptionHandler handler = new DescriptionHandler( getDescriptionModel( ) );
                 File file = new File( fileInput.getFile().getLocationURI().getPath() );
-                
+
                 getDescriptionModel().setSuspendEvent( true );
                 parser.parse(file, handler);
-                
+
             } catch ( Exception e ) {
-                PluginLogger.error( 
-                        Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$ 
-                        e );
+                PluginLogger.error(
+                                Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$
+                                e );
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -132,7 +132,7 @@ public class DescriptionEditor extends FormEditor {
     public boolean isDirty() {
         return mDescriptionModel.isDirty();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -144,7 +144,7 @@ public class DescriptionEditor extends FormEditor {
             File file = new File( input.getFile().getLocationURI() );
             out = new FileOutputStream( file );
             getDescriptionModel().serialize( out );
-            
+
             input.getFile().refreshLocal( IResource.DEPTH_ZERO, pMonitor );
         } catch ( Exception e ) {
             PluginLogger.error( Messages.getString("DescriptionEditor.ErrorSaving"), e ); //$NON-NLS-1$
@@ -170,7 +170,7 @@ public class DescriptionEditor extends FormEditor {
     public boolean isSaveAsAllowed() {
         return false;
     }
-    
+
     /**
      * @return the description.xml model.
      */
@@ -180,7 +180,7 @@ public class DescriptionEditor extends FormEditor {
         }
         return mDescriptionModel;
     }
-    
+
     /**
      * Write the description model to the description source page.
      */
@@ -201,7 +201,7 @@ public class DescriptionEditor extends FormEditor {
             }
         }
     }
-    
+
     /**
      * Re-load the model from the XML code shown in the description source page.
      */
@@ -210,29 +210,29 @@ public class DescriptionEditor extends FormEditor {
             TextFileDocumentProvider docProvider  = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
             IDocument doc = docProvider.getDocument( mSourcePage.getEditorInput() );
             if ( doc != null ) {
-                
+
                 StringReader reader = null;
                 try {
                     SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
                     // Enables the namespaces mapping
                     parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespaces" , true ); //$NON-NLS-1$
-                    parser.getXMLReader().setFeature( 
-                            "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
+                    parser.getXMLReader().setFeature(
+                                    "http://xml.org/sax/features/namespace-prefixes", true ); //$NON-NLS-1$
                     DescriptionHandler handler = new DescriptionHandler( getDescriptionModel( ) );
-                    
+
                     reader = new StringReader( doc.get( ) );
                     InputSource is = new InputSource( reader );
-                    
+
                     getDescriptionModel().setSuspendEvent( true );
                     parser.parse( is, handler);
                     mFormPage.reloadData( );
-                    
+
                     getDescriptionModel().setSuspendEvent( false );
 
                 } catch ( Exception e ) {
-                    PluginLogger.error( 
-                            Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$ 
-                            e );
+                    PluginLogger.error(
+                                    Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$
+                                    e );
                 } finally {
                     reader.close();
                 }

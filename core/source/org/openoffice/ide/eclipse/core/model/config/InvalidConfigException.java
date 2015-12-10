@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,59 +47,59 @@ package org.openoffice.ide.eclipse.core.model.config;
 /**
  * This exception is thrown when an OOo or SDK isn't valid, ie that it's home
  * doesn't fit to a correct home directory for an OOo or SDK.
- * 
+ *
  * @see IOOo
  * @see ISdk
- * 
+ *
  * @author cedricbosdo
  */
 public class InvalidConfigException extends Exception {
- 
+
     /**
      * The error points to an invalid SDK home path.
      */
     public static final int INVALID_SDK_HOME = 0;
-    
+
     /**
      * The error points to an invalid OOo home path.
      */
     public static final int INVALID_OOO_HOME = 1;
 
     private static final long serialVersionUID = 2019018152788487567L;
-    
+
     private int mErrorCode;
 
     /**
      * Constructor of the invalid SDK exception. It needs a message and a error
      * code among those defined as constants of this class.
-     * 
+     *
      * @param pMessage error message
      * @param pCode error code
      */
     public InvalidConfigException(String pMessage, int pCode) {
         super(pMessage);
-        
+
         mErrorCode = pCode;
     }
-    
+
     /**
      * Constructor of the invalid SDK exception. It needs a message and a error
      * code among those defined as constants of this class.
-     * 
+     *
      * @param pMessage error message
      * @param pCode error code
      * @param pException exception in case there is one.
      */
     public InvalidConfigException(String pMessage, int pCode, Throwable pException) {
         super(pMessage, pException);
-        
+
         mErrorCode = pCode;
     }
-    
+
     /**
-     * Returns the error code of the exception among the constants of the 
+     * Returns the error code of the exception among the constants of the
      * <code>InvalidSDKException</code> class.
-     * 
+     *
      * @return error code.
      */
     public int getErrorCode() {

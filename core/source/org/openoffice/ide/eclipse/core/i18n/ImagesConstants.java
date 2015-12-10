@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -45,8 +45,8 @@ package org.openoffice.ide.eclipse.core.i18n;
 
 /**
  * Defines the keys to use for images internationalization. The default file name
- * is defined in the <code>ImageManager.properties</code> file 
- * 
+ * is defined in the <code>ImageManager.properties</code> file
+ *
  * @author cedricbosdo
  *
  */

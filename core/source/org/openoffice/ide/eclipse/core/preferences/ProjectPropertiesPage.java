@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -66,50 +66,52 @@ import org.openoffice.ide.eclipse.core.model.config.ISdk;
 /**
  * The project preference page. This page can be used to reconfigure the
  * project OOo and SDK.
- * 
+ *
  * @author cedricbosdo
  */
-public class ProjectPropertiesPage extends PropertyPage 
-                                   implements IWorkbenchPropertyPage {
+public class ProjectPropertiesPage extends PropertyPage
+implements IWorkbenchPropertyPage {
 
     private static final String SDK = "__sdk"; //$NON-NLS-1$
     private static final String OOO = "__ooo"; //$NON-NLS-1$
-    
+
     private SdkRow mSdkRow;
     private OOoRow mOOoRow;
-    
+
     private UnoidlProject mProject;
-    
+
     /**
      * Default constructor setting configuration listeners.
      */
     public ProjectPropertiesPage() {
         super();
-        
+
         noDefaultAndApplyButton();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void dispose() {
-        
+
         mOOoRow.dispose();
         mSdkRow.dispose();
-        
+
         super.dispose();
     }
 
     //------------------------------------------------------- Content managment
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setElement(IAdaptable pElement) {
         super.setElement(pElement);
-        
+
         try {
-            IProject prj = (IProject)pElement.getAdapter( IProject.class );
+            IProject prj = pElement.getAdapter( IProject.class );
             if ( prj != null ) {
                 mProject = (UnoidlProject)ProjectsManager.getProject( prj.getName() );
             }
@@ -117,34 +119,36 @@ public class ProjectPropertiesPage extends PropertyPage
             PluginLogger.debug(e.getMessage());
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Control createContents(Composite pParent) {
-        
+
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
-        
+
         // Add the SDK choice field
         mSdkRow = new SdkRow(body, SDK, mProject.getSdk());
-        
+
         // Add the OOo choice field
         mOOoRow = new OOoRow(body, OOO, mProject.getOOo());
-        
+
         return body;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean performOk() {
         saveValues();
         return true;
     }
-    
+
     /**
-     * Convenience method to save the SDK and OOo values in their plugin 
+     * Convenience method to save the SDK and OOo values in their plugin
      * configuration file.
      */
     private void saveValues() {
@@ -152,7 +156,7 @@ public class ProjectPropertiesPage extends PropertyPage
             ISdk sdk = SDKContainer.getSDK(mSdkRow.getValue());
             mProject.setSdk(sdk);
         }
-        
+
         if (!mOOoRow.getValue().equals("")) { //$NON-NLS-1$
             IOOo ooo = OOoContainer.getOOo(mOOoRow.getValue());
             mProject.setOOo(ooo);

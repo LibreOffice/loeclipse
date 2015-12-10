@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -52,7 +52,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * This class is a small structure containing the data to ZIP for one file.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -61,12 +61,12 @@ public class ZipContent {
     private static final int BUFFER_SIZE = 2048;
 
     protected File mResource;
-    
+
     protected String mEntryName;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param pEntryName the name in the ZIP file
      * @param pResource the file to put in the ZIP file.
      */
@@ -74,21 +74,21 @@ public class ZipContent {
         mResource = pResource;
         mEntryName = pEntryName;
     }
-    
+
     /**
      * @return the file represented by the {@link ZipEntry}
      */
     public File getFile() {
         return mResource;
     }
-    
+
     /**
      * Write the ZIP entry to the given Zip output stream.
-     * 
+     *
      * @param pOutput the stream where to write the entry data.
      */
     public void writeContentToZip(ZipOutputStream pOutput) {
-        
+
         BufferedInputStream origin = null;
         try {
             FileInputStream fi = new FileInputStream( mResource );
@@ -103,17 +103,17 @@ public class ZipContent {
             while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
                 pOutput.write(data, 0, count);
             }
-            
+
             pOutput.closeEntry();
-            
+
         } catch (IOException e) {
             System.err.println("Problem when writing file to zip: " + mEntryName + " (" + e.getLocalizedMessage() + ")");
         } finally {
             // Close the file entry stream
-            try { 
+            try {
                 if (origin != null) {
                     origin.close();
-                } 
+                }
             } catch (IOException e) {
             }
         }

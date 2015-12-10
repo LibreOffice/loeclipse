@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -55,7 +55,7 @@ import org.eclipse.jface.text.rules.IToken;
  *   <li>foo = foo</li>
  * </ul>
  * However "=foo" wont be accepted.
- * 
+ *
  * @author cbosdonnat
  *
  */
@@ -63,16 +63,17 @@ public class EqualityNameRule extends RegexRule {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pToken the token to analyze.
      */
     public EqualityNameRule(IToken pToken) {
         super("[a-zA-Z]+\\p{Blank}?=", pToken); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public IToken evaluate(ICharacterScanner pScanner) {
         IToken result = super.evaluate(pScanner);
         if (result == getToken()) {

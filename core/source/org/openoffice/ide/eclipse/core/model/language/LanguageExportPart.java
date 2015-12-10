@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Cédric Bosdonnat
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.language;
 
@@ -37,14 +37,14 @@ import org.openoffice.plugin.core.model.UnoPackage;
 /**
  * Abstract class for the language specific controls part in the OXT export
  * wizard.
- * 
+ *
  * @author cbosdo
  *
  */
 public abstract class LanguageExportPart {
 
     private ManifestExportPage mPage;
-    
+
     /**
      * Create the controls in the part.
      * @param pParent the parent composite where to create the controls
@@ -58,7 +58,7 @@ public abstract class LanguageExportPart {
 
     /**
      * Run the export actions in a separate thread.
-     * 
+     *
      * <strong>Note that the controls might be disposed when this methods
      * is called.</strong>
      * @param pModel  the model of the exported package
@@ -71,8 +71,8 @@ public abstract class LanguageExportPart {
     public void setPage( ManifestExportPage pPage ) {
         mPage = pPage;
     }
-    
-    /** 
+
+    /**
      * @return the page containing this UI part.
      */
     protected ManifestExportPage getPage( ) {

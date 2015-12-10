@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -59,7 +59,7 @@ import org.openoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
 /**
  * The project package editor.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -67,7 +67,7 @@ public class PackagePropertiesEditor extends FormEditor {
 
     private SourcePage mSourcePage;
     private PackageFormPage mContentsPage;
-    
+
     private PackagePropertiesModel mModel;
     private boolean mIgnoreSourceChanges = false;
 
@@ -76,27 +76,31 @@ public class PackagePropertiesEditor extends FormEditor {
      */
     @Override
     protected void addPages() {
-        
+
         try {
-            
+
             // Add the form page with the tree
             mContentsPage = new PackageFormPage(this, "package"); //$NON-NLS-1$
             addPage(mContentsPage);
-            
+
             // Add the text page for package.properties
             mSourcePage = new SourcePage(this, "source", "package.properties"); //$NON-NLS-1$ //$NON-NLS-2$
             mSourcePage.init(getEditorSite(), getEditorInput());
             mSourcePage.getDocumentProvider().addElementStateListener(new IElementStateListener() {
 
+                @Override
                 public void elementContentAboutToBeReplaced(Object pElement) {
                 }
 
+                @Override
                 public void elementContentReplaced(Object pElement) {
                 }
 
+                @Override
                 public void elementDeleted(Object pElement) {
                 }
 
+                @Override
                 public void elementDirtyStateChanged(Object pElement, boolean pIsDirty) {
                     if (!mIgnoreSourceChanges) {
                         mModel.setQuiet(true);
@@ -107,46 +111,49 @@ public class PackagePropertiesEditor extends FormEditor {
                     }
                 }
 
+                @Override
                 public void elementMoved(Object pOriginalElement, Object pMovedElement) {
-                }                
+                }
             });
             addPage(mSourcePage);
         } catch (PartInitException e) {
             // log ?
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void init(IEditorSite pSite, IEditorInput pInput) throws PartInitException {
         super.init(pSite, pInput);
-        
+
         if (pInput instanceof IFileEditorInput) {
-            
+
             IFileEditorInput fileInput = (IFileEditorInput)pInput;
             IProject prj = fileInput.getFile().getProject();
             String projectName = prj.getName();
             setPartName(projectName);
-            
+
             // Create the package properties
             mModel = new PackagePropertiesModel(fileInput.getFile());
             mModel.addChangeListener(new IModelChangedListener() {
 
+                @Override
                 public void modelChanged() {
                     editorDirtyStateChanged();
                     writeToSource();
                 }
 
+                @Override
                 public void modelSaved() {
                     editorDirtyStateChanged();
                 }
-                
+
             });
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -154,7 +161,7 @@ public class PackagePropertiesEditor extends FormEditor {
     public boolean isDirty() {
         return mModel.isDirty();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -183,14 +190,14 @@ public class PackagePropertiesEditor extends FormEditor {
     public boolean isSaveAsAllowed() {
         return false;
     }
-    
+
     /**
      * @return the project packaging properties file content.
      */
     public PackagePropertiesModel getModel() {
         return mModel;
     }
-    
+
     /**
      * Write the properties model to the source editor page.
      */
@@ -205,12 +212,12 @@ public class PackagePropertiesEditor extends FormEditor {
             }
         }
     }
-    
+
     /**
      * Loads the properties model from the source editor page.
      */
     public void loadFromSource() {
-        
+
         if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
             TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
             IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());

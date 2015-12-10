@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -59,7 +59,7 @@ import org.openoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 
 /**
  * This class launches the URE application from its configuration.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -70,42 +70,44 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
     /**
      * {@inheritDoc}
      */
-    public void launch(ILaunchConfiguration pConfiguration, String pMode, 
-            ILaunch pLaunch, IProgressMonitor pMonitor) throws CoreException {
-        
+    @Override
+    public void launch(ILaunchConfiguration pConfiguration, String pMode,
+                    ILaunch pLaunch, IProgressMonitor pMonitor) throws CoreException {
+
         if (pMonitor == null) {
             pMonitor = new NullProgressMonitor();
         }
-        
+
         pMonitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
-                new Object[]{pConfiguration.getName()}), TASK_UNITS);
+                        new Object[]{pConfiguration.getName()}), TASK_UNITS);
         // check for cancellation
         if (pMonitor.isCanceled()) {
             return;
         }
-        
+
         String prjName = pConfiguration.getAttribute(
-                IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+                        IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
         String mainName = pConfiguration.getAttribute(
-                IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
+                        IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
         String args = pConfiguration.getAttribute(
-                IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
-        
+                        IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
+
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         if (prj != null) {
             try {
                 ILanguageBuilder langBuilder = prj.getLanguage().getLanguageBuidler();
                 langBuilder.createLibrary(prj);
-            
+
                 // Run the URE Applicaton using IOOo.runUno()
                 prj.getOOo().runUno(prj, mainName, args, pLaunch, pMonitor);
             } catch (Exception e) {
                 Display.getDefault().asyncExec(new Runnable() {
 
+                    @Override
                     public void run() {
                         MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                Messages.getString("UreLaunchDelegate.ErrorTitle"),  //$NON-NLS-1$
-                                Messages.getString("UreLaunchDelegate.ErrorMessage")); //$NON-NLS-1$    
+                                        Messages.getString("UreLaunchDelegate.ErrorTitle"),  //$NON-NLS-1$
+                                        Messages.getString("UreLaunchDelegate.ErrorMessage")); //$NON-NLS-1$
                     }
                 });
             }

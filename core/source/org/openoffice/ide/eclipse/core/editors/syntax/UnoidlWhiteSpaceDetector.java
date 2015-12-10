@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -48,14 +48,15 @@ import org.eclipse.jface.text.rules.IWhitespaceDetector;
 
 /**
  * A basic rule to detect the white spaces in the text.
- * 
+ *
  * @author cedricbosdo
  */
 public class UnoidlWhiteSpaceDetector implements IWhitespaceDetector {
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isWhitespace(char pChar) {
         return Character.isWhitespace(pChar);
     }

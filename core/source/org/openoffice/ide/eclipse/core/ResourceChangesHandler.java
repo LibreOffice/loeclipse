@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -59,10 +59,10 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * This class is responsible for all the actions to perform on resources changes.
- * 
+ *
  * <p>To be sure that this class is started early even if the OOIntegration hasn't
  * been activated, this class implement {@link IStartup}</p>
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -72,8 +72,9 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
     /**
      * {@inheritDoc}
      */
+    @Override
     public void resourceChanged(IResourceChangeEvent pEvent) {
-        
+
         if (IResourceChangeEvent.POST_CHANGE == pEvent.getType()) {
             // Extract all the additions among the changes
             IResourceDelta delta = pEvent.getDelta();
@@ -110,10 +111,11 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
     /**
      * {@inheritDoc}
      */
+    @Override
     public void earlyStartup() {
         // Load the projects manager
         ProjectsManager.load();
-        
+
         // Add a listener to the resources changes of the workspace
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
         PluginLogger.info("Resources changes are now listened"); //$NON-NLS-1$
@@ -121,17 +123,17 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
 
     /**
      * Job adding a project to the {@link ProjectsManager}.
-     * 
+     *
      * @author cedricbosdo
      *
      */
     private class ProjectAdderJob extends WorkspaceJob {
-        
+
         private IProject mPrj;
-        
+
         /**
          * Project adder constructor.
-         * 
+         *
          * @param pPrj the project to add
          */
         public ProjectAdderJob(IProject pPrj) {

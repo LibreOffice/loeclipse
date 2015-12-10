@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -48,11 +48,11 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**
  * This abstract class has to be implemented to add a language specific
- * configuration page in the project wizard. 
- * 
+ * configuration page in the project wizard.
+ *
  * <p>Implementations should be aware that the {@link #fillData(UnoFactoryData)}
  * method can be called even if the page content has not been created.</p>
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -64,17 +64,17 @@ public abstract class LanguageWizardPage extends WizardPage {
     public LanguageWizardPage() {
         super("language"); //$NON-NLS-1$
     }
-    
+
     /**
      * Fills the page with the project creation informations.
-     * 
+     *
      * @param pData the data describing the informations to set.
      */
     public abstract void setProjectInfos(UnoFactoryData pData);
 
     /**
      * @param pData to fill with the language specific data.
-     * 
+     *
      * @return the given data with the completed properties, <code>null</code>
      *   if the provided data is <code>null</code>
      */

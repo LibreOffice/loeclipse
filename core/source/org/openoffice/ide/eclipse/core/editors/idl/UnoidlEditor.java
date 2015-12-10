@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -53,46 +53,48 @@ import org.openoffice.ide.eclipse.core.editors.utils.OOTextEditor;
  * Class handling the UNO-IDL text to render them in an Eclipse editor. In order
  * to fully understand the editor mechanisms, please report to Eclipse plugin
  * developer's guide.
- * 
+ *
  * @see UnoidlConfiguration for the viewer configuration
  * @see UnoidlDocumentProvider for the document provider
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class UnoidlEditor extends OOTextEditor {
-    
+
     /**
      * Member that listens to the preferences property changes.
      */
     private IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
+        @Override
         public void propertyChange(PropertyChangeEvent pEvent) {
             getSourceViewer().invalidateTextPresentation();
-            
+
         }
     };
-    
+
     /**
      * The color manager providing the colors for the editor.
      */
     private ColorProvider mColorManager;
-    
+
     /**
      * Default constructor setting the correct document provider and viewer
      * configuration.
      */
     public UnoidlEditor() {
         super();
-        
+
         mColorManager = new ColorProvider();
         setSourceViewerConfiguration(new UnoidlConfiguration(mColorManager));
         setDocumentProvider(new UnoidlDocumentProvider());
         OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(mPropertyListener);
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void dispose() {
         mColorManager.dispose();
         OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(mPropertyListener);

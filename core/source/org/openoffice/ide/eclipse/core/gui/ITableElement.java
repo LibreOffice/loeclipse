@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -48,7 +48,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Interface used by the abstract table to get the labels of it's items.
- *  
+ *
  * @author cedricbosdo
  *
  */
@@ -56,46 +56,46 @@ public interface ITableElement {
 
     /**
      * Returns the column image corresponding to the property.
-     * 
+     *
      * @param pProperty the property designating the column
      * @return the image for the column
      */
     public Image getImage(String pProperty);
-    
+
     /**
      * Returns the column label corresponding to the property.
-     * 
+     *
      * @param pProperty the property designating the column
      * @return the label for the column
      */
     public String getLabel(String pProperty);
-    
+
     /**
      * @return the line properties in the columns order.
      */
     public String[] getProperties();
-    
+
     /**
-     * Defines whether the column cell corresponding to the property can be 
+     * Defines whether the column cell corresponding to the property can be
      * modified.
-     * 
+     *
      * @param pProperty the property designating the column
      * @return <code>true</code> if the cell is editable.
      */
     public boolean canModify(String pProperty);
-    
+
     /**
      * Returns the column value corresponding to the property.
-     * 
+     *
      * @param pProperty the property designating the column
      * @return the value for the column
      */
     public Object getValue(String pProperty);
-    
-    
+
+
     /**
      * Sets the column value corresponding to the property.
-     * 
+     *
      * @param pProperty the property designating the column
      * @param pValue the new value for the column
      */

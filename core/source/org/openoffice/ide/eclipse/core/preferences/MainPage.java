@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,13 +56,13 @@ import org.openoffice.ide.eclipse.core.LogLevels;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 import org.openoffice.ide.eclipse.core.gui.rows.ChoiceRow;
-import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.openoffice.ide.eclipse.core.gui.rows.FieldEvent;
+import org.openoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 
 
 /**
  * This preferences page defines plugin generic values like log level.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -72,84 +72,90 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
     private IFieldChangedListener mListener = new loglevelListener();
 
     private ChoiceRow mLoglevel;
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Control createContents(Composite pParent) {
-        
+
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout(2, false));
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        mLoglevel = new ChoiceRow(body, LOGLEVEL, 
-                Messages.getString("MainPage.LogLevel"), null, false); //$NON-NLS-1$
+        mLoglevel = new ChoiceRow(body, LOGLEVEL,
+                        Messages.getString("MainPage.LogLevel"), null, false); //$NON-NLS-1$
         mLoglevel.add(Messages.getString("MainPage.Error"), //$NON-NLS-1$
-                LogLevels.ERROR.toString());
+                        LogLevels.ERROR.toString());
         mLoglevel.add(Messages.getString("MainPage.Warning"), //$NON-NLS-1$
-                LogLevels.WARNING.toString());
+                        LogLevels.WARNING.toString());
         mLoglevel.add(Messages.getString("MainPage.Info"), //$NON-NLS-1$
-                LogLevels.INFO.toString());
+                        LogLevels.INFO.toString());
         mLoglevel.add(Messages.getString("MainPage.Debug"), //$NON-NLS-1$
-                LogLevels.DEBUG.toString());
-        
+                        LogLevels.DEBUG.toString());
+
         IPreferenceStore store = getPreferenceStore();
         mLoglevel.select(store.getString(
-                OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
+                        OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
         mLoglevel.setFieldChangedListener(mListener);
-            
+
         return body;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbench pWorkbench) {
-        
+
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected IPreferenceStore doGetPreferenceStore() {
         return OOEclipsePlugin.getDefault().getPreferenceStore();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean performOk() {
         boolean result = super.performOk();
-        
+
         IPreferenceStore store = getPreferenceStore();
-        store.setValue(OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY, 
-                mLoglevel.getValue());
-        
+        store.setValue(OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY,
+                        mLoglevel.getValue());
+
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void performDefaults() {
         super.performDefaults();
-        
+
         IPreferenceStore store = getPreferenceStore();
         mLoglevel.select(store.getDefaultString(
-                OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
+                        OOEclipsePlugin.LOGLEVEL_PREFERENCE_KEY));
     }
-    
+
     /**
      * Listens to the log level changes and set the correct level to the
      * plugin logger.
-     * 
+     *
      * @author cbosdonnat
      */
     private class loglevelListener implements IFieldChangedListener {
-        
+
         /**
          * {@inheritDoc}
          */
+        @Override
         public void fieldChanged(FieldEvent pE) {
             if (pE.getProperty().equals(LOGLEVEL)) {
                 // set the new logger level

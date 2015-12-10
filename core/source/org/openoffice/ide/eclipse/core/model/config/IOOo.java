@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -52,14 +52,14 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Interface for a LibreOffice configuration instance. This can even be implemented as an URE instance.
- * 
+ *
  * @author cedricbosdo
  */
 public interface IOOo {
 
     /**
      * Set the home directory.
-     * 
+     *
      * @param pHome
      *            the absolute path to the home directory
      * @throws InvalidConfigException
@@ -71,14 +71,14 @@ public interface IOOo {
     /**
      * Returns the path to the LibreOffice home directory. This string could be passed to the Path constructor to get
      * the folder object.
-     * 
+     *
      * @return path to the LibreOffice home directory.
      */
     public String getHome();
 
     /**
      * Returns the LibreOffice name. It should be a unique identifier
-     * 
+     *
      * @return LibreOffice name
      */
     public String getName();
@@ -88,12 +88,12 @@ public interface IOOo {
      * Returns the path to the LibreOffice classes directory. These strings could be passed to the Path constructor
      * to get the folder object.
      * </p>
-     * 
+     *
      * <p>
-     * <em>This method should be used for future compatibility with 
+     * <em>This method should be used for future compatibility with
      * URE applications</em>
      * </p>
-     * 
+     *
      * @return path to the LibreOffice classes directory
      */
     public String[] getClassesPath();
@@ -103,7 +103,7 @@ public interface IOOo {
      * Returns the path to the LibreOffice shared libraries. This string could be passed to the Path constructor to
      * get the folder object.
      * </p>
-     * 
+     *
      * @return path to the LibreOffice libraries directory
      */
     public String[] getLibsPath();
@@ -113,7 +113,7 @@ public interface IOOo {
      * Returns the path to any folder containing binaries in the LibreOffice installation. This string could be passed to the
      * Path constructor to get the folder object.
      * </p>
-     * 
+     *
      * @return paths to the LibreOffice binary directories
      */
     public String[] getBinPath();
@@ -143,10 +143,10 @@ public interface IOOo {
      */
     public String getJavaldxPath();
 
-    
+
     /**
      * Returns a command to execute a <code>uno</code> component.
-     * 
+     *
      * @param pImplementationName
      *            the name of the component implementation to run
      * @param pLibLocation
@@ -155,7 +155,7 @@ public interface IOOo {
      *            the path to the additional registries
      * @param pArgs
      *            the argument for the component launch
-     * 
+     *
      * @return the command to execute the <code>uno</code> binary
      */
     public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
@@ -163,7 +163,7 @@ public interface IOOo {
 
     /**
      * Run the <code>uno</code> executable with the given Main implementation, the arguments and the launcher.
-     * 
+     *
      * @param pPrj
      *            the project to run
      * @param pMain
@@ -178,7 +178,7 @@ public interface IOOo {
     public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, ILaunch pLaunch, IProgressMonitor pMonitor);
 
     /**
-     * 
+     *
      * @param pPrj
      *            the project to run
      * @param pLaunch
@@ -200,7 +200,7 @@ public interface IOOo {
 
     /**
      * Update a package in the LibreOffice instance if it can manages packages.
-     * 
+     *
      * @param pPackageFile
      *            the package to add or update
      * @param pUserInstallation

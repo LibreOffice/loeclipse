@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -57,29 +57,29 @@ import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.swt.custom.StyleRange;
 
 /**
- * The UNO-IDL document repairer. This is used by the UNO-IDL editor. In 
- * order to fully understand the editor mechanisms, please report to 
- * Eclipse plugin developer's guide. 
- * 
+ * The UNO-IDL document repairer. This is used by the UNO-IDL editor. In
+ * order to fully understand the editor mechanisms, please report to
+ * Eclipse plugin developer's guide.
+ *
  * @author cedricbosdo
  *
  */
 public class NonRuleBasedDamagerRepairer
-    implements IPresentationDamager, IPresentationRepairer {
+implements IPresentationDamager, IPresentationRepairer {
 
-    /** 
+    /**
      * The document this object works on .
      */
     protected IDocument mDocument;
-    
-    /** 
+
+    /**
      * The default text attribute if non is returned as data by the current token.
      */
     protected TextAttribute mDefaultTextAttribute;
-    
+
     /**
      * Default constructor.
-     * 
+     *
      * @param pDefaultTextAttribute the attribute to assign to default text
      */
     public NonRuleBasedDamagerRepairer(TextAttribute pDefaultTextAttribute) {
@@ -91,6 +91,7 @@ public class NonRuleBasedDamagerRepairer
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDocument(IDocument pDocument) {
         mDocument = pDocument;
     }
@@ -106,7 +107,7 @@ public class NonRuleBasedDamagerRepairer
      */
     protected int endOfLineOf(int pOffset) throws BadLocationException {
         int endOffset = mDocument.getLength();
-        
+
         IRegion info = mDocument.getLineInformationOfOffset(pOffset);
         if (pOffset <= info.getOffset() + info.getLength()) {
             endOffset = info.getOffset() + info.getLength();
@@ -119,24 +120,25 @@ public class NonRuleBasedDamagerRepairer
         } catch (BadLocationException x) {
             endOffset = mDocument.getLength();
         }
-        
+
         return endOffset;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public IRegion getDamageRegion(ITypedRegion pPartition,
-            DocumentEvent pEvent,
-            boolean pDocumentPartitioningChanged) {
-        
+                    DocumentEvent pEvent,
+                    boolean pDocumentPartitioningChanged) {
+
         IRegion damaged = pPartition;
-        
+
         if (!pDocumentPartitioningChanged) {
             try {
 
                 IRegion info =
-                    mDocument.getLineInformationOfOffset(pEvent.getOffset());
+                                mDocument.getLineInformationOfOffset(pEvent.getOffset());
                 int start = Math.max(pPartition.getOffset(), info.getOffset());
 
                 int length = pEvent.getLength();
@@ -146,7 +148,7 @@ public class NonRuleBasedDamagerRepairer
                 int end = pEvent.getOffset() + length;
 
                 if (info.getOffset() <= end
-                    && end <= info.getOffset() + info.getLength()) {
+                                && end <= info.getOffset() + info.getLength()) {
                     // optimize the case of the same line
                     end = info.getOffset() + info.getLength();
                 } else {
@@ -154,9 +156,9 @@ public class NonRuleBasedDamagerRepairer
                 }
 
                 end =
-                    Math.min(
-                        pPartition.getOffset() + pPartition.getLength(),
-                        end);
+                                Math.min(
+                                                pPartition.getOffset() + pPartition.getLength(),
+                                                end);
                 damaged = new Region(start, end - start);
 
             } catch (BadLocationException x) {
@@ -169,9 +171,10 @@ public class NonRuleBasedDamagerRepairer
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createPresentation(TextPresentation pPresentation, ITypedRegion pRegion) {
         addRange(pPresentation, pRegion.getOffset(),
-            pRegion.getLength(), mDefaultTextAttribute);
+                        pRegion.getLength(), mDefaultTextAttribute);
     }
 
     /**
@@ -183,12 +186,12 @@ public class NonRuleBasedDamagerRepairer
      * @param pAttr the attribute describing the style of the range to be styled
      */
     protected void addRange(TextPresentation pPresentation, int pOffset,
-            int pLength, TextAttribute pAttr) {
-        
+                    int pLength, TextAttribute pAttr) {
+
         if (pAttr != null) {
             pPresentation.addStyleRange(
-                new StyleRange(pOffset, pLength, pAttr.getForeground(),
-                    pAttr.getBackground(), pAttr.getStyle()));
+                            new StyleRange(pOffset, pLength, pAttr.getForeground(),
+                                            pAttr.getBackground(), pAttr.getStyle()));
         }
     }
 }

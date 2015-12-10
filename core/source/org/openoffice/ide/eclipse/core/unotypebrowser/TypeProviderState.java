@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -45,13 +45,13 @@ package org.openoffice.ide.eclipse.core.unotypebrowser;
 
 /**
  * Indicates the state of the {@link UnoTypeProvider}.
- *  
+ *
  * <ul>
  *      <li>{@link #EMPTY} means that the types provider has never been initialized</li>
  *      <li>{@link #INITIALIZING} means that the types provider is updating the types</li>
  *      <li>{@link #INITIALIZED} means that the types provider has fetched the types</li>
  * </ul>
- * 
+ *
  * @author cbosdonnat
  *
  */

@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -54,7 +54,7 @@ import org.openoffice.ide.eclipse.core.model.config.ISdk;
 
 /**
  * Row displaying the selection of an SDK instance.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -62,7 +62,7 @@ public class SdkRow extends AbstractConfigRow {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pParent the composite where to create the row
      * @param pProperty the property for the row events
      * @param pToSelect the configuration element to select first
@@ -70,7 +70,7 @@ public class SdkRow extends AbstractConfigRow {
     public SdkRow(final Composite pParent, String pProperty, ISdk pToSelect) {
         super(pParent, pProperty, Messages.getString("SdkRow.Browse"), pToSelect); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -78,7 +78,7 @@ public class SdkRow extends AbstractConfigRow {
     protected void addListener(IConfigListener pConfigListener) {
         SDKContainer.addListener(pConfigListener);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -86,7 +86,7 @@ public class SdkRow extends AbstractConfigRow {
     protected void removeListener(IConfigListener pConfigListener) {
         SDKContainer.removeListener(pConfigListener);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -94,7 +94,7 @@ public class SdkRow extends AbstractConfigRow {
     protected AbstractTable createTable(Composite pParent) {
         SDKTable table = new SDKTable(pParent);
         table.getPreferences();
-        
+
         return table;
     }
 
@@ -103,14 +103,14 @@ public class SdkRow extends AbstractConfigRow {
      */
     @Override
     protected String[] getConfigValues() {
-        // Adding the SDK names to the combo box 
+        // Adding the SDK names to the combo box
         String[] sdks = new String[SDKContainer.getSDKCount()];
         Vector<String> sdkKeys = SDKContainer.getSDKKeys();
         for (int i = 0, length = SDKContainer.getSDKCount(); i < length; i++) {
             sdks[i] = sdkKeys.get(i);
         }
         sdkKeys.clear();
-        
+
         return sdks;
     }
 

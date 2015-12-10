@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -53,11 +53,11 @@ import org.openoffice.ide.eclipse.core.editors.idl.Colors;
 
 /**
  * Preference page to change the UNO-IDL editor colors.
- *  
+ *
  * @author cedricbosdo
  */
 public class UnoidlEditorPage extends FieldEditorPreferencePage
-    implements IWorkbenchPreferencePage {
+implements IWorkbenchPreferencePage {
 
     /**
      * Default constructor loading the preferences.
@@ -71,34 +71,36 @@ public class UnoidlEditorPage extends FieldEditorPreferencePage
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createFieldEditors() {
-        addField(new ColorFieldEditor(Colors.C_TEXT, 
-                 Messages.getString("UnoidlEditorPage.Text"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_KEYWORD, 
-                 Messages.getString("UnoidlEditorPage.Keyword"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_TEXT,
+                        Messages.getString("UnoidlEditorPage.Text"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_KEYWORD,
+                        Messages.getString("UnoidlEditorPage.Keyword"), getFieldEditorParent())); //$NON-NLS-1$
         addField(new ColorFieldEditor(Colors.C_MODIFIER,
-                 Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
-                 getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_STRING, 
-                 Messages.getString("UnoidlEditorPage.String"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_TYPE, 
-                 Messages.getString("UnoidlEditorPage.Type"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_COMMENT, 
-                 Messages.getString("UnoidlEditorPage.Comment"), getFieldEditorParent())); //$NON-NLS-1$
+                        Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
+                        getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_STRING,
+                        Messages.getString("UnoidlEditorPage.String"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_TYPE,
+                        Messages.getString("UnoidlEditorPage.Type"), getFieldEditorParent())); //$NON-NLS-1$
+        addField(new ColorFieldEditor(Colors.C_COMMENT,
+                        Messages.getString("UnoidlEditorPage.Comment"), getFieldEditorParent())); //$NON-NLS-1$
         addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT,
-                 Messages.getString("UnoidlEditorPage.AutodocComment"),  //$NON-NLS-1$
-                 getFieldEditorParent()));
+                        Messages.getString("UnoidlEditorPage.AutodocComment"),  //$NON-NLS-1$
+                        getFieldEditorParent()));
         addField(new ColorFieldEditor(Colors.C_XML_TAG,
-                 Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
-                 getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR, 
-                 Messages.getString("UnoidlEditorPage.PreprocessorCommand"),  //$NON-NLS-1$
-                 getFieldEditorParent()));
+                        Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
+                        getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR,
+                        Messages.getString("UnoidlEditorPage.PreprocessorCommand"),  //$NON-NLS-1$
+                        getFieldEditorParent()));
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbench pWorkbench) {
     }
 }

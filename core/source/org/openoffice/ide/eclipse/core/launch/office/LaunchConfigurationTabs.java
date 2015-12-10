@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Dan Corneanu.
  *
  * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -39,28 +39,29 @@ import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
 /**
  * Creates tabs in the LibreOffice launcher.
- * 
+ *
  * @author cdan
- * 
+ *
  */
 public class LaunchConfigurationTabs extends AbstractLaunchConfigurationTabGroup {
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createTabs(ILaunchConfigurationDialog pDialog, String pMode) {
         ILaunchConfigurationTab[] tabs =  null;
         if (ILaunchManager.DEBUG_MODE.equals(pMode)) {
-            tabs = new ILaunchConfigurationTab[] { 
-                new OfficeTab(), 
-                new PackageConfigTab(),
-                new SourceLookupTab(),
-                new CommonTab() };
+            tabs = new ILaunchConfigurationTab[] {
+                            new OfficeTab(),
+                            new PackageConfigTab(),
+                            new SourceLookupTab(),
+                            new CommonTab() };
         } else {
-            tabs = new ILaunchConfigurationTab[] { 
-                new OfficeTab(), 
-                new PackageConfigTab(),
-                new CommonTab() };
+            tabs = new ILaunchConfigurationTab[] {
+                            new OfficeTab(),
+                            new PackageConfigTab(),
+                            new CommonTab() };
         }
 
         setTabs(tabs);

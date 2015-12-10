@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,6 +47,7 @@ import java.util.Vector;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
@@ -59,62 +60,63 @@ import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Table representing the interface members in the interface wizard page.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class InterfaceMembersTable extends AbstractTable {
-    
+
     private static final String TYPE = "__type"; //$NON-NLS-1$
     private static final String NAME = "__name"; //$NON-NLS-1$
     private static final String OPTIONS = "__options"; //$NON-NLS-1$
     private static final int NAME_WIDTH = 100;
     private static final int TYPE_WIDTH = 50;
     private static final int OPTIONS_WIDTH = 300;
-    
+
     /**
      * Creates a table to add/edit/remove the attributes and methods of an
      * interface.
-     * 
+     *
      * @param pParent the parent composite where to create the table. Its layout
-     *             should be a Grid Layout with one column 
+     *             should be a Grid Layout with one column
      */
     public InterfaceMembersTable(Composite pParent) {
-        super(    pParent, 
-                Messages.getString("InterfaceMembersTable.Title"),  //$NON-NLS-1$
-                new String[]{
-                    Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
-                    Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
-                    Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
-                }, 
-                new int[]{ NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH}, 
-                new String[] {
-                    NAME,
-                    TYPE,
-                    OPTIONS
-                }
-        );
+        super(    pParent,
+                        Messages.getString("InterfaceMembersTable.Title"),  //$NON-NLS-1$
+                        new String[]{
+                                        Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
+                                        Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
+                                        Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
+        },
+                        new int[]{ NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH},
+                        new String[] {
+                                        NAME,
+                                        TYPE,
+                                        OPTIONS
+        }
+                        );
     }
-    
+
     /**
      * Returns an array of the defined {@link UnoFactoryData}.
-     * 
+     *
      * @return the created factory data
      */
     public UnoFactoryData[] getUnoFactoryData() {
         Vector<ITableElement> lines = getLines();
         int size = lines.size();
         UnoFactoryData[] data = new UnoFactoryData[size];
-        
+
         for (int i = 0; i < size; i++) {
             data[i] = ((MemberLine)lines.get(i)).mData;
         }
         return data;
     }
-    
+
     /**
-         * {@inheritDoc}
-         */
+     * {@inheritDoc}
+     */
+    @Override
     protected ITableElement addLine() {
         MemberLine result = null;
         UnoFactoryData data = openDialog(null);
@@ -123,15 +125,16 @@ public class InterfaceMembersTable extends AbstractTable {
         }
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void handleDoubleClick(DoubleClickEvent pEvent) {
-        
+
         // Open the Member dialog but freeze the member type
         super.handleDoubleClick(pEvent);
-        
+
         if (getSelection() instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection) getSelection();
             Object o = selection.getFirstElement();
@@ -143,26 +146,26 @@ public class InterfaceMembersTable extends AbstractTable {
             }
         }
     }
-    
+
     /**
      * Open the member dialog for edition or creation.
-     * 
+     *
      * @param pContent if <code>null</code>, the dialog is opened to create a
      *         new member, otherwise it reuses the given data to modify them.
-     * 
+     *
      * @return the created or edited data
      */
     protected UnoFactoryData openDialog(UnoFactoryData pContent) {
         InterfaceMemberDialog dlg;
         UnoFactoryData result = pContent;
-        
+
         if (pContent == null) {
             dlg = new InterfaceMemberDialog();
         } else {
             dlg = new InterfaceMemberDialog(pContent);
         }
-        
-        if (InterfaceMemberDialog.OK == dlg.open()) {
+
+        if (Window.OK == dlg.open()) {
             result = dlg.getData();
         } else {
             if (pContent == null) {
@@ -171,38 +174,39 @@ public class InterfaceMembersTable extends AbstractTable {
         }
         return result;
     }
-    
+
     /**
      * This class defines the model of the member lines.
-     * 
+     *
      * @author cedricbosdo
      * @see AbstractTable
      */
     class MemberLine implements ITableElement {
 
         private UnoFactoryData mData;
-        
+
         /**
-         * This constructor instanciates an UnoFactoryData, keep in mind that 
+         * This constructor instanciates an UnoFactoryData, keep in mind that
          * these should be disposed.
          */
         public MemberLine() {
             mData = new UnoFactoryData();
         }
-        
+
         /**
          * This constructor only makes a reference copy of the data, don't
          * dispose them too early.
-         * 
+         *
          * @param pData the data for the line
          */
         public MemberLine(UnoFactoryData pData) {
             mData = pData;
         }
-        
+
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean canModify(String pProperty) {
             return false;
         }
@@ -210,8 +214,9 @@ public class InterfaceMembersTable extends AbstractTable {
         /**
          * {@inheritDoc}
          */
+        @Override
         public Image getImage(String pProperty) {
-            Image image = null;    
+            Image image = null;
             if (pProperty.equals(NAME)) {
                 int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
                 if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
@@ -220,16 +225,17 @@ public class InterfaceMembersTable extends AbstractTable {
                     image = OOEclipsePlugin.getImage(ImagesConstants.METHOD);
                 }
             }
-            
+
             return image;
         }
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getLabel(String pProperty) {
             String label = null;
-            
+
             if (pProperty.equals(TYPE)) {
                 String type = (String)mData.getProperty(IUnoFactoryConstants.TYPE);
                 label = type;
@@ -251,28 +257,30 @@ public class InterfaceMembersTable extends AbstractTable {
                     }
                 }
             }
-            
+
             if (label == null) {
                 label = ""; //$NON-NLS-1$
             }
-            
+
             return label;
         }
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public String[] getProperties() {
             return new String[]{
-                TYPE,
-                NAME,
-                OPTIONS
+                            TYPE,
+                            NAME,
+                            OPTIONS
             };
         }
 
         /**
          * {@inheritDoc}
          */
+        @Override
         public Object getValue(String pProperty) {
             return null;
         }
@@ -280,6 +288,7 @@ public class InterfaceMembersTable extends AbstractTable {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void setValue(String pProperty, Object pValue) {
         }
     }

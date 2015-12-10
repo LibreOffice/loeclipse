@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -46,16 +46,16 @@ package org.openoffice.ide.eclipse.core.builders;
 import java.io.File;
 
 /**
- * A little tiny interface to visit File objects. This has to be used to avoid 
- * multiple and annoying project refresh operations trigerring unwanted changes. 
- * 
+ * A little tiny interface to visit File objects. This has to be used to avoid
+ * multiple and annoying project refresh operations trigerring unwanted changes.
+ *
  * @author cedricbosdo
  *
  */
 public class VisitableFile {
 
     private File mFile;
-    
+
     /**
      * Create a new visitable file, ready to accept a visit.
      * @param pFile the file to visit later.
@@ -63,14 +63,14 @@ public class VisitableFile {
     public VisitableFile(File pFile) {
         mFile = pFile;
     }
-    
+
     /**
      * @return if the file exists
      */
     public boolean exists() {
         return mFile != null && mFile.exists();
     }
-    
+
     /**
      * @return if the visitable file has been correctly initialised and is a
      *     directory
@@ -78,17 +78,17 @@ public class VisitableFile {
     public boolean isDirectory() {
         return mFile != null && mFile.isDirectory();
     }
-    
+
     /**
      * @return if the visitable file has been correctly initialised and is a file
      */
     public boolean isFile() {
         return mFile != null && mFile.isFile();
     }
-    
+
     /**
      * Welcome a visitor and let him explore the file hierarchy as he needs to.
-     * 
+     *
      * @param pVisitor the File visitor
      */
     public void accept(IFileVisitor pVisitor) {

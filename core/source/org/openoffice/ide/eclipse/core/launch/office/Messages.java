@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Dan Corneanu.
  *
  * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -34,12 +34,12 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Messages for the package.
- * 
+ *
  * @author cdan
  *
  */
 public class Messages extends NLS {
-    
+
     public static String OfficeLaunchDelegate_LaunchError;
     public static String OfficeLaunchDelegate_LaunchErrorTitle;
     public static String OfficeTab_Options;
@@ -51,9 +51,9 @@ public class Messages extends NLS {
     public static String OfficeTab_ChkUseCleanUserInstallation_ToolTip;
     public static String OfficeTab_ProjectChooserTitle;
     public static String OfficeTab_ProjectChooserMessage;
-    
+
     private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.launch.office.messages"; //$NON-NLS-1$
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

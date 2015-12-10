@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -60,56 +60,59 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 /**
  * GUI row for a file selection. It supports only the Grid Layout
  * and can be configured to select either a file or a directory.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class FileRow extends LabeledRow {
-    
+
     private String mValue = new String();
     private boolean mDirectory = false;
-    
+
     /**
      * File row constructor.
-     * 
+     *
      * @param pParent composite parent of the row.
      * @param pProperty property name used in field changing event.
      * @param pLabel label to print on the left of the row.
-     * @param pDirectory if <code>true</code>, the field is a directory path, 
+     * @param pDirectory if <code>true</code>, the field is a directory path,
      *                  otherwise the field is a file path.
      */
-    public FileRow (Composite pParent, String pProperty, String pLabel, 
-            boolean pDirectory) {
+    public FileRow (Composite pParent, String pProperty, String pLabel,
+                    boolean pDirectory) {
         super(pProperty);
-        
+
         Label aLabel = new Label(pParent, SWT.SHADOW_NONE | SWT.LEFT);
         aLabel.setText(pLabel);
-        
+
         Text aField = new Text(pParent, SWT.BORDER);
-            
+
         createContent(pParent, aLabel, aField,
-                Messages.getString("FileRow.Browse"), false); //$NON-NLS-1$
-        
+                        Messages.getString("FileRow.Browse"), false); //$NON-NLS-1$
+
         mField.addFocusListener(new FocusAdapter() {
+            @Override
             public void focusLost(FocusEvent pEvent) {
                 setValue(getValue());
             }
         });
-        
+
         addBrowseSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent pEvent) {
                 browse();
             }
         });
-        
+
         mDirectory = pDirectory;
     }
-    
+
     /**
      * Method called when the button browse is clicked.
      */
     protected void browse() {
         BusyIndicator.showWhile(mBrowse.getDisplay(), new Runnable() {
+            @Override
             public void run() {
                 doOpenFileSelectionDialog();
             }
@@ -121,48 +124,49 @@ public class FileRow extends LabeledRow {
      */
     protected void doOpenFileSelectionDialog() {
         Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
-                                getActiveWorkbenchWindow().getShell();
-        
+                        getActiveWorkbenchWindow().getShell();
+
         String newFile = null;
-        
+
         if (mDirectory) {
             DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
-            
+
             String file = getValue();
             if (file != null) {
                 dialog.setText(Messages.getString("FileRow.DirectoryTitle")); //$NON-NLS-1$
-                
+
                 newFile = dialog.open();
             }
-            
+
         } else {
             FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-            
+
             String file = getValue();
             if (file != null) {
                 dialog.setFileName(file);
             }
-            
+
             dialog.setText(Messages.getString("FileRow.FileTitle")); //$NON-NLS-1$
 
             newFile = dialog.open();
         }
-        
+
         if (newFile != null) {
             setValue(newFile);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getValue() {
         return mValue;
     }
-    
+
     /**
      * Set a new value to the row.
-     * 
+     *
      * @param pValue the new value
      */
     public void setValue(String pValue) {

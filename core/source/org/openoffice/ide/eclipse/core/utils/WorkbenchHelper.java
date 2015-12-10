@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.utils;
 
@@ -44,7 +44,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
  * Provides a set of useful method to perform actions on the Eclipse workbench.
- * 
+ *
  * @author cbosdonnat
  *
  */
@@ -52,16 +52,16 @@ public class WorkbenchHelper {
 
     /**
      * Simply shows the file in the IDE.
-     * 
+     *
      * @param pFile the file to show
      * @param pPage the active workbench page
      */
     public static void showFile(IFile pFile, IWorkbenchPage pPage) {
-        
+
         try {
             IWorkbench workbench = PlatformUI.getWorkbench();
             BasicNewResourceWizard.selectAndReveal(
-                    pFile, workbench.getActiveWorkbenchWindow());
+                            pFile, workbench.getActiveWorkbenchWindow());
 
             final IWorkbenchPage activePage = pPage;
             final IFile toShow = pFile;
@@ -70,6 +70,7 @@ public class WorkbenchHelper {
                 final Display display = Display.getDefault();
                 if (display != null) {
                     display.asyncExec(new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 IDE.openEditor(activePage, toShow, true);
@@ -84,15 +85,15 @@ public class WorkbenchHelper {
             PluginLogger.error("Can't open file", e); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Convenience method returning the active workbench page.
-     * 
+     *
      * @return the active page
      */
     public static IWorkbenchPage getActivePage() {
         IWorkbenchPage page = null;
-        
+
         IWorkbenchWindow window = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
         if (null != window) {
             page = window.getActivePage();

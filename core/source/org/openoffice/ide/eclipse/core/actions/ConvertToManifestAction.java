@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Cédric Bosdonnat.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.actions;
 
@@ -58,7 +58,7 @@ import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Action converting the legacy package.properties into manifest.xml file.
- * 
+ *
  * @author Cédric Bosdonnat <cedric.bosdonnat@free.fr>
  *
  */
@@ -69,6 +69,7 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setActivePart(IAction pAction, IWorkbenchPart pTargetPart) {
         // No need of the target part
     }
@@ -76,42 +77,43 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run( IAction pAction ) {
         PackagePropertiesModel propsModel = new PackagePropertiesModel( mPackageFile );
-        
+
         String prjName = mPackageFile.getProject().getName();
         IUnoidlProject prj = ProjectsManager.getProject( prjName );
         File prjFile = SystemHelper.getFile( prj );
-        
+
         // Create a dummy package to get the automatic entries of the manifest
         UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage( prj, new File( "foo.oxt" ) ); //$NON-NLS-1$
         ManifestModel manifestModel = unoPackage.getManifestModel();
-        
+
         for (IFolder lib : propsModel.getBasicLibraries()) {
             manifestModel.addBasicLibrary( lib.getProjectRelativePath().toString() );
         }
-        
+
         for (IFolder lib : propsModel.getDialogLibraries()) {
             manifestModel.addDialogLibrary( lib.getProjectRelativePath().toString() );
         }
-        
+
         for (IResource content : propsModel.getContents()) {
             File contentFile = SystemHelper.getFile( content );
-            manifestModel.addContent( 
-                            UnoPackage.getPathRelativeToBase( contentFile, prjFile), 
+            manifestModel.addContent(
+                            UnoPackage.getPathRelativeToBase( contentFile, prjFile),
                             contentFile );
         }
-        
+
         Iterator<Entry<Locale, IFile>> iter = propsModel.getDescriptionFiles().entrySet().iterator();
         while ( iter.hasNext() ) {
             Entry<Locale, IFile> entry = iter.next();
             manifestModel.addDescription( entry.getValue().getProjectRelativePath().toString(), entry.getKey() );
         }
-        
+
         // Serialize the manifest model into the manifest.xml file
         IFile manifestFile = mPackageFile.getParent().getFile( new Path( UnoPackage.MANIFEST_PATH ) );
         File file = new File( manifestFile.getLocationURI() );
-        
+
         if ( !file.exists() || file.canWrite() ) {
             FileOutputStream out = null;
 
@@ -135,6 +137,7 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void selectionChanged(IAction pAction, ISelection pSelection) {
         if ( !pSelection.isEmpty() && pSelection instanceof IStructuredSelection ) {
             IStructuredSelection sel = (IStructuredSelection)pSelection;

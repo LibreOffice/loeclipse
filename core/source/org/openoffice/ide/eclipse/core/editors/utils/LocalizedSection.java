@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.utils;
 
@@ -41,19 +41,19 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.openoffice.ide.eclipse.core.model.utils.IModel;
 
 /**
- * 
+ *
  * @param <ModelType> the type of the model object for the section
- * 
+ *
  * @author Cédric Bosdonnat
  *
  */
-public abstract class LocalizedSection< ModelType extends IModel > extends AbstractSection< ModelType > 
-    implements ILocaleListener {
-    
+public abstract class LocalizedSection< ModelType extends IModel > extends AbstractSection< ModelType >
+implements ILocaleListener {
+
     protected Locale mCurrentLocale;
-    
+
     private FormPage mPage;
-    
+
     /**
      * @param pParent the parent composite where to add the section
      * @param pPage the page page of the section
@@ -61,28 +61,29 @@ public abstract class LocalizedSection< ModelType extends IModel > extends Abstr
      */
     public LocalizedSection ( Composite pParent, FormPage pPage, int pStyle ) {
         super( pParent, pPage, pStyle );
-        
+
         mPage = pPage;
-        
-        
+
+
         createContent( );
     }
-    
+
     /**
      * Create the localized controls in the given parent.
-     * 
+     *
      * @param pToolkit the toolkit to use for the controls creation
      * @param pParent the parent to use for the new controls.
      */
     protected abstract void createControls( FormToolkit pToolkit, Composite pParent ) ;
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void selectLocale(final Locale pLocale) {
         mCurrentLocale = pLocale;
     }
-    
+
     /**
      * Creates the dialog content.
      */
@@ -90,16 +91,16 @@ public abstract class LocalizedSection< ModelType extends IModel > extends Abstr
         // Create the Language selection tools
         Section section = getSection();
         section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        
+
         FormToolkit toolkit = mPage.getManagedForm().getToolkit();
-        
+
         Composite clientArea = toolkit.createComposite(section);
         clientArea.setLayout(new GridLayout());
         clientArea.setLayoutData(new GridData(GridData.FILL_BOTH));
         createControls( toolkit, clientArea );
-        
+
         toolkit.paintBordersFor( clientArea );
-        
+
         section.setClient( clientArea );
     }
 }

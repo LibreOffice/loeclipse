@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -57,7 +57,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 /**
  * Class providing all the <code>XMain</code> implementations of a UNO
  * project.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -66,18 +66,18 @@ public class MainImplementationsProvider {
     /**
      * Gets all the classes implementing the <code>XMain</code> interface
      * in a UNO project.
-     * 
-     * <p>This method delegates the search to the different language main 
+     *
+     * <p>This method delegates the search to the different language main
      * providers.</p>
-     * 
-     * @param pPrj the project where to find the <code>XMain</code> 
+     *
+     * @param pPrj the project where to find the <code>XMain</code>
      *          implementations
      * @return the list of all the classes implementing the <code>XMain</code>
      *          interface
      */
     public String[] getImplementations(IUnoidlProject pPrj) {
         Vector<String> implementations = new Vector<String>();
-        
+
         if (pPrj instanceof UnoidlProject) {
             IProject project = ((UnoidlProject)pPrj).getProject();
             Vector<IConfigurationElement> mainProviders = getProvidersDefs();
@@ -85,7 +85,7 @@ public class MainImplementationsProvider {
             for (IConfigurationElement providerDef : mainProviders) {
                 try {
                     IMainProvider provider = (IMainProvider)providerDef.
-                    createExecutableExtension("class"); //$NON-NLS-1$
+                                    createExecutableExtension("class"); //$NON-NLS-1$
                     implementations.addAll(provider.getMainNames(project));
                 } catch (Exception e) {
                     // Impossible to get the provider
@@ -94,28 +94,28 @@ public class MainImplementationsProvider {
         }
         return implementations.toArray(new String[implementations.size()]);
     }
-    
+
     /**
      * Convenience method returning the providers definitions from the plugins
      * extensions points descriptions.
-     * 
+     *
      * @return the array of the configuration element for the providers.
      */
     private static Vector<IConfigurationElement> getProvidersDefs() {
         Vector<IConfigurationElement> result = new Vector<IConfigurationElement>();
-        
+
         IExtensionRegistry registry = Platform.getExtensionRegistry();
         IExtensionPoint point = registry.getExtensionPoint(
-                "org.openoffice.ide.eclipse.core.MainProvider"); //$NON-NLS-1$
+                        "org.openoffice.ide.eclipse.core.MainProvider"); //$NON-NLS-1$
         if (point != null) {
-            
+
             IExtension[] extensions = point.getExtensions();
-            
+
             for (int i = 0; i < extensions.length; i++) {
-                
+
                 IConfigurationElement[] elements = extensions[i].
-                        getConfigurationElements();
-            
+                                getConfigurationElements();
+
                 for (int j = 0; j < elements.length; j++) {
                     IConfigurationElement elementj = elements[j];
                     if (elementj.getName().equals("MainProvider")) { //$NON-NLS-1$
@@ -124,7 +124,7 @@ public class MainImplementationsProvider {
                 }
             }
         }
-        
+
         return result;
     }
 }

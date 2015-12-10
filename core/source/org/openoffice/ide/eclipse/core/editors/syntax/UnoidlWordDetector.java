@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -47,25 +47,27 @@ import org.eclipse.jface.text.rules.IWordDetector;
 
 /**
  * Basic rule to detect words in the text.
- * 
+ *
  * @author cedricbosdo
  */
 public class UnoidlWordDetector implements IWordDetector {
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isWordStart(char pChar) {
         boolean isLower = pChar >= 'a' && pChar <= 'z';
         boolean isUpper = pChar >= 'A' && pChar <= 'Z';
-        
-        return isLower || isUpper || (pChar == '.') || (pChar == '_');
+
+        return isLower || isUpper || pChar == '.' || pChar == '_';
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isWordPart(char pChar) {
-        return isWordStart(pChar) || (pChar >= '0' && pChar <= '9');
+        return isWordStart(pChar) || pChar >= '0' && pChar <= '9';
     }
 }

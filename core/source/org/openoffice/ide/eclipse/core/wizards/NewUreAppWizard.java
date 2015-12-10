@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -49,29 +49,29 @@ import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 /**
  * The new URE application wizard is simply a new UNO project wizard, with
  * the inherited interface forced to <code>com::sun::star::lang::XMain</code>.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class NewUreAppWizard extends NewUnoProjectWizard {
-    
+
     /**
      * Constructor.
      */
     public NewUreAppWizard() {
         setDisableServicePage("com::sun::star::lang::XMain"); //$NON-NLS-1$
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void addPages() {
         super.addPages();
-        
+
         mMainPage.setDescription(Messages.getString("NewUreAppWizard.Description")); //$NON-NLS-1$
         mMainPage.setTitle(Messages.getString("NewUreAppWizard.Title")); //$NON-NLS-1$
         mMainPage.setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
-                ImagesConstants.URE_APP_WIZ));
+                        ImagesConstants.URE_APP_WIZ));
     }
 }

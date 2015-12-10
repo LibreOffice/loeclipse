@@ -147,6 +147,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getClassesPath() {
         return mMapper.getClasses();
     }
@@ -154,6 +155,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getLibsPath() {
         // Nothing if not OOo3
         String[] otherPaths = mMapper.getAdditionnalLibs();
@@ -168,6 +170,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getBinPath() {
         // Nothing if not OOo3
         String[] otherPaths = mMapper.getAdditionnalBins();
@@ -183,6 +186,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getTypesPath() {
         return mMapper.getTypes();
     }
@@ -190,6 +194,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getServicesPath() {
         return mMapper.getServices();
     }
@@ -197,6 +202,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getUnorcPath() {
         String path = getLibsPath()[0] + FILE_SEP + "bootstrap"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
@@ -210,6 +216,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getUnoPath() {
         return mMapper.getUnoPath();
     }
@@ -217,6 +224,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void setName(String pName) {
 
         String name = pName;
@@ -261,6 +269,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "OOo " + getName(); //$NON-NLS-1$
     }
@@ -268,6 +277,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
                     String[] pArgs) {
 
@@ -322,6 +332,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getJavaldxPath() {
         String javaldx = getLibsPath() + FILE_SEP + "javaldx"; //$NON-NLS-1$
         return javaldx;
@@ -330,6 +341,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canManagePackages() {
         return true;
     }
@@ -337,6 +349,7 @@ public class OOo extends AbstractOOo {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updatePackage(File pPackageFile, IPath pUserInstallation) {
 
         // Check if there is already a package with the same name
@@ -344,6 +357,7 @@ public class OOo extends AbstractOOo {
             if (containsPackage(pPackageFile.getName(), pUserInstallation)) {
                 mDoRemovePackage = false;
                 Display.getDefault().syncExec(new Runnable() {
+                    @Override
                     public void run() {
                         mDoRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
                                         Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
@@ -361,6 +375,7 @@ public class OOo extends AbstractOOo {
 
         } catch (Exception e) {
             Display.getDefault().asyncExec(new Runnable() {
+                @Override
                 public void run() {
                     MessageDialog.openError(Display.getDefault().getActiveShell(),
                                     Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$

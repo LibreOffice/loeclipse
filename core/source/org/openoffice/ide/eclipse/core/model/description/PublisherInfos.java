@@ -20,29 +20,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.description;
 
 /**
  * Simple structure storing the publisher informations.
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class PublisherInfos {
-    
+
     private DescriptionModel mModel;
-    
+
     private String mUrl = ""; //$NON-NLS-1$
     private String mName = ""; //$NON-NLS-1$
-    
+
     /**
      * @return the url
      */
@@ -75,10 +75,10 @@ public class PublisherInfos {
         }
         mModel.fireModelChanged();
     }
-    
+
     /**
      * Set the description model in order to be able to fire the model changes.
-     * 
+     *
      * @param pModel the parent model
      */
     protected void setModel( DescriptionModel pModel ) {

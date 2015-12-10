@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Cédric Bosdonnat
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.language;
 
@@ -41,9 +41,9 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Base class for the language extensions.
- * 
+ *
  * @author cbosdo
- * 
+ *
  */
 public abstract class AbstractLanguage {
 
@@ -113,9 +113,9 @@ public abstract class AbstractLanguage {
     public abstract ILanguageBuilder getLanguageBuidler();
 
     /**
-     * Launch OpenOffice for debugging and connect the eclipse debugger to it. 
+     * Launch OpenOffice for debugging and connect the eclipse debugger to it.
      * Currently only Java debugging is supported.
-     * 
+     *
      * @param pPrj the target project.
      * @param pLaunch the launch configuration to add our debug target to.
      * @param pUserInstallation user profile.
@@ -125,11 +125,11 @@ public abstract class AbstractLanguage {
                     IProgressMonitor pMonitor);
 
     /**
-     * When in debug mode, we have to configure the 
+     * When in debug mode, we have to configure the
      * appropriate source locator for the respective language.
-     * 
+     *
      * The rest will be taken care by the {@link SourceLookupTab}.
-     * 
+     *
      * @param pConfiguration the configuration to add extra attributes to.
      * @throws CoreException if something went wrong.
      */

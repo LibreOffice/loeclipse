@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -71,43 +71,43 @@ import org.openoffice.ide.eclipse.core.wizards.pages.NewUnoProjectPage;
 import org.openoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
- * New UNO project wizard. 
- * 
+ * New UNO project wizard.
+ *
  * @author cedricbosdo
  *
  */
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
-    
+
     protected NewUnoProjectPage mMainPage;
     private LanguageWizardPage mLanguagePage = null;
     private ServiceWizardSet mServiceSet = null;
-    
-    private String mServiceIfaceName = null; 
-    
+
+    private String mServiceIfaceName = null;
+
     private IWorkbenchPage mActivePage;
 
     /**
      * Constructor.
      */
     public NewUnoProjectWizard() {
-        
+
         super();
         mActivePage = WorkbenchHelper.getActivePage();
         setForcePreviousAndNextButtons(false);
     }
-    
+
     /**
      * Force the inheritance interface to a given value and do not show the service
      * creation pages.
-     * 
+     *
      * <p>This is used by other wizards like the new URE application wizard.</p>
-     * 
+     *
      * @param pIfaceName the inheritance interface to force, separated with "::"
      */
     protected void setDisableServicePage(String pIfaceName) {
         mServiceIfaceName = pIfaceName;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -115,12 +115,12 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     public void addPages() {
         mMainPage = new NewUnoProjectPage("mainpage"); //$NON-NLS-1$
         addPage(mMainPage);
-        
+
         mServiceSet = new ServiceWizardSet(this);
         IWizardPage[] pages = mServiceSet.getPages();
         for (IWizardPage wizardPage : pages) {
             addPage(wizardPage);
-            
+
             // All the pages of the service wizard set should be hidden if
             // the inheritance interface is fixed.
             if (mServiceIfaceName == null || mServiceIfaceName.equals("")) { //$NON-NLS-1$
@@ -128,16 +128,16 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
             }
         }
     }
-    
+
     /**
      * Set the language page to use for the project.
-     * 
+     *
      * @param pPage the language page to use.
      */
     public void setLanguagePage(LanguageWizardPage pPage) {
         if (pPage != null) {
-            if (mLanguagePage == null || 
-                    !mLanguagePage.getClass().equals(pPage.getClass())) {
+            if (mLanguagePage == null ||
+                            !mLanguagePage.getClass().equals(pPage.getClass())) {
                 mLanguagePage = pPage;
                 addPage(mLanguagePage);
             }
@@ -148,7 +148,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
             mLanguagePage = null;
         }
     }
-    
+
     /**
      * This method should be called by included pages to notify any change that
      * could have an impact on other pages.
@@ -156,12 +156,12 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
      * @param pPage the page which has changed.
      */
     public void pageChanged(IWizardPage pPage) {
-        
+
         if (mMainPage.equals(pPage)) {
-            
+
             // change the language page if possible
             updateLoanguagePage( );
-        
+
             try {
                 // Compute the default service name
                 String serviceName = mMainPage.getProjectName().trim();
@@ -179,17 +179,17 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 
                 UnoFactoryData data = new UnoFactoryData();
 
-                data.setProperty(IUnoFactoryConstants.PROJECT_OOO, 
-                        OOoContainer.getOOo(mMainPage.getOOoName()));
+                data.setProperty(IUnoFactoryConstants.PROJECT_OOO,
+                                OOoContainer.getOOo(mMainPage.getOOoName()));
                 data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, mMainPage.getPrefix());
 
                 UnoFactoryData serviceData = new UnoFactoryData();
                 serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
                 serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, serviceName);
-                serviceData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, 
-                        new String[]{ifaceName.replaceAll("\\.", "::")}); //$NON-NLS-1$ //$NON-NLS-2$
-                serviceData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, 
-                        mMainPage.getPrefix().replaceAll("\\.", "::")); //$NON-NLS-1$ //$NON-NLS-2$
+                serviceData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES,
+                                new String[]{ifaceName.replaceAll("\\.", "::")}); //$NON-NLS-1$ //$NON-NLS-2$
+                serviceData.setProperty(IUnoFactoryConstants.PACKAGE_NAME,
+                                mMainPage.getPrefix().replaceAll("\\.", "::")); //$NON-NLS-1$ //$NON-NLS-2$
 
                 data.addInnerData(serviceData);
 
@@ -197,19 +197,19 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                     // Change the default value if the service inheritance name is fixed
                     UnoFactoryData ifaceData = new UnoFactoryData();
                     ifaceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.INTERFACE);
-                    
+
                     String[] splitted = mServiceIfaceName.split("::"); //$NON-NLS-1$
                     String packageName = splitted[0];
                     for (int i = 1; i < splitted.length - 1; i++) {
                         packageName += "::" + splitted[i]; //$NON-NLS-1$
                     }
-                    
+
                     ifaceData.setProperty(IUnoFactoryConstants.TYPE_NAME, splitted[splitted.length - 1]);
                     ifaceData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, packageName);
-                    
+
                     data.addInnerData(ifaceData);
                 }
-                
+
                 mServiceSet.dataChanged(data);
 
                 data.dispose();
@@ -229,7 +229,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         try {
             next = mServiceSet.getNextPage(pPage);
         } catch (NoSuchPageException e) {
-            // Return the default next page if the page is not in the wizard set. 
+            // Return the default next page if the page is not in the wizard set.
             next = super.getNextPage(pPage);
 
             try {
@@ -247,10 +247,10 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 next = null;
             }
         }
-        
+
         return next;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -261,8 +261,8 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
             previous = mServiceSet.getPreviousPage(pPage);
         } catch (NoSuchPageException e) {
             // Return the default previous page if the page is not in the
-            // wizard set. 
-            previous = super.getPreviousPage(pPage);            
+            // wizard set.
+            previous = super.getPreviousPage(pPage);
         }
 
         // If the page is the service page, the previous page shouldn't be null
@@ -275,31 +275,32 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 previous = mMainPage;
             }
         }
-        
+
         return previous;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean performFinish() {
-        
+
         // First gather the data
         UnoFactoryData data = new UnoFactoryData();
         data = mMainPage.fillData(data, true);
         if (mLanguagePage != null) {
             data = mLanguagePage.fillData(data);
         }
-        
+
         new ProjectCreationJob(data).schedule();
-        
+
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public IWorkbench getWorkbench() {
         return OOEclipsePlugin.getDefault().getWorkbench();
     }
@@ -317,35 +318,35 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 page.setProjectInfos( mMainPage.fillData( data, false ) );
             }
             setLanguagePage( page );
-            
+
             // Cleaning
             data.dispose();
         } else {
             setLanguagePage(null);
         }
-        
-        if (mLanguagePage != null) { 
+
+        if (mLanguagePage != null) {
             UnoFactoryData data = new UnoFactoryData();
             mLanguagePage.setProjectInfos(
-                    mMainPage.fillData(data, false));
-            
+                            mMainPage.fillData(data, false));
+
             // cleaning
             data.dispose();
         }
     }
-    
+
     /**
      * Thread executing the project creation tasks.
-     * 
+     *
      * @author cedricbosdo
      */
     private class ProjectCreationJob extends Job {
-        
+
         private UnoFactoryData mData;
-        
+
         /**
          * Constructor.
-         * 
+         *
          * @param pData the data describing the project to create.
          */
         public ProjectCreationJob(UnoFactoryData pData) {
@@ -357,55 +358,57 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         /**
          * {@inheritDoc}
          */
+        @Override
         protected IStatus run(IProgressMonitor pMonitor) {
-            
-            IStatus status = new Status(IStatus.OK, 
-                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-                    IStatus.OK, "", null); //$NON-NLS-1$
-            
+
+            IStatus status = new Status(IStatus.OK,
+                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.OK, "", null); //$NON-NLS-1$
+
             // Create the projet folder structure
             try {
                 IUnoidlProject prj = UnoFactory.createProject(mData, pMonitor);
-                
-                mServiceSet.mProject = prj; 
+
+                mServiceSet.mProject = prj;
                 mServiceSet.doFinish(pMonitor, mActivePage);
-                
+
                 UnoidlProjectHelper.setProjectBuilders(prj);
-                
+
             } catch (Exception e) {
                 Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
                 if (o instanceof IProject) {
                     rollback((IProject)o);
                 }
-                
+
                 Display.getDefault().asyncExec(new Runnable() {
+                    @Override
                     public void run() {
-                        MessageDialog.openError(Display.getDefault().getActiveShell(), 
-                                Messages.getString("NewUnoProjectWizard.ProjectCreationErrorTitle"),  //$NON-NLS-1$
-                                Messages.getString("NewUnoProjectWizard.ProjectCreationErrorMessage")); //$NON-NLS-1$
+                        MessageDialog.openError(Display.getDefault().getActiveShell(),
+                                        Messages.getString("NewUnoProjectWizard.ProjectCreationErrorTitle"),  //$NON-NLS-1$
+                                        Messages.getString("NewUnoProjectWizard.ProjectCreationErrorMessage")); //$NON-NLS-1$
                     }
                 });
                 PluginLogger.error(
-                        Messages.getString("NewUnoProjectWizard.CreateProjectError"), e); //$NON-NLS-1$
-                
-                status = new Status(IStatus.OK, 
-                        OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, 
-                        IStatus.OK, 
-                        Messages.getString("NewUnoProjectWizard.CreateProjectError"),  //$NON-NLS-1$
-                        e);
+                                Messages.getString("NewUnoProjectWizard.CreateProjectError"), e); //$NON-NLS-1$
+
+                status = new Status(IStatus.OK,
+                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                                IStatus.OK,
+                                Messages.getString("NewUnoProjectWizard.CreateProjectError"),  //$NON-NLS-1$
+                                e);
             }
-            
+
             if (mData != null) {
                 mData.dispose();
             }
             mData = null;
-            
+
             return status;
         }
-        
+
         /**
          * Undo the project creation if something have happened during the project creation.
-         * 
+         *
          * @param pProject the project to remove.
          */
         private void rollback(IProject pProject) {
@@ -413,7 +416,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 pProject.delete(true, true, null);
             } catch (CoreException ex) {
                 PluginLogger.debug(
-                        Messages.getString("NewUnoProjectWizard.DeleteProjectError")); //$NON-NLS-1$
+                                Messages.getString("NewUnoProjectWizard.DeleteProjectError")); //$NON-NLS-1$
             }
         }
     }

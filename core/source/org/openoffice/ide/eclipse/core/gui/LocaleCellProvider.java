@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -64,7 +64,7 @@ public class LocaleCellProvider extends CellEditor {
     private Locale mValue;
     private Vector<String> mLanguages;
     private Vector<String> mCountries;
-    
+
     private CCombo mLanguage;
     private CCombo mCountry;
 
@@ -80,10 +80,10 @@ public class LocaleCellProvider extends CellEditor {
      */
     @Override
     protected Control createControl(Composite pParent) {
-        
+
         Composite body = new Composite(pParent, getStyle());
         body.setLayout(new GridLayout(2, false));
-        
+
         // Create the language Combobox
         String[] languagesISO = Locale.getISOLanguages();
         String[] languagesDisplay = new String[languagesISO.length];
@@ -97,7 +97,7 @@ public class LocaleCellProvider extends CellEditor {
             languagesDisplay[i] = locale.getDisplayLanguage();
             mLanguages.add(i, lang);
         }
-        
+
         mLanguage = new CCombo(body, getStyle());
         mLanguage.setLayoutData(new GridData());
         mLanguage.setFont(pParent.getFont());
@@ -109,8 +109,8 @@ public class LocaleCellProvider extends CellEditor {
                 mValue = new Locale(lang, mValue.getCountry());
             }
         });
-        
-        
+
+
         // Create the country Combobox
         String[] countriesISO = Locale.getISOCountries();
         String[] countriesDisplay = new String[countriesISO.length + 1];
@@ -127,7 +127,7 @@ public class LocaleCellProvider extends CellEditor {
             countriesDisplay[i + 1] = locale.getDisplayCountry();
             mCountries.add(i + 1, country);
         }
-        
+
         mCountry = new CCombo(body, getStyle());
         mCountry.setLayoutData(new GridData());
         mCountry.setFont(pParent.getFont());
@@ -139,7 +139,7 @@ public class LocaleCellProvider extends CellEditor {
                 mValue = new Locale(mValue.getLanguage(), country);
             }
         });
-        
+
         return body;
     }
 
@@ -165,7 +165,7 @@ public class LocaleCellProvider extends CellEditor {
     protected void doSetValue(Object pValue) {
         if (pValue instanceof Locale) {
             mValue = (Locale)pValue;
-            
+
             mLanguage.select(mLanguages.indexOf(mValue.getLanguage()));
             mCountry.select(mCountries.indexOf(mValue.getCountry()));
         }

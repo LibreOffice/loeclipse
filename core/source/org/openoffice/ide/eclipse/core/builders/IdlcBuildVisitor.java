@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,32 +56,33 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 /**
  * Class visiting each child of the idl folder to generate the corresponding
  * <code>urd</code> file.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class IdlcBuildVisitor implements IResourceVisitor {
-    
+
     private IProgressMonitor mProgressMonitor;
-    
+
     /**
      * Default constructor.
-     * 
+     *
      * @param pMonitor progress monitor
      */
     public IdlcBuildVisitor(IProgressMonitor pMonitor) {
         mProgressMonitor = pMonitor;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean visit(IResource pResource) throws CoreException {
-        
+
         boolean visitChildren = false;
         if (TypesBuilder.sBuildState == 1) {
             if (IResource.FILE == pResource.getType() &&
-                    "idl".equals(pResource.getFileExtension())) { //$NON-NLS-1$
+                            "idl".equals(pResource.getFileExtension())) { //$NON-NLS-1$
 
                 TypesBuilder.runIdlcOnFile((IFile)pResource, mProgressMonitor);
                 if (mProgressMonitor != null) {
@@ -91,12 +92,12 @@ public class IdlcBuildVisitor implements IResourceVisitor {
             } else if (pResource instanceof IContainer) {
 
                 IUnoidlProject project = ProjectsManager.getProject(
-                        pResource.getProject().getName());
+                                pResource.getProject().getName());
                 IPath resPath = pResource.getProjectRelativePath();
                 IPath idlPath = project.getIdlPath();
 
                 if (resPath.segmentCount() < idlPath.segmentCount() ||
-                        resPath.toString().startsWith(idlPath.toString())) {
+                                resPath.toString().startsWith(idlPath.toString())) {
                     visitChildren = true;
                 }
             }

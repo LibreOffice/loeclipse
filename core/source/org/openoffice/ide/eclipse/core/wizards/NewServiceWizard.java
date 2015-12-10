@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -66,17 +66,17 @@ import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.openoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
- * The wizard for the creation of UNO services. 
- * 
+ * The wizard for the creation of UNO services.
+ *
  * @author cedricbosdo
  *
  */
 public class NewServiceWizard extends BasicNewResourceWizard implements INewWizard {
 
     private IWorkbenchPage mActivePage;
-    
+
     private ServiceWizardSet mWizardSet;
-    
+
     /**
      * Constructor.
      */
@@ -88,34 +88,36 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean performFinish() {
-        
+
         Job serviceJob = new Job(Messages.getString("NewServiceWizard.JobName")) { //$NON-NLS-1$
 
+            @Override
             protected IStatus run(IProgressMonitor pMonitor) {
-                
+
                 IStatus status = new Status(IStatus.OK,
-                        OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                        IStatus.OK, "", null); //$NON-NLS-1$
+                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                                IStatus.OK, "", null); //$NON-NLS-1$
                 try {
 
                     mWizardSet.doFinish(pMonitor, mActivePage);
-                    
+
                 } catch (Exception e) {
                     status = new Status(IStatus.CANCEL,
-                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                            IStatus.OK, 
-                            Messages.getString("NewServiceWizard.CreateServiceError") , e); //$NON-NLS-1$
+                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                                    IStatus.OK,
+                                    Messages.getString("NewServiceWizard.CreateServiceError") , e); //$NON-NLS-1$
                 }
-                
+
                 return status;
             }
-            
+
         };
-        
+
         serviceJob.setPriority(Job.INTERACTIVE);
         serviceJob.schedule();
-        
+
         return true;
     }
 
@@ -128,10 +130,10 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
         try {
             next = mWizardSet.getNextPage(pPage);
         } catch (NoSuchPageException e) { }
-        
+
         return next;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -141,33 +143,34 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
         try {
             previous = mWizardSet.getPreviousPage(pPage);
         } catch (NoSuchPageException e) { }
-        
+
         return previous;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbench pWorkbench, IStructuredSelection pSelection) {
-        
+
         super.init(pWorkbench, pSelection);
-        
+
         if (pSelection.getFirstElement() instanceof IAdaptable) {
-            
+
             IAdaptable adapter = (IAdaptable)pSelection.getFirstElement();
-            IResource resource = (IResource)adapter.getAdapter(IResource.class);
-            
+            IResource resource = adapter.getAdapter(IResource.class);
+
             if (resource != null) {
                 createPages(resource.getProject());
             }
         }
     }
-    
+
     /**
      * Creates all the wizard pages needed by the UNO service creation wizard.
-     * 
+     *
      * <p>The created pages are described by the {@link ServiceWizardSet}.</p>
-     * 
+     *
      * @param pProject the project where to create the service.
      */
     private void createPages(IProject pProject) {
@@ -175,30 +178,30 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
             try {
                 if (pProject.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
                     UnoidlProject unoProject = (UnoidlProject)pProject.getNature(
-                            OOEclipsePlugin.UNO_NATURE_ID);
-                    
+                                    OOEclipsePlugin.UNO_NATURE_ID);
+
                     mWizardSet = new ServiceWizardSet(this);
-                    
+
                     IWizardPage[] pages = mWizardSet.getPages();
                     for (IWizardPage wizardPage : pages) {
                         addPage(wizardPage);
                     }
-                    
+
                     // initializes the wizard
                     UnoFactoryData data = new UnoFactoryData();
                     data.setProperty(IUnoFactoryConstants.PROJECT_NAME, unoProject.getName());
                     data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, unoProject.getCompanyPrefix());
                     data.setProperty(IUnoFactoryConstants.PROJECT_OOO, unoProject.getOOo());
-                    
+
                     UnoFactoryData serviceData = new UnoFactoryData();
                     serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
-                    serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME, 
-                            Messages.getString("NewServiceWizard.DefaultName")); //$NON-NLS-1$
-                    
+                    serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME,
+                                    Messages.getString("NewServiceWizard.DefaultName")); //$NON-NLS-1$
+
                     data.addInnerData(serviceData);
-                    
+
                     mWizardSet.initialize(data);
-                    
+
                 }
             } catch (CoreException e) {
                 PluginLogger.debug(e.getMessage());

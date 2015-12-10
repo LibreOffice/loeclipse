@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unittests;
 
@@ -35,6 +35,7 @@ import java.io.FileFilter;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.Platform;
+import org.openoffice.ide.eclipse.core.internal.model.AbstractOOo;
 import org.openoffice.ide.eclipse.core.internal.model.OOo;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
@@ -42,7 +43,7 @@ import junit.framework.TestCase;
 
 /**
  * Unit test class checking the OOo structure recognition.
- * 
+ *
  * @author Cédric Bosdonnat
  *
  */
@@ -52,7 +53,7 @@ public class OOoTest extends TestCase {
 
     /**
      * Test if the directories checks for various versions of OOo are working.
-     * 
+     *
      * <p>In order to make this test run, a <tt>ooo.tests</tt> variable has to be set. This
      * should point to a directory containing a directory per supported OS, which are:</p>
      * <ul>
@@ -60,15 +61,15 @@ public class OOoTest extends TestCase {
      *  <li>macosx</li>
      *  <li>win32</li>
      * </ul>
-     * 
-     * <p>Each one of these directories have to contain the one directory per installation 
-     * to test. For example, if one wants to test OpenOffice.org 2.4 and 3.1 for Linux, the 
+     *
+     * <p>Each one of these directories have to contain the one directory per installation
+     * to test. For example, if one wants to test OpenOffice.org 2.4 and 3.1 for Linux, the
      * following directories should be created in the <tt>linux</tt> folder:</p>
      * <ul>
      *  <li>OpenOffice.org 2.4</li>
      *  <li>OpenOffice.org 3.1</li>
      * </ul>
-     * 
+     *
      * <p>The names are only used for readability purpose. The tested OOo folders will be these
      * ones.</p>
      */
@@ -79,7 +80,8 @@ public class OOoTest extends TestCase {
 
         // Loop over the platforms
         File[] dirs = testsDir.listFiles( new FileFilter( ) {
-            public boolean accept(File pPathname) {                    
+            @Override
+            public boolean accept(File pPathname) {
                 boolean isDir = pPathname.isDirectory() && pPathname.canRead();
                 boolean isMacos = pPathname.getName().equals( Platform.OS_MACOSX );
                 boolean isWin32 = pPathname.getName().equals( Platform.OS_WIN32 );
@@ -90,13 +92,14 @@ public class OOoTest extends TestCase {
         });
         for (File platformDir : dirs) {
             // Emulate the given platform
-            OOo.setPlatform( platformDir.getName() );
+            AbstractOOo.setPlatform( platformDir.getName() );
 
             // Loop over the installation directories
             File[] instDirs = platformDir.listFiles( new FileFilter( ) {
+                @Override
                 public boolean accept(File pPathname) {
                     return pPathname.isDirectory() && pPathname.canRead();
-                } 
+                }
             });
 
             for (File inst : instDirs) {

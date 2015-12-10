@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Dan Corneanu.
  *
  * Copyright: 2010 by Dan Corneanu
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.launch.office;
 
@@ -58,9 +58,9 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Tab for configuring the LibreOffice launch properties.
- * 
+ *
  * @author cdan
- * 
+ *
  */
 public class OfficeTab extends AbstractLaunchConfigurationTab {
 
@@ -73,6 +73,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createControl(Composite pParent) {
         Composite comp = new Composite(pParent, SWT.NONE);
         comp.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -87,7 +88,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
 
     /**
      * Creates a group with UI controls for changing the launcher's options.
-     * 
+     *
      * @param pParent
      *            the parent composite to add our self to.
      */
@@ -104,7 +105,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
 
     /**
      * Creates a group with UI controls for selecting the target project.
-     * 
+     *
      * @param pParent
      *            the parent composite to add our self to.
      */
@@ -134,10 +135,11 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return Messages.OfficeTab_Title;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -149,6 +151,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
             mProjectTxt.setText(pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""));
@@ -162,6 +165,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void performApply(ILaunchConfigurationWorkingCopy pConfiguration) {
         pConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
         pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, mUseCleanUserInstallation
@@ -182,6 +186,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy pConfiguration) {
         pConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
         pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, true);
@@ -194,7 +199,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
         try {
 
             boolean projectSet = !pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "")
-                .equals("");//$NON-NLS-1$ //$NON-NLS-2$
+                            .equals("");//$NON-NLS-1$
             if (projectSet) {
                 String name = pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;
@@ -208,9 +213,9 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
 
     /**
      * Change listener to be notified when the user touches the UI controls :).
-     * 
+     *
      * @author cdan
-     * 
+     *
      */
     private class ChangeListener extends SelectionAdapter {
         @Override

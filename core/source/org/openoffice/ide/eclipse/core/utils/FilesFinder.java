@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Visitor looking for all the files with given extensions.
- * 
+ *
  * @author cbosdo
  *
  */
@@ -21,30 +21,31 @@ public class FilesFinder implements IResourceVisitor {
     private String[] mExtensions;
     private ArrayList<IFile> mFiles;
     private Set<IPath> mExcludedPaths = new HashSet<IPath>();
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param pExtensions the file extensions to match
      */
     public FilesFinder( String[] pExtensions ) {
         mExtensions = pExtensions;
-        mFiles = new ArrayList<IFile>(); 
+        mFiles = new ArrayList<IFile>();
     }
-    
+
     /**
      * @return the found files
      */
     public ArrayList<IFile> getResults( ) {
         return mFiles;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean visit(IResource pResource) throws CoreException {
 
-        boolean result = false; 
+        boolean result = false;
         IPath resourcePath = pResource.getFullPath();
         if (!this.mExcludedPaths.contains(resourcePath)) {
             if ( pResource.getType() == IResource.FILE ) {
@@ -63,14 +64,14 @@ public class FilesFinder implements IResourceVisitor {
             }
             result = true;
         }
-        
+
         return result;
     }
 
     /**
      * Add a path to exclude in the search.
-     * 
-     * @param pDistPath the path to exclude  
+     *
+     * @param pDistPath the path to exclude
      */
     public void addExclude(IPath pDistPath) {
         this.mExcludedPaths.add(pDistPath);

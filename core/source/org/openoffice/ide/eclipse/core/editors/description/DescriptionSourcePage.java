@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.description;
 
@@ -35,15 +35,15 @@ import org.openoffice.ide.eclipse.core.editors.utils.SourcePage;
 
 /**
  * The source page for the description.xml file.
- * 
+ *
  * @author Cédric Bosdonnat
  *
  */
 public class DescriptionSourcePage extends SourcePage {
-    
+
     /**
      * Description source editor page constructor.
-     * 
+     *
      * @param pFormEditor the editor hosting the page.
      * @param pId the page identifier
      * @param pTitle the page title
@@ -51,7 +51,7 @@ public class DescriptionSourcePage extends SourcePage {
     public DescriptionSourcePage(FormEditor pFormEditor, String pId, String pTitle) {
         super( pFormEditor, pId, pTitle );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -59,7 +59,7 @@ public class DescriptionSourcePage extends SourcePage {
     public boolean canLeaveThePage() {
         DescriptionEditor editor = (DescriptionEditor)getEditor();
         editor.loadDescFromSource();
-        
+
         return super.canLeaveThePage();
     }
 }

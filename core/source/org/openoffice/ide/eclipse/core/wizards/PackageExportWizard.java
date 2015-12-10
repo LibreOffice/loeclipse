@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Cédric Bosdonnat
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.wizards;
 
@@ -50,14 +50,14 @@ import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class for the new OXT export wizard.
- * 
+ *
  * @author Cédric Bosdonnat
- * 
+ *
  */
 public class PackageExportWizard extends Wizard implements IExportWizard {
 
     private static final String DIALOG_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
-    
+
     private UnoPackageExportPage mMainPage;
     private ManifestExportPage mManifestPage;
 
@@ -76,7 +76,7 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
             setDialogSettings( section );
         }
     }
-    
+
     @Override
     public boolean performFinish() {
         boolean finished = false;
@@ -112,13 +112,14 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 PluginLogger.error( "Project couldn't be built", e );
             }
         }
-        
+
         return finished;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(IWorkbench pWorkbench, IStructuredSelection pSelection) {
         // Try hard to find a selected UNO project
         IUnoidlProject prj = null;
@@ -126,20 +127,20 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
         while (it.hasNext() && prj == null) {
             Object o = it.next();
             if (o instanceof IAdaptable) {
-                IResource res = (IResource) ((IAdaptable) o)
-                        .getAdapter(IResource.class);
+                IResource res = ((IAdaptable) o)
+                                .getAdapter(IResource.class);
                 if (res != null) {
                     prj = ProjectsManager
-                            .getProject(res.getProject().getName());
+                                    .getProject(res.getProject().getName());
                 }
             }
         }
-        
+
         setWindowTitle( Messages.getString("PackageExportWizard2.DialogTitle") ); //$NON-NLS-1$
 
         mManifestPage = new ManifestExportPage("page2", prj); //$NON-NLS-1$
         mMainPage = new UnoPackageExportPage("page1", prj, //$NON-NLS-1$
-                mManifestPage);
+                        mManifestPage);
         addPage(mMainPage);
         addPage(mManifestPage);
     }

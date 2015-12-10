@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -55,43 +55,44 @@ import org.eclipse.swt.widgets.Text;
 /**
  * GUI row for a text input. It supports only the Grid Layout
  * and can be extended to manage more complex texts.
- * 
+ *
  * @see org.openoffice.ide.eclipse.core.gui.rows.FileRow
  *         for a file row based on this class
  * @see org.openoffice.ide.eclipse.core.gui.rows.TypeRow
- *         for a UNO type selection row based on this class 
- * 
+ *         for a UNO type selection row based on this class
+ *
  * @author cedricbosdo
  *
  */
 public class TextRow extends LabeledRow
-                     implements FocusListener, KeyListener {
-    
+implements FocusListener, KeyListener {
+
     private String mValue = new String();
     private String mOldValue;
-    
+
     /**
      * Create a new text row.
-     * 
+     *
      * @param pParent the parent composite where to create the row
      * @param pProperty the property name of the row's value
      * @param pLabel the label of the row
      */
     public TextRow(Composite pParent, String pProperty, String pLabel) {
         super(pProperty);
-        
+
         Label aLabel = new Label(pParent, SWT.LEFT | SWT.SHADOW_NONE);
         aLabel.setText(pLabel);
         Text aField = new Text(pParent, SWT.BORDER);
-        
+
         createContent(pParent, aLabel, aField, null, false);
         mField.addFocusListener(this);
         mField.addKeyListener(this);
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void focusGained(FocusEvent pEvent) {
         // Ne fait rien...
     }
@@ -99,15 +100,17 @@ public class TextRow extends LabeledRow
     /**
      * {@inheritDoc}
      */
+    @Override
     public void focusLost(FocusEvent pEvent) {
         if (!((Text)mField).getText().equals(mValue)) {
             setValue(((Text)mField).getText());
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void keyPressed(KeyEvent pEvent) {
         mOldValue = ((Text)mField).getText();
     }
@@ -115,6 +118,7 @@ public class TextRow extends LabeledRow
     /**
      * {@inheritDoc}
      */
+    @Override
     public void keyReleased(KeyEvent pEvent) {
         if (pEvent.getSource().equals(mField)) {
             if (!((Text)mField).getText().equals(mOldValue)) {
@@ -128,13 +132,14 @@ public class TextRow extends LabeledRow
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getValue() {
         return mValue;
     }
-    
+
     /**
      * Set the value of the row.
-     * 
+     *
      * @param pValue the value to set
      */
     public void setValue(String pValue) {
@@ -142,24 +147,24 @@ public class TextRow extends LabeledRow
         if (null == pValue) {
             newText = ""; //$NON-NLS-1$
         }
-        
+
         if (!((Text)mField).getText().equals(newText)) {
             ((Text)mField).setText(newText);
         }
-        
+
         mValue = newText;
         FieldEvent fe = new FieldEvent(getProperty(), getValue());
         fireFieldChangedEvent(fe);
     }
-    
+
     /**
      * Sets the focus on the row.
      */
     public void setFocus() {
-        
+
         Text textField = (Text)mField;
         textField.setFocus();
-        
+
         // Makes the cursor to go at the end of the text
         textField.setSelection(textField.getText().length());
     }

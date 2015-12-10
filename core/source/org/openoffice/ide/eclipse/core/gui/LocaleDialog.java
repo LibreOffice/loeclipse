@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openoffice.ide.eclipse.core.gui;
 
@@ -27,35 +27,35 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Dialog class for the selection of a locale.
- * 
+ *
  * @author cbosdonnat
  *
  */
 public class LocaleDialog extends Dialog {
 
     private ComboViewer mLocaleList;
-    
+
     private Locale mLocale;
     private ArrayList<Locale> mLocales;
-    
+
     /**
      * Creates the dialog using the active shell as parent.
-     * 
+     *
      */
     public LocaleDialog( ) {
         super( new Shell( Display.getDefault() ) );
-        
+
         setShellStyle(SWT.RESIZE | SWT.APPLICATION_MODAL);
     }
-    
+
     /**
      * @return the currently selected locale
      */
     public Locale getLocale( ) {
-        
+
         return mLocale;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -64,12 +64,12 @@ public class LocaleDialog extends Dialog {
         Composite body = (Composite)super.createDialogArea(pParent);
         body.setLayout( new GridLayout( 2, false ) );
         body.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-        
+
         // Language
         Label langLbl = new Label( body, SWT.NONE );
         langLbl.setText( Messages.getString("LocaleDialog.Title") ); //$NON-NLS-1$
         langLbl.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING ) );
-        
+
         Combo list = new Combo( body, SWT.READ_ONLY | SWT.DROP_DOWN );
         list.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
         mLocaleList = new ComboViewer( list );
@@ -78,22 +78,23 @@ public class LocaleDialog extends Dialog {
         mLocaleList.setSorter( new ViewerSorter () );
         mLocaleList.addSelectionChangedListener( new ISelectionChangedListener( ) {
 
+            @Override
             public void selectionChanged(SelectionChangedEvent pEvent) {
                 Locale locale = null;
                 IStructuredSelection sel = (IStructuredSelection)mLocaleList.getSelection();
                 if ( !sel.isEmpty() ) {
                     locale = (Locale) sel.getFirstElement();
-                } 
+                }
                 mLocale = locale;
             }
-            
+
         });
-        
-        
+
+
         mLocales = new ArrayList<Locale>( );
         mLocales.addAll( Arrays.asList( Locale.getAvailableLocales() ) );
         mLocaleList.setInput( mLocales );
-        
+
         return body;
     }
 }

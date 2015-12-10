@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -52,15 +52,16 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 /**
  * Class providing all the UNO projects labels to the SWT tables and trees
  * showing UNO projects.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class UnoProjectLabelProvider extends LabelProvider {
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public Image getImage(Object pElement) {
         return OOEclipsePlugin.getImage(ImagesConstants.UNO_PROJECT);
     }
@@ -68,6 +69,7 @@ public class UnoProjectLabelProvider extends LabelProvider {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getText(Object pElement) {
         String text = null;
         if (pElement instanceof IUnoidlProject) {

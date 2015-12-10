@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,35 +56,35 @@ import org.openoffice.plugin.core.utils.FileHelper;
 
 /**
  * Builder for the URD files generating the <code>types.rdb</code> registry.
- * 
+ *
  * <p>This builder should not be associated directly
- * to a UNO project: the right builder for this is {@link TypesBuilder}. 
- * This builder doesn't make any difference between full and incremental 
+ * to a UNO project: the right builder for this is {@link TypesBuilder}.
+ * This builder doesn't make any difference between full and incremental
  * builds.</p>
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class RegmergeBuilder {
-        
+
     /**
-     * Root of the generated types, used by regmerge and javamaker. UCR 
-     * is chosen for LibreOffice compatibility 
+     * Root of the generated types, used by regmerge and javamaker. UCR
+     * is chosen for LibreOffice compatibility
      */
     public static final String TYPE_ROOT_KEY = "/UCR"; //$NON-NLS-1$
-    
+
     /**
      * Computes the full build of all the <code>urd</code> files into a single
-     * <code>types.rdb</code> file. This resulting file is given by 
+     * <code>types.rdb</code> file. This resulting file is given by
      * {@link IUnoidlProject#getTypesPath()}. This methods simply launches the
      * {@link RegmergeBuildVisitor} on the urd folder.
-     * 
+     *
      * @param pUnoprj the project to build
      * @param pMonitor a monitor to watch the build progress
      * @throws Exception is thrown is anything wrong happens
      */
     public static void build(IUnoidlProject pUnoprj, IProgressMonitor pMonitor) throws Exception {
-        
+
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoprj.getName());
 
         IFile typesFile = pUnoprj.getFile(pUnoprj.getTypesPath());
@@ -102,27 +102,27 @@ public class RegmergeBuilder {
     }
 
     /**
-     * Convenience method to execute the <code>regmerge</code> tool 
+     * Convenience method to execute the <code>regmerge</code> tool
      * on a given file.
-     * 
+     *
      * @param pFile the file to run <code>regmerge</code> on.
      * @param pUnoprj the UNO project on which to run the <code>regmerge</code> tool
      * @param pMonitor a progress monitor
      */
     static void runRegmergeOnFile(File pFile, IUnoidlProject pUnoprj, IProgressMonitor pMonitor) {
-        
-        // The registry file is placed in the root of the project as announced 
+
+        // The registry file is placed in the root of the project as announced
         // to the api-dev mailing-list
         IFile mergeFile = pUnoprj.getFile(pUnoprj.getTypesPath());
-        
+
         String existingReg = ""; //$NON-NLS-1$
         if (mergeFile.exists()) {
             existingReg = mergeFile.getProjectRelativePath().toOSString() + " "; //$NON-NLS-1$
         }
-        
+
         String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
-                           existingReg + "\"" + pFile.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-        
+                        existingReg + "\"" + pFile.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+
         // Process creation. Need to set the PATH value using OOo path: due to some tools changes in 3.1
         String[] sPaths = pUnoprj.getOOo().getBinPath();
         String sPathValue = "PATH="; //$NON-NLS-1$
@@ -132,11 +132,11 @@ public class RegmergeBuilder {
             }
             sPathValue += sPath;
         }
-        
+
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pUnoprj.getName() );
-        Process process = pUnoprj.getSdk().runToolWithEnv( prj, 
-                pUnoprj.getOOo(), command, new String[]{ sPathValue }, pMonitor);
-        
+        Process process = pUnoprj.getSdk().runToolWithEnv( prj,
+                        pUnoprj.getOOo(), command, new String[]{ sPathValue }, pMonitor);
+
         // Just wait for the process to end before destroying it
         try {
             process.waitFor();
