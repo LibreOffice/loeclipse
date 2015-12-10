@@ -1,19 +1,17 @@
 # LOEclipse
 
-This plugin helps with developing and debugging LibreOffice extensions from Eclipse.
+This plugin helps with developing and debugging LibreOffice extensions/components from Eclipse.
 
-More information can be found on [this site](http://bosdonnat.fr/pages/libreoffice-eclipse.html).
+This release supports only LibreOffice 5.0 and upwards (due to some changed internal paths).
+For historic releases supporting older versions of LibreOffice (and OpenOffice) visit [this site](http://bosdonnat.fr/pages/libreoffice-eclipse.html).
 
 ## Installation
 
-Using update sites
-* Launch eclipse
-* Help->Software updates->Find & install
-* Select the "Add new features" option
-* Add a new update site pointing to one of:
-  * `http://cedric.bosdonnat.free.fr/ooeclipseintegration/` (to install a released version)
-  * the `site` directory (when building from source)
-* Now click Next and follow the wizard's instructions
+Install this plugin via an update site in Eclipse pointing to one of:
+* `http://cedric.bosdonnat.free.fr/ooeclipseintegration/` (to install a released version)
+* the `site` directory (when building from source)
+
+After installing the plugin, you can create new extensions/components by using *File->New->Project->LibreOffice*.
 
 ## Documentation
 
