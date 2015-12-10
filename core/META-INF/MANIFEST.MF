@@ -2,8 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: LibreOffice eclipse integration - core
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.core;singleton:=true
+Bundle-Vendor: The Document Foundation
 Bundle-Version: 1.2.0
 Bundle-Activator: org.libreoffice.ide.eclipse.core.OOEclipsePlugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.jface.text,
@@ -18,7 +21,6 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.debug.core;visibility:=reexport,
  org.eclipse.debug.ui,
  org.eclipse.ui
-Bundle-ActivationPolicy: lazy
 Export-Package: org.libreoffice.ide.eclipse.core,
  org.libreoffice.ide.eclipse.core.actions,
  org.libreoffice.ide.eclipse.core.builders,
@@ -52,5 +54,3 @@ Export-Package: org.libreoffice.ide.eclipse.core,
  org.libreoffice.ide.eclipse.core.wizards.pages,
  org.libreoffice.plugin.core.model,
  org.libreoffice.plugin.core.utils
-Bundle-Vendor: The Document Foundation
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7

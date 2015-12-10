@@ -2,9 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Java Plug-in for LibreOffice eclipse integration
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.java;singleton:=true
+Bundle-Vendor: The Document Foundation
 Bundle-Version: 1.0.3
 Bundle-Activator: org.libreoffice.ide.eclipse.java.OOoJavaPlugin
-Bundle-Vendor: The Document Foundation
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.ui,
  org.libreoffice.ide.eclipse.core,
  org.eclipse.core.resources,
@@ -17,5 +19,3 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.cheatsheets,
  org.eclipse.jdt.debug.ui;bundle-version="3.4.1"
-Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
