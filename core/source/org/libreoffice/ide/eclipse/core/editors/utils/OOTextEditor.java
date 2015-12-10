@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.TextEditor;
 
 /**
- * Base class for an enhanced text editor to be used in the ooeclipse plugins.
+ * Base class for an enhanced text editor to be used in the loeclipse plugins.
  *
  * @author Cédric Bosdonnat <cedric.bosdonnat@free.fr>
  *

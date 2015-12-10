@@ -40,7 +40,7 @@
  * Contributor(s): Cedric Bosdonnat                                                              
  ====================================================================== -->
 
-<project name="ooeclipseintegration" default="site">
+<project name="loeclipseintegration" default="site">
 	<presetdef name="javac">
 		<javac includeantruntime="false" />
 	</presetdef>
@@ -84,7 +84,7 @@
             </fileset>
         </path>
 		
-        <dirname property="build.basedir" file="${ant.file.ooeclipseintegration}"/>
+        <dirname property="build.basedir" file="${ant.file.loeclipseintegration}"/>
 		<property name="out.path" value="${basedir}/../site" />
 		<condition property="debug" value="false">
 			<not>
@@ -100,7 +100,7 @@
 	<target name="purge" description="Cleans all the output results" 
 		depends="core.purge, java.purge">
 		<delete dir="../site"/>
-		<delete file="../ooeclipseintegration_site.zip" />
+		<delete file="../loeclipseintegration_site.zip" />
 	</target>
 	
 	<target name="versions" depends="core.version, java.version" />
@@ -154,7 +154,7 @@
 
 	<target name="archive-site" description="Create a zip for the update site"
 		depends="site">
-		<zip destfile="../ooeclipseintegration_site.zip"
+		<zip destfile="../loeclipseintegration_site.zip"
 			basedir="${out.path}"
 			includes="plugins/**, features/**, site.xml" />
 	</target>

@@ -148,7 +148,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
         OOoContainer.load();
         SDKContainer.load();
 
-        PluginLogger.info("OOEclipseIntegration started"); //$NON-NLS-1$
+        PluginLogger.info("LOEclipseIntegration started"); //$NON-NLS-1$
     }
 
     /**

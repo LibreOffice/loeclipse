@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: ooeclipseintegration style
+    Checkstyle-Configuration: loeclipseintegration style
     Description: none
 -->
 <module name="Checker">
