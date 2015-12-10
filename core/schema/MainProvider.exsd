@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.openoffice.ide.eclipse.core">
+<schema targetNamespace="org.libreoffice.ide.eclipse.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.openoffice.ide.eclipse.core" id="MainProvider" name="Provides XMain implementations for different languages"/>
+         <meta.schema plugin="org.libreoffice.ide.eclipse.core" id="MainProvider" name="Provides XMain implementations for different languages"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -50,7 +50,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.launch.IMainProvider"/>
+                  <meta.attribute kind="java" basedOn="org.libreoffice.ide.eclipse.core.launch.IMainProvider"/>
                </appInfo>
             </annotation>
          </attribute>

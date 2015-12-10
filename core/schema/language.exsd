@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.openoffice.ide.eclipse.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.libreoffice.ide.eclipse.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.openoffice.ide.eclipse.core" id="language" name="Uno-idl project language binding Extension point"/>
+         <meta.schema plugin="org.libreoffice.ide.eclipse.core" id="language" name="Uno-idl project language binding Extension point"/>
       </appInfo>
       <documentation>
          This extension point has to be used for the definition of a new language supported by the LibreOffice development plugin.
@@ -68,10 +68,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class implementing the org.openoffice.ide.eclipse.core.model.ILanguage.
+                  Class implementing the org.libreoffice.ide.eclipse.core.model.ILanguage.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.language.AbstractLanguage:"/>
+                  <meta.attribute kind="java" basedOn="org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -91,7 +91,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage:"/>
+                  <meta.attribute kind="java" basedOn="org.libreoffice.ide.eclipse.core.model.language.LanguageWizardPage:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -106,7 +106,7 @@
                   Part at the end of the UNO export wizard. It generally contains build scripts related controls.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.openoffice.ide.eclipse.core.model.language.LanguageExportPart:"/>
+                  <meta.attribute kind="java" basedOn="org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart:"/>
                </appInfo>
             </annotation>
          </attribute>

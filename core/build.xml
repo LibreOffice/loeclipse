@@ -135,12 +135,12 @@
 		
 		<javadoc 
 			useexternalfile="true"
-			packagenames="org.openoffice.ide.eclipse.core.*"
+			packagenames="org.libreoffice.ide.eclipse.core.*"
 			classpathref="core.dependencies.path"
 			destdir="${core.basedir}/doc/help/html/api">
 				
 			<packageset dir="${core.basedir}/source">
-				<include name="org/openoffice/ide/eclipse/core/**"/>
+				<include name="org/libreoffice/ide/eclipse/core/**"/>
 				<exclude name="**/internal/**"/>
 				<exclude name="**/unittests/**"/>
 			</packageset>

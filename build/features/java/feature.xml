@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.openoffice.ide.eclipse.java" label="LibreOffice development plugin support for Java implementation" version="${java.Bundle-Version}" provider-name="Cédric Bosdonnat">
+<feature id="org.libreoffice.ide.eclipse.java" label="LibreOffice development plugin support for Java implementation" version="${java.Bundle-Version}" provider-name="Cédric Bosdonnat">
   <description>
       This plugin provides the support of Java implementation for LibreOffice
 component development. This plugin depends on the LibreOffice development
@@ -320,6 +320,6 @@ version for the Library.
   <requires>
     <import feature="org.eclipse.jdt"/>
   </requires>
-  <plugin id="org.openoffice.ide.eclipse.java" download-size="0" install-size="0" version="${java.Bundle-Version}" unpack="false"/>
-  <plugin id="org.openoffice.ide.eclipse.core" download-size="0" install-size="0" version="${core.Bundle-Version}" unpack="false"/>
+  <plugin id="org.libreoffice.ide.eclipse.java" download-size="0" install-size="0" version="${java.Bundle-Version}" unpack="false"/>
+  <plugin id="org.libreoffice.ide.eclipse.core" download-size="0" install-size="0" version="${core.Bundle-Version}" unpack="false"/>
 </feature>

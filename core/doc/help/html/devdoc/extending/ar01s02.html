@@ -27,34 +27,34 @@ the following values to fill in the form:</p>
 <div class="itemizedlist">
 <ul type="disc">
 	<li>
-	<p>Name: <code class="literal">org.openoffice.ide.eclipse.&lt;language&gt;</code></p>
+	<p>Name: <code class="literal">org.libreoffice.ide.eclipse.&lt;language&gt;</code></p>
 	</li>
 	<li>
-	<p>Plugin ID: <code class="literal">org.openoffice.ide.eclipse.&lt;language&gt;</code></p>
+	<p>Plugin ID: <code class="literal">org.libreoffice.ide.eclipse.&lt;language&gt;</code></p>
 	</li>
 	<li>
-	<p>Class name: <code class="literal">org.openoffice.ide.eclipse.&lt;language&gt;.&lt;Language&gt;Plugin</code></p>
+	<p>Class name: <code class="literal">org.libreoffice.ide.eclipse.&lt;language&gt;.&lt;Language&gt;Plugin</code></p>
 	</li>
 </ul>
 </div>
 <p>In the opened editor, go to the &#8220;<span class="strong"><strong>dependencies</strong></span>&#8221;
-page and add the <code class="literal">org.openoffice.ide.eclipse.core</code>
+page and add the <code class="literal">org.libreoffice.ide.eclipse.core</code>
 plugin to the list. In order to fit the other plugins, rename the <code
 	class="literal">src</code> folder into <code class="literal">source</code>.
 To have a short directory name, rename you project directory in <code
 	class="literal">&lt;language&gt;</code> using your preferred file
 browser.</p>
 <p>Adding a new implementation language support means using two
-extensions points defined by the <code class="literal">org.openoffice.ide.eclipse.core</code>
+extensions points defined by the <code class="literal">org.libreoffice.ide.eclipse.core</code>
 plugin:</p>
 <div class="itemizedlist">
 <ul type="disc">
 	<li>
-	<p><code class="literal">org.openoffice.ide.eclipse.core.language</code>:
+	<p><code class="literal">org.libreoffice.ide.eclipse.core.language</code>:
 	the main extension point for the new language plugin</p>
 	</li>
 	<li>
-	<p><code class="literal">org.openoffice.ide.eclipse.core.MainProvider</code>:
+	<p><code class="literal">org.libreoffice.ide.eclipse.core.MainProvider</code>:
 	helps to show the implementations classes in the URE launch
 	configuration tab.</p>
 	</li>
@@ -71,7 +71,7 @@ point</h3>
 </div>
 <p>Now you are ready to add a new language in your freshly created
 plugin. Therefore go to the &#8220;<span class="strong"><strong>extensions</strong></span>&#8221;
-page and add a new <code class="literal">org.openoffice.ide.eclipse.core.language</code>
+page and add a new <code class="literal">org.libreoffice.ide.eclipse.core.language</code>
 extension.</p>
 <p>Now right click on it and select language to add a language item
 to configure. Change the name into the language name to print in the

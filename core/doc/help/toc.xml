@@ -14,15 +14,15 @@
   </topic>
   
   <topic label="API Reference" href="doc/help/html/api/overview-summary.html">
-     <topic label="actions" href="doc/help/html/api/org/openoffice/ide/eclipse/actions/package-summary.html" />
-     <topic label="builders" href="doc/help/html/api/org/openoffice/ide/eclipse/builders/package-summary.html" />
-     <topic label="editors" href="doc/help/html/api/org/openoffice/ide/eclipse/editors/package-summary.html" />
-     <topic label="gui" href="doc/help/html/api/org/openoffice/ide/eclipse/gui/package-summary.html" />
-     <topic label="i18n" href="doc/help/html/api/org/openoffice/ide/eclipse/i18n/package-summary.html" />
-     <topic label="model" href="doc/help/html/api/org/openoffice/ide/eclipse/model/package-summary.html" />
-     <topic label="preferences" href="doc/help/html/api/org/openoffice/ide/eclipse/preferences/package-summary.html" />
-     <topic label="unotypebrowser" href="doc/help/html/api/org/openoffice/ide/eclipse/unotypebrowser/package-summary.html" />
-     <topic label="wizards" href="doc/help/html/api/org/openoffice/ide/eclipse/wizards/package-summary.html" />
+     <topic label="actions" href="doc/help/html/api/org/libreoffice/ide/eclipse/actions/package-summary.html" />
+     <topic label="builders" href="doc/help/html/api/org/libreoffice/ide/eclipse/builders/package-summary.html" />
+     <topic label="editors" href="doc/help/html/api/org/libreoffice/ide/eclipse/editors/package-summary.html" />
+     <topic label="gui" href="doc/help/html/api/org/libreoffice/ide/eclipse/gui/package-summary.html" />
+     <topic label="i18n" href="doc/help/html/api/org/libreoffice/ide/eclipse/i18n/package-summary.html" />
+     <topic label="model" href="doc/help/html/api/org/libreoffice/ide/eclipse/model/package-summary.html" />
+     <topic label="preferences" href="doc/help/html/api/org/libreoffice/ide/eclipse/preferences/package-summary.html" />
+     <topic label="unotypebrowser" href="doc/help/html/api/org/libreoffice/ide/eclipse/unotypebrowser/package-summary.html" />
+     <topic label="wizards" href="doc/help/html/api/org/libreoffice/ide/eclipse/wizards/package-summary.html" />
   </topic>
   
 </toc>

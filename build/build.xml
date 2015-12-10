@@ -73,7 +73,7 @@
 	
 	<target name="init-env" depends="core.init-env, java.init-env">
 
-		<property name="package.prefix" value="org.openoffice.ide.eclipse"/>
+		<property name="package.prefix" value="org.libreoffice.ide.eclipse"/>
 
 		<property name="office.basis.dir" value="${libreoffice.home}" />
 		<property name="office.ure.dir" value="${office.basis.dir}${file.separator}program"/>

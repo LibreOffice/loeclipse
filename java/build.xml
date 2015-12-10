@@ -129,8 +129,8 @@
 
         <!-- Echo the needed bits for site.xml -->
         <copy tofile="${out.path}/site-java.xml" file="${build.basedir}/site-feature.xml" />
-        <replace file="${out.path}/site-java.xml" token="@@URL@@" value="features/org.openoffice.ide.eclipse.java_${java.Bundle-Version}.jar"/>
-        <replace file="${out.path}/site-java.xml" token="@@ID@@" value="org.openoffice.ide.eclipse.java"/>
+        <replace file="${out.path}/site-java.xml" token="@@URL@@" value="features/org.libreoffice.ide.eclipse.java_${java.Bundle-Version}.jar"/>
+        <replace file="${out.path}/site-java.xml" token="@@ID@@" value="org.libreoffice.ide.eclipse.java"/>
         <replace file="${out.path}/site-java.xml" token="@@VERSION@@" value="${java.Bundle-Version}"/>
 
 		<!-- Copying the plugins -->

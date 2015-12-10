@@ -98,9 +98,9 @@
 
 	<xs:complexType name="TDependencies">
 		<xs:sequence>
-			<xs:element name="OpenOffice.org-minimal-version" type="TVersion"
+			<xs:element name="openoffice.org-minimal-version" type="TVersion"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="OpenOffice.org-maximal-version" type="TVersion"
+			<xs:element name="openoffice.org-maximal-version" type="TVersion"
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>

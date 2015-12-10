@@ -6,68 +6,68 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.idl.UnoidlEditor"
+            class="org.libreoffice.ide.eclipse.core.editors.idl.UnoidlEditor"
             default="true"
             extensions="idl"
             icon="icons/idl_file.gif"
-            id="org.openoffice.ide.eclipse.core.editors.UnoidlEditor"
+            id="org.libreoffice.ide.eclipse.core.editors.UnoidlEditor"
             name="%idleditor.name"/>
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.registry.RegEditor"
+            class="org.libreoffice.ide.eclipse.core.editors.registry.RegEditor"
             default="true"
             extensions="rdb, urd"
             icon="icons/db_file.gif"
-            id="org.openoffice.ide.eclipse.core.editors.regvieweditor"
+            id="org.libreoffice.ide.eclipse.core.editors.regvieweditor"
             name="%regeditor.name"/>
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.pack.PackagePropertiesEditor"
+            class="org.libreoffice.ide.eclipse.core.editors.pack.PackagePropertiesEditor"
             default="true"
             filenames="package.properties"
             icon="icons/build_exec.gif"
-            id="org.openoffice.ide.eclipse.core.editors.extproperties"
+            id="org.libreoffice.ide.eclipse.core.editors.extproperties"
             name="%package.editor.name"/>
       <editor
-            class="org.openoffice.ide.eclipse.core.editors.description.DescriptionEditor"
+            class="org.libreoffice.ide.eclipse.core.editors.description.DescriptionEditor"
             default="true"
             filenames="description.xml"
             icon="icons/build_exec.gif"
-            id="org.openoffice.ide.eclipse.core.editors.description"
+            id="org.libreoffice.ide.eclipse.core.editors.description"
             name="%description.editor.name"/>
    </extension>
    
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.openoffice.ide.eclipse.core.preferences.MainPage"
+            class="org.libreoffice.ide.eclipse.core.preferences.MainPage"
             name="%preferences.oooplugin"
-            id="org.openoffice.ide.eclipse.core.preferences.main"/>
+            id="org.libreoffice.ide.eclipse.core.preferences.main"/>
       <page
-            class="org.openoffice.ide.eclipse.core.preferences.UnoidlEditorPage"
-            category="org.openoffice.ide.eclipse.core.preferences.main"
+            class="org.libreoffice.ide.eclipse.core.preferences.UnoidlEditorPage"
+            category="org.libreoffice.ide.eclipse.core.preferences.main"
             name="%preferences.unoidleditor"
-            id="org.openoffice.ide.eclipse.core.preferences.unoidlEditor"/>
+            id="org.libreoffice.ide.eclipse.core.preferences.unoidlEditor"/>
       <page
-            class="org.openoffice.ide.eclipse.core.preferences.UnoSDKConfigPage"
-            category="org.openoffice.ide.eclipse.core.preferences.main"
-            id="org.openoffice.ide.eclipse.core.preferences.unosdkconfig"
+            class="org.libreoffice.ide.eclipse.core.preferences.UnoSDKConfigPage"
+            category="org.libreoffice.ide.eclipse.core.preferences.main"
+            id="org.libreoffice.ide.eclipse.core.preferences.unosdkconfig"
             name="%preferences.sdkconfig"/>
    </extension>
    
     <extension
    		 point="org.eclipse.ui.newWizards">
    	  <category
-   	        id="org.openoffice.ide.eclipse.core"
+   	        id="org.libreoffice.ide.eclipse.core"
    	        name="%wizards">
    	  </category>
       <wizard
             canFinishEarly="false"
-            category="org.openoffice.ide.eclipse.core"
+            category="org.libreoffice.ide.eclipse.core"
             hasPages="true"
             icon="icons/newunoproject.gif"
-            id="org.openoffice.ide.eclipse.core.newunoproject"
+            id="org.libreoffice.ide.eclipse.core.newunoproject"
             name="%wizards.unoidlproject"
             project="true">
-         <class class="org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard">
+         <class class="org.libreoffice.ide.eclipse.core.wizards.NewUnoProjectWizard">
          	<parameter name="unoproject" value="true"/>
          </class>
          <description>
@@ -76,13 +76,13 @@
       </wizard>
       <wizard
             canFinishEarly="false"
-            category="org.openoffice.ide.eclipse.core"
+            category="org.libreoffice.ide.eclipse.core"
             hasPages="true"
             icon="icons/newservice.gif"
-            id="org.openoffice.ide.eclipse.core.newservice"
+            id="org.libreoffice.ide.eclipse.core.newservice"
             name="%wizards.service"
             project="false">
-         <class class="org.openoffice.ide.eclipse.core.wizards.NewServiceWizard">
+         <class class="org.libreoffice.ide.eclipse.core.wizards.NewServiceWizard">
          	<parameter name="unotype" value="true"/>
          </class>
          <description>
@@ -91,13 +91,13 @@
       </wizard>
       <wizard
             canFinishEarly="false"
-            category="org.openoffice.ide.eclipse.core"
+            category="org.libreoffice.ide.eclipse.core"
             hasPages="true"
             icon="icons/newinterface.gif"
-            id="org.openoffice.ide.eclipse.core.newinterface"
+            id="org.libreoffice.ide.eclipse.core.newinterface"
             name="%wizards.interface"
             project="false">
-         <class class="org.openoffice.ide.eclipse.core.wizards.NewInterfaceWizard">
+         <class class="org.libreoffice.ide.eclipse.core.wizards.NewInterfaceWizard">
          	<parameter name="unotype" value="true"/>
          </class>
          <description>
@@ -106,13 +106,13 @@
       </wizard>
       <wizard
             canFinishEarly="true"
-            category="org.openoffice.ide.eclipse.core"
+            category="org.libreoffice.ide.eclipse.core"
             hasPages="true"
             icon="icons/new_ure_app.gif"
-            id="org.openoffice.ide.eclipse.core.newureapp"
+            id="org.libreoffice.ide.eclipse.core.newureapp"
             name="%wizard.ure.name"
             project="true">
-         <class class="org.openoffice.ide.eclipse.core.wizards.NewUreAppWizard">
+         <class class="org.libreoffice.ide.eclipse.core.wizards.NewUreAppWizard">
          	<parameter name="unoproject" value="true"/>
          </class>
          <description>
@@ -125,29 +125,29 @@
          name="%nature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
-         <run class="org.openoffice.ide.eclipse.core.internal.model.UnoidlProject"/>
+         <run class="org.libreoffice.ide.eclipse.core.internal.model.UnoidlProject"/>
       </runtime>
-	  <builder id="org.openoffice.ide.eclipse.core.types"/>
+	  <builder id="org.libreoffice.ide.eclipse.core.types"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             description="%newactions.description"
-            id="org.openoffice.ide.eclipse.core.newactions"
+            id="org.libreoffice.ide.eclipse.core.newactions"
             label="%newactions.name"
             visible="true">
          <action
-               class="org.openoffice.ide.eclipse.core.actions.UnoProjectPulldownAction"
+               class="org.libreoffice.ide.eclipse.core.actions.UnoProjectPulldownAction"
                icon="icons/newunoproject.gif"
-               id="org.openoffice.ide.eclipse.core.newactions.newproject"
+               id="org.libreoffice.ide.eclipse.core.newactions.newproject"
                label="%newactions.newproject.name"
                style="pulldown"
                toolbarPath="uno"
                tooltip="%newactions.newproject.tooltip"/>
          <action
-               class="org.openoffice.ide.eclipse.core.actions.UnoTypePulldownAction"
+               class="org.libreoffice.ide.eclipse.core.actions.UnoTypePulldownAction"
                icon="icons/newservice.gif"
-               id="org.openoffice.ide.eclipse.core.newactions.newtype"
+               id="org.libreoffice.ide.eclipse.core.newactions.newtype"
                label="%action.service.label"
                style="pulldown"
                toolbarPath="uno"
@@ -161,15 +161,15 @@
       <builder
             hasNature="true"
             isConfigurable="false">
-         <run class="org.openoffice.ide.eclipse.core.builders.TypesBuilder"/>
+         <run class="org.libreoffice.ide.eclipse.core.builders.TypesBuilder"/>
       </builder>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
             adaptable="true"
-            class="org.openoffice.ide.eclipse.core.gui.UnoidlDecorator"
-            id="org.openoffice.ide.eclipse.core.decorator"
+            class="org.libreoffice.ide.eclipse.core.gui.UnoidlDecorator"
+            id="org.libreoffice.ide.eclipse.core.decorator"
             label="%decorator.name"
             state="true">
          <enablement>
@@ -194,13 +194,13 @@
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
-            id="org.openoffice.ide.eclipse.core.cheatsheets"
+            id="org.libreoffice.ide.eclipse.core.cheatsheets"
             name="%cheatsheets.name"/>
 	  <!-- Uncomment when the cheatsheet will be reworked
       <cheatsheet
-            category="org.openoffice.ide.eclipse.core.cheatsheets"
+            category="org.libreoffice.ide.eclipse.core.cheatsheets"
             contentFile="$nl$/doc/cheatsheets/starting.xml"
-            id="org.openoffice.ide.eclipse.core.cheatsheets.starting"
+            id="org.libreoffice.ide.eclipse.core.cheatsheets.starting"
             name="%cheatsheets.starting.name">
          <description>
             %cheatsheets.starting.description
@@ -243,12 +243,12 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.openoffice.ide.eclipse.core.preferences.ProjectPropertiesPage"
-            id="org.openoffice.ide.eclipse.core.projectproperties"
+            class="org.libreoffice.ide.eclipse.core.preferences.ProjectPropertiesPage"
+            id="org.libreoffice.ide.eclipse.core.projectproperties"
             name="%project.propertypage.name">
          <filter
                name="nature"
-               value="org.openoffice.ide.eclipse.core.unonature"/>
+               value="org.libreoffice.ide.eclipse.core.unonature"/>
          <enabledWhen>
             <adapt
                   type="org.eclipse.core.resources.IProject">
@@ -259,15 +259,15 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.openoffice.ide.eclipse.core.launch.UreLaunchDelegate"
-            id="org.openoffice.ide.eclipse.core.launchUreApplication"
+            delegate="org.libreoffice.ide.eclipse.core.launch.UreLaunchDelegate"
+            id="org.libreoffice.ide.eclipse.core.launchUreApplication"
             modes="run"
             name="%launch.ure"/>
       <launchConfigurationType
-            delegate="org.openoffice.ide.eclipse.core.launch.office.OfficeLaunchDelegate"
+            delegate="org.libreoffice.ide.eclipse.core.launch.office.OfficeLaunchDelegate"
             delegateDescription="The Open Office launcher supports running and remote debugging Open Office extensions."
             delegateName="Open Office Launcher"
-            id="org.openoffice.ide.eclipse.core.launchOpenOffice"
+            id="org.libreoffice.ide.eclipse.core.launchlibreoffice"
             modes="run,debug"
             name="%launch.libreoffice">
       </launchConfigurationType>
@@ -275,42 +275,42 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.openoffice.ide.eclipse.core.launch.LaunchConfigurationTabs"
-            id="org.openoffice.ide.eclipse.core.launchConfigurationTabGroup1"
-            type="org.openoffice.ide.eclipse.core.launchUreApplication"/>
+            class="org.libreoffice.ide.eclipse.core.launch.LaunchConfigurationTabs"
+            id="org.libreoffice.ide.eclipse.core.launchConfigurationTabGroup1"
+            type="org.libreoffice.ide.eclipse.core.launchUreApplication"/>
       <launchConfigurationTabGroup
-            class="org.openoffice.ide.eclipse.core.launch.office.LaunchConfigurationTabs"
-            id="org.openoffice.ide.eclipse.core.OfficeLlaunchConfigurationTabGroup1"
-            type="org.openoffice.ide.eclipse.core.launchOpenOffice">
+            class="org.libreoffice.ide.eclipse.core.launch.office.LaunchConfigurationTabs"
+            id="org.libreoffice.ide.eclipse.core.OfficeLlaunchConfigurationTabGroup1"
+            type="org.libreoffice.ide.eclipse.core.launchlibreoffice">
       </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="org.openoffice.ide.eclipse.core.launchUreApplication"
+            configTypeID="org.libreoffice.ide.eclipse.core.launchUreApplication"
             icon="icons/ure_app.gif"
-            id="org.openoffice.ide.eclipse.core.UreLaunchIcon"/>
+            id="org.libreoffice.ide.eclipse.core.UreLaunchIcon"/>
       <launchConfigurationTypeImage
-            configTypeID="org.openoffice.ide.eclipse.core.launchOpenOffice"
+            configTypeID="org.libreoffice.ide.eclipse.core.launchlibreoffice"
             icon="icons/libreoffice_16.png"
-            id="org.openoffice.ide.eclipse.core.OfficeLaunchIcon">
+            id="org.libreoffice.ide.eclipse.core.OfficeLaunchIcon">
       </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
       <category
-            id="org.openoffice.ide.eclipse.core.uno"
+            id="org.libreoffice.ide.eclipse.core.uno"
             name="%wizards"/>
       <wizard
-            category="org.openoffice.ide.eclipse.core.uno"
-            class="org.openoffice.ide.eclipse.core.wizards.PackageExportWizard"
+            category="org.libreoffice.ide.eclipse.core.uno"
+            class="org.libreoffice.ide.eclipse.core.wizards.PackageExportWizard"
             icon="/icons/export_package.gif"
-            id="org.openoffice.ide.eclipse.core.export.package"
+            id="org.libreoffice.ide.eclipse.core.export.package"
             name="%wizards.export"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
-      <startup class="org.openoffice.ide.eclipse.core.ResourceChangesHandler"/>
+      <startup class="org.libreoffice.ide.eclipse.core.ResourceChangesHandler"/>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
@@ -324,13 +324,13 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="false"
-            id="org.openoffice.ide.eclipse.core.objectContribution1"
+            id="org.libreoffice.ide.eclipse.core.objectContribution1"
             nameFilter="package.properties"
             objectClass="org.eclipse.core.resources.IFile">
          <action
-               class="org.openoffice.ide.eclipse.core.actions.ConvertToManifestAction"
+               class="org.libreoffice.ide.eclipse.core.actions.ConvertToManifestAction"
                enablesFor="1"
-               id="org.openoffice.ide.eclipse.core.actions.create_manifest"
+               id="org.libreoffice.ide.eclipse.core.actions.create_manifest"
                label="%action.tomanifest">
          </action>
       </objectContribution>
@@ -338,9 +338,9 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            class="org.openoffice.ide.eclipse.core.launch.office.OfficeLaunchShortcut"
+            class="org.libreoffice.ide.eclipse.core.launch.office.OfficeLaunchShortcut"
             icon="icons/libreoffice_16.png"
-            id="org.openoffice.ide.eclipse.core.launch.shortcut"
+            id="org.libreoffice.ide.eclipse.core.launch.shortcut"
             label="LibreOffice extension"
             modes="run, debug">
          <contextualLaunch>
@@ -351,13 +351,13 @@
                      <and>
                         <adapt type="org.eclipse.core.resources.IProject" />
                         <test property="org.eclipse.debug.ui.projectNature"
-                              value="org.openoffice.ide.eclipse.core.unonature" />
+                              value="org.libreoffice.ide.eclipse.core.unonature" />
                      </and>
                   </iterate>
                </with>
             </enablement>
          </contextualLaunch>
-         <configurationType id="org.openoffice.ide.eclipse.core.launchOpenOffice" />
+         <configurationType id="org.libreoffice.ide.eclipse.core.launchlibreoffice" />
       </shortcut>
    </extension>
 </plugin>

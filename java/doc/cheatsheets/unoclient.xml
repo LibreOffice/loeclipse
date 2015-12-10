@@ -17,7 +17,7 @@ Configure the LibreOffice instance and SDK used to build to program and configur
       </description>
       <command
             required="true"
-            serialization="org.eclipse.ui.newWizard(newWizardId=org.openoffice.ide.eclipse.java.client)"/>
+            serialization="org.eclipse.ui.newWizard(newWizardId=org.libreoffice.ide.eclipse.java.client)"/>
    </item>
    <item
          title="Write the client code">
