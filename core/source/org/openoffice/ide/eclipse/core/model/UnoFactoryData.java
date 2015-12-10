@@ -47,8 +47,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 /**
- * This class contains the data describing a the object to create by the
- * Uno factory.
+ * This class contains the data describing a the object to create by the Uno factory.
  *
  * @author cedricbosdo
  *
@@ -59,11 +58,13 @@ public class UnoFactoryData {
     private Vector<UnoFactoryData> mInnerData = new Vector<UnoFactoryData>();
 
     /**
-     * Add or replace the property value associated with the key. Nothing
-     * happens if the key is <code>null</code> or an empty string.
+     * Add or replace the property value associated with the key. Nothing happens if the key is <code>null</code> or an
+     * empty string.
      *
-     * @param pKey the name of the property
-     * @param pValue the value of the property
+     * @param pKey
+     *            the name of the property
+     * @param pValue
+     *            the value of the property
      */
     public void setProperty(String pKey, Object pValue) {
         if (pKey != null && !pKey.equals("")) { //$NON-NLS-1$
@@ -72,10 +73,11 @@ public class UnoFactoryData {
     }
 
     /**
-     * @param pKey the key of the property to get.
+     * @param pKey
+     *            the key of the property to get.
      *
-     * @return the property corresponding to the key or <code>null</code> if
-     *     the key is null or an empty string or if there is such a key.
+     * @return the property corresponding to the key or <code>null</code> if the key is null or an empty string or if
+     *         there is such a key.
      */
     public Object getProperty(String pKey) {
         Object result = null;
@@ -92,7 +94,7 @@ public class UnoFactoryData {
         Object[] aKeys = mProperties.keySet().toArray();
         String[] sKeys = new String[aKeys.length];
         for (int i = 0; i < aKeys.length; i++) {
-            sKeys[i] = (String)aKeys[i];
+            sKeys[i] = (String) aKeys[i];
         }
         return sKeys;
     }
@@ -109,10 +111,10 @@ public class UnoFactoryData {
     }
 
     /**
-     * Adds an inner data if it is neither <code>null</code> nor already
-     * present in the inner data.
+     * Adds an inner data if it is neither <code>null</code> nor already present in the inner data.
      *
-     * @param pData the data to add
+     * @param pData
+     *            the data to add
      */
     public void addInnerData(UnoFactoryData pData) {
         if (pData != null && !mInnerData.contains(pData)) {
@@ -121,10 +123,10 @@ public class UnoFactoryData {
     }
 
     /**
-     * Removes an inner data if it isn't <code>null</code> and already
-     * present in the inner data.
+     * Removes an inner data if it isn't <code>null</code> and already present in the inner data.
      *
-     * @param pData the data to remove
+     * @param pData
+     *            the data to remove
      */
     public void removeInnerData(UnoFactoryData pData) {
         if (pData != null && mInnerData.contains(pData)) {

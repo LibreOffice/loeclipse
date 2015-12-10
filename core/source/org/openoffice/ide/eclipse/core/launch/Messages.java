@@ -55,8 +55,7 @@ import java.util.ResourceBundle;
 public class Messages {
     private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.core.launch.messages"; //$NON-NLS-1$
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-                    .getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
     /**
      * Default constructor.
@@ -67,14 +66,15 @@ public class Messages {
     /**
      * Get the string from it's key.
      *
-     * @param pKey the key of the string
+     * @param pKey
+     *            the key of the string
      *
      * @return the internationalized string
      */
     public static String getString(String pKey) {
         String string = '!' + pKey + '!';
         try {
-            string =  RESOURCE_BUNDLE.getString(pKey);
+            string = RESOURCE_BUNDLE.getString(pKey);
         } catch (MissingResourceException e) {
         }
         return string;

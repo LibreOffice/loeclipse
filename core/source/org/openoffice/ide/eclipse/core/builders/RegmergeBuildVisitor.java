@@ -52,8 +52,7 @@ import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Class visiting each child of the urd folder to merge it with the common
- * <code>types.rdb</code> registry.
+ * Class visiting each child of the urd folder to merge it with the common <code>types.rdb</code> registry.
  *
  * @author cbosdonnat
  *
@@ -69,8 +68,10 @@ public class RegmergeBuildVisitor implements IFileVisitor {
     /**
      * Default constructor.
      *
-     * @param pUnoprj the UNO project to visit
-     * @param pMonitor progress monitor for the regmerge
+     * @param pUnoprj
+     *            the UNO project to visit
+     * @param pMonitor
+     *            progress monitor for the regmerge
      */
     public RegmergeBuildVisitor(IUnoidlProject pUnoprj, IProgressMonitor pMonitor) {
         super();

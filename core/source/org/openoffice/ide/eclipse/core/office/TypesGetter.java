@@ -71,7 +71,8 @@ public class TypesGetter {
     /**
      * Set the LibreOffice instance to use for the different operations.
      *
-     * @param pOOo the LibreOffice instance to set.
+     * @param pOOo
+     *            the LibreOffice instance to set.
      */
     public void setOOo(IOOo pOOo) {
         mOOo = pOOo;
@@ -85,7 +86,8 @@ public class TypesGetter {
     }
 
     /**
-     * @param pLocalRegs the local registries to search
+     * @param pLocalRegs
+     *            the local registries to search
      */
     public void setLocalRegs(List<String> pLocalRegs) {
         mLocalRegs = pLocalRegs;
@@ -94,10 +96,11 @@ public class TypesGetter {
     /**
      * Get the UNO types from an office instance.
      *
-     * @param pRoot the root registry key where to look for the types. If the value is
-     *      <code>null</code> the whole registry will be searched
-     * @param pMask the bit-ORed types to search. The types are defined in the
-     *      {@link IUnoFactoryConstants} class.
+     * @param pRoot
+     *            the root registry key where to look for the types. If the value is <code>null</code> the whole
+     *            registry will be searched
+     * @param pMask
+     *            the bit-ORed types to search. The types are defined in the {@link IUnoFactoryConstants} class.
      *
      * @return the list of types available in the office
      */
@@ -108,7 +111,7 @@ public class TypesGetter {
         try {
             // Load the target class and create the getter instance
             OfficeClassLoader oooClassLoader = OfficeClassLoader.getClassLoader(getOOo(),
-                            TypesGetter.class.getClassLoader());
+                TypesGetter.class.getClassLoader());
             Class<?> clazz = oooClassLoader.loadClass(CLASSNAME);
             Object getter = clazz.newInstance();
 

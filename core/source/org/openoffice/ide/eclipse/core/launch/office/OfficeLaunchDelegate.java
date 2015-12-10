@@ -75,22 +75,22 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      */
     @Override
     public void launch(ILaunchConfiguration pConfiguration, String pMode, ILaunch pLaunch, IProgressMonitor pMonitor)
-                    throws CoreException {
+        throws CoreException {
         if (pMonitor == null) {
             pMonitor = new NullProgressMonitor();
         }
 
         try {
             pMonitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
-                            new Object[] { pConfiguration.getName() }), TASK_UNITS);
+                new Object[] { pConfiguration.getName() }), TASK_UNITS);
             // check for cancellation
             if (pMonitor.isCanceled()) {
                 return;
             }
 
-            String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String() );
-            boolean useCleanUserInstalation = pConfiguration.getAttribute(
-                            IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
+            String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
+            boolean useCleanUserInstalation = pConfiguration
+                .getAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
 
             IUnoidlProject unoprj = ProjectsManager.getProject(prjName);
 
@@ -103,17 +103,17 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     }
 
                     // Force the build
-                    IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
-                    TypesBuilder.build( prj, pMonitor );
+                    IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
+                    TypesBuilder.build(prj, pMonitor);
 
-                    List<IResource> resources = PackageConfigTab.getResources( pConfiguration );
-                    File destFile = exportComponent( unoprj, resources );
+                    List<IResource> resources = PackageConfigTab.getResources(pConfiguration);
+                    File destFile = exportComponent(unoprj, resources);
                     pMonitor.worked(1);
 
                     // Deploy the component
                     deployComponent(unoprj, userInstallation, destFile);
 
-                    //remove lock file not cleaned by unopkg gui
+                    // remove lock file not cleaned by unopkg gui
                     File lockFile = new File(userInstallation.toFile(), ".lock");
                     if (lockFile.exists()) {
                         lockFile.delete();
@@ -125,7 +125,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                         unoprj.getLanguage().connectDebuggerToOffice(unoprj, pLaunch, userInstallation, pMonitor);
                     } else {
                         unoprj.getOOo().runOffice(unoprj, pLaunch, userInstallation, new NullExtraOptionsProvider(),
-                                        pMonitor);
+                            pMonitor);
                     }
                     pMonitor.worked(1);
                 } catch (Exception e) {
@@ -135,8 +135,8 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                         @Override
                         public void run() {
                             MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                            Messages.OfficeLaunchDelegate_LaunchErrorTitle,
-                                            Messages.OfficeLaunchDelegate_LaunchError);
+                                Messages.OfficeLaunchDelegate_LaunchErrorTitle,
+                                Messages.OfficeLaunchDelegate_LaunchError);
                         }
                     });
                 }
@@ -180,9 +180,9 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
         IFolder distFolder = pPrj.getFolder(pPrj.getDistPath());
         File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
 
-        UnoPackage pack = PackageContentSelector.createPackage( pPrj, destFile, pResources );
+        UnoPackage pack = PackageContentSelector.createPackage(pPrj, destFile, pResources);
 
-        pack.close( );
+        pack.close();
         return destFile;
     }
 

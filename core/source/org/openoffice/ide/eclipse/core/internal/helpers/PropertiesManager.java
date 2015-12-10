@@ -62,9 +62,8 @@ import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
- * Helper class for OOo and SDK preferences handling. These aren't stored in
- * the standard plugin preferences, but in a separate file:
- * {@link org.openoffice.ide.eclipse.core.OOEclipsePlugin#OOO_CONFIG}
+ * Helper class for OOo and SDK preferences handling. These aren't stored in the standard plugin preferences, but in a
+ * separate file: {@link org.openoffice.ide.eclipse.core.OOEclipsePlugin#OOO_CONFIG}
  *
  * @author cedricbosdo
  *
@@ -114,8 +113,7 @@ public class PropertiesManager {
                         SDK sdk = new SDK(path);
                         sdks.add(sdk);
                     } catch (InvalidConfigException e) {
-                        PluginLogger.error(
-                                        e.getLocalizedMessage(), e);
+                        PluginLogger.error(e.getLocalizedMessage(), e);
                         // This message is localized in SDK class
                     }
                 }
@@ -132,9 +130,8 @@ public class PropertiesManager {
             sdks.clear();
 
         } catch (IOException e) {
-            PluginLogger.error(
-                            Messages.getString("PropertiesManager.UnreadableFileError") +  //$NON-NLS-1$
-                            OOEclipsePlugin.OOO_CONFIG, e);
+            PluginLogger.error(Messages.getString("PropertiesManager.UnreadableFileError") + //$NON-NLS-1$
+                OOEclipsePlugin.OOO_CONFIG, e);
         }
 
         return result;
@@ -143,7 +140,8 @@ public class PropertiesManager {
     /**
      * Saves the SDK properties.
      *
-     * @param pSdks the SDKs to save
+     * @param pSdks
+     *            the SDKs to save
      */
     public static void saveSDKs(ISdk[] pSdks) {
 
@@ -155,7 +153,7 @@ public class PropertiesManager {
             // Load all the existing properties and remove the SDKPATH_PREFERENCE_KEY ones
             Enumeration<Object> keys = sdksProperties.keys();
             while (keys.hasMoreElements()) {
-                String key = (String)keys.nextElement();
+                String key = (String) keys.nextElement();
 
                 if (key.startsWith(SDKPATH_PREFERENCE_KEY)) {
                     sdksProperties.remove(key);
@@ -168,9 +166,7 @@ public class PropertiesManager {
                 sdksProperties.put(SDKPATH_PREFERENCE_KEY + i, sdki.getHome());
             }
 
-
-            String sdks_config_url = OOEclipsePlugin.getDefault().
-                            getStateLocation().toString();
+            String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
             File file = new File(sdks_config_url + "/" + OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
             if (!file.exists()) {
                 file.createNewFile();
@@ -183,7 +179,10 @@ public class PropertiesManager {
         } catch (IOException e) {
             PluginLogger.error(e.getLocalizedMessage(), e);
         } finally {
-            try { out.close(); } catch (Exception e) { }
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -235,9 +234,8 @@ public class PropertiesManager {
             ooos.clear();
 
         } catch (IOException e) {
-            PluginLogger.error(
-                            Messages.getString("PropertiesManager.UnreadableFileError") + //$NON-NLS-1$
-                            OOEclipsePlugin.OOO_CONFIG, e);
+            PluginLogger.error(Messages.getString("PropertiesManager.UnreadableFileError") + //$NON-NLS-1$
+                OOEclipsePlugin.OOO_CONFIG, e);
         }
 
         return result;
@@ -246,27 +244,31 @@ public class PropertiesManager {
     /**
      * Try to add an URE instance to the list of OOo instances.
      *
-     * <p>If the path doesn't refer to a valid URE, nothing is changed
-     * in the list of OOo instances</p>
+     * <p>
+     * If the path doesn't refer to a valid URE, nothing is changed in the list of OOo instances
+     * </p>
      *
-     * @param pPath the path to the URE installation
-     * @param pName the name of the URE
-     * @param pOoos the list of OOo instances where to add the URE
+     * @param pPath
+     *            the path to the URE installation
+     * @param pName
+     *            the name of the URE
+     * @param pOoos
+     *            the list of OOo instances where to add the URE
      */
     private static void addURE(String pPath, String pName, Vector<IOOo> pOoos) {
         try {
             URE ure = new URE(pPath, pName);
             pOoos.add(ure);
         } catch (InvalidConfigException e) {
-            PluginLogger.error(
-                            e.getLocalizedMessage(), e);
+            PluginLogger.error(e.getLocalizedMessage(), e);
         }
     }
 
     /**
      * Saves the OOo properties.
      *
-     * @param pOoos the OOos to save
+     * @param pOoos
+     *            the OOos to save
      */
     public static void saveOOos(IOOo[] pOoos) {
 
@@ -278,10 +280,9 @@ public class PropertiesManager {
             // Load all the existing properties and remove the OOOPATH_PREFERENCE_KEY ones
             Enumeration<Object> keys = ooosProperties.keys();
             while (keys.hasMoreElements()) {
-                String key = (String)keys.nextElement();
+                String key = (String) keys.nextElement();
 
-                if (key.startsWith(OOOPATH_PREFERENCE_KEY) ||
-                                key.startsWith(OOONAME_PREFERENCE_KEY)) {
+                if (key.startsWith(OOOPATH_PREFERENCE_KEY) || key.startsWith(OOONAME_PREFERENCE_KEY)) {
                     ooosProperties.remove(key);
                 }
             }
@@ -293,9 +294,7 @@ public class PropertiesManager {
                 ooosProperties.put(OOONAME_PREFERENCE_KEY + i, oooi.getName());
             }
 
-
-            String ooos_config_url = OOEclipsePlugin.getDefault().
-                            getStateLocation().toString();
+            String ooos_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
             File file = new File(ooos_config_url + "/" + OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
             if (!file.exists()) {
                 file.createNewFile();
@@ -308,24 +307,25 @@ public class PropertiesManager {
         } catch (IOException e) {
             PluginLogger.error(e.getLocalizedMessage(), e);
         } finally {
-            try { out.close(); } catch (Exception e) { }
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
         }
     }
 
     /**
-     * Loads the OOo and SDK properties from the
-     * {@link OOEclipsePlugin#OOO_CONFIG} file.
+     * Loads the OOo and SDK properties from the {@link OOEclipsePlugin#OOO_CONFIG} file.
      *
      * @return the loaded properties
-     * @throws IOException is thrown if any problem happened during the file
-     *             reading
+     * @throws IOException
+     *             is thrown if any problem happened during the file reading
      */
     private static Properties getProperties() throws IOException {
         // Loads the ooos config file into a properties object
         Properties ooosProperties = new Properties();
 
-        String ooos_config_url = OOEclipsePlugin.getDefault().
-                        getStateLocation().toString();
+        String ooos_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();
         File file = new File(ooos_config_url + "/" + OOEclipsePlugin.OOO_CONFIG); //$NON-NLS-1$
         if (!file.exists()) {
             file.createNewFile();
@@ -335,7 +335,10 @@ public class PropertiesManager {
         try {
             ooosProperties.load(in);
         } finally {
-            try { in.close(); } catch (IOException e) { }
+            try {
+                in.close();
+            } catch (IOException e) {
+            }
         }
 
         return ooosProperties;

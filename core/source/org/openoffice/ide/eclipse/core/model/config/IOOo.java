@@ -63,8 +63,8 @@ public interface IOOo {
      * @param pHome
      *            the absolute path to the home directory
      * @throws InvalidConfigException
-     *             is thrown if the path doesn't match the implementation requirement for a LibreOffice instance. The error
-     *             code will be {@link InvalidConfigException#INVALID_OOO_HOME}
+     *             is thrown if the path doesn't match the implementation requirement for a LibreOffice instance. The
+     *             error code will be {@link InvalidConfigException#INVALID_OOO_HOME}
      */
     public void setHome(String pHome) throws InvalidConfigException;
 
@@ -85,8 +85,8 @@ public interface IOOo {
 
     /**
      * <p>
-     * Returns the path to the LibreOffice classes directory. These strings could be passed to the Path constructor
-     * to get the folder object.
+     * Returns the path to the LibreOffice classes directory. These strings could be passed to the Path constructor to
+     * get the folder object.
      * </p>
      *
      * <p>
@@ -100,8 +100,8 @@ public interface IOOo {
 
     /**
      * <p>
-     * Returns the path to the LibreOffice shared libraries. This string could be passed to the Path constructor to
-     * get the folder object.
+     * Returns the path to the LibreOffice shared libraries. This string could be passed to the Path constructor to get
+     * the folder object.
      * </p>
      *
      * @return path to the LibreOffice libraries directory
@@ -110,8 +110,8 @@ public interface IOOo {
 
     /**
      * <p>
-     * Returns the path to any folder containing binaries in the LibreOffice installation. This string could be passed to the
-     * Path constructor to get the folder object.
+     * Returns the path to any folder containing binaries in the LibreOffice installation. This string could be passed
+     * to the Path constructor to get the folder object.
      * </p>
      *
      * @return paths to the LibreOffice binary directories
@@ -143,7 +143,6 @@ public interface IOOo {
      */
     public String getJavaldxPath();
 
-
     /**
      * Returns a command to execute a <code>uno</code> component.
      *
@@ -159,7 +158,7 @@ public interface IOOo {
      * @return the command to execute the <code>uno</code> binary
      */
     public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
-                    String[] pArgs);
+        String[] pArgs);
 
     /**
      * Run the <code>uno</code> executable with the given Main implementation, the arguments and the launcher.
@@ -191,7 +190,7 @@ public interface IOOo {
      *            a monitor to follow the progress
      */
     public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-                    IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor);
+        IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor);
 
     /**
      * @return <code>true</code> if the LibreOffice instance has a package manager.

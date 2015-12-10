@@ -54,23 +54,24 @@ public class OOoConfigPanel {
     /**
      * Constructor.
      *
-     * @param pParent the parent composite where to create the fields
+     * @param pParent
+     *            the parent composite where to create the fields
      */
-    public OOoConfigPanel ( Composite pParent ) {
+    public OOoConfigPanel(Composite pParent) {
 
-        Group group = new Group( pParent, SWT.NONE );
-        group.setText( Messages.getString("OOoConfigPanel.GroupTitle") ); //$NON-NLS-1$
-        group.setLayout( new GridLayout( GRID_COLUMNS, false ) );
-        group.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Group group = new Group(pParent, SWT.NONE);
+        group.setText(Messages.getString("OOoConfigPanel.GroupTitle")); //$NON-NLS-1$
+        group.setLayout(new GridLayout(GRID_COLUMNS, false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        mSdkRow = new SdkRow( group, new String(), null );
-        mOOoRow = new OOoRow( group, new String(), null );
+        mSdkRow = new SdkRow(group, new String(), null);
+        mOOoRow = new OOoRow(group, new String(), null);
     }
 
     /**
      * Disposes the object, mainly to unregister the listeners.
      */
-    public void dispose( ) {
+    public void dispose() {
         mOOoRow.dispose();
         mSdkRow.dispose();
     }

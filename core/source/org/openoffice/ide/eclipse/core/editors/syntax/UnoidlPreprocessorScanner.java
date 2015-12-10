@@ -55,9 +55,8 @@ import org.openoffice.ide.eclipse.core.editors.idl.Colors;
 import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 
 /**
- * Scanner splitting the preprocessor commands into items to be colorized.
- * In order to fully understand the editor mechanisms, please report to
- * Eclipse plugin developer's guide.
+ * Scanner splitting the preprocessor commands into items to be colorized. In order to fully understand the editor
+ * mechanisms, please report to Eclipse plugin developer's guide.
  *
  * @author cedricbosdo
  */
@@ -66,56 +65,46 @@ public class UnoidlPreprocessorScanner extends RuleBasedScanner {
     /**
      * The preprocessor commands to match.
      */
-    public static final String[] PREPROC_COMMANDS = {
-                    "include", //$NON-NLS-1$
-                    "ifdef", //$NON-NLS-1$
-                    "ifndef", //$NON-NLS-1$
-                    "endif", //$NON-NLS-1$
-                    "elif", //$NON-NLS-1$
-                    "else", //$NON-NLS-1$
-                    "define", //$NON-NLS-1$
-                    "undef", //$NON-NLS-1$
-                    "line", //$NON-NLS-1$
-                    "error", //$NON-NLS-1$
-                    "pragma" //$NON-NLS-1$
+    public static final String[] PREPROC_COMMANDS = { "include", //$NON-NLS-1$
+        "ifdef", //$NON-NLS-1$
+        "ifndef", //$NON-NLS-1$
+        "endif", //$NON-NLS-1$
+        "elif", //$NON-NLS-1$
+        "else", //$NON-NLS-1$
+        "define", //$NON-NLS-1$
+        "undef", //$NON-NLS-1$
+        "line", //$NON-NLS-1$
+        "error", //$NON-NLS-1$
+        "pragma" //$NON-NLS-1$
     };
 
     /**
      * Constructor initializing the rules for the preprocessor command analysis.
      *
-     * @param pColorManager the color manager from where to get the colors
+     * @param pColorManager
+     *            the color manager from where to get the colors
      */
     public UnoidlPreprocessorScanner(ColorProvider pColorManager) {
 
-        IToken path = new Token(
-                        new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR),
-                                        null, SWT.ITALIC));
+        IToken path = new Token(new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.ITALIC));
 
         IToken condition = new Token(
-                        new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR),
-                                        null, SWT.ITALIC));
+            new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.ITALIC));
 
         IToken definition = condition;
 
-        IToken other = new Token(
-                        new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR)));
+        IToken other = new Token(new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR)));
 
-        IToken command = new Token (
-                        new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR),
-                                        null, SWT.BOLD));
+        IToken command = new Token(new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.BOLD));
 
-
-        WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);
+        WordRule wordRule = new WordRule(new UnoidlWordDetector(), other);
         for (int i = 0; i < PREPROC_COMMANDS.length; i++) {
             wordRule.addWord(PREPROC_COMMANDS[i], command);
         }
-        IRule[] rules = new IRule[] {
-                        new SingleLineRule("<", ">", path), //$NON-NLS-1$ //$NON-NLS-2$
-                        new SingleLineRule("\"", "\"", path), //$NON-NLS-1$ //$NON-NLS-2$
-                        new RegexRule("\\p{Blank}+[a-zA-Z]+$", condition), //$NON-NLS-1$
-                        new EqualityNameRule(definition),
-                        wordRule
-        };
+        IRule[] rules = new IRule[] { new SingleLineRule("<", ">", path), //$NON-NLS-1$ //$NON-NLS-2$
+            new SingleLineRule("\"", "\"", path), //$NON-NLS-1$ //$NON-NLS-2$
+            new RegexRule("\\p{Blank}+[a-zA-Z]+$", condition), //$NON-NLS-1$
+            new EqualityNameRule(definition), wordRule };
 
         setRules(rules);
     }

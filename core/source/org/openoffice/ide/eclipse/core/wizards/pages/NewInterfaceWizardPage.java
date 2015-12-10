@@ -68,20 +68,20 @@ import org.openoffice.ide.eclipse.core.wizards.Messages;
  * @author cedricbosdo
  *
  */
-public class NewInterfaceWizardPage extends NewScopedElementWizardPage
-implements ISelectionChangedListener {
+public class NewInterfaceWizardPage extends NewScopedElementWizardPage implements ISelectionChangedListener {
 
     private static final int MAX_HEIGHT = 600;
     private static final int MIN_WIDTH = 600;
     private InterfacesTable mInterfaceInheritances;
     private InterfaceMembersTable mMembers;
 
-
     /**
      * Constructor.
      *
-     * @param pPageName the page name
-     * @param pUnoProject the project for which to create the interface.
+     * @param pPageName
+     *            the page name
+     * @param pUnoProject
+     *            the project for which to create the interface.
      */
     public NewInterfaceWizardPage(String pPageName, IUnoidlProject pUnoProject) {
         super(pPageName, pUnoProject);
@@ -90,13 +90,16 @@ implements ISelectionChangedListener {
     /**
      * Constructor.
      *
-     * @param pPageName the page name
-     * @param pProject the project for which to create the interface.
-     * @param pRootName scoped name of the module containing the type
-     * @param pElementName name of the type, without any '.' or '::'
+     * @param pPageName
+     *            the page name
+     * @param pProject
+     *            the project for which to create the interface.
+     * @param pRootName
+     *            scoped name of the module containing the type
+     * @param pElementName
+     *            name of the type, without any '.' or '::'
      */
-    public NewInterfaceWizardPage(String pPageName, IUnoidlProject pProject,
-                    String pRootName, String pElementName) {
+    public NewInterfaceWizardPage(String pPageName, IUnoidlProject pProject, String pRootName, String pElementName) {
         super(pPageName, pProject, pRootName, pElementName);
     }
 
@@ -119,8 +122,7 @@ implements ISelectionChangedListener {
         return IUnoFactoryConstants.INTERFACE;
     }
 
-
-    //--------------------------------------------------- Page content managment
+    // --------------------------------------------------- Page content managment
 
     /**
      * {@inheritDoc}
@@ -134,7 +136,6 @@ implements ISelectionChangedListener {
         point.x = Math.min(point.x, MIN_WIDTH);
         getShell().setSize(point);
 
-
         Composite tableParent = new Composite(pParent, SWT.NORMAL);
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = LabeledRow.LAYOUT_COLUMNS;
@@ -142,8 +143,7 @@ implements ISelectionChangedListener {
         tableParent.setLayout(new GridLayout(1, false));
 
         mInterfaceInheritances = new InterfacesTable(tableParent);
-        mInterfaceInheritances.setToolTipText(
-                        Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip")); //$NON-NLS-1$
+        mInterfaceInheritances.setToolTipText(Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip")); //$NON-NLS-1$
         mInterfaceInheritances.addSelectionChangedListener(this);
 
         mMembers = new InterfaceMembersTable(tableParent);
@@ -180,8 +180,7 @@ implements ISelectionChangedListener {
      */
     @Override
     protected ImageDescriptor getImageDescriptor() {
-        return OOEclipsePlugin.getImageDescriptor(
-                        ImagesConstants.NEW_INTERFACE_IMAGE);
+        return OOEclipsePlugin.getImageDescriptor(ImagesConstants.NEW_INTERFACE_IMAGE);
     }
 
     /**
@@ -193,17 +192,16 @@ implements ISelectionChangedListener {
     }
 
     /**
-     * @param pData the data to fill
+     * @param pData
+     *            the data to fill
      *
-     * @return the given data with the completed properties, <code>null</code>
-     *   if the provided data is <code>null</code>
+     * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
     @Override
     public UnoFactoryData fillData(UnoFactoryData pData) {
         pData = super.fillData(pData);
         if (pData != null) {
-            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE,
-                            Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.INTERFACE));
 
             // Vector containing the interface inheritance paths "::" separated
             Vector<String> optionalIntf = new Vector<String>();
@@ -213,8 +211,7 @@ implements ISelectionChangedListener {
             if (mInterfaceInheritances != null) {
                 Vector<ITableElement> lines = mInterfaceInheritances.getLines();
                 for (ITableElement linei : lines) {
-                    InterfacesTable.InheritanceLine line =
-                                    (InterfacesTable.InheritanceLine)linei;
+                    InterfacesTable.InheritanceLine line = (InterfacesTable.InheritanceLine) linei;
 
                     if (line.isOptional()) {
                         optionalIntf.add(line.getInterfaceName().replace(".", "::")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -228,14 +225,12 @@ implements ISelectionChangedListener {
             // Get the mandatory inheritances
             String[] interfaces = new String[mandatoryIntf.size()];
             interfaces = mandatoryIntf.toArray(interfaces);
-            pData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES,
-                            interfaces);
+            pData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, interfaces);
 
             // Get the optional inheritances
             String[] opt_interfaces = new String[optionalIntf.size()];
             opt_interfaces = optionalIntf.toArray(opt_interfaces);
-            pData.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES,
-                            opt_interfaces);
+            pData.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, opt_interfaces);
 
             optionalIntf.clear();
             mandatoryIntf.clear();
@@ -259,8 +254,7 @@ implements ISelectionChangedListener {
         UnoFactoryData typeData = new UnoFactoryData();
 
         if (typeData != null) {
-            typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE,
-                            Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+            typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.INTERFACE));
         }
         return typeData;
     }

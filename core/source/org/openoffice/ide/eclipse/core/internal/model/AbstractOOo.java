@@ -129,7 +129,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         if (!homeFile.isDirectory() || !homeFile.canRead()) {
             mHome = null;
             throw new InvalidConfigException(Messages.getString("AbstractOOo.NoDirectoryError") + //$NON-NLS-1$
-                            homeFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
+                homeFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
         }
 
         mHome = pHome;
@@ -189,7 +189,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         if (!unorcFile.isFile() || !unorcFile.canRead()) {
             mHome = null;
             throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
-                            unorcFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
+                unorcFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
         }
     }
 
@@ -208,8 +208,10 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
             if (!servicesFile.isFile() || !servicesFile.canRead()) {
                 mHome = null;
-                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
-                                servicesFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
+                throw new InvalidConfigException(
+                    Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
+                        servicesFile.getAbsolutePath(),
+                    InvalidConfigException.INVALID_OOO_HOME);
             }
         }
     }
@@ -229,7 +231,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             if (!typesFile.isFile() || !typesFile.canRead()) {
                 mHome = null;
                 throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
-                                typesFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
+                    typesFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
             }
         }
     }
@@ -249,7 +251,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             if (!javaDir.isDirectory() || !javaDir.canRead()) {
                 mHome = null;
                 throw new InvalidConfigException(Messages.getString("AbstractOOo.NoDirectoryError") + //$NON-NLS-1$
-                                javaDir.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
+                    javaDir.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
             }
         }
     }
@@ -339,8 +341,8 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         }
 
         String command = unoPath + " -c " + pMain + //$NON-NLS-1$
-                        " -l " + libpath + //$NON-NLS-1$
-                        " -- " + pArgs; //$NON-NLS-1$
+            " -l " + libpath + //$NON-NLS-1$
+            " -- " + pArgs; //$NON-NLS-1$
 
         String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
 
@@ -362,7 +364,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
             String libPath = writer.getBuffer().toString();
             env = SystemHelper.addEnv(env, "LD_LIBRARY_PATH", libPath.trim(), //$NON-NLS-1$
-                            System.getProperty("path.separator")); //$NON-NLS-1$
+                System.getProperty("path.separator")); //$NON-NLS-1$
         }
 
         Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
@@ -374,7 +376,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      */
     @Override
     public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-                    IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor) {
+        IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor) {
         try {
             IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
             String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
@@ -390,7 +392,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             String command = "soffice.bin";
 
             env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
-            env = SystemHelper.addEnv(env, "SAL_ALLOW_LINKOO_SYMLINKS", "1", null );
+            env = SystemHelper.addEnv(env, "SAL_ALLOW_LINKOO_SYMLINKS", "1", null);
             env = addUserProfile(pUserInstallation, env);
             env = pExtraOptionsProvider.addEnv(env);
 
@@ -445,34 +447,33 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         return result;
     }
 
-    protected static String getPlatformOS(){
+    protected static String getPlatformOS() {
         return Platform.getOS();
     }
 
     /**
-     * indicates if a code is a symbolic link or not.
-     * The code is an adaptation from apache commons
+     * indicates if a code is a symbolic link or not. The code is an adaptation from apache commons
+     * 
      * @param file
      * @return true if the file is a symbolic link, false otherwise
      * @throws IOException
      */
-    protected static boolean isSymbolicLink(File file) throws IOException{
-        if(file == null){
+    protected static boolean isSymbolicLink(File file) throws IOException {
+        if (file == null) {
             return false;
         }
         File fileInCanonicalParent = null;
-        if(file.getParentFile() == null){
+        if (file.getParentFile() == null) {
             fileInCanonicalParent = file;
-        }
-        else{
-            File canonicalParent= file.getParentFile().getCanonicalFile();
+        } else {
+            File canonicalParent = file.getParentFile().getCanonicalFile();
             fileInCanonicalParent = new File(canonicalParent, file.getName());
         }
         return !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
     }
 
     public static File getTargetLink(File link) throws IOException {
-        if(link == null){
+        if (link == null) {
             return null;
         }
         return new File(link.getCanonicalPath());

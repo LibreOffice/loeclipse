@@ -72,7 +72,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author Cédric Bosdonnat
  *
  */
-public class MirrorsSection extends AbstractSection< DescriptionModel > {
+public class MirrorsSection extends AbstractSection<DescriptionModel> {
 
     private static final int COLUMN_WIDTH = 200;
 
@@ -84,15 +84,17 @@ public class MirrorsSection extends AbstractSection< DescriptionModel > {
     private MenuItem mDeleteAction;
 
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the parent page
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the parent page
      */
-    public MirrorsSection( Composite pParent, DescriptionFormPage pPage ) {
-        super( pParent, pPage, ExpandableComposite.TITLE_BAR );
+    public MirrorsSection(Composite pParent, DescriptionFormPage pPage) {
+        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
         mPage = pPage;
 
-        createContent( );
-        setModel( pPage.getModel() );
+        createContent();
+        setModel(pPage.getModel());
     }
 
     /**
@@ -100,9 +102,9 @@ public class MirrorsSection extends AbstractSection< DescriptionModel > {
      */
     @Override
     public void loadData() {
-        getModel().setSuspendEvent( true );
-        mTable.setInput( getModel().getUpdateInfos() );
-        getModel().setSuspendEvent( false );
+        getModel().setSuspendEvent(true);
+        mTable.setInput(getModel().getUpdateInfos());
+        getModel().setSuspendEvent(false);
     }
 
     /**
@@ -110,108 +112,104 @@ public class MirrorsSection extends AbstractSection< DescriptionModel > {
      */
     private void createContent() {
         Section section = getSection();
-        section.setText( "Update mirrors" ); //$NON-NLS-1$
+        section.setText("Update mirrors"); //$NON-NLS-1$
 
-        section.setLayoutData( new GridData( GridData.FILL_BOTH ));
+        section.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         FormToolkit toolkit = mPage.getManagedForm().getToolkit();
         Composite clientArea = toolkit.createComposite(section);
-        clientArea.setLayout( new GridLayout( 2, false ) );
+        clientArea.setLayout(new GridLayout(2, false));
 
-
-        Label descrLbl = toolkit.createLabel( clientArea,
-                        Messages.getString("MirrorsSection.Description"),  //$NON-NLS-1$
-                        SWT.WRAP);
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = toolkit.createLabel(clientArea, Messages.getString("MirrorsSection.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
         // Create the list control
-        createTable( clientArea );
+        createTable(clientArea);
 
         // Create the add controls
-        Label addLbl = toolkit.createLabel( clientArea,
-                        Messages.getString("MirrorsSection.MirrorTextTitle") ); //$NON-NLS-1$
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label addLbl = toolkit.createLabel(clientArea, Messages.getString("MirrorsSection.MirrorTextTitle")); //$NON-NLS-1$
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        addLbl.setLayoutData( gd );
+        addLbl.setLayoutData(gd);
 
-        mUrlTxt = toolkit.createText( clientArea, new String( ) );
-        mUrlTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mUrlTxt.addModifyListener( new ModifyListener () {
+        mUrlTxt = toolkit.createText(clientArea, new String());
+        mUrlTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mUrlTxt.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent pE) {
-                mAddBtn.setEnabled( !(0 == mUrlTxt.getText().trim().length()) );
+                mAddBtn.setEnabled(!(0 == mUrlTxt.getText().trim().length()));
             }
         });
 
-        mAddBtn = toolkit.createButton( clientArea, Messages.getString("MirrorsSection.Add"), SWT.PUSH ); //$NON-NLS-1$
-        mAddBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );
-        mAddBtn.addSelectionListener( new SelectionAdapter( ) {
+        mAddBtn = toolkit.createButton(clientArea, Messages.getString("MirrorsSection.Add"), SWT.PUSH); //$NON-NLS-1$
+        mAddBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mAddBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 String text = mUrlTxt.getText();
-                getModel().addUpdateInfo( text );
-                mTable.add( text );
-                mUrlTxt.setText( new String( ) );
+                getModel().addUpdateInfo(text);
+                mTable.add(text);
+                mUrlTxt.setText(new String());
                 markDirty();
             }
-        } );
+        });
 
-        toolkit.paintBordersFor( clientArea );
+        toolkit.paintBordersFor(clientArea);
         section.setClient(clientArea);
     }
 
     /**
      * Create the URLs table control.
      *
-     * @param pParent the parent composite where to create the table.
+     * @param pParent
+     *            the parent composite where to create the table.
      */
-    private void createTable( Composite pParent ) {
-        Table table = new Table( pParent, SWT.SINGLE | SWT.FULL_SELECTION );
-        GridData gd = new GridData( GridData.FILL_BOTH );
+    private void createTable(Composite pParent) {
+        Table table = new Table(pParent, SWT.SINGLE | SWT.FULL_SELECTION);
+        GridData gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 2;
-        table.setLayoutData( gd );
-        mTable = new TableViewer( table );
-        mTable.setContentProvider( new ArrayContentProvider( ) );
-        mTable.setLabelProvider( new UrlLabelProvider( ) );
-        mTable.setColumnProperties( new String[]{ "url" } ); //$NON-NLS-1$
-        mTable.setCellEditors( new CellEditor[] {
-                        new TextCellEditor( table )
-        });
-        mTable.setCellModifier( new UrlCellModifier( ) );
+        table.setLayoutData(gd);
+        mTable = new TableViewer(table);
+        mTable.setContentProvider(new ArrayContentProvider());
+        mTable.setLabelProvider(new UrlLabelProvider());
+        mTable.setColumnProperties(new String[] { "url" }); //$NON-NLS-1$
+        mTable.setCellEditors(new CellEditor[] { new TextCellEditor(table) });
+        mTable.setCellModifier(new UrlCellModifier());
 
-        TableColumn column = new TableColumn( table, SWT.LEFT );
-        column.setMoveable( false );
-        column.setWidth( COLUMN_WIDTH );
+        TableColumn column = new TableColumn(table, SWT.LEFT);
+        column.setMoveable(false);
+        column.setWidth(COLUMN_WIDTH);
 
         // Create the table context menu
-        Menu menu = new Menu( table );
-        mDeleteAction = new MenuItem( menu, SWT.PUSH );
-        mDeleteAction.setText( Messages.getString("MirrorsSection.Remove") ); //$NON-NLS-1$
-        mDeleteAction.setImage( OOEclipsePlugin.getImage( ImagesConstants.DELETE ) );
-        mDeleteAction.setEnabled( false );
-        mDeleteAction.addSelectionListener( new SelectionAdapter( ) {
+        Menu menu = new Menu(table);
+        mDeleteAction = new MenuItem(menu, SWT.PUSH);
+        mDeleteAction.setText(Messages.getString("MirrorsSection.Remove")); //$NON-NLS-1$
+        mDeleteAction.setImage(OOEclipsePlugin.getImage(ImagesConstants.DELETE));
+        mDeleteAction.setEnabled(false);
+        mDeleteAction.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
-                IStructuredSelection sel = (IStructuredSelection)mTable.getSelection();
+                IStructuredSelection sel = (IStructuredSelection) mTable.getSelection();
                 Object selected = sel.getFirstElement();
-                mTable.remove( selected );
-                getModel().removeUpdateInfo( selected.toString() );
+                mTable.remove(selected);
+                getModel().removeUpdateInfo(selected.toString());
                 markDirty();
             }
         });
 
-        mTable.addSelectionChangedListener( new ISelectionChangedListener( ) {
+        mTable.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
             public void selectionChanged(SelectionChangedEvent pEvent) {
-                mDeleteAction.setEnabled( !pEvent.getSelection().isEmpty() );
+                mDeleteAction.setEnabled(!pEvent.getSelection().isEmpty());
             }
         });
 
-        table.setMenu( menu );
+        table.setMenu(menu);
     }
 
     /**
@@ -235,7 +233,7 @@ public class MirrorsSection extends AbstractSection< DescriptionModel > {
          */
         @Override
         public String getColumnText(Object pElement, int pColumnIndex) {
-            return pElement.toString( );
+            return pElement.toString();
         }
     }
 
@@ -269,13 +267,13 @@ public class MirrorsSection extends AbstractSection< DescriptionModel > {
         @Override
         public void modify(Object pElement, String pProperty, Object pValue) {
             if (pElement instanceof TableItem) {
-                Object o = ((TableItem)pElement).getData();
-                String oldValue = o.toString( );
+                Object o = ((TableItem) pElement).getData();
+                String oldValue = o.toString();
 
-                int pos = getModel().getUpdateInfos().indexOf( oldValue );
-                getModel().replaceUpdateInfo( pos, pValue.toString() );
-                mTable.replace( pValue, pos );
-                mTable.refresh( o );
+                int pos = getModel().getUpdateInfos().indexOf(oldValue);
+                getModel().replaceUpdateInfo(pos, pValue.toString());
+                mTable.replace(pValue, pos);
+                mTable.refresh(o);
                 markDirty();
             }
         }

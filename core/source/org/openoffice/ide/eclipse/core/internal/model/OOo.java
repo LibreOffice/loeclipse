@@ -76,8 +76,8 @@ import org.openoffice.ide.eclipse.core.model.utils.SystemHelper;
  * </p>
  *
  * <p>
- * A MacOS installation of LibreOffice will have some different paths, and of course the windows installation too.
- * This class is used to abstract the platform LibreOffice is installed on.
+ * A MacOS installation of LibreOffice will have some different paths, and of course the windows installation too. This
+ * class is used to abstract the platform LibreOffice is installed on.
  * </p>
  *
  * @author cedricbosdo
@@ -279,7 +279,7 @@ public class OOo extends AbstractOOo {
      */
     @Override
     public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
-                    String[] pArgs) {
+        String[] pArgs) {
 
         String command = ""; //$NON-NLS-1$
 
@@ -323,7 +323,7 @@ public class OOo extends AbstractOOo {
             }
 
             command = "java " + classpath + " " + //$NON-NLS-1$ //$NON-NLS-2$
-                            pImplementationName + " " + sArgs; //$NON-NLS-1$
+                pImplementationName + " " + sArgs; //$NON-NLS-1$
         }
 
         return command;
@@ -360,8 +360,8 @@ public class OOo extends AbstractOOo {
                     @Override
                     public void run() {
                         mDoRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-                                        Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
-                                        Messages.getString("OOo.PackageAlreadyInstalled")); //$NON-NLS-1$
+                            Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
+                            Messages.getString("OOo.PackageAlreadyInstalled")); //$NON-NLS-1$
                     }
                 });
                 if (mDoRemovePackage) {
@@ -378,8 +378,8 @@ public class OOo extends AbstractOOo {
                 @Override
                 public void run() {
                     MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                    Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
-                                    Messages.getString("OOo.DeploymentError")); //$NON-NLS-1$
+                        Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
+                        Messages.getString("OOo.DeploymentError")); //$NON-NLS-1$
                 }
             });
             PluginLogger.error(Messages.getString("OOo.DeploymentError"), e); //$NON-NLS-1$
@@ -400,7 +400,7 @@ public class OOo extends AbstractOOo {
      */
     private void addPackage(File pPackageFile, IPath pUserInstallation) throws Exception {
         String path = pPackageFile.getAbsolutePath();
-        String shellCommand = MessageFormat.format( "unopkg gui -f \"{0}\"", path ); //$NON-NLS-1$
+        String shellCommand = MessageFormat.format("unopkg gui -f \"{0}\"", path); //$NON-NLS-1$
 
         String[] env = SystemHelper.getSystemEnvironement();
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
@@ -429,7 +429,7 @@ public class OOo extends AbstractOOo {
 
         if (failed) {
             throw new Exception(Messages.getString("OOo.PackageAddError") + //$NON-NLS-1$
-                            pPackageFile.getAbsolutePath());
+                pPackageFile.getAbsolutePath());
         }
     }
 
@@ -539,7 +539,7 @@ public class OOo extends AbstractOOo {
             if (ureDir == null) {
                 mHome = null;
                 throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + unoRelativePath,
-                                InvalidConfigException.INVALID_OOO_HOME);
+                    InvalidConfigException.INVALID_OOO_HOME);
             }
             mUre = new URE(ureDir.getAbsolutePath());
         }
@@ -553,7 +553,7 @@ public class OOo extends AbstractOOo {
                 List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
                 if (dirs == null) {
                     throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
-                                    InvalidConfigException.INVALID_OOO_HOME);
+                        InvalidConfigException.INVALID_OOO_HOME);
                 }
                 // remove link if there is duplicate
                 if (dirs.size() > 1) {
@@ -563,10 +563,10 @@ public class OOo extends AbstractOOo {
                             linksList.add(tmpFile);
                         }
                     }
-                    if(!linksList.isEmpty()) {
-                        for(File link : linksList){
+                    if (!linksList.isEmpty()) {
+                        for (File link : linksList) {
                             File linkTarget = AbstractOOo.getTargetLink(link);
-                            if(dirs.contains(linkTarget)){
+                            if (dirs.contains(linkTarget)) {
                                 dirs.remove(linkTarget);
                             }
                         }
@@ -574,13 +574,13 @@ public class OOo extends AbstractOOo {
                 }
                 if (dirs.size() != 1) {
                     throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
-                                    InvalidConfigException.INVALID_OOO_HOME);
+                        InvalidConfigException.INVALID_OOO_HOME);
                 } else {
                     return dirs.get(0);
                 }
             } catch (IOException e) {
                 throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
-                                InvalidConfigException.INVALID_OOO_HOME);
+                    InvalidConfigException.INVALID_OOO_HOME);
             }
         }
 
@@ -602,16 +602,16 @@ public class OOo extends AbstractOOo {
                             linksList.add(tmpFile);
                         }
                     }
-                    if(!linksList.isEmpty()) {
-                        for(File link : linksList){
+                    if (!linksList.isEmpty()) {
+                        for (File link : linksList) {
                             File linkTarget = AbstractOOo.getTargetLink(link);
-                            if(dirs.contains(linkTarget)){
+                            if (dirs.contains(linkTarget)) {
                                 dirs.remove(linkTarget);
                             }
                         }
                     }
                 }
-                if(dirs.size() == 0){
+                if (dirs.size() == 0) {
                     return Collections.emptyList();
                 }
                 List<File> returnList = new ArrayList<File>();
@@ -621,7 +621,7 @@ public class OOo extends AbstractOOo {
                 return returnList;
             } catch (IOException e) {
                 throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
-                                InvalidConfigException.INVALID_OOO_HOME);
+                    InvalidConfigException.INVALID_OOO_HOME);
             }
         }
 
@@ -638,7 +638,7 @@ public class OOo extends AbstractOOo {
             }
 
             File basisLibs = this.mapperBasisLibs;
-            if(basisLibs == null){
+            if (basisLibs == null) {
                 try {
                     String extension = ".so";
                     if (getPlatform().equals(Platform.OS_WIN32)) {
@@ -673,7 +673,7 @@ public class OOo extends AbstractOOo {
             }
 
             File basisLibs = this.mapperBasisBins;
-            if(basisLibs == null){
+            if (basisLibs == null) {
                 try {
                     basisLibs = locateUniqueContainer(mHome, "soffice.bin");
                     this.mapperBasisBins = basisLibs;
@@ -702,11 +702,11 @@ public class OOo extends AbstractOOo {
                 ureClasses = mUre.getClassesPath();
             }
 
-            File basisClasses =  this.mapperBasisClasses;
-            if(mapperBasisClasses == null){
+            File basisClasses = this.mapperBasisClasses;
+            if (mapperBasisClasses == null) {
                 try {
                     basisClasses = locateUniqueContainer(mHome, "unoil.jar");
-                    mapperBasisClasses= basisClasses;
+                    mapperBasisClasses = basisClasses;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
                 }
@@ -733,7 +733,7 @@ public class OOo extends AbstractOOo {
             }
 
             List<File> basisTypes = this.mapperBasisTypes;
-            if(mapperBasisTypes == null){
+            if (mapperBasisTypes == null) {
                 try {
                     basisTypes = locateFiles(mHome, "offapi.rdb");
                     mapperBasisTypes = basisTypes;
@@ -744,8 +744,8 @@ public class OOo extends AbstractOOo {
 
             if (basisTypes != null && basisTypes.size() > 0) {
                 List<String> servicesPathList = new ArrayList<String>();
-                for(File typeFile : basisTypes){
-                    if(typeFile != null){
+                for (File typeFile : basisTypes) {
+                    if (typeFile != null) {
                         servicesPathList.add(typeFile.getAbsolutePath());
                     }
                 }
@@ -769,7 +769,7 @@ public class OOo extends AbstractOOo {
             }
 
             List<File> basisTypes = this.mapperBasisServices;
-            if(mapperBasisServices == null){
+            if (mapperBasisServices == null) {
                 try {
                     basisTypes = locateFiles(mHome, "services.rdb");
                     mapperBasisServices = basisTypes;
@@ -780,8 +780,8 @@ public class OOo extends AbstractOOo {
 
             if (basisTypes != null && basisTypes.size() > 0) {
                 List<String> servicesPathList = new ArrayList<String>();
-                for(File typeFile : basisTypes){
-                    if(typeFile != null){
+                for (File typeFile : basisTypes) {
+                    if (typeFile != null) {
                         servicesPathList.add(typeFile.getAbsolutePath());
                     }
                 }

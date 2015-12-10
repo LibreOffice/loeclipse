@@ -47,12 +47,11 @@ import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 
 /**
- * Rule using a regex rule to highlight an equality. For example,
- * the following lines are valid for this rule:
+ * Rule using a regex rule to highlight an equality. For example, the following lines are valid for this rule:
  * <ul>
- *   <li>foo=</li>
- *   <li>foo=foo</li>
- *   <li>foo = foo</li>
+ * <li>foo=</li>
+ * <li>foo=foo</li>
+ * <li>foo = foo</li>
  * </ul>
  * However "=foo" wont be accepted.
  *
@@ -64,7 +63,8 @@ public class EqualityNameRule extends RegexRule {
     /**
      * Constructor.
      *
-     * @param pToken the token to analyze.
+     * @param pToken
+     *            the token to analyze.
      */
     public EqualityNameRule(IToken pToken) {
         super("[a-zA-Z]+\\p{Blank}?=", pToken); //$NON-NLS-1$

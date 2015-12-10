@@ -70,8 +70,10 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Creates and initializes an {@link OfficeClassLoader} for a given office instance.
      *
-     * @param pOOo the LibreOffice instance to use for the class loader
-     * @param pParent the parent class loader to set
+     * @param pOOo
+     *            the LibreOffice instance to use for the class loader
+     * @param pParent
+     *            the parent class loader to set
      */
     private OfficeClassLoader(IOOo pOOo, ClassLoader pParent) {
         super(getUrls(pOOo), pParent);
@@ -80,14 +82,16 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Create or load the classloader for the given LibreOffice instance.
      *
-     * @param pOOo the LibreOffice instance to load
-     * @param pParent the parent classloader to use if the classloader has to be created.
+     * @param pOOo
+     *            the LibreOffice instance to load
+     * @param pParent
+     *            the parent classloader to use if the classloader has to be created.
      *
      * @return the classloader corresponding to the LibreOffice instance
      */
     public static OfficeClassLoader getClassLoader(IOOo pOOo, ClassLoader pParent) {
         // First try the class loaders cache
-        OfficeClassLoader loader =  sClassLoaders.get(pOOo.getHome());
+        OfficeClassLoader loader = sClassLoaders.get(pOOo.getHome());
 
         // If not found, create a new class loader for this office instance
         if (loader == null) {
@@ -99,21 +103,22 @@ public class OfficeClassLoader extends URLClassLoader {
     }
 
     /**
-     * Load a class in a different order than the standard one: first look in the
-     * URLs then call the parent's class loader loadClass method. This order is applied
-     * only if the class to load is in the
+     * Load a class in a different order than the standard one: first look in the URLs then call the parent's class
+     * loader loadClass method. This order is applied only if the class to load is in the
      * <code>org.openoffice.ide.eclipse.core.internal.office</code> package.
      *
-     * @param pName the name of the class to load
-     * @param pResolve if <code>true</code> then resolves the class
+     * @param pName
+     *            the name of the class to load
+     * @param pResolve
+     *            if <code>true</code> then resolves the class
      *
      * @return the loaded class
      *
-     * @throws ClassNotFoundException if the class cannot be found
+     * @throws ClassNotFoundException
+     *             if the class cannot be found
      */
     @Override
-    protected synchronized Class<?> loadClass(String pName, boolean pResolve)
-                    throws ClassNotFoundException {
+    protected synchronized Class<?> loadClass(String pName, boolean pResolve) throws ClassNotFoundException {
 
         Class<?> clazz = null;
         clazz = findLoadedClass(pName);
@@ -135,7 +140,8 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Get the URLs to add to the class loader from an office instance.
      *
-     * @param pOOo the LibreOffice instance
+     * @param pOOo
+     *            the LibreOffice instance
      *
      * @return the URL to set to the class loader
      */

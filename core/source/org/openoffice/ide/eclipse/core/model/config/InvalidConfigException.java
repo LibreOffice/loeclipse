@@ -43,10 +43,9 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.model.config;
 
-
 /**
- * This exception is thrown when an OOo or SDK isn't valid, ie that it's home
- * doesn't fit to a correct home directory for an OOo or SDK.
+ * This exception is thrown when an OOo or SDK isn't valid, ie that it's home doesn't fit to a correct home directory
+ * for an OOo or SDK.
  *
  * @see IOOo
  * @see ISdk
@@ -70,11 +69,13 @@ public class InvalidConfigException extends Exception {
     private int mErrorCode;
 
     /**
-     * Constructor of the invalid SDK exception. It needs a message and a error
-     * code among those defined as constants of this class.
+     * Constructor of the invalid SDK exception. It needs a message and a error code among those defined as constants of
+     * this class.
      *
-     * @param pMessage error message
-     * @param pCode error code
+     * @param pMessage
+     *            error message
+     * @param pCode
+     *            error code
      */
     public InvalidConfigException(String pMessage, int pCode) {
         super(pMessage);
@@ -83,12 +84,15 @@ public class InvalidConfigException extends Exception {
     }
 
     /**
-     * Constructor of the invalid SDK exception. It needs a message and a error
-     * code among those defined as constants of this class.
+     * Constructor of the invalid SDK exception. It needs a message and a error code among those defined as constants of
+     * this class.
      *
-     * @param pMessage error message
-     * @param pCode error code
-     * @param pException exception in case there is one.
+     * @param pMessage
+     *            error message
+     * @param pCode
+     *            error code
+     * @param pException
+     *            exception in case there is one.
      */
     public InvalidConfigException(String pMessage, int pCode, Throwable pException) {
         super(pMessage, pException);
@@ -97,8 +101,7 @@ public class InvalidConfigException extends Exception {
     }
 
     /**
-     * Returns the error code of the exception among the constants of the
-     * <code>InvalidSDKException</code> class.
+     * Returns the error code of the exception among the constants of the <code>InvalidSDKException</code> class.
      *
      * @return error code.
      */

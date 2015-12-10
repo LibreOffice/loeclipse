@@ -69,23 +69,25 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.openoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
 /**
- * This class is a factory creating UNO projects and types from data sets
- * describing the object to get.
+ * This class is a factory creating UNO projects and types from data sets describing the object to get.
  *
  * @author cedricbosdo
  */
 public final class UnoFactory {
 
     /**
-     * Creates a UNO project from scratch. It creates the directories,
-     * initial types and generates the basic implementation.
+     * Creates a UNO project from scratch. It creates the directories, initial types and generates the basic
+     * implementation.
      *
-     * @param pData the project description
-     * @param pMonitor the monitor to report the progress of the project creation
+     * @param pData
+     *            the project description
+     * @param pMonitor
+     *            the monitor to report the progress of the project creation
      *
      * @return the created UNO project
      *
-     * @throws Exception if anything wrong happens during the project creation
+     * @throws Exception
+     *             if anything wrong happens during the project creation
      */
     public static IUnoidlProject createProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
 
@@ -95,19 +97,22 @@ public final class UnoFactory {
         prj.getFile("package.properties").getLocation().toFile().createNewFile(); //$NON-NLS-1$
 
         // Creates an empty description.xml file
-        File file = prj.getFile( IUnoidlProject.DESCRIPTION_FILENAME ).getLocation().toFile();
-        DescriptionModel descrModel = new DescriptionModel( );
-        descrModel.getDisplayNames().put( Locale.ENGLISH, prj.getName() );
-        descrModel.setId( prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$
-                        prj.getName().replaceAll( "[^a-zA-Z0-9]", new String( ) ).toLowerCase() ); //$NON-NLS-1$
+        File file = prj.getFile(IUnoidlProject.DESCRIPTION_FILENAME).getLocation().toFile();
+        DescriptionModel descrModel = new DescriptionModel();
+        descrModel.getDisplayNames().put(Locale.ENGLISH, prj.getName());
+        descrModel.setId(prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$
+            prj.getName().replaceAll("[^a-zA-Z0-9]", new String()).toLowerCase()); //$NON-NLS-1$
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream( file );
-            descrModel.serialize( out );
-        } catch ( Exception e ) {
+            out = new FileOutputStream(file);
+            descrModel.serialize(out);
+        } catch (Exception e) {
             // TODO Log ?
         } finally {
-            try { out.close(); } catch ( Exception e ) { }
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
         }
 
         UnoidlProjectHelper.refreshProject(prj, null);
@@ -119,37 +124,42 @@ public final class UnoFactory {
     /**
      * Creates a new component implementation skeleton.
      *
-     * <p>Creates a new component implementation skeleton from the project
-     * factory data and opens the generated file. This method executes the
-     * uno-skeletonmaker command line tool.</p>
+     * <p>
+     * Creates a new component implementation skeleton from the project factory data and opens the generated file. This
+     * method executes the uno-skeletonmaker command line tool.
+     * </p>
      *
-     * <p>The data should contain at least the following properties:
+     * <p>
+     * The data should contain at least the following properties:
      * <ul>
-     *     <li>The projet language in {@link IUnoFactoryConstants#PROJECT_LANGUAGE}</li>
-     *     <li>The projet name in {@link IUnoFactoryConstants#PROJECT_NAME}</li>
-     *     <li>One service inner data defined by:
-     *     <ul>
-     *         <li>The service name in {@link IUnoFactoryConstants#TYPE_NAME}</li>
-     *         <li>The service module in {@link IUnoFactoryConstants#PACKAGE_NAME}</li>
-     *     </ul>
-     *    </li>
+     * <li>The projet language in {@link IUnoFactoryConstants#PROJECT_LANGUAGE}</li>
+     * <li>The projet name in {@link IUnoFactoryConstants#PROJECT_NAME}</li>
+     * <li>One service inner data defined by:
+     * <ul>
+     * <li>The service name in {@link IUnoFactoryConstants#TYPE_NAME}</li>
+     * <li>The service module in {@link IUnoFactoryConstants#PACKAGE_NAME}</li>
+     * </ul>
+     * </li>
      * </ul>
      * </p>
      *
-     * @param pData the project data for which to create the component
-     *             implementation skeleton.
-     * @param pActivePage the page in which to open the created file
-     * @param pMonitor the progress monitor to report the operation progress
+     * @param pData
+     *            the project data for which to create the component implementation skeleton.
+     * @param pActivePage
+     *            the page in which to open the created file
+     * @param pMonitor
+     *            the progress monitor to report the operation progress
      *
-     * @throws Exception is thrown if anything wrong happens
+     * @throws Exception
+     *             is thrown if anything wrong happens
      */
-    public static void makeSkeleton(UnoFactoryData pData,
-                    IWorkbenchPage pActivePage, IProgressMonitor pMonitor) throws Exception {
+    public static void makeSkeleton(UnoFactoryData pData, IWorkbenchPage pActivePage, IProgressMonitor pMonitor)
+        throws Exception {
 
-        String prjName = (String)pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+        String prjName = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
 
-        AbstractLanguage lang = (AbstractLanguage)pData.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
+        AbstractLanguage lang = (AbstractLanguage) pData.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
         IProjectHandler langProjectHandler = lang.getProjectHandler();
         String languageOption = langProjectHandler.getSkeletonMakerLanguage(pData);
 
@@ -166,7 +176,6 @@ public final class UnoFactory {
                 typesReg += " -l " + oooType; //$NON-NLS-1$
             }
 
-
             String prjTypes = prj.getTypesPath().toString();
             typesReg += " -l " + prjTypes; //$NON-NLS-1$
 
@@ -174,16 +183,16 @@ public final class UnoFactory {
             String unorc = "-env:BOOTSTRAPINI=\"" + prj.getOOo().getUnorcPath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
             // Get the service for which to generate the skeleton
-            UnoFactoryData[] inner =  pData.getInnerData();
+            UnoFactoryData[] inner = pData.getInnerData();
             String service = ""; //$NON-NLS-1$
             int i = 0;
 
             while (i < inner.length && service.equals("")) { //$NON-NLS-1$
 
-                int typeNature = ((Integer)inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
+                int typeNature = ((Integer) inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
                 if (typeNature == IUnoFactoryConstants.SERVICE) {
-                    String name = (String)inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
-                    String module = (String)inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+                    String name = (String) inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
+                    String module = (String) inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
 
                     String fullname = module + "::" + name; //$NON-NLS-1$
                     fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -197,14 +206,14 @@ public final class UnoFactory {
             String implementationName = langProjectHandler.getImplementationName(prj, service);
 
             // Run the uno-skeletonmaker command
-            String command = "uno-skeletonmaker" +    //$NON-NLS-1$
-                            " " + unorc +  //$NON-NLS-1$
-                            " component " + languageOption +  //$NON-NLS-1$
-                            " --propertysetmixin" +  //$NON-NLS-1$
-                            " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$
-                            " " + typesReg + //$NON-NLS-1$
-                            " -n " + implementationName + //$NON-NLS-1$
-                            " -t " + service; //$NON-NLS-1$
+            String command = "uno-skeletonmaker" + //$NON-NLS-1$
+                " " + unorc + //$NON-NLS-1$
+                " component " + languageOption + //$NON-NLS-1$
+                " --propertysetmixin" + //$NON-NLS-1$
+                " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$
+                " " + typesReg + //$NON-NLS-1$
+                " -n " + implementationName + //$NON-NLS-1$
+                " -t " + service; //$NON-NLS-1$
 
             Process process = prj.getSdk().runTool(prj, command, pMonitor);
 
@@ -225,10 +234,11 @@ public final class UnoFactory {
                     if (!error.equals("")) { //$NON-NLS-1$
                         PluginLogger.error(error);
                     } else {
-                        PluginLogger.info(Messages.getString("UnoFactory.SkeletonGeneratedMessage") +  //$NON-NLS-1$
-                                        implementationName);
+                        PluginLogger.info(Messages.getString("UnoFactory.SkeletonGeneratedMessage") + //$NON-NLS-1$
+                            implementationName);
                     }
-                } catch (java.io.IOException e) { }
+                } catch (java.io.IOException e) {
+                }
             }
 
             // Refresh the project to reflect the changes
@@ -246,71 +256,75 @@ public final class UnoFactory {
     /**
      * Creates a service from its factory data and opens the created file.
      *
-     * <p>The data needed to create the service needs to be structured in the
-     * following way:
-     *     <ul>
-     *         <li>{@link IUnoFactoryConstants#PACKAGE_NAME} the full name of the
-     *             module containing the service.</li>
-     *         <li>{@link IUnoFactoryConstants#TYPE_NAME} the service name.</li>
-     *         <li> {@link IUnoFactoryConstants#INHERITED_INTERFACES} the list
-     *             of the inherited interfaces of the service as an array of
-     *             strings.</li>
-     *         <li>{@link IUnoFactoryConstants#TYPE_PUBLISHED} a boolean indicating
-     *             whether the type is marked as published or not.</li>
-     *     </ul>
+     * <p>
+     * The data needed to create the service needs to be structured in the following way:
+     * <ul>
+     * <li>{@link IUnoFactoryConstants#PACKAGE_NAME} the full name of the module containing the service.</li>
+     * <li>{@link IUnoFactoryConstants#TYPE_NAME} the service name.</li>
+     * <li>{@link IUnoFactoryConstants#INHERITED_INTERFACES} the list of the inherited interfaces of the service as an
+     * array of strings.</li>
+     * <li>{@link IUnoFactoryConstants#TYPE_PUBLISHED} a boolean indicating whether the type is marked as published or
+     * not.</li>
+     * </ul>
      * </p>
      *
-     * @param pData the data describing the service
-     * @param pPrj the uno project that will contain the service
-     * @param pActivePage the page in which to open the created file
-     * @param pMonitor the progress monitor to report the operation progress
-     * @throws Exception is thrown if anything wrong happens
+     * @param pData
+     *            the data describing the service
+     * @param pPrj
+     *            the uno project that will contain the service
+     * @param pActivePage
+     *            the page in which to open the created file
+     * @param pMonitor
+     *            the progress monitor to report the operation progress
+     * @throws Exception
+     *             is thrown if anything wrong happens
      */
-    public static void createService(UnoFactoryData pData, IUnoidlProject pPrj,
-                    IWorkbenchPage pActivePage, IProgressMonitor pMonitor) throws Exception {
+    public static void createService(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
+        IProgressMonitor pMonitor) throws Exception {
         createService(pData, pPrj, pActivePage, pMonitor, true);
     }
 
     /**
      * Creates a service from its factory data.
      *
-     * <p>The data needed to create the service needs to be structured in the
-     * following way:
-     *     <ul>
-     *         <li>{@link IUnoFactoryConstants#PACKAGE_NAME} the full name of the
-     *             module containing the service.</li>
-     *         <li>{@link IUnoFactoryConstants#TYPE_NAME} the service name.</li>
-     *         <li> {@link IUnoFactoryConstants#INHERITED_INTERFACES} the list
-     *             of the inherited interfaces of the service as an array of
-     *             strings.</li>
-     *         <li>{@link IUnoFactoryConstants#TYPE_PUBLISHED} a boolean indicating
-     *             whether the type is marked as published or not.</li>
-     *     </ul>
+     * <p>
+     * The data needed to create the service needs to be structured in the following way:
+     * <ul>
+     * <li>{@link IUnoFactoryConstants#PACKAGE_NAME} the full name of the module containing the service.</li>
+     * <li>{@link IUnoFactoryConstants#TYPE_NAME} the service name.</li>
+     * <li>{@link IUnoFactoryConstants#INHERITED_INTERFACES} the list of the inherited interfaces of the service as an
+     * array of strings.</li>
+     * <li>{@link IUnoFactoryConstants#TYPE_PUBLISHED} a boolean indicating whether the type is marked as published or
+     * not.</li>
+     * </ul>
      * </p>
      *
-     * <p>The created file can be opened if <code>openFile</code> is set to
-     * <code>true</code>.</p>
+     * <p>
+     * The created file can be opened if <code>openFile</code> is set to <code>true</code>.
+     * </p>
      *
-     * @param pData the data describing the service
-     * @param pPrj the uno project that will contain the service
-     * @param pActivePage the page in which to open the created file
-     * @param pMonitor the progress monitor to report the operation progress
-     * @param pOpenFile opens the created file if set to <code>true</code>
-     * @throws Exception is thrown if anything wrong happens
+     * @param pData
+     *            the data describing the service
+     * @param pPrj
+     *            the uno project that will contain the service
+     * @param pActivePage
+     *            the page in which to open the created file
+     * @param pMonitor
+     *            the progress monitor to report the operation progress
+     * @param pOpenFile
+     *            opens the created file if set to <code>true</code>
+     * @throws Exception
+     *             is thrown if anything wrong happens
      */
-    public static void createService(UnoFactoryData pData, IUnoidlProject pPrj,
-                    IWorkbenchPage pActivePage, IProgressMonitor pMonitor, boolean pOpenFile) throws Exception {
+    public static void createService(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
+        IProgressMonitor pMonitor, boolean pOpenFile) throws Exception {
 
         // Extract the data
-        String path = (String)pData.getProperty(
-                        IUnoFactoryConstants.PACKAGE_NAME);
+        String path = (String) pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
         path = path.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
-        String name = (String)pData.getProperty(
-                        IUnoFactoryConstants.TYPE_NAME);
-        String[] inheritedIfaces = (String[])pData.getProperty(
-                        IUnoFactoryConstants.INHERITED_INTERFACES);
-        boolean published = ((Boolean)pData.getProperty(
-                        IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
+        String name = (String) pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        String[] inheritedIfaces = (String[]) pData.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
+        boolean published = ((Boolean) pData.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
 
         // Create the necessary modules
         UnoidlProjectHelper.createModules(path, pPrj, null);
@@ -333,8 +347,7 @@ public final class UnoFactory {
         IUnoComposite currentModule = createParentModules(fileContent, path);
 
         // Create the service
-        IUnoComposite service = CompositeFactory.createService(name,
-                        published, inheritedIfaces[0]);
+        IUnoComposite service = CompositeFactory.createService(name, published, inheritedIfaces[0]);
         currentModule.addChild(service);
 
         // Create all the stuffs
@@ -350,43 +363,52 @@ public final class UnoFactory {
     /**
      * Creates an interface from its factory data and opens the created file.
      *
-     * @param pData the data describing the interface
-     * @param pPrj the UNO project that will contain the interface
-     * @param pActivePage the page in which to open the created file
-     * @param pMonitor the progress monitor to report the operation progress
-     * @throws Exception is thrown if anything wrong happens
+     * @param pData
+     *            the data describing the interface
+     * @param pPrj
+     *            the UNO project that will contain the interface
+     * @param pActivePage
+     *            the page in which to open the created file
+     * @param pMonitor
+     *            the progress monitor to report the operation progress
+     * @throws Exception
+     *             is thrown if anything wrong happens
      */
-    public static void createInterface(UnoFactoryData pData, IUnoidlProject pPrj,
-                    IWorkbenchPage pActivePage, IProgressMonitor pMonitor)
-                                    throws Exception {
+    public static void createInterface(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
+        IProgressMonitor pMonitor) throws Exception {
         createInterface(pData, pPrj, pActivePage, pMonitor, true);
     }
 
     /**
-     * Creates an interface from its factory data. The created file can be opened
-     * if <code>openFile</code> is set to <code>true</code>.
+     * Creates an interface from its factory data. The created file can be opened if <code>openFile</code> is set to
+     * <code>true</code>.
      *
-     * @param pData the data describing the interface
-     * @param pPrj the UNO project that will contain the interface
-     * @param pActivePage the page in which to open the created file
-     * @param pMonitor the progress monitor to report the operation progress
-     * @param pOpenFile opens the created file if set to <code>true</code>
-     * @throws Exception is thrown if anything wrong happens
+     * @param pData
+     *            the data describing the interface
+     * @param pPrj
+     *            the UNO project that will contain the interface
+     * @param pActivePage
+     *            the page in which to open the created file
+     * @param pMonitor
+     *            the progress monitor to report the operation progress
+     * @param pOpenFile
+     *            opens the created file if set to <code>true</code>
+     * @throws Exception
+     *             is thrown if anything wrong happens
      */
-    public static void createInterface(UnoFactoryData pData, IUnoidlProject pPrj,
-                    IWorkbenchPage pActivePage, IProgressMonitor pMonitor, boolean pOpenFile)
-                                    throws Exception {
+    public static void createInterface(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
+        IProgressMonitor pMonitor, boolean pOpenFile) throws Exception {
 
         // Extract the data
-        String path = (String)pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+        String path = (String) pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
         path = path.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
-        String name = (String)pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
-        String[] interfaces = (String[])pData.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
-        String[] opt_interfaces = (String[])pData.getProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES);
-        boolean published = ((Boolean)pData.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
+        String name = (String) pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        String[] interfaces = (String[]) pData.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
+        String[] opt_interfaces = (String[]) pData.getProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES);
+        boolean published = ((Boolean) pData.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
 
         if (0 == interfaces.length && 0 < opt_interfaces.length) {
-            interfaces = new String[]{opt_interfaces[0]};
+            interfaces = new String[] { opt_interfaces[0] };
 
             // Remove the first optional interface
             String[] new_opt_interfaces = new String[opt_interfaces.length - 1];
@@ -419,8 +441,7 @@ public final class UnoFactory {
 
         // Create the optional inheritances
         for (int i = 0; i < opt_interfaces.length; i++) {
-            IUnoComposite inherit = CompositeFactory.createInterfaceInheritance(
-                            opt_interfaces[i], true);
+            IUnoComposite inherit = CompositeFactory.createInterfaceInheritance(opt_interfaces[i], true);
             intf.addChild(inherit);
         }
 
@@ -428,22 +449,22 @@ public final class UnoFactory {
         for (UnoFactoryData memberData : pData.getInnerData()) {
 
             // Get the member type: Attribute or Method
-            Integer memberType = (Integer)memberData.getProperty(IUnoFactoryConstants.MEMBER_TYPE);
+            Integer memberType = (Integer) memberData.getProperty(IUnoFactoryConstants.MEMBER_TYPE);
             if (memberType.intValue() == IUnoFactoryConstants.ATTRIBUTE) {
                 // create the method composite
-                String attrName = (String)memberData.getProperty(IUnoFactoryConstants.NAME);
-                String type = (String)memberData.getProperty(IUnoFactoryConstants.TYPE);
-                String flags = (String)memberData.getProperty(IUnoFactoryConstants.FLAGS);
+                String attrName = (String) memberData.getProperty(IUnoFactoryConstants.NAME);
+                String type = (String) memberData.getProperty(IUnoFactoryConstants.TYPE);
+                String flags = (String) memberData.getProperty(IUnoFactoryConstants.FLAGS);
                 intf.addChild(CompositeFactory.createAttribute(attrName, type, flags));
             } else if (memberType.intValue() == IUnoFactoryConstants.METHOD) {
                 // create the attribute composite
-                String methodName = (String)memberData.getProperty(IUnoFactoryConstants.NAME);
-                String type = (String)memberData.getProperty(IUnoFactoryConstants.TYPE);
+                String methodName = (String) memberData.getProperty(IUnoFactoryConstants.NAME);
+                String type = (String) memberData.getProperty(IUnoFactoryConstants.TYPE);
                 IUnoComposite method = CompositeFactory.createMethod(methodName, type);
                 for (UnoFactoryData argData : memberData.getInnerData()) {
-                    String argName = (String)argData.getProperty(IUnoFactoryConstants.NAME);
-                    String argType = (String)argData.getProperty(IUnoFactoryConstants.TYPE);
-                    String direction = (String)argData.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
+                    String argName = (String) argData.getProperty(IUnoFactoryConstants.NAME);
+                    String argType = (String) argData.getProperty(IUnoFactoryConstants.TYPE);
+                    String direction = (String) argData.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
                     method.addChild(CompositeFactory.createMethodArgument(argName, argType, direction));
                 }
                 intf.addChild(method);
@@ -462,9 +483,12 @@ public final class UnoFactory {
     /**
      * Show the file declaring a UNO type.
      *
-     * @param pTypepath the complete name of the type to show separated by <code>::</code>.
-     * @param pPrj the project containing the type
-     * @param pActivePage the workbench active page
+     * @param pTypepath
+     *            the complete name of the type to show separated by <code>::</code>.
+     * @param pPrj
+     *            the project containing the type
+     * @param pActivePage
+     *            the workbench active page
      */
     private static void showType(String pTypepath, IUnoidlProject pPrj, IWorkbenchPage pActivePage) {
         // show the generated file
@@ -477,7 +501,8 @@ public final class UnoFactory {
     /**
      * Get the includes to add from the children.
      *
-     * @param pData the data to look for includes declarations needs.
+     * @param pData
+     *            the data to look for includes declarations needs.
      * @return a list of UNO types (separator <code>::</code>)
      */
     private static String[] getNeededIncludes(UnoFactoryData pData) {
@@ -503,8 +528,10 @@ public final class UnoFactory {
     /**
      * Create the parent modules and return the deepest one.
      *
-     * @param pFileContent the file content UNO composite where to add the modules
-     * @param pTypePath the "::" separated path of the modules to create.
+     * @param pFileContent
+     *            the file content UNO composite where to add the modules
+     * @param pTypePath
+     *            the "::" separated path of the modules to create.
      *
      * @return the deepest created module
      */
@@ -529,8 +556,10 @@ public final class UnoFactory {
     /**
      * Adds includes composites in a type file.
      *
-     * @param pFileContent the file content composite where to add the includes
-     * @param pTypes the types for which to add the includes
+     * @param pFileContent
+     *            the file content composite where to add the includes
+     * @param pTypes
+     *            the types for which to add the includes
      */
     private static void createIncludes(IUnoComposite pFileContent, String[] pTypes) {
         for (int i = 0; i < pTypes.length; i++) {

@@ -44,12 +44,15 @@ public class DescriptionSourcePage extends SourcePage {
     /**
      * Description source editor page constructor.
      *
-     * @param pFormEditor the editor hosting the page.
-     * @param pId the page identifier
-     * @param pTitle the page title
+     * @param pFormEditor
+     *            the editor hosting the page.
+     * @param pId
+     *            the page identifier
+     * @param pTitle
+     *            the page title
      */
     public DescriptionSourcePage(FormEditor pFormEditor, String pId, String pTitle) {
-        super( pFormEditor, pId, pTitle );
+        super(pFormEditor, pId, pTitle);
     }
 
     /**
@@ -57,7 +60,7 @@ public class DescriptionSourcePage extends SourcePage {
      */
     @Override
     public boolean canLeaveThePage() {
-        DescriptionEditor editor = (DescriptionEditor)getEditor();
+        DescriptionEditor editor = (DescriptionEditor) getEditor();
         editor.loadDescFromSource();
 
         return super.canLeaveThePage();

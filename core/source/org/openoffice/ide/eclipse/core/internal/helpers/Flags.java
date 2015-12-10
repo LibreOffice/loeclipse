@@ -56,12 +56,14 @@ public class Flags {
     private int mAllowed;
 
     /**
-     * Initializes the flags structure with a default value and a maximum
-     * number of bits to use for the flags.
+     * Initializes the flags structure with a default value and a maximum number of bits to use for the flags.
      *
-     * @param pMax the number value of the flags
-     * @param pAllowed the allowed flags
-     * @param pDefault the default value
+     * @param pMax
+     *            the number value of the flags
+     * @param pAllowed
+     *            the allowed flags
+     * @param pDefault
+     *            the default value
      */
     public Flags(int pMax, int pAllowed, int pDefault) {
         mFlags = pDefault;
@@ -70,11 +72,11 @@ public class Flags {
     }
 
     /**
-     * Set one or more types. To specify more than one types give the bit or
-     * of all the types, e.g. <code>INTERFACE | SERVICE</code>. The non-allowed
-     * flags are automatically stripped.
+     * Set one or more types. To specify more than one types give the bit or of all the types, e.g.
+     * <code>INTERFACE | SERVICE</code>. The non-allowed flags are automatically stripped.
      *
-     * @param pValue the bit or of the types
+     * @param pValue
+     *            the bit or of the types
      */
     public void setTypes(int pValue) {
 
@@ -87,8 +89,7 @@ public class Flags {
     }
 
     /**
-     * @return the flags set as an integer. The flags field is a bit OR of all the
-     *          flags set.
+     * @return the flags set as an integer. The flags field is a bit OR of all the flags set.
      */
     public int getFlags() {
         return mFlags;
@@ -97,7 +98,8 @@ public class Flags {
     /**
      * Checks if the given flag will be queried.
      *
-     * @param pFlag the flag to match
+     * @param pFlag
+     *            the flag to match
      * @return <code>true</code> if the flag is one of the flags set
      */
     public boolean isFlagSet(int pFlag) {

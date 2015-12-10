@@ -69,18 +69,16 @@ import org.openoffice.ide.eclipse.core.wizards.utils.IListenablePage;
 import org.openoffice.ide.eclipse.core.wizards.utils.IPageListener;
 
 /**
- * Abstract class for a wizard page to create a scoped element
- * such as a service or an interface.
+ * Abstract class for a wizard page to create a scoped element such as a service or an interface.
  *
  * @author cedricbosdo
  *
  */
-public abstract class NewScopedElementWizardPage extends WizardPage
-implements IFieldChangedListener, IListenablePage {
+public abstract class NewScopedElementWizardPage extends WizardPage implements IFieldChangedListener, IListenablePage {
 
-    private static final String P_PACKAGE           = "__package"; //$NON-NLS-1$
-    private static final String P_NAME              = "__name"; //$NON-NLS-1$
-    private static final String P_PUBLISHED            = "__published"; //$NON-NLS-1$
+    private static final String P_PACKAGE = "__package"; //$NON-NLS-1$
+    private static final String P_NAME = "__name"; //$NON-NLS-1$
+    private static final String P_PUBLISHED = "__published"; //$NON-NLS-1$
 
     private IUnoidlProject mUnoProject;
     private String mRootName;
@@ -94,78 +92,86 @@ implements IFieldChangedListener, IListenablePage {
     private BooleanRow mPublishedRow;
 
     /**
-     * Default constructor to use when neither the project nor the
-     * OOo instance is known.
+     * Default constructor to use when neither the project nor the OOo instance is known.
      *
-     * @param pName wizard page name
+     * @param pName
+     *            wizard page name
      */
     public NewScopedElementWizardPage(String pName) {
-        this (pName, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        this(pName, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
      * Constructor to use when the UNO project is already created.
      *
-     * @param pPageName name of the page
-     * @param pUnoProject UNO project in which to create a scoped type
+     * @param pPageName
+     *            name of the page
+     * @param pUnoProject
+     *            UNO project in which to create a scoped type
      */
-    public NewScopedElementWizardPage(
-                    String pPageName, IUnoidlProject pUnoProject) {
+    public NewScopedElementWizardPage(String pPageName, IUnoidlProject pUnoProject) {
         this(pPageName, pUnoProject, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
-     * Constructor to use when the UNO project is already created, the
-     * scoped type name and it's path already known.
+     * Constructor to use when the UNO project is already created, the scoped type name and it's path already known.
      *
-     * @param pPageName name of the wizard page
-     * @param pProject UNO project in which to create a scoped type
-     * @param pRootName scoped name of the module containing the type
-     * @param pElementName name of the type, without any '.' or '::'
+     * @param pPageName
+     *            name of the wizard page
+     * @param pProject
+     *            UNO project in which to create a scoped type
+     * @param pRootName
+     *            scoped name of the module containing the type
+     * @param pElementName
+     *            name of the type, without any '.' or '::'
      */
-    public NewScopedElementWizardPage(
-                    String pPageName, IUnoidlProject pProject,
-                    String pRootName, String pElementName) {
+    public NewScopedElementWizardPage(String pPageName, IUnoidlProject pProject, String pRootName,
+        String pElementName) {
 
         this(pPageName, pRootName, pElementName);
         setUnoidlProject(pProject);
     }
 
     /**
-     * Creates a default scoped name type wizard page with blank container
-     * path and type name.
+     * Creates a default scoped name type wizard page with blank container path and type name.
      *
-     * @param pPageName name of the wizard page
-     * @param pOOoInstance the OOo instance to use to retrieve the types
+     * @param pPageName
+     *            name of the wizard page
+     * @param pOOoInstance
+     *            the OOo instance to use to retrieve the types
      */
     public NewScopedElementWizardPage(String pPageName, IOOo pOOoInstance) {
         this(pPageName, "", "", pOOoInstance); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
-     * Constructor to use when the UNO project is already created, the
-     * scoped type name and it's path already known.
+     * Constructor to use when the UNO project is already created, the scoped type name and it's path already known.
      *
-     * @param pPageName name of the wizard page
-     * @param pRootName scoped name of the module containing the type
-     * @param pElementName name of the type, without any '.' or '::'
-     * @param pOOoInstance the reference to the OOo to use for type selection
+     * @param pPageName
+     *            name of the wizard page
+     * @param pRootName
+     *            scoped name of the module containing the type
+     * @param pElementName
+     *            name of the type, without any '.' or '::'
+     * @param pOOoInstance
+     *            the reference to the OOo to use for type selection
      */
-    public NewScopedElementWizardPage(String pPageName,
-                    String pRootName, String pElementName, IOOo pOOoInstance) {
+    public NewScopedElementWizardPage(String pPageName, String pRootName, String pElementName, IOOo pOOoInstance) {
 
         this(pPageName, pRootName, pElementName);
         setOOoInstance(pOOoInstance);
     }
 
     /**
-     * Creates a default page for a scoped element like an interface or a
-     * service. This constructor let provide default values for the container
-     * path and the type name.
+     * Creates a default page for a scoped element like an interface or a service. This constructor let provide default
+     * values for the container path and the type name.
      *
-     * @param pPageName name of the wizard page
-     * @param pRootName scoped name of the module containing the type
-     * @param pElementName name of the type, without any '.' or '::'
+     * @param pPageName
+     *            name of the wizard page
+     * @param pRootName
+     *            scoped name of the module containing the type
+     * @param pElementName
+     *            name of the type, without any '.' or '::'
      */
     private NewScopedElementWizardPage(String pPageName, String pRootName, String pElementName) {
 
@@ -204,23 +210,29 @@ implements IFieldChangedListener, IListenablePage {
     protected abstract ImageDescriptor getImageDescriptor();
 
     /**
-     * Implement this method to add specific controls for the subclassing
-     * wizard page.
+     * Implement this method to add specific controls for the subclassing wizard page.
      *
-     * @param pParent the composite parent where to put the controls
+     * @param pParent
+     *            the composite parent where to put the controls
      */
     protected abstract void createSpecificControl(Composite pParent);
 
     /**
-     * @return the types to get in the UNO types provider. The returned integer
-     * is a <pre>bit or</pre> of the types defined in the {@link UnoTypeProvider} class.
+     * @return the types to get in the UNO types provider. The returned integer is a
+     * 
+     *         <pre>
+     * bit or
+     *         </pre>
+     * 
+     *         of the types defined in the {@link UnoTypeProvider} class.
      */
     public abstract int getProvidedTypes();
 
     /**
      * Set the OOo instance to query the types from.
      *
-     * @param pOOoInstance OOo instance to use.
+     * @param pOOoInstance
+     *            OOo instance to use.
      */
     public void setOOoInstance(IOOo pOOoInstance) {
         if (pOOoInstance != null) {
@@ -232,7 +244,8 @@ implements IFieldChangedListener, IListenablePage {
     /**
      * Sets the UNO project in which to create the scoped name type.
      *
-     * @param pUnoProject the projet for which to create the UNO type.
+     * @param pUnoProject
+     *            the projet for which to create the UNO type.
      */
     public void setUnoidlProject(IUnoidlProject pUnoProject) {
         mUnoProject = pUnoProject;
@@ -281,10 +294,11 @@ implements IFieldChangedListener, IListenablePage {
     }
 
     /**
-     * The container name of the type to create is composed of two parts: the
-     * package root and the package; this method sets the first part.
+     * The container name of the type to create is composed of two parts: the package root and the package; this method
+     * sets the first part.
      *
-     * @param pValue the new package root to set
+     * @param pValue
+     *            the new package root to set
      */
     public void setPackageRoot(String pValue) {
         String packageLabel = Messages.getString("NewScopedElementWizardPage.Package") + pValue; //$NON-NLS-1$
@@ -296,13 +310,14 @@ implements IFieldChangedListener, IListenablePage {
     }
 
     /**
-     * the container name of the type to create is composed of two parts: the
-     * package root and the package. This method sets the second part.
+     * the container name of the type to create is composed of two parts: the package root and the package. This method
+     * sets the second part.
      *
-     * @param pValue the new package value
-     * @param pForced <code>true</code> will replace the current value,
-     *             <code>false</code> will set the value only if the current
-     *             package is empty or <code>null</code>.
+     * @param pValue
+     *            the new package value
+     * @param pForced
+     *            <code>true</code> will replace the current value, <code>false</code> will set the value only if the
+     *            current package is empty or <code>null</code>.
      */
     public void setPackage(String pValue, boolean pForced) {
         String moduleSep = "::"; //$NON-NLS-1$
@@ -322,10 +337,11 @@ implements IFieldChangedListener, IListenablePage {
     /**
      * Sets the name of the element to create.
      *
-     * @param pValue the new package value
-     * @param pForced <code>true</code> will replace the current value,
-     *             <code>false</code> will set the value only if the current
-     *             package is empty or <code>null</code>.
+     * @param pValue
+     *            the new package value
+     * @param pForced
+     *            <code>true</code> will replace the current value, <code>false</code> will set the value only if the
+     *            current package is empty or <code>null</code>.
      */
     public void setName(String pValue, boolean pForced) {
 
@@ -354,9 +370,10 @@ implements IFieldChangedListener, IListenablePage {
     /**
      * Sets whether the type is published or not.
      *
-     * @param pValue <code>true</code> if the type is published, <code>false</code>
-     *          otherwise
-     * @param pForced <code>true</code> to overwrite the existing value.
+     * @param pValue
+     *            <code>true</code> if the type is published, <code>false</code> otherwise
+     * @param pForced
+     *            <code>true</code> to overwrite the existing value.
      */
     public void setPublished(boolean pValue, boolean pForced) {
 
@@ -380,7 +397,7 @@ implements IFieldChangedListener, IListenablePage {
         super.dispose();
     }
 
-    //---------------------------------------------------------- IListenablePage
+    // ---------------------------------------------------------- IListenablePage
 
     /**
      * {@inheritDoc}
@@ -405,7 +422,8 @@ implements IFieldChangedListener, IListenablePage {
     /**
      * Notifies all the page listeners that the pages data have changed.
      *
-     * @param pData the new data of the page.
+     * @param pData
+     *            the new data of the page.
      */
     protected void firePageChanged(UnoFactoryData pData) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -413,7 +431,7 @@ implements IFieldChangedListener, IListenablePage {
         }
     }
 
-    //--------------------------------------------------- Page content managment
+    // --------------------------------------------------- Page content managment
 
     /**
      * {@inheritDoc}
@@ -452,7 +470,7 @@ implements IFieldChangedListener, IListenablePage {
         publishedParent.setLayoutData(gd);
 
         mPublishedRow = new BooleanRow(publishedParent, P_PUBLISHED,
-                        Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
+            Messages.getString("NewScopedElementWizardPage.Published")); //$NON-NLS-1$
         mPublishedRow.setFieldChangedListener(this);
 
         setPageComplete(isPageComplete());
@@ -472,17 +490,16 @@ implements IFieldChangedListener, IListenablePage {
     }
 
     /**
-     * @param pData the UNO data to complete
+     * @param pData
+     *            the UNO data to complete
      *
-     * @return the given data with the completed properties, <code>null</code>
-     *   if the provided data is <code>null</code>
+     * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
     public UnoFactoryData fillData(UnoFactoryData pData) {
         if (pData != null) {
             pData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
             pData.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
-            pData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED,
-                            Boolean.valueOf(isPublished()));
+            pData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, Boolean.valueOf(isPublished()));
         }
         return pData;
     }
@@ -495,8 +512,8 @@ implements IFieldChangedListener, IListenablePage {
     public abstract UnoFactoryData getEmptyTypeData();
 
     /**
-     * @param pData the data of the project for which to get the default type
-     * data.
+     * @param pData
+     *            the data of the project for which to get the default type data.
      *
      * @return the default type data for the project
      */
@@ -505,19 +522,17 @@ implements IFieldChangedListener, IListenablePage {
 
         if (pData != null) {
             try {
-                String name = (String)pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+                String name = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
-                String packageName = (String)pData.getProperty(
-                                IUnoFactoryConstants.PROJECT_PREFIX);
+                String packageName = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
                 packageName = packageName.replace(".", "::"); //$NON-NLS-1$ //$NON-NLS-2$
 
                 // put the properties in the data
                 typeData.setProperty(IUnoFactoryConstants.TYPE_NAME, name);
                 typeData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, packageName);
-                typeData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED,
-                                Boolean.FALSE);
+                typeData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, Boolean.FALSE);
             } catch (Exception e) {
                 typeData = null;
             }
@@ -541,10 +556,8 @@ implements IFieldChangedListener, IListenablePage {
             } else if (pEvent.getProperty().equals(P_NAME)) {
                 mElementName = pEvent.getValue();
                 // Test if there is the scoped name already exists
-                String[] containers = new String[] {
-                                getProject().getTypesPath().toOSString(),
-                                getProject().getOOo().getName()
-                };
+                String[] containers = new String[] { getProject().getTypesPath().toOSString(),
+                    getProject().getOOo().getName() };
                 boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue(), containers);
                 if (exists) {
                     setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
@@ -605,20 +618,20 @@ implements IFieldChangedListener, IListenablePage {
     /**
      * Checks if an IDL file exists in the project for a given IDL type.
      *
-     * <p>Please note that this method behaves correctly only if the user is
-     * respecting the following design rules:
+     * <p>
+     * Please note that this method behaves correctly only if the user is respecting the following design rules:
      * <ul>
-     *     <li>One IDL type per file</li>
-     *     <li>The IDL types have to be organized in directories representing the
-     *          UNO modules</li>
+     * <li>One IDL type per file</li>
+     * <li>The IDL types have to be organized in directories representing the UNO modules</li>
      * </ul>
      * </p>
      *
-     * @param pIdlFullName the full name of the IDL file check
-     * @param pPrj the project where to look for the IDL file
+     * @param pIdlFullName
+     *            the full name of the IDL file check
+     * @param pPrj
+     *            the project where to look for the IDL file
      *
-     * @return <code>true</code> if the an IDL file corresponds to the searched type,
-     *          <code>false</code> otherwise.
+     * @return <code>true</code> if the an IDL file corresponds to the searched type, <code>false</code> otherwise.
      */
     public static boolean existsIdlFile(String pIdlFullName, IUnoidlProject pPrj) {
 

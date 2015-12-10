@@ -49,14 +49,13 @@ import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.ide.eclipse.core.model.language.AbstractLanguage;
 
 /**
- * This interface contains the keys for the data to provide to the UNO
- * factory. This interface shouldn't define any language specific data key.
+ * This interface contains the keys for the data to provide to the UNO factory. This interface shouldn't define any
+ * language specific data key.
  *
  * @author cedricbosdo
  *
  */
 public interface IUnoFactoryConstants {
-
 
     // Project keys
     /**
@@ -64,9 +63,9 @@ public interface IUnoFactoryConstants {
      */
     public static final String PROJECT_HANDLE = "project_handle"; //$NON-NLS-1$
 
-    public static final String PROJECT_PATH = "project_path"; //$NON-NSL-1$ //$NON-NLS-1$
+    public static final String PROJECT_PATH = "project_path"; // $NON-NSL-1$ //$NON-NLS-1$
 
-    public static final String PROJECT_NAME = "project_name"; //$NON-NSL-1$ //$NON-NLS-1$
+    public static final String PROJECT_NAME = "project_name"; // $NON-NSL-1$ //$NON-NLS-1$
 
     /**
      * The object should be a dot-separated string.
@@ -76,7 +75,7 @@ public interface IUnoFactoryConstants {
     /**
      * The object should be a single word.
      */
-    public static final String PROJECT_COMP    = "project_comp"; //$NON-NLS-1$
+    public static final String PROJECT_COMP = "project_comp"; //$NON-NLS-1$
 
     /**
      * The object should be an instance of {@link AbstractLanguage}.
@@ -120,8 +119,7 @@ public interface IUnoFactoryConstants {
     public static final String TYPE_PUBLISHED = "type_published"; //$NON-NLS-1$
 
     /**
-     * The object defines which UNO type the data is describing: a module,
-     * an interface, a service...
+     * The object defines which UNO type the data is describing: a module, an interface, a service...
      */
     public static final String TYPE_NATURE = "type_nature"; //$NON-NLS-1$
 
@@ -138,20 +136,17 @@ public interface IUnoFactoryConstants {
     public static final int BASICS = 1024;
 
     /**
-     * The object is a String corresponding to the returned type of a method or
-     * the type of an attribute.
+     * The object is a String corresponding to the returned type of a method or the type of an attribute.
      */
     public static final String TYPE = "type"; //$NON-NLS-1$
 
     /**
-     * The object is an integer defining whether the data are describing an
-     * attribute or a method.
+     * The object is an integer defining whether the data are describing an attribute or a method.
      */
     public static final String MEMBER_TYPE = "member_type"; //$NON-NLS-1$
 
     public static final int ATTRIBUTE = 1;
     public static final int METHOD = 2;
-
 
     /**
      * The object is the data name.
@@ -159,14 +154,13 @@ public interface IUnoFactoryConstants {
     public static final String NAME = "name"; //$NON-NLS-1$
 
     /**
-     * The object is a string containing the different flags of attributes,
-     * properties and methods separated by a space.
+     * The object is a string containing the different flags of attributes, properties and methods separated by a space.
      */
     public static final String FLAGS = "flags"; //$NON-NLS-1$
 
     /**
-     * The object is a string among <code>in</code>, <code>out</code> and <code>inout</code>
-     * defining the direction of a method parameter.
+     * The object is a string among <code>in</code>, <code>out</code> and <code>inout</code> defining the direction of a
+     * method parameter.
      */
     public static final String ARGUMENT_INOUT = "argument_inout"; //$NON-NLS-1$
 

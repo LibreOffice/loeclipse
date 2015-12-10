@@ -81,14 +81,15 @@ public class ContentsSection extends SectionPart {
     /**
      * Constructor.
      *
-     * @param pPage the form page containing the section
+     * @param pPage
+     *            the form page containing the section
      */
     public ContentsSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(),
-                        pPage.getManagedForm().getToolkit(), ExpandableComposite.TITLE_BAR);
+        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+            ExpandableComposite.TITLE_BAR);
 
         mPage = pPage;
-        PackagePropertiesModel model = ((PackagePropertiesEditor)mPage.getEditor()).getModel();
+        PackagePropertiesModel model = ((PackagePropertiesEditor) mPage.getEditor()).getModel();
         model.addChangeListener(new IModelChangedListener() {
 
             @Override
@@ -108,7 +109,6 @@ public class ContentsSection extends SectionPart {
         section.setText(Messages.getString("ContentsSection.Title")); //$NON-NLS-1$
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-
         mTreeViewer = new ContainerCheckedTreeViewer(section);
         // Configure the tree viewer
         mTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
@@ -119,7 +119,7 @@ public class ContentsSection extends SectionPart {
             @Override
             public void checkStateChanged(CheckStateChangedEvent pEvent) {
 
-                PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
+                PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
 
                 List<IResource> contents = getContents();
                 editor.getModel().clearContents();
@@ -133,27 +133,26 @@ public class ContentsSection extends SectionPart {
             @Override
             public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
                 /*
-                 * Files to exclude: .*
-                 * Folders to exclude: build, bin
+                 * Files to exclude: .* Folders to exclude: build, bin
                  */
                 boolean select = true;
                 if (pElement instanceof IAdaptable) {
-                    IResource resource = ((IAdaptable)pElement).getAdapter(IResource.class);
+                    IResource resource = ((IAdaptable) pElement).getAdapter(IResource.class);
                     if (resource != null) {
-                        if (resource.getName().startsWith(".") ||  //$NON-NLS-1$
-                                        resource.getName().equals("build") ||  //$NON-NLS-1$
-                                        resource.getName().equals("bin") || //$NON-NLS-1$
-                                        UnoidlProjectHelper.isContainedInPackage(resource)) {
+                        if (resource.getName().startsWith(".") || //$NON-NLS-1$
+                            resource.getName().equals("build") || //$NON-NLS-1$
+                            resource.getName().equals("bin") || //$NON-NLS-1$
+                            UnoidlProjectHelper.isContainedInPackage(resource)) {
                             select = false;
                         }
 
                         // Check if the resource is already selected somewhere
-                        PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
+                        PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
                         PackagePropertiesModel model = editor.getModel();
 
-                        if (model.getBasicLibraries().contains(resource) ||
-                                        model.getDialogLibraries().contains(resource) ||
-                                        model.getDescriptionFiles().containsValue(resource)) {
+                        if (model.getBasicLibraries().contains(resource)
+                            || model.getDialogLibraries().contains(resource)
+                            || model.getDescriptionFiles().containsValue(resource)) {
                             select = false;
                         }
                     }
@@ -165,7 +164,7 @@ public class ContentsSection extends SectionPart {
 
         IEditorInput input = mPage.getEditorInput();
         if (input instanceof IFileEditorInput) {
-            IFileEditorInput fileInput = (IFileEditorInput)input;
+            IFileEditorInput fileInput = (IFileEditorInput) input;
             mTreeViewer.setInput(fileInput.getFile().getProject());
         }
 
@@ -182,10 +181,9 @@ public class ContentsSection extends SectionPart {
         // Write the selections to the document
         Object[] checked = mTreeViewer.getCheckedElements();
 
-
         for (Object o : checked) {
             if (o instanceof IAdaptable) {
-                IResource res = ((IAdaptable)o).getAdapter(IResource.class);
+                IResource res = ((IAdaptable) o).getAdapter(IResource.class);
                 if (res != null) {
                     addResourceToContent(contents, res);
                 }
@@ -196,11 +194,12 @@ public class ContentsSection extends SectionPart {
     }
 
     /**
-     * Add a resource to the contents list, but removes all duplicates entries (all files
-     * of a selected directory).
+     * Add a resource to the contents list, but removes all duplicates entries (all files of a selected directory).
      *
-     * @param pContents the resource list to update
-     * @param pResource the resource to add
+     * @param pContents
+     *            the resource list to update
+     * @param pResource
+     *            the resource to add
      */
     private void addResourceToContent(ArrayList<IResource> pContents, IResource pResource) {
         int i = 0;
@@ -228,15 +227,16 @@ public class ContentsSection extends SectionPart {
     /**
      * Updates the section using the new contents.
      *
-     * @param pContents the package contents to put in the section
+     * @param pContents
+     *            the package contents to put in the section
      */
     public void setContents(List<IResource> pContents) {
         // Split the string into several parts and find the files
         if (mPage.getEditorInput() instanceof IFileEditorInput) {
-            IFileEditorInput input = (IFileEditorInput)mPage.getEditorInput();
+            IFileEditorInput input = (IFileEditorInput) mPage.getEditorInput();
             IProject prj = input.getFile().getProject();
 
-            mTreeViewer.setCheckedElements(new Object[]{});
+            mTreeViewer.setCheckedElements(new Object[] {});
 
             for (IResource res : pContents) {
                 if (res.getProject().equals(prj) && res.exists()) {

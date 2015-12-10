@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.unittests;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -59,11 +58,11 @@ public class AllTests {
      */
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for UnoCompositeTest project"); //$NON-NLS-1$
-        //$JUnit-BEGIN$
+        // $JUnit-BEGIN$
         suite.addTestSuite(CompositeTest.class);
         suite.addTestSuite(UnoFactoryTest.class);
         suite.addTestSuite(OOoTest.class);
-        //$JUnit-END$
+        // $JUnit-END$
         return suite;
     }
 

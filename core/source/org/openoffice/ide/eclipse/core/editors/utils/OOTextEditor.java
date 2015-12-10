@@ -53,11 +53,12 @@ public class OOTextEditor extends TextEditor {
     /**
      * Hide or Show the message box of the editor.
      *
-     * @param pVisible <code>true</code> to show it, <code>false</code> to hide.
+     * @param pVisible
+     *            <code>true</code> to show it, <code>false</code> to hide.
      */
     public void setMessageVisible(boolean pVisible) {
         mMsgVisible = pVisible;
-        if ( mMsgComposite != null ) {
+        if (mMsgComposite != null) {
             ((GridData) mMsgComposite.getLayoutData()).exclude = !pVisible;
             mMsgComposite.setVisible(pVisible);
             mMsgComposite.getParent().layout(true, true);
@@ -67,7 +68,8 @@ public class OOTextEditor extends TextEditor {
     /**
      * Override this method to set or change the editor message controls.
      *
-     * @param pParent the parent composite to use for the creation
+     * @param pParent
+     *            the parent composite to use for the creation
      */
     protected void createMessageContent(Composite pParent) {
         // Do nothing here
@@ -98,7 +100,7 @@ public class OOTextEditor extends TextEditor {
         mMsgComposite.setLayout(gridLayout);
 
         createMessageContent(mMsgComposite);
-        setMessageVisible( mMsgVisible );
+        setMessageVisible(mMsgVisible);
 
         Composite editorComposite = new Composite(composite, SWT.NONE);
         editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

@@ -68,39 +68,39 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
      */
     public PackageExportWizard() {
         IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings.getSection( DIALOG_SETTINGS_KEY );
-        if ( section == null ) {
+        IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
+        if (section == null) {
             mHasNewDialogSettings = true;
         } else {
             mHasNewDialogSettings = false;
-            setDialogSettings( section );
+            setDialogSettings(section);
         }
     }
 
     @Override
     public boolean performFinish() {
         boolean finished = false;
-        UnoPackage model = mMainPage.getPackageModel( );
-        if ( model != null ) {
+        UnoPackage model = mMainPage.getPackageModel();
+        if (model != null) {
             try {
                 // Force a build on the project
                 mMainPage.forceBuild();
 
                 // Configure the manifest.xml for the model
-                mManifestPage.configureManifest( model );
+                mManifestPage.configureManifest(model);
 
                 // TODO Run the next operations in a job
 
                 // Write the build scripts if needed
-                mManifestPage.createBuildScripts( model );
+                mManifestPage.createBuildScripts(model);
 
                 // Export the package
-                File out = model.close( );
+                File out = model.close();
                 finished = out != null;
 
                 mMainPage.refreshProject();
 
-                if ( mHasNewDialogSettings ) {
+                if (mHasNewDialogSettings) {
                     IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
                     IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
                     section = workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
@@ -108,8 +108,8 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 }
 
                 mMainPage.saveWidgetValues();
-            } catch ( Exception e ) {
-                PluginLogger.error( "Project couldn't be built", e );
+            } catch (Exception e) {
+                PluginLogger.error("Project couldn't be built", e);
             }
         }
 
@@ -127,20 +127,18 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
         while (it.hasNext() && prj == null) {
             Object o = it.next();
             if (o instanceof IAdaptable) {
-                IResource res = ((IAdaptable) o)
-                                .getAdapter(IResource.class);
+                IResource res = ((IAdaptable) o).getAdapter(IResource.class);
                 if (res != null) {
-                    prj = ProjectsManager
-                                    .getProject(res.getProject().getName());
+                    prj = ProjectsManager.getProject(res.getProject().getName());
                 }
             }
         }
 
-        setWindowTitle( Messages.getString("PackageExportWizard2.DialogTitle") ); //$NON-NLS-1$
+        setWindowTitle(Messages.getString("PackageExportWizard2.DialogTitle")); //$NON-NLS-1$
 
         mManifestPage = new ManifestExportPage("page2", prj); //$NON-NLS-1$
         mMainPage = new UnoPackageExportPage("page1", prj, //$NON-NLS-1$
-                        mManifestPage);
+            mManifestPage);
         addPage(mMainPage);
         addPage(mManifestPage);
     }

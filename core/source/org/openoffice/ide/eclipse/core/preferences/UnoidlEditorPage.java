@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.preferences;
 
-
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
@@ -56,8 +55,7 @@ import org.openoffice.ide.eclipse.core.editors.idl.Colors;
  *
  * @author cedricbosdo
  */
-public class UnoidlEditorPage extends FieldEditorPreferencePage
-implements IWorkbenchPreferencePage {
+public class UnoidlEditorPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
     /**
      * Default constructor loading the preferences.
@@ -73,28 +71,24 @@ implements IWorkbenchPreferencePage {
      */
     @Override
     public void createFieldEditors() {
-        addField(new ColorFieldEditor(Colors.C_TEXT,
-                        Messages.getString("UnoidlEditorPage.Text"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_KEYWORD,
-                        Messages.getString("UnoidlEditorPage.Keyword"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_MODIFIER,
-                        Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
-                        getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_STRING,
-                        Messages.getString("UnoidlEditorPage.String"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_TYPE,
-                        Messages.getString("UnoidlEditorPage.Type"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_COMMENT,
-                        Messages.getString("UnoidlEditorPage.Comment"), getFieldEditorParent())); //$NON-NLS-1$
-        addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT,
-                        Messages.getString("UnoidlEditorPage.AutodocComment"),  //$NON-NLS-1$
-                        getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_XML_TAG,
-                        Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
-                        getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR,
-                        Messages.getString("UnoidlEditorPage.PreprocessorCommand"),  //$NON-NLS-1$
-                        getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_TEXT, Messages.getString("UnoidlEditorPage.Text"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_KEYWORD, Messages.getString("UnoidlEditorPage.Keyword"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_MODIFIER, Messages.getString("UnoidlEditorPage.Modifier"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_STRING, Messages.getString("UnoidlEditorPage.String"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_TYPE, Messages.getString("UnoidlEditorPage.Type"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_COMMENT, Messages.getString("UnoidlEditorPage.Comment"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT, Messages.getString("UnoidlEditorPage.AutodocComment"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_XML_TAG, Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
+            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR, Messages.getString("UnoidlEditorPage.PreprocessorCommand"), //$NON-NLS-1$
+            getFieldEditorParent()));
     }
 
     /**

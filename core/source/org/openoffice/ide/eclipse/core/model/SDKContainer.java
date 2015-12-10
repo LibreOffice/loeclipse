@@ -89,7 +89,8 @@ public class SDKContainer {
     /**
      * Add a SDK listener to the container.
      *
-     *  @param pListener SDK listener to add
+     * @param pListener
+     *            SDK listener to add
      */
     public static void addListener(IConfigListener pListener) {
         if (null != pListener) {
@@ -100,7 +101,8 @@ public class SDKContainer {
     /**
      * Removes a SDK listener from the container.
      *
-     * @param pListener SDK listener to remove
+     * @param pListener
+     *            SDK listener to remove
      */
     public static void removeListener(IConfigListener pListener) {
         if (null != pListener) {
@@ -108,7 +110,7 @@ public class SDKContainer {
         }
     }
 
-    //-------------------------------------- Methods to manage the sdks
+    // -------------------------------------- Methods to manage the sdks
 
     /**
      * @return the sdks elements in an array.
@@ -122,16 +124,16 @@ public class SDKContainer {
     }
 
     /**
-     * Add the SDK given in parameter to the list of the others. Do not use directly
-     * the private field to handle SDKs
+     * Add the SDK given in parameter to the list of the others. Do not use directly the private field to handle SDKs
      *
-     * @param pSdk SDK to add
+     * @param pSdk
+     *            SDK to add
      */
     public static void addSDK(ISdk pSdk) {
 
         /**
-         * If there already is a SDK with such an identifier, replace the values,
-         * not the object to keep the references on it
+         * If there already is a SDK with such an identifier, replace the values, not the object to keep the references
+         * on it
          */
 
         if (null != pSdk) {
@@ -146,10 +148,10 @@ public class SDKContainer {
     }
 
     /**
-     * Notify every listener that an SDK instance configuration
-     * has been added.
+     * Notify every listener that an SDK instance configuration has been added.
      *
-     * @param pSdk the added SDK
+     * @param pSdk
+     *            the added SDK
      */
     private void fireSDKAdded(ISdk pSdk) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -159,10 +161,10 @@ public class SDKContainer {
     }
 
     /**
-     * remove the given SDK from the list. Do not use directly the private field to
-     * handle SDKs
+     * remove the given SDK from the list. Do not use directly the private field to handle SDKs
      *
-     * @param pSdk SDK to remove
+     * @param pSdk
+     *            SDK to remove
      */
     public static void delSDK(ISdk pSdk) {
         if (null != pSdk) {
@@ -193,10 +195,10 @@ public class SDKContainer {
     }
 
     /**
-     * Notify all the listeners that an SDK instance configuration
-     * has been removed.
+     * Notify all the listeners that an SDK instance configuration has been removed.
      *
-     * @param pSdk the removed SDK
+     * @param pSdk
+     *            the removed SDK
      */
     private void fireSDKRemoved(ISdk pSdk) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -208,8 +210,10 @@ public class SDKContainer {
     /**
      * update the ith SDK from the list with the given SDK.
      *
-     * @param pSdkkey position of the sdk to update
-     * @param pSdk new value for the SDK
+     * @param pSdkkey
+     *            position of the sdk to update
+     * @param pSdk
+     *            new value for the SDK
      */
     public static void updateSDK(String pSdkkey, ISdk pSdk) {
         if (sInstance.mElements.containsKey(pSdkkey) && null != pSdk) {
@@ -231,10 +235,10 @@ public class SDKContainer {
     }
 
     /**
-     * Notify every listener that an SDK instance configuration
-     * has been updated.
+     * Notify every listener that an SDK instance configuration has been updated.
      *
-     * @param pSdk the updated SDK
+     * @param pSdk
+     *            the updated SDK
      */
     private void fireSDKUpdated(ISdk pSdk) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -246,7 +250,8 @@ public class SDKContainer {
     /**
      * Returns the sdk that corresponds to the given sdk name and buildid.
      *
-     * @param pSdkkey unique identifier of the wanted sdk
+     * @param pSdkkey
+     *            unique identifier of the wanted sdk
      * @return SDK which name equals the one provided
      */
     public static ISdk getSDK(String pSdkkey) {
@@ -276,8 +281,7 @@ public class SDKContainer {
     }
 
     /**
-     * Singleton accessor, named <code>getInstance</code> in many other
-     * singleton pattern implementations.
+     * Singleton accessor, named <code>getInstance</code> in many other singleton pattern implementations.
      *
      * @return the {@link SDKContainer} singleton instance.
      */
@@ -290,8 +294,7 @@ public class SDKContainer {
     }
 
     /**
-     * Loads the SDK already configured instances from the
-     * preferences.
+     * Loads the SDK already configured instances from the preferences.
      */
     public static void load() {
 
@@ -302,8 +305,7 @@ public class SDKContainer {
     }
 
     /**
-     * Saves the SDK already configured instances to the
-     * preferences.
+     * Saves the SDK already configured instances to the preferences.
      */
     public static void saveSDKs() {
 

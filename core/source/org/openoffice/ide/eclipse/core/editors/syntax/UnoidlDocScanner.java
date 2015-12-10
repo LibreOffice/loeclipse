@@ -54,9 +54,8 @@ import org.openoffice.ide.eclipse.core.editors.idl.Colors;
 import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 
 /**
- * UNO-IDL comment scanner. Used by the UNO-IDL viewer configuration. In order
- * to fully understand the editor mechanisms, please report to Eclipse
- * plugin developer's guide.
+ * UNO-IDL comment scanner. Used by the UNO-IDL viewer configuration. In order to fully understand the editor
+ * mechanisms, please report to Eclipse plugin developer's guide.
  *
  * @author cedricbosdo
  *
@@ -66,20 +65,15 @@ public class UnoidlDocScanner extends RuleBasedScanner {
     /**
      * Default constructor initializing the color manager to colorize.
      *
-     * @param pColorManager the color manager used to provide the colors
+     * @param pColorManager
+     *            the color manager used to provide the colors
      */
     public UnoidlDocScanner(ColorProvider pColorManager) {
 
-        IToken body = new Token (
-                        new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT)));
+        IToken body = new Token(new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT)));
 
-        IToken tag = new Token (
-                        new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT),
-                                        null,
-                                        SWT.BOLD));
-        IToken xmlTag = new Token (
-                        new TextAttribute(pColorManager.getColor(Colors.C_XML_TAG)));
-
+        IToken tag = new Token(new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT), null, SWT.BOLD));
+        IToken xmlTag = new Token(new TextAttribute(pColorManager.getColor(Colors.C_XML_TAG)));
 
         IRule[] rules = new IRule[2];
         rules[0] = new SingleLineRule("<", ">", xmlTag); //$NON-NLS-1$ //$NON-NLS-2$

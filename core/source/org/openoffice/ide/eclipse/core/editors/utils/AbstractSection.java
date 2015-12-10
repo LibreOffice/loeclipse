@@ -8,45 +8,47 @@ import org.openoffice.ide.eclipse.core.model.utils.IModel;
 import org.openoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
 /**
- * Abstract section class providing mechanisms to suspend the dirty state change
- * notifications.
+ * Abstract section class providing mechanisms to suspend the dirty state change notifications.
  *
- * @param <ModelType> the type of the model object for the section
+ * @param <ModelType>
+ *            the type of the model object for the section
  *
  * @author Cédric Bosdonnat
  *
  */
-public abstract class AbstractSection< ModelType extends IModel > extends SectionPart
-implements IModelChangedListener {
+public abstract class AbstractSection<ModelType extends IModel> extends SectionPart implements IModelChangedListener {
 
     private ModelType mModel;
 
     /**
      * The SectionPart constructor.
      *
-     * @param pParent the parent composite
-     * @param pPage the form page to use
-     * @param pStyle the SectionPart style
+     * @param pParent
+     *            the parent composite
+     * @param pPage
+     *            the form page to use
+     * @param pStyle
+     *            the SectionPart style
      */
-    public AbstractSection(Composite pParent, FormPage pPage,
-                    int pStyle) {
+    public AbstractSection(Composite pParent, FormPage pPage, int pStyle) {
         super(pParent, pPage.getManagedForm().getToolkit(), pStyle);
-        initialize( pPage.getManagedForm() );
-        getManagedForm().addPart( this );
-        getSection( ).setLayoutData( new GridData( GridData.FILL_BOTH ) );
+        initialize(pPage.getManagedForm());
+        getManagedForm().addPart(this);
+        getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
     }
 
     /**
      * @return the data model for the section
      */
-    public ModelType getModel( ) {
+    public ModelType getModel() {
         return mModel;
     }
 
     /**
-     * @param pModel the new data model for the section
+     * @param pModel
+     *            the new data model for the section
      */
-    public void setModel( ModelType pModel ) {
+    public void setModel(ModelType pModel) {
         mModel = pModel;
     }
 

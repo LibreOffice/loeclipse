@@ -136,7 +136,7 @@ public class URE extends AbstractOOo {
     @Override
     public String[] getTypesPath() {
         String types = getHome() + FILE_SEP + "program" + //$NON-NLS-1$
-                        FILE_SEP + "types.rdb"; //$NON-NLS-1$
+            FILE_SEP + "types.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -149,7 +149,7 @@ public class URE extends AbstractOOo {
     @Override
     public String[] getServicesPath() {
         String services = getHome() + FILE_SEP + "program" + //$NON-NLS-1$
-                        FILE_SEP + "services.rdb"; //$NON-NLS-1$
+            FILE_SEP + "services.rdb"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -176,14 +176,13 @@ public class URE extends AbstractOOo {
         return getHome() + FILE_SEP + "bin" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
     }
 
-    public static String getUnoExecutable(){
+    public static String getUnoExecutable() {
         String uno = "uno.bin"; //$NON-NLS-1$
         if (getPlatformOS().equals(Platform.OS_WIN32)) {
             uno = "uno.exe"; //$NON-NLS-1$
         }
         return uno;
     }
-
 
     /**
      * {@inheritDoc}
@@ -198,7 +197,7 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPath,
-                    String[] pArgs) {
+        String[] pArgs) {
 
         String command = ""; //$NON-NLS-1$
 
@@ -245,10 +244,10 @@ public class URE extends AbstractOOo {
         }
 
         command = unoPath + " -c " + pImplementationName + //$NON-NLS-1$
-                        " -l " + pLibLocation + //$NON-NLS-1$
-                        typesArg + " -ro file:///" + serviceArgs + //$NON-NLS-1$
-                        " " + additionnalRegistries + //$NON-NLS-1$
-                        " -- " + sArgs; //$NON-NLS-1$
+            " -l " + pLibLocation + //$NON-NLS-1$
+            typesArg + " -ro file:///" + serviceArgs + //$NON-NLS-1$
+            " " + additionnalRegistries + //$NON-NLS-1$
+            " -- " + sArgs; //$NON-NLS-1$
 
         return command;
     }

@@ -43,21 +43,24 @@ public interface ILocaleListener {
     /**
      * The locale selection has changed.
      *
-     * @param pLocale the new locale to use.
+     * @param pLocale
+     *            the new locale to use.
      */
-    public void selectLocale( Locale pLocale );
+    public void selectLocale(Locale pLocale);
 
     /**
      * A locale has been deleted.
      *
-     * @param pLocale the deleted locale
+     * @param pLocale
+     *            the deleted locale
      */
-    public void deleteLocale( Locale pLocale );
+    public void deleteLocale(Locale pLocale);
 
     /**
      * A locale has been added.
      *
-     * @param pLocale the added locale
+     * @param pLocale
+     *            the added locale
      */
-    public void addLocale( Locale pLocale );
+    public void addLocale(Locale pLocale);
 }

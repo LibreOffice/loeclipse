@@ -57,8 +57,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.office.TypesGetter;
 
 /**
- * Class providing UNO types from a LibreOffice instance and optionally
- * from a UNO project.
+ * Class providing UNO types from a LibreOffice instance and optionally from a UNO project.
  *
  * @author cedricbosdo
  *
@@ -68,23 +67,11 @@ public class UnoTypeProvider {
     public static final int ALL_TYPES = 2047;
     public static final String BASIC_TYPES_KEY = "basic-types"; //$NON-NLS-1$
 
-    private static final InternalUnoType[] SIMPLE_TYPES = {
-                    InternalUnoType.STRING,
-                    InternalUnoType.VOID,
-                    InternalUnoType.BOOLEAN,
-                    InternalUnoType.BYTE,
-                    InternalUnoType.SHORT,
-                    InternalUnoType.LONG,
-                    InternalUnoType.HYPER,
-                    InternalUnoType.FLOAT,
-                    InternalUnoType.DOUBLE,
-                    InternalUnoType.CHAR,
-                    InternalUnoType.TYPE,
-                    InternalUnoType.ANY,
-                    InternalUnoType.USHORT,
-                    InternalUnoType.ULONG,
-                    InternalUnoType.UHYPER
-    };
+    private static final InternalUnoType[] SIMPLE_TYPES = { InternalUnoType.STRING, InternalUnoType.VOID,
+        InternalUnoType.BOOLEAN, InternalUnoType.BYTE, InternalUnoType.SHORT, InternalUnoType.LONG,
+        InternalUnoType.HYPER, InternalUnoType.FLOAT, InternalUnoType.DOUBLE, InternalUnoType.CHAR,
+        InternalUnoType.TYPE, InternalUnoType.ANY, InternalUnoType.USHORT, InternalUnoType.ULONG,
+        InternalUnoType.UHYPER };
 
     private static UnoTypeProvider sInstance = new UnoTypeProvider();
 
@@ -109,7 +96,7 @@ public class UnoTypeProvider {
         return sInstance;
     }
 
-    //---------------------------------------------------------- Type management
+    // ---------------------------------------------------------- Type management
 
     /**
      * Refresh the cache of Uno types.
@@ -128,9 +115,11 @@ public class UnoTypeProvider {
     /**
      * Checks whether the list contains the given type name.
      *
-     * @param pScopedName the type name to match
-     * @param pContainers the UNO types containers to look in. These have to be either
-     *          the path to a project RDB file or a LibreOffice name
+     * @param pScopedName
+     *            the type name to match
+     * @param pContainers
+     *            the UNO types containers to look in. These have to be either the path to a project RDB file or a
+     *            LibreOffice name
      *
      * @return <code>true</code> if the list contains a type with this name
      */
@@ -156,38 +145,36 @@ public class UnoTypeProvider {
         return result;
     }
 
-    //------------------------------------------------------- Project management
+    // ------------------------------------------------------- Project management
 
     /**
-     * Set the UNO project for which to get the UNO types. This project's
-     * <code>types.rdb</code> registry will be used as external registry
-     * for the types query.
+     * Set the UNO project for which to get the UNO types. This project's <code>types.rdb</code> registry will be used
+     * as external registry for the types query.
      *
-     * @param pProject the project for which to launch the type query
+     * @param pProject
+     *            the project for which to launch the type query
      */
     public void setProject(IUnoidlProject pProject) {
 
         if (null != pProject) {
             mOooInstance = pProject.getOOo();
-            mPathToRegister = pProject.getFile(
-                            pProject.getTypesPath()).getLocation().toOSString();
+            mPathToRegister = pProject.getFile(pProject.getTypesPath()).getLocation().toOSString();
 
-            PluginLogger.debug(
-                            "UnoTypeProvider initialized with " + pProject); //$NON-NLS-1$
+            PluginLogger.debug("UnoTypeProvider initialized with " + pProject); //$NON-NLS-1$
         }
     }
 
     /**
      * Sets the OOo if the new one is different from the old one.
      *
-     *  @param pOOoInstance LibreOffice instance to bootstrap
+     * @param pOOoInstance
+     *            LibreOffice instance to bootstrap
      */
     public void setOOoInstance(IOOo pOOoInstance) {
 
         if (null != pOOoInstance && !pOOoInstance.equals(mOooInstance)) {
             mOooInstance = pOOoInstance;
-            PluginLogger.debug(
-                            "UnoTypeProvider initialized with " + pOOoInstance); //$NON-NLS-1$
+            PluginLogger.debug("UnoTypeProvider initialized with " + pOOoInstance); //$NON-NLS-1$
         }
     }
 
@@ -198,12 +185,13 @@ public class UnoTypeProvider {
         return mState;
     }
 
-    //---------------------------------------------------- TypeGetter launching
+    // ---------------------------------------------------- TypeGetter launching
 
     /**
      * Register the given listener.
      *
-     * @param pListener the listener to add
+     * @param pListener
+     *            the listener to add
      */
     public void addInitListener(IInitListener pListener) {
         mListeners.add(pListener);
@@ -212,7 +200,8 @@ public class UnoTypeProvider {
     /**
      * Makes the given initialization listener stop listening.
      *
-     * @param pListener the listener to remove
+     * @param pListener
+     *            the listener to remove
      */
     public void removeInitListener(IInitListener pListener) {
         mListeners.remove(pListener);
@@ -229,12 +218,13 @@ public class UnoTypeProvider {
         }
     }
 
-    //--------------------------------------------------- Collection management
+    // --------------------------------------------------- Collection management
 
     /**
      * Initializes the cache if needed and get the cached data.
      *
-     * @param pContainers the container from which to get the types.
+     * @param pContainers
+     *            the container from which to get the types.
      *
      * @return the types list as an array.
      *

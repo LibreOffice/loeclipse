@@ -53,17 +53,17 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Generic component for the selection of the parameters of a UNO connection.
  *
- * <p>Use the {@link #setPatterns(String, String)} method to define the patterns
- * depending on the implementation language.</p>
+ * <p>
+ * Use the {@link #setPatterns(String, String)} method to define the patterns depending on the implementation language.
+ * </p>
  *
  * @author cbosdonnat
  *
  */
 public class ConnectionConfigPanel {
 
-    private static final String[] TYPE_VALUES = {
-                    Messages.getString("ConnectionConfigPanel.Pipe"),  //$NON-NLS-1$
-                    Messages.getString("ConnectionConfigPanel.Socket")  }; //$NON-NLS-1$
+    private static final String[] TYPE_VALUES = { Messages.getString("ConnectionConfigPanel.Pipe"), //$NON-NLS-1$
+        Messages.getString("ConnectionConfigPanel.Socket") }; //$NON-NLS-1$
 
     private boolean mIsPipe;
     private String[] mPatterns;
@@ -85,12 +85,14 @@ public class ConnectionConfigPanel {
     /**
      * Constructor.
      *
-     * <p>In order to properly work, the parent composite has to have a
-     * {@link GridLayout} set.</p>
+     * <p>
+     * In order to properly work, the parent composite has to have a {@link GridLayout} set.
+     * </p>
      *
-     * @param pParent the parent composite to create the controls in.
+     * @param pParent
+     *            the parent composite to create the controls in.
      */
-    public ConnectionConfigPanel( Composite pParent  ) {
+    public ConnectionConfigPanel(Composite pParent) {
         mIsPipe = false;
         mPatterns = new String[TYPE_VALUES.length];
 
@@ -98,23 +100,23 @@ public class ConnectionConfigPanel {
         mPort = "8100"; //$NON-NLS-1$
         mHost = "localhost"; //$NON-NLS-1$
 
-        createControls( pParent );
+        createControls(pParent);
     }
 
     /**
      * Set the patterns to use in {@link #getConnectionCode()}.
      *
-     * @param pPipe the pattern for the pipe connection type.
-     *      The parameter <code>{0}</code> is the pipe's name.
+     * @param pPipe
+     *            the pattern for the pipe connection type. The parameter <code>{0}</code> is the pipe's name.
      *
-     * @param pSocket the pattern for the socket connection type.
-     *      The parameters mapping is the following:
-     *      <ul>
-     *          <li><code>{0}</code> maps to the host</li>
-     *          <li><code>{1}</code> maps to the port</li>
-     *      </ul>
+     * @param pSocket
+     *            the pattern for the socket connection type. The parameters mapping is the following:
+     *            <ul>
+     *            <li><code>{0}</code> maps to the host</li>
+     *            <li><code>{1}</code> maps to the port</li>
+     *            </ul>
      */
-    public void setPatterns( String pPipe, String pSocket ) {
+    public void setPatterns(String pPipe, String pSocket) {
         mPatterns[0] = pPipe;
         mPatterns[1] = pSocket;
     }
@@ -124,16 +126,14 @@ public class ConnectionConfigPanel {
      *
      * @see #setPatterns(String, String) for the used patterns
      */
-    public String getConnectionCode( ) {
+    public String getConnectionCode() {
 
         String cnxString = null;
 
-        if ( mIsPipe ) {
-            cnxString = MessageFormat.format( mPatterns[0],
-                            mName );
+        if (mIsPipe) {
+            cnxString = MessageFormat.format(mPatterns[0], mName);
         } else {
-            cnxString = MessageFormat.format( mPatterns[1],
-                            mHost, mPort );
+            cnxString = MessageFormat.format(mPatterns[1], mHost, mPort);
         }
 
         return cnxString;
@@ -142,52 +142,52 @@ public class ConnectionConfigPanel {
     /**
      * Creates all the component's controls.
      *
-     * @param pParent the parent composite where to create the controls
+     * @param pParent
+     *            the parent composite where to create the controls
      */
-    protected void createControls( Composite pParent ) {
+    protected void createControls(Composite pParent) {
         Layout layout = pParent.getLayout();
-        if ( layout instanceof GridLayout ) {
-            int layoutColumns = ((GridLayout)layout).numColumns;
+        if (layout instanceof GridLayout) {
+            int layoutColumns = ((GridLayout) layout).numColumns;
 
-            Group body = new Group( pParent, SWT.NONE );
-            body.setText( Messages.getString("ConnectionConfigPanel.GroupTitle") ); //$NON-NLS-1$
+            Group body = new Group(pParent, SWT.NONE);
+            body.setText(Messages.getString("ConnectionConfigPanel.GroupTitle")); //$NON-NLS-1$
 
-            GridData gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
+            GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             gd.horizontalSpan = layoutColumns;
-            body.setLayoutData( gd );
-            body.setLayout( new GridLayout( 2, false ) );
+            body.setLayoutData(gd);
+            body.setLayout(new GridLayout(2, false));
 
-            Label typeLbl = new Label( body, SWT.NONE );
-            typeLbl.setText( Messages.getString("ConnectionConfigPanel.CnxTypeLabel") ); //$NON-NLS-1$
-            typeLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
-            mTypeList = new Combo( body, SWT.DROP_DOWN | SWT.READ_ONLY );
-            mTypeList.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
-            mTypeList.setItems( TYPE_VALUES );
+            Label typeLbl = new Label(body, SWT.NONE);
+            typeLbl.setText(Messages.getString("ConnectionConfigPanel.CnxTypeLabel")); //$NON-NLS-1$
+            typeLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+            mTypeList = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
+            mTypeList.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+            mTypeList.setItems(TYPE_VALUES);
             int pos = 1;
-            if ( mIsPipe ) {
+            if (mIsPipe) {
                 pos = 0;
             }
-            mTypeList.select( pos );
-            mTypeList.addSelectionListener( new SelectionAdapter() {
+            mTypeList.select(pos);
+            mTypeList.addSelectionListener(new SelectionAdapter() {
 
                 @Override
-                public void widgetSelected(SelectionEvent pEvent ) {
+                public void widgetSelected(SelectionEvent pEvent) {
                     mIsPipe = mTypeList.getSelectionIndex() == 0;
                     updateDetails();
                 }
             });
 
             mDetails = new ArrayList<Composite>();
-            mDetailsComposite = new Composite( body, SWT.NONE );
-            gd = new GridData( SWT.FILL, SWT.FILL, true, true );
+            mDetailsComposite = new Composite(body, SWT.NONE);
+            gd = new GridData(SWT.FILL, SWT.FILL, true, true);
             gd.horizontalSpan = 2;
-            mDetailsComposite.setLayoutData( gd );
+            mDetailsComposite.setLayoutData(gd);
             mStackLayout = new StackLayout();
-            mDetailsComposite.setLayout( mStackLayout );
+            mDetailsComposite.setLayout(mStackLayout);
 
-
-            mDetails.add( createPipeControls( ) );
-            mDetails.add( createSocketControls( ) );
+            mDetails.add(createPipeControls());
+            mDetails.add(createSocketControls());
 
             updateDetails();
         }
@@ -198,87 +198,85 @@ public class ConnectionConfigPanel {
      */
     protected void updateDetails() {
         int pos = 1;
-        if ( mIsPipe ) {
+        if (mIsPipe) {
             pos = 0;
         }
-        mStackLayout.topControl = mDetails.get( pos );
-        mDetailsComposite.layout( );
+        mStackLayout.topControl = mDetails.get(pos);
+        mDetailsComposite.layout();
     }
 
     /**
-     * @return the newly created composite containing the pipe's
-     *      configuration controls.
+     * @return the newly created composite containing the pipe's configuration controls.
      */
     private Composite createPipeControls() {
-        Composite body = new Composite( mDetailsComposite, SWT.NONE );
-        body.setLayout( new GridLayout( 2, false ) );
+        Composite body = new Composite(mDetailsComposite, SWT.NONE);
+        body.setLayout(new GridLayout(2, false));
 
-        Label nameLbl = new Label( body, SWT.NONE );
-        nameLbl.setText( Messages.getString("ConnectionConfigPanel.Name") ); //$NON-NLS-1$
-        nameLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
+        Label nameLbl = new Label(body, SWT.NONE);
+        nameLbl.setText(Messages.getString("ConnectionConfigPanel.Name")); //$NON-NLS-1$
+        nameLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        mNameTxt = new Text( body, SWT.SINGLE | SWT.BORDER );
-        mNameTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mNameTxt.addKeyListener( new KeyAdapter() {
+        mNameTxt = new Text(body, SWT.SINGLE | SWT.BORDER);
+        mNameTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mNameTxt.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent pE) {
                 mName = mNameTxt.getText();
             }
         });
-        mNameTxt.setText( mName );
+        mNameTxt.setText(mName);
 
         return body;
     }
 
     /**
-     * @return the newly created composite containing the socket's
-     *      configuration controls.
+     * @return the newly created composite containing the socket's configuration controls.
      */
     private Composite createSocketControls() {
-        Composite body = new Composite( mDetailsComposite, SWT.NONE );
-        body.setLayout( new GridLayout( 2, false ) );
+        Composite body = new Composite(mDetailsComposite, SWT.NONE);
+        body.setLayout(new GridLayout(2, false));
 
-        Label hostLbl = new Label( body, SWT.NONE );
-        hostLbl.setText( Messages.getString("ConnectionConfigPanel.Host") ); //$NON-NLS-1$
-        hostLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
+        Label hostLbl = new Label(body, SWT.NONE);
+        hostLbl.setText(Messages.getString("ConnectionConfigPanel.Host")); //$NON-NLS-1$
+        hostLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        mHostTxt = new Text( body, SWT.SINGLE | SWT.BORDER );
-        mHostTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mHostTxt.addKeyListener( new KeyAdapter() {
+        mHostTxt = new Text(body, SWT.SINGLE | SWT.BORDER);
+        mHostTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mHostTxt.addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyReleased(KeyEvent pE) {
                 mHost = mHostTxt.getText();
             }
         });
-        mHostTxt.setText( mHost );
+        mHostTxt.setText(mHost);
 
-        Label portLbl = new Label( body, SWT.NONE );
-        portLbl.setText( Messages.getString("ConnectionConfigPanel.Port") ); //$NON-NLS-1$
-        portLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
+        Label portLbl = new Label(body, SWT.NONE);
+        portLbl.setText(Messages.getString("ConnectionConfigPanel.Port")); //$NON-NLS-1$
+        portLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        mPortTxt = new Text( body, SWT.SINGLE | SWT.BORDER );
-        mPortTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mPortTxt.addVerifyListener( new VerifyListener() {
+        mPortTxt = new Text(body, SWT.SINGLE | SWT.BORDER);
+        mPortTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mPortTxt.addVerifyListener(new VerifyListener() {
 
             @Override
             public void verifyText(VerifyEvent pEvent) {
                 try {
-                    if ( pEvent.text.length() > 0 ) {
-                        Integer.parseInt( pEvent.text );
+                    if (pEvent.text.length() > 0) {
+                        Integer.parseInt(pEvent.text);
                     }
                 } catch (NumberFormatException e) {
                     pEvent.doit = false;
                 }
             }
         });
-        mPortTxt.addKeyListener( new KeyAdapter () {
+        mPortTxt.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent pEvent) {
                 mPort = mPortTxt.getText();
             }
         });
-        mPortTxt.setText( mPort );
+        mPortTxt.setText(mPort);
 
         return body;
     }

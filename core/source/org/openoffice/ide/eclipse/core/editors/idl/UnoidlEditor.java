@@ -50,9 +50,8 @@ import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 import org.openoffice.ide.eclipse.core.editors.utils.OOTextEditor;
 
 /**
- * Class handling the UNO-IDL text to render them in an Eclipse editor. In order
- * to fully understand the editor mechanisms, please report to Eclipse plugin
- * developer's guide.
+ * Class handling the UNO-IDL text to render them in an Eclipse editor. In order to fully understand the editor
+ * mechanisms, please report to Eclipse plugin developer's guide.
  *
  * @see UnoidlConfiguration for the viewer configuration
  * @see UnoidlDocumentProvider for the document provider
@@ -79,8 +78,7 @@ public class UnoidlEditor extends OOTextEditor {
     private ColorProvider mColorManager;
 
     /**
-     * Default constructor setting the correct document provider and viewer
-     * configuration.
+     * Default constructor setting the correct document provider and viewer configuration.
      */
     public UnoidlEditor() {
         super();

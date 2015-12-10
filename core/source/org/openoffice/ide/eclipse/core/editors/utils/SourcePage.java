@@ -67,9 +67,12 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * Source editor page constructor.
      *
-     * @param pFormEditor the editor hosting the page.
-     * @param pId the page identifier
-     * @param pTitle the page title
+     * @param pFormEditor
+     *            the editor hosting the page.
+     * @param pId
+     *            the page identifier
+     * @param pTitle
+     *            the page title
      */
     public SourcePage(FormEditor pFormEditor, String pId, String pTitle) {
         mId = pId;
@@ -166,7 +169,7 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     public boolean selectReveal(Object pObject) {
         boolean reveal = false;
         if (pObject instanceof IMarker) {
-            IDE.gotoMarker(this, (IMarker)pObject);
+            IDE.gotoMarker(this, (IMarker) pObject);
             reveal = true;
         }
         return reveal;

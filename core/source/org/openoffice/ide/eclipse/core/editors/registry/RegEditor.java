@@ -49,9 +49,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.openoffice.ide.eclipse.core.editors.utils.OOTextEditor;
 
 /**
- * Editor class to view the UNO registries, ie <code>.urd</code> and
- * <code>.rdb</code> files. This editor is read-only and simply shows
- * the registry content without syntax highlighting.
+ * Editor class to view the UNO registries, ie <code>.urd</code> and <code>.rdb</code> files. This editor is read-only
+ * and simply shows the registry content without syntax highlighting.
  *
  * @author cedricbosdo
  */

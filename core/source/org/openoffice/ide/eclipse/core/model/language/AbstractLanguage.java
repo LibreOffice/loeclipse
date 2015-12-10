@@ -113,25 +113,30 @@ public abstract class AbstractLanguage {
     public abstract ILanguageBuilder getLanguageBuidler();
 
     /**
-     * Launch OpenOffice for debugging and connect the eclipse debugger to it.
-     * Currently only Java debugging is supported.
+     * Launch OpenOffice for debugging and connect the eclipse debugger to it. Currently only Java debugging is
+     * supported.
      *
-     * @param pPrj the target project.
-     * @param pLaunch the launch configuration to add our debug target to.
-     * @param pUserInstallation user profile.
-     * @param pMonitor monitor to report progress to.
+     * @param pPrj
+     *            the target project.
+     * @param pLaunch
+     *            the launch configuration to add our debug target to.
+     * @param pUserInstallation
+     *            user profile.
+     * @param pMonitor
+     *            monitor to report progress to.
      */
     public abstract void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-                    IProgressMonitor pMonitor);
+        IProgressMonitor pMonitor);
 
     /**
-     * When in debug mode, we have to configure the
-     * appropriate source locator for the respective language.
+     * When in debug mode, we have to configure the appropriate source locator for the respective language.
      *
      * The rest will be taken care by the {@link SourceLookupTab}.
      *
-     * @param pConfiguration the configuration to add extra attributes to.
-     * @throws CoreException if something went wrong.
+     * @param pConfiguration
+     *            the configuration to add extra attributes to.
+     * @throws CoreException
+     *             if something went wrong.
      */
     public abstract void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException;
 }

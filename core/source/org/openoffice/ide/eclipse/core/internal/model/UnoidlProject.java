@@ -671,7 +671,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     @Override
     public void saveAllProperties() {
 
-        if( mLanguage == null || mOOo == null || mSdk == null){
+        if (mLanguage == null || mOOo == null || mSdk == null) {
             PluginLogger.warning(Messages.getString("UnoidlProject.InconsistentConfigurationError")); //$NON-NLS-1$
             return;
         }
@@ -864,7 +864,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         } catch (CoreException e) {
             if (pSet) {
                 PluginLogger.error(Messages.getString("UnoidlProject.CreateMarkerError") + //$NON-NLS-1$
-                                getProjectPath().toString(), e);
+                    getProjectPath().toString(), e);
             } else {
                 PluginLogger.error(Messages.getString("UnoidlProject.RemoveMarkerError"), e); //$NON-NLS-1$
             }

@@ -50,8 +50,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * Usefull class to create a boolean choice row with a label. For further
- * informations on rows, please report to {@link LabeledRow}.
+ * Usefull class to create a boolean choice row with a label. For further informations on rows, please report to
+ * {@link LabeledRow}.
  *
  * @author cedricbosdo
  *
@@ -61,12 +61,14 @@ public class BooleanRow extends LabeledRow {
     private boolean mValue;
 
     /**
-     * Creates a new boolean raw. The parent composite should have a grid layout
-     * with 2 or 3 horizontal spans.
+     * Creates a new boolean raw. The parent composite should have a grid layout with 2 or 3 horizontal spans.
      *
-     * @param pParent the parent composite where to create the row.
-     * @param pProperty the property name of the row.
-     * @param pLabel the label to print on the left of the raw
+     * @param pParent
+     *            the parent composite where to create the row.
+     * @param pProperty
+     *            the property name of the row.
+     * @param pLabel
+     *            the label to print on the left of the raw
      */
     public BooleanRow(Composite pParent, String pProperty, String pLabel) {
         super(pProperty);
@@ -82,7 +84,7 @@ public class BooleanRow extends LabeledRow {
 
         Label text = new Label(pParent, SWT.NONE);
 
-        createContent(pParent, checkbox,text, null, false);
+        createContent(pParent, checkbox, text, null, false);
     }
 
     /**
@@ -90,7 +92,7 @@ public class BooleanRow extends LabeledRow {
      */
     @Override
     public void setLabel(String pNewLabel) {
-        ((Label)mField).setText(pNewLabel);
+        ((Label) mField).setText(pNewLabel);
     }
 
     /**
@@ -98,17 +100,18 @@ public class BooleanRow extends LabeledRow {
      */
     @Override
     public void setTooltip(String pTooltip) {
-        ((Button)mLabel).setToolTipText(pTooltip);
+        ((Button) mLabel).setToolTipText(pTooltip);
     }
 
     /**
      * Set a new value to the raw.
      *
-     * @param pValue the new value
+     * @param pValue
+     *            the new value
      */
     public void setValue(boolean pValue) {
         if (mValue != pValue) {
-            ((Button)mLabel).setSelection(pValue);
+            ((Button) mLabel).setSelection(pValue);
             toggleValue();
         }
     }
@@ -141,6 +144,6 @@ public class BooleanRow extends LabeledRow {
      */
     @Override
     public void setEnabled(boolean pEnabled) {
-        ((Button)mLabel).setEnabled(pEnabled);
+        ((Button) mLabel).setEnabled(pEnabled);
     }
 }

@@ -66,15 +66,15 @@ import org.openoffice.plugin.core.utils.StringUtils;
 import org.openoffice.plugin.core.utils.ZipContent;
 
 /**
- * This class represents a UNO package and should be used to create a UNO
- * package.
+ * This class represents a UNO package and should be used to create a UNO package.
  *
- * <p>In the same way than ant jar target does, the UNO package is defined by an
- * output file and a root directory. All the file that will be added to the
- * package will have to be contained in this directory or one of its
- * children.</p>
+ * <p>
+ * In the same way than ant jar target does, the UNO package is defined by an output file and a root directory. All the
+ * file that will be added to the package will have to be contained in this directory or one of its children.
+ * </p>
  *
- * <p>For the different file types see
+ * <p>
+ * For the different file types see
  * {@link "http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/Extensions/File_Format"}.
  * </p>
  *
@@ -106,10 +106,15 @@ public class UnoPackage {
     /**
      * Create a new package object.
      *
-     * <p>The extension has be one of the following. The default extension is
-     * {@link #OXT}. If the extension is invalid or missing, the file will be
-     * renamed in <code>.oxt</code>. <ul> <li>{@link #ZIP}</li> <li>
-     * {@link #UNOPKG}</li> <li>{@link #OXT}</li> </ul> </p>
+     * <p>
+     * The extension has be one of the following. The default extension is {@link #OXT}. If the extension is invalid or
+     * missing, the file will be renamed in <code>.oxt</code>.
+     * <ul>
+     * <li>{@link #ZIP}</li>
+     * <li>{@link #UNOPKG}</li>
+     * <li>{@link #OXT}</li>
+     * </ul>
+     * </p>
      *
      * @param pOut
      *            the file of the package.
@@ -136,15 +141,15 @@ public class UnoPackage {
         int pos = abs.indexOf(basePath.getPath());
         if (pos == -1) {
             throw new InvalidParameterException("File [" + file + //
-                            "] is not part of the base path tree [" + basePath + "]");
+                "] is not part of the base path tree [" + basePath + "]");
         }
 
         return abs.substring(basePath.getPath().length() + 1);
     }
 
     /**
-     * Cleans up the data structure. There is no need to call this method if the
-     * package has been closed using {@link #close()}
+     * Cleans up the data structure. There is no need to call this method if the package has been closed using
+     * {@link #close()}
      */
     public void dispose() {
         mDestination = null;
@@ -159,12 +164,13 @@ public class UnoPackage {
     }
 
     /**
-     * Set the manifest.xml file to use for the package: setting this value will
-     * skip the manifest.xml file automatic generation.
+     * Set the manifest.xml file to use for the package: setting this value will skip the manifest.xml file automatic
+     * generation.
      *
-     * <p><strong>Setting this value to a non-existing file is the same as
-     * setting it with <code>null</code>: the default value will be
-     * used.</strong></p>
+     * <p>
+     * <strong>Setting this value to a non-existing file is the same as setting it with <code>null</code>: the default
+     * value will be used.</strong>
+     * </p>
      *
      * @param pFile
      *            the file to read.
@@ -186,7 +192,8 @@ public class UnoPackage {
     /**
      * Adds the content of the given (root) file or directory.
      *
-     * @param file the file
+     * @param file
+     *            the file
      */
     public void addContent(File file) {
         this.addContent("", file);
@@ -195,8 +202,9 @@ public class UnoPackage {
     /**
      * Add a file or directory to the package.
      *
-     * <p>This method doesn't know about the different languages contributions
-     * to the <code>manifest.xml</code> file.</p>
+     * <p>
+     * This method doesn't know about the different languages contributions to the <code>manifest.xml</code> file.
+     * </p>
      *
      * @param pContent
      *            the file or folder to add
@@ -215,11 +223,14 @@ public class UnoPackage {
     /**
      * Add a file to the package.
      *
-     * <p>This method doesn't know about the different languages contributions
-     * to the <code>manifest.xml</code> file.</p>
+     * <p>
+     * This method doesn't know about the different languages contributions to the <code>manifest.xml</code> file.
+     * </p>
      *
-     * @param pathname the pathname inside the package
-     * @param pContent the content
+     * @param pathname
+     *            the pathname inside the package
+     * @param pContent
+     *            the content
      */
     public void addFile(String pathname, File pContent) {
         if (pContent.getName().endsWith(".xcs")) {
@@ -238,10 +249,10 @@ public class UnoPackage {
     }
 
     /**
-     * This method was added for symmetric reason because of the other
-     * addDirectory(..) methods.
+     * This method was added for symmetric reason because of the other addDirectory(..) methods.
      *
-     * @param directory the directory
+     * @param directory
+     *            the directory
      * @see #addDirectory(File, String[], String[])
      */
     public void addDirectory(final File directory) {
@@ -251,8 +262,10 @@ public class UnoPackage {
     /**
      * Adds the directory.
      *
-     * @param pathInArchive the path in archive
-     * @param directory the directory
+     * @param pathInArchive
+     *            the path in archive
+     * @param directory
+     *            the directory
      */
     public void addDirectory(final String pathInArchive, final File directory) {
         if (!directory.isDirectory()) {
@@ -264,16 +277,19 @@ public class UnoPackage {
     /**
      * Adds the directory.
      *
-     * @param directory the directory
-     * @param includes the includes
-     * @param excludes the excludes
+     * @param directory
+     *            the directory
+     * @param includes
+     *            the includes
+     * @param excludes
+     *            the excludes
      */
-    public void addDirectory(final File directory, final String[] includes,
-                    final String[] excludes) {
+    public void addDirectory(final File directory, final String[] includes, final String[] excludes) {
         addDirectory("", directory, includes, excludes);
     }
 
-    private void addDirectory(final String pathInArchive, final File directory, final String[] includes, final String[] excludes) {
+    private void addDirectory(final String pathInArchive, final File directory, final String[] includes,
+        final String[] excludes) {
         String pathname = FilenameUtils.normalize(pathInArchive);
         assert directory.isDirectory();
         if (isBasicLibrary(directory)) {
@@ -326,10 +342,9 @@ public class UnoPackage {
     }
 
     /**
-     * Add a uno component file, for example a jar, shared library or python
-     * file containing the uno implementation. The type of the file defines the
-     * language and should be given as defined in the OOo Developer's Guide,
-     * like Java, native, Python.
+     * Add a uno component file, for example a jar, shared library or python file containing the uno implementation. The
+     * type of the file defines the language and should be given as defined in the OOo Developer's Guide, like Java,
+     * native, Python.
      *
      * @param pFile
      *            the file to add to the package
@@ -343,19 +358,20 @@ public class UnoPackage {
     }
 
     /**
-     * Add a uno component file, for example a jar, shared library or python
-     * file containing the uno implementation.
+     * Add a uno component file, for example a jar, shared library or python file containing the uno implementation.
      *
-     * <p>The type of the file defines the language and should be given as
-     * defined in the OOo Developer's Guide, like Java, native, Python.</p>
+     * <p>
+     * The type of the file defines the language and should be given as defined in the OOo Developer's Guide, like Java,
+     * native, Python.
+     * </p>
      *
      * @param pFile
      *            the file to add to the package
      * @param pType
      *            the type of the file to add.
      * @param pPlatform
-     *            optional parameter to use only with native type. Please refer
-     *            to the OOo Developer's Guide for more information.
+     *            optional parameter to use only with native type. Please refer to the OOo Developer's Guide for more
+     *            information.
      */
     public void addComponentFile(String pathInArchive, File pFile, String pType, String pPlatform) {
         if (!pFile.isFile()) {
@@ -371,10 +387,12 @@ public class UnoPackage {
     /**
      * Add a type library to the package.
      *
-     * <p>Note that by some strange way, a jar dependency can be added in the
-     * package as a type library like RDB files.</p>
+     * <p>
+     * Note that by some strange way, a jar dependency can be added in the package as a type library like RDB files.
+     * </p>
      *
-     * @param pathInArchive the path in the Zip archive
+     * @param pathInArchive
+     *            the path in the Zip archive
      * @param pFile
      *            the file to add
      * @param pType
@@ -397,13 +415,12 @@ public class UnoPackage {
     }
 
     /**
-     * Here we look if a RegistrationHandler.class is inside the given
-     * jar file. In this case no entry is needed for the generated manifest
-     * file.
-     * <br/>
+     * Here we look if a RegistrationHandler.class is inside the given jar file. In this case no entry is needed for the
+     * generated manifest file. <br/>
      * This method has package default visibility for testing.
      *
-     * @param file the jar file
+     * @param file
+     *            the jar file
      * @return true, if successful
      * @since 24-Sep-2010 (oliver.boehm@agentes.de)
      */
@@ -417,8 +434,7 @@ public class UnoPackage {
                     continue;
                 }
                 if (entry.getName().endsWith("RegistrationHandler.class")
-                                || entry.getName().endsWith(
-                                                "RegistrationHandler.classes")) {
+                    || entry.getName().endsWith("RegistrationHandler.classes")) {
                     return true;
                 }
             }
@@ -431,7 +447,8 @@ public class UnoPackage {
     /**
      * Add a basic library to the package.
      *
-     * @param dir the directory of the basic library.
+     * @param dir
+     *            the directory of the basic library.
      */
     public void addBasicLibraryFile(File dir) {
         this.addBasicLibraryFile(null, dir);
@@ -440,7 +457,9 @@ public class UnoPackage {
     /**
      * Add a basic library to the package.
      *
-     * <p>Even if this method may not be used, it is possible.</p>
+     * <p>
+     * Even if this method may not be used, it is possible.
+     * </p>
      *
      * @param pDir
      *            the directory of the basic library.
@@ -452,15 +471,20 @@ public class UnoPackage {
     /**
      * Add a basic library to the package.
      *
-     * <p>Even if this method may not be used, it is possible.</p>
+     * <p>
+     * Even if this method may not be used, it is possible.
+     * </p>
      *
-     * @param pathInArchive the path in archive
-     * @param pDir the directory of the basic library.
-     * @param includes the includes
-     * @param excludes the excludes
+     * @param pathInArchive
+     *            the path in archive
+     * @param pDir
+     *            the directory of the basic library.
+     * @param includes
+     *            the includes
+     * @param excludes
+     *            the excludes
      */
-    public void addBasicLibraryFile(String pathInArchive, File pDir,
-                    String[] includes, String[] excludes) {
+    public void addBasicLibraryFile(String pathInArchive, File pDir, String[] includes, String[] excludes) {
         if (!pDir.isDirectory()) {
             throw new IllegalArgumentException("pDir [" + pDir + "] is not a folder");
         }
@@ -475,7 +499,8 @@ public class UnoPackage {
     /**
      * Add a dialog library to the package.
      *
-     * @param dir the directory of the dialog library.
+     * @param dir
+     *            the directory of the dialog library.
      */
     public void addDialogLibraryFile(File dir) {
         this.addDialogLibraryFile(null, dir);
@@ -484,7 +509,9 @@ public class UnoPackage {
     /**
      * Add a dialog library to the package.
      *
-     * <p>Even if this method may not be used, it is possible.</p>
+     * <p>
+     * Even if this method may not be used, it is possible.
+     * </p>
      *
      * @param pDir
      *            the directory of the dialog library.
@@ -504,15 +531,20 @@ public class UnoPackage {
     /**
      * Add a dialog library to the package.
      *
-     * <p>Even if this method may not be used, it is possible.</p>
+     * <p>
+     * Even if this method may not be used, it is possible.
+     * </p>
      *
-     * @param pathInArchive the path in archive
-     * @param pDir the directory of the dialog library.
-     * @param includes the includes
-     * @param excludes the excludes
+     * @param pathInArchive
+     *            the path in archive
+     * @param pDir
+     *            the directory of the dialog library.
+     * @param includes
+     *            the includes
+     * @param excludes
+     *            the excludes
      */
-    public void addDialogLibraryFile(String pathInArchive, File pDir,
-                    String[] includes, String[] excludes) {
+    public void addDialogLibraryFile(String pathInArchive, File pDir, String[] includes, String[] excludes) {
         if (!pDir.isDirectory()) {
             throw new IllegalArgumentException("pDir [" + pDir + "] is not a folder");
         }
@@ -578,18 +610,18 @@ public class UnoPackage {
     }
 
     /**
-     * Adds a file or directory to the package but do not include it in the
-     * manifest.
+     * Adds a file or directory to the package but do not include it in the manifest.
      *
-     * <p>This could be used for example for images.</p>
+     * <p>
+     * This could be used for example for images.
+     * </p>
      *
      * @param pFile
      *            the file or directory to add.
      */
     public void addOtherFile(String pathInArchive, File pFile) {
         if (!pFile.isFile()) {
-            throw new IllegalArgumentException("pFile ["
-                            + pFile.getAbsolutePath() + "] is not a file");
+            throw new IllegalArgumentException("pFile [" + pFile.getAbsolutePath() + "] is not a file");
         }
         // Do not change the extension from now
         initializeOutput();
@@ -598,8 +630,8 @@ public class UnoPackage {
     }
 
     /**
-     * Writes the package on the disk and cleans up the data. The UnoPackage
-     * instance cannot be used after this operation: it should unreferenced.
+     * Writes the package on the disk and cleans up the data. The UnoPackage instance cannot be used after this
+     * operation: it should unreferenced.
      *
      * @param pMonitor
      *            the progress monitor
@@ -657,8 +689,8 @@ public class UnoPackage {
     private File createManifestFile() throws IOException {
         File manifest = new File(System.getProperty("java.io.tmpdir"), MANIFEST_PATH);
         if (manifest.exists()) {
-            throw new IOException("I don't risk to overwrite "
-                            + manifest.getAbsolutePath() + " - please delete it manually!");
+            throw new IOException("I don't risk to overwrite " + manifest.getAbsolutePath()
+                + " - please delete it manually!");
         }
         FileOutputStream writer = new FileOutputStream(manifest);
         mManifest.write(writer);
@@ -667,8 +699,7 @@ public class UnoPackage {
     }
 
     /**
-     * @return a list of the files that are already queued for addition to the
-     *         package.
+     * @return a list of the files that are already queued for addition to the package.
      */
     public List<File> getContainedFiles() {
         ArrayList<File> files = new ArrayList<File>(mZipEntries.size());
@@ -679,8 +710,7 @@ public class UnoPackage {
     }
 
     /**
-     * Gets the list of the names that are already queued for addition to the
-     *         package.
+     * Gets the list of the names that are already queued for addition to the package.
      *
      * @return the contained names
      */
@@ -689,8 +719,8 @@ public class UnoPackage {
     }
 
     /**
-     * Add the path to a resource to clean after having exported the package.
-     * The resource won't be cleaned if the package isn't exported.
+     * Add the path to a resource to clean after having exported the package. The resource won't be cleaned if the
+     * package isn't exported.
      *
      * @param pPath
      *            the path to the resource to clean.
@@ -702,8 +732,10 @@ public class UnoPackage {
     /**
      * Creates the main elements for the package creation.
      *
-     * <p>After this step, the extension cannot be changed. Calling this method
-     * when the package has already been initialized does nothing.</p>
+     * <p>
+     * After this step, the extension cannot be changed. Calling this method when the package has already been
+     * initialized does nothing.
+     * </p>
      *
      */
     private void initializeOutput() {
@@ -725,20 +757,22 @@ public class UnoPackage {
     /**
      * Recursively add the file or directory to the Zip entries.
      *
-     * @param pRelativePath the relative path of the file to add
-     * @param pFile the file or directory to add
-     * @param includes the includes
-     * @param excludes the excludes
+     * @param pRelativePath
+     *            the relative path of the file to add
+     * @param pFile
+     *            the file or directory to add
+     * @param includes
+     *            the includes
+     * @param excludes
+     *            the excludes
      */
-    private void addZipContent(String pRelativePath, File pFile,
-                    String[] includes, String[] excludes) {
+    private void addZipContent(String pRelativePath, File pFile, String[] includes, String[] excludes) {
         if (pRelativePath != null) {
             if (pFile.isDirectory()) {
                 // Add all the children
                 try {
                     for (File child : pFile.listFiles()) {
-                        String path = FilenameUtils.normalize(pRelativePath
-                                        + "/" + child.getName());
+                        String path = FilenameUtils.normalize(pRelativePath + "/" + child.getName());
                         if (shouldBeExcluded(path, includes, excludes)) {
                             continue;
                         }
@@ -770,8 +804,7 @@ public class UnoPackage {
      * @param pRes
      *            the resource to check
      *
-     * @return <code>true</code> if the resource is a dialog library,
-     *         <code>false</code> in any other case
+     * @return <code>true</code> if the resource is a dialog library, <code>false</code> in any other case
      */
     private boolean isDialogLibrary(File pRes) {
         boolean result = false;
@@ -787,8 +820,7 @@ public class UnoPackage {
      * @param pRes
      *            the resource to check
      *
-     * @return <code>true</code> if the resource is a basic library,
-     *         <code>false</code> in any other case
+     * @return <code>true</code> if the resource is a basic library, <code>false</code> in any other case
      */
     private boolean isBasicLibrary(File pRes) {
         boolean result = false;

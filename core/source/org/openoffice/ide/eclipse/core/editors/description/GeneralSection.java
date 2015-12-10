@@ -58,7 +58,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author Cédric Bosdonnat
  *
  */
-public class GeneralSection extends LocalizedSection< DescriptionModel > {
+public class GeneralSection extends LocalizedSection<DescriptionModel> {
 
     private static final int LAYOUT_COLS = 3;
 
@@ -70,115 +70,116 @@ public class GeneralSection extends LocalizedSection< DescriptionModel > {
     private Text mDescriptionTxt;
     private Button mDescriptionBtn;
 
-
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the parent page
-     * @param pProject the project containing the description.xml file
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the parent page
+     * @param pProject
+     *            the project containing the description.xml file
      */
-    public GeneralSection( Composite pParent, DescriptionFormPage pPage, IProject pProject ) {
-        super( pParent, pPage, ExpandableComposite.TITLE_BAR );
-        getSection( ).setText( Messages.getString("GeneralSection.Title") ); //$NON-NLS-1$
+    public GeneralSection(Composite pParent, DescriptionFormPage pPage, IProject pProject) {
+        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
+        getSection().setText(Messages.getString("GeneralSection.Title")); //$NON-NLS-1$
 
         mProject = pProject;
-        setModel( pPage.getModel() );
+        setModel(pPage.getModel());
     }
 
     /**
      * Loads the values from the model into the controls.
      */
     @Override
-    public void loadData( ) {
-        getModel().setSuspendEvent( true );
-        mNameTxt.setText( getModel().getDisplayNames().get( mCurrentLocale ) );
-        mIdTxt.setText( getModel().getId() );
-        mVersionTxt.setText( getModel().getVersion() );
-        mDescriptionTxt.setText( getModel().getDescriptions().get( mCurrentLocale ) );
-        getModel().setSuspendEvent( false );
+    public void loadData() {
+        getModel().setSuspendEvent(true);
+        mNameTxt.setText(getModel().getDisplayNames().get(mCurrentLocale));
+        mIdTxt.setText(getModel().getId());
+        mVersionTxt.setText(getModel().getVersion());
+        mDescriptionTxt.setText(getModel().getDescriptions().get(mCurrentLocale));
+        getModel().setSuspendEvent(false);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void createControls( FormToolkit pToolkit, Composite pParent ) {
+    protected void createControls(FormToolkit pToolkit, Composite pParent) {
 
-        pParent.setLayout( new GridLayout( LAYOUT_COLS, false ) );
+        pParent.setLayout(new GridLayout(LAYOUT_COLS, false));
 
-        Label descrLbl = pToolkit.createLabel( pParent,
-                        Messages.getString("GeneralSection.Description"),  //$NON-NLS-1$
-                        SWT.WRAP );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
         // Name controls
-        pToolkit.createLabel( pParent, Messages.getString("GeneralSection.Name") ); //$NON-NLS-1$
-        mNameTxt = pToolkit.createText( pParent, new String( ) );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Name")); //$NON-NLS-1$
+        mNameTxt = pToolkit.createText(pParent, new String());
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS - 1;
-        mNameTxt.setLayoutData( gd );
-        mNameTxt.setEnabled( false );
-        mNameTxt.addModifyListener( new ModifyListener () {
+        mNameTxt.setLayoutData(gd);
+        mNameTxt.setEnabled(false);
+        mNameTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().addDisplayName( mCurrentLocale, mNameTxt.getText() );
+                getModel().addDisplayName(mCurrentLocale, mNameTxt.getText());
             }
         });
 
         // Identifier controls
-        pToolkit.createLabel( pParent, Messages.getString("GeneralSection.Identifier") ); //$NON-NLS-1$
-        mIdTxt = pToolkit.createText( pParent, new String( ) );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Identifier")); //$NON-NLS-1$
+        mIdTxt = pToolkit.createText(pParent, new String());
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS - 1;
-        mIdTxt.setLayoutData( gd );
-        mIdTxt.addModifyListener( new ModifyListener () {
+        mIdTxt.setLayoutData(gd);
+        mIdTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().setId( mIdTxt.getText() );
+                getModel().setId(mIdTxt.getText());
             }
         });
 
         // Version controls
-        pToolkit.createLabel( pParent, Messages.getString("GeneralSection.Version") ); //$NON-NLS-1$
-        mVersionTxt = pToolkit.createText( pParent, new String( ) );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Version")); //$NON-NLS-1$
+        mVersionTxt = pToolkit.createText(pParent, new String());
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS - 1;
-        mVersionTxt.setLayoutData( gd );
-        mVersionTxt.addModifyListener( new ModifyListener () {
+        mVersionTxt.setLayoutData(gd);
+        mVersionTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().setVersion( mVersionTxt.getText() );
+                getModel().setVersion(mVersionTxt.getText());
             }
         });
 
         // Description controls
-        pToolkit.createLabel( pParent, Messages.getString("GeneralSection.Description") ); //$NON-NLS-1$
-        mDescriptionTxt = pToolkit.createText( pParent, new String( ) );
-        mDescriptionTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mDescriptionTxt.setEnabled( false );
-        mDescriptionTxt.addModifyListener( new ModifyListener () {
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Description")); //$NON-NLS-1$
+        mDescriptionTxt = pToolkit.createText(pParent, new String());
+        mDescriptionTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mDescriptionTxt.setEnabled(false);
+        mDescriptionTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().addDescription( mCurrentLocale, mDescriptionTxt.getText() );
+                getModel().addDescription(mCurrentLocale, mDescriptionTxt.getText());
             }
         });
 
-        mDescriptionBtn = pToolkit.createButton( pParent, "...", SWT.PUSH ); //$NON-NLS-1$
-        mDescriptionBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );
-        mDescriptionBtn.addSelectionListener( new SelectionAdapter( ) {
+        mDescriptionBtn = pToolkit.createButton(pParent, "...", SWT.PUSH); //$NON-NLS-1$
+        mDescriptionBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mDescriptionBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 // Open the folder selection dialog
-                ProjectSelectionDialog dlg = new ProjectSelectionDialog( mProject,
-                                Messages.getString("GeneralSection.FileChooserTooltip") ); //$NON-NLS-1$
+                ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
+                    Messages.getString("GeneralSection.FileChooserTooltip")); //$NON-NLS-1$
 
-                if ( dlg.open() == Window.OK ) {
+                if (dlg.open() == Window.OK) {
                     IResource res = dlg.getSelected();
-                    if ( res != null && res.getType() == IResource.FILE ) {
-                        IFile file = (IFile)res;
+                    if (res != null && res.getType() == IResource.FILE) {
+                        IFile file = (IFile) res;
                         String path = file.getProjectRelativePath().toString();
-                        mDescriptionTxt.setText( path );
+                        mDescriptionTxt.setText(path);
                     }
                 }
             }
@@ -190,15 +191,15 @@ public class GeneralSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void addLocale(Locale pLocale) {
-        if ( !getModel().getDisplayNames().containsKey( pLocale ) ) {
-            getModel().addDisplayName( pLocale, new String( ) );
+        if (!getModel().getDisplayNames().containsKey(pLocale)) {
+            getModel().addDisplayName(pLocale, new String());
         }
-        if ( !getModel().getDescriptions().containsKey( pLocale ) ) {
-            getModel().addDescription( pLocale, new String( ) );
+        if (!getModel().getDescriptions().containsKey(pLocale)) {
+            getModel().addDescription(pLocale, new String());
         }
-        mNameTxt.setEnabled( true );
-        mDescriptionTxt.setEnabled( true );
-        mDescriptionBtn.setEnabled( true );
+        mNameTxt.setEnabled(true);
+        mDescriptionTxt.setEnabled(true);
+        mDescriptionBtn.setEnabled(true);
     }
 
     /**
@@ -206,15 +207,15 @@ public class GeneralSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void deleteLocale(Locale pLocale) {
-        getModel().removeDisplayName( pLocale );
-        getModel().removeDescription( pLocale );
-        if ( getModel().getDisplayNames().isEmpty() ) {
-            mNameTxt.setEnabled( false );
+        getModel().removeDisplayName(pLocale);
+        getModel().removeDescription(pLocale);
+        if (getModel().getDisplayNames().isEmpty()) {
+            mNameTxt.setEnabled(false);
         }
 
-        if ( getModel().getDescriptions().isEmpty() ) {
-            mDescriptionTxt.setEnabled( false );
-            mDescriptionBtn.setEnabled( false );
+        if (getModel().getDescriptions().isEmpty()) {
+            mDescriptionTxt.setEnabled(false);
+            mDescriptionBtn.setEnabled(false);
         }
     }
 
@@ -224,13 +225,13 @@ public class GeneralSection extends LocalizedSection< DescriptionModel > {
     @Override
     public void selectLocale(Locale pLocale) {
 
-        if ( mCurrentLocale != null ) {
-            getModel().addDisplayName( mCurrentLocale, mNameTxt.getText( ) );
-            getModel().addDescription( mCurrentLocale, mDescriptionTxt.getText( ) );
+        if (mCurrentLocale != null) {
+            getModel().addDisplayName(mCurrentLocale, mNameTxt.getText());
+            getModel().addDescription(mCurrentLocale, mDescriptionTxt.getText());
         }
         super.selectLocale(pLocale);
-        String name = getModel().getDisplayNames().get( pLocale );
-        mNameTxt.setText( name );
-        mDescriptionTxt.setText( getModel().getDescriptions().get( pLocale ) );
+        String name = getModel().getDisplayNames().get(pLocale);
+        mNameTxt.setText(name);
+        mDescriptionTxt.setText(getModel().getDescriptions().get(pLocale));
     }
 }

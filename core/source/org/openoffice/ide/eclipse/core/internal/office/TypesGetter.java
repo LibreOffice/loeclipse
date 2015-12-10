@@ -101,16 +101,17 @@ public class TypesGetter {
     /**
      * Set the office connection to use to get the types.
      *
-     * @param pConnection the office connection to use
+     * @param pConnection
+     *            the office connection to use
      */
     public void setConnection(OfficeConnection pConnection) {
         mConnection = pConnection;
     }
 
     /**
-     * @param pLocalRegs the local registries to search. The path has to be in
-     *      written in an OS dependent form. This path is converted into an OOo valid URL
-     *      just before getting the types from it.
+     * @param pLocalRegs
+     *            the local registries to search. The path has to be in written in an OS dependent form. This path is
+     *            converted into an OOo valid URL just before getting the types from it.
      */
     public void setLocalRegs(List<String> pLocalRegs) {
         mLocalRegs.clear();
@@ -118,9 +119,9 @@ public class TypesGetter {
     }
 
     /**
-     * @param pExternalRegs the external registries to search. The path has to be in
-     *      written in an OS dependent form. This path is converted into an OOo valid URL
-     *      just before getting the types from it.
+     * @param pExternalRegs
+     *            the external registries to search. The path has to be in written in an OS dependent form. This path is
+     *            converted into an OOo valid URL just before getting the types from it.
      */
     public void setExternalRegs(List<String> pExternalRegs) {
         mExternalRegs.clear();
@@ -130,17 +131,18 @@ public class TypesGetter {
     /**
      * Get the UNO types from the defined registries.
      *
-     * Only the types under the given root and corresponding to the types defined by the
-     * mask will be extracted.
+     * Only the types under the given root and corresponding to the types defined by the mask will be extracted.
      *
-     * @param pRoot the root registry key where to look for the types. If the value is
-     *      <code>null</code> the whole registry will be searched
-     * @param pMask the bit-ORed types to search. The types are defined in the
-     *      {@link IUnoFactoryConstants} class.
+     * @param pRoot
+     *            the root registry key where to look for the types. If the value is <code>null</code> the whole
+     *            registry will be searched
+     * @param pMask
+     *            the bit-ORed types to search. The types are defined in the {@link IUnoFactoryConstants} class.
      *
      * @return the UNO types corresponding to the request.
      *
-     * @throws Throwable if anything wrong happens
+     * @throws Throwable
+     *             if anything wrong happens
      */
     public Map<String, List<InternalUnoType>> getTypes(String pRoot, Integer pMask) throws Throwable {
         Map<String, List<InternalUnoType>> types = new HashMap<String, List<InternalUnoType>>();
@@ -158,8 +160,10 @@ public class TypesGetter {
     /**
      * Method called to initialize the types getter before querying the types.
      *
-     * @param pRoot the registries root key
-     * @param pTypesMask the types mask for the types to query
+     * @param pRoot
+     *            the registries root key
+     * @param pTypesMask
+     *            the types mask for the types to query
      */
     private void initialize(String pRoot, int pTypesMask) {
 
@@ -183,14 +187,16 @@ public class TypesGetter {
     /**
      * Query the types and return them in a map..
      *
-     * <p>The types are mapped to an identifier indicating where they have been
-     * extracted from. For a LibreOffice instance, the key in the map will be the
-     * OOo name. For any external registry, the key in the map will be the OS
-     * specific path to the registry.</p>
+     * <p>
+     * The types are mapped to an identifier indicating where they have been extracted from. For a LibreOffice instance,
+     * the key in the map will be the OOo name. For any external registry, the key in the map will be the OS specific
+     * path to the registry.
+     * </p>
      *
      * @return the types
      *
-     * @throws Exception if anything wrong happens
+     * @throws Exception
+     *             if anything wrong happens
      */
     private Map<String, List<InternalUnoType>> queryTypes() throws Exception {
 
@@ -209,12 +215,12 @@ public class TypesGetter {
             String url = mConnection.convertToUrl(path);
             if (url != null) {
                 String oooKey = mConnection.getOOo().getName();
-                List<InternalUnoType> types = results.get( oooKey );
-                if ( types == null ) {
+                List<InternalUnoType> types = results.get(oooKey);
+                if (types == null) {
                     types = new ArrayList<InternalUnoType>();
-                    results.put( oooKey, types );
+                    results.put(oooKey, types);
                 }
-                types.addAll( getTypesFromRegistry(url, false) );
+                types.addAll(getTypesFromRegistry(url, false));
             }
         }
 
@@ -222,19 +228,19 @@ public class TypesGetter {
     }
 
     /**
-     * Get all the types from a registry and return an {@link InternalUnoType}
-     * vector.
+     * Get all the types from a registry and return an {@link InternalUnoType} vector.
      *
-     * @param pRegistryPath the path to the types registry from which to extract the types.
-     * @param pIsLocal <code>true</code> if the types registry is local to the project,
-     *      <code>false</code> otherwise.
+     * @param pRegistryPath
+     *            the path to the types registry from which to extract the types.
+     * @param pIsLocal
+     *            <code>true</code> if the types registry is local to the project, <code>false</code> otherwise.
      *
      * @return the types from the registry
      *
-     * @throws Exception is thrown if the registry reading fails
+     * @throws Exception
+     *             is thrown if the registry reading fails
      */
-    private LinkedList<InternalUnoType> getTypesFromRegistry(String pRegistryPath,
-                    boolean pIsLocal) throws Exception {
+    private LinkedList<InternalUnoType> getTypesFromRegistry(String pRegistryPath, boolean pIsLocal) throws Exception {
 
         LinkedList<InternalUnoType> result = new LinkedList<InternalUnoType>();
 
@@ -243,31 +249,24 @@ public class TypesGetter {
             // Get the UNO Type enumeration access
             XComponentContext xCtx = mConnection.getContext();
             XMultiComponentFactory xMCF = xCtx.getServiceManager();
-            XSimpleRegistry xReg = UnoRuntime.queryInterface(
-                            XSimpleRegistry.class,
-                            xMCF.createInstanceWithContext(
-                                            "com.sun.star.registry.SimpleRegistry", xCtx)); //$NON-NLS-1$
+            XSimpleRegistry xReg = UnoRuntime.queryInterface(XSimpleRegistry.class,
+                xMCF.createInstanceWithContext("com.sun.star.registry.SimpleRegistry", xCtx)); //$NON-NLS-1$
 
             xReg.open(pRegistryPath, true, false);
 
             Object[] seqArgs = { xReg };
 
             Object oTDMgr = xMCF.createInstanceWithArgumentsAndContext(
-                            "com.sun.star.reflection.TypeDescriptionProvider", //$NON-NLS-1$
-                            seqArgs, xCtx);
+                "com.sun.star.reflection.TypeDescriptionProvider", //$NON-NLS-1$
+                seqArgs, xCtx);
 
             // Set the local Type Description Manager
-            XTypeDescriptionEnumerationAccess localTDMgr =
-                            UnoRuntime.queryInterface(
-                                            XTypeDescriptionEnumerationAccess.class,
-                                            oTDMgr);
+            XTypeDescriptionEnumerationAccess localTDMgr = UnoRuntime
+                .queryInterface(XTypeDescriptionEnumerationAccess.class, oTDMgr);
 
             // Query the types from the enumeration access
-            XTypeDescriptionEnumeration xLocalTypeEnum = localTDMgr.
-                            createTypeDescriptionEnumeration(
-                                            mRoot,
-                                            mTypeClasses,
-                                            TypeDescriptionSearchDepth.INFINITE);
+            XTypeDescriptionEnumeration xLocalTypeEnum = localTDMgr.createTypeDescriptionEnumeration(mRoot,
+                mTypeClasses, TypeDescriptionSearchDepth.INFINITE);
 
             // Convert the enumeration into a Vector
             while (xLocalTypeEnum.hasMoreElements()) {
@@ -283,21 +282,21 @@ public class TypesGetter {
     /**
      * Convenient method to check if the mask includes a type.
      *
-     * @param pMask the mask to check
-     * @param pType the type to find in the mask
+     * @param pMask
+     *            the mask to check
+     * @param pType
+     *            the type to find in the mask
      *
-     * @return <code>true</code> if the mask contains the type,
-     *      <code>false</code> otherwise.
+     * @return <code>true</code> if the mask contains the type, <code>false</code> otherwise.
      */
     private boolean isOfType(int pMask, int pType) {
         return (pMask & pType) != 0;
     }
 
     /**
-     *  Convenient method to convert the types mask into an array of UNO
-     *  TypeClasses.
+     * Convenient method to convert the types mask into an array of UNO TypeClasses.
      *
-     *  @return the corresponding TypeClass array
+     * @return the corresponding TypeClass array
      */
     private TypeClass[] convertToTypeClasses() {
 
@@ -322,11 +321,12 @@ public class TypesGetter {
     }
 
     /**
-     * Add the <code>TypeClass</code> corresponding to the given type if it
-     * is present in the getter types mask.
+     * Add the <code>TypeClass</code> corresponding to the given type if it is present in the getter types mask.
      *
-     * @param pType the type to add from {@link IUnoFactoryConstants}
-     * @param pTypeClasses the type classes list.
+     * @param pType
+     *            the type to add from {@link IUnoFactoryConstants}
+     * @param pTypeClasses
+     *            the type classes list.
      */
     private void tryAddingType(int pType, Vector<TypeClass> pTypeClasses) {
         if (isOfType(mMask, pType)) {
@@ -335,20 +335,21 @@ public class TypesGetter {
     }
 
     /**
-     * Creates an {@link InternalUnoType} from the UNO TypeDescription
-     * and a flag to know whether the type is local or external.
+     * Creates an {@link InternalUnoType} from the UNO TypeDescription and a flag to know whether the type is local or
+     * external.
      *
-     * <p>Note: this method isn't very useful yet, but it prepares future
-     * evolutions currently impossible.</p>
+     * <p>
+     * Note: this method isn't very useful yet, but it prepares future evolutions currently impossible.
+     * </p>
      *
-     * @param pType the type description to convert to an {@link InternalUnoType}
-     * @param pIsLocal <code>true</code> if the file is local to the project,
-     *      <code>false</code> otherwise.
+     * @param pType
+     *            the type description to convert to an {@link InternalUnoType}
+     * @param pIsLocal
+     *            <code>true</code> if the file is local to the project, <code>false</code> otherwise.
      *
      * @return the created {@link InternalUnoType}
      */
-    private InternalUnoType createInternalType(XTypeDescription pType,
-                    boolean pIsLocal) {
+    private InternalUnoType createInternalType(XTypeDescription pType, boolean pIsLocal) {
 
         // convert the type into an integer
         TypeClass typeClass = pType.getTypeClass();

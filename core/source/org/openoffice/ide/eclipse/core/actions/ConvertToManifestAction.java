@@ -78,57 +78,58 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void run( IAction pAction ) {
-        PackagePropertiesModel propsModel = new PackagePropertiesModel( mPackageFile );
+    public void run(IAction pAction) {
+        PackagePropertiesModel propsModel = new PackagePropertiesModel(mPackageFile);
 
         String prjName = mPackageFile.getProject().getName();
-        IUnoidlProject prj = ProjectsManager.getProject( prjName );
-        File prjFile = SystemHelper.getFile( prj );
+        IUnoidlProject prj = ProjectsManager.getProject(prjName);
+        File prjFile = SystemHelper.getFile(prj);
 
         // Create a dummy package to get the automatic entries of the manifest
-        UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage( prj, new File( "foo.oxt" ) ); //$NON-NLS-1$
+        UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(prj, new File("foo.oxt")); //$NON-NLS-1$
         ManifestModel manifestModel = unoPackage.getManifestModel();
 
         for (IFolder lib : propsModel.getBasicLibraries()) {
-            manifestModel.addBasicLibrary( lib.getProjectRelativePath().toString() );
+            manifestModel.addBasicLibrary(lib.getProjectRelativePath().toString());
         }
 
         for (IFolder lib : propsModel.getDialogLibraries()) {
-            manifestModel.addDialogLibrary( lib.getProjectRelativePath().toString() );
+            manifestModel.addDialogLibrary(lib.getProjectRelativePath().toString());
         }
 
         for (IResource content : propsModel.getContents()) {
-            File contentFile = SystemHelper.getFile( content );
-            manifestModel.addContent(
-                            UnoPackage.getPathRelativeToBase( contentFile, prjFile),
-                            contentFile );
+            File contentFile = SystemHelper.getFile(content);
+            manifestModel.addContent(UnoPackage.getPathRelativeToBase(contentFile, prjFile), contentFile);
         }
 
         Iterator<Entry<Locale, IFile>> iter = propsModel.getDescriptionFiles().entrySet().iterator();
-        while ( iter.hasNext() ) {
+        while (iter.hasNext()) {
             Entry<Locale, IFile> entry = iter.next();
-            manifestModel.addDescription( entry.getValue().getProjectRelativePath().toString(), entry.getKey() );
+            manifestModel.addDescription(entry.getValue().getProjectRelativePath().toString(), entry.getKey());
         }
 
         // Serialize the manifest model into the manifest.xml file
-        IFile manifestFile = mPackageFile.getParent().getFile( new Path( UnoPackage.MANIFEST_PATH ) );
-        File file = new File( manifestFile.getLocationURI() );
+        IFile manifestFile = mPackageFile.getParent().getFile(new Path(UnoPackage.MANIFEST_PATH));
+        File file = new File(manifestFile.getLocationURI());
 
-        if ( !file.exists() || file.canWrite() ) {
+        if (!file.exists() || file.canWrite()) {
             FileOutputStream out = null;
 
             try {
-                out = new FileOutputStream( file );
-                manifestModel.write( out );
-            } catch ( Exception e ) {
-                PluginLogger.error( Messages.getString("ConvertToManifestAction.WriteError0"), e ); //$NON-NLS-1$
+                out = new FileOutputStream(file);
+                manifestModel.write(out);
+            } catch (Exception e) {
+                PluginLogger.error(Messages.getString("ConvertToManifestAction.WriteError0"), e); //$NON-NLS-1$
             } finally {
-                try { out.close(); } catch (IOException e) { }
+                try {
+                    out.close();
+                } catch (IOException e) {
+                }
             }
 
             // Refresh the file
             try {
-                manifestFile.refreshLocal( IResource.DEPTH_ZERO, null );
+                manifestFile.refreshLocal(IResource.DEPTH_ZERO, null);
             } catch (CoreException e) {
             }
         }
@@ -139,11 +140,11 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
      */
     @Override
     public void selectionChanged(IAction pAction, ISelection pSelection) {
-        if ( !pSelection.isEmpty() && pSelection instanceof IStructuredSelection ) {
-            IStructuredSelection sel = (IStructuredSelection)pSelection;
+        if (!pSelection.isEmpty() && pSelection instanceof IStructuredSelection) {
+            IStructuredSelection sel = (IStructuredSelection) pSelection;
             Object o = sel.getFirstElement();
-            if ( o instanceof IFile ) {
-                mPackageFile = ( IFile )o;
+            if (o instanceof IFile) {
+                mPackageFile = (IFile) o;
             }
         }
     }

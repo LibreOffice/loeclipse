@@ -73,21 +73,18 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Abstract table structure used in the plugin. This avoid to rewrite to many
- * times the same code for basic table managment.
+ * Abstract table structure used in the plugin. This avoid to rewrite to many times the same code for basic table
+ * managment.
  *
- * <p>In order to create a new table class, the following methods should be
- * overridden:
- *     <ul>
- *         <li>{@link #addLine()} to customize the action performed when clicking
- *             on the <em>Add</em> button.</li>
- *         <li>{@link #removeLine()} to customize the action performed when
- *             clicking on the <em>Del</em> button.</li>
- *         <li>{@link #handleDoubleClick(DoubleClickEvent)} to customize the
- *             action performed on a doucle click on the table.</li>
- *         <li>{@link #createCellEditors(Table)} to customize how to edit the
- *             cells of the differents columns of the table.</li>
- *     </ul>
+ * <p>
+ * In order to create a new table class, the following methods should be overridden:
+ * <ul>
+ * <li>{@link #addLine()} to customize the action performed when clicking on the <em>Add</em> button.</li>
+ * <li>{@link #removeLine()} to customize the action performed when clicking on the <em>Del</em> button.</li>
+ * <li>{@link #handleDoubleClick(DoubleClickEvent)} to customize the action performed on a doucle click on the table.
+ * </li>
+ * <li>{@link #createCellEditors(Table)} to customize how to edit the cells of the differents columns of the table.</li>
+ * </ul>
  * </p>
  *
  * @author cedricbosdo
@@ -116,17 +113,22 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     private String mTitle;
 
     /**
-     * Constructor for a generic table. The number of columns is the minimum
-     * of the length of the three arrays in parameter.
+     * Constructor for a generic table. The number of columns is the minimum of the length of the three arrays in
+     * parameter.
      *
-     * @param pParent the parent composite where to add the table
-     * @param pTitle a title for the table
-     * @param pColTitles an array with the colums titles
-     * @param pColWidths an array with the columns width
-     * @param pColProperties an array with the columns properties
+     * @param pParent
+     *            the parent composite where to add the table
+     * @param pTitle
+     *            a title for the table
+     * @param pColTitles
+     *            an array with the colums titles
+     * @param pColWidths
+     *            an array with the columns width
+     * @param pColProperties
+     *            an array with the columns properties
      */
-    public AbstractTable(Composite pParent, String pTitle, String[] pColTitles,
-                    int[] pColWidths, String[] pColProperties) {
+    public AbstractTable(Composite pParent, String pTitle, String[] pColTitles, int[] pColWidths,
+        String[] pColProperties) {
         super(pParent, SWT.NONE);
 
         mTitle = pTitle;
@@ -166,8 +168,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     /**
      * Convenient method to get the table lines.
      *
-     * @return a vector containing the {@link ITableElement} objects
-     *            representing the lines.
+     * @return a vector containing the {@link ITableElement} objects representing the lines.
      */
     public Vector<ITableElement> getLines() {
         return mLines;
@@ -184,7 +185,8 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     /**
      * Adding a line to the table model.
      *
-     * @param pElement the line to add.
+     * @param pElement
+     *            the line to add.
      */
     protected void addLine(ITableElement pElement) {
         mLines.add(pElement);
@@ -215,12 +217,11 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * Method called to configure the columns cell editors. This method should
-     * be overridden in order to set customized editors. The default action is
-     * to return <code>null</code> to indicate that no editing is allowed.
+     * Method called to configure the columns cell editors. This method should be overridden in order to set customized
+     * editors. The default action is to return <code>null</code> to indicate that no editing is allowed.
      *
-     * @param pTable the table for which to create the cell editors, i.e. the
-     *         internal table object of this class.
+     * @param pTable
+     *            the table for which to create the cell editors, i.e. the internal table object of this class.
      *
      * @return the cell editors in the order of the columns
      */
@@ -229,8 +230,8 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * Method called after an action on the <em>Add</em> button. This method
-     * should be overridden to customize the table.
+     * Method called after an action on the <em>Add</em> button. This method should be overridden to customize the
+     * table.
      *
      * @return the new table line to add.
      */
@@ -239,31 +240,30 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * Method called after an action on the <em>Del</em> button. This method
-     * should be overridden to customize the table.
+     * Method called after an action on the <em>Del</em> button. This method should be overridden to customize the
+     * table.
      *
      * @return the table line removed or <code>null</code> if none was removed.
      */
     protected ITableElement removeLine() {
 
-        IStructuredSelection selection = (IStructuredSelection)mTableViewer.
-                        getSelection();
+        IStructuredSelection selection = (IStructuredSelection) mTableViewer.getSelection();
         ITableElement toRemove = null;
 
         if (!selection.isEmpty()) {
             if (selection.getFirstElement() instanceof ITableElement) {
-                toRemove = (ITableElement)selection.getFirstElement();
+                toRemove = (ITableElement) selection.getFirstElement();
             }
         }
         return toRemove;
     }
 
     /**
-     * Method called when a double click event has been raised by the table.
-     * This implementation doesn't perform any action and is intended to be
-     * overridden.
+     * Method called when a double click event has been raised by the table. This implementation doesn't perform any
+     * action and is intended to be overridden.
      *
-     * @param pEvent the double click event raised
+     * @param pEvent
+     *            the double click event raised
      */
     protected void handleDoubleClick(DoubleClickEvent pEvent) {
     }
@@ -320,8 +320,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
         // Creates the two buttons ADD and DEL
         mAdd = new Button(this, SWT.NONE);
         mAdd.setText(Messages.getString("AbstractTable.Add")); //$NON-NLS-1$
-        GridData gdAdd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
-                        GridData.HORIZONTAL_ALIGN_FILL);
+        GridData gdAdd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
         mAdd.setLayoutData(gdAdd);
         mAdd.addSelectionListener(new SelectionAdapter() {
 
@@ -339,8 +338,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 
         mDel = new Button(this, SWT.NONE);
         mDel.setText(Messages.getString("AbstractTable.Del")); //$NON-NLS-1$
-        GridData gdDel = new GridData(GridData.VERTICAL_ALIGN_BEGINNING |
-                        GridData.HORIZONTAL_ALIGN_FILL);
+        GridData gdDel = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
         mDel.setLayoutData(gdDel);
         mDel.addSelectionListener(new SelectionAdapter() {
 
@@ -360,8 +358,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
      *
      */
     private void createColumns() {
-        for (int i = 0, length = Math.min(mColumnWidths.length,
-                        mColumnTitles.length); i < length; i++) {
+        for (int i = 0, length = Math.min(mColumnWidths.length, mColumnTitles.length); i < length; i++) {
             TableColumn column = new TableColumn(mTable, SWT.RESIZE | SWT.LEFT);
             column.setWidth(mColumnWidths[i]);
             column.setText(mColumnTitles[i]);
@@ -369,9 +366,8 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * Provides the content of the table. The main method used here is the
-     * {@link #getElements(Object)} one which returns all the
-     * {@link ITableElement} lines.
+     * Provides the content of the table. The main method used here is the {@link #getElements(Object)} one which
+     * returns all the {@link ITableElement} lines.
      *
      * @author cbosdonnat
      *
@@ -405,10 +401,9 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * This class is responsible to handle the different editon actions
-     * performed on the table cells. This uses the
-     * {@link ITableElement#canModify(String)}, {@link ITableElement#getValue(String)}
-     * and {@link ITableElement#setValue(String, Object)}.
+     * This class is responsible to handle the different editon actions performed on the table cells. This uses the
+     * {@link ITableElement#canModify(String)}, {@link ITableElement#getValue(String)} and
+     * {@link ITableElement#setValue(String, Object)}.
      *
      * @author cbosdonnat
      */
@@ -422,7 +417,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
             boolean result = false;
 
             if (pElement instanceof ITableElement) {
-                result = ((ITableElement)pElement).canModify(pProperty);
+                result = ((ITableElement) pElement).canModify(pProperty);
             }
             return result;
         }
@@ -435,7 +430,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
             Object value = null;
 
             if (pElement instanceof ITableElement) {
-                value = ((ITableElement)pElement).getValue(pProperty);
+                value = ((ITableElement) pElement).getValue(pProperty);
             }
             return value;
         }
@@ -446,10 +441,10 @@ public class AbstractTable extends Composite implements ISelectionProvider {
         @Override
         public void modify(Object pElement, String pProperty, Object pValue) {
 
-            TableItem item = (TableItem)pElement;
+            TableItem item = (TableItem) pElement;
 
             if (item.getData() instanceof ITableElement) {
-                ((ITableElement)item.getData()).setValue(pProperty, pValue);
+                ((ITableElement) item.getData()).setValue(pProperty, pValue);
                 mTableViewer.refresh();
             }
         }
@@ -457,14 +452,12 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * The class responsible to provide the labels and images for each
-     * table cell. This class will use the {@link ITableElement#getLabel(String)}
-     * and {@link ITableElement#getImage(String)} methods.
+     * The class responsible to provide the labels and images for each table cell. This class will use the
+     * {@link ITableElement#getLabel(String)} and {@link ITableElement#getImage(String)} methods.
      *
      * @author cedricbosdo
      */
-    private class AbstractLabelProvider extends LabelProvider
-    implements ITableLabelProvider {
+    private class AbstractLabelProvider extends LabelProvider implements ITableLabelProvider {
 
         /**
          * {@inheritDoc}
@@ -474,7 +467,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
             Image image = null;
 
             if (pElement instanceof ITableElement) {
-                image = ((ITableElement)pElement).getImage(mColumnProperties[pColumnIndex]);
+                image = ((ITableElement) pElement).getImage(mColumnProperties[pColumnIndex]);
             }
             return image;
         }
@@ -487,14 +480,13 @@ public class AbstractTable extends Composite implements ISelectionProvider {
             String text = null;
 
             if (pElement instanceof ITableElement) {
-                text = ((ITableElement)pElement).getLabel(mColumnProperties[pColumnIndex]);
+                text = ((ITableElement) pElement).getLabel(mColumnProperties[pColumnIndex]);
             }
             return text;
         }
     }
 
-    //------------------------------------- Implementation of ISelectionProvider
-
+    // ------------------------------------- Implementation of ISelectionProvider
 
     /**
      * {@inheritDoc}

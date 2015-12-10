@@ -50,8 +50,7 @@ import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Class providing all the UNO projects labels to the SWT tables and trees
- * showing UNO projects.
+ * Class providing all the UNO projects labels to the SWT tables and trees showing UNO projects.
  *
  * @author cedricbosdo
  *
@@ -73,7 +72,7 @@ public class UnoProjectLabelProvider extends LabelProvider {
     public String getText(Object pElement) {
         String text = null;
         if (pElement instanceof IUnoidlProject) {
-            text = ((IUnoidlProject)pElement).getName();
+            text = ((IUnoidlProject) pElement).getName();
         }
         return text;
     }

@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.editors.idl;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -52,9 +51,8 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
 
 /**
- * The document provider used by the UNO-IDL editor. The partion scanner are
- * defined in the document configuration {@link UnoidlConfiguration}. In order
- * to fully understand the editor mechanisms, please report to Eclipse plugin
+ * The document provider used by the UNO-IDL editor. The partion scanner are defined in the document configuration
+ * {@link UnoidlConfiguration}. In order to fully understand the editor mechanisms, please report to Eclipse plugin
  * developer's guide.
  *
  * @author cbosdonnat
@@ -64,14 +62,10 @@ public class UnoidlDocumentProvider extends FileDocumentProvider {
     private static UnoidlPartitionScanner sScanner = null;
 
     /**
-     * The scannable partitions in the idl text. Each one should have an
-     * associated scanner in the configuration.
+     * The scannable partitions in the idl text. Each one should have an associated scanner in the configuration.
      */
-    private static final String[] TYPES = new String[] {
-                    UnoidlPartitionScanner.IDL_AUTOCOMMENT,
-                    UnoidlPartitionScanner.IDL_COMMENT,
-                    UnoidlPartitionScanner.IDL_PREPROCESSOR
-    };
+    private static final String[] TYPES = new String[] { UnoidlPartitionScanner.IDL_AUTOCOMMENT,
+        UnoidlPartitionScanner.IDL_COMMENT, UnoidlPartitionScanner.IDL_PREPROCESSOR };
 
     /**
      * Default constructor.
@@ -98,9 +92,7 @@ public class UnoidlDocumentProvider extends FileDocumentProvider {
      * @return the IDL partitioner to cut the file text into scannable partitions.
      */
     private FastPartitioner createIDLPartitioner() {
-        return new FastPartitioner(
-                        getIDLPartitionScanner(), TYPES
-                        );
+        return new FastPartitioner(getIDLPartitionScanner(), TYPES);
     }
 
     /**

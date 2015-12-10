@@ -71,12 +71,13 @@ public class PackageFormPage extends FormPage {
     /**
      * Content form page constructor.
      *
-     * @param pEditor the editor where to create the form page
-     * @param pId the page identifier
+     * @param pEditor
+     *            the editor where to create the form page
+     * @param pId
+     *            the page identifier
      */
     public PackageFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId,
-                        Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
+        super(pEditor, pId, Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
     }
 
     /**
@@ -85,7 +86,7 @@ public class PackageFormPage extends FormPage {
     public IProject getProject() {
         IProject prj = null;
         if (getEditorInput() instanceof IFileEditorInput) {
-            prj = ((IFileEditorInput)getEditorInput()).getFile().getProject();
+            prj = ((IFileEditorInput) getEditorInput()).getFile().getProject();
         }
         return prj;
     }
@@ -99,7 +100,7 @@ public class PackageFormPage extends FormPage {
         ScrolledForm form = pManagedForm.getForm();
 
         FormToolkit toolkit = pManagedForm.getToolkit();
-        toolkit.decorateFormHeading( form.getForm() );
+        toolkit.decorateFormHeading(form.getForm());
 
         form.setText(Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
 
@@ -112,7 +113,7 @@ public class PackageFormPage extends FormPage {
         mDescriptions = new PackageDescriptionSection(this);
 
         // update the model from the source
-        PackagePropertiesEditor editor = (PackagePropertiesEditor)getEditor();
+        PackagePropertiesEditor editor = (PackagePropertiesEditor) getEditor();
         editor.getModel().setQuiet(true);
 
         editor.loadFromSource();

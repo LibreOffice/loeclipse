@@ -74,27 +74,17 @@ public class InterfaceMembersTable extends AbstractTable {
     private static final int OPTIONS_WIDTH = 300;
 
     /**
-     * Creates a table to add/edit/remove the attributes and methods of an
-     * interface.
+     * Creates a table to add/edit/remove the attributes and methods of an interface.
      *
-     * @param pParent the parent composite where to create the table. Its layout
-     *             should be a Grid Layout with one column
+     * @param pParent
+     *            the parent composite where to create the table. Its layout should be a Grid Layout with one column
      */
     public InterfaceMembersTable(Composite pParent) {
-        super(    pParent,
-                        Messages.getString("InterfaceMembersTable.Title"),  //$NON-NLS-1$
-                        new String[]{
-                                        Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
-                                        Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
-                                        Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
-        },
-                        new int[]{ NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH},
-                        new String[] {
-                                        NAME,
-                                        TYPE,
-                                        OPTIONS
-        }
-                        );
+        super(pParent, Messages.getString("InterfaceMembersTable.Title"), //$NON-NLS-1$
+            new String[] { Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
+                Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
+                Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
+            }, new int[] { NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH }, new String[] { NAME, TYPE, OPTIONS });
     }
 
     /**
@@ -108,7 +98,7 @@ public class InterfaceMembersTable extends AbstractTable {
         UnoFactoryData[] data = new UnoFactoryData[size];
 
         for (int i = 0; i < size; i++) {
-            data[i] = ((MemberLine)lines.get(i)).mData;
+            data[i] = ((MemberLine) lines.get(i)).mData;
         }
         return data;
     }
@@ -150,8 +140,9 @@ public class InterfaceMembersTable extends AbstractTable {
     /**
      * Open the member dialog for edition or creation.
      *
-     * @param pContent if <code>null</code>, the dialog is opened to create a
-     *         new member, otherwise it reuses the given data to modify them.
+     * @param pContent
+     *            if <code>null</code>, the dialog is opened to create a new member, otherwise it reuses the given data
+     *            to modify them.
      *
      * @return the created or edited data
      */
@@ -186,18 +177,17 @@ public class InterfaceMembersTable extends AbstractTable {
         private UnoFactoryData mData;
 
         /**
-         * This constructor instanciates an UnoFactoryData, keep in mind that
-         * these should be disposed.
+         * This constructor instanciates an UnoFactoryData, keep in mind that these should be disposed.
          */
         public MemberLine() {
             mData = new UnoFactoryData();
         }
 
         /**
-         * This constructor only makes a reference copy of the data, don't
-         * dispose them too early.
+         * This constructor only makes a reference copy of the data, don't dispose them too early.
          *
-         * @param pData the data for the line
+         * @param pData
+         *            the data for the line
          */
         public MemberLine(UnoFactoryData pData) {
             mData = pData;
@@ -218,7 +208,7 @@ public class InterfaceMembersTable extends AbstractTable {
         public Image getImage(String pProperty) {
             Image image = null;
             if (pProperty.equals(NAME)) {
-                int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
+                int memberType = ((Integer) mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
                 if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
                     image = OOEclipsePlugin.getImage(ImagesConstants.ATTRIBUTE);
                 } else if (memberType == IUnoFactoryConstants.METHOD) {
@@ -237,20 +227,20 @@ public class InterfaceMembersTable extends AbstractTable {
             String label = null;
 
             if (pProperty.equals(TYPE)) {
-                String type = (String)mData.getProperty(IUnoFactoryConstants.TYPE);
+                String type = (String) mData.getProperty(IUnoFactoryConstants.TYPE);
                 label = type;
             } else if (pProperty.equals(NAME)) {
-                String name = (String)mData.getProperty(IUnoFactoryConstants.NAME);
+                String name = (String) mData.getProperty(IUnoFactoryConstants.NAME);
                 label = name;
             } else if (pProperty.equals(OPTIONS)) {
-                int memberType = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
+                int memberType = ((Integer) mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
                 if (memberType == IUnoFactoryConstants.ATTRIBUTE) {
-                    label = (String)mData.getProperty(IUnoFactoryConstants.FLAGS);
+                    label = (String) mData.getProperty(IUnoFactoryConstants.FLAGS);
                 } else if (memberType == IUnoFactoryConstants.METHOD) {
                     UnoFactoryData[] args = mData.getInnerData();
                     label = ""; //$NON-NLS-1$
                     for (int i = 0; i < args.length; i++) {
-                        String name = (String)args[i].getProperty(IUnoFactoryConstants.NAME);
+                        String name = (String) args[i].getProperty(IUnoFactoryConstants.NAME);
                         if (name != null) {
                             label += name + " "; //$NON-NLS-1$
                         }
@@ -270,11 +260,7 @@ public class InterfaceMembersTable extends AbstractTable {
          */
         @Override
         public String[] getProperties() {
-            return new String[]{
-                            TYPE,
-                            NAME,
-                            OPTIONS
-            };
+            return new String[] { TYPE, NAME, OPTIONS };
         }
 
         /**

@@ -76,8 +76,7 @@ public class ColorProvider {
      * Default constructor getting the preferences.
      */
     public ColorProvider() {
-        OOEclipsePlugin.getDefault().getPreferenceStore()
-        .addPropertyChangeListener(mPropertyListener);
+        OOEclipsePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(mPropertyListener);
         mStore = OOEclipsePlugin.getDefault().getPreferenceStore();
     }
 
@@ -89,22 +88,21 @@ public class ColorProvider {
         while (e.hasNext()) {
             e.next().dispose();
         }
-        OOEclipsePlugin.getDefault().getPreferenceStore()
-        .removePropertyChangeListener(mPropertyListener);
+        OOEclipsePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(mPropertyListener);
     }
 
     /**
      * Returns the color corresponding to the given name.
      *
-     * @param pColorString name of the color to get
+     * @param pColorString
+     *            name of the color to get
      * @return the color from the preferences or the eclipse default color
      */
     public Color getColor(String pColorString) {
 
         Color color = mColorTable.get(pColorString);
         if (color == null) {
-            color = new Color(Display.getCurrent(),
-                            PreferenceConverter.getColor(mStore, pColorString));
+            color = new Color(Display.getCurrent(), PreferenceConverter.getColor(mStore, pColorString));
             mColorTable.put(pColorString, color);
         }
         return color;

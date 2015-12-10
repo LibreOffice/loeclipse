@@ -63,29 +63,37 @@ public class DialogRow extends LabeledRow implements ModifyListener {
     private String mValue = new String();
 
     /**
-     * Simple constructor for the Dialog row creation. The button text will be
-     * set to <em>Browse</em>.
+     * Simple constructor for the Dialog row creation. The button text will be set to <em>Browse</em>.
      *
-     * @param pParent the composite in which to create the row
-     * @param pProperty the property to recognize an event from this row
-     * @param pLabel the label on the left of the row
-     * @param pLink tells whether to create a browse link or button
+     * @param pParent
+     *            the composite in which to create the row
+     * @param pProperty
+     *            the property to recognize an event from this row
+     * @param pLabel
+     *            the label on the left of the row
+     * @param pLink
+     *            tells whether to create a browse link or button
      */
     public DialogRow(Composite pParent, String pProperty, String pLabel, boolean pLink) {
-        this(pParent, pProperty, pLabel , Messages.getString("DialogRow.BrowseLabel"), pLink); //$NON-NLS-1$
+        this(pParent, pProperty, pLabel, Messages.getString("DialogRow.BrowseLabel"), pLink); //$NON-NLS-1$
     }
 
     /**
      * Constructor for the Dialog row creation allowing to change the button text.
      *
-     * @param pParent the composite in which to create the row
-     * @param pProperty the property to recognize an event from this row
-     * @param pLabel the label on the left of the row
-     * @param pBtnLabel the label of the button opening the dialog
-     * @param pLink tells whether to create a browse link or button
+     * @param pParent
+     *            the composite in which to create the row
+     * @param pProperty
+     *            the property to recognize an event from this row
+     * @param pLabel
+     *            the label on the left of the row
+     * @param pBtnLabel
+     *            the label of the button opening the dialog
+     * @param pLink
+     *            tells whether to create a browse link or button
      *
      */
-    public DialogRow(Composite pParent, String pProperty,  String pLabel, String pBtnLabel, boolean pLink) {
+    public DialogRow(Composite pParent, String pProperty, String pLabel, String pBtnLabel, boolean pLink) {
         super(pProperty);
 
         Label aLabel = new Label(pParent, SWT.LEFT | SWT.SHADOW_NONE);
@@ -93,7 +101,7 @@ public class DialogRow extends LabeledRow implements ModifyListener {
         Text aField = new Text(pParent, SWT.BORDER);
 
         createContent(pParent, aLabel, aField, pBtnLabel, pLink);
-        ((Text)mField).addModifyListener(this);
+        ((Text) mField).addModifyListener(this);
 
         addBrowseSelectionListener(new SelectionAdapter() {
             @Override
@@ -107,8 +115,8 @@ public class DialogRow extends LabeledRow implements ModifyListener {
     }
 
     /**
-     * Open the dialog when clicking on the right button. Subclasses, may
-     * implement this method. Default returns an empty string.
+     * Open the dialog when clicking on the right button. Subclasses, may implement this method. Default returns an
+     * empty string.
      *
      * @return the new value for the row
      */
@@ -129,13 +137,14 @@ public class DialogRow extends LabeledRow implements ModifyListener {
      */
     @Override
     public void modifyText(ModifyEvent pEvent) {
-        setValue(((Text)mField).getText().trim());
+        setValue(((Text) mField).getText().trim());
     }
 
     /**
      * Set a new value to the row.
      *
-     * @param pValue the new value
+     * @param pValue
+     *            the new value
      */
     public void setValue(String pValue) {
         String newText = pValue;
@@ -143,8 +152,8 @@ public class DialogRow extends LabeledRow implements ModifyListener {
             newText = ""; //$NON-NLS-1$
         }
 
-        if (!((Text)mField).getText().equals(newText)) {
-            ((Text)mField).setText(newText);
+        if (!((Text) mField).getText().equals(newText)) {
+            ((Text) mField).setText(newText);
         }
 
         mValue = newText;

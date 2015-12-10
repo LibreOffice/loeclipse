@@ -77,50 +77,54 @@ public class LocaleSelector {
     /**
      * Creates the control on a form.
      *
-     * @param pToolkit the toolkit to use for the controls creation
-     * @param pParent the page composite
+     * @param pToolkit
+     *            the toolkit to use for the controls creation
+     * @param pParent
+     *            the page composite
      */
-    public LocaleSelector( FormToolkit pToolkit, Composite pParent) {
+    public LocaleSelector(FormToolkit pToolkit, Composite pParent) {
 
-        mListeners = new ArrayList<ILocaleListener>( );
-        mLocales = new ArrayList<Locale>( );
+        mListeners = new ArrayList<ILocaleListener>();
+        mLocales = new ArrayList<Locale>();
 
         // Controls initialization
-        Composite langBody = pToolkit.createComposite( pParent );
+        Composite langBody = pToolkit.createComposite(pParent);
         langBody.setLayoutData(new GridData(GridData.FILL_BOTH));
         langBody.setLayout(new GridLayout(LAYOUT_COLS, false));
 
-        Label separator = pToolkit.createSeparator( langBody, SWT.HORIZONTAL );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label separator = pToolkit.createSeparator(langBody, SWT.HORIZONTAL);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        separator.setLayoutData( gd );
+        separator.setLayoutData(gd);
 
-        createList( pToolkit, langBody );
-        createButtons( langBody );
+        createList(pToolkit, langBody);
+        createButtons(langBody);
     }
 
     /**
-     *  @param pListener the listener to add
+     * @param pListener
+     *            the listener to add
      */
-    public void addListener( ILocaleListener pListener ) {
-        mListeners.add( pListener );
+    public void addListener(ILocaleListener pListener) {
+        mListeners.add(pListener);
     }
 
     /**
-     * @param pListener the listener to remove.
+     * @param pListener
+     *            the listener to remove.
      */
-    protected void removeListener( ILocaleListener pListener ) {
-        mListeners.remove( pListener );
+    protected void removeListener(ILocaleListener pListener) {
+        mListeners.remove(pListener);
     }
 
     /**
      * @return the currently selected locale. <code>null</code> if no locale selected.
      */
-    protected Locale getCurrentLocale( ) {
+    protected Locale getCurrentLocale() {
         Locale locale = null;
-        IStructuredSelection sel = (IStructuredSelection)mLangList.getSelection();
-        if ( !sel.isEmpty() ) {
-            locale = (Locale)sel.getFirstElement();
+        IStructuredSelection sel = (IStructuredSelection) mLangList.getSelection();
+        if (!sel.isEmpty()) {
+            locale = (Locale) sel.getFirstElement();
         }
         return locale;
     }
@@ -128,52 +132,54 @@ public class LocaleSelector {
     /**
      * Replace all the previous locales by these new ones.
      *
-     * @param pLocales the new locales to set.
+     * @param pLocales
+     *            the new locales to set.
      */
-    public void loadLocales( ArrayList<Locale> pLocales ) {
+    public void loadLocales(ArrayList<Locale> pLocales) {
         // notifies the removals
         for (Locale locale : mLocales) {
-            mLangList.remove( locale );
-            fireDeleteLocale( locale );
+            mLangList.remove(locale);
+            fireDeleteLocale(locale);
         }
         mLocales.clear();
 
-        mLocales.addAll( pLocales );
+        mLocales.addAll(pLocales);
         // Notifies the additions
         for (Locale locale : mLocales) {
-            mLangList.add( locale );
-            fireAddLocale( locale );
+            mLangList.add(locale);
+            fireAddLocale(locale);
         }
-        if ( mLocales.size() > 0 ) {
-            Locale locale = mLocales.get( 0 );
-            mLangList.setSelection( new StructuredSelection( locale ) );
-            fireUpdateLocale( locale );
+        if (mLocales.size() > 0) {
+            Locale locale = mLocales.get(0);
+            mLangList.setSelection(new StructuredSelection(locale));
+            fireUpdateLocale(locale);
         }
     }
 
     /**
      * Creates the locale selection list.
      *
-     * @param pToolkit the toolkit to use for the controls creation
-     * @param pParent the composite parent where to create the label and list.
+     * @param pToolkit
+     *            the toolkit to use for the controls creation
+     * @param pParent
+     *            the composite parent where to create the label and list.
      */
     private void createList(FormToolkit pToolkit, Composite pParent) {
-        Label localeLbl = pToolkit.createLabel( pParent,
-                        Messages.getString("LocaleSelector.SelectedLocaleTitle") ); //$NON-NLS-1$
-        localeLbl.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING ) );
+        Label localeLbl = pToolkit.createLabel(pParent, Messages.getString("LocaleSelector.SelectedLocaleTitle")); //$NON-NLS-1$
+        localeLbl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-        Combo list = new Combo( pParent, SWT.DROP_DOWN | SWT.READ_ONLY );
-        list.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mLangList = new ComboViewer( list );
-        mLangList.setContentProvider( new ArrayContentProvider( ) );
-        mLangList.setLabelProvider( new LabelProvider( ) );
-        mLangList.addSelectionChangedListener( new ISelectionChangedListener( ) {
+        Combo list = new Combo(pParent, SWT.DROP_DOWN | SWT.READ_ONLY);
+        list.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mLangList = new ComboViewer(list);
+        mLangList.setContentProvider(new ArrayContentProvider());
+        mLangList.setLabelProvider(new LabelProvider());
+        mLangList.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent pEvent) {
-                IStructuredSelection sel = (IStructuredSelection)pEvent.getSelection();
-                if ( !sel.isEmpty() ) {
-                    mCurrentLocale = (Locale)sel.getFirstElement();
-                    fireUpdateLocale( mCurrentLocale );
+                IStructuredSelection sel = (IStructuredSelection) pEvent.getSelection();
+                if (!sel.isEmpty()) {
+                    mCurrentLocale = (Locale) sel.getFirstElement();
+                    fireUpdateLocale(mCurrentLocale);
                 }
             }
         });
@@ -182,54 +188,55 @@ public class LocaleSelector {
     /**
      * Creates the add and del buttons.
      *
-     * @param pParent the composite parent where to create the buttons.
+     * @param pParent
+     *            the composite parent where to create the buttons.
      */
-    private void createButtons( Composite pParent ) {
-        mAddBtn = new Button( pParent, SWT.NONE );
-        mAddBtn.setImage( OOEclipsePlugin.getImage( ImagesConstants.ADD ) );
-        mAddBtn.addSelectionListener( new SelectionAdapter( ) {
+    private void createButtons(Composite pParent) {
+        mAddBtn = new Button(pParent, SWT.NONE);
+        mAddBtn.setImage(OOEclipsePlugin.getImage(ImagesConstants.ADD));
+        mAddBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
 
                 // Show the Locale selection dialog.
-                LocaleDialog dlg = new LocaleDialog( );
-                if ( dlg.open() == Window.OK ) {
+                LocaleDialog dlg = new LocaleDialog();
+                if (dlg.open() == Window.OK) {
                     Locale locale = dlg.getLocale();
 
                     // Add the result to the list and select it
-                    if ( !mLocales.contains( locale ) ) {
-                        mLocales.add( locale );
-                        mLangList.add( locale );
-                        mDelBtn.setEnabled( true );
-                        fireAddLocale( locale );
+                    if (!mLocales.contains(locale)) {
+                        mLocales.add(locale);
+                        mLangList.add(locale);
+                        mDelBtn.setEnabled(true);
+                        fireAddLocale(locale);
                     }
-                    mLangList.setSelection( new StructuredSelection( locale ), true );
-                    fireUpdateLocale( locale );
+                    mLangList.setSelection(new StructuredSelection(locale), true);
+                    fireUpdateLocale(locale);
                 }
             }
         });
 
-        mDelBtn = new Button( pParent, SWT.NONE );
-        mDelBtn.setEnabled( false );
-        mDelBtn.setImage( OOEclipsePlugin.getImage( ImagesConstants.DELETE ) );
-        mDelBtn.addSelectionListener( new SelectionAdapter( ) {
+        mDelBtn = new Button(pParent, SWT.NONE);
+        mDelBtn.setEnabled(false);
+        mDelBtn.setImage(OOEclipsePlugin.getImage(ImagesConstants.DELETE));
+        mDelBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
 
                 // Show the locale before the removed one
-                Locale locale = getCurrentLocale( );
-                mLangList.remove( locale );
-                int pos = mLocales.indexOf( locale ) - 1;
-                if ( pos < 0 ) {
+                Locale locale = getCurrentLocale();
+                mLangList.remove(locale);
+                int pos = mLocales.indexOf(locale) - 1;
+                if (pos < 0) {
                     pos = 0;
                 }
-                mLocales.remove( locale );
-                mDelBtn.setEnabled( !mLocales.isEmpty() );
-                fireDeleteLocale( locale );
+                mLocales.remove(locale);
+                mDelBtn.setEnabled(!mLocales.isEmpty());
+                fireDeleteLocale(locale);
 
-                Locale newSel = mLocales.get( pos );
-                mLangList.setSelection( new StructuredSelection( newSel ), true );
-                fireUpdateLocale( getCurrentLocale( ) );
+                Locale newSel = mLocales.get(pos);
+                mLangList.setSelection(new StructuredSelection(newSel), true);
+                fireUpdateLocale(getCurrentLocale());
             }
         });
     }
@@ -237,33 +244,36 @@ public class LocaleSelector {
     /**
      * Notifies the listeners that the locale selection has changed.
      *
-     * @param pLocale the locale.
+     * @param pLocale
+     *            the locale.
      */
-    private void fireUpdateLocale( Locale pLocale ) {
-        for (ILocaleListener listener  : mListeners) {
-            listener.selectLocale( pLocale );
+    private void fireUpdateLocale(Locale pLocale) {
+        for (ILocaleListener listener : mListeners) {
+            listener.selectLocale(pLocale);
         }
     }
 
     /**
      * Notifies the listeners that a locale has been removed.
      *
-     * @param pLocale the locale.
+     * @param pLocale
+     *            the locale.
      */
-    private void fireDeleteLocale( Locale pLocale ) {
-        for (ILocaleListener listener  : mListeners) {
-            listener.deleteLocale( pLocale );
+    private void fireDeleteLocale(Locale pLocale) {
+        for (ILocaleListener listener : mListeners) {
+            listener.deleteLocale(pLocale);
         }
     }
 
     /**
      * Notifies the listeners that a locale has been added.
      *
-     * @param pLocale the locale.
+     * @param pLocale
+     *            the locale.
      */
-    private void fireAddLocale( Locale pLocale ) {
-        for (ILocaleListener listener  : mListeners) {
-            listener.addLocale( pLocale );
+    private void fireAddLocale(Locale pLocale) {
+        for (ILocaleListener listener : mListeners) {
+            listener.addLocale(pLocale);
         }
     }
 }

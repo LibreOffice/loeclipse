@@ -67,40 +67,41 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
     private String mInheritedInterface;
 
     /**
-     * Variable indicating that the inherited interface field value is being
-     * changed by the page API.
+     * Variable indicating that the inherited interface field value is being changed by the page API.
      */
     private boolean mChanging = false;
 
     /**
-     * Variable indicating that the inherited interface has been changed by the
-     * user since the last definition using the page API.
+     * Variable indicating that the inherited interface has been changed by the user since the last definition using the
+     * page API.
      */
     private boolean mInheritanceChanged = false;
 
-
     /**
-     * Simple constructor setting the package root and element name to
-     * blank values.
+     * Simple constructor setting the package root and element name to blank values.
      *
-     * @param pPageName the page name
-     * @param pProject the project where to create the service
+     * @param pPageName
+     *            the page name
+     * @param pProject
+     *            the project where to create the service
      */
     public NewServiceWizardPage(String pPageName, IUnoidlProject pProject) {
         super(pPageName, pProject);
     }
 
     /**
-     * Constructor setting allowing to set custom root package and service
-     * name.
+     * Constructor setting allowing to set custom root package and service name.
      *
-     * @param pPageName the page name
-     * @param pProject the project where to create the service
-     * @param pRootName the project root namespace
-     * @param pServiceName the default service name
+     * @param pPageName
+     *            the page name
+     * @param pProject
+     *            the project where to create the service
+     * @param pRootName
+     *            the project root namespace
+     * @param pServiceName
+     *            the default service name
      */
-    public NewServiceWizardPage(String pPageName, IUnoidlProject pProject,
-                    String pRootName, String pServiceName) {
+    public NewServiceWizardPage(String pPageName, IUnoidlProject pProject, String pRootName, String pServiceName) {
         super(pPageName, pProject, pRootName, pServiceName);
     }
 
@@ -112,8 +113,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
         return IUnoFactoryConstants.INTERFACE;
     }
 
-    //--------------------------------------------------- Page content managment
-
+    // --------------------------------------------------- Page content managment
 
     /**
      * {@inheritDoc}
@@ -121,10 +121,9 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
     @Override
     public void createSpecificControl(Composite pParent) {
 
-        mIfaceInheritanceRow = new TypeRow(pParent,
-                        P_IFACE_INHERITANCE,
-                        Messages.getString("NewServiceWizardPage.InheritedInterface"), //$NON-NLS-1$
-                        IUnoFactoryConstants.INTERFACE);
+        mIfaceInheritanceRow = new TypeRow(pParent, P_IFACE_INHERITANCE,
+            Messages.getString("NewServiceWizardPage.InheritedInterface"), //$NON-NLS-1$
+            IUnoFactoryConstants.INTERFACE);
         if (mInheritedInterface != null) {
             mIfaceInheritanceRow.setValue(mInheritedInterface);
         }
@@ -161,8 +160,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
      */
     @Override
     protected ImageDescriptor getImageDescriptor() {
-        return OOEclipsePlugin.getImageDescriptor(
-                        ImagesConstants.NEW_SERVICE_IMAGE);
+        return OOEclipsePlugin.getImageDescriptor(ImagesConstants.NEW_SERVICE_IMAGE);
     }
 
     /**
@@ -193,11 +191,15 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
     /**
      * Sets the name of the exported interface.
      *
-     * <p>Use this method to impose the service to implement a particular
-     * interface. This is the case for an URE application.</p>
+     * <p>
+     * Use this method to impose the service to implement a particular interface. This is the case for an URE
+     * application.
+     * </p>
      *
-     * @param pValue the interface fully qualified name
-     * @param pForced disables the field if <code>true</code>
+     * @param pValue
+     *            the interface fully qualified name
+     * @param pForced
+     *            disables the field if <code>true</code>
      */
     public void setInheritanceName(String pValue, boolean pForced) {
 
@@ -218,8 +220,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
     }
 
     /**
-     * Tells whether the user has changed the exported interface since it has last
-     * been set using the APIs.
+     * Tells whether the user has changed the exported interface since it has last been set using the APIs.
      *
      * @return <code>true</code> is the has changed the exported interface.
      */
@@ -228,10 +229,10 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
     }
 
     /**
-     * @param pData the data to fill
+     * @param pData
+     *            the data to fill
      *
-     * @return the given data with the completed properties, <code>null</code>
-     *   if the provided data is <code>null</code>
+     * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
     @Override
     public UnoFactoryData fillData(UnoFactoryData pData) {
@@ -239,10 +240,9 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
         pData = super.fillData(pData);
 
         if (pData != null) {
-            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE,
-                            Integer.valueOf(IUnoFactoryConstants.SERVICE));
+            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.SERVICE));
             pData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES,
-                            new String[]{getInheritanceName().replace(".", "::")}); //$NON-NLS-1$ //$NON-NLS-2$
+                new String[] { getInheritanceName().replace(".", "::") }); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return pData;
@@ -256,8 +256,7 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
         UnoFactoryData typeData = new UnoFactoryData();
 
         if (typeData != null) {
-            typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE,
-                            Integer.valueOf(IUnoFactoryConstants.SERVICE));
+            typeData.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.SERVICE));
         }
         return typeData;
     }

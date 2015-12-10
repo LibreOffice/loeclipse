@@ -59,9 +59,10 @@ import org.osgi.framework.BundleContext;
 /**
  * Plugin entry point, it is used by Eclipse as a bundle.
  *
- * <p>This class contains the main constants of the plugin, like its
- * ID, the UNO project nature. The internationalization method is provided
- * in this class too.</p>
+ * <p>
+ * This class contains the main constants of the plugin, like its ID, the UNO project nature. The internationalization
+ * method is provided in this class too.
+ * </p>
  *
  * @author cedricbosdo
  */
@@ -90,29 +91,28 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
     /**
      * Log level preference key, used to store the preferences.
      */
-    public static final String LOGLEVEL_PREFERENCE_KEY      = "loglevel"; //$NON-NLS-1$
-
+    public static final String LOGLEVEL_PREFERENCE_KEY = "loglevel"; //$NON-NLS-1$
 
     // Light red
-    public static final RGB STRING = new RGB(255,0,0);
+    public static final RGB STRING = new RGB(255, 0, 0);
 
     // White
-    public static final RGB BACKGROUND = new RGB(255,255,255);
+    public static final RGB BACKGROUND = new RGB(255, 255, 255);
 
-    //Black
-    public static final RGB DEFAULT = new RGB(0,0,0);
+    // Black
+    public static final RGB DEFAULT = new RGB(0, 0, 0);
 
     // Prune
-    public static final RGB KEYWORD = new RGB(127,0,85);
+    public static final RGB KEYWORD = new RGB(127, 0, 85);
 
     // Dark blue
-    public static final RGB TYPE = new RGB(0,0,128);
+    public static final RGB TYPE = new RGB(0, 0, 128);
 
     // Grey green
-    public static final RGB COMMENT = new RGB(63,127,95);
+    public static final RGB COMMENT = new RGB(63, 127, 95);
 
     // Light blue
-    public static final RGB DOC_COMMENT = new RGB(64,128,255);
+    public static final RGB DOC_COMMENT = new RGB(64, 128, 255);
 
     // Light grey
     public static final RGB XML_TAG = new RGB(180, 180, 180);
@@ -122,7 +122,6 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
 
     // Dark grey
     public static final RGB PREPROCESSOR_COMMAND = new RGB(128, 128, 128);
-
 
     // The shared instance.
     private static OOEclipsePlugin sPlugin;
@@ -173,8 +172,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the image manager. If it is null, this method wil create it
-     * before using it.
+     * Returns the image manager. If it is null, this method wil create it before using it.
      *
      * @return the image manager
      */
@@ -187,10 +185,11 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the image corresponding to the provided key. If the image file
-     * or the key doesn't exists, the method returns <code>null</code>.
+     * Returns the image corresponding to the provided key. If the image file or the key doesn't exists, the method
+     * returns <code>null</code>.
      *
-     * @param pKey Key designing the image
+     * @param pKey
+     *            Key designing the image
      * @return the image associated to the key
      *
      * @see ImageManager#getImage(String)
@@ -200,11 +199,11 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the image descriptor corresponding to the provided key.
-     * If the image file or the key doesn't exists, the method returns
-     * <code>null</code>.
+     * Returns the image descriptor corresponding to the provided key. If the image file or the key doesn't exists, the
+     * method returns <code>null</code>.
      *
-     * @param pKey Key designing the image
+     * @param pKey
+     *            Key designing the image
      * @return the image descriptor associated to the key
      *
      * @see ImageManager#getImageDescriptor(String)

@@ -56,32 +56,31 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
  */
 public class OfficeLaunchShortcut implements ILaunchShortcut {
 
-    private static final String OFFICE_LAUNCH_CONFIG_ID =
-                    "org.openoffice.ide.eclipse.core.launchOpenOffice"; //$NON-NLS-1$
+    private static final String OFFICE_LAUNCH_CONFIG_ID = "org.openoffice.ide.eclipse.core.launchOpenOffice"; //$NON-NLS-1$
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void launch(ISelection pSelection, String pMode) {
-        if ( pSelection instanceof IStructuredSelection ) {
-            IStructuredSelection sel = ( IStructuredSelection ) pSelection;
+        if (pSelection instanceof IStructuredSelection) {
+            IStructuredSelection sel = (IStructuredSelection) pSelection;
             Iterator<?> it = sel.iterator();
 
             IUnoidlProject project = null;
-            while ( it.hasNext() && project == null) {
+            while (it.hasNext() && project == null) {
                 Object o = it.next();
-                if ( o instanceof IAdaptable ) {
-                    IAdaptable adaptable = ( IAdaptable ) o;
-                    IResource res = adaptable.getAdapter( IResource.class );
-                    if ( res != null ) {
-                        project = ProjectsManager.getProject( res.getProject().getName() );
+                if (o instanceof IAdaptable) {
+                    IAdaptable adaptable = (IAdaptable) o;
+                    IResource res = adaptable.getAdapter(IResource.class);
+                    if (res != null) {
+                        project = ProjectsManager.getProject(res.getProject().getName());
                     }
                 }
             }
 
-            if ( project != null ) {
-                launch( project, pMode );
+            if (project != null) {
+                launch(project, pMode);
             }
         }
     }
@@ -92,12 +91,12 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
     @Override
     public void launch(IEditorPart pEditor, String pMode) {
         IEditorInput input = pEditor.getEditorInput();
-        IFile file = input.getAdapter( IFile.class );
+        IFile file = input.getAdapter(IFile.class);
 
-        if ( file != null ) {
-            IUnoidlProject prj = ProjectsManager.getProject( file.getProject().getName() );
-            if ( prj != null ) {
-                launch( prj, pMode );
+        if (file != null) {
+            IUnoidlProject prj = ProjectsManager.getProject(file.getProject().getName());
+            if (prj != null) {
+                launch(prj, pMode);
             }
         }
     }
@@ -105,33 +104,34 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
     /**
      * Create a default launch configuration for the UNO project.
      *
-     * @param pProject the UNO project for which to create the default launch config
+     * @param pProject
+     *            the UNO project for which to create the default launch config
      * @return the newly created and saved launch configuration.
      */
-    private ILaunchConfiguration createDefaultLaunchConfiguration( IUnoidlProject pProject ) {
+    private ILaunchConfiguration createDefaultLaunchConfiguration(IUnoidlProject pProject) {
         ILaunchConfiguration created = null;
         try {
             ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-            ILaunchConfigurationType type = launchManager.getLaunchConfigurationType( OFFICE_LAUNCH_CONFIG_ID );
+            ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(OFFICE_LAUNCH_CONFIG_ID);
 
-            String name = launchManager.generateUniqueLaunchConfigurationNameFrom( pProject.getName() );
-            ILaunchConfigurationWorkingCopy createdConfiguration = type.newInstance( null, name );
+            String name = launchManager.generateUniqueLaunchConfigurationNameFrom(pProject.getName());
+            ILaunchConfigurationWorkingCopy createdConfiguration = type.newInstance(null, name);
 
-            createdConfiguration.setAttribute( IOfficeLaunchConstants.PROJECT_NAME, pProject.getName() );
-            createdConfiguration.setAttribute( IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, true );
+            createdConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, pProject.getName());
+            createdConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, true);
 
-            List< IFile > content = PackageContentSelector.getDefaultContent( pProject );
+            List<IFile> content = PackageContentSelector.getDefaultContent(pProject);
             String paths = new String();
             for (IFile file : content) {
-                if ( !paths.isEmpty() ) {
+                if (!paths.isEmpty()) {
                     paths += IOfficeLaunchConstants.PATHS_SEPARATOR;
                 }
                 paths += file.getProjectRelativePath().toString();
             }
-            createdConfiguration.setAttribute( IOfficeLaunchConstants.CONTENT_PATHS, paths);
+            createdConfiguration.setAttribute(IOfficeLaunchConstants.CONTENT_PATHS, paths);
 
-            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( pProject.getName() );
-            createdConfiguration.setMappedResources( new IResource[]{ project } );
+            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pProject.getName());
+            createdConfiguration.setMappedResources(new IResource[] { project });
 
             // Common Tab Arguments
             CommonTab tab = new CommonTab();
@@ -139,8 +139,8 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
             tab.dispose();
 
             created = createdConfiguration.doSave();
-        } catch ( CoreException e ) {
-            PluginLogger.error( "Error creating the launch configuration", e );
+        } catch (CoreException e) {
+            PluginLogger.error("Error creating the launch configuration", e);
             created = null;
         }
 
@@ -148,28 +148,28 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
     }
 
     /**
-     * COPIED/MODIFIED from AntLaunchShortcut
-     * Returns a list of existing launch configuration for the given file.
+     * COPIED/MODIFIED from AntLaunchShortcut Returns a list of existing launch configuration for the given file.
      *
-     * @param pProject the UNO project for which to look for existing launch configurations
+     * @param pProject
+     *            the UNO project for which to look for existing launch configurations
      * @return the list of the matching launch configurations
      */
-    protected List< ILaunchConfiguration > findExistingLaunchConfigurations( IUnoidlProject pProject ) {
+    protected List<ILaunchConfiguration> findExistingLaunchConfigurations(IUnoidlProject pProject) {
         ILaunchManager manager = org.eclipse.debug.core.DebugPlugin.getDefault().getLaunchManager();
-        ILaunchConfigurationType type = manager.getLaunchConfigurationType( OFFICE_LAUNCH_CONFIG_ID );
+        ILaunchConfigurationType type = manager.getLaunchConfigurationType(OFFICE_LAUNCH_CONFIG_ID);
         List<ILaunchConfiguration> validConfigs = new ArrayList<ILaunchConfiguration>();
         if (type != null) {
             try {
                 ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 
-                for ( int i = 0; i < configs.length; i++ ) {
+                for (int i = 0; i < configs.length; i++) {
                     String projectName = configs[i].getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
-                    if ( pProject.getName().equals( projectName ) ) {
+                    if (pProject.getName().equals(projectName)) {
                         validConfigs.add(configs[i]);
                     }
                 }
             } catch (CoreException e) {
-                PluginLogger.error( "Unexpected error", e );
+                PluginLogger.error("Unexpected error", e);
             }
         }
         return validConfigs;
@@ -178,20 +178,22 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
     /**
      * Launch a unoidl project using the default configuration.
      *
-     * @param pProject the project to launch
-     * @param pMode the mode of the launch
+     * @param pProject
+     *            the project to launch
+     * @param pMode
+     *            the mode of the launch
      */
     private void launch(IUnoidlProject pProject, String pMode) {
         ILaunchConfiguration conf = null;
-        List<ILaunchConfiguration> configurations = findExistingLaunchConfigurations( pProject );
-        if ( configurations.isEmpty( ) ) {
-            conf = createDefaultLaunchConfiguration( pProject );
+        List<ILaunchConfiguration> configurations = findExistingLaunchConfigurations(pProject);
+        if (configurations.isEmpty()) {
+            conf = createDefaultLaunchConfiguration(pProject);
         } else {
-            conf = configurations.get( 0 );
+            conf = configurations.get(0);
         }
 
-        if (conf != null ) {
-            DebugUITools.launch( conf, pMode );
+        if (conf != null) {
+            DebugUITools.launch(conf, pMode);
         }
     }
 

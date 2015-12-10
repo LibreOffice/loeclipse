@@ -51,8 +51,8 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * Scanner splitting the text into partitions. In order to fully understand
- * the editor mechanisms, please report to Eclipse plugin developer's guide.
+ * Scanner splitting the text into partitions. In order to fully understand the editor mechanisms, please report to
+ * Eclipse plugin developer's guide.
  *
  * @author cedricbosdo
  */
@@ -70,12 +70,11 @@ public class UnoidlPartitionScanner extends RuleBasedPartitionScanner {
         IToken idlAutoComment = new Token(IDL_AUTOCOMMENT);
         IToken idlPreprocessor = new Token(IDL_PREPROCESSOR);
 
-        IPredicateRule[] rules = new IPredicateRule[] {
-                        new MultiLineRule("/**", "*/", idlAutoComment), //$NON-NLS-1$ //$NON-NLS-2$
-                        new EndOfLineRule("///", idlAutoComment), //$NON-NLS-1$
-                        new MultiLineRule("/*", "*/", idlComment), //$NON-NLS-1$ //$NON-NLS-2$
-                        new EndOfLineRule("//", idlComment), //$NON-NLS-1$
-                        new EndOfLineRule("#", idlPreprocessor) //$NON-NLS-1$
+        IPredicateRule[] rules = new IPredicateRule[] { new MultiLineRule("/**", "*/", idlAutoComment), //$NON-NLS-1$ //$NON-NLS-2$
+            new EndOfLineRule("///", idlAutoComment), //$NON-NLS-1$
+            new MultiLineRule("/*", "*/", idlComment), //$NON-NLS-1$ //$NON-NLS-2$
+            new EndOfLineRule("//", idlComment), //$NON-NLS-1$
+            new EndOfLineRule("#", idlPreprocessor) //$NON-NLS-1$
         };
         setPredicateRules(rules);
     }

@@ -63,9 +63,12 @@ public class OOoRow extends AbstractConfigRow {
     /**
      * Constructor.
      *
-     * @param pParent the composite where to create the row
-     * @param pProperty the property for the row events
-     * @param pToSelect the configuration element to select first
+     * @param pParent
+     *            the composite where to create the row
+     * @param pProperty
+     *            the property for the row events
+     * @param pToSelect
+     *            the configuration element to select first
      */
     public OOoRow(final Composite pParent, String pProperty, IOOo pToSelect) {
         super(pParent, pProperty, Messages.getString("OOoRow.Browse"), pToSelect); //$NON-NLS-1$
@@ -116,7 +119,7 @@ public class OOoRow extends AbstractConfigRow {
      */
     @Override
     protected String getElementName(Object pToSelect) {
-        return ((IOOo)pToSelect).getName();
+        return ((IOOo) pToSelect).getName();
     }
 
     /**

@@ -55,9 +55,8 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.PluginLogger;
 
 /**
- * The image manager is an object returning an image or an image descriptor
- * from a key. The keys are described in the ImagesConstants class and the
- * associated properties file is <code>ImageManager.properties</code>.
+ * The image manager is an object returning an image or an image descriptor from a key. The keys are described in the
+ * ImagesConstants class and the associated properties file is <code>ImageManager.properties</code>.
  *
  * @author cedricbosdo
  *
@@ -65,12 +64,14 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
 public class ImageManager {
 
     /**
-     * <p>Constant designing the icon equivalence file. This file defines the
-     * association between the image key and the image file. This mechanism
-     * helps changing icons without changing the code.</p>
+     * <p>
+     * Constant designing the icon equivalence file. This file defines the association between the image key and the
+     * image file. This mechanism helps changing icons without changing the code.
+     * </p>
      *
-     * <p>For example, this file will define that the ERROR key corresponds
-     * to the /icons/errors.gif image.</p>
+     * <p>
+     * For example, this file will define that the ERROR key corresponds to the /icons/errors.gif image.
+     * </p>
      */
 
     private ResourceBundle mImageBundle;
@@ -86,13 +87,12 @@ public class ImageManager {
             mImageBundle = ResourceBundle.getBundle("org.openoffice.ide.eclipse.core.i18n.ImageManager"); //$NON-NLS-1$
 
         } catch (NullPointerException e) {
-            PluginLogger.debug(
-                            "Call to getBundle is incorrect: NullPointerException " + //$NON-NLS-1$
-                            "caught"); //$NON-NLS-1$
+            PluginLogger.debug("Call to getBundle is incorrect: NullPointerException " + //$NON-NLS-1$
+                "caught"); //$NON-NLS-1$
         } catch (MissingResourceException e) {
 
             String message = "Image file not found for locale :" //$NON-NLS-1$
-                            + Locale.getDefault().toString();
+                + Locale.getDefault().toString();
             PluginLogger.error(message);
         }
     }
@@ -100,9 +100,9 @@ public class ImageManager {
     /**
      * Method which returns the image corresponding to the provided key.
      *
-     * @param pKey Key corresponding to the image to find
-     * @return image corresponding to the key, or <code>null</code> if the key
-     *         doesn't exists or the bundle is null
+     * @param pKey
+     *            Key corresponding to the image to find
+     * @return image corresponding to the key, or <code>null</code> if the key doesn't exists or the bundle is null
      */
     public Image getImage(String pKey) {
 
@@ -127,9 +127,10 @@ public class ImageManager {
     /**
      * Method which returns the image descriptor corresponding to the provided key.
      *
-     * @param pKey Key corresponding to the image to find
-     * @return image descriptor corresponding to the key, or <code>null</code>
-     *            if the key doesn't exists or the bundle is null
+     * @param pKey
+     *            Key corresponding to the image to find
+     * @return image descriptor corresponding to the key, or <code>null</code> if the key doesn't exists or the bundle
+     *         is null
      */
     public ImageDescriptor getImageDescriptor(String pKey) {
         ImageDescriptor imageDescr = null;
@@ -137,9 +138,7 @@ public class ImageManager {
         if (null != mImageBundle) {
             // Fetch the plugin relative path from the bundle
             String path = mImageBundle.getString(pKey);
-            imageDescr = AbstractUIPlugin.imageDescriptorFromPlugin(
-                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                            path);
+            imageDescr = AbstractUIPlugin.imageDescriptorFromPlugin(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, path);
         }
 
         return imageDescr;
@@ -148,7 +147,8 @@ public class ImageManager {
     /**
      * Finds the image descriptor from the bundle relative path of the image.
      *
-     * @param pPath the image path
+     * @param pPath
+     *            the image path
      * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptorFromPath(String pPath) {
@@ -157,8 +157,6 @@ public class ImageManager {
             pPath = "/" + pPath; //$NON-NLS-1$
         }
 
-        return AbstractUIPlugin.imageDescriptorFromPlugin(
-                        OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                        pPath);
+        return AbstractUIPlugin.imageDescriptorFromPlugin(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, pPath);
     }
 }

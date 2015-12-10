@@ -88,11 +88,13 @@ public class PackagePropertiesModel {
     private Vector<IModelChangedListener> mListeners = new Vector<IModelChangedListener>();
 
     /**
-     * Create a new package.properties model for a given file. If the file
-     * can be read, the existing properties will be imported.
+     * Create a new package.properties model for a given file. If the file can be read, the existing properties will be
+     * imported.
      *
-     * @param pFile the package.properties file represented by the object.
-     * @throws IllegalArgumentException if the file is <code>null</code>
+     * @param pFile
+     *            the package.properties file represented by the object.
+     * @throws IllegalArgumentException
+     *             if the file is <code>null</code>
      */
     public PackagePropertiesModel(IFile pFile) throws IllegalArgumentException {
 
@@ -103,25 +105,26 @@ public class PackagePropertiesModel {
             mPropertiesFile = pFile;
         } catch (FileNotFoundException e) {
             mPropertiesFile = null;
-            throw new IllegalArgumentException(
-                            Messages.getString("PackagePropertiesModel.NullFileException")); //$NON-NLS-1$
+            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NullFileException")); //$NON-NLS-1$
         }
 
         try {
             mProperties.load(is);
         } catch (IOException e) {
-            PluginLogger.warning(
-                            Messages.getString("PackagePropertiesModel.FileReadException") + pFile.getLocation()); //$NON-NLS-1$
+            PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException") + pFile.getLocation()); //$NON-NLS-1$
         } finally {
-            try { is.close(); } catch (Exception e) { }
+            try {
+                is.close();
+            } catch (Exception e) {
+            }
         }
     }
 
     /**
      * Set whether the changes should be notified to the listeners or not.
      *
-     * @param pQuiet <code>true</code> if the changes should be notified,
-     *          <code>false</code> otherwise.
+     * @param pQuiet
+     *            <code>true</code> if the changes should be notified, <code>false</code> otherwise.
      */
     public void setQuiet(boolean pQuiet) {
         mIsQuiet = pQuiet;
@@ -130,7 +133,8 @@ public class PackagePropertiesModel {
     /**
      * Add a listener notified of the model changes.
      *
-     * @param pListener the listener to add.
+     * @param pListener
+     *            the listener to add.
      */
     public void addChangeListener(IModelChangedListener pListener) {
         mListeners.add(pListener);
@@ -139,7 +143,8 @@ public class PackagePropertiesModel {
     /**
      * Removes a class listening the model changes.
      *
-     * @param pListener the listener to remove
+     * @param pListener
+     *            the listener to remove
      */
     public void removeChangedListener(IModelChangedListener pListener) {
         if (mListeners.contains(pListener)) {
@@ -172,8 +177,7 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * @return <code>true</code> if the properties model has changed but isn't saved,
-     *      <code>false</code> otherwise.
+     * @return <code>true</code> if the properties model has changed but isn't saved, <code>false</code> otherwise.
      */
     public boolean isDirty() {
         return mIsDirty;
@@ -182,27 +186,30 @@ public class PackagePropertiesModel {
     /**
      * Writes the Package properties to the file.
      *
-     * @throws Exception if the data can't be written
+     * @throws Exception
+     *             if the data can't be written
      */
     public void write() throws Exception {
-        FileOutputStream os = new FileOutputStream(
-                        mPropertiesFile.getLocation().toFile());
+        FileOutputStream os = new FileOutputStream(mPropertiesFile.getLocation().toFile());
         try {
-            mProperties.store(os,
-                            Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
+            mProperties.store(os, Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
             firePackageSaved();
         } catch (IOException e) {
             throw e;
         } finally {
-            try { os.close(); } catch (Exception e) { }
+            try {
+                os.close();
+            } catch (Exception e) {
+            }
         }
     }
 
     /**
-     * Clears all the content of the package properties and replace it by a
-     * string as if it would have been the properties file content.
+     * Clears all the content of the package properties and replace it by a string as if it would have been the
+     * properties file content.
      *
-     * @param pContent the string describing the data
+     * @param pContent
+     *            the string describing the data
      */
     public void reloadFromString(String pContent) {
         String initContent = writeToString();
@@ -218,8 +225,8 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * @return the content of the package properties under the form of a string
-     *         as it would have been written to the file.
+     * @return the content of the package properties under the form of a string as it would have been written to the
+     *         file.
      */
     public String writeToString() {
         String fileContent = ""; //$NON-NLS-1$
@@ -227,7 +234,7 @@ public class PackagePropertiesModel {
         Iterator<Entry<Object, Object>> iter = entries.iterator();
         while (iter.hasNext()) {
             Entry<Object, Object> entry = iter.next();
-            fileContent += (String)entry.getKey() + "=" + (String)entry.getValue() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+            fileContent += (String) entry.getKey() + "=" + (String) entry.getValue() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return fileContent;
@@ -236,15 +243,16 @@ public class PackagePropertiesModel {
     /**
      * Adds a Basic library folder to the package.
      *
-     * @param pLibFolder the library folder to add
-     * @throws IllegalArgumentException is thrown if the argument is
-     *             <code>null</code>
+     * @param pLibFolder
+     *            the library folder to add
+     * @throws IllegalArgumentException
+     *             is thrown if the argument is <code>null</code>
      */
     public void addBasicLibrary(IFolder pLibFolder) throws IllegalArgumentException {
 
         String libs = mProperties.getProperty(BASICLIBS);
         if (libs == null) {
-            libs = "";  //$NON-NLS-1$
+            libs = ""; //$NON-NLS-1$
         }
 
         try {
@@ -262,14 +270,15 @@ public class PackagePropertiesModel {
     /**
      * Adds a basic dialog library folder to the package.
      *
-     * @param pLibFolder the library folder to add
-     * @throws IllegalArgumentException is thrown if the argument is
-     *             <code>null</code>
+     * @param pLibFolder
+     *            the library folder to add
+     * @throws IllegalArgumentException
+     *             is thrown if the argument is <code>null</code>
      */
     public void addDialogLibrary(IFolder pLibFolder) throws IllegalArgumentException {
         String libs = mProperties.getProperty(DIALOGLIBS);
         if (libs == null) {
-            libs = "";  //$NON-NLS-1$
+            libs = ""; //$NON-NLS-1$
         }
 
         try {
@@ -350,18 +359,21 @@ public class PackagePropertiesModel {
     /**
      * Adds a file or directory to the package properties.
      *
-     * <p><strong>Do not add dialog or basic libraries or package descriptions using
-     * this method: use the appropriate method</strong>.</p>
+     * <p>
+     * <strong>Do not add dialog or basic libraries or package descriptions using this method: use the appropriate
+     * method</strong>.
+     * </p>
      *
-     * @param pRes the resource to add
+     * @param pRes
+     *            the resource to add
      *
-     * @throws IllegalArgumentException is thrown if the argument is
-     *             <code>null</code>
+     * @throws IllegalArgumentException
+     *             is thrown if the argument is <code>null</code>
      */
     public void addContent(IResource pRes) throws IllegalArgumentException {
         String libs = mProperties.getProperty(CONTENTS);
         if (libs == null) {
-            libs = "";  //$NON-NLS-1$
+            libs = ""; //$NON-NLS-1$
         }
 
         try {
@@ -377,9 +389,8 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * @return the list of the the files and directories added to the package
-     *         properties that are not dialog or basic libraries or package
-     *         descriptions
+     * @return the list of the the files and directories added to the package properties that are not dialog or basic
+     *         libraries or package descriptions
      */
     public List<IResource> getContents() {
         ArrayList<IResource> result = new ArrayList<IResource>();
@@ -406,8 +417,8 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Removes all the file and directories from the package properties that
-     * has been added using {@link #addContent(IResource)}.
+     * Removes all the file and directories from the package properties that has been added using
+     * {@link #addContent(IResource)}.
      */
     public void clearContents() {
         mProperties.setProperty(CONTENTS, ""); //$NON-NLS-1$
@@ -415,25 +426,25 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Adds a localized package description file. The description file has to
-     * exist and the locale can't be <code>null</code>.
+     * Adds a localized package description file. The description file has to exist and the locale can't be
+     * <code>null</code>.
      *
-     * @param pDescription the description file
-     * @param pLocale the file locale.
+     * @param pDescription
+     *            the description file
+     * @param pLocale
+     *            the file locale.
      *
-     * @throws IllegalArgumentException is thrown if the file is <code>null</code>
-     *         or doesn't exists or if the locale is <code>null</code>.
+     * @throws IllegalArgumentException
+     *             is thrown if the file is <code>null</code> or doesn't exists or if the locale is <code>null</code>.
      */
     public void addDescriptionFile(IFile pDescription, Locale pLocale) throws IllegalArgumentException {
 
         if (pLocale == null) {
-            throw new IllegalArgumentException(
-                            Messages.getString("PackagePropertiesModel.NoLocaleException")); //$NON-NLS-1$
+            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoLocaleException")); //$NON-NLS-1$
         }
 
         if (pDescription == null || !pDescription.exists()) {
-            throw new IllegalArgumentException(
-                            Messages.getString("PackagePropertiesModel.NoDescriptionFileException")); //$NON-NLS-1$
+            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoDescriptionFileException")); //$NON-NLS-1$
         }
 
         String countryName = ""; //$NON-NLS-1$
@@ -447,8 +458,7 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * @return a map of the description files accessed by their locale. There is
-     *         no support of a default locale.
+     * @return a map of the description files accessed by their locale. There is no support of a default locale.
      */
     public Map<Locale, IFile> getDescriptionFiles() {
         HashMap<Locale, IFile> descriptions = new HashMap<Locale, IFile>();
@@ -456,7 +466,7 @@ public class PackagePropertiesModel {
 
         Iterator<Object> keys = mProperties.keySet().iterator();
         while (keys.hasNext()) {
-            String key = (String)keys.next();
+            String key = (String) keys.next();
             String regex = DESCRIPTION + "-([a-zA-Z]{2})(?:_([a-zA-Z]{2}))?"; //$NON-NLS-1$
             Matcher matcher = Pattern.compile(regex).matcher(key);
             if (matcher.matches()) {
@@ -484,14 +494,14 @@ public class PackagePropertiesModel {
     public void clearDescriptions() {
         int nbRemoved = 0;
 
-        Iterator<Object> keys = ((Properties)mProperties.clone()).keySet().iterator();
+        Iterator<Object> keys = ((Properties) mProperties.clone()).keySet().iterator();
         while (keys.hasNext()) {
-            String key = (String)keys.next();
+            String key = (String) keys.next();
             String regex = DESCRIPTION + "-([a-zA-Z]{2})(?:_([a-zA-Z]{2}))?"; //$NON-NLS-1$
             Matcher matcher = Pattern.compile(regex).matcher(key);
             if (matcher.matches()) {
                 mProperties.remove(key);
-                nbRemoved ++ ;
+                nbRemoved++;
             }
         }
 

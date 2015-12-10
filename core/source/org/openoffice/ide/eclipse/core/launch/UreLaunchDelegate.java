@@ -71,26 +71,23 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void launch(ILaunchConfiguration pConfiguration, String pMode,
-                    ILaunch pLaunch, IProgressMonitor pMonitor) throws CoreException {
+    public void launch(ILaunchConfiguration pConfiguration, String pMode, ILaunch pLaunch, IProgressMonitor pMonitor)
+        throws CoreException {
 
         if (pMonitor == null) {
             pMonitor = new NullProgressMonitor();
         }
 
         pMonitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
-                        new Object[]{pConfiguration.getName()}), TASK_UNITS);
+            new Object[] { pConfiguration.getName() }), TASK_UNITS);
         // check for cancellation
         if (pMonitor.isCanceled()) {
             return;
         }
 
-        String prjName = pConfiguration.getAttribute(
-                        IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
-        String mainName = pConfiguration.getAttribute(
-                        IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
-        String args = pConfiguration.getAttribute(
-                        IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
+        String prjName = pConfiguration.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+        String mainName = pConfiguration.getAttribute(IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
+        String args = pConfiguration.getAttribute(IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
 
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         if (prj != null) {
@@ -106,8 +103,8 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
                     @Override
                     public void run() {
                         MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                        Messages.getString("UreLaunchDelegate.ErrorTitle"),  //$NON-NLS-1$
-                                        Messages.getString("UreLaunchDelegate.ErrorMessage")); //$NON-NLS-1$
+                            Messages.getString("UreLaunchDelegate.ErrorTitle"), //$NON-NLS-1$
+                            Messages.getString("UreLaunchDelegate.ErrorMessage")); //$NON-NLS-1$
                     }
                 });
             }

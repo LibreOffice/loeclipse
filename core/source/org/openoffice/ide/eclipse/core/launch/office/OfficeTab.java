@@ -155,8 +155,8 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
             mProjectTxt.setText(pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""));
-            mUseCleanUserInstallation.setSelection(pConfiguration.getAttribute(
-                            IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false));
+            mUseCleanUserInstallation.setSelection(
+                pConfiguration.getAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false));
         } catch (CoreException e) {
             PluginLogger.error(Messages.OfficeTab_Configurationerror, e);
         }
@@ -168,12 +168,11 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     @Override
     public void performApply(ILaunchConfigurationWorkingCopy pConfiguration) {
         pConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
-        pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, mUseCleanUserInstallation
-                        .getSelection());
+        pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION,
+            mUseCleanUserInstallation.getSelection());
 
         try {
-            String projectName = pConfiguration.getAttribute(
-                            IOfficeLaunchConstants.PROJECT_NAME, "");
+            String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
             IUnoidlProject project = ProjectsManager.getProject(projectName);
             if (null != project) {
                 project.getLanguage().configureSourceLocator(pConfiguration);
@@ -198,8 +197,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
 
         try {
 
-            boolean projectSet = !pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "")
-                            .equals("");//$NON-NLS-1$
+            boolean projectSet = !pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-2$
             if (projectSet) {
                 String name = pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;

@@ -63,15 +63,15 @@ public class CompositeTest extends TestCase {
     /**
      * Constructor.
      *
-     * @param pName the test case name
+     * @param pName
+     *            the test case name
      */
     public CompositeTest(String pName) {
         super(pName);
     }
 
     /**
-     * Test method for {@link UnoComposite#getChildren()} and
-     * {@link UnoComposite#addChild(IUnoComposite)}.
+     * Test method for {@link UnoComposite#getChildren()} and {@link UnoComposite#addChild(IUnoComposite)}.
      */
     public void testGetChildren() {
 
@@ -120,23 +120,22 @@ public class CompositeTest extends TestCase {
 
         // Create a composite
         IUnoComposite node = new UnoComposite();
-        assertEquals("The type should be COMPOSITE_TYPE_NOTSET",  //$NON-NLS-1$
-                        IUnoComposite.COMPOSITE_TYPE_NOTSET, node.getType());
+        assertEquals("The type should be COMPOSITE_TYPE_NOTSET", //$NON-NLS-1$
+            IUnoComposite.COMPOSITE_TYPE_NOTSET, node.getType());
 
         // Sets the type FILE
         node.setType(IUnoComposite.COMPOSITE_TYPE_FILE);
-        assertEquals("The type should be COMPOSITE_TYPE_FILE",  //$NON-NLS-1$
-                        IUnoComposite.COMPOSITE_TYPE_FILE, node.getType());
+        assertEquals("The type should be COMPOSITE_TYPE_FILE", //$NON-NLS-1$
+            IUnoComposite.COMPOSITE_TYPE_FILE, node.getType());
 
         // Sets the type FOLDER, no changes of the type
         node.setType(IUnoComposite.COMPOSITE_TYPE_FOLDER);
-        assertEquals("The type should be COMPOSITE_TYPE_FILE",  //$NON-NLS-1$
-                        IUnoComposite.COMPOSITE_TYPE_FILE, node.getType());
+        assertEquals("The type should be COMPOSITE_TYPE_FILE", //$NON-NLS-1$
+            IUnoComposite.COMPOSITE_TYPE_FILE, node.getType());
     }
 
     /**
-     * Test method for {@link UnoComposite#configure(String)}
-     * and for {@link UnoComposite#toString()}.
+     * Test method for {@link UnoComposite#configure(String)} and for {@link UnoComposite#toString()}.
      */
     public void testConfigureText() {
 
@@ -189,8 +188,7 @@ public class CompositeTest extends TestCase {
     }
 
     /**
-     * Test for {@link UnoComposite#setIndented(boolean)} and
-     * {@link UnoComposite#toString()}.
+     * Test for {@link UnoComposite#setIndented(boolean)} and {@link UnoComposite#toString()}.
      */
     public void testIndentation() {
 
@@ -229,8 +227,7 @@ public class CompositeTest extends TestCase {
     }
 
     /**
-     * Test method for {@link UnoComposite#configure(String)}
-     * and for {@link UnoComposite#create(boolean)}.
+     * Test method for {@link UnoComposite#configure(String)} and for {@link UnoComposite#create(boolean)}.
      */
     public void testConfigureFile() {
 
@@ -244,8 +241,8 @@ public class CompositeTest extends TestCase {
             File folderTest = new File("toto"); //$NON-NLS-1$
             assertTrue("toto doesn't exist", folderTest.exists()); //$NON-NLS-1$
             assertTrue("toto is not a folder", folderTest.isDirectory()); //$NON-NLS-1$
-            assertTrue("toto is writable and readable",  //$NON-NLS-1$
-                            folderTest.canWrite() && folderTest.canRead());
+            assertTrue("toto is writable and readable", //$NON-NLS-1$
+                folderTest.canWrite() && folderTest.canRead());
 
             IUnoComposite file = new UnoComposite();
             file.setType(IUnoComposite.COMPOSITE_TYPE_FILE);
@@ -266,7 +263,7 @@ public class CompositeTest extends TestCase {
             assertTrue("toto file can't be read", fileTest.canRead()); //$NON-NLS-1$
 
             BufferedReader reader = new BufferedReader(new FileReader(fileTest));
-            assertEquals("Wrong content of the file", "test3 text" ,reader.readLine()); //$NON-NLS-1$ //$NON-NLS-2$
+            assertEquals("Wrong content of the file", "test3 text", reader.readLine()); //$NON-NLS-1$ //$NON-NLS-2$
 
             // Cleaning after the tests
             fileTest.delete();

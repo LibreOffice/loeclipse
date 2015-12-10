@@ -56,14 +56,15 @@ public class FileType {
     public static final String PARAM_PLATFORM = "platform";
 
     String mMimeType;
-    HashMap< String, String > mParams = new HashMap<String, String>();
+    HashMap<String, String> mParams = new HashMap<String, String>();
 
     /**
      * Constructor.
      *
-     * @param pMime the mime type of the file.
+     * @param pMime
+     *            the mime type of the file.
      */
-    public FileType( String pMime ) {
+    public FileType(String pMime) {
         mMimeType = pMime;
     }
 
@@ -75,26 +76,29 @@ public class FileType {
     }
 
     /**
-     * @param pName the name of the parameter to add
-     * @param pValue the value of the parameter to add
+     * @param pName
+     *            the name of the parameter to add
+     * @param pValue
+     *            the value of the parameter to add
      */
-    public void addParam( String pName, String pValue ) {
-        mParams.put( pName, pValue );
+    public void addParam(String pName, String pValue) {
+        mParams.put(pName, pValue);
     }
 
     /**
-     * @param pName the name of the parameter to remove
+     * @param pName
+     *            the name of the parameter to remove
      */
-    public void removeParam( String pName ) {
-        mParams.remove( pName );
+    public void removeParam(String pName) {
+        mParams.remove(pName);
     }
 
     /**
      * @return a copy of the parameters map. Changing this object will have no effect.
      */
-    public HashMap< String, String > getParams( ) {
-        HashMap<String, String> copy = new HashMap<String, String>( );
-        copy.putAll( mParams );
+    public HashMap<String, String> getParams() {
+        HashMap<String, String> copy = new HashMap<String, String>();
+        copy.putAll(mParams);
         return copy;
     }
 
@@ -106,11 +110,11 @@ public class FileType {
         String type = mMimeType;
 
         // Output the params if any
-        Iterator< Entry< String, String > > iter = mParams.entrySet().iterator();
+        Iterator<Entry<String, String>> iter = mParams.entrySet().iterator();
         String paramPattern = ";{0}={1}";
-        while ( iter.hasNext() ) {
-            Entry< String, String > entry = iter.next();
-            type += MessageFormat.format( paramPattern, entry.getKey(), entry.getValue() );
+        while (iter.hasNext()) {
+            Entry<String, String> entry = iter.next();
+            type += MessageFormat.format(paramPattern, entry.getKey(), entry.getValue());
         }
 
         return type;

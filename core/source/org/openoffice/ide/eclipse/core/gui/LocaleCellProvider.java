@@ -69,7 +69,8 @@ public class LocaleCellProvider extends CellEditor {
     private CCombo mCountry;
 
     /**
-     * @param pParent the composite containing the cell editor
+     * @param pParent
+     *            the composite containing the cell editor
      */
     public LocaleCellProvider(Composite pParent) {
         super(pParent);
@@ -109,7 +110,6 @@ public class LocaleCellProvider extends CellEditor {
                 mValue = new Locale(lang, mValue.getCountry());
             }
         });
-
 
         // Create the country Combobox
         String[] countriesISO = Locale.getISOCountries();
@@ -164,7 +164,7 @@ public class LocaleCellProvider extends CellEditor {
     @Override
     protected void doSetValue(Object pValue) {
         if (pValue instanceof Locale) {
-            mValue = (Locale)pValue;
+            mValue = (Locale) pValue;
 
             mLanguage.select(mLanguages.indexOf(mValue.getLanguage()));
             mCountry.select(mCountries.indexOf(mValue.getCountry()));

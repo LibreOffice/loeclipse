@@ -83,16 +83,13 @@ import org.openoffice.ide.eclipse.core.internal.helpers.Flags;
 import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 
 /**
- * A dialog to browse UNO types. This class doesn't launch the types query:
- * this job is performed by the UNO type provider to avoid very slow window
- * rendering.
+ * A dialog to browse UNO types. This class doesn't launch the types query: this job is performed by the UNO type
+ * provider to avoid very slow window rendering.
  *
  * @author cedricbosdo
  *
  */
-public class UnoTypeBrowser extends StatusDialog
-implements IFieldChangedListener,
-IInitListener {
+public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListener, IInitListener {
 
     private static final String F_INPUT = "__input"; //$NON-NLS-1$
     private static final String F_TYPE_FILTER = "__type_filter"; //$NON-NLS-1$
@@ -111,16 +108,17 @@ IInitListener {
     private InternalUnoType mSelectedType;
     private Flags mTypes;
 
-    //    private IUnoidlProject mProject;
-    //    private IOOo mOOo;
-
+    // private IUnoidlProject mProject;
+    // private IOOo mOOo;
 
     /**
-     * Creates a new browser dialog. The browser, waits for the type provider
-     * to finish its work if it's not already over.
+     * Creates a new browser dialog. The browser, waits for the type provider to finish its work if it's not already
+     * over.
      *
-     * @param pParentShell the shell where to create the dialog
-     * @param pAllowedTypes the bit-ORed allowed types
+     * @param pParentShell
+     *            the shell where to create the dialog
+     * @param pAllowedTypes
+     *            the bit-ORed allowed types
      *
      */
     public UnoTypeBrowser(Shell pParentShell, int pAllowedTypes) {
@@ -139,15 +137,13 @@ IInitListener {
         if (!typesProvider.getState().equals(TypeProviderState.INITIALIZED)) {
             // changes the status to warn the user
 
-            updateStatus(new Status(IStatus.INFO,
-                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                            IStatus.INFO,
-                            Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
-                            null));
+            updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.INFO,
+                Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
+                null));
         }
     }
 
-    //---------------------------------------------------- UI creation & control
+    // ---------------------------------------------------- UI creation & control
 
     /**
      * {@inheritDoc}
@@ -155,8 +151,7 @@ IInitListener {
     @Override
     protected void createButtonsForButtonBar(Composite pParent) {
 
-        mRefreshBtn = createButton(pParent, ID_REFRESH,
-                        Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
+        mRefreshBtn = createButton(pParent, ID_REFRESH, Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
         Image img = OOEclipsePlugin.getImage("REFRESH"); //$NON-NLS-1$
         mRefreshBtn.setImage(img);
         mRefreshBtn.addSelectionListener(new SelectionAdapter() {
@@ -165,11 +160,9 @@ IInitListener {
                 // Refresh the cache and the view
                 activateFields(false);
 
-                updateStatus(new Status(IStatus.INFO,
-                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                IStatus.INFO,
-                                Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
-                                null));
+                updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.INFO,
+                    Messages.getString("UnoTypeBrowser.WaitTypes"), //$NON-NLS-1$
+                    null));
 
                 UnoTypeProvider.getInstance().refreshCache();
             }
@@ -190,29 +183,27 @@ IInitListener {
     protected Control createDialogArea(Composite pParent) {
 
         // Create the control that contains all the UI components
-        Composite body = (Composite)super.createDialogArea(pParent);
+        Composite body = (Composite) super.createDialogArea(pParent);
         body.setLayout(new GridLayout(2, false));
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // Create the title label
         Label titleLabel = new Label(body, SWT.NONE);
-        GridData gdLabel = new GridData(GridData.FILL_BOTH |
-                        GridData.VERTICAL_ALIGN_BEGINNING);
+        GridData gdLabel = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
         gdLabel.horizontalSpan = 2;
         gdLabel.heightHint = TITLE_HEIGHT;
         titleLabel.setLayoutData(gdLabel);
         titleLabel.setText(Messages.getString("UnoTypeBrowser.TitleTitle")); //$NON-NLS-1$
 
         // create the input text row
-        mInputRow = new TextRow(body, F_INPUT,
-                        Messages.getString("UnoTypeBrowser.TypeName")); //$NON-NLS-1$
+        mInputRow = new TextRow(body, F_INPUT, Messages.getString("UnoTypeBrowser.TypeName")); //$NON-NLS-1$
         mInputRow.setFieldChangedListener(this);
 
         createList(body);
 
         // create the types filter row
-        mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER,
-                        Messages.getString("UnoTypeBrowser.FilterLabel"), null, false); //$NON-NLS-1$
+        mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER, Messages.getString("UnoTypeBrowser.FilterLabel"), null, //$NON-NLS-1$
+            false);
         mTypeFilterRow.setTooltip(Messages.getString("UnoTypeBrowser.FilterTooltip")); //$NON-NLS-1$
         mTypeFilterRow.setFieldChangedListener(this);
         setFilterValues();
@@ -241,11 +232,8 @@ IInitListener {
                     mTypesList.refresh();
                     activateFields(true);
 
-                    updateStatus(new Status(IStatus.INFO,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.INFO,
-                                    "", //$NON-NLS-1$
-                                    null));
+                    updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.INFO, "", //$NON-NLS-1$
+                        null));
                 }
             }
         };
@@ -256,7 +244,8 @@ IInitListener {
     /**
      * Create and configure the types list.
      *
-     * @param pParent the parent composite where to create the list
+     * @param pParent
+     *            the parent composite where to create the list
      */
     private void createList(Composite pParent) {
 
@@ -280,24 +269,19 @@ IInitListener {
             @Override
             public void selectionChanged(SelectionChangedEvent pEvent) {
                 if (pEvent.getSelection().isEmpty()) {
-                    updateStatus(new Status(IStatus.ERROR,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.ERROR,
-                                    Messages.getString("UnoTypeBrowser.EmptySelectionError"), //$NON-NLS-1$
-                                    null));
+                    updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
+                        Messages.getString("UnoTypeBrowser.EmptySelectionError"), //$NON-NLS-1$
+                        null));
                     mSelectedType = null;
                     getButton(IDialogConstants.OK_ID).setEnabled(false);
 
                 } else {
-                    updateStatus(new Status(IStatus.OK,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.OK,
-                                    "", //$NON-NLS-1$
-                                    null));
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
+                        null));
                     getButton(IDialogConstants.OK_ID).setEnabled(true);
 
-                    IStructuredSelection selection = (IStructuredSelection)pEvent.getSelection();
-                    mSelectedType = (InternalUnoType)selection.getFirstElement();
+                    IStructuredSelection selection = (IStructuredSelection) pEvent.getSelection();
+                    mSelectedType = (InternalUnoType) selection.getFirstElement();
 
                     mTypesList.refresh(mSelectedType, true);
                 }
@@ -318,7 +302,7 @@ IInitListener {
         addFilter(IUnoFactoryConstants.SINGLETON, "UnoTypeBrowser.FilterSingletons"); //$NON-NLS-1$
         addFilter(IUnoFactoryConstants.ENUM, "UnoTypeBrowser.FilterEnumerations"); //$NON-NLS-1$
         addFilter(IUnoFactoryConstants.STRUCT, "UnoTypeBrowser.FilterStructures"); //$NON-NLS-1$
-        addFilter(IUnoFactoryConstants.CONSTANT,"UnoTypeBrowser.FilterConstants"); //$NON-NLS-1$
+        addFilter(IUnoFactoryConstants.CONSTANT, "UnoTypeBrowser.FilterConstants"); //$NON-NLS-1$
         addFilter(IUnoFactoryConstants.CONSTANTS, "UnoTypeBrowser.FilterConstantsGroups"); //$NON-NLS-1$
         addFilter(IUnoFactoryConstants.EXCEPTION, "UnoTypeBrowser.FilterException"); //$NON-NLS-1$
         addFilter(IUnoFactoryConstants.TYPEDEF, "UnoTypeBrowser.FilterTypedefs"); //$NON-NLS-1$
@@ -329,8 +313,10 @@ IInitListener {
      *
      * The value of the filter option is a string version of the type
      *
-     * @param pType the type to add in {@link IUnoFactoryConstants}
-     * @param pMessageKey the message key to use to get the message from the messages bundle.
+     * @param pType
+     *            the type to add in {@link IUnoFactoryConstants}
+     * @param pMessageKey
+     *            the message key to use to get the message from the messages bundle.
      */
     private void addFilter(int pType, String pMessageKey) {
         if (pType == UnoTypeProvider.ALL_TYPES || mTypes.isFlagSet(pType)) {
@@ -344,8 +330,8 @@ IInitListener {
      *
      * This method should be used when long operations are performed.
      *
-     * @param pActivate <code>true</code> to activate all the fields, <code>false</code> to
-     *          set the fields as not active.
+     * @param pActivate
+     *            <code>true</code> to activate all the fields, <code>false</code> to set the fields as not active.
      */
     public void activateFields(boolean pActivate) {
         mInputRow.setEnabled(pActivate);
@@ -383,7 +369,7 @@ IInitListener {
             Image result = null;
 
             if (pElement instanceof InternalUnoType) {
-                int type = ((InternalUnoType)pElement).getType();
+                int type = ((InternalUnoType) pElement).getType();
 
                 if (IUnoFactoryConstants.SERVICE == type) {
                     result = OOEclipsePlugin.getImage(ImagesConstants.SERVICE);
@@ -413,12 +399,11 @@ IInitListener {
             String result = ""; //$NON-NLS-1$
 
             if (pElement instanceof InternalUnoType) {
-                InternalUnoType type = (InternalUnoType)pElement;
+                InternalUnoType type = (InternalUnoType) pElement;
                 result = type.getName();
 
                 if (!mTypesList.getSelection().isEmpty()) {
-                    IStructuredSelection selection = (IStructuredSelection)
-                                    mTypesList.getSelection();
+                    IStructuredSelection selection = (IStructuredSelection) mTypesList.getSelection();
 
                     if (selection.getFirstElement().equals(type)) {
                         result = result + " - " + type.getFullName(); //$NON-NLS-1$
@@ -437,16 +422,13 @@ IInitListener {
     protected void okPressed() {
 
         /**
-         * The calling method have to close the dialog window after having get the
-         * resulting data.
+         * The calling method have to close the dialog window after having get the resulting data.
          */
 
         if (mTypesList.getSelection().isEmpty()) {
-            updateStatus(new Status(IStatus.ERROR,
-                            OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                            IStatus.ERROR,
-                            Messages.getString("UnoTypeBrowser.EmptySelectionError"),  //$NON-NLS-1$
-                            null));
+            updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
+                Messages.getString("UnoTypeBrowser.EmptySelectionError"), //$NON-NLS-1$
+                null));
             getButton(IDialogConstants.OK_ID).setEnabled(false);
             UnoTypeProvider.getInstance().removeInitListener(this);
         } else {
@@ -454,7 +436,7 @@ IInitListener {
         }
     }
 
-    //------------------------------------------------- React on field changing
+    // ------------------------------------------------- React on field changing
 
     /**
      * Refreshes the dialog.
@@ -485,7 +467,7 @@ IInitListener {
         mInputRow.setFocus();
     }
 
-    //---------------------------------------- Filters the elements in the list
+    // ---------------------------------------- Filters the elements in the list
 
     /**
      * List items filter class.
@@ -502,7 +484,7 @@ IInitListener {
             boolean select = false;
 
             if (pElement instanceof InternalUnoType) {
-                InternalUnoType type = (InternalUnoType)pElement;
+                InternalUnoType type = (InternalUnoType) pElement;
                 if (mTypes.isFlagSet(type.getType())) {
                     // The type is correct, check the name
                     if (type.getName().startsWith(mInputRow.getValue())) {
@@ -514,7 +496,7 @@ IInitListener {
         }
     }
 
-    //----------------------------------------- Manages the content of the list
+    // ----------------------------------------- Manages the content of the list
 
     /**
      * @return the selected {@link InternalUnoType}.
@@ -526,7 +508,8 @@ IInitListener {
     /**
      * Set the type selected in the list.
      *
-     * @param pType the type which should be selected
+     * @param pType
+     *            the type which should be selected
      */
     public void setSelectedType(InternalUnoType pType) {
         mSelectedType = pType;

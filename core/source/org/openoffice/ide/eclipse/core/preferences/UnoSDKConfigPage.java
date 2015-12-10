@@ -57,8 +57,7 @@ import org.openoffice.ide.eclipse.core.gui.SDKTable;
  * @author cedricbosdo
  *
  */
-public class UnoSDKConfigPage extends PreferencePage implements
-IWorkbenchPreferencePage {
+public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPreferencePage {
 
     private SDKTable mSdkTable;
     private OOoTable mOOoTable;

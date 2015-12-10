@@ -49,10 +49,9 @@ import java.net.URLClassLoader;
 import org.openoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
- * Provides a set of utility methods to use to handle OOo. All the code handling
- * LibreOffice has to be in the {@value #OOO_PACKAGE} package. These classes have
- * to be loaded by the {@link OfficeClassLoader}. All the classes facade classes have
- * to be in the same package than this class.
+ * Provides a set of utility methods to use to handle OOo. All the code handling LibreOffice has to be in the
+ * {@value #OOO_PACKAGE} package. These classes have to be loaded by the {@link OfficeClassLoader}. All the classes
+ * facade classes have to be in the same package than this class.
  *
  * @author cedricbosdo
  *
@@ -66,12 +65,15 @@ public class OfficeHelper {
     /**
      * Create an office connection object using a given class loader.
      *
-     * @param pClassLoader the class loader to use
-     * @param pOOo the office to set in the connection
+     * @param pClassLoader
+     *            the class loader to use
+     * @param pOOo
+     *            the office to set in the connection
      *
      * @return the office connection object
      *
-     * @throws Exception if the class cannot be found or the constructor cannot be called.
+     * @throws Exception
+     *             if the class cannot be found or the constructor cannot be called.
      */
     static Object createConnection(URLClassLoader pClassLoader, IOOo pOOo) throws Exception {
         String className = CLASS_CONNECTION;

@@ -75,8 +75,7 @@ import org.openoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
  * @author cedricbosdo
  *
  */
-public class NewInterfaceWizard extends BasicNewResourceWizard implements
-INewWizard {
+public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWizard {
 
     private IWorkbenchPage mActivePage;
     private NewInterfaceWizardPage mPage;
@@ -104,9 +103,7 @@ INewWizard {
             protected IStatus run(IProgressMonitor pMonitor) {
 
                 pMonitor.beginTask(Messages.getString("NewInterfaceWizard.TaskName"), 1); //$NON-NLS-1$
-                IStatus status = new Status(IStatus.OK,
-                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                IStatus.OK, "", null); //$NON-NLS-1$
+                IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
                 try {
                     IUnoidlProject prj = mPage.getProject();
                     UnoFactory.createInterface(data, prj, mActivePage, pMonitor);
@@ -115,10 +112,8 @@ INewWizard {
                     data.dispose();
                     pMonitor.worked(1);
                 } catch (Exception e) {
-                    status = new Status(IStatus.CANCEL,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.OK,
-                                    Messages.getString("NewInterfaceWizard.InterfaceCreationError"), e); //$NON-NLS-1$
+                    status = new Status(IStatus.CANCEL, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK,
+                        Messages.getString("NewInterfaceWizard.InterfaceCreationError"), e); //$NON-NLS-1$
                     pMonitor.setCanceled(true);
                 }
 
@@ -142,9 +137,9 @@ INewWizard {
 
         super.init(pWorkbench, pSelection);
 
-        if  (pSelection.getFirstElement() instanceof IAdaptable) {
+        if (pSelection.getFirstElement() instanceof IAdaptable) {
 
-            IAdaptable adapter = (IAdaptable)pSelection.getFirstElement();
+            IAdaptable adapter = (IAdaptable) pSelection.getFirstElement();
             IResource resource = adapter.getAdapter(IResource.class);
 
             if (resource != null) {
@@ -156,14 +151,14 @@ INewWizard {
     /**
      * Creates the new interface page.
      *
-     * @param pProject the project in which to create the interface
+     * @param pProject
+     *            the project in which to create the interface
      */
     private void createPages(IProject pProject) {
         if (null != pProject) {
             try {
                 if (pProject.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
-                    UnoidlProject unoProject = (UnoidlProject)pProject.getNature(
-                                    OOEclipsePlugin.UNO_NATURE_ID);
+                    UnoidlProject unoProject = (UnoidlProject) pProject.getNature(OOEclipsePlugin.UNO_NATURE_ID);
 
                     mPage = new NewInterfaceWizardPage("newiface", unoProject); //$NON-NLS-1$
 
@@ -178,7 +173,8 @@ INewWizard {
     /**
      * Method opening a file in an UNO-IDL editor.
      *
-     * @param pResource the file to open
+     * @param pResource
+     *            the file to open
      */
     protected void openResource(final IFile pResource) {
 

@@ -60,8 +60,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * Provides the document content for the registry editor. This class uses
- * the <code>regview</code> tool.
+ * Provides the document content for the registry editor. This class uses the <code>regview</code> tool.
  *
  * @see org.openoffice.ide.eclipse.core.editors.registry.RegEditor for the editor
  *
@@ -84,18 +83,16 @@ public class RegDocumentProvider extends FileDocumentProvider {
     protected IDocument createDocument(Object pElement) throws CoreException {
         // create a document from the output of the regview execution
 
-        IDocument document = new Document(
-                        Messages.getString("RegDocumentProvider.DocumentCreationError"));  //$NON-NLS-1$
+        IDocument document = new Document(Messages.getString("RegDocumentProvider.DocumentCreationError")); //$NON-NLS-1$
 
         if (pElement instanceof IFileEditorInput) {
 
-            IFile file = ((IFileEditorInput)pElement).getFile();
-            IUnoidlProject unoproject = ProjectsManager.getProject(
-                            file.getProject().getName());
+            IFile file = ((IFileEditorInput) pElement).getFile();
+            IUnoidlProject unoproject = ProjectsManager.getProject(file.getProject().getName());
 
             // Try to run regview on the file
 
-            String command = "regview " + file.getLocation().toOSString();  //$NON-NLS-1$
+            String command = "regview " + file.getLocation().toOSString(); //$NON-NLS-1$
 
             Process process = unoproject.getSdk().runTool(unoproject, command, null);
 
@@ -149,8 +146,8 @@ public class RegDocumentProvider extends FileDocumentProvider {
      * {@inheritDoc}
      */
     @Override
-    protected void doSaveDocument(IProgressMonitor pMonitor, Object pElement,
-                    IDocument pDocument, boolean pOverwrite) throws CoreException {
+    protected void doSaveDocument(IProgressMonitor pMonitor, Object pElement, IDocument pDocument, boolean pOverwrite)
+        throws CoreException {
 
         // This kind of document cannot be edited, nor saved
     }

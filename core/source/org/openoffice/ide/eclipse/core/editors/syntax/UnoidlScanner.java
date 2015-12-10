@@ -56,9 +56,8 @@ import org.openoffice.ide.eclipse.core.editors.idl.Colors;
 import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 
 /**
- * UNO-IDL code scanner. Used by the UNO-IDL viewer configuration. In order
- * to fully understand the editor mechanisms, please report to Eclipse
- * plugin developer's guide.
+ * UNO-IDL code scanner. Used by the UNO-IDL viewer configuration. In order to fully understand the editor mechanisms,
+ * please report to Eclipse plugin developer's guide.
  *
  * @author cedricbosdo
  *
@@ -68,39 +67,29 @@ public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax {
     private ColorProvider mColorProvider;
 
     /**
-     * Default constructor, initializing the rules to apply in the uno-idl
-     * code.
+     * Default constructor, initializing the rules to apply in the uno-idl code.
      *
-     * @param pColorProvider a color provider to colorize the resulting tokens
+     * @param pColorProvider
+     *            a color provider to colorize the resulting tokens
      */
     public UnoidlScanner(ColorProvider pColorProvider) {
         mColorProvider = pColorProvider;
 
         // Tokens' definitions
-        IToken keyword = new Token(
-                        new TextAttribute(mColorProvider.getColor(Colors.C_KEYWORD),
-                                        null,
-                                        SWT.BOLD));
+        IToken keyword = new Token(new TextAttribute(mColorProvider.getColor(Colors.C_KEYWORD), null, SWT.BOLD));
 
-        IToken type = new Token(
-                        new TextAttribute(
-                                        mColorProvider.getColor(Colors.C_TYPE),
-                                        null,
-                                        SWT.BOLD));
+        IToken type = new Token(new TextAttribute(mColorProvider.getColor(Colors.C_TYPE), null, SWT.BOLD));
 
-        IToken modifier = new Token(
-                        new TextAttribute(mColorProvider.getColor(Colors.C_MODIFIER)));
+        IToken modifier = new Token(new TextAttribute(mColorProvider.getColor(Colors.C_MODIFIER)));
 
-        IToken string = new Token(
-                        new TextAttribute(mColorProvider.getColor(Colors.C_STRING)));
+        IToken string = new Token(new TextAttribute(mColorProvider.getColor(Colors.C_STRING)));
 
-        IToken other = new Token(
-                        new TextAttribute(mColorProvider.getColor(Colors.C_TEXT)));
+        IToken other = new Token(new TextAttribute(mColorProvider.getColor(Colors.C_TEXT)));
 
         setDefaultReturnToken(other);
 
-        //Add word rule for keywords, types and constants
-        WordRule wordRule = new WordRule(new UnoidlWordDetector(),other);
+        // Add word rule for keywords, types and constants
+        WordRule wordRule = new WordRule(new UnoidlWordDetector(), other);
         for (int i = 0, length = RESERVED_WORDS.length; i < length; i++) {
             wordRule.addWord(RESERVED_WORDS[i], keyword);
         }
@@ -114,17 +103,16 @@ public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax {
             wordRule.addWord(MODIFIERS[i], modifier);
         }
 
-        IRule[] rules = new IRule[]{
+        IRule[] rules = new IRule[] {
 
-                        // Add rules for strings and character constants
-                        new SingleLineRule("\"","\"", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
-                        new SingleLineRule("'","'", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
+            // Add rules for strings and character constants
+            new SingleLineRule("\"", "\"", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
+            new SingleLineRule("'", "'", string, '\\'), //$NON-NLS-1$ //$NON-NLS-2$
 
-                        //Add generic whitespace rule
-                        new WhitespaceRule(new UnoidlWhiteSpaceDetector()),
+            // Add generic whitespace rule
+            new WhitespaceRule(new UnoidlWhiteSpaceDetector()),
 
-                        wordRule
-        };
+            wordRule };
         setRules(rules);
     }
 }

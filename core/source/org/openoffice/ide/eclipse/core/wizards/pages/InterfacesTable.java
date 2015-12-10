@@ -59,14 +59,12 @@ import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
- * This class corresponds to the table of interface inheritances. The add
- * action launches the UNO Type browser to select one interface. This class
- * shouldn't be subclassed.
+ * This class corresponds to the table of interface inheritances. The add action launches the UNO Type browser to select
+ * one interface. This class shouldn't be subclassed.
  *
  * @author cedricbosdo
  */
 public class InterfacesTable extends AbstractTable {
-
 
     private static final int OPTIONAL_WIDTH = 25;
     private static final int NAME_WIDTH = 400;
@@ -74,29 +72,24 @@ public class InterfacesTable extends AbstractTable {
     /**
      * Simplified constructor for this kind of table.
      *
-     * @param pParent the parent composite where to put the table
+     * @param pParent
+     *            the parent composite where to put the table
      */
     public InterfacesTable(Composite pParent) {
-        super(
-                        pParent,
-                        Messages.getString("InterfacesTable.Title"),  //$NON-NLS-1$
-                        new String[] {
-                                        Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
-                                        Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
-                        },
-                        new int[] {OPTIONAL_WIDTH, NAME_WIDTH},
-                        new String[] {
-                                        InheritanceLine.OPTIONAL,
-                                        InheritanceLine.NAME
-                        }
-                        );
+        super(pParent, Messages.getString("InterfacesTable.Title"), //$NON-NLS-1$
+            new String[] { Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
+                Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
+            }, new int[] { OPTIONAL_WIDTH, NAME_WIDTH },
+            new String[] { InheritanceLine.OPTIONAL, InheritanceLine.NAME });
     }
 
     /**
      * Add a new interface in the table.
      *
-     * @param pIfaceName the name of the interface to add
-     * @param pOptional <code>true</code> if the interface is optional.
+     * @param pIfaceName
+     *            the name of the interface to add
+     * @param pOptional
+     *            <code>true</code> if the interface is optional.
      */
     public void addInterface(String pIfaceName, boolean pOptional) {
         InheritanceLine line = new InheritanceLine();
@@ -111,10 +104,7 @@ public class InterfacesTable extends AbstractTable {
      */
     @Override
     protected CellEditor[] createCellEditors(Table pTable) {
-        CellEditor[] editors = new CellEditor[] {
-                        new CheckboxCellEditor(),
-                        null
-        };
+        CellEditor[] editors = new CellEditor[] { new CheckboxCellEditor(), null };
 
         return editors;
     }
@@ -139,16 +129,15 @@ public class InterfacesTable extends AbstractTable {
 
             // Creates the line only if OK has been pressed
             line = new InheritanceLine();
-            ((InheritanceLine)line).setInterfaceName(value);
+            ((InheritanceLine) line).setInterfaceName(value);
         }
 
         return line;
     }
 
     /**
-     * The interface names are stored in path-like strings, ie: using "::"
-     * as separator. This class describes a line in the table and thus has
-     * to implement {@link ITableElement} interface
+     * The interface names are stored in path-like strings, ie: using "::" as separator. This class describes a line in
+     * the table and thus has to implement {@link ITableElement} interface
      *
      * @author cedricbosdo
      *
@@ -161,7 +150,7 @@ public class InterfacesTable extends AbstractTable {
         private String mInterfaceName;
         private boolean mOptional = false;
 
-        //----------------------------------------------------- Member managment
+        // ----------------------------------------------------- Member managment
 
         /**
          * @return the interface name
@@ -180,7 +169,8 @@ public class InterfacesTable extends AbstractTable {
         /**
          * Set the interface name.
          *
-         * @param pInterfaceName the interface name of the inheritance
+         * @param pInterfaceName
+         *            the interface name of the inheritance
          */
         public void setInterfaceName(String pInterfaceName) {
             this.mInterfaceName = pInterfaceName;
@@ -189,14 +179,14 @@ public class InterfacesTable extends AbstractTable {
         /**
          * Set whether the inheritance is optional or not.
          *
-         * @param pOptional <code>true</code> if the inheritance is optional.
+         * @param pOptional
+         *            <code>true</code> if the inheritance is optional.
          */
         public void setOptional(boolean pOptional) {
             this.mOptional = pOptional;
         }
 
-        //----------------------------------------- ITableElement implementation
-
+        // ----------------------------------------- ITableElement implementation
 
         /**
          * {@inheritDoc}
@@ -266,7 +256,7 @@ public class InterfacesTable extends AbstractTable {
 
             if (pProperty.equals(OPTIONAL) && pValue instanceof Boolean) {
 
-                setOptional(((Boolean)pValue).booleanValue());
+                setOptional(((Boolean) pValue).booleanValue());
             }
         }
     }

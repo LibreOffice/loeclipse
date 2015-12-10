@@ -51,59 +51,45 @@ import org.openoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 /**
  * Class describing a UNO-Type.
  *
- * Only used with the {@link UnoTypeProvider}. A UNO type is described by
- * its name, a boolean field defining if it's a local type and a path
- * containing the fully qualified name of the type container.
+ * Only used with the {@link UnoTypeProvider}. A UNO type is described by its name, a boolean field defining if it's a
+ * local type and a path containing the fully qualified name of the type container.
  *
  * @author cedricbosdo
  *
  */
 public class InternalUnoType {
 
-    public static final InternalUnoType STRING = new InternalUnoType(
-                    "string", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType STRING = new InternalUnoType("string", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType VOID = new InternalUnoType(
-                    "void", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType VOID = new InternalUnoType("void", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType BOOLEAN = new InternalUnoType(
-                    "boolean", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType BOOLEAN = new InternalUnoType("boolean", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType BYTE = new InternalUnoType(
-                    "byte", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType BYTE = new InternalUnoType("byte", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType SHORT = new InternalUnoType(
-                    "short", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType SHORT = new InternalUnoType("short", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType LONG = new InternalUnoType(
-                    "long", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType LONG = new InternalUnoType("long", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType HYPER = new InternalUnoType(
-                    "hyper", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType HYPER = new InternalUnoType("hyper", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType FLOAT = new InternalUnoType(
-                    "float", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType FLOAT = new InternalUnoType("float", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType DOUBLE = new InternalUnoType(
-                    "double", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType DOUBLE = new InternalUnoType("double", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType CHAR = new InternalUnoType(
-                    "char", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType CHAR = new InternalUnoType("char", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType TYPE = new InternalUnoType(
-                    "type", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType TYPE = new InternalUnoType("type", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType ANY = new InternalUnoType(
-                    "any", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType ANY = new InternalUnoType("any", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType USHORT = new InternalUnoType(
-                    "unsigned short", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType USHORT = new InternalUnoType("unsigned short", IUnoFactoryConstants.BASICS, //$NON-NLS-1$
+        true);
 
-    public static final InternalUnoType ULONG = new InternalUnoType(
-                    "unsigned long", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType ULONG = new InternalUnoType("unsigned long", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType UHYPER = new InternalUnoType(
-                    "unsigned hyper", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType UHYPER = new InternalUnoType("unsigned hyper", IUnoFactoryConstants.BASICS, //$NON-NLS-1$
+        true);
 
     public static final int ALL_TYPES = 2047;
 
@@ -123,13 +109,13 @@ public class InternalUnoType {
     /**
      * Constructor.
      *
-     * @param pTypeString the string representing the type.
+     * @param pTypeString
+     *            the string representing the type.
      */
     public InternalUnoType(String pTypeString) {
         if (null != pTypeString) {
-            Matcher typeMatcher = Pattern.compile(
-                            "(" + EXTERNAL_TAG + "|" + LOCAL_TAG + //$NON-NLS-1$ //$NON-NLS-2$
-                            ") ([^\\s]*) ([0-9]+)").matcher(pTypeString); //$NON-NLS-1$
+            Matcher typeMatcher = Pattern.compile("(" + EXTERNAL_TAG + "|" + LOCAL_TAG + //$NON-NLS-1$ //$NON-NLS-2$
+                ") ([^\\s]*) ([0-9]+)").matcher(pTypeString); //$NON-NLS-1$
             if (typeMatcher.matches() && TYPE_REGEX_GROUPS == typeMatcher.groupCount()) {
                 setLocal(typeMatcher.group(1));
                 setType(Integer.parseInt(typeMatcher.group(TYPE_VALUE_GROUP)));
@@ -141,10 +127,13 @@ public class InternalUnoType {
     /**
      * Constructor.
      *
-     * @param pCompleteName the type complete name separated with "."
-     * @param pType the UNO type's type
-     * @param pIsLocal <code>true</code> if the type is defined in the project,
-     *      <code>false</code> if it's defined in an external <code>types.rdb</code>.
+     * @param pCompleteName
+     *            the type complete name separated with "."
+     * @param pType
+     *            the UNO type's type
+     * @param pIsLocal
+     *            <code>true</code> if the type is defined in the project, <code>false</code> if it's defined in an
+     *            external <code>types.rdb</code>.
      */
     public InternalUnoType(String pCompleteName, int pType, boolean pIsLocal) {
         mLocal = pIsLocal;
@@ -153,8 +142,7 @@ public class InternalUnoType {
     }
 
     /**
-     * @return the type name, ie <code>XInterface</code> for
-     * <code>com.sun.star.uno.XInterface</code>.
+     * @return the type name, ie <code>XInterface</code> for <code>com.sun.star.uno.XInterface</code>.
      */
     public String getName() {
         String name = ""; //$NON-NLS-1$
@@ -168,15 +156,15 @@ public class InternalUnoType {
 
     /**
      * @return the type complete name, i.e. <code>com.sun.star.uno.XInterface</code> for
-     * <code>com.sun.star.uno.XInterface</code>.
+     *         <code>com.sun.star.uno.XInterface</code>.
      */
     public String getFullName() {
         return mPath;
     }
 
     /**
-     * Returns the type of the type, ie {@link IUnoFactoryConstants#INTERFACE}
-     * for <code>com.sun.star.uno.XInterface</code>.
+     * Returns the type of the type, ie {@link IUnoFactoryConstants#INTERFACE} for
+     * <code>com.sun.star.uno.XInterface</code>.
      *
      * @return one of the types defined in {@link UnoTypeProvider}
      */
@@ -208,7 +196,8 @@ public class InternalUnoType {
     /**
      * Set the type of the UNO type, e.g. service, interface.
      *
-     * @param pType the type to set described using the types constants
+     * @param pType
+     *            the type to set described using the types constants
      */
     private void setType(int pType) {
         if (pType >= 0 && pType < ALL_TYPES_FILTER) {
@@ -217,10 +206,10 @@ public class InternalUnoType {
     }
 
     /**
-     * Sets whether the type is local to the project or defined in an external
-     * <code>types.rdb</code> file.
+     * Sets whether the type is local to the project or defined in an external <code>types.rdb</code> file.
      *
-     * @param pTag {@link #LOCAL_TAG} or {@link #EXTERNAL_TAG}.
+     * @param pTag
+     *            {@link #LOCAL_TAG} or {@link #EXTERNAL_TAG}.
      */
     private void setLocal(String pTag) {
         if (pTag.equals(LOCAL_TAG)) {

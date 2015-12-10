@@ -53,21 +53,24 @@ public interface IConfigListener {
     /**
      * Method fired when a config element has been added to the container.
      *
-     * @param pElement added sdk or ooo
+     * @param pElement
+     *            added sdk or ooo
      */
     public void ConfigAdded(Object pElement);
 
     /**
      * Method fired when a config element has been removed from the container.
      *
-     * @param pElement removed sdk or ooo. <code>null</code> if the container has been cleared
+     * @param pElement
+     *            removed sdk or ooo. <code>null</code> if the container has been cleared
      */
     public void ConfigRemoved(Object pElement);
 
     /**
      * Method fired when a config element has been updated in the container.
      *
-     * @param pElement new value of the sdk or ooo
+     * @param pElement
+     *            new value of the sdk or ooo
      */
     public void ConfigUpdated(Object pElement);
 }

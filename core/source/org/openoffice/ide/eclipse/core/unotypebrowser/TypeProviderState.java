@@ -47,16 +47,14 @@ package org.openoffice.ide.eclipse.core.unotypebrowser;
  * Indicates the state of the {@link UnoTypeProvider}.
  *
  * <ul>
- *      <li>{@link #EMPTY} means that the types provider has never been initialized</li>
- *      <li>{@link #INITIALIZING} means that the types provider is updating the types</li>
- *      <li>{@link #INITIALIZED} means that the types provider has fetched the types</li>
+ * <li>{@link #EMPTY} means that the types provider has never been initialized</li>
+ * <li>{@link #INITIALIZING} means that the types provider is updating the types</li>
+ * <li>{@link #INITIALIZED} means that the types provider has fetched the types</li>
  * </ul>
  *
  * @author cbosdonnat
  *
  */
 public enum TypeProviderState {
-    EMPTY,
-    INITIALIZING,
-    INITIALIZED
+    EMPTY, INITIALIZING, INITIALIZED
 }

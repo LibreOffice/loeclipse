@@ -42,39 +42,44 @@ import org.openoffice.ide.eclipse.core.model.utils.IModel;
 
 /**
  *
- * @param <ModelType> the type of the model object for the section
+ * @param <ModelType>
+ *            the type of the model object for the section
  *
  * @author Cédric Bosdonnat
  *
  */
-public abstract class LocalizedSection< ModelType extends IModel > extends AbstractSection< ModelType >
-implements ILocaleListener {
+public abstract class LocalizedSection<ModelType extends IModel> extends AbstractSection<ModelType>
+    implements ILocaleListener {
 
     protected Locale mCurrentLocale;
 
     private FormPage mPage;
 
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the page page of the section
-     * @param pStyle a bit-or of the styles defined in Section class
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the page page of the section
+     * @param pStyle
+     *            a bit-or of the styles defined in Section class
      */
-    public LocalizedSection ( Composite pParent, FormPage pPage, int pStyle ) {
-        super( pParent, pPage, pStyle );
+    public LocalizedSection(Composite pParent, FormPage pPage, int pStyle) {
+        super(pParent, pPage, pStyle);
 
         mPage = pPage;
 
-
-        createContent( );
+        createContent();
     }
 
     /**
      * Create the localized controls in the given parent.
      *
-     * @param pToolkit the toolkit to use for the controls creation
-     * @param pParent the parent to use for the new controls.
+     * @param pToolkit
+     *            the toolkit to use for the controls creation
+     * @param pParent
+     *            the parent to use for the new controls.
      */
-    protected abstract void createControls( FormToolkit pToolkit, Composite pParent ) ;
+    protected abstract void createControls(FormToolkit pToolkit, Composite pParent);
 
     /**
      * {@inheritDoc}
@@ -87,7 +92,7 @@ implements ILocaleListener {
     /**
      * Creates the dialog content.
      */
-    private void createContent( ) {
+    private void createContent() {
         // Create the Language selection tools
         Section section = getSection();
         section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -97,10 +102,10 @@ implements ILocaleListener {
         Composite clientArea = toolkit.createComposite(section);
         clientArea.setLayout(new GridLayout());
         clientArea.setLayoutData(new GridData(GridData.FILL_BOTH));
-        createControls( toolkit, clientArea );
+        createControls(toolkit, clientArea);
 
-        toolkit.paintBordersFor( clientArea );
+        toolkit.paintBordersFor(clientArea);
 
-        section.setClient( clientArea );
+        section.setClient(clientArea);
     }
 }

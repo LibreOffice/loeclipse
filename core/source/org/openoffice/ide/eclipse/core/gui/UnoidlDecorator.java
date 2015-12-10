@@ -57,9 +57,8 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * For Eclipse a decorator is a small class changing an element
- * image and/or label. This decorator replaces the icons for IDL files and
- * registries.
+ * For Eclipse a decorator is a small class changing an element image and/or label. This decorator replaces the icons
+ * for IDL files and registries.
  *
  * @author cedricbosdo
  *
@@ -72,28 +71,24 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
     @Override
     public Image decorateImage(Image pImage, Object pElement) {
 
-
         Image newImage = null;
 
         if (isIdlFolder(pElement)) {
-            newImage = new OverlayImageIcon(pImage,
-                            OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
-                            OverlayImageIcon.TOP_LEFT).getImage();
+            newImage = new OverlayImageIcon(pImage, OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
+                OverlayImageIcon.TOP_LEFT).getImage();
         } else if (pElement instanceof IProject) {
-            IProject project = (IProject)pElement;
+            IProject project = (IProject) pElement;
             try {
                 if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
-                    newImage = new OverlayImageIcon(pImage,
-                                    OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
-                                    OverlayImageIcon.BOTTOM_RIGHT).getImage();
+                    newImage = new OverlayImageIcon(pImage, OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
+                        OverlayImageIcon.BOTTOM_RIGHT).getImage();
                 }
             } catch (CoreException e) {
                 // Nothing to do: no uno nature found
             }
         } else if (isDbFolder(pElement)) {
-            newImage = new OverlayImageIcon(pImage,
-                            OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
-                            OverlayImageIcon.TOP_LEFT).getImage();
+            newImage = new OverlayImageIcon(pImage, OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
+                OverlayImageIcon.TOP_LEFT).getImage();
         }
 
         return newImage;
@@ -116,15 +111,15 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
     /**
      * Tests if the element is a folder contained in the project idl directory.
      *
-     * @param pElement element to check
-     * @return <code>true</code> if the element is an IDL directory,
-     *             <code>false</code> otherwise.
+     * @param pElement
+     *            element to check
+     * @return <code>true</code> if the element is an IDL directory, <code>false</code> otherwise.
      */
     private boolean isIdlFolder(Object pElement) {
         boolean result = false;
 
         if (pElement instanceof IResource) {
-            IResource resource = (IResource)pElement;
+            IResource resource = (IResource) pElement;
 
             try {
                 if (IResource.FOLDER == resource.getType()) {
@@ -145,27 +140,24 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
     }
 
     /**
-     * Tests if the elements is the urd folder of a unoidl project
-     * or one of its children.
+     * Tests if the elements is the urd folder of a unoidl project or one of its children.
      *
-     * @param pElement the element to test
-     * @return <code>true</code> if the element is the urd folder of a unoidl project
-     *         or one of its children. Otherwise of if the element is a urd child but
-     *         not a folder, <code>false</code> is returned
+     * @param pElement
+     *            the element to test
+     * @return <code>true</code> if the element is the urd folder of a unoidl project or one of its children. Otherwise
+     *         of if the element is a urd child but not a folder, <code>false</code> is returned
      */
-    private boolean isDbFolder (Object pElement) {
+    private boolean isDbFolder(Object pElement) {
         boolean result = false;
 
         if (pElement instanceof IFolder) {
 
             try {
-                IFolder folder = (IFolder)pElement;
+                IFolder folder = (IFolder) pElement;
 
-                IUnoidlProject project = ProjectsManager.getProject(
-                                folder.getProject().getName());
+                IUnoidlProject project = ProjectsManager.getProject(folder.getProject().getName());
 
-                if (folder.getProjectRelativePath().toString().startsWith(
-                                project.getUrdPath().toString())) {
+                if (folder.getProjectRelativePath().toString().startsWith(project.getUrdPath().toString())) {
 
                     result = true;
                 }

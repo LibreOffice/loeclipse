@@ -54,8 +54,7 @@ import org.openoffice.ide.eclipse.core.model.config.ISdk;
 import org.openoffice.plugin.core.model.UnoPackage;
 
 /**
- * Interface defining a set of methods for to do the language specific
- * tasks to build UNO projects.
+ * Interface defining a set of methods for to do the language specific tasks to build UNO projects.
  *
  * @author cedricbosdo
  *
@@ -65,45 +64,55 @@ public interface ILanguageBuilder {
     /**
      * Computes the environment variables needed to build the library.
      *
-     * @param pUnoProject the UNO project of the library
-     * @return an array containing all the environment variables under
-     *         the form <code>NAME=VALUE</code>
+     * @param pUnoProject
+     *            the UNO project of the library
+     * @return an array containing all the environment variables under the form <code>NAME=VALUE</code>
      */
     public String[] getBuildEnv(IUnoidlProject pUnoProject);
 
     /**
      * Creates the library containing the component.
      *
-     * @param pUnoProject the project to build into a library
+     * @param pUnoProject
+     *            the project to build into a library
      * @return the created library path
-     * @throws Exception if anything wrong happened
+     * @throws Exception
+     *             if anything wrong happened
      */
     public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception;
 
     /**
-     * <p>Generates the language specific interfaces corresponding
-     * to the project unoidl specifications. This method needs an
-     * OpenOffice.org instance, the project <code>types.rdb</code>
-     * path, the build path where to put the generated files and
-     * the root module to avoid massive idl types creation</p>
+     * <p>
+     * Generates the language specific interfaces corresponding to the project unoidl specifications. This method needs
+     * an OpenOffice.org instance, the project <code>types.rdb</code> path, the build path where to put the generated
+     * files and the root module to avoid massive idl types creation
+     * </p>
      *
-     * @param pSdk the SDK containing the tools for generation
-     * @param pOoo the working OpenOffice.org instance
-     * @param pPrj the project for which to generate the interfaces
-     * @param pTypesFile the project types.rdb path
-     * @param pBuildFolder the path to the folder where to the files will
-     *         be generated
-     * @param pRootModule the project root module (eg: <code>foo::bar</code>)
-     * @param pMonitor the progress monitor
+     * @param pSdk
+     *            the SDK containing the tools for generation
+     * @param pOoo
+     *            the working OpenOffice.org instance
+     * @param pPrj
+     *            the project for which to generate the interfaces
+     * @param pTypesFile
+     *            the project types.rdb path
+     * @param pBuildFolder
+     *            the path to the folder where to the files will be generated
+     * @param pRootModule
+     *            the project root module (eg: <code>foo::bar</code>)
+     * @param pMonitor
+     *            the progress monitor
      */
-    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
-                    File pBuildFolder, String pRootModule, IProgressMonitor pMonitor);
+    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile, File pBuildFolder,
+        String pRootModule, IProgressMonitor pMonitor);
 
     /**
      * Adds all the language specific libraries to the UNO package.
      *
-     * @param pUnoPackage the UNO package to complete
-     * @param pPrj the project to package
+     * @param pUnoPackage
+     *            the UNO package to complete
+     * @param pPrj
+     *            the project to package
      */
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pPrj);
 }

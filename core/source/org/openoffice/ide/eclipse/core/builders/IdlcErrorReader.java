@@ -68,18 +68,21 @@ public class IdlcErrorReader {
     /**
      * Include error regular expression.
      *
-     * <p><em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find
-     * include file &lt;missing include&gt;</em></p>
+     * <p>
+     * <em>cpp: &lt;file&gt;:&lt;line number&gt; some text Could not find
+     * include file &lt;missing include&gt;</em>
+     * </p>
      */
     private static final String R_IDLCPP_ERROR = "cpp: (\\S+):([0-9]+)(.*:[0-9]+)? (.*)"; //$NON-NLS-1$
 
     /**
      * Syntax error expression.
      *
-     * <p><em>&lt;file&gt;:&lt;line number&gt; [&lt;offsetStart&gt;,&lt;offsetEnd&gt;] : &lt;message&gt;</em></p>
+     * <p>
+     * <em>&lt;file&gt;:&lt;line number&gt; [&lt;offsetStart&gt;,&lt;offsetEnd&gt;] : &lt;message&gt;</em>
+     * </p>
      */
-    private static final String R_IDLC_ERROR  = "(.*):([0-9]+) \\[([0-9]+):([0-9]+)\\] :" +
-                    " (WARNING, )?(.*)"; //$NON-NLS-1$
+    private static final String R_IDLC_ERROR = "(.*):([0-9]+) \\[([0-9]+):([0-9]+)\\] :" + " (WARNING, )?(.*)"; //$NON-NLS-2$
 
     private static final int IDLC_ERROR_LINE_GROUP = 2;
     private static final int IDLC_ERROR_OFFSET_START_GROUP = 3;
@@ -104,10 +107,12 @@ public class IdlcErrorReader {
     /**
      * Constructor.
      *
-     * @param pStream the error stream to read
-     * @param pFile the built IDL file
+     * @param pStream
+     *            the error stream to read
+     * @param pFile
+     *            the built IDL file
      */
-    public IdlcErrorReader (InputStream pStream, IFile pFile) {
+    public IdlcErrorReader(InputStream pStream, IFile pFile) {
         mIn = new InputStreamReader(pStream);
         mReader = new LineNumberReader(mIn);
         mCompiledFile = pFile;
@@ -120,9 +125,7 @@ public class IdlcErrorReader {
 
         try {
             // Cleans the idlc error previously added
-            mCompiledFile.deleteMarkers(
-                            IMarker.PROBLEM, true,
-                            IResource.DEPTH_INFINITE);
+            mCompiledFile.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 
             // Read each line until the stream end (null line)
             String line = mReader.readLine();
@@ -141,11 +144,9 @@ public class IdlcErrorReader {
                 if (null != marker) {
                     // Keep only the markers for the errors concerning the
                     // file which is compiled
-                    if (IResource.FILE == marker.getResource().getType() &&
-                                    !marker.getResource().getProjectRelativePath().
-                                    toString().equals(
-                                                    mCompiledFile.getProjectRelativePath().
-                                                    toString())) {
+                    if (IResource.FILE == marker.getResource().getType()
+                        && !marker.getResource().getProjectRelativePath().toString()
+                            .equals(mCompiledFile.getProjectRelativePath().toString())) {
                         marker.delete();
                     }
                 }
@@ -153,12 +154,10 @@ public class IdlcErrorReader {
                 line = mReader.readLine();
             }
         } catch (IOException e) {
-            PluginLogger.error(
-                            Messages.getString("IdlcErrorReader.ErrorReadingError"), e); //$NON-NLS-1$
+            PluginLogger.error(Messages.getString("IdlcErrorReader.ErrorReadingError"), e); //$NON-NLS-1$
         } catch (CoreException e) {
-            PluginLogger.error(
-                            Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
-                            + mCompiledFile.getProjectRelativePath().toString(), e);
+            PluginLogger.error(Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
+                + mCompiledFile.getProjectRelativePath().toString(), e);
         } finally {
             try {
                 mReader.close();
@@ -169,13 +168,14 @@ public class IdlcErrorReader {
     }
 
     /**
-     * <p>Method that analyzes the error line and return the appropriate
-     * marker if it is possible.</p>
+     * <p>
+     * Method that analyzes the error line and return the appropriate marker if it is possible.
+     * </p>
      *
-     * @param pLine error line to analyse
-     * @return the corresponding marker if the line is an <code>idlc</code> error line.
-     *             <code>null</code> if there were problems by creating the
-     *             marker or if the line isn't an <code>idlc</code> error line.
+     * @param pLine
+     *            error line to analyse
+     * @return the corresponding marker if the line is an <code>idlc</code> error line. <code>null</code> if there were
+     *         problems by creating the marker or if the line isn't an <code>idlc</code> error line.
      */
     private IMarker analyseIdlcError(String pLine) {
         IMarker marker = null;
@@ -207,14 +207,13 @@ public class IdlcErrorReader {
 
             IFile file = project.getFile(filePath);
             try {
-                int severity  = IMarker.SEVERITY_WARNING;
+                int severity = IMarker.SEVERITY_WARNING;
                 if (error) {
                     severity = IMarker.SEVERITY_ERROR;
                 }
 
                 marker = file.createMarker(IMarker.PROBLEM);
-                marker.setAttribute(IMarker.SEVERITY,
-                                severity);
+                marker.setAttribute(IMarker.SEVERITY, severity);
                 marker.setAttribute(IMarker.MESSAGE, message);
                 marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
                 marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
@@ -227,15 +226,14 @@ public class IdlcErrorReader {
                 // But afterwards, pay attention when the marker should be located under
                 // the bad words
 
-                int lineOffset = getLineOffset( lineNo );
+                int lineOffset = getLineOffset(lineNo);
 
                 marker.setAttribute(IMarker.CHAR_START, lineOffset + offsetStart - 1);
-                marker.setAttribute(IMarker.CHAR_END,  lineOffset + offsetEnd);
+                marker.setAttribute(IMarker.CHAR_END, lineOffset + offsetEnd);
 
             } catch (CoreException e) {
-                PluginLogger.error(
-                                Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
-                                + file.getProjectRelativePath().toString(), e);
+                PluginLogger.error(Messages.getString("IdlcErrorReader.MarkerCreationError") //$NON-NLS-1$
+                    + file.getProjectRelativePath().toString(), e);
             }
         }
 
@@ -243,13 +241,14 @@ public class IdlcErrorReader {
     }
 
     /**
-     * <p>Method that analyzes the IDLC preprocessor error line and return the appropriate
-     * marker if it is possible.</p>
+     * <p>
+     * Method that analyzes the IDLC preprocessor error line and return the appropriate marker if it is possible.
+     * </p>
      *
-     * @param pLine error line to analyse
-     * @return the corresponding marker if the line is an <code>idlc</code> error line.
-     *             <code>null</code> if there were problems by creating the
-     *             marker or if the line isn't an <code>idlc</code> error line.
+     * @param pLine
+     *            error line to analyse
+     * @return the corresponding marker if the line is an <code>idlc</code> error line. <code>null</code> if there were
+     *         problems by creating the marker or if the line isn't an <code>idlc</code> error line.
      */
     private IMarker analyseIdlcppError(String pLine) {
         IMarker marker = null;
@@ -286,7 +285,7 @@ public class IdlcErrorReader {
                     marker.setAttribute(IMarker.LINE_NUMBER, lineNo);
                     marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 
-                    int lineOffset = getLineOffset( lineNo );
+                    int lineOffset = getLineOffset(lineNo);
 
                     marker.setAttribute(IMarker.CHAR_START, lineOffset);
                     marker.setAttribute(IMarker.CHAR_END, lineOffset + getLineLength(lineNo));
@@ -303,17 +302,17 @@ public class IdlcErrorReader {
     /**
      * Get the offset of the line relatively to the document beginning.
      *
-     * @param pLine the line number
+     * @param pLine
+     *            the line number
      *
      * @return the computed offset
      */
-    private int getLineOffset( int pLine ) {
+    private int getLineOffset(int pLine) {
         int offset = 0;
 
         try {
             // Get the line offset.
-            LineNumberReader fileReader = new LineNumberReader(
-                            new InputStreamReader(mCompiledFile.getContents()));
+            LineNumberReader fileReader = new LineNumberReader(new InputStreamReader(mCompiledFile.getContents()));
 
             for (int i = 0, length = pLine - 1; i < length; i++) {
                 String tmpLine = fileReader.readLine();
@@ -329,17 +328,17 @@ public class IdlcErrorReader {
     /**
      * Get the length of the line.
      *
-     * @param pLine the line number
+     * @param pLine
+     *            the line number
      *
      * @return the length
      */
-    private int getLineLength( int pLine ) {
+    private int getLineLength(int pLine) {
         int lineLen = 0;
 
         try {
             // Get the line offset.
-            LineNumberReader fileReader = new LineNumberReader(
-                            new InputStreamReader(mCompiledFile.getContents()));
+            LineNumberReader fileReader = new LineNumberReader(new InputStreamReader(mCompiledFile.getContents()));
 
             for (int i = 0, length = pLine - 1; i < length; i++) {
                 fileReader.readLine();

@@ -103,11 +103,12 @@ public class PackageDescriptionSection extends SectionPart {
     /**
      * Constructor.
      *
-     * @param pPage the package page where to create the section
+     * @param pPage
+     *            the package page where to create the section
      */
     public PackageDescriptionSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(),
-                        pPage.getManagedForm().getToolkit(), ExpandableComposite.TITLE_BAR);
+        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+            ExpandableComposite.TITLE_BAR);
 
         mPage = pPage;
 
@@ -136,15 +137,11 @@ public class PackageDescriptionSection extends SectionPart {
         localeCol.setWidth(LOCALE_WIDTH);
 
         mTableViewer = new TableViewer(table);
-        mTableViewer.setColumnProperties(new String[]{P_NAME, P_LOCALE});
-        mTableViewer.setCellEditors(new CellEditor[]{
-                        null,
-                        new LocaleCellProvider(table)
-        });
+        mTableViewer.setColumnProperties(new String[] { P_NAME, P_LOCALE });
+        mTableViewer.setCellEditors(new CellEditor[] { null, new LocaleCellProvider(table) });
         mTableViewer.setContentProvider(new DescrContentProvider());
         mTableViewer.setLabelProvider(new DescrLabelProvider());
         mTableViewer.setCellModifier(new DescrCellModifier());
-
 
         // Add the buttons here
         createButtons(clientArea);
@@ -171,7 +168,8 @@ public class PackageDescriptionSection extends SectionPart {
     /**
      * Set the package descriptions to show in the section.
      *
-     * @param pDescriptions the descriptions to show.
+     * @param pDescriptions
+     *            the descriptions to show.
      */
     public void setDescriptions(Map<Locale, IFile> pDescriptions) {
         mDescriptions.clear();
@@ -188,7 +186,7 @@ public class PackageDescriptionSection extends SectionPart {
      * Tells the listeners when the descriptions have changed.
      */
     private void fireSectionModified() {
-        PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
+        PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
 
         Map<Locale, IFile> descriptions = getDescriptions();
         editor.getModel().clearDescriptions();
@@ -202,25 +200,26 @@ public class PackageDescriptionSection extends SectionPart {
     /**
      * Create the buttons of the section.
      *
-     * @param pParent the composite where to create the buttons
+     * @param pParent
+     *            the composite where to create the buttons
      */
     private void createButtons(Composite pParent) {
         Composite buttons = mPage.getManagedForm().getToolkit().createComposite(pParent);
         buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         buttons.setLayout(new GridLayout());
 
-        Button add = mPage.getManagedForm().getToolkit().createButton(
-                        buttons, Messages.getString("PackageDescriptionSection.AddButton"), SWT.PUSH); //$NON-NLS-1$
+        Button add = mPage.getManagedForm().getToolkit().createButton(buttons,
+            Messages.getString("PackageDescriptionSection.AddButton"), SWT.PUSH); //$NON-NLS-1$
         add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
         add.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
                 // Open the folder chooser dialog and refresh the table
                 IProject prj = mPage.getProject();
-                PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
+                PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
 
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog(prj,
-                                Messages.getString("PackageDescriptionSection.AddDescription")); //$NON-NLS-1$
+                    Messages.getString("PackageDescriptionSection.AddDescription")); //$NON-NLS-1$
 
                 ArrayList<IResource> hiddenResources = new ArrayList<IResource>();
                 hiddenResources.add(prj.getFolder("build")); //$NON-NLS-1$
@@ -236,7 +235,7 @@ public class PackageDescriptionSection extends SectionPart {
                 if (Window.OK == dlg.open()) {
                     IResource res = dlg.getSelected();
                     if (res instanceof IFile) {
-                        mDescriptions.put((IFile)res, Locale.getDefault());
+                        mDescriptions.put((IFile) res, Locale.getDefault());
                         mTableViewer.add(res);
                         mTableViewer.refresh();
                         fireSectionModified();
@@ -245,8 +244,8 @@ public class PackageDescriptionSection extends SectionPart {
             }
         });
 
-        Button del = mPage.getManagedForm().getToolkit().createButton(
-                        buttons, Messages.getString("PackageDescriptionSection.DelButton"), SWT.PUSH); //$NON-NLS-1$
+        Button del = mPage.getManagedForm().getToolkit().createButton(buttons,
+            Messages.getString("PackageDescriptionSection.DelButton"), SWT.PUSH); //$NON-NLS-1$
         del.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
         del.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -254,7 +253,7 @@ public class PackageDescriptionSection extends SectionPart {
                 // Delete the selected line
                 ISelection sel = mTableViewer.getSelection();
                 if (sel instanceof IStructuredSelection) {
-                    IStructuredSelection structuredSel = (IStructuredSelection)sel;
+                    IStructuredSelection structuredSel = (IStructuredSelection) sel;
                     Iterator<?> iter = structuredSel.iterator();
                     while (iter.hasNext()) {
                         Object o = iter.next();
@@ -332,9 +331,9 @@ public class PackageDescriptionSection extends SectionPart {
         public void modify(Object pElement, String pProperty, Object pValue) {
             if (pProperty.equals(P_LOCALE) && pValue instanceof Locale) {
                 if (pElement instanceof TableItem) {
-                    Object o = ((TableItem)pElement).getData();
+                    Object o = ((TableItem) pElement).getData();
                     if (o instanceof IFile) {
-                        mDescriptions.put((IFile)o, (Locale)pValue);
+                        mDescriptions.put((IFile) o, (Locale) pValue);
                         mTableViewer.refresh(o);
                         fireSectionModified();
                     }
@@ -357,7 +356,7 @@ public class PackageDescriptionSection extends SectionPart {
         public Image getColumnImage(Object pElement, int pColumnIndex) {
             Image image = null;
             if (pColumnIndex == 0 && pElement instanceof IAdaptable) {
-                IAdaptable adaptable = (IAdaptable)pElement;
+                IAdaptable adaptable = (IAdaptable) pElement;
                 IWorkbenchAdapter adapter = adaptable.getAdapter(IWorkbenchAdapter.class);
                 image = adapter.getImageDescriptor(pElement).createImage();
             }
@@ -371,7 +370,7 @@ public class PackageDescriptionSection extends SectionPart {
         public String getColumnText(Object pElement, int pColumnIndex) {
             String label = null;
             if (pColumnIndex == 0 && pElement instanceof IFile) {
-                label = ((IResource)pElement).getProjectRelativePath().toOSString();
+                label = ((IResource) pElement).getProjectRelativePath().toOSString();
             } else if (pColumnIndex == 1) {
                 label = mDescriptions.get(pElement).getDisplayName();
             }

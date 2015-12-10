@@ -49,29 +49,34 @@ public class PublisherInfos {
     public String getUrl() {
         return mUrl;
     }
+
     /**
-     * @param pUrl the url to set
+     * @param pUrl
+     *            the url to set
      */
     public void setUrl(String pUrl) {
         mUrl = pUrl;
-        if ( mUrl != null ) {
-            mUrl = mUrl.trim( );
+        if (mUrl != null) {
+            mUrl = mUrl.trim();
         }
         mModel.fireModelChanged();
     }
+
     /**
      * @return the name
      */
     public String getName() {
         return mName;
     }
+
     /**
-     * @param pName the name to set
+     * @param pName
+     *            the name to set
      */
     public void setName(String pName) {
         mName = pName;
-        if ( mName != null ) {
-            mName = mName.trim( );
+        if (mName != null) {
+            mName = mName.trim();
         }
         mModel.fireModelChanged();
     }
@@ -79,9 +84,10 @@ public class PublisherInfos {
     /**
      * Set the description model in order to be able to fire the model changes.
      *
-     * @param pModel the parent model
+     * @param pModel
+     *            the parent model
      */
-    protected void setModel( DescriptionModel pModel ) {
+    protected void setModel(DescriptionModel pModel) {
         mModel = pModel;
     }
 }

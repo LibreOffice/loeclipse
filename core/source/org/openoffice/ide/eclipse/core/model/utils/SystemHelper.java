@@ -73,37 +73,41 @@ public class SystemHelper {
     /**
      * Get a normal Java File from an Eclipse IResource.
      *
-     * @param pRes the IResource to convert
+     * @param pRes
+     *            the IResource to convert
      *
      * @return the equivalent File
      */
-    public static File getFile( IResource pRes ) {
+    public static File getFile(IResource pRes) {
         return pRes.getLocation().toFile();
     }
 
     /**
      * Get a normal Java File from an {@link IUnoidlProject}.
      *
-     * @param pPrj {@link IUnoidlProject} to convert
+     * @param pPrj
+     *            {@link IUnoidlProject} to convert
      *
      * @return the equivalent File
      */
-    public static File getFile( IUnoidlProject pPrj ) {
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pPrj.getName() );
-        return getFile( prj );
+    public static File getFile(IUnoidlProject pPrj) {
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
+        return getFile(prj);
     }
 
     /**
      * Add an environment variable to an array of existing variables.
      *
-     * @param pEnv the array of existing environment variables where to add the
-     *         new variable
-     * @param pName the name of the variable to add
-     * @param pValue    the value of the variable to add
+     * @param pEnv
+     *            the array of existing environment variables where to add the new variable
+     * @param pName
+     *            the name of the variable to add
+     * @param pValue
+     *            the value of the variable to add
      *
      * @return the completed array
      */
-    public static String[] addPathEnv( String[] pEnv, String pName, String[] pValue ) {
+    public static String[] addPathEnv(String[] pEnv, String pName, String[] pValue) {
 
         String values = new String();
         for (int i = 0; i < pValue.length; i++) {
@@ -115,26 +119,28 @@ public class SystemHelper {
             values += tmpValue;
         }
 
-        return addEnv( pEnv, pName, values, PATH_SEPARATOR );
+        return addEnv(pEnv, pName, values, PATH_SEPARATOR);
     }
 
     /**
      * Add an environment variable to an array of existing variables.
      *
-     * @param pEnv the array of existing environment variables where to add the
-     *         new variable
-     * @param pName the name of the variable to add
-     * @param pValue    the value of the variable to add
-     * @param pSeparator the separator to use if there is already a variable with
-     *         the same name. If <code>null</code>, the old variable will be replaced
+     * @param pEnv
+     *            the array of existing environment variables where to add the new variable
+     * @param pName
+     *            the name of the variable to add
+     * @param pValue
+     *            the value of the variable to add
+     * @param pSeparator
+     *            the separator to use if there is already a variable with the same name. If <code>null</code>, the old
+     *            variable will be replaced
      *
      * @return the completed array
      */
-    public static String[] addEnv(String[] pEnv, String pName, String pValue,
-                    String pSeparator) {
+    public static String[] addEnv(String[] pEnv, String pName, String pValue, String pSeparator) {
         /*
-         * TODO cdan should add a test for this method
-         * (test that the case is preserved even on windows, but compare with ignoring case on windows)
+         * TODO cdan should add a test for this method (test that the case is preserved even on windows, but compare
+         * with ignoring case on windows)
          */
         String[] result = new String[1];
 
@@ -171,7 +177,7 @@ public class SystemHelper {
                 result[result.length - 1] = pName + "=" + pValue; //$NON-NLS-1$
             }
         } else {
-            result [0] = pName + "=" + pValue; //$NON-NLS-1$
+            result[0] = pName + "=" + pValue; //$NON-NLS-1$
         }
 
         return result;
@@ -185,7 +191,7 @@ public class SystemHelper {
         String[] sysEnv = new String[envSet.size()];
         Iterator<Entry<String, String>> iter = envSet.iterator();
         int i = 0;
-        while (iter.hasNext())  {
+        while (iter.hasNext()) {
             Entry<String, String> entry = iter.next();
             sysEnv[i] = entry.getKey() + "=" + entry.getValue(); //$NON-NLS-1$
             i++;
@@ -194,27 +200,32 @@ public class SystemHelper {
     }
 
     /**
-     * Run a shell command with the system environment and an optional execution
-     * directory.
+     * Run a shell command with the system environment and an optional execution directory.
      *
-     * @param pShellCommand the command to run
-     * @param pExecDir the execution directory or <code>null</code> if none
+     * @param pShellCommand
+     *            the command to run
+     * @param pExecDir
+     *            the execution directory or <code>null</code> if none
      * @return the process for the running command
-     * @throws IOException if anything wrong happens during the command launch
+     * @throws IOException
+     *             if anything wrong happens during the command launch
      */
     public static Process runToolWithSysEnv(String pShellCommand, File pExecDir) throws IOException {
         return runTool(pShellCommand, getSystemEnvironement(), pExecDir);
     }
 
     /**
-     * Run a shell command with a given environment and an optional execution
-     * directory.
+     * Run a shell command with a given environment and an optional execution directory.
      *
-     * @param pShellCommand the command to run
-     * @param pEnv the environment variables
-     * @param pExecDir the execution directory or <code>null</code> if none
+     * @param pShellCommand
+     *            the command to run
+     * @param pEnv
+     *            the environment variables
+     * @param pExecDir
+     *            the execution directory or <code>null</code> if none
      * @return the process for the running command
-     * @throws IOException if anything wrong happens during the command launch
+     * @throws IOException
+     *             if anything wrong happens during the command launch
      */
     public static Process runTool(String pShellCommand, String[] pEnv, File pExecDir) throws IOException {
         String[] command = new String[COMMAND_ARGS_LENGTH];
@@ -240,9 +251,9 @@ public class SystemHelper {
             execPath = " from dir: "; //$NON-NLS-1$
             execPath += pExecDir.getAbsolutePath();
         }
-        PluginLogger.debug("Running command: " + pShellCommand +  //$NON-NLS-1$
-                        " with env: " + Arrays.toString(pEnv) +  //$NON-NLS-1$
-                        execPath);
+        PluginLogger.debug("Running command: " + pShellCommand + //$NON-NLS-1$
+            " with env: " + Arrays.toString(pEnv) + //$NON-NLS-1$
+            execPath);
         Process process = null;
         if (pExecDir != null) {
             process = Runtime.getRuntime().exec(command, pEnv, pExecDir);

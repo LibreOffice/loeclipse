@@ -58,8 +58,9 @@ public class ManifestModel {
     /**
      * Add a file or directory to the package.
      *
-     * <p>This method doesn't know about the different languages contributions
-     * to the <code>manifest.xml</code> file.</p>
+     * <p>
+     * This method doesn't know about the different languages contributions to the <code>manifest.xml</code> file.
+     * </p>
      *
      * @param pContent
      *            the file or folder to add
@@ -78,7 +79,7 @@ public class ManifestModel {
         } else if (pContent.isDirectory()) {
             // Recurse on the directory
             for (File child : pContent.listFiles()) {
-                addContent(path + "/" + child.getName(), child );
+                addContent(path + "/" + child.getName(), child);
             }
         } else {
             throw new IllegalArgumentException("pContent [" + pContent + "] does not exists");
@@ -86,10 +87,9 @@ public class ManifestModel {
     }
 
     /**
-     * Add a uno component file, for example a jar, shared library or python
-     * file containing the uno implementation. The type of the file defines the
-     * language and should be given as defined in the OOo Developer's Guide,
-     * like Java, native, Python.
+     * Add a uno component file, for example a jar, shared library or python file containing the uno implementation. The
+     * type of the file defines the language and should be given as defined in the OOo Developer's Guide, like Java,
+     * native, Python.
      *
      * @param pFile
      *            the file to add to the package
@@ -103,19 +103,20 @@ public class ManifestModel {
     }
 
     /**
-     * Add a uno component file, for example a jar, shared library or python
-     * file containing the uno implementation.
+     * Add a uno component file, for example a jar, shared library or python file containing the uno implementation.
      *
-     * <p>The type of the file defines the language and should be given as
-     * defined in the OOo Developer's Guide, like Java, native, Python.</p>
+     * <p>
+     * The type of the file defines the language and should be given as defined in the OOo Developer's Guide, like Java,
+     * native, Python.
+     * </p>
      *
      * @param pFile
      *            the file to add to the package
      * @param pType
      *            the type of the file to add.
      * @param pPlatform
-     *            optional parameter to use only with native type. Please refer
-     *            to the OOo Developer's Guide for more information.
+     *            optional parameter to use only with native type. Please refer to the OOo Developer's Guide for more
+     *            information.
      */
     public void addComponentFile(String pFile, String pType, String pPlatform) {
         FileType type = new FileType(FileType.MIME_UNO_COMPONENT);
@@ -130,8 +131,9 @@ public class ManifestModel {
     /**
      * Add a type library to the package.
      *
-     * <p>Note that by some strange way, a jar dependency can be added in the
-     * package as a type library like RDB files.</p>
+     * <p>
+     * Note that by some strange way, a jar dependency can be added in the package as a type library like RDB files.
+     * </p>
      *
      * @param pFile
      *            the file to add
@@ -148,7 +150,9 @@ public class ManifestModel {
     /**
      * Add a basic library to the package.
      *
-     * <p>Even if this method may not be used, it is possible.</p>
+     * <p>
+     * Even if this method may not be used, it is possible.
+     * </p>
      *
      * @param pDir
      *            the directory of the basic library.
@@ -162,7 +166,9 @@ public class ManifestModel {
     /**
      * Add a dialog library to the package.
      *
-     * <p>Even if this method may not be used, it is possible.</p>
+     * <p>
+     * Even if this method may not be used, it is possible.
+     * </p>
      *
      * @param pDir
      *            the directory of the dialog library.
@@ -227,8 +233,7 @@ public class ManifestModel {
     }
 
     /**
-     * This is the generic method to add an element to the manifest: nothing is
-     * tested here.
+     * This is the generic method to add an element to the manifest: nothing is tested here.
      *
      * @param pRelativePath
      *            the path of the file relative to the package
@@ -253,17 +258,17 @@ public class ManifestModel {
      *             if something happened when writing to the output stream
      */
     public void write(OutputStream pOut) throws IOException {
-        //        Iterator<Entry<String, FileType>> iter = mEntries.entrySet().iterator();
-        //        String entryPattern = "\t<manifest:file-entry manifest:full-path=\"{0}\"" +
-        //                " manifest:media-type=\"{1}\"/>\n";
-        //        pOut.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
-        //        pOut.write("<manifest:manifest xmlns:manifest=\"http://openoffice.org/2001/manifest\">\n".getBytes());
-        //        while (iter.hasNext()) {
-        //            Entry<String, FileType> entry = iter.next();
-        //            pOut.write(MessageFormat.format(entryPattern, entry.getKey(), entry.getValue().toString()).getBytes());
-        //        }
-        //        pOut.write("</manifest:manifest>\n".getBytes());
-        //        pOut.flush();
+        // Iterator<Entry<String, FileType>> iter = mEntries.entrySet().iterator();
+        // String entryPattern = "\t<manifest:file-entry manifest:full-path=\"{0}\"" +
+        // " manifest:media-type=\"{1}\"/>\n";
+        // pOut.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
+        // pOut.write("<manifest:manifest xmlns:manifest=\"http://openoffice.org/2001/manifest\">\n".getBytes());
+        // while (iter.hasNext()) {
+        // Entry<String, FileType> entry = iter.next();
+        // pOut.write(MessageFormat.format(entryPattern, entry.getKey(), entry.getValue().toString()).getBytes());
+        // }
+        // pOut.write("</manifest:manifest>\n".getBytes());
+        // pOut.flush();
         write(new OutputStreamWriter(pOut));
         pOut.flush();
     }
@@ -271,13 +276,14 @@ public class ManifestModel {
     /**
      * Write the manifest file.
      *
-     * @param writer the writer
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param writer
+     *            the writer
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     public void write(Writer writer) throws IOException {
         Iterator<Entry<String, FileType>> iter = mEntries.entrySet().iterator();
-        String entryPattern = "\t<manifest:file-entry manifest:full-path=\"{0}\"" +
-                        " manifest:media-type=\"{1}\"/>\n";
+        String entryPattern = "\t<manifest:file-entry manifest:full-path=\"{0}\"" + " manifest:media-type=\"{1}\"/>\n";
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         writer.write("<manifest:manifest xmlns:manifest=\"http://openoffice.org/2001/manifest\">\n");
         while (iter.hasNext()) {

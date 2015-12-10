@@ -53,22 +53,23 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author Cédric Bosdonnat
  *
  */
-public class ReleaseNotesSection extends LocalizedSection< DescriptionModel > implements
-ILocaleListener {
+public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> implements ILocaleListener {
 
     private static final int LAYOUT_COLS = 2;
     private Text mUrlTxt;
 
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the parent page
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the parent page
      */
     public ReleaseNotesSection(Composite pParent, DescriptionFormPage pPage) {
-        super( pParent, pPage, ExpandableComposite.TITLE_BAR );
+        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
 
-        getSection().setText( Messages.getString("ReleaseNotesSection.Title") ); //$NON-NLS-1$
+        getSection().setText(Messages.getString("ReleaseNotesSection.Title")); //$NON-NLS-1$
 
-        setModel( pPage.getModel() );
+        setModel(pPage.getModel());
     }
 
     /**
@@ -76,9 +77,9 @@ ILocaleListener {
      */
     @Override
     public void loadData() {
-        getModel().setSuspendEvent( true );
-        mUrlTxt.setText( getModel().getReleaseNotes().get( mCurrentLocale ) );
-        getModel().setSuspendEvent( false );
+        getModel().setSuspendEvent(true);
+        mUrlTxt.setText(getModel().getReleaseNotes().get(mCurrentLocale));
+        getModel().setSuspendEvent(false);
     }
 
     /**
@@ -86,24 +87,23 @@ ILocaleListener {
      */
     @Override
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
-        pParent.setLayout( new GridLayout( LAYOUT_COLS, false ) );
+        pParent.setLayout(new GridLayout(LAYOUT_COLS, false));
 
-        Label descrLbl = pToolkit.createLabel( pParent,
-                        Messages.getString("ReleaseNotesSection.Description"),  //$NON-NLS-1$
-                        SWT.WRAP );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = pToolkit.createLabel(pParent, Messages.getString("ReleaseNotesSection.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
         // Url controls
-        pToolkit.createLabel( pParent, Messages.getString("ReleaseNotesSection.Url") ); //$NON-NLS-1$
-        mUrlTxt = pToolkit.createText( pParent, new String( ) );
-        mUrlTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mUrlTxt.setEnabled( false );
-        mUrlTxt.addModifyListener( new ModifyListener () {
+        pToolkit.createLabel(pParent, Messages.getString("ReleaseNotesSection.Url")); //$NON-NLS-1$
+        mUrlTxt = pToolkit.createText(pParent, new String());
+        mUrlTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mUrlTxt.setEnabled(false);
+        mUrlTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().addReleaseNote( mCurrentLocale, mUrlTxt.getText() );
+                getModel().addReleaseNote(mCurrentLocale, mUrlTxt.getText());
                 markDirty();
             }
         });
@@ -114,10 +114,10 @@ ILocaleListener {
      */
     @Override
     public void addLocale(Locale pLocale) {
-        if ( !getModel().getReleaseNotes().containsKey( pLocale ) ) {
-            getModel().addReleaseNote( pLocale, new String( ) );
+        if (!getModel().getReleaseNotes().containsKey(pLocale)) {
+            getModel().addReleaseNote(pLocale, new String());
         }
-        mUrlTxt.setEnabled( true );
+        mUrlTxt.setEnabled(true);
     }
 
     /**
@@ -125,9 +125,9 @@ ILocaleListener {
      */
     @Override
     public void deleteLocale(Locale pLocale) {
-        getModel().removeReleaseNote( pLocale );
-        if ( getModel().getReleaseNotes().isEmpty() ) {
-            mUrlTxt.setEnabled( false );
+        getModel().removeReleaseNote(pLocale);
+        if (getModel().getReleaseNotes().isEmpty()) {
+            mUrlTxt.setEnabled(false);
         }
     }
 
@@ -137,10 +137,10 @@ ILocaleListener {
     @Override
     public void selectLocale(Locale pLocale) {
 
-        if ( mCurrentLocale != null ) {
-            getModel().addReleaseNote( mCurrentLocale, mUrlTxt.getText() );
+        if (mCurrentLocale != null) {
+            getModel().addReleaseNote(mCurrentLocale, mUrlTxt.getText());
         }
         super.selectLocale(pLocale);
-        mUrlTxt.setText( getModel().getReleaseNotes().get( pLocale ) );
+        mUrlTxt.setText(getModel().getReleaseNotes().get(pLocale));
     }
 }

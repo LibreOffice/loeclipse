@@ -25,8 +25,8 @@
 package org.openoffice.plugin.core.utils;
 
 /**
- * The commons.lang dependency was removed but we need some stuff from the
- * StringUtils class. The missing functionality is recoded here.
+ * The commons.lang dependency was removed but we need some stuff from the StringUtils class. The missing functionality
+ * is recoded here.
  *
  * @author oliver (oliver.boehm@agentes.de)
  * @since 1.1.1 (08.12.2010)
@@ -34,12 +34,14 @@ package org.openoffice.plugin.core.utils;
 public class StringUtils {
 
     /** Utility class - no need to instantiate it. */
-    private StringUtils() {}
+    private StringUtils() {
+    }
 
     /**
      * Checks if the given string is not null and not empty.
      *
-     * @param str the string
+     * @param str
+     *            the string
      * @return true, if string is not empty
      */
     public static boolean isNotEmpty(final String str) {

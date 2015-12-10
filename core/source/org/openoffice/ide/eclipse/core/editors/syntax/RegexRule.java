@@ -64,11 +64,12 @@ public class RegexRule implements IRule {
     private char[][] mDelimiters;
 
     /**
-     * Constructor, initializing the token to return and the regex to
-     * match.
+     * Constructor, initializing the token to return and the regex to match.
      *
-     * @param pRegex the regular expression to match
-     * @param pToken the token to associate
+     * @param pRegex
+     *            the regular expression to match
+     * @param pToken
+     *            the token to associate
      */
     public RegexRule(String pRegex, IToken pToken) {
         mToken = pToken;
@@ -92,7 +93,7 @@ public class RegexRule implements IRule {
 
         do {
             c = pScanner.read();
-            line = line + new Character((char)c);
+            line = line + new Character((char) c);
             mCharReadNb++;
 
             if (!isEOL(c)) {
@@ -111,7 +112,7 @@ public class RegexRule implements IRule {
                 if (matchingBegun) {
                     matchingDone = true;
                     result = mToken;
-                    //scanner.unread();
+                    // scanner.unread();
                 }
             }
         } while (!isEOL(c) && !matchingDone);
@@ -134,15 +135,14 @@ public class RegexRule implements IRule {
     }
 
     /**
-     * Convenience method to determine if a character corresponds to an end
-     * of line.
+     * Convenience method to determine if a character corresponds to an end of line.
      *
-     * @param pChar the character to check
+     * @param pChar
+     *            the character to check
      *
-     * @return <code>true</code> if the character is an end of line,
-     *      <code>false</code> otherwise.
+     * @return <code>true</code> if the character is an end of line, <code>false</code> otherwise.
      */
-    protected boolean isEOL (int pChar) {
+    protected boolean isEOL(int pChar) {
         boolean isEol = false;
 
         for (int i = 0; i < mDelimiters.length; i++) {
@@ -154,15 +154,14 @@ public class RegexRule implements IRule {
     }
 
     /**
-     * Convenience method to determine if a character corresponds to an end
-     * of file.
+     * Convenience method to determine if a character corresponds to an end of file.
      *
-     * @param pChar the character to check
+     * @param pChar
+     *            the character to check
      *
-     * @return <code>true</code> if the character is an end of file,
-     *      <code>false</code> otherwise.
+     * @return <code>true</code> if the character is an end of file, <code>false</code> otherwise.
      */
-    protected boolean isEOF (int pChar) {
+    protected boolean isEOF(int pChar) {
         boolean result = false;
         if (ICharacterScanner.EOF == pChar) {
             result = true;

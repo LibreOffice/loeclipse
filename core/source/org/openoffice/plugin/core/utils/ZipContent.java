@@ -67,10 +67,12 @@ public class ZipContent {
     /**
      * Constructor.
      *
-     * @param pEntryName the name in the ZIP file
-     * @param pResource the file to put in the ZIP file.
+     * @param pEntryName
+     *            the name in the ZIP file
+     * @param pResource
+     *            the file to put in the ZIP file.
      */
-    public ZipContent( String pEntryName, File pResource ) {
+    public ZipContent(String pEntryName, File pResource) {
         mResource = pResource;
         mEntryName = pEntryName;
     }
@@ -85,13 +87,14 @@ public class ZipContent {
     /**
      * Write the ZIP entry to the given Zip output stream.
      *
-     * @param pOutput the stream where to write the entry data.
+     * @param pOutput
+     *            the stream where to write the entry data.
      */
     public void writeContentToZip(ZipOutputStream pOutput) {
 
         BufferedInputStream origin = null;
         try {
-            FileInputStream fi = new FileInputStream( mResource );
+            FileInputStream fi = new FileInputStream(mResource);
             origin = new BufferedInputStream(fi, BUFFER_SIZE);
 
             ZipEntry entry = new ZipEntry(mEntryName);
@@ -107,7 +110,8 @@ public class ZipContent {
             pOutput.closeEntry();
 
         } catch (IOException e) {
-            System.err.println("Problem when writing file to zip: " + mEntryName + " (" + e.getLocalizedMessage() + ")");
+            System.err.println(
+                "Problem when writing file to zip: " + mEntryName + " (" + e.getLocalizedMessage() + ")");
         } finally {
             // Close the file entry stream
             try {

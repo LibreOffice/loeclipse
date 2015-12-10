@@ -58,8 +58,8 @@ import org.eclipse.swt.widgets.Text;
 import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
- * GUI row for a file selection. It supports only the Grid Layout
- * and can be configured to select either a file or a directory.
+ * GUI row for a file selection. It supports only the Grid Layout and can be configured to select either a file or a
+ * directory.
  *
  * @author cedricbosdo
  *
@@ -72,14 +72,16 @@ public class FileRow extends LabeledRow {
     /**
      * File row constructor.
      *
-     * @param pParent composite parent of the row.
-     * @param pProperty property name used in field changing event.
-     * @param pLabel label to print on the left of the row.
-     * @param pDirectory if <code>true</code>, the field is a directory path,
-     *                  otherwise the field is a file path.
+     * @param pParent
+     *            composite parent of the row.
+     * @param pProperty
+     *            property name used in field changing event.
+     * @param pLabel
+     *            label to print on the left of the row.
+     * @param pDirectory
+     *            if <code>true</code>, the field is a directory path, otherwise the field is a file path.
      */
-    public FileRow (Composite pParent, String pProperty, String pLabel,
-                    boolean pDirectory) {
+    public FileRow(Composite pParent, String pProperty, String pLabel, boolean pDirectory) {
         super(pProperty);
 
         Label aLabel = new Label(pParent, SWT.SHADOW_NONE | SWT.LEFT);
@@ -87,8 +89,7 @@ public class FileRow extends LabeledRow {
 
         Text aField = new Text(pParent, SWT.BORDER);
 
-        createContent(pParent, aLabel, aField,
-                        Messages.getString("FileRow.Browse"), false); //$NON-NLS-1$
+        createContent(pParent, aLabel, aField, Messages.getString("FileRow.Browse"), false); //$NON-NLS-1$
 
         mField.addFocusListener(new FocusAdapter() {
             @Override
@@ -123,8 +124,7 @@ public class FileRow extends LabeledRow {
      * Open the File selection dialog.
      */
     protected void doOpenFileSelectionDialog() {
-        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().
-                        getActiveWorkbenchWindow().getShell();
+        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 
         String newFile = null;
 
@@ -167,13 +167,14 @@ public class FileRow extends LabeledRow {
     /**
      * Set a new value to the row.
      *
-     * @param pValue the new value
+     * @param pValue
+     *            the new value
      */
     public void setValue(String pValue) {
 
-        ((Text)mField).setText(pValue);
+        ((Text) mField).setText(pValue);
         mValue = pValue;
-        FieldEvent fe = new FieldEvent (getProperty(), getValue());
+        FieldEvent fe = new FieldEvent(getProperty(), getValue());
         fireFieldChangedEvent(fe);
     }
 }

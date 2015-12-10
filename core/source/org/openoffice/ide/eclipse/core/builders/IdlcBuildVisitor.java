@@ -54,8 +54,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
- * Class visiting each child of the idl folder to generate the corresponding
- * <code>urd</code> file.
+ * Class visiting each child of the idl folder to generate the corresponding <code>urd</code> file.
  *
  * @author cedricbosdo
  *
@@ -67,7 +66,8 @@ public class IdlcBuildVisitor implements IResourceVisitor {
     /**
      * Default constructor.
      *
-     * @param pMonitor progress monitor
+     * @param pMonitor
+     *            progress monitor
      */
     public IdlcBuildVisitor(IProgressMonitor pMonitor) {
         mProgressMonitor = pMonitor;
@@ -81,23 +81,21 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 
         boolean visitChildren = false;
         if (TypesBuilder.sBuildState == 1) {
-            if (IResource.FILE == pResource.getType() &&
-                            "idl".equals(pResource.getFileExtension())) { //$NON-NLS-1$
+            if (IResource.FILE == pResource.getType() && "idl".equals(pResource.getFileExtension())) { //$NON-NLS-1$
 
-                TypesBuilder.runIdlcOnFile((IFile)pResource, mProgressMonitor);
+                TypesBuilder.runIdlcOnFile((IFile) pResource, mProgressMonitor);
                 if (mProgressMonitor != null) {
                     mProgressMonitor.worked(1);
                 }
 
             } else if (pResource instanceof IContainer) {
 
-                IUnoidlProject project = ProjectsManager.getProject(
-                                pResource.getProject().getName());
+                IUnoidlProject project = ProjectsManager.getProject(pResource.getProject().getName());
                 IPath resPath = pResource.getProjectRelativePath();
                 IPath idlPath = project.getIdlPath();
 
-                if (resPath.segmentCount() < idlPath.segmentCount() ||
-                                resPath.toString().startsWith(idlPath.toString())) {
+                if (resPath.segmentCount() < idlPath.segmentCount()
+                    || resPath.toString().startsWith(idlPath.toString())) {
                     visitChildren = true;
                 }
             }

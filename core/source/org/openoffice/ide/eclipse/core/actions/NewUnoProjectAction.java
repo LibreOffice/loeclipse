@@ -64,13 +64,11 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 
     private IWorkbenchWindow mWindow;
 
-
     /**
      * Default constructor just initializing the action.
      */
     public NewUnoProjectAction() {
-        init(OOEclipsePlugin.getDefault().getWorkbench().
-                        getActiveWorkbenchWindow());
+        init(OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow());
     }
 
     /**
@@ -104,8 +102,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 
         Point size = dialog.getShell().getSize();
         Rectangle bounds = Display.getDefault().getClientArea();
-        dialog.getShell().setBounds((bounds.width - size.x) / 2,
-                        (bounds.height - size.y) / 2, size.x, size.y);
+        dialog.getShell().setBounds((bounds.width - size.x) / 2, (bounds.height - size.y) / 2, size.x, size.y);
 
     }
 

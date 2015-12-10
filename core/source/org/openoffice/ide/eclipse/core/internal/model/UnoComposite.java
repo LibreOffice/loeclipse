@@ -53,8 +53,7 @@ import java.util.regex.Pattern;
 import org.openoffice.ide.eclipse.core.model.IUnoComposite;
 
 /**
- * Implements the UNO-IDL model composite. This class could certainly be
- * rewritten using the Java Format tools.
+ * Implements the UNO-IDL model composite. This class could certainly be rewritten using the Java Format tools.
  *
  * @author cedricbosdo
  *
@@ -129,10 +128,8 @@ public class UnoComposite implements IUnoComposite {
     @Override
     public void setType(int pType) {
 
-        if (mType == COMPOSITE_TYPE_NOTSET &&
-                        (pType == COMPOSITE_TYPE_FILE ||
-                        pType == COMPOSITE_TYPE_FOLDER ||
-                        pType == COMPOSITE_TYPE_TEXT)) {
+        if (mType == COMPOSITE_TYPE_NOTSET && (pType == COMPOSITE_TYPE_FILE || pType == COMPOSITE_TYPE_FOLDER
+            || pType == COMPOSITE_TYPE_TEXT)) {
 
             mType = pType;
         }
@@ -252,7 +249,6 @@ public class UnoComposite implements IUnoComposite {
     @Override
     public String toString() {
 
-
         String result = new String();
 
         if (mType == COMPOSITE_TYPE_TEXT) {
@@ -280,7 +276,7 @@ public class UnoComposite implements IUnoComposite {
 
                     Matcher matcher = Pattern.compile("\\$\\{(\\w+)\\}").matcher(parti); //$NON-NLS-1$
                     if (matcher.matches()) {
-                        result =  result + mProperties.get(matcher.group(1));
+                        result = result + mProperties.get(matcher.group(1));
                     } else {
                         result = result + parti;
                     }
@@ -300,9 +296,12 @@ public class UnoComposite implements IUnoComposite {
     /**
      * Indent each line of a text with a <code>"\t"</code>.
      *
-     * <p>Do not add a <code>\t</code> between <code>\n\n</code> or <code>\n$</code></p>
+     * <p>
+     * Do not add a <code>\t</code> between <code>\n\n</code> or <code>\n$</code>
+     * </p>
      *
-     * @param pToIndent the text to indent.
+     * @param pToIndent
+     *            the text to indent.
      *
      * @return the indented text
      */
@@ -315,8 +314,8 @@ public class UnoComposite implements IUnoComposite {
                 // '\n' found
                 if (pToIndent.charAt(i) == '\n' && i != pToIndent.length() - 1 && pToIndent.charAt(i + 1) != '\n') {
 
-                    pToIndent = pToIndent.substring(0, i + 1) + "\t" +  //$NON-NLS-1$
-                                    pToIndent.substring(i + 1);
+                    pToIndent = pToIndent.substring(0, i + 1) + "\t" + //$NON-NLS-1$
+                        pToIndent.substring(i + 1);
                 }
             }
             pToIndent = "\t" + pToIndent; //$NON-NLS-1$
@@ -327,26 +326,27 @@ public class UnoComposite implements IUnoComposite {
     /**
      * splits the template into text parts and variables.
      *
-     * <p>The state machine has two states: <em>TEXT_STATE</em> or
-     * <em>VARIABLE_STATE</em> if the last string found was <code>"${"</code>
-     * or <code>"}"</code>.</p>
+     * <p>
+     * The state machine has two states: <em>TEXT_STATE</em> or <em>VARIABLE_STATE</em> if the last string found was
+     * <code>"${"</code> or <code>"}"</code>.
+     * </p>
      *
-     * <p>At the beginning the string is assumed to be in <em>TEXT_STATE</em>. The
-     * template copy will be checked for the substrings <code>"${"</code> or
-     * <code>"}"</code> depending on the state. On each substring discovery, the
+     * <p>
+     * At the beginning the string is assumed to be in <em>TEXT_STATE</em>. The template copy will be checked for the
+     * substrings <code>"${"</code> or <code>"}"</code> depending on the state. On each substring discovery, the
      * following operations will be done:
+     * 
      * <pre>
      *     pos = templateCopy position of the substring
      *     parts.add(templateCopy before pos)
      *     templateCopy = templateCopy from pos
      * </pre>
-     * And the loop will be executed until the <code>templateCopy</code> is empty
-     * or the substring is not found. In such a case the operation will depend on
-     * the current state:
+     * 
+     * And the loop will be executed until the <code>templateCopy</code> is empty or the substring is not found. In such
+     * a case the operation will depend on the current state:
      * <ul>
-     *     <li><em>TEXT_STATE</em>: templateCopy is added as the last part</li>
-     *     <li><em>VARIABLE_STATE</em>: adds a <code>"}"</code> before to add as
-     *          the last part</li>
+     * <li><em>TEXT_STATE</em>: templateCopy is added as the last part</li>
+     * <li><em>VARIABLE_STATE</em>: adds a <code>"}"</code> before to add as the last part</li>
      * </ul>
      * </p>
      *
@@ -359,7 +359,7 @@ public class UnoComposite implements IUnoComposite {
 
         /*
          */
-        final int TEXT_STATE     = 0;
+        final int TEXT_STATE = 0;
         final int VARIABLE_STATE = 1;
 
         int state = TEXT_STATE;
@@ -392,7 +392,7 @@ public class UnoComposite implements IUnoComposite {
 
         // manages the last part
         if (state == VARIABLE_STATE && !templateCopy.equals("") && //$NON-NLS-1$
-                        !templateCopy.endsWith("}")) { //$NON-NLS-1$
+            !templateCopy.endsWith("}")) { //$NON-NLS-1$
             templateCopy += "}"; //$NON-NLS-1$
         }
 

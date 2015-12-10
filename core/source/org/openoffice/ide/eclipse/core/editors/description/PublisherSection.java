@@ -53,22 +53,24 @@ import org.openoffice.ide.eclipse.core.model.description.PublisherInfos;
  * @author Cédric Bosdonnat
  *
  */
-public class PublisherSection extends LocalizedSection< DescriptionModel > {
+public class PublisherSection extends LocalizedSection<DescriptionModel> {
 
     private static final int LAYOUT_COLS = 2;
     private Text mUrlTxt;
     private Text mNameTxt;
 
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the parent page
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the parent page
      */
     public PublisherSection(Composite pParent, DescriptionFormPage pPage) {
-        super( pParent, pPage, ExpandableComposite.TITLE_BAR );
+        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
 
-        getSection().setText( Messages.getString("PublisherSection.Title") ); //$NON-NLS-1$
+        getSection().setText(Messages.getString("PublisherSection.Title")); //$NON-NLS-1$
 
-        setModel( pPage.getModel() );
+        setModel(pPage.getModel());
     }
 
     /**
@@ -76,11 +78,11 @@ public class PublisherSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void loadData() {
-        getModel().setSuspendEvent( true );
-        PublisherInfos pubInfos = getModel().getPublisherInfos().get( mCurrentLocale );
-        mUrlTxt.setText( pubInfos.getUrl() );
-        mNameTxt.setText( pubInfos.getName() );
-        getModel().setSuspendEvent( false );
+        getModel().setSuspendEvent(true);
+        PublisherInfos pubInfos = getModel().getPublisherInfos().get(mCurrentLocale);
+        mUrlTxt.setText(pubInfos.getUrl());
+        mNameTxt.setText(pubInfos.getName());
+        getModel().setSuspendEvent(false);
     }
 
     /**
@@ -89,39 +91,38 @@ public class PublisherSection extends LocalizedSection< DescriptionModel > {
     @Override
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
 
-        pParent.setLayout( new GridLayout( LAYOUT_COLS, false ) );
+        pParent.setLayout(new GridLayout(LAYOUT_COLS, false));
 
-        Label descrLbl = pToolkit.createLabel( pParent,
-                        Messages.getString("PublisherSection.Description"),  //$NON-NLS-1$
-                        SWT.WRAP );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = pToolkit.createLabel(pParent, Messages.getString("PublisherSection.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
         // Name controls
-        pToolkit.createLabel( pParent, Messages.getString("PublisherSection.Name") ); //$NON-NLS-1$
-        mNameTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
-        mNameTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mNameTxt.setEnabled( false );
-        mNameTxt.addModifyListener( new ModifyListener () {
+        pToolkit.createLabel(pParent, Messages.getString("PublisherSection.Name")); //$NON-NLS-1$
+        mNameTxt = pToolkit.createText(pParent, ""); //$NON-NLS-1$
+        mNameTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mNameTxt.setEnabled(false);
+        mNameTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                PublisherInfos infos = getModel().getPublisherInfos().get( mCurrentLocale );
-                infos.setName( mNameTxt.getText() );
+                PublisherInfos infos = getModel().getPublisherInfos().get(mCurrentLocale);
+                infos.setName(mNameTxt.getText());
                 markDirty();
             }
         });
 
         // Url controls
-        pToolkit.createLabel( pParent, Messages.getString("PublisherSection.Url") ); //$NON-NLS-1$
-        mUrlTxt = pToolkit.createText( pParent, "" ); //$NON-NLS-1$
-        mUrlTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mUrlTxt.setEnabled( false );
-        mUrlTxt.addModifyListener( new ModifyListener () {
+        pToolkit.createLabel(pParent, Messages.getString("PublisherSection.Url")); //$NON-NLS-1$
+        mUrlTxt = pToolkit.createText(pParent, ""); //$NON-NLS-1$
+        mUrlTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mUrlTxt.setEnabled(false);
+        mUrlTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                PublisherInfos infos = getModel().getPublisherInfos().get( mCurrentLocale );
-                infos.setUrl( mUrlTxt.getText() );
+                PublisherInfos infos = getModel().getPublisherInfos().get(mCurrentLocale);
+                infos.setUrl(mUrlTxt.getText());
                 markDirty();
             }
         });
@@ -132,11 +133,11 @@ public class PublisherSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void addLocale(Locale pLocale) {
-        if ( !getModel().getPublisherInfos().containsKey( pLocale ) ) {
-            getModel().addPublisherInfo( pLocale, new PublisherInfos( ) );
+        if (!getModel().getPublisherInfos().containsKey(pLocale)) {
+            getModel().addPublisherInfo(pLocale, new PublisherInfos());
         }
-        mNameTxt.setEnabled( true );
-        mUrlTxt.setEnabled( true );
+        mNameTxt.setEnabled(true);
+        mUrlTxt.setEnabled(true);
     }
 
     /**
@@ -144,10 +145,10 @@ public class PublisherSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void deleteLocale(Locale pLocale) {
-        getModel().removePublisherInfo( pLocale );
-        if ( getModel().getPublisherInfos().isEmpty() ) {
-            mNameTxt.setEnabled( false );
-            mUrlTxt.setEnabled( false );
+        getModel().removePublisherInfo(pLocale);
+        if (getModel().getPublisherInfos().isEmpty()) {
+            mNameTxt.setEnabled(false);
+            mUrlTxt.setEnabled(false);
         }
     }
 
@@ -157,14 +158,14 @@ public class PublisherSection extends LocalizedSection< DescriptionModel > {
     @Override
     public void selectLocale(Locale pLocale) {
 
-        if ( mCurrentLocale != null ) {
-            PublisherInfos infos = getModel().getPublisherInfos().get( mCurrentLocale );
-            infos.setName( mNameTxt.getText() );
-            infos.setUrl( mUrlTxt.getText() );
+        if (mCurrentLocale != null) {
+            PublisherInfos infos = getModel().getPublisherInfos().get(mCurrentLocale);
+            infos.setName(mNameTxt.getText());
+            infos.setUrl(mUrlTxt.getText());
         }
         super.selectLocale(pLocale);
-        PublisherInfos infos = getModel().getPublisherInfos().get( pLocale );
-        mNameTxt.setText( infos.getName() );
-        mUrlTxt.setText( infos.getUrl() );
+        PublisherInfos infos = getModel().getPublisherInfos().get(pLocale);
+        mNameTxt.setText(infos.getName());
+        mUrlTxt.setText(infos.getUrl());
     }
 }

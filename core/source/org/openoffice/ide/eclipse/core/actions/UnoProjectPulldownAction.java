@@ -48,6 +48,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Pulldown action for the uno projects. The wizard has to be defined as follows:
+ * 
  * <pre>
  *        &lt;wizard
  *           canFinishEarly="false"

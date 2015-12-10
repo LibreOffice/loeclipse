@@ -62,8 +62,7 @@ public interface IUnoidlProject {
     public static final String DESCRIPTION_FILENAME = "description.xml"; //$NON-NLS-1$
 
     /**
-     * <code>org.openoffice.ide.eclipse.idlfolder</code> is a
-     * persistent folder property that determines whether the
+     * <code>org.openoffice.ide.eclipse.idlfolder</code> is a persistent folder property that determines whether the
      * folder can contain unoidl files or not.
      */
     public static final String IDL_FOLDER = "idlfolder"; //$NON-NLS-1$
@@ -77,7 +76,7 @@ public interface IUnoidlProject {
      */
     public void dispose();
 
-    //---------------------------------------------------- Properties accessors
+    // ---------------------------------------------------- Properties accessors
 
     /**
      * @return the project implementation language.
@@ -100,56 +99,66 @@ public interface IUnoidlProject {
     public ISdk getSdk();
 
     /**
-     * Set the language of the project implementation. This method can
-     * be called only once on a project to avoid project nature problems.
+     * Set the language of the project implementation. This method can be called only once on a project to avoid project
+     * nature problems.
      *
-     * @param pLanguage the new language
+     * @param pLanguage
+     *            the new language
      */
     public void setLanguage(AbstractLanguage pLanguage);
 
     /**
      * Sets the selected LibreOffice.
      *
-     * @param pOOo the selected LibreOffice
+     * @param pOOo
+     *            the selected LibreOffice
      */
     public void setOOo(IOOo pOOo);
 
     /**
      * Sets the selected SDK.
      *
-     * @param pSdk the selected SDK
+     * @param pSdk
+     *            the selected SDK
      */
     public void setSdk(ISdk pSdk);
 
     /**
      * Set a property to the project.
      *
-     * <p>This can be used by plugins to set their own properties on the project.</p>
+     * <p>
+     * This can be used by plugins to set their own properties on the project.
+     * </p>
      *
-     * @param pName the property name
-     * @param pValue the property value
+     * @param pName
+     *            the property name
+     * @param pValue
+     *            the property value
      */
     public void setProperty(String pName, String pValue);
 
     /**
      * Get a project's property.
      *
-     * <p>This can be used by plugins to get their own properties from the project.</p>
+     * <p>
+     * This can be used by plugins to get their own properties from the project.
+     * </p>
      *
-     * @param pName the property name
-     * @return the value of the property or <code>null</code> if it doesn't
-     *         exists
+     * @param pName
+     *            the property name
+     * @return the value of the property or <code>null</code> if it doesn't exists
      */
     public String getProperty(String pName);
 
-    //-------------------------------------------------------- Config accessors
+    // -------------------------------------------------------- Config accessors
 
     /**
      * Gets the root module of the project.
      *
-     * <p>It corresponds to the prefix transformed as an idl scoped name. For example, if
-     * the company prefix is set to <code>foo.bar</code>, the root module will be
-     * <code>foo::bar</code>.</p>
+     * <p>
+     * It corresponds to the prefix transformed as an idl scoped name. For example, if the company prefix is set to
+     * <code>foo.bar</code>, the root module will be <code>foo::bar</code>.
+     * </p>
      *
      * @return the root module of the project
      */
@@ -158,9 +167,10 @@ public interface IUnoidlProject {
     /**
      * Gets the root module path of the project.
      *
-     * <p>It corresponds to the path to the root module definition. For example, if
-     * the company prefix is set to <code>foo.bar</code>, the root module path will be
-     * <code>idl/foo/bar</code>.</p>
+     * <p>
+     * It corresponds to the path to the root module definition. For example, if the company prefix is set to
+     * <code>foo.bar</code>, the root module path will be <code>idl/foo/bar</code>.
+     * </p>
      *
      * @return the root module path of the project
      */
@@ -169,14 +179,14 @@ public interface IUnoidlProject {
     /**
      * Sets the company prefix.
      *
-     * @param pPrefix new company prefix
+     * @param pPrefix
+     *            new company prefix
      */
     public void setCompanyPrefix(String pPrefix);
 
     /**
-     * Returns the company prefix used in the idl modules and implementation
-     * trees. For example, it could be <code>org.openoffice</code> for any code
-     * created by the LibreOffice community.
+     * Returns the company prefix used in the idl modules and implementation trees. For example, it could be
+     * <code>org.openoffice</code> for any code created by the LibreOffice community.
      *
      * @return the company prefix
      */
@@ -185,38 +195,38 @@ public interface IUnoidlProject {
     /**
      * Sets the output extension.
      *
-     * @param pOutputExt new output extension to set
+     * @param pOutputExt
+     *            new output extension to set
      */
     public void setOutputExtension(String pOutputExt);
 
     /**
      * Returns the package or namespace name used for the implementation.
      *
-     * <p>If the company prefix is <code>org.openoffice</code> and the output
-     * extension is <code>comp</code>, then the implementation namespace will be:
-     * <code>org.openoffice.comp</code>.</p>
+     * <p>
+     * If the company prefix is <code>org.openoffice</code> and the output extension is <code>comp</code>, then the
+     * implementation namespace will be: <code>org.openoffice.comp</code>.
+     * </p>
      *
      * @return the implementation namespace
      */
     public String getOutputExtension();
 
-    //------------------------------------------------------------ Path getters
+    // ------------------------------------------------------------ Path getters
 
     /**
-     * @return the path to the project directory containing the temporary
-     * build files. This path is relative to the project folder.
+     * @return the path to the project directory containing the temporary build files. This path is relative to the
+     *         project folder.
      */
     public IPath getBuildPath();
 
     /**
-     * @return the path to the project directory containing the idl files.
-     * This path is relative to the project folder.
+     * @return the path to the project directory containing the idl files. This path is relative to the project folder.
      */
     public IPath getIdlPath();
 
     /**
-     * @return the path to the project implementation directory. This path is
-     * relative to the project folder.
+     * @return the path to the project implementation directory. This path is relative to the project folder.
      */
     public IPath getImplementationPath();
 
@@ -226,32 +236,28 @@ public interface IUnoidlProject {
     public IPath getProjectPath();
 
     /**
-     * @return the path to the sources directory: that is "source". This path is
-     * relative to the project folder.
+     * @return the path to the sources directory: that is "source". This path is relative to the project folder.
      */
     public IPath getSourcePath();
 
     /**
-     * @return the path to the project <code>types.rdb</code> file. This path is
-     * relative to the project folder.
+     * @return the path to the project <code>types.rdb</code> file. This path is relative to the project folder.
      */
     public IPath getTypesPath();
 
     /**
-     * @return the path to the project <code>services.rdb</code> file. This path
-     * is relative to the project folder.
+     * @return the path to the project <code>services.rdb</code> file. This path is relative to the project folder.
      */
     public IPath getServicesPath();
 
     /**
-     * @return the path to the project directory containing the generated
-     * urd files. This path is relative to the project folder.
+     * @return the path to the project directory containing the generated urd files. This path is relative to the
+     *         project folder.
      */
     public IPath getUrdPath();
 
     /**
-     * @return the path to the project's folder containing the distribution .oxf
-     *         file.
+     * @return the path to the project's folder containing the distribution .oxf file.
      */
     public IPath getDistPath();
 
@@ -263,29 +269,28 @@ public interface IUnoidlProject {
     public IFolder getDistFolder() throws CoreException;
 
     /**
-     * @return the path to the project's folder used to store the user profile
-     *         when running/debugging LibreOffice in a clean environment. This
-     *         way we do not mangle with the system wide installed, LibreOffice
-     *         settings.
+     * @return the path to the project's folder used to store the user profile when running/debugging LibreOffice in a
+     *         clean environment. This way we do not mangle with the system wide installed, LibreOffice settings.
      */
     public IPath getOfficeUserProfilePath();
 
     /**
-     * @return the folder used to store the user profile
-     *         when running/debugging LibreOffice in a clean environment. This
-     *         way we do not mangle with the system wide installed, LibreOffice
-     *         settings. If the folder does not exist then it is created.
-     * @throws CoreException if we were unable to create the folder.
+     * @return the folder used to store the user profile when running/debugging LibreOffice in a clean environment. This
+     *         way we do not mangle with the system wide installed, LibreOffice settings. If the folder does not exist
+     *         then it is created.
+     * @throws CoreException
+     *             if we were unable to create the folder.
      */
     public IFolder getOfficeUserProfileFolder() throws CoreException;
 
-    //----------------------------------------------- Project resources getters
+    // ----------------------------------------------- Project resources getters
 
     /**
-     * Returns the file handle for the given project relative path. If the
-     * file doesn't exists, the handle will be <code>null</code>.
+     * Returns the file handle for the given project relative path. If the file doesn't exists, the handle will be
+     * <code>null</code>.
      *
-     * @param pPath the path to the folder to get
+     * @param pPath
+     *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
@@ -294,10 +299,11 @@ public interface IUnoidlProject {
     public IFile getFile(IPath pPath);
 
     /**
-     * Returns the file handle for the given project relative path. If the
-     * file doesn't exists, the handle will be <code>null</code>.
+     * Returns the file handle for the given project relative path. If the file doesn't exists, the handle will be
+     * <code>null</code>.
      *
-     * @param pPath the path to the folder to get
+     * @param pPath
+     *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
@@ -306,10 +312,11 @@ public interface IUnoidlProject {
     public IFile getFile(String pPath);
 
     /**
-     * Returns the folder handle for the given project relative path. If the
-     * folder doesn't exists, the handle will be <code>null</code>.
+     * Returns the folder handle for the given project relative path. If the folder doesn't exists, the handle will be
+     * <code>null</code>.
      *
-     * @param pPath the path to the folder to get
+     * @param pPath
+     *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
@@ -318,10 +325,11 @@ public interface IUnoidlProject {
     public IFolder getFolder(IPath pPath);
 
     /**
-     * Returns the folder handle for the given project relative path. If the
-     * folder doesn't exists, the handle will be <code>null</code>.
+     * Returns the folder handle for the given project relative path. If the folder doesn't exists, the handle will be
+     * <code>null</code>.
      *
-     * @param pPath the path to the folder to get
+     * @param pPath
+     *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
@@ -332,14 +340,16 @@ public interface IUnoidlProject {
     /**
      * Defines the directory containing the IDL files.
      *
-     * @param pIdlDir the IDL directory
+     * @param pIdlDir
+     *            the IDL directory
      */
     public void setIdlDir(String pIdlDir);
 
     /**
      * Defines the directory containing the sources.
      *
-     * @param pSourcesDir the sources directory
+     * @param pSourcesDir
+     *            the sources directory
      */
     public void setSourcesDir(String pSourcesDir);
 

@@ -61,7 +61,7 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author cbosdonnat
  *
  */
-public class LicenseSection extends LocalizedSection< DescriptionModel > {
+public class LicenseSection extends LocalizedSection<DescriptionModel> {
 
     private static final int LAYOUT_COLS = 3;
 
@@ -74,30 +74,31 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
     private IProject mProject;
 
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the parent page
-     * @param pProject the project containing the description.xml file
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the parent page
+     * @param pProject
+     *            the project containing the description.xml file
      */
-    public LicenseSection( Composite pParent, DescriptionFormPage pPage, IProject pProject ) {
-        super( pParent, pPage, ExpandableComposite.TITLE_BAR );
+    public LicenseSection(Composite pParent, DescriptionFormPage pPage, IProject pProject) {
+        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
 
         mProject = pProject;
-        setModel( pPage.getModel() );
+        setModel(pPage.getModel());
     }
-
 
     /**
      * Load the data from the model into the non-localized controls.
      */
     @Override
     public void loadData() {
-        getModel().setSuspendEvent( true );
-        mFileTxt.setText( getModel().getLicenses().get( mCurrentLocale ) );
-        mSuppressUpdateBtn.setSelection( getModel().isSuppressOnUpdate() );
-        mUserAcceptBtn.setSelection( getModel().isAcceptByUser() );
-        getModel().setSuspendEvent( false );
+        getModel().setSuspendEvent(true);
+        mFileTxt.setText(getModel().getLicenses().get(mCurrentLocale));
+        mSuppressUpdateBtn.setSelection(getModel().isSuppressOnUpdate());
+        mUserAcceptBtn.setSelection(getModel().isAcceptByUser());
+        getModel().setSuspendEvent(false);
     }
-
 
     /**
      * {@inheritDoc}
@@ -106,47 +107,42 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
 
         Section section = getSection();
-        section.setLayoutData(new GridData( GridData.FILL_BOTH ));
-        section.setText( Messages.getString("LicenseSection.Title") ); //$NON-NLS-1$
+        section.setLayoutData(new GridData(GridData.FILL_BOTH));
+        section.setText(Messages.getString("LicenseSection.Title")); //$NON-NLS-1$
 
-        pParent.setLayout( new GridLayout( LAYOUT_COLS, false ) );
+        pParent.setLayout(new GridLayout(LAYOUT_COLS, false));
 
         // Create the checkboxes
-        Label descrLbl = pToolkit.createLabel( pParent,
-                        Messages.getString("LicenseSection.Description"),  //$NON-NLS-1$
-                        SWT.WRAP );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = pToolkit.createLabel(pParent, Messages.getString("LicenseSection.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
+        createFileControls(pToolkit, pParent);
 
-        createFileControls( pToolkit, pParent );
-
-        mUserAcceptBtn = pToolkit.createButton( pParent,
-                        Messages.getString("LicenseSection.UserAccept"),  //$NON-NLS-1$
-                        SWT.CHECK );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        mUserAcceptBtn = pToolkit.createButton(pParent, Messages.getString("LicenseSection.UserAccept"), //$NON-NLS-1$
+            SWT.CHECK);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        mUserAcceptBtn.setLayoutData( gd );
-        mUserAcceptBtn.addSelectionListener( new SelectionAdapter( ) {
+        mUserAcceptBtn.setLayoutData(gd);
+        mUserAcceptBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
-                getModel().setAcceptByUser( mUserAcceptBtn.getSelection() );
+                getModel().setAcceptByUser(mUserAcceptBtn.getSelection());
                 markDirty();
             }
         });
 
-
-        mSuppressUpdateBtn = pToolkit.createButton( pParent,
-                        Messages.getString("LicenseSection.SuppressUpdate"),  //$NON-NLS-1$
-                        SWT.CHECK );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        mSuppressUpdateBtn = pToolkit.createButton(pParent, Messages.getString("LicenseSection.SuppressUpdate"), //$NON-NLS-1$
+            SWT.CHECK);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
-        mSuppressUpdateBtn.setLayoutData( gd );
-        mSuppressUpdateBtn.addSelectionListener( new SelectionAdapter( ) {
+        mSuppressUpdateBtn.setLayoutData(gd);
+        mSuppressUpdateBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
-                getModel().setSuppressOnUpdate( mSuppressUpdateBtn.getSelection() );
+                getModel().setSuppressOnUpdate(mSuppressUpdateBtn.getSelection());
                 markDirty();
             }
         });
@@ -155,40 +151,42 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
     /**
      * Create the file selection control.
      *
-     * @param pToolkit the toolkit used for the controls creation
-     * @param pParent the parent composite where to create the controls
+     * @param pToolkit
+     *            the toolkit used for the controls creation
+     * @param pParent
+     *            the parent composite where to create the controls
      */
     private void createFileControls(FormToolkit pToolkit, Composite pParent) {
 
         // Create the folder selection controls
-        Label pathLbl = pToolkit.createLabel( pParent, Messages.getString("LicenseSection.LicenseFile") ); //$NON-NLS-1$
-        pathLbl.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING ) );
+        Label pathLbl = pToolkit.createLabel(pParent, Messages.getString("LicenseSection.LicenseFile")); //$NON-NLS-1$
+        pathLbl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-        mFileTxt = pToolkit.createText( pParent, new String( ) );
-        mFileTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mFileTxt.addModifyListener( new ModifyListener( ) {
+        mFileTxt = pToolkit.createText(pParent, new String());
+        mFileTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mFileTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().addLicense( mCurrentLocale, mFileTxt.getText() );
+                getModel().addLicense(mCurrentLocale, mFileTxt.getText());
                 markDirty();
             }
         });
 
-        mFileBrowseBtn = pToolkit.createButton( pParent, "...", SWT.PUSH ); //$NON-NLS-1$
-        mFileBrowseBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );
-        mFileBrowseBtn.addSelectionListener( new SelectionAdapter( ) {
+        mFileBrowseBtn = pToolkit.createButton(pParent, "...", SWT.PUSH); //$NON-NLS-1$
+        mFileBrowseBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mFileBrowseBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 // Open the folder selection dialog
-                ProjectSelectionDialog dlg = new ProjectSelectionDialog( mProject,
-                                Messages.getString("LicenseSection.FileChooserTooltip") ); //$NON-NLS-1$
+                ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
+                    Messages.getString("LicenseSection.FileChooserTooltip")); //$NON-NLS-1$
 
-                if ( dlg.open() == Window.OK ) {
+                if (dlg.open() == Window.OK) {
                     IResource res = dlg.getSelected();
-                    if ( res != null && res.getType() == IResource.FILE ) {
-                        IFile file = (IFile)res;
+                    if (res != null && res.getType() == IResource.FILE) {
+                        IFile file = (IFile) res;
                         String path = file.getProjectRelativePath().toString();
-                        mFileTxt.setText( path );
+                        mFileTxt.setText(path);
                     }
                 }
             }
@@ -200,11 +198,11 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void addLocale(Locale pLocale) {
-        getModel().addLicense( pLocale, new String( ) );
+        getModel().addLicense(pLocale, new String());
 
         // enable the text and file
-        mFileBrowseBtn.setEnabled( true );
-        mFileTxt.setEnabled( true );
+        mFileBrowseBtn.setEnabled(true);
+        mFileTxt.setEnabled(true);
     }
 
     /**
@@ -212,11 +210,11 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void deleteLocale(Locale pLocale) {
-        getModel().removeLicense( pLocale );
-        if ( getModel().getLicenses().isEmpty() ) {
+        getModel().removeLicense(pLocale);
+        if (getModel().getLicenses().isEmpty()) {
             // disable the text and file
-            mFileBrowseBtn.setEnabled( false );
-            mFileTxt.setEnabled( false );
+            mFileBrowseBtn.setEnabled(false);
+            mFileTxt.setEnabled(false);
         }
     }
 
@@ -225,11 +223,11 @@ public class LicenseSection extends LocalizedSection< DescriptionModel > {
      */
     @Override
     public void selectLocale(Locale pLocale) {
-        if ( mCurrentLocale != null ) {
-            getModel().addLicense( mCurrentLocale, mFileTxt.getText( ) );
+        if (mCurrentLocale != null) {
+            getModel().addLicense(mCurrentLocale, mFileTxt.getText());
         }
         super.selectLocale(pLocale);
-        String path = getModel().getLicenses().get( pLocale );
-        mFileTxt.setText( path );
+        String path = getModel().getLicenses().get(pLocale);
+        mFileTxt.setText(path);
     }
 }

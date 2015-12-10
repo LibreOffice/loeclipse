@@ -130,7 +130,7 @@ public class PackagePropertiesEditor extends FormEditor {
 
         if (pInput instanceof IFileEditorInput) {
 
-            IFileEditorInput fileInput = (IFileEditorInput)pInput;
+            IFileEditorInput fileInput = (IFileEditorInput) pInput;
             IProject prj = fileInput.getFile().getProject();
             String projectName = prj.getName();
             setPartName(projectName);
@@ -203,7 +203,7 @@ public class PackagePropertiesEditor extends FormEditor {
      */
     public void writeToSource() {
         if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
-            TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
+            TextFileDocumentProvider docProvider = (TextFileDocumentProvider) mSourcePage.getDocumentProvider();
             IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
             if (doc != null) {
                 mIgnoreSourceChanges = true;
@@ -219,7 +219,7 @@ public class PackagePropertiesEditor extends FormEditor {
     public void loadFromSource() {
 
         if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
-            TextFileDocumentProvider docProvider = (TextFileDocumentProvider)mSourcePage.getDocumentProvider();
+            TextFileDocumentProvider docProvider = (TextFileDocumentProvider) mSourcePage.getDocumentProvider();
             IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
             if (doc != null) {
                 mModel.reloadFromString(doc.get());

@@ -46,8 +46,8 @@ package org.openoffice.ide.eclipse.core.builders;
 import java.io.File;
 
 /**
- * A little tiny interface for a File visitor. This has to be used to avoid
- * multiple and annoying project refresh operations triggering unwanted changes.
+ * A little tiny interface for a File visitor. This has to be used to avoid multiple and annoying project refresh
+ * operations triggering unwanted changes.
  *
  * @author cedricbosdo
  *
@@ -57,9 +57,10 @@ public interface IFileVisitor {
     /**
      * Simply visit the file and return if the children should be visited.
      *
-     * @param pFile the file to visit
-     * @return <code>true</code> if the children should be visited,
-     *             <code>false</code> otherwise. This has no importance for files.
+     * @param pFile
+     *            the file to visit
+     * @return <code>true</code> if the children should be visited, <code>false</code> otherwise. This has no importance
+     *         for files.
      */
     public boolean visit(File pFile);
 }

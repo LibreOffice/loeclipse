@@ -89,14 +89,13 @@ import org.openoffice.ide.eclipse.core.wizards.Messages;
 import org.openoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
 /**
- * Uses the default Project wizard page and add some UNO-IDL special
- * fields: SDK and OOo choices company prefix and Output path.
+ * Uses the default Project wizard page and add some UNO-IDL special fields: SDK and OOo choices company prefix and
+ * Output path.
  *
  * @author cedricbosdo
  *
  */
-public class NewUnoProjectPage extends WizardNewProjectCreationPage
-implements IFieldChangedListener {
+public class NewUnoProjectPage extends WizardNewProjectCreationPage implements IFieldChangedListener {
 
     /* Constants defining the field properties used to react to field change events */
     private static final String PREFIX = "__prefix"; //$NON-NLS-1$
@@ -126,8 +125,7 @@ implements IFieldChangedListener {
     private ChoiceRow mLanguageRow;
 
     /**
-     * Checked to indicate the use of a custom project
-     * directory structure.
+     * Checked to indicate the use of a custom project directory structure.
      */
     private BooleanRow mCustomDirsRow;
 
@@ -152,7 +150,7 @@ implements IFieldChangedListener {
         @Override
         public void modifyText(ModifyEvent pEvent) {
             checkWhiteSpaces();
-            ((NewUnoProjectWizard)getWizard()).pageChanged(NewUnoProjectPage.this);
+            ((NewUnoProjectWizard) getWizard()).pageChanged(NewUnoProjectPage.this);
         }
     };
     private OOoConfigPanel mOOoConfigPanel;
@@ -160,7 +158,8 @@ implements IFieldChangedListener {
     /**
      * Default constructor.
      *
-     * @param pPageName the name of the wizard page
+     * @param pPageName
+     *            the name of the wizard page
      */
     public NewUnoProjectPage(String pPageName) {
         super(pPageName);
@@ -169,8 +168,7 @@ implements IFieldChangedListener {
 
         setDescription(Messages.getString("NewUnoProjectPage.Message")); //$NON-NLS-1$
 
-        setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
-                        ImagesConstants.NEWPROJECT_WIZ));
+        setImageDescriptor(OOEclipsePlugin.getImageDescriptor(ImagesConstants.NEWPROJECT_WIZ));
     }
 
     /**
@@ -227,25 +225,22 @@ implements IFieldChangedListener {
     /**
      * @return the selected OOo name
      */
-    public String getOOoName( ) {
+    public String getOOoName() {
         return mOOoConfigPanel.getOOoName();
     }
 
     /**
      * Creates a new project resource with the selected name.
      * <p>
-     * In normal usage, this method is invoked after the user has pressed Finish
-     * on the wizard; the enablement of the Finish button implies that all
-     * controls on the pages currently contain valid values.
+     * In normal usage, this method is invoked after the user has pressed Finish on the wizard; the enablement of the
+     * Finish button implies that all controls on the pages currently contain valid values.
      * </p>
      * <p>
-     * Note that this wizard caches the new project once it has been
-     * successfully created; subsequent invocations of this method will answer
-     * the same project resource without attempting to create it again.
+     * Note that this wizard caches the new project once it has been successfully created; subsequent invocations of
+     * this method will answer the same project resource without attempting to create it again.
      * </p>
      *
-     * @return the created project resource, or <code>null</code> if the
-     *         project was not created
+     * @return the created project resource, or <code>null</code> if the project was not created
      */
     private IProject createNewProject() {
         if (mNewProject == null) {
@@ -259,8 +254,7 @@ implements IFieldChangedListener {
             }
 
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
-            final IProjectDescription description = workspace.
-                            newProjectDescription(newProjectHandle.getName());
+            final IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
             description.setLocation(location);
 
             // create the new project operation
@@ -281,9 +275,8 @@ implements IFieldChangedListener {
                 // ie.- one of the steps resulted in a core exception
                 Throwable t = e.getTargetException();
                 PluginLogger.error(t.toString(), t);
-                ErrorDialog.openError(getShell(),
-                                Messages.getString("NewUnoProjectPage.ProjectCreationError"), //$NON-NLS-1$
-                                null, ((CoreException) t).getStatus());
+                ErrorDialog.openError(getShell(), Messages.getString("NewUnoProjectPage.ProjectCreationError"), //$NON-NLS-1$
+                    null, ((CoreException) t).getStatus());
                 mNewProject = null;
             }
         }
@@ -306,9 +299,8 @@ implements IFieldChangedListener {
      * @exception OperationCanceledException
      *                if the operation is canceled
      */
-    void createProject(IProjectDescription pDescription, IProject pProjectHandle,
-                    IProgressMonitor pMonitor) throws CoreException,
-    OperationCanceledException {
+    void createProject(IProjectDescription pDescription, IProject pProjectHandle, IProgressMonitor pMonitor)
+        throws CoreException, OperationCanceledException {
         try {
             pMonitor.beginTask("", TASK_UNITS); //$NON-NLS-1$
 
@@ -335,38 +327,35 @@ implements IFieldChangedListener {
 
         initializeDialogUnits(pParent);
 
-        Composite control = (Composite)getControl();
+        Composite control = (Composite) getControl();
 
-        Composite body = new Composite( control, SWT.None );
-        body.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-        body.setLayout( new GridLayout() );
+        Composite body = new Composite(control, SWT.None);
+        body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        body.setLayout(new GridLayout());
 
         // Listens to name and directory changes
         addTextListener(control);
 
         Group prjGroup = new Group(body, SWT.NONE);
-        prjGroup.setText( Messages.getString("NewUnoProjectPage.UnoGroupTitle") ); //$NON-NLS-1$
-        prjGroup.setFont( pParent.getFont() );
+        prjGroup.setText(Messages.getString("NewUnoProjectPage.UnoGroupTitle")); //$NON-NLS-1$
+        prjGroup.setFont(pParent.getFont());
         prjGroup.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
         prjGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Add the company prefix field
-        mPrefixRow = new TextRow(prjGroup, PREFIX,
-                        Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
+        mPrefixRow = new TextRow(prjGroup, PREFIX, Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
         mPrefixRow.setValue("org.openoffice.example"); // Setting default value //$NON-NLS-1$
         mPrefixRow.setFieldChangedListener(this);
         mPrefixRow.setTooltip(Messages.getString("NewUnoProjectPage.RootPackageTooltip")); //$NON-NLS-1$
 
         // Add the output directory field
-        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT,
-                        Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
+        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT, Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
         mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
         mOutputExt.setFieldChangedListener(this);
         mOutputExt.setTooltip(Messages.getString("NewUnoProjectPage.CompExtensionTooltip")); //$NON-NLS-1$
 
         // Adding the programming language row
-        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE,
-                        Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
+        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE, Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
         mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
 
         // Sets the available programming languages
@@ -377,40 +366,36 @@ implements IFieldChangedListener {
         mLanguageRow.select(0);
         mLanguageRow.setFieldChangedListener(this);
 
+        mOOoConfigPanel = new OOoConfigPanel(body);
 
-        mOOoConfigPanel = new OOoConfigPanel( body );
-
-
-        addCustomDirsControls( body );
+        addCustomDirsControls(body);
     }
 
     /**
      * Create the controls for the project directories customization.
      *
-     * @param pParent the parent composite where to create the controls.
+     * @param pParent
+     *            the parent composite where to create the controls.
      */
     private void addCustomDirsControls(Composite pParent) {
 
-        Group group = new Group( pParent, SWT.NONE );
-        group.setText( Messages.getString("NewUnoProjectPage.LayoutGroupTitle") ); //$NON-NLS-1$
-        group.setLayout( new GridLayout( 2, false ) );
-        group.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Group group = new Group(pParent, SWT.NONE);
+        group.setText(Messages.getString("NewUnoProjectPage.LayoutGroupTitle")); //$NON-NLS-1$
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         // Add the custom directories checkbox
-        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS,
-                        Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
+        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS, Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
         mCustomDirsRow.setFieldChangedListener(this);
 
         // Add the custom source directory chooser
-        mSourceRow = new TextRow(group, CUSTOM_SRC,
-                        Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
+        mSourceRow = new TextRow(group, CUSTOM_SRC, Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
         mSourceRow.setValue(UnoidlProjectHelper.SOURCE_BASIS);
         mSourceRow.setEnabled(false);
         mSourceRow.setFieldChangedListener(this);
 
         // Add the custom idl directory chooser
-        mIdlDirRow = new TextRow(group, CUSTOM_IDL,
-                        Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
+        mIdlDirRow = new TextRow(group, CUSTOM_IDL, Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
         mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
         mIdlDirRow.setEnabled(false);
         mIdlDirRow.setFieldChangedListener(this);
@@ -419,11 +404,11 @@ implements IFieldChangedListener {
     /**
      * Shows a warning if there are spaces in the project directory on Windows.
      */
-    private void checkWhiteSpaces () {
+    private void checkWhiteSpaces() {
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
             if (getLocationPath().toOSString().contains(" ")) { //$NON-NLS-1$
                 setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesWarning"), //$NON-NLS-1$
-                                WARNING);
+                    WARNING);
             }
         }
     }
@@ -431,18 +416,19 @@ implements IFieldChangedListener {
     /**
      * Add the modify listener to all the Text children of the control.
      *
-     * @param pControl the control on which to add the listener.
+     * @param pControl
+     *            the control on which to add the listener.
      */
     private void addTextListener(Control pControl) {
 
         if (pControl instanceof Composite) {
-            Control[] children = ((Composite)pControl).getChildren();
+            Control[] children = ((Composite) pControl).getChildren();
             for (int i = 0; i < children.length; i++) {
                 Control child = children[i];
                 addTextListener(child);
             }
         } else if (pControl instanceof Text) {
-            Text text = (Text)pControl;
+            Text text = (Text) pControl;
             if (!text.isDisposed()) {
                 text.addModifyListener(mModifListener);
                 mListenedTexts.add(text);
@@ -463,13 +449,16 @@ implements IFieldChangedListener {
 
             String newCompanyPrefix = pEvent.getValue();
             /**
-             * <p>The company prefix is a package like name used by the project
-             * to build the idl file path and the implementation path.</p>
+             * <p>
+             * The company prefix is a package like name used by the project to build the idl file path and the
+             * implementation path.
+             * </p>
              */
             if (!newCompanyPrefix.matches("([a-zA-Z][a-zA-Z0-9]*)(.[a-zA-Z][a-zA-Z0-9]*)*")) { //$NON-NLS-1$
                 /**
-                 * <p>If the new company prefix is invalid, an error message
-                 * is set.</p>
+                 * <p>
+                 * If the new company prefix is invalid, an error message is set.
+                 * </p>
                  */
                 setErrorMessage(Messages.getString("NewUnoProjectPage.InvalidPrefixError")); //$NON-NLS-1$
 
@@ -481,14 +470,17 @@ implements IFieldChangedListener {
         } else if (pEvent.getProperty().equals(OUTPUT_EXT)) {
             String newOuputExt = pEvent.getValue();
             /**
-             * <p>The implementation extension is a single word which could
-             * contain numbers. It have to begin with a letter.</p>
+             * <p>
+             * The implementation extension is a single word which could contain numbers. It have to begin with a
+             * letter.
+             * </p>
              */
 
             if (!newOuputExt.matches("[a-zA-Z][a-zA-Z0-9]*")) { //$NON-NLS-1$
                 /**
-                 * <p>If the new implementation extension is invalid, it is set to
-                 * the empty string with an error message.</p>
+                 * <p>
+                 * If the new implementation extension is invalid, it is set to the empty string with an error message.
+                 * </p>
                  */
 
                 setErrorMessage(Messages.getString("NewUnoProjectPage.InvalidCompError")); //$NON-NLS-1$
@@ -497,7 +489,7 @@ implements IFieldChangedListener {
                 setErrorMessage(null);
                 if (Platform.getOS().equals(Platform.OS_WIN32)) {
                     setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesWarning"), //$NON-NLS-1$
-                                    WARNING);
+                        WARNING);
                 }
             }
         } else if (pEvent.getProperty().equals(CUSTOM_DIRS)) {
@@ -505,15 +497,16 @@ implements IFieldChangedListener {
             mSourceRow.setEnabled(useCustom);
             mIdlDirRow.setEnabled(useCustom);
         }
-        ((NewUnoProjectWizard)getWizard()).pageChanged(this);
+        ((NewUnoProjectWizard) getWizard()).pageChanged(this);
     }
 
     /**
-     * @param pData the data to fill.
-     * @param pForce forces the project creation. Otherwise, the project handle won't be set
+     * @param pData
+     *            the data to fill.
+     * @param pForce
+     *            forces the project creation. Otherwise, the project handle won't be set
      *
-     * @return the given data with the completed properties, <code>null</code>
-     *   if the provided data is <code>null</code>
+     * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
     public UnoFactoryData fillData(UnoFactoryData pData, boolean pForce) {
 
@@ -521,9 +514,9 @@ implements IFieldChangedListener {
             if (pForce) {
                 try {
                     pData.setProperty(IUnoFactoryConstants.PROJECT_HANDLE, createNewProject());
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                }
             }
-
 
             pData.setProperty(IUnoFactoryConstants.PROJECT_PATH, getLocationPath());
             pData.setProperty(IUnoFactoryConstants.PROJECT_NAME, getProjectName());

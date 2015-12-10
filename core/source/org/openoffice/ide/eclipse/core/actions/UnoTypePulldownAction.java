@@ -53,6 +53,7 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
 
 /**
  * Pulldown action for the uno types. The wizard has to be defined as follows:
+ * 
  * <pre>
  *     &lt;wizard
  *           canFinishEarly="false"
@@ -99,7 +100,7 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
 
         boolean isValid = false;
         if (!pSelection.isEmpty() && pSelection.getFirstElement() instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable)pSelection.getFirstElement();
+            IAdaptable adaptable = (IAdaptable) pSelection.getFirstElement();
             if (adaptable.getAdapter(IResource.class) != null) {
                 IResource res = adaptable.getAdapter(IResource.class);
                 IProject prj = res.getProject();

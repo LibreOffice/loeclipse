@@ -93,16 +93,19 @@ public class UnoPackageExportPage extends WizardPage {
     /**
      * Constructor.
      *
-     * @param pPageName the page id
-     * @param pPrj the project to export
-     * @param pManifestPage the manifest page of the wizard
+     * @param pPageName
+     *            the page id
+     * @param pPrj
+     *            the project to export
+     * @param pManifestPage
+     *            the manifest page of the wizard
      */
-    public UnoPackageExportPage( String pPageName, IUnoidlProject pPrj, ManifestExportPage pManifestPage ) {
+    public UnoPackageExportPage(String pPageName, IUnoidlProject pPrj, ManifestExportPage pManifestPage) {
         super(pPageName);
 
-        setTitle( Messages.getString("UnoPackageExportPage.Title") ); //$NON-NLS-1$
-        setDescription( Messages.getString("UnoPackageExportPage.Description") ); //$NON-NLS-1$
-        setImageDescriptor( OOEclipsePlugin.getImageDescriptor( ImagesConstants.PACKAGE_EXPORT_WIZ ) );
+        setTitle(Messages.getString("UnoPackageExportPage.Title")); //$NON-NLS-1$
+        setDescription(Messages.getString("UnoPackageExportPage.Description")); //$NON-NLS-1$
+        setImageDescriptor(OOEclipsePlugin.getImageDescriptor(ImagesConstants.PACKAGE_EXPORT_WIZ));
 
         mSelectedProject = pPrj;
         mManifestPage = pManifestPage;
@@ -113,23 +116,21 @@ public class UnoPackageExportPage extends WizardPage {
      */
     @Override
     public void createControl(Composite pParent) {
-        Composite body = new Composite( pParent, SWT.NONE );
-        body.setLayout( new GridLayout( ) );
-        body.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-        setControl( body );
+        Composite body = new Composite(pParent, SWT.NONE);
+        body.setLayout(new GridLayout());
+        body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        setControl(body);
 
-        createProjectSelection( );
-        mContentSelector = new PackageContentSelector( body, SWT.NONE );
-        createDestinationGroup( );
-        createOptionsGroup( );
+        createProjectSelection();
+        mContentSelector = new PackageContentSelector(body, SWT.NONE);
+        createDestinationGroup();
+        createOptionsGroup();
 
-        setPageComplete( checkPageCompletion() );
+        setPageComplete(checkPageCompletion());
 
         // Load the data into the fields
-        loadData( );
+        loadData();
     }
-
-
 
     /**
      * Loads the data in the different controls of the page.
@@ -139,15 +140,15 @@ public class UnoPackageExportPage extends WizardPage {
         String[] items = mProjectsList.getItems();
         int i = 0;
         boolean selected = false;
-        while ( mSelectedProject != null && i < items.length && !selected ) {
-            if ( items[i].equals( mSelectedProject.getName() ) ) {
-                mProjectsList.select( i );
+        while (mSelectedProject != null && i < items.length && !selected) {
+            if (items[i].equals(mSelectedProject.getName())) {
+                mProjectsList.select(i);
                 selected = true;
             }
             i++;
         }
 
-        mContentSelector.loadDefaults( );
+        mContentSelector.loadDefaults();
 
         restoreWidgetValues();
     }
@@ -156,14 +157,14 @@ public class UnoPackageExportPage extends WizardPage {
      * Creates the project selection part of the dialog.
      */
     private void createProjectSelection() {
-        Composite body = (Composite)getControl();
-        Composite selectionBody = new Composite( body, SWT.NONE );
-        selectionBody.setLayout( new GridLayout( 2, false ) );
-        selectionBody.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Composite body = (Composite) getControl();
+        Composite selectionBody = new Composite(body, SWT.NONE);
+        selectionBody.setLayout(new GridLayout(2, false));
+        selectionBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        Label lbl = new Label( selectionBody, SWT.NORMAL );
-        lbl.setText( Messages.getString("UnoPackageExportPage.Project") ); //$NON-NLS-1$
-        lbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
+        Label lbl = new Label(selectionBody, SWT.NORMAL);
+        lbl.setText(Messages.getString("UnoPackageExportPage.Project")); //$NON-NLS-1$
+        lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
         IUnoidlProject[] prjs = ProjectsManager.getProjects();
         String[] prjNames = new String[prjs.length];
@@ -172,26 +173,26 @@ public class UnoPackageExportPage extends WizardPage {
             prjNames[i] = prj.getName();
         }
 
-        mProjectsList = new Combo( selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY );
-        mProjectsList.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mProjectsList.setItems( prjNames );
+        mProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
+        mProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mProjectsList.setItems(prjNames);
 
-        mProjectsList.addModifyListener( new ModifyListener() {
+        mProjectsList.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent pE) {
                 int id = mProjectsList.getSelectionIndex();
-                if ( id != -1 ) {
-                    String name = mProjectsList.getItem( id );
-                    IUnoidlProject unoprj = ProjectsManager.getProject( name );
+                if (id != -1) {
+                    String name = mProjectsList.getItem(id);
+                    IUnoidlProject unoprj = ProjectsManager.getProject(name);
                     mSelectedProject = unoprj;
 
                     // Change the project in the manifest page
-                    mManifestPage.setProject( unoprj );
-                    mContentSelector.setProject( unoprj );
+                    mManifestPage.setProject(unoprj);
+                    mContentSelector.setProject(unoprj);
                 }
 
-                setPageComplete( checkPageCompletion() );
+                setPageComplete(checkPageCompletion());
             }
         });
     }
@@ -200,50 +201,50 @@ public class UnoPackageExportPage extends WizardPage {
      * Creates the package destination part of the dialog.
      */
     private void createDestinationGroup() {
-        Composite body = (Composite)getControl();
-        Composite groupBody = new Composite( body, SWT.NONE );
-        groupBody.setLayout( new GridLayout( ) );
-        groupBody.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Composite body = (Composite) getControl();
+        Composite groupBody = new Composite(body, SWT.NONE);
+        groupBody.setLayout(new GridLayout());
+        groupBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        Label titleLbl = new Label( groupBody, SWT.NONE );
-        titleLbl.setText( Messages.getString("UnoPackageExportPage.SelectDestination") ); //$NON-NLS-1$
-        titleLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        Label titleLbl = new Label(groupBody, SWT.NONE);
+        titleLbl.setText(Messages.getString("UnoPackageExportPage.SelectDestination")); //$NON-NLS-1$
+        titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        Composite rowBody = new Composite( groupBody, SWT.NONE );
-        rowBody.setLayout( new GridLayout( DESTINATION_PART_COLS, false ) );
-        rowBody.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Composite rowBody = new Composite(groupBody, SWT.NONE);
+        rowBody.setLayout(new GridLayout(DESTINATION_PART_COLS, false));
+        rowBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        Label lbl = new Label( rowBody, SWT.None );
-        lbl.setText( Messages.getString("UnoPackageExportPage.OxtFile") ); //$NON-NLS-1$
-        lbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
+        Label lbl = new Label(rowBody, SWT.None);
+        lbl.setText(Messages.getString("UnoPackageExportPage.OxtFile")); //$NON-NLS-1$
+        lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        mDestinationCombo = new Combo( rowBody, SWT.DROP_DOWN );
-        mDestinationCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mDestinationCombo.addModifyListener( new ModifyListener() {
+        mDestinationCombo = new Combo(rowBody, SWT.DROP_DOWN);
+        mDestinationCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mDestinationCombo.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent pE) {
-                setPageComplete( checkPageCompletion() );
+                setPageComplete(checkPageCompletion());
             }
         });
 
-        Button btn = new Button( rowBody, SWT.PUSH );
-        btn.setText( Messages.getString("UnoPackageExportPage.Browse") ); //$NON-NLS-1$
-        btn.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
-        btn.addSelectionListener( new SelectionListener() {
+        Button btn = new Button(rowBody, SWT.PUSH);
+        btn.setText(Messages.getString("UnoPackageExportPage.Browse")); //$NON-NLS-1$
+        btn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+        btn.addSelectionListener(new SelectionListener() {
 
             @Override
             public void widgetSelected(SelectionEvent pE) {
-                FileDialog dlg = new FileDialog( getShell(), SWT.SAVE );
+                FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
                 String path = dlg.open();
-                if ( path != null ) {
-                    mDestinationCombo.setText( path );
+                if (path != null) {
+                    mDestinationCombo.setText(path);
                 }
             }
 
             @Override
             public void widgetDefaultSelected(SelectionEvent pE) {
-                widgetSelected( pE );
+                widgetSelected(pE);
             }
         });
     }
@@ -252,26 +253,26 @@ public class UnoPackageExportPage extends WizardPage {
      * Creates the options part of the dialog (the one at the bottom).
      */
     private void createOptionsGroup() {
-        Composite body = (Composite)getControl();
-        Composite groupBody = new Composite( body, SWT.NONE );
-        groupBody.setLayout( new GridLayout( ) );
-        groupBody.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Composite body = (Composite) getControl();
+        Composite groupBody = new Composite(body, SWT.NONE);
+        groupBody.setLayout(new GridLayout());
+        groupBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        Label titleLbl = new Label( groupBody, SWT.NONE );
-        titleLbl.setText( Messages.getString("UnoPackageExportPage.Options") ); //$NON-NLS-1$
-        titleLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        Label titleLbl = new Label(groupBody, SWT.NONE);
+        titleLbl.setText(Messages.getString("UnoPackageExportPage.Options")); //$NON-NLS-1$
+        titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        Composite rowsBody = new Composite( groupBody, SWT.NONE );
-        rowsBody.setLayout( new GridLayout( ) );
-        rowsBody.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
+        Composite rowsBody = new Composite(groupBody, SWT.NONE);
+        rowsBody.setLayout(new GridLayout());
+        rowsBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        mOverwriteBox = new Button( rowsBody, SWT.CHECK );
-        mOverwriteBox.setText( Messages.getString("UnoPackageExportPage.OverwriteWithoutWarning") ); //$NON-NLS-1$
-        mOverwriteBox.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        mOverwriteBox = new Button(rowsBody, SWT.CHECK);
+        mOverwriteBox.setText(Messages.getString("UnoPackageExportPage.OverwriteWithoutWarning")); //$NON-NLS-1$
+        mOverwriteBox.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        mAutodeployBox = new Button( rowsBody, SWT.CHECK );
-        mAutodeployBox.setText( Messages.getString("UnoPackageExportPage.AutoDeploy") ); //$NON-NLS-1$
-        mAutodeployBox.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        mAutodeployBox = new Button(rowsBody, SWT.CHECK);
+        mAutodeployBox.setText(Messages.getString("UnoPackageExportPage.AutoDeploy")); //$NON-NLS-1$
+        mAutodeployBox.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
     }
 
     /**
@@ -290,25 +291,25 @@ public class UnoPackageExportPage extends WizardPage {
      */
     public void saveWidgetValues() {
         IDialogSettings settings = getDialogSettings();
-        if ( settings != null ) {
-            settings.put( OVERWRITE_FILES, mOverwriteBox.getSelection() );
-            settings.put( AUTODEPLOY, mAutodeployBox.getSelection() );
+        if (settings != null) {
+            settings.put(OVERWRITE_FILES, mOverwriteBox.getSelection());
+            settings.put(AUTODEPLOY, mAutodeployBox.getSelection());
 
-            String[] topItems = new String[ MAX_DESTINATION_STORED ];
+            String[] topItems = new String[MAX_DESTINATION_STORED];
             String firstItem = mDestinationCombo.getText().trim();
             topItems[0] = firstItem;
             int items_i = 0;
             int top_i = 0;
             int count = mDestinationCombo.getItemCount();
-            while ( top_i < MAX_DESTINATION_STORED - 1 && items_i < count ) {
-                String item = mDestinationCombo.getItem( items_i ).trim( );
-                if ( mDestinationCombo.getSelectionIndex() != items_i ) {
-                    topItems[ top_i + 1 ] = item;
+            while (top_i < MAX_DESTINATION_STORED - 1 && items_i < count) {
+                String item = mDestinationCombo.getItem(items_i).trim();
+                if (mDestinationCombo.getSelectionIndex() != items_i) {
+                    topItems[top_i + 1] = item;
                     top_i++;
                 }
                 items_i++;
             }
-            settings.put( DESTINATION_HISTORY, topItems );
+            settings.put(DESTINATION_HISTORY, topItems);
         }
     }
 
@@ -317,21 +318,21 @@ public class UnoPackageExportPage extends WizardPage {
      */
     public void restoreWidgetValues() {
         IDialogSettings settings = getDialogSettings();
-        if ( settings != null ) {
-            mOverwriteBox.setSelection( settings.getBoolean( OVERWRITE_FILES ) );
-            mAutodeployBox.setSelection( settings.getBoolean( AUTODEPLOY ) );
-            String[] items = settings.getArray( DESTINATION_HISTORY );
+        if (settings != null) {
+            mOverwriteBox.setSelection(settings.getBoolean(OVERWRITE_FILES));
+            mAutodeployBox.setSelection(settings.getBoolean(AUTODEPLOY));
+            String[] items = settings.getArray(DESTINATION_HISTORY);
             for (String item : items) {
-                if ( item != null && !(0 == item.length()) ) {
-                    mDestinationCombo.add( item );
+                if (item != null && !(0 == item.length())) {
+                    mDestinationCombo.add(item);
                 }
             }
         }
     }
 
     /**
-     * @return the package model built from the data provided by the user or <code>null</code> if
-     *          something blocked the process.
+     * @return the package model built from the data provided by the user or <code>null</code> if something blocked the
+     *         process.
      */
     public UnoPackage getPackageModel() {
         UnoPackage pack = null;
@@ -339,27 +340,25 @@ public class UnoPackageExportPage extends WizardPage {
         try {
             // Test the existence of the destination: warning may be needed
             boolean doit = true;
-            File destFile = new File( mDestinationCombo.getText() );
-            if ( destFile.exists() && !mOverwriteBox.getSelection() ) {
-                String msg = MessageFormat.format(
-                                Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$
-                                destFile.getPath() );
-                doit = MessageDialog.openQuestion( getShell(), getTitle(), msg);
+            File destFile = new File(mDestinationCombo.getText());
+            if (destFile.exists() && !mOverwriteBox.getSelection()) {
+                String msg = MessageFormat.format(Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$
+                    destFile.getPath());
+                doit = MessageDialog.openQuestion(getShell(), getTitle(), msg);
             }
 
-            if ( doit ) {
-                pack = PackageContentSelector.createPackage( mSelectedProject, destFile,
-                                mContentSelector.getSelected());
+            if (doit) {
+                pack = PackageContentSelector.createPackage(mSelectedProject, destFile, mContentSelector.getSelected());
 
                 // Run the deployer
-                if ( mAutodeployBox.getSelection() ) {
-                    DeployerJob job = new DeployerJob( mSelectedProject.getOOo(), destFile );
+                if (mAutodeployBox.getSelection()) {
+                    DeployerJob job = new DeployerJob(mSelectedProject.getOOo(), destFile);
 
-                    Display.getDefault().asyncExec( job );
+                    Display.getDefault().asyncExec(job);
                 }
             }
-        } catch ( Exception e ) {
-            PluginLogger.error( Messages.getString("UnoPackageExportPage.LibraryCreationError"), e ); //$NON-NLS-1$
+        } catch (Exception e) {
+            PluginLogger.error(Messages.getString("UnoPackageExportPage.LibraryCreationError"), e); //$NON-NLS-1$
         }
 
         return pack;
@@ -372,8 +371,8 @@ public class UnoPackageExportPage extends WizardPage {
         try {
             // Refresh the project and return the status
             String prjName = mSelectedProject.getName();
-            IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
-            prj.refreshLocal( IResource.DEPTH_INFINITE, null );
+            IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
+            prj.refreshLocal(IResource.DEPTH_INFINITE, null);
         } catch (CoreException e) {
         }
     }
@@ -392,8 +391,10 @@ public class UnoPackageExportPage extends WizardPage {
         /**
          * Constructor.
          *
-         * @param pOoo the LibreOffice where to deploy
-         * @param pDest the package to deploy
+         * @param pOoo
+         *            the LibreOffice where to deploy
+         * @param pDest
+         *            the package to deploy
          */
         DeployerJob(IOOo pOoo, File pDest) {
             mOOo = pOoo;
@@ -414,11 +415,12 @@ public class UnoPackageExportPage extends WizardPage {
     /**
      * Force a build of the selected project.
      *
-     * @throws Exception if the project couldn't be built.
+     * @throws Exception
+     *             if the project couldn't be built.
      */
-    public void forceBuild( ) throws Exception {
+    public void forceBuild() throws Exception {
         String prjName = mSelectedProject.getName();
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
-        TypesBuilder.build( prj, null );
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
+        TypesBuilder.build(prj, null);
     }
 }

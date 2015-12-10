@@ -46,8 +46,8 @@ package org.openoffice.ide.eclipse.core.builders;
 import java.io.File;
 
 /**
- * A little tiny interface to visit File objects. This has to be used to avoid
- * multiple and annoying project refresh operations trigerring unwanted changes.
+ * A little tiny interface to visit File objects. This has to be used to avoid multiple and annoying project refresh
+ * operations trigerring unwanted changes.
  *
  * @author cedricbosdo
  *
@@ -58,7 +58,9 @@ public class VisitableFile {
 
     /**
      * Create a new visitable file, ready to accept a visit.
-     * @param pFile the file to visit later.
+     * 
+     * @param pFile
+     *            the file to visit later.
      */
     public VisitableFile(File pFile) {
         mFile = pFile;
@@ -72,8 +74,7 @@ public class VisitableFile {
     }
 
     /**
-     * @return if the visitable file has been correctly initialised and is a
-     *     directory
+     * @return if the visitable file has been correctly initialised and is a directory
      */
     public boolean isDirectory() {
         return mFile != null && mFile.isDirectory();
@@ -89,7 +90,8 @@ public class VisitableFile {
     /**
      * Welcome a visitor and let him explore the file hierarchy as he needs to.
      *
-     * @param pVisitor the File visitor
+     * @param pVisitor
+     *            the File visitor
      */
     public void accept(IFileVisitor pVisitor) {
         if (pVisitor.visit(mFile) && isDirectory()) {

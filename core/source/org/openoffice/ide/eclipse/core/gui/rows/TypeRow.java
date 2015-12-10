@@ -60,9 +60,10 @@ import org.openoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 /**
  * Row for the selection of a UNO type.
  *
- * <p>The row allows to type the text in a text field or selecting the
- * type using the UNO type browser. The text field support a simple
- * auto-completion.</p>
+ * <p>
+ * The row allows to type the text in a text field or selecting the type using the UNO type browser. The text field
+ * support a simple auto-completion.
+ * </p>
  *
  * @author cedricbosdo
  *
@@ -79,14 +80,19 @@ public class TypeRow extends TextRow {
     /**
      * Creates a row for the selection of a UNO type.
      *
-     * <p>The types mask is an integer from 0 to 2048-1. The type mask can be
-     * obtained by bit-OR of the types constants defined in {@link InternalUnoType}
-     * class.</p>
+     * <p>
+     * The types mask is an integer from 0 to 2048-1. The type mask can be obtained by bit-OR of the types constants
+     * defined in {@link InternalUnoType} class.
+     * </p>
      *
-     * @param pParent the parent composite where to create the row
-     * @param pProperty the property name of the row
-     * @param pLabel the label of the row
-     * @param pType the types mask of the row.
+     * @param pParent
+     *            the parent composite where to create the row
+     * @param pProperty
+     *            the property name of the row
+     * @param pLabel
+     *            the label of the row
+     * @param pType
+     *            the types mask of the row.
      */
     public TypeRow(Composite pParent, String pProperty, String pLabel, int pType) {
         super(pParent, pProperty, pLabel);
@@ -97,22 +103,23 @@ public class TypeRow extends TextRow {
     }
 
     /**
-     * Set whether the row should support include auto-completion for sequences.
-     * Sequences aren't included in the auto-completion by default.
+     * Set whether the row should support include auto-completion for sequences. Sequences aren't included in the
+     * auto-completion by default.
      *
-     * @param pInclude <code>true</code> if the row can auto-complete sequences
+     * @param pInclude
+     *            <code>true</code> if the row can auto-complete sequences
      */
     public void includeSequences(boolean pInclude) {
         mIncludeSequences = pInclude;
     }
 
     /**
-     * Set whether the row should support include auto-completion for simple
-     * UNO types. If the simple types are not included in the auto-completion,
-     * the void type isn't included too. Simple types aren't included in the
+     * Set whether the row should support include auto-completion for simple UNO types. If the simple types are not
+     * included in the auto-completion, the void type isn't included too. Simple types aren't included in the
      * auto-completion by default.
      *
-     * @param pInclude <code>true</code> if the row can auto-complete sequences
+     * @param pInclude
+     *            <code>true</code> if the row can auto-complete sequences
      * @see #includeVoid(boolean) to include/exclude the void type
      */
     public void includeSimpleTypes(boolean pInclude) {
@@ -120,13 +127,13 @@ public class TypeRow extends TextRow {
     }
 
     /**
-     * Set whether the row should support include auto-completion for the void
-     * type. The void type is included in the auto-completion by default as long
-     * as the simple types are included.
+     * Set whether the row should support include auto-completion for the void type. The void type is included in the
+     * auto-completion by default as long as the simple types are included.
      *
-     * @param pInclude <code>true</code> if the row can auto-complete sequences
-     * @see #includeSimpleTypes(boolean) for more precisions on the inclusion
-     *         of the void type dependence on the other simple types inclusion.
+     * @param pInclude
+     *            <code>true</code> if the row can auto-complete sequences
+     * @see #includeSimpleTypes(boolean) for more precisions on the inclusion of the void type dependence on the other
+     *      simple types inclusion.
      */
     public void includeVoid(boolean pInclude) {
         mIncludeVoid = pInclude;
@@ -136,13 +143,12 @@ public class TypeRow extends TextRow {
      * {@inheritDoc}
      */
     @Override
-    protected void createContent(Composite pParent, Control pLabel,
-                    Control pField, String pBrowseText, boolean pLink) {
+    protected void createContent(Composite pParent, Control pLabel, Control pField, String pBrowseText, boolean pLink) {
 
         super.createContent(pParent, pLabel, pField, Messages.getString("TypeRow.Browse"), true); //$NON-NLS-1$
 
         // Add a completion listener on the Text field
-        ((Text)mField).addKeyListener(new KeyAdapter() {
+        ((Text) mField).addKeyListener(new KeyAdapter() {
 
             /**
              * {@inheritDoc}
@@ -153,14 +159,14 @@ public class TypeRow extends TextRow {
                 // react on Ctrl+space
                 if (pEvent.character == ' ' && (pEvent.stateMask & SWT.CTRL) != 0) {
                     // if the word sequence is started, complete it
-                    Text text = (Text)mField;
+                    Text text = (Text) mField;
 
                     int pos = text.getCaretPosition();
                     String value = text.getText(0, pos);
 
                     int i = getStartOfWord(pos, text.getText());
 
-                    if ("sequence".startsWith(value.substring(i,pos)) && mIncludeSequences) { //$NON-NLS-1$
+                    if ("sequence".startsWith(value.substring(i, pos)) && mIncludeSequences) { //$NON-NLS-1$
                         String toadd = "sequence".substring(pos - i) + "<>"; //$NON-NLS-1$ //$NON-NLS-2$
                         text.insert(toadd);
                         setValue(text.getText().trim());
@@ -169,24 +175,23 @@ public class TypeRow extends TextRow {
                     } else {
                         // check the simple types
                         if (mIncludeSimpleTypes) {
-                            String[] simpleTypes = new String[] {
-                                            "unsigned ", //$NON-NLS-1$
-                                            "string", //$NON-NLS-1$
-                                            "short", //$NON-NLS-1$
-                                            "long", //$NON-NLS-1$
-                                            "hyper", //$NON-NLS-1$
-                                            "double", //$NON-NLS-1$
-                                            "float", //$NON-NLS-1$
-                                            "any", //$NON-NLS-1$
-                                            "void", //$NON-NLS-1$
-                                            "char", //$NON-NLS-1$
-                                            "type", //$NON-NLS-1$
-                                            "boolean" //$NON-NLS-1$
+                            String[] simpleTypes = new String[] { "unsigned ", //$NON-NLS-1$
+                                "string", //$NON-NLS-1$
+                                "short", //$NON-NLS-1$
+                                "long", //$NON-NLS-1$
+                                "hyper", //$NON-NLS-1$
+                                "double", //$NON-NLS-1$
+                                "float", //$NON-NLS-1$
+                                "any", //$NON-NLS-1$
+                                "void", //$NON-NLS-1$
+                                "char", //$NON-NLS-1$
+                                "type", //$NON-NLS-1$
+                                "boolean" //$NON-NLS-1$
                             };
 
                             for (String type : simpleTypes) {
                                 if ((!type.equals("void") || mIncludeVoid) && //$NON-NLS-1$
-                                                type.startsWith(value.substring(i, pos))) {
+                                    type.startsWith(value.substring(i, pos))) {
                                     String toadd = type.substring(pos - i);
                                     text.insert(toadd);
                                     setValue(text.getText().trim());
@@ -217,7 +222,7 @@ public class TypeRow extends TextRow {
                 if (Window.OK == browser.open()) {
                     mSelectedType = browser.getSelectedType();
                     if (null != mSelectedType) {
-                        Text text = (Text)mField;
+                        Text text = (Text) mField;
                         int pos = text.getCaretPosition();
                         text.insert(mSelectedType.getFullName().replaceAll("\\.", "::")); //$NON-NLS-1$ //$NON-NLS-2$
                         text.setFocus();
@@ -232,8 +237,10 @@ public class TypeRow extends TextRow {
     /**
      * Get the position of the start of the selected word.
      *
-     * @param pPos the caret position
-     * @param pText the text to analyze
+     * @param pPos
+     *            the caret position
+     * @param pText
+     *            the text to analyze
      *
      * @return the position of the first character of the word in the text.
      */

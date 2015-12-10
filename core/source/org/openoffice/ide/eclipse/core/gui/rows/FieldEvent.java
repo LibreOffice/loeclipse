@@ -44,8 +44,7 @@
 package org.openoffice.ide.eclipse.core.gui.rows;
 
 /**
- * Event describing a raw change. Each row is associated to one property in
- * order to recognize it when it changes.
+ * Event describing a raw change. Each row is associated to one property in order to recognize it when it changes.
  *
  * @author cedricbosdo
  *
@@ -58,8 +57,10 @@ public class FieldEvent {
     /**
      * Creates a new row change event.
      *
-     * @param pProperty the property associated to the changed row
-     * @param pValue the new value of the row
+     * @param pProperty
+     *            the property associated to the changed row
+     * @param pValue
+     *            the new value of the row
      */
     public FieldEvent(String pProperty, String pValue) {
         this.mProperty = pProperty;

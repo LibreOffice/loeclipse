@@ -54,48 +54,53 @@ public class OOoTest extends TestCase {
     /**
      * Test if the directories checks for various versions of OOo are working.
      *
-     * <p>In order to make this test run, a <tt>ooo.tests</tt> variable has to be set. This
-     * should point to a directory containing a directory per supported OS, which are:</p>
+     * <p>
+     * In order to make this test run, a <tt>ooo.tests</tt> variable has to be set. This should point to a directory
+     * containing a directory per supported OS, which are:
+     * </p>
      * <ul>
-     *  <li>linux</li>
-     *  <li>macosx</li>
-     *  <li>win32</li>
+     * <li>linux</li>
+     * <li>macosx</li>
+     * <li>win32</li>
      * </ul>
      *
-     * <p>Each one of these directories have to contain the one directory per installation
-     * to test. For example, if one wants to test OpenOffice.org 2.4 and 3.1 for Linux, the
-     * following directories should be created in the <tt>linux</tt> folder:</p>
+     * <p>
+     * Each one of these directories have to contain the one directory per installation to test. For example, if one
+     * wants to test OpenOffice.org 2.4 and 3.1 for Linux, the following directories should be created in the
+     * <tt>linux</tt> folder:
+     * </p>
      * <ul>
-     *  <li>OpenOffice.org 2.4</li>
-     *  <li>OpenOffice.org 3.1</li>
+     * <li>OpenOffice.org 2.4</li>
+     * <li>OpenOffice.org 3.1</li>
      * </ul>
      *
-     * <p>The names are only used for readability purpose. The tested OOo folders will be these
-     * ones.</p>
+     * <p>
+     * The names are only used for readability purpose. The tested OOo folders will be these ones.
+     * </p>
      */
-    public void testOOoChecks( ) {
+    public void testOOoChecks() {
         String pattern = "Unexpected OOo load failure for OS {0}, installation {1}"; //$NON-NLS-1$
-        String testsPath = System.getProperty( TEST_PROP );
-        File testsDir = new File( testsPath );
+        String testsPath = System.getProperty(TEST_PROP);
+        File testsDir = new File(testsPath);
 
         // Loop over the platforms
-        File[] dirs = testsDir.listFiles( new FileFilter( ) {
+        File[] dirs = testsDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pPathname) {
                 boolean isDir = pPathname.isDirectory() && pPathname.canRead();
-                boolean isMacos = pPathname.getName().equals( Platform.OS_MACOSX );
-                boolean isWin32 = pPathname.getName().equals( Platform.OS_WIN32 );
-                boolean isLinux = pPathname.getName().equals( Platform.OS_LINUX );
+                boolean isMacos = pPathname.getName().equals(Platform.OS_MACOSX);
+                boolean isWin32 = pPathname.getName().equals(Platform.OS_WIN32);
+                boolean isLinux = pPathname.getName().equals(Platform.OS_LINUX);
 
-                return isDir && ( isMacos || isWin32 || isLinux );
+                return isDir && (isMacos || isWin32 || isLinux);
             }
         });
         for (File platformDir : dirs) {
             // Emulate the given platform
-            AbstractOOo.setPlatform( platformDir.getName() );
+            AbstractOOo.setPlatform(platformDir.getName());
 
             // Loop over the installation directories
-            File[] instDirs = platformDir.listFiles( new FileFilter( ) {
+            File[] instDirs = platformDir.listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File pPathname) {
                     return pPathname.isDirectory() && pPathname.canRead();
@@ -104,9 +109,9 @@ public class OOoTest extends TestCase {
 
             for (File inst : instDirs) {
                 try {
-                    new OOo( inst.getAbsolutePath() );
+                    new OOo(inst.getAbsolutePath());
                 } catch (InvalidConfigException e) {
-                    fail( MessageFormat.format( pattern, platformDir.getName(), inst.getName() ) );
+                    fail(MessageFormat.format(pattern, platformDir.getName(), inst.getName()));
                 }
             }
         }

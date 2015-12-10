@@ -85,8 +85,7 @@ import org.openoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.openoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 
 /**
- * Basic and dialog libraries section of the Contents form page of the
- * package editor.
+ * Basic and dialog libraries section of the Contents form page of the package editor.
  *
  * @author cedricbosdo
  *
@@ -104,19 +103,19 @@ public class LibsSection extends SectionPart {
     private TableViewer mTableViewer;
 
     /**
-     * A <code>0</code> as value, means: "Basic Library". A <code>1</code>
-     * means "Dialog Library".
+     * A <code>0</code> as value, means: "Basic Library". A <code>1</code> means "Dialog Library".
      */
     private HashMap<Object, Integer> mLibs = new HashMap<Object, Integer>();
 
     /**
      * Constructor.
      *
-     * @param pPage the form page where to create the section
+     * @param pPage
+     *            the form page where to create the section
      */
     public LibsSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(),
-                        pPage.getManagedForm().getToolkit(), ExpandableComposite.TITLE_BAR);
+        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+            ExpandableComposite.TITLE_BAR);
 
         mPage = pPage;
 
@@ -124,7 +123,6 @@ public class LibsSection extends SectionPart {
 
         section.setText(Messages.getString("LibsSection.Title")); //$NON-NLS-1$
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 
         Composite clientArea = mPage.getManagedForm().getToolkit().createComposite(section);
         clientArea.setLayout(new GridLayout());
@@ -149,7 +147,7 @@ public class LibsSection extends SectionPart {
         Iterator<Entry<Object, Integer>> iter = mLibs.entrySet().iterator();
         while (iter.hasNext()) {
             Entry<Object, Integer> entry = iter.next();
-            IFolder res = (IFolder)entry.getKey();
+            IFolder res = (IFolder) entry.getKey();
 
             if (entry.getValue().equals(BASIC_LIB)) {
                 libs.add(res);
@@ -169,7 +167,7 @@ public class LibsSection extends SectionPart {
         Iterator<Entry<Object, Integer>> iter = mLibs.entrySet().iterator();
         while (iter.hasNext()) {
             Entry<Object, Integer> entry = iter.next();
-            IFolder res = (IFolder)entry.getKey();
+            IFolder res = (IFolder) entry.getKey();
 
             if (entry.getValue().equals(DIALOG_LIB)) {
                 libs.add(res);
@@ -182,7 +180,8 @@ public class LibsSection extends SectionPart {
     /**
      * Fill the libraries section from the properties file.
      *
-     * @param pModel the properties file content.
+     * @param pModel
+     *            the properties file content.
      */
     public void setLibraries(PackagePropertiesModel pModel) {
 
@@ -193,7 +192,7 @@ public class LibsSection extends SectionPart {
         mLibs.clear();
 
         if (mPage.getEditorInput() instanceof IFileEditorInput) {
-            IFileEditorInput input = (IFileEditorInput)mPage.getEditorInput();
+            IFileEditorInput input = (IFileEditorInput) mPage.getEditorInput();
             IProject prj = input.getFile().getProject();
 
             for (IFolder lib : basicLibs) {
@@ -217,7 +216,8 @@ public class LibsSection extends SectionPart {
     /**
      * Creates the table GUI.
      *
-     * @param pClientArea the composite where to create the table
+     * @param pClientArea
+     *            the composite where to create the table
      */
     private void createTable(Composite pClientArea) {
         Table table = new Table(pClientArea, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
@@ -226,14 +226,15 @@ public class LibsSection extends SectionPart {
         mTableViewer = new TableViewer(table);
         mTableViewer.setContentProvider(new LibsContentProvider());
         mTableViewer.setLabelProvider(new LibsLabelProvider());
-        mTableViewer.setCellEditors(new CellEditor[]{
-                        null,
-                        new ComboBoxCellEditor(mTableViewer.getTable(),
-                                        new String[]{Messages.getString("LibsSection.BasicLibrary"),  //$NON-NLS-1$
-                                                        Messages.getString("LibsSection.DialogLibrary")}) //$NON-NLS-1$
-        });
+        mTableViewer.setCellEditors(
+            new CellEditor[] { null,
+                new ComboBoxCellEditor(mTableViewer.getTable(),
+                    new String[] { Messages.getString(
+                        "LibsSection.BasicLibrary"), //$NON-NLS-1$
+                        Messages.getString("LibsSection.DialogLibrary") }) //$NON-NLS-1$
+            });
         mTableViewer.setCellModifier(new LibsCellModifier());
-        mTableViewer.setColumnProperties(new String[]{P_NAME, P_LIBTYPE});
+        mTableViewer.setColumnProperties(new String[] { P_NAME, P_LIBTYPE });
 
         TableColumn folderColumn = new TableColumn(table, SWT.LEFT);
         folderColumn.setMoveable(false);
@@ -249,27 +250,27 @@ public class LibsSection extends SectionPart {
     /**
      * Create the add / del buttons.
      *
-     * @param pClientArea the composite where to create the buttons
+     * @param pClientArea
+     *            the composite where to create the buttons
      */
     private void createButtons(Composite pClientArea) {
         Composite buttons = mPage.getManagedForm().getToolkit().createComposite(pClientArea);
         buttons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttons.setLayout(new GridLayout(2, true));
 
-        Button addBtn = mPage.getManagedForm().getToolkit().createButton(
-                        buttons, Messages.getString("LibsSection.AddButton"), SWT.PUSH); //$NON-NLS-1$
-        addBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END |
-                        GridData.GRAB_HORIZONTAL));
+        Button addBtn = mPage.getManagedForm().getToolkit().createButton(buttons,
+            Messages.getString("LibsSection.AddButton"), SWT.PUSH); //$NON-NLS-1$
+        addBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL));
         addBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
                 // Open the folder chooser dialog and refresh the table
                 IProject prj = mPage.getProject();
-                PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
+                PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
 
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog(prj,
-                                Messages.getString("LibsSection.AddDescription")); //$NON-NLS-1$
+                    Messages.getString("LibsSection.AddDescription")); //$NON-NLS-1$
                 dlg.setShowOnlyFolders(true);
 
                 ArrayList<IResource> hiddenResources = new ArrayList<IResource>();
@@ -291,17 +292,16 @@ public class LibsSection extends SectionPart {
             }
         });
 
-        Button delBtn = mPage.getManagedForm().getToolkit().createButton(
-                        buttons, Messages.getString("LibsSection.DelButton"), SWT.PUSH); //$NON-NLS-1$
-        delBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING |
-                        GridData.GRAB_HORIZONTAL));
+        Button delBtn = mPage.getManagedForm().getToolkit().createButton(buttons,
+            Messages.getString("LibsSection.DelButton"), SWT.PUSH); //$NON-NLS-1$
+        delBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL));
         delBtn.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
                 // Delete the selected line
                 ISelection sel = mTableViewer.getSelection();
                 if (sel instanceof IStructuredSelection) {
-                    IStructuredSelection structuredSel = (IStructuredSelection)sel;
+                    IStructuredSelection structuredSel = (IStructuredSelection) sel;
                     Iterator<?> iter = structuredSel.iterator();
                     while (iter.hasNext()) {
                         Object o = iter.next();
@@ -319,7 +319,7 @@ public class LibsSection extends SectionPart {
      * Tells to all the listeners that the section has been changed.
      */
     private void fireSectionModified() {
-        PackagePropertiesEditor editor = (PackagePropertiesEditor)mPage.getEditor();
+        PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
 
         List<IFolder> dialogLibs = getDialogLibraries();
         editor.getModel().clearDialogLibraries();
@@ -398,8 +398,8 @@ public class LibsSection extends SectionPart {
         public void modify(Object pElement, String pProperty, Object pValue) {
             if (pProperty.equals(P_LIBTYPE) && pValue instanceof Integer) {
                 if (pElement instanceof TableItem) {
-                    Object o = ((TableItem)pElement).getData();
-                    mLibs.put(o, (Integer)pValue);
+                    Object o = ((TableItem) pElement).getData();
+                    mLibs.put(o, (Integer) pValue);
                     mTableViewer.refresh(o);
                     fireSectionModified();
                 }
@@ -421,7 +421,7 @@ public class LibsSection extends SectionPart {
         public Image getColumnImage(Object pElement, int pColumnIndex) {
             Image image = null;
             if (pColumnIndex == 0 && pElement instanceof IFolder) {
-                IFolder folder = (IFolder)pElement;
+                IFolder folder = (IFolder) pElement;
                 IWorkbenchAdapter adapter = folder.getAdapter(IWorkbenchAdapter.class);
                 image = adapter.getImageDescriptor(pElement).createImage();
             }
@@ -435,7 +435,7 @@ public class LibsSection extends SectionPart {
         public String getColumnText(Object pElement, int pColumnIndex) {
             String label = null;
             if (pColumnIndex == 0 && pElement instanceof IFolder) {
-                label = ((IFolder)pElement).getProjectRelativePath().toOSString();
+                label = ((IFolder) pElement).getProjectRelativePath().toOSString();
             } else if (pColumnIndex == 1) {
                 if (mLibs.get(pElement).equals(BASIC_LIB)) {
                     label = Messages.getString("LibsSection.BasicLibrary"); //$NON-NLS-1$

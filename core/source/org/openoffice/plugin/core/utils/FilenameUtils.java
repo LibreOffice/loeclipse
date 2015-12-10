@@ -25,8 +25,8 @@
 package org.openoffice.plugin.core.utils;
 
 /**
- * The commons.io dependency was removed but we need some stuff from the
- * FilenameUtils class. The missing functionality is recoded here.
+ * The commons.io dependency was removed but we need some stuff from the FilenameUtils class. The missing functionality
+ * is recoded here.
  *
  * @author oliver (oliver.boehm@agentes.de)
  * @since 1.1.1 (21.09.2010)
@@ -34,12 +34,14 @@ package org.openoffice.plugin.core.utils;
 public final class FilenameUtils {
 
     /** Utility class - no need to instantiate it. */
-    private FilenameUtils() {}
+    private FilenameUtils() {
+    }
 
     /**
      * Normalize.
      *
-     * @param pathname the pathname
+     * @param pathname
+     *            the pathname
      * @return the string
      */
     public static String normalize(final String pathname) {
@@ -49,12 +51,13 @@ public final class FilenameUtils {
     /**
      * Separators to unix.
      *
-     * @param filename the filename
+     * @param filename
+     *            the filename
      * @return the string
      */
     public static String separatorsToUnix(final String filename) {
-        //		return StringUtils.replaceChars(filename, '\\', '/');
-        return filename.replace( '\\', '/');
+        // return StringUtils.replaceChars(filename, '\\', '/');
+        return filename.replace('\\', '/');
     }
 
 }

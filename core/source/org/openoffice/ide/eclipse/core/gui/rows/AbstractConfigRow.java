@@ -66,15 +66,18 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Constructor.
      *
-     * @param pParent the composite where to create the row
-     * @param pProperty the property for the row events
-     * @param pBrowseText the text for the browse button/link
-     * @param pSelection the configuration element to select first
+     * @param pParent
+     *            the composite where to create the row
+     * @param pProperty
+     *            the property for the row events
+     * @param pBrowseText
+     *            the text for the browse button/link
+     * @param pSelection
+     *            the configuration element to select first
      */
     public AbstractConfigRow(final Composite pParent, String pProperty, String pBrowseText, Object pSelection) {
-        super(pParent, pProperty,
-                        Messages.getString("AbstractConfigRow.Label"), //$NON-NLS-1$
-                        pBrowseText, true);
+        super(pParent, pProperty, Messages.getString("AbstractConfigRow.Label"), //$NON-NLS-1$
+            pBrowseText, true);
 
         addListener(mConfigListener);
 
@@ -92,11 +95,11 @@ public abstract class AbstractConfigRow extends ChoiceRow {
             }
         });
 
-        fillRow( );
-        if ( pSelection != null ) {
-            select( getElementName( pSelection ) );
+        fillRow();
+        if (pSelection != null) {
+            select(getElementName(pSelection));
         } else {
-            select( 0 );
+            select(0);
         }
     }
 
@@ -110,14 +113,16 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Add the configuration listener to the correct configuration container.
      *
-     * @param pConfigListener the listener to add
+     * @param pConfigListener
+     *            the listener to add
      */
     protected abstract void addListener(IConfigListener pConfigListener);
 
     /**
      * Remove the configuration listener from the correct configuration container.
      *
-     * @param pConfigListener the listener to remove
+     * @param pConfigListener
+     *            the listener to remove
      */
     protected abstract void removeListener(IConfigListener pConfigListener);
 
@@ -134,7 +139,8 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Computes the name to use to select the given object.
      *
-     * @param pElement the configuration object for which to get the name
+     * @param pElement
+     *            the configuration object for which to get the name
      * @return the name to use for the selection
      */
     protected abstract String getElementName(Object pElement);
@@ -142,7 +148,7 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Fills the row with the existing values from the configuration.
      */
-    private void fillRow( ) {
+    private void fillRow() {
 
         String[] values = getConfigValues();
 
@@ -158,7 +164,8 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Create the table to show the configuration elements in the dialog.
      *
-     * @param pParent the parent for the table.
+     * @param pParent
+     *            the parent for the table.
      * @return the initialized table
      */
     protected abstract AbstractTable createTable(Composite pParent);
@@ -179,9 +186,10 @@ public abstract class AbstractConfigRow extends ChoiceRow {
         /**
          * Constructor.
          *
-         * @param pParentShell the shell used for the dialog creation
+         * @param pParentShell
+         *            the shell used for the dialog creation
          */
-        TableDialog (Shell pParentShell) {
+        TableDialog(Shell pParentShell) {
             super(pParentShell);
             setShellStyle(getShellStyle() | SWT.RESIZE);
 
@@ -223,8 +231,8 @@ public abstract class AbstractConfigRow extends ChoiceRow {
          */
         @Override
         public void ConfigAdded(Object pElement) {
-            fillRow( );
-            select( getElementName( pElement ) );
+            fillRow();
+            select(getElementName(pElement));
         }
 
         /**
@@ -233,11 +241,11 @@ public abstract class AbstractConfigRow extends ChoiceRow {
         @Override
         public void ConfigRemoved(Object pElement) {
             String value = getValue();
-            fillRow( );
+            fillRow();
 
             // Select the previous selection if it hasn't been removed
-            if ( pElement != null && !value.equals( getElementName( pElement ) ) ) {
-                select( value );
+            if (pElement != null && !value.equals(getElementName(pElement))) {
+                select(value);
             }
         }
 
@@ -246,8 +254,8 @@ public abstract class AbstractConfigRow extends ChoiceRow {
          */
         @Override
         public void ConfigUpdated(Object pElement) {
-            fillRow( );
-            select( getElementName( pElement ) );
+            fillRow();
+            select(getElementName(pElement));
         };
     }
 }

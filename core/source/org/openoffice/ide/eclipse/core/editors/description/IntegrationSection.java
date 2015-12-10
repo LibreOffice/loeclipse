@@ -68,31 +68,30 @@ import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
  * @author Cédric Bosdonnat
  *
  */
-public class IntegrationSection extends AbstractSection< DescriptionModel > {
+public class IntegrationSection extends AbstractSection<DescriptionModel> {
 
     static final String SEPARATOR = ","; //$NON-NLS-1$
-    static final String[] PLATFORMS = {
-                    "all", //$NON-NLS-1$
-                    "freebsd_x86", //$NON-NLS-1$
-                    "freebsd_x86_64", //$NON-NLS-1$
-                    "linux_arm_eabi", //$NON-NLS-1$
-                    "linux_arm_oabi", //$NON-NLS-1$
-                    "linux_ia64", //$NON-NLS-1$
-                    "linux_mips_eb", //$NON-NLS-1$
-                    "linux_mips_el", //$NON-NLS-1$
-                    "linux_powerpc", //$NON-NLS-1$
-                    "linux_powerpc64", //$NON-NLS-1$
-                    "linux_s390", //$NON-NLS-1$
-                    "linux_s390x", //$NON-NLS-1$
-                    "linux_sparc", //$NON-NLS-1$
-                    "linux_x86", //$NON-NLS-1$
-                    "linux_x86_64", //$NON-NLS-1$
-                    "macosx_powerpc", //$NON-NLS-1$
-                    "macosx_x86", //$NON-NLS-1$
-                    "os2_x86", //$NON-NLS-1$
-                    "solaris_sparc", //$NON-NLS-1$
-                    "solaris_x86", //$NON-NLS-1$
-                    "windows_x86" //$NON-NLS-1$
+    static final String[] PLATFORMS = { "all", //$NON-NLS-1$
+        "freebsd_x86", //$NON-NLS-1$
+        "freebsd_x86_64", //$NON-NLS-1$
+        "linux_arm_eabi", //$NON-NLS-1$
+        "linux_arm_oabi", //$NON-NLS-1$
+        "linux_ia64", //$NON-NLS-1$
+        "linux_mips_eb", //$NON-NLS-1$
+        "linux_mips_el", //$NON-NLS-1$
+        "linux_powerpc", //$NON-NLS-1$
+        "linux_powerpc64", //$NON-NLS-1$
+        "linux_s390", //$NON-NLS-1$
+        "linux_s390x", //$NON-NLS-1$
+        "linux_sparc", //$NON-NLS-1$
+        "linux_x86", //$NON-NLS-1$
+        "linux_x86_64", //$NON-NLS-1$
+        "macosx_powerpc", //$NON-NLS-1$
+        "macosx_x86", //$NON-NLS-1$
+        "os2_x86", //$NON-NLS-1$
+        "solaris_sparc", //$NON-NLS-1$
+        "solaris_x86", //$NON-NLS-1$
+        "windows_x86" //$NON-NLS-1$
     };
     private static final int GRID_COLUMS = 3;
 
@@ -103,28 +102,30 @@ public class IntegrationSection extends AbstractSection< DescriptionModel > {
     private Text mPlatformTxt;
 
     /**
-     * @param pParent the parent composite where to add the section
-     * @param pPage the parent page
+     * @param pParent
+     *            the parent composite where to add the section
+     * @param pPage
+     *            the parent page
      */
-    public IntegrationSection( Composite pParent, DescriptionFormPage pPage ) {
-        super( pParent, pPage, ExpandableComposite.TITLE_BAR );
+    public IntegrationSection(Composite pParent, DescriptionFormPage pPage) {
+        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
         mPage = pPage;
 
-        createContent( );
+        createContent();
 
-        setModel( pPage.getModel() );
+        setModel(pPage.getModel());
     }
 
     /**
      * Loads the values from the model into the controls.
      */
     @Override
-    public void loadData( ) {
-        getModel().setSuspendEvent( true );
-        mMinOOoTxt.setText( getModel().getMinOOo()  );
-        mMaxOOoTxt.setText( getModel().getMaxOOo() );
-        mPlatformTxt.setText( getModel().getPlatforms() );
-        getModel().setSuspendEvent( false );
+    public void loadData() {
+        getModel().setSuspendEvent(true);
+        mMinOOoTxt.setText(getModel().getMinOOo());
+        mMaxOOoTxt.setText(getModel().getMaxOOo());
+        mPlatformTxt.setText(getModel().getPlatforms());
+        getModel().setSuspendEvent(false);
     }
 
     /**
@@ -132,75 +133,74 @@ public class IntegrationSection extends AbstractSection< DescriptionModel > {
      */
     private void createContent() {
         Section section = getSection();
-        section.setText( Messages.getString("IntegrationSection.Title") ); //$NON-NLS-1$
+        section.setText(Messages.getString("IntegrationSection.Title")); //$NON-NLS-1$
 
-        section.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ));
+        section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         FormToolkit toolkit = mPage.getManagedForm().getToolkit();
         Composite clientArea = toolkit.createComposite(section);
-        clientArea.setLayout( new GridLayout( GRID_COLUMS, false ) );
+        clientArea.setLayout(new GridLayout(GRID_COLUMS, false));
 
-        Label descrLbl = toolkit.createLabel( clientArea,
-                        Messages.getString("IntegrationSection.Description"),  //$NON-NLS-1$
-                        SWT.WRAP );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = toolkit.createLabel(clientArea, Messages.getString("IntegrationSection.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = GRID_COLUMS;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
         // Min OOo version controls
-        toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.MinOOoVersion") ); //$NON-NLS-1$
-        mMinOOoTxt = toolkit.createText( clientArea, new String( ) );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        toolkit.createLabel(clientArea, Messages.getString("IntegrationSection.MinOOoVersion")); //$NON-NLS-1$
+        mMinOOoTxt = toolkit.createText(clientArea, new String());
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = GRID_COLUMS - 1;
-        mMinOOoTxt.setLayoutData( gd );
-        mMinOOoTxt.addModifyListener( new ModifyListener () {
+        mMinOOoTxt.setLayoutData(gd);
+        mMinOOoTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().setMinOOo( mMinOOoTxt.getText() );
+                getModel().setMinOOo(mMinOOoTxt.getText());
                 markDirty();
             }
         });
 
         // Max OOo version controls
-        toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.MaxOOoVersion") ); //$NON-NLS-1$
-        mMaxOOoTxt = toolkit.createText( clientArea, new String( ) );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        toolkit.createLabel(clientArea, Messages.getString("IntegrationSection.MaxOOoVersion")); //$NON-NLS-1$
+        mMaxOOoTxt = toolkit.createText(clientArea, new String());
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = GRID_COLUMS - 1;
-        mMaxOOoTxt.setLayoutData( gd );
-        mMaxOOoTxt.addModifyListener( new ModifyListener () {
+        mMaxOOoTxt.setLayoutData(gd);
+        mMaxOOoTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().setMaxOOo( mMaxOOoTxt.getText() );
+                getModel().setMaxOOo(mMaxOOoTxt.getText());
                 markDirty();
             }
         });
 
         // Platforms controls
-        toolkit.createLabel( clientArea, Messages.getString("IntegrationSection.Platforms") ); //$NON-NLS-1$
-        mPlatformTxt = toolkit.createText( clientArea, "all" ); //$NON-NLS-1$
-        mPlatformTxt.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-        mPlatformTxt.addModifyListener( new ModifyListener () {
+        toolkit.createLabel(clientArea, Messages.getString("IntegrationSection.Platforms")); //$NON-NLS-1$
+        mPlatformTxt = toolkit.createText(clientArea, "all"); //$NON-NLS-1$
+        mPlatformTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mPlatformTxt.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent pE) {
-                getModel().setPlatforms( mPlatformTxt.getText() );
+                getModel().setPlatforms(mPlatformTxt.getText());
                 markDirty();
             }
         });
 
-        Button platformBtn = toolkit.createButton( clientArea, "...", SWT.PUSH | SWT.FLAT ); //$NON-NLS-1$
-        platformBtn.setLayoutData( new GridData( GridData.HORIZONTAL_ALIGN_END ) );
-        platformBtn.addSelectionListener( new SelectionAdapter ( ) {
+        Button platformBtn = toolkit.createButton(clientArea, "...", SWT.PUSH | SWT.FLAT); //$NON-NLS-1$
+        platformBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        platformBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent pE) {
-                PlatformDialog dlg = new PlatformDialog( );
-                if ( dlg.open() == Window.OK ) {
-                    mPlatformTxt.setText( dlg.getSelected( ) );
+                PlatformDialog dlg = new PlatformDialog();
+                if (dlg.open() == Window.OK) {
+                    mPlatformTxt.setText(dlg.getSelected());
                 }
             }
         });
 
-        toolkit.paintBordersFor( clientArea );
+        toolkit.paintBordersFor(clientArea);
 
         section.setClient(clientArea);
     }
@@ -219,25 +219,25 @@ public class IntegrationSection extends AbstractSection< DescriptionModel > {
         /**
          * Dialog constructor.
          */
-        public PlatformDialog ( ) {
-            super( new Shell( Display.getDefault() ) );
+        public PlatformDialog() {
+            super(new Shell(Display.getDefault()));
 
             setShellStyle(SWT.RESIZE | SWT.APPLICATION_MODAL);
 
-            String textValue = mPlatformTxt.getText().replace(" ", new String( ) ); //$NON-NLS-1$
-            String[ ] selection = textValue.split( SEPARATOR );
-            mSelected = new ArrayList<String>( Arrays.asList( selection ) );
+            String textValue = mPlatformTxt.getText().replace(" ", new String()); //$NON-NLS-1$
+            String[] selection = textValue.split(SEPARATOR);
+            mSelected = new ArrayList<String>(Arrays.asList(selection));
         }
 
         /**
          * @return the selected platforms in a comma-separated string.
          */
-        public String getSelected( ) {
-            String selection = new String( );
+        public String getSelected() {
+            String selection = new String();
             for (String selected : mSelected) {
                 selection += selected + SEPARATOR;
             }
-            return selection.substring( 0, selection.length() - SEPARATOR.length() );
+            return selection.substring(0, selection.length() - SEPARATOR.length());
         }
 
         /**
@@ -245,19 +245,19 @@ public class IntegrationSection extends AbstractSection< DescriptionModel > {
          */
         @Override
         protected Control createDialogArea(Composite pParent) {
-            Composite body = (Composite)super.createDialogArea(pParent);
-            body.setLayout( new GridLayout( ) );
-            body.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+            Composite body = (Composite) super.createDialogArea(pParent);
+            body.setLayout(new GridLayout());
+            body.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-            Table table = new Table( body, SWT.MULTI | SWT.CHECK );
-            mList = new CheckboxTableViewer( table );
-            mList.setContentProvider( new ArrayContentProvider ( ) );
-            mList.setLabelProvider( new LabelProvider ( ) );
+            Table table = new Table(body, SWT.MULTI | SWT.CHECK);
+            mList = new CheckboxTableViewer(table);
+            mList.setContentProvider(new ArrayContentProvider());
+            mList.setLabelProvider(new LabelProvider());
 
-            mList.setInput( PLATFORMS );
-            mList.setCheckedElements( mSelected.toArray() );
+            mList.setInput(PLATFORMS);
+            mList.setCheckedElements(mSelected.toArray());
 
-            mList.addCheckStateListener( new ICheckStateListener ( ) {
+            mList.addCheckStateListener(new ICheckStateListener() {
 
                 @Override
                 public void checkStateChanged(CheckStateChangedEvent pEvent) {
@@ -265,7 +265,7 @@ public class IntegrationSection extends AbstractSection< DescriptionModel > {
 
                     mSelected.clear();
                     for (Object value : values) {
-                        mSelected.add( value.toString() );
+                        mSelected.add(value.toString());
                     }
                 };
             });

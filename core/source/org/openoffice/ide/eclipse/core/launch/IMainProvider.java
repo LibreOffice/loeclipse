@@ -58,7 +58,8 @@ public interface IMainProvider {
     /**
      * Get the names of the XMain implementations in the project.
      *
-     * @param pProject the UnoIdl project where to look for implementations
+     * @param pProject
+     *            the UnoIdl project where to look for implementations
      * @return the names of the implementations found.
      */
     public Vector<String> getMainNames(IProject pProject);

@@ -86,15 +86,13 @@ public class SDK implements ISdk, ITableElement {
     private static final String K_SDK_BUILDID = "BUILDID"; //$NON-NLS-1$
 
     /**
-     * private constant that hold the name of the sdk config file (normaly dk.mk)
-     * This is set to easily change if there are future sdk organization changes.
+     * private constant that hold the name of the sdk config file (normaly dk.mk) This is set to easily change if there
+     * are future sdk organization changes.
      */
     private static final String F_DK_CONFIG = "dk.mk"; //$NON-NLS-1$
 
     private static final String INCLUDE = "include"; //$NON-NLS-1$
     private static final String LIB = "lib"; //$NON-NLS-1$
-
-
 
     /* SDK Members */
 
@@ -102,21 +100,22 @@ public class SDK implements ISdk, ITableElement {
     private String mSdkHome;
 
     /**
-     * Standard and only constructor for the SDK object. The name and buildId will be fetched
-     * from the $(SDK_HOME)/settings/dk.mk properties file.
+     * Standard and only constructor for the SDK object. The name and buildId will be fetched from the
+     * $(SDK_HOME)/settings/dk.mk properties file.
      *
-     * @param pSdkHome absolute path of the SDK root
+     * @param pSdkHome
+     *            absolute path of the SDK root
      *
-     * @throws InvalidConfigException if the path doesn't points to a valid
-     *      LibreOffice SDK installation directory.
+     * @throws InvalidConfigException
+     *             if the path doesn't points to a valid LibreOffice SDK installation directory.
      */
-    public SDK (String pSdkHome) throws InvalidConfigException {
+    public SDK(String pSdkHome) throws InvalidConfigException {
 
         // Sets the path to the SDK
         setHome(pSdkHome);
     }
 
-    //----------------------------------------------------- ISdk Implementation
+    // ----------------------------------------------------- ISdk Implementation
 
     /**
      * {@inheritDoc}
@@ -133,8 +132,11 @@ public class SDK implements ISdk, ITableElement {
             if (homeFile.exists() && homeFile.isDirectory()) {
 
                 /**
-                 * <p>If the provided sdk home does not contains <li><code>idl</code></li>
-                 * <li><code>settings</code></li> directories, the provided sdk is considered as invalid</p>
+                 * <p>
+                 * If the provided sdk home does not contains
+                 * <li><code>idl</code></li>
+                 * <li><code>settings</code></li> directories, the provided sdk is considered as invalid
+                 * </p>
                  */
 
                 // test for the idl directory
@@ -146,12 +148,11 @@ public class SDK implements ISdk, ITableElement {
                 // test for the uno-skeletonmaker tool
                 String binName = "uno-skeletonmaker"; //$NON-NLS-1$
                 if (Platform.getOS().equals(Platform.OS_WIN32)) {
-                    binName += ".exe";  //$NON-NLS-1$
+                    binName += ".exe"; //$NON-NLS-1$
                 }
                 if (!getBinPath(pHome).append(binName).toFile().exists()) {
-                    throw new InvalidConfigException(
-                                    Messages.getString("SDK.MinSdkVersionError"), //$NON-NLS-1$
-                                    InvalidConfigException.INVALID_SDK_HOME);
+                    throw new InvalidConfigException(Messages.getString("SDK.MinSdkVersionError"), //$NON-NLS-1$
+                        InvalidConfigException.INVALID_SDK_HOME);
                 }
 
                 // If the settings and idl directory both exists, then try to fetch the name and buildId from
@@ -160,61 +161,59 @@ public class SDK implements ISdk, ITableElement {
                 this.mSdkHome = pHome;
 
             } else {
-                throw new InvalidConfigException(
-                                Messages.getString("SDK.NoDirectoryError"), //$NON-NLS-1$
-                                InvalidConfigException.INVALID_SDK_HOME);
+                throw new InvalidConfigException(Messages.getString("SDK.NoDirectoryError"), //$NON-NLS-1$
+                    InvalidConfigException.INVALID_SDK_HOME);
             }
         } catch (Throwable e) {
 
             if (e instanceof InvalidConfigException) {
 
                 // Rethrow the InvalidSDKException
-                InvalidConfigException exception = (InvalidConfigException)e;
+                InvalidConfigException exception = (InvalidConfigException) e;
                 throw exception;
             } else {
                 PluginLogger.error("Unexpected error during SDK cration", e); //$NON-NLS-1$
                 // Unexpected exception thrown
-                throw new InvalidConfigException(
-                                Messages.getString("SDK.UnexpectedError"),  //$NON-NLS-1$
-                                InvalidConfigException.INVALID_SDK_HOME, e);
+                throw new InvalidConfigException(Messages.getString("SDK.UnexpectedError"), //$NON-NLS-1$
+                    InvalidConfigException.INVALID_SDK_HOME, e);
             }
         }
     }
 
     /**
-     * Checks if the <code>settings</code> directory is contained in the SDK
-     * installation path.
+     * Checks if the <code>settings</code> directory is contained in the SDK installation path.
      *
-     * @param pHomeFile the SDK installation file handle to check
+     * @param pHomeFile
+     *            the SDK installation file handle to check
      *
      * @return the settings file found
      *
-     * @throws InvalidConfigException the the <code>settings</code> isn't found
+     * @throws InvalidConfigException
+     *             the the <code>settings</code> isn't found
      */
     private File checkSettingsDir(File pHomeFile) throws InvalidConfigException {
         File settingsFile = new File(pHomeFile, "settings"); //$NON-NLS-1$
-        if (! (settingsFile.exists() && settingsFile.isDirectory()) ) {
-            throw new InvalidConfigException(
-                            Messages.getString("SDK.NoSettingsDirError"), //$NON-NLS-1$
-                            InvalidConfigException.INVALID_SDK_HOME);
+        if (!(settingsFile.exists() && settingsFile.isDirectory())) {
+            throw new InvalidConfigException(Messages.getString("SDK.NoSettingsDirError"), //$NON-NLS-1$
+                InvalidConfigException.INVALID_SDK_HOME);
         }
         return settingsFile;
     }
 
     /**
-     * Checks if the <code>idl</code> directory is contained in the SDK
-     * installation path.
+     * Checks if the <code>idl</code> directory is contained in the SDK installation path.
      *
-     * @param pHomeFile the SDK installation file handle to check
+     * @param pHomeFile
+     *            the SDK installation file handle to check
      *
-     * @throws InvalidConfigException the the <code>idl</code> isn't found
+     * @throws InvalidConfigException
+     *             the the <code>idl</code> isn't found
      */
     private void checkIdlDir(File pHomeFile) throws InvalidConfigException {
         File idlFile = new File(pHomeFile, "idl"); //$NON-NLS-1$
-        if (! (idlFile.exists() && idlFile.isDirectory()) ) {
-            throw new InvalidConfigException(
-                            Messages.getString("SDK.NoIdlDirError"),  //$NON-NLS-1$
-                            InvalidConfigException.INVALID_SDK_HOME);
+        if (!(idlFile.exists() && idlFile.isDirectory())) {
+            throw new InvalidConfigException(Messages.getString("SDK.NoIdlDirError"), //$NON-NLS-1$
+                InvalidConfigException.INVALID_SDK_HOME);
         }
     }
 
@@ -254,7 +253,7 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public IPath getIncludePath() {
-        return new Path( getHome() ).append( INCLUDE );
+        return new Path(getHome()).append(INCLUDE);
     }
 
     /**
@@ -262,13 +261,14 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public IPath getLibPath() {
-        return new Path( getHome() ).append( LIB );
+        return new Path(getHome()).append(LIB);
     }
 
     /**
      * Get the path to the executable files of the SDK.
      *
-     * @param pHome the SDK installation path
+     * @param pHome
+     *            the SDK installation path
      * @return the path to the binaries folder depending on the platform
      */
     private IPath getBinPath(String pHome) {
@@ -286,7 +286,8 @@ public class SDK implements ISdk, ITableElement {
     /**
      * Get the binaries path for the SDK 2.x structure.
      *
-     * @param pHome the SDK home path
+     * @param pHome
+     *            the SDK home path
      *
      * @return the path to the bin directory
      */
@@ -314,9 +315,8 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
-    public Process runTool(IUnoidlProject pProject,
-                    String pShellCommand, IProgressMonitor pMonitor) {
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pProject.getName() );
+    public Process runTool(IUnoidlProject pProject, String pShellCommand, IProgressMonitor pMonitor) {
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pProject.getName());
         return runToolWithEnv(prj, pProject.getOOo(), pShellCommand, new String[0], pMonitor);
     }
 
@@ -324,13 +324,13 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
-    public Process runToolWithEnv(IProject pProject, IOOo pOOo,
-                    String pShellCommand, String[] pEnv, IProgressMonitor pMonitor) {
+    public Process runToolWithEnv(IProject pProject, IOOo pOOo, String pShellCommand, String[] pEnv,
+        IProgressMonitor pMonitor) {
 
         Process process = null;
 
         try {
-            if ( null != pOOo ) {
+            if (null != pOOo) {
 
                 // Get the environment variables and copy them. Needs Java 1.5
                 String[] sysEnv = SystemHelper.getSystemEnvironement();
@@ -350,13 +350,10 @@ public class SDK implements ISdk, ITableElement {
             // Error while launching the process
 
             MessageDialog dialog = new MessageDialog(
-                            OOEclipsePlugin.getDefault().getWorkbench().
-                            getActiveWorkbenchWindow().getShell(),
-                            Messages.getString("SDK.PluginError"), //$NON-NLS-1$
-                            null,
-                            Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
-                            MessageDialog.ERROR,
-                            new String[]{Messages.getString("SDK.Ok")}, 0); //$NON-NLS-1$
+                OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+                Messages.getString("SDK.PluginError"), //$NON-NLS-1$
+                null, Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
+                MessageDialog.ERROR, new String[] { Messages.getString("SDK.Ok") }, 0); //$NON-NLS-1$
             dialog.setBlockOnOpen(true);
             dialog.create();
             dialog.open();
@@ -365,13 +362,10 @@ public class SDK implements ISdk, ITableElement {
             // SubProcess creation unauthorized
 
             MessageDialog dialog = new MessageDialog(
-                            OOEclipsePlugin.getDefault().getWorkbench().
-                            getActiveWorkbenchWindow().getShell(),
-                            Messages.getString("SDK.PluginError"), //$NON-NLS-1$
-                            null,
-                            Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
-                            MessageDialog.ERROR,
-                            new String[]{Messages.getString("SDK.Ok")},    0); //$NON-NLS-1$
+                OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+                Messages.getString("SDK.PluginError"), //$NON-NLS-1$
+                null, Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
+                MessageDialog.ERROR, new String[] { Messages.getString("SDK.Ok") }, 0); //$NON-NLS-1$
             dialog.setBlockOnOpen(true);
             dialog.create();
             dialog.open();
@@ -385,16 +379,20 @@ public class SDK implements ISdk, ITableElement {
     /**
      * Merge two environment variables arrays.
      *
-     * <p>The modified array is the first one: the variables defined in the
-     * second parameter will be merged into the first array.</p>
+     * <p>
+     * The modified array is the first one: the variables defined in the second parameter will be merged into the first
+     * array.
+     * </p>
      *
-     * @param pBaseEnv the array to modify
-     * @param pToMergeEnv the array containing the environment variables to merge
+     * @param pBaseEnv
+     *            the array to modify
+     * @param pToMergeEnv
+     *            the array containing the environment variables to merge
      *
      * @return the merged environment variables.
      */
     private String[] mergeVariables(String[] pBaseEnv, String[] pToMergeEnv) {
-        //TODO cdan should add a test for this method (all entries in pToMergeEnv should be found in the result)
+        // TODO cdan should add a test for this method (all entries in pToMergeEnv should be found in the result)
         // PATH merging
         String[] vars = pBaseEnv;
         for (int i = 0; i < pToMergeEnv.length; i++) {
@@ -409,27 +407,31 @@ public class SDK implements ISdk, ITableElement {
         return vars;
     }
 
-    //-------------------------------------------- ITableElement Implementation
+    // -------------------------------------------- ITableElement Implementation
 
     /**
      * Update the environment variables needed for the execution of an SDK tool.
      *
-     * <p>This method set the <code>PATH</code>, <code>LD_LIBRARY_PATH</code> or
-     * <code>DYLD_LIBRARY_PATH</code> depending on the platform.</p>
+     * <p>
+     * This method set the <code>PATH</code>, <code>LD_LIBRARY_PATH</code> or <code>DYLD_LIBRARY_PATH</code> depending
+     * on the platform.
+     * </p>
      *
-     * @param pVars the environment variables to update
-     * @param pOoo the LibreOffice instance to use along with the SDK
+     * @param pVars
+     *            the environment variables to update
+     * @param pOoo
+     *            the LibreOffice instance to use along with the SDK
      *
      * @return the update environment variables.
      *
-     * @throws Exception if the platform isn't among the platforms for which the
-     *      LibreOffice SDK is available.
+     * @throws Exception
+     *             if the platform isn't among the platforms for which the LibreOffice SDK is available.
      */
     private String[] updateEnvironment(String[] pVars, IOOo pOoo) throws Exception {
         String[] oooBinPaths = pOoo.getBinPath();
-        String[] binPaths = new String[ oooBinPaths.length + 1 ];
-        binPaths[ 0 ] = getBinPath().toOSString();
-        System.arraycopy( oooBinPaths, 0, binPaths, 1, oooBinPaths.length );
+        String[] binPaths = new String[oooBinPaths.length + 1];
+        binPaths[0] = getBinPath().toOSString();
+        System.arraycopy(oooBinPaths, 0, binPaths, 1, oooBinPaths.length);
 
         String[] oooLibs = pOoo.getLibsPath();
 
@@ -439,21 +441,20 @@ public class SDK implements ISdk, ITableElement {
             // Definining path variables
             pVars = SystemHelper.addPathEnv(pVars, "PATH", binPaths); //$NON-NLS-1$
 
-        } else if (Platform.getOS().equals(Platform.OS_LINUX) ||
-                        Platform.getOS().equals(Platform.OS_SOLARIS)) {
+        } else if (Platform.getOS().equals(Platform.OS_LINUX) || Platform.getOS().equals(Platform.OS_SOLARIS)) {
 
             // An UN*X platform
-            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH",  //$NON-NLS-1$
-                            binPaths );
+            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH", //$NON-NLS-1$
+                binPaths);
             pVars = SystemHelper.addPathEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
-                            oooLibs );
+                oooLibs);
 
         } else if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 
-            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH",  //$NON-NLS-1$
-                            binPaths );
+            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH", //$NON-NLS-1$
+                binPaths);
             pVars = SystemHelper.addPathEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
-                            oooLibs);
+                oooLibs);
 
         } else {
             // Unmanaged OS
@@ -490,7 +491,7 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public String[] getProperties() {
-        return new String[] {NAME, PATH};
+        return new String[] { NAME, PATH };
     }
 
     /**
@@ -518,17 +519,19 @@ public class SDK implements ISdk, ITableElement {
     }
 
     /**
-     * Reads the <code>dk.mk</code> file to get the SDK name and build id. They are set in the
-     * SDK object if they are both fetched. Otherwise an invalid SDK exception is thrown.
+     * Reads the <code>dk.mk</code> file to get the SDK name and build id. They are set in the SDK object if they are
+     * both fetched. Otherwise an invalid SDK exception is thrown.
      *
-     * @param pSettingsFile the setting directory file handle.
+     * @param pSettingsFile
+     *            the setting directory file handle.
      *
-     * @throws InvalidConfigException Exception thrown when one of the following problems happened
-     *          <ul>
+     * @throws InvalidConfigException
+     *             Exception thrown when one of the following problems happened
+     *             <ul>
      *             <li>the given settings file isn't a valid directory</li>
      *             <li>the <code>settings/dk.mk</code> file doesn't exists or is unreadable</li>
      *             <li>one or both of the sdk name or build id key is not set</li>
-     *          </ul>
+     *             </ul>
      */
     private void readSettings(File pSettingsFile) throws InvalidConfigException {
 
@@ -551,28 +554,29 @@ public class SDK implements ISdk, ITableElement {
 
                     mBuildId = dkProperties.getProperty(K_SDK_BUILDID);
                 } else {
-                    throw new InvalidConfigException(
-                                    Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID, //$NON-NLS-1$
-                                    InvalidConfigException.INVALID_SDK_HOME);
+                    throw new InvalidConfigException(Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID, //$NON-NLS-1$
+                        InvalidConfigException.INVALID_SDK_HOME);
                 }
 
             } catch (FileNotFoundException e) {
-                throw new InvalidConfigException(
-                                Messages.getString("SDK.NoFileError") + "settings/" + F_DK_CONFIG ,  //$NON-NLS-1$ //$NON-NLS-2$
-                                InvalidConfigException.INVALID_SDK_HOME);
+                throw new InvalidConfigException(Messages.getString("SDK.NoFileError") + "settings/" + F_DK_CONFIG, //$NON-NLS-1$ //$NON-NLS-2$
+                    InvalidConfigException.INVALID_SDK_HOME);
             } catch (IOException e) {
                 throw new InvalidConfigException(
-                                Messages.getString("SDK.NoReadableFileError") +  //$NON-NLS-1$
-                                "settings/" + F_DK_CONFIG,  //$NON-NLS-1$
-                                InvalidConfigException.INVALID_SDK_HOME);
+                    Messages.getString("SDK.NoReadableFileError") + //$NON-NLS-1$
+                        "settings/" + F_DK_CONFIG, //$NON-NLS-1$
+                    InvalidConfigException.INVALID_SDK_HOME);
             } finally {
-                try { in.close(); } catch (Exception e) { }
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
             }
 
         } else {
             throw new InvalidConfigException(
-                            Messages.getString("SDK.NoDirectoryError") + pSettingsFile.getAbsolutePath(), //$NON-NLS-1$
-                            InvalidConfigException.INVALID_SDK_HOME);
+                Messages.getString("SDK.NoDirectoryError") + pSettingsFile.getAbsolutePath(), //$NON-NLS-1$
+                InvalidConfigException.INVALID_SDK_HOME);
         }
     }
 }

@@ -50,8 +50,5 @@ package org.openoffice.ide.eclipse.core;
  *
  */
 public enum LogLevels {
-    ERROR,
-    WARNING,
-    INFO,
-    DEBUG;
+    ERROR, WARNING, INFO, DEBUG;
 }

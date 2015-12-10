@@ -43,7 +43,6 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.preferences;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
@@ -64,13 +63,11 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 import org.openoffice.ide.eclipse.core.model.config.ISdk;
 
 /**
- * The project preference page. This page can be used to reconfigure the
- * project OOo and SDK.
+ * The project preference page. This page can be used to reconfigure the project OOo and SDK.
  *
  * @author cedricbosdo
  */
-public class ProjectPropertiesPage extends PropertyPage
-implements IWorkbenchPropertyPage {
+public class ProjectPropertiesPage extends PropertyPage implements IWorkbenchPropertyPage {
 
     private static final String SDK = "__sdk"; //$NON-NLS-1$
     private static final String OOO = "__ooo"; //$NON-NLS-1$
@@ -101,7 +98,7 @@ implements IWorkbenchPropertyPage {
         super.dispose();
     }
 
-    //------------------------------------------------------- Content managment
+    // ------------------------------------------------------- Content managment
 
     /**
      * {@inheritDoc}
@@ -111,9 +108,9 @@ implements IWorkbenchPropertyPage {
         super.setElement(pElement);
 
         try {
-            IProject prj = pElement.getAdapter( IProject.class );
-            if ( prj != null ) {
-                mProject = (UnoidlProject)ProjectsManager.getProject( prj.getName() );
+            IProject prj = pElement.getAdapter(IProject.class);
+            if (prj != null) {
+                mProject = (UnoidlProject) ProjectsManager.getProject(prj.getName());
             }
         } catch (Exception e) {
             PluginLogger.debug(e.getMessage());
@@ -148,8 +145,7 @@ implements IWorkbenchPropertyPage {
     }
 
     /**
-     * Convenience method to save the SDK and OOo values in their plugin
-     * configuration file.
+     * Convenience method to save the SDK and OOo values in their plugin configuration file.
      */
     private void saveValues() {
         if (!mSdkRow.getValue().equals("")) { //$NON-NLS-1$

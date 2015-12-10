@@ -13,8 +13,7 @@ public interface IExtraOptionsProvider {
      *
      * @param pEnv
      *            the original env variables.
-     * @return
-     *          the new env variables.
+     * @return the new env variables.
      */
     String[] addEnv(String[] pEnv);
 }

@@ -49,8 +49,7 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextViewer;
 
 /**
- * This class is responsible for the selection of words using double-clics
- * in the UNO-IDL editor.
+ * This class is responsible for the selection of words using double-clics in the UNO-IDL editor.
  *
  * @author cbosdonnat
  *
@@ -80,9 +79,9 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Test if the caret is positioned in a comment partition.
      *
-     * @param pCaretPos the caret position
-     * @return <code>true</code> if the cursor is in a comment,
-     *         <code>false</code> otherwise
+     * @param pCaretPos
+     *            the caret position
+     * @return <code>true</code> if the cursor is in a comment, <code>false</code> otherwise
      */
     protected boolean selectComment(int pCaretPos) {
 
@@ -92,7 +91,6 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
         int startPos, endPos;
 
         try {
-
 
             int pos = getCommentStartPosition(pCaretPos, doc);
             int c = doc.getChar(pos);
@@ -130,11 +128,14 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Get the position of the start of the current comment or the same position than the caret.
      *
-     * @param pCaretPos the position of the caret
-     * @param pDoc the edited document
+     * @param pCaretPos
+     *            the position of the caret
+     * @param pDoc
+     *            the edited document
      * @return the start of the comment or the caret position
      *
-     * @throws BadLocationException if something wrong happens during the document reading
+     * @throws BadLocationException
+     *             if something wrong happens during the document reading
      */
     private int getCommentStartPosition(int pCaretPos, IDocument pDoc) throws BadLocationException {
         int pos = pCaretPos;
@@ -158,9 +159,9 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Test if the caret is positioned in a word partition.
      *
-     * @param pCaretPos the caret position
-     * @return <code>true</code> if the cursor is in a word,
-     *         <code>false</code> ortherwise
+     * @param pCaretPos
+     *            the caret position
+     * @return <code>true</code> if the cursor is in a word, <code>false</code> ortherwise
      */
     protected boolean selectWord(int pCaretPos) {
 
@@ -208,8 +209,10 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Define the text selection using a range.
      *
-     * @param pStartPos the position of the selection start
-     * @param pStopPos the position of the selection end
+     * @param pStartPos
+     *            the position of the selection start
+     * @param pStopPos
+     *            the position of the selection end
      */
     private void selectRange(int pStartPos, int pStopPos) {
         int offset = pStartPos + 1;

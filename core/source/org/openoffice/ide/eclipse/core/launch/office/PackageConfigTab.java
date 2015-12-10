@@ -65,27 +65,28 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     /**
      * Get the selected resources stored in a launch configuration.
      *
-     * @param pConfiguration the configuration to extract the infos from
+     * @param pConfiguration
+     *            the configuration to extract the infos from
      *
      * @return the list of resources extracted
      *
-     * @throws CoreException if any of the needed properties is missing in
-     *      the launch configuration
+     * @throws CoreException
+     *             if any of the needed properties is missing in the launch configuration
      */
-    public static List<IResource> getResources( ILaunchConfiguration pConfiguration ) throws CoreException {
+    public static List<IResource> getResources(ILaunchConfiguration pConfiguration) throws CoreException {
         ArrayList<IResource> selected = new ArrayList<IResource>();
 
-        String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( prjName );
+        String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
 
-        String paths = pConfiguration.getAttribute( IOfficeLaunchConstants.CONTENT_PATHS, new String() );
-        if ( !paths.isEmpty() ) {
-            String[] pathsItems = paths.split( IOfficeLaunchConstants.PATHS_SEPARATOR );
+        String paths = pConfiguration.getAttribute(IOfficeLaunchConstants.CONTENT_PATHS, new String());
+        if (!paths.isEmpty()) {
+            String[] pathsItems = paths.split(IOfficeLaunchConstants.PATHS_SEPARATOR);
 
             for (String path : pathsItems) {
-                IResource res = prj.findMember( path );
-                if ( res != null ) {
-                    selected.add( res );
+                IResource res = prj.findMember(path);
+                if (res != null) {
+                    selected.add(res);
                 }
             }
         }
@@ -98,13 +99,13 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     @Override
     public void createControl(Composite pParent) {
 
-        Composite body = new Composite( pParent, SWT.NONE );
-        body.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-        body.setLayout( new GridLayout() );
+        Composite body = new Composite(pParent, SWT.NONE);
+        body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        body.setLayout(new GridLayout());
 
-        mContentSelector = new PackageContentSelector( body, SWT.NONE );
+        mContentSelector = new PackageContentSelector(body, SWT.NONE);
 
-        setControl( body );
+        setControl(body);
     }
 
     /**
@@ -129,17 +130,17 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     @Override
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
-            String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
-            IUnoidlProject project = ProjectsManager.getProject( prjName );
+            String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
+            IUnoidlProject project = ProjectsManager.getProject(prjName);
 
-            if ( null != project ) {
-                mContentSelector.setProject( project );
+            if (null != project) {
+                mContentSelector.setProject(project);
 
-                List<IResource> selected = getResources( pConfiguration );
-                if ( selected.isEmpty() ) {
+                List<IResource> selected = getResources(pConfiguration);
+                if (selected.isEmpty()) {
                     mContentSelector.loadDefaults();
                 } else {
-                    mContentSelector.setSelected( selected );
+                    mContentSelector.setSelected(selected);
                 }
             }
         } catch (CoreException e) {
@@ -155,16 +156,16 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
         List<?> selected = mContentSelector.getSelected();
         String paths = new String();
         for (Object obj : selected) {
-            if ( obj instanceof IResource ) {
-                IResource res = (IResource)obj;
+            if (obj instanceof IResource) {
+                IResource res = (IResource) obj;
 
-                if ( !paths.isEmpty() ) {
+                if (!paths.isEmpty()) {
                     paths += IOfficeLaunchConstants.PATHS_SEPARATOR;
                 }
                 paths += res.getProjectRelativePath().toString();
             }
         }
-        pConfiguration.setAttribute( IOfficeLaunchConstants.CONTENT_PATHS, paths );
+        pConfiguration.setAttribute(IOfficeLaunchConstants.CONTENT_PATHS, paths);
     }
 
     /**
@@ -173,9 +174,9 @@ public class PackageConfigTab extends AbstractLaunchConfigurationTab {
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy pConfiguration) {
         try {
-            String prjName = pConfiguration.getAttribute( IOfficeLaunchConstants.PROJECT_NAME, new String() );
-            if ( !prjName.isEmpty() ) {
-                mContentSelector.setProject( ProjectsManager.getProject( prjName ) );
+            String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
+            if (!prjName.isEmpty()) {
+                mContentSelector.setProject(ProjectsManager.getProject(prjName));
 
                 mContentSelector.loadDefaults();
             }

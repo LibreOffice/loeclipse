@@ -80,9 +80,12 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
     /**
      * Constructor.
      *
-     * @param pBaseImage the image to decorate
-     * @param pImage the decorator image
-     * @param pLocation the location of the decorator image on the base image.
+     * @param pBaseImage
+     *            the image to decorate
+     * @param pImage
+     *            the decorator image
+     * @param pLocation
+     *            the location of the decorator image on the base image.
      */
     public OverlayImageIcon(Image pBaseImage, Image pImage, int pLocation) {
         // Base image of the object
@@ -90,15 +93,16 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
 
         mImage = pImage;
         mLocation = pLocation;
-        mSizeOfImage = new Point(pBaseImage.getBounds().width,
-                        pBaseImage.getBounds().height);
+        mSizeOfImage = new Point(pBaseImage.getBounds().width, pBaseImage.getBounds().height);
     }
 
     /**
      * this method is called to draw the composite image.
      *
-     * @param pLower the first image to draw
-     * @param pUpper the top image to draw
+     * @param pLower
+     *            the first image to draw
+     * @param pUpper
+     *            the top image to draw
      *
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
      *
@@ -110,31 +114,29 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
         drawImage(mBaseImage.getImageData(), 0, 0);
 
         ImageData imageData = mImage.getImageData();
-        switch(mLocation) {
+        switch (mLocation) {
             // Draw on the top left corner
             case TOP_LEFT:
                 drawImage(imageData, 0, 0);
                 break;
 
-                // Draw on top right corner
+            // Draw on top right corner
             case TOP_RIGHT:
                 drawImage(imageData, mSizeOfImage.x - imageData.width, 0);
                 break;
 
-                // Draw on bottom left
+            // Draw on bottom left
             case BOTTOM_LEFT:
                 drawImage(imageData, 0, mSizeOfImage.y - imageData.height);
                 break;
 
-                // Draw on bottom right corner
+            // Draw on bottom right corner
             case BOTTOM_RIGHT:
-                drawImage(imageData, mSizeOfImage.x - imageData.width,
-                                mSizeOfImage.y - imageData.height);
+                drawImage(imageData, mSizeOfImage.x - imageData.width, mSizeOfImage.y - imageData.height);
                 break;
 
         }
     }
-
 
     /**
      * @return Get the size of the composite image

@@ -60,14 +60,15 @@ import org.openoffice.ide.eclipse.core.model.ProjectsManager;
 /**
  * This class is responsible for all the actions to perform on resources changes.
  *
- * <p>To be sure that this class is started early even if the OOIntegration hasn't
- * been activated, this class implement {@link IStartup}</p>
+ * <p>
+ * To be sure that this class is started early even if the OOIntegration hasn't been activated, this class implement
+ * {@link IStartup}
+ * </p>
  *
  * @author cedricbosdo
  *
  */
 public class ResourceChangesHandler implements IStartup, IResourceChangeListener {
-
 
     /**
      * {@inheritDoc}
@@ -134,7 +135,8 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
         /**
          * Project adder constructor.
          *
-         * @param pPrj the project to add
+         * @param pPrj
+         *            the project to add
          */
         public ProjectAdderJob(IProject pPrj) {
             super(Messages.getString("ResourceChangesHandler.Title")); //$NON-NLS-1$

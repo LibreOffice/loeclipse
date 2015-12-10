@@ -43,10 +43,8 @@
  ************************************************************************/
 package org.openoffice.ide.eclipse.core.gui.rows;
 
-
 /**
- * is an interface that will be used to get notified when a GUI field (row)
- * has changed.
+ * is an interface that will be used to get notified when a GUI field (row) has changed.
  *
  * @see FieldEvent for the notification event description
  * @see LabeledRow for the base class of the listened rows
@@ -59,7 +57,8 @@ public interface IFieldChangedListener {
     /**
      * Method called when the row has changed.
      *
-     * @param pEvent the field event thrown
+     * @param pEvent
+     *            the field event thrown
      */
     public void fieldChanged(FieldEvent pEvent);
 }

@@ -50,41 +50,37 @@ import org.eclipse.core.resources.IFolder;
 import org.openoffice.ide.eclipse.core.internal.model.UnoComposite;
 
 /**
- * This class provides static methods to generate well-formed
- * uno composites. Thus there is no need to know how to create them to
- * use them.
+ * This class provides static methods to generate well-formed uno composites. Thus there is no need to know how to
+ * create them to use them.
  *
- * <p><b>Note:</b> This class has to be extended to add new UNO-IDL
- * code generation.</p>
+ * <p>
+ * <b>Note:</b> This class has to be extended to add new UNO-IDL code generation.
+ * </p>
  *
  * @author cedricbosdo
  *
  */
 public final class CompositeFactory {
 
-
     /**
-     * Creates a file node from the fully qualified name of the type which
-     * should be described inside.
+     * Creates a file node from the fully qualified name of the type which should be described inside.
      *
-     * @param pFullName  is the fully qualified name of the
-     *             type described in the file to create
-     *             (eg: <code>org::openoffice::foo</code>)
-     * @param pProject is the uno project in which to add the type.
+     * @param pFullName
+     *            is the fully qualified name of the type described in the file to create (eg:
+     *            <code>org::openoffice::foo</code>)
+     * @param pProject
+     *            is the uno project in which to add the type.
      *
-     * @return a Uno composite representing a file, or <code>null</code>
-     *         if the fullName is null or an empty string
+     * @return a Uno composite representing a file, or <code>null</code> if the fullName is null or an empty string
      */
-    public static IUnoComposite createTypeFile(String pFullName,
-                    IUnoidlProject pProject) {
+    public static IUnoComposite createTypeFile(String pFullName, IUnoidlProject pProject) {
 
         IUnoComposite file = null;
 
         if (pFullName != null && !pFullName.equals("")) { //$NON-NLS-1$
             String fileName = pFullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-            IFile filehandle = pProject.getFile(
-                            pProject.getIdlPath().append(fileName));
+            IFile filehandle = pProject.getFile(pProject.getIdlPath().append(fileName));
 
             file = createFile(filehandle);
         }
@@ -95,10 +91,10 @@ public final class CompositeFactory {
     /**
      * Creates a Uno composite representing a file from its filename.
      *
-     * @param pFilehandle the relative filename
+     * @param pFilehandle
+     *            the relative filename
      *
-     * @see #createTypeFile(String, IUnoidlProject) for file creation from
-     *         Type name
+     * @see #createTypeFile(String, IUnoidlProject) for file creation from Type name
      *
      * @return a Uno composite of FILE type
      */
@@ -116,18 +112,22 @@ public final class CompositeFactory {
     }
 
     /**
-     * Creates a uno composite representing the file content skeleton from
-     * the type name it should contain. All the file contents has to be added
-     * in this composite.
+     * Creates a uno composite representing the file content skeleton from the type name it should contain. All the file
+     * contents has to be added in this composite.
      *
-     * <p>The produced result will be of the following form:
-     * <pre>#ifndef __define_name_idl__
+     * <p>
+     * The produced result will be of the following form:
+     * 
+     * <pre>
+     * #ifndef __define_name_idl__
      * #define __define_name_idl__
      * [...]
      * #endif
-     * </pre></p>
+     * </pre>
+     * </p>
      *
-     * @param pFullname the type fully qualified name (eg: <code>org::foo</code>)
+     * @param pFullname
+     *            the type fully qualified name (eg: <code>org::foo</code>)
      * @return a uno composite representing the file content
      */
     public static IUnoComposite createFileContent(String pFullname) {
@@ -144,9 +144,9 @@ public final class CompositeFactory {
             properties.put("define", define.toLowerCase()); //$NON-NLS-1$
 
             String template = "#ifndef ${define}\n" + //$NON-NLS-1$
-                            "#define ${define}\n" +  //$NON-NLS-1$
-                            "\n${children}\n" + //$NON-NLS-1$
-                            "#endif\n"; //$NON-NLS-1$
+                "#define ${define}\n" + //$NON-NLS-1$
+                "\n${children}\n" + //$NON-NLS-1$
+                "#endif\n"; //$NON-NLS-1$
 
             content.configure(properties, template);
         }
@@ -155,15 +155,16 @@ public final class CompositeFactory {
     }
 
     /**
-     * Creates a Uno composite representing an include line. It uses the
-     * type's fully qualified name to recompose the file name. It supposes
-     * that the type is contained in a file of it's name.
+     * Creates a Uno composite representing an include line. It uses the type's fully qualified name to recompose the
+     * file name. It supposes that the type is contained in a file of it's name.
      *
-     * <p>If the method is called with the type <code>foo::XFoo</code>, the
-     * file <code>foo/XFoo.idl</code> will be returned. The resulting include
-     * line is always in &lt;,  &gt; characters.</p>
+     * <p>
+     * If the method is called with the type <code>foo::XFoo</code>, the file <code>foo/XFoo.idl</code> will be
+     * returned. The resulting include line is always in &lt;, &gt; characters.
+     * </p>
      *
-     * @param pFullName the fully qualified name of the type to include
+     * @param pFullName
+     *            the fully qualified name of the type to include
      *
      * @return a parametrized uno composite
      */
@@ -188,22 +189,20 @@ public final class CompositeFactory {
     /**
      * Creates a Uno composite directory.
      *
-     * @param pFullName is the fully qualified name of the
-     *             module to create (eg: <code>org::openoffice::foo</code>)
-     * @param pProject is the unoidl project in which to generate the
-     *             module
+     * @param pFullName
+     *            is the fully qualified name of the module to create (eg: <code>org::openoffice::foo</code>)
+     * @param pProject
+     *            is the unoidl project in which to generate the module
      *
      * @return a Uno composite directory.
      */
-    public static IUnoComposite createModuleDir(String pFullName,
-                    IUnoidlProject pProject) {
+    public static IUnoComposite createModuleDir(String pFullName, IUnoidlProject pProject) {
 
         UnoComposite module = new UnoComposite();
         module.setType(IUnoComposite.COMPOSITE_TYPE_FOLDER);
         String path = pFullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        IFolder filehandle = pProject.getFolder(
-                        pProject.getIdlPath().append(path));
+        IFolder filehandle = pProject.getFolder(pProject.getIdlPath().append(path));
 
         module.configure(filehandle.getLocation().toString());
 
@@ -213,12 +212,19 @@ public final class CompositeFactory {
     /**
      * Creates a simple module namespace use.
      *
-     * <p>For example, the produced text for the "foo" module name will be
-     * the following: </p>
+     * <p>
+     * For example, the produced text for the "foo" module name will be the following:
+     * </p>
      *
-     * <p><pre>module foo { };</pre></p>
+     * <p>
+     * 
+     * <pre>
+     * module foo { };
+     * </pre>
+     * </p>
      *
-     * @param pName is the module name (eg <code>foo</code>)
+     * @param pName
+     *            is the module name (eg <code>foo</code>)
      * @return the uno composite corresponding to the module.
      */
     public static IUnoComposite createModuleSpace(String pName) {
@@ -227,18 +233,17 @@ public final class CompositeFactory {
         module.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put("name", pName); //$NON-NLS-1$
-        String template = "module ${name} { ${children} };";  //$NON-NLS-1$
+        String template = "module ${name} { ${children} };"; //$NON-NLS-1$
         module.configure(properties, template);
 
         return module;
     }
 
     /**
-     * Simple convenient method calling {@link #createModuleSpace(String)} to
-     * create cascading modules namespaces.
+     * Simple convenient method calling {@link #createModuleSpace(String)} to create cascading modules namespaces.
      *
-     * @param pFullName is the fully qualified name of the
-     *             module to create (eg: <code>org::openoffice::foo</code>)
+     * @param pFullName
+     *            is the fully qualified name of the module to create (eg: <code>org::openoffice::foo</code>)
      * @return the top-most composite corresponding to the top-most module
      */
     public static IUnoComposite createModulesSpaces(String pFullName) {
@@ -265,18 +270,26 @@ public final class CompositeFactory {
     }
 
     /**
-     * Creates a UNO composite representing a UNO service with an interface
-     * inheritance.
+     * Creates a UNO composite representing a UNO service with an interface inheritance.
      *
-     * <p>The text produced by this method corresponds to the following one</p>
-     * <p><pre>\n[published ]service NAME : INTERFACE {
+     * <p>
+     * The text produced by this method corresponds to the following one
+     * </p>
+     * <p>
+     * 
+     * <pre>
+     * \n[published ]service NAME : INTERFACE {
      * [...]
-     * };</pre></p>
+     * };
+     * </pre>
+     * </p>
      *
-     * @param pName is the service name
-     * @param pIsPublished <code>true</code> if the module is a published one.
-     * @param pInterfaceFullName is the interface inheritance fully qualified
-     *             name
+     * @param pName
+     *            is the service name
+     * @param pIsPublished
+     *            <code>true</code> if the module is a published one.
+     * @param pInterfaceFullName
+     *            is the interface inheritance fully qualified name
      *
      * @see #createModulesSpaces(String) to get all the module declarations
      * @see #createService(String, boolean) for optional interface inheritance
@@ -284,8 +297,7 @@ public final class CompositeFactory {
      *
      * @return the created service composite
      */
-    public static IUnoComposite createService(String pName, boolean pIsPublished,
-                    String pInterfaceFullName) {
+    public static IUnoComposite createService(String pName, boolean pIsPublished, String pInterfaceFullName) {
 
         IUnoComposite service = null;
 
@@ -309,29 +321,37 @@ public final class CompositeFactory {
             }
 
             String template = "\n\n${published}service ${name} ${interface}{\n" + //$NON-NLS-1$
-                            "${children}\n};\n\n"; //$NON-NLS-1$
+                "${children}\n};\n\n"; //$NON-NLS-1$
 
             service.configure(properties, template);
         }
 
         return service;
     }
+
     /**
-     * Creates a service declaration text with the default interface. This one
-     * doesn't need to be mentioned in order to be used by UNO:
-     * <code>com::sun::star::uno::XInterface</code>.
+     * Creates a service declaration text with the default interface. This one doesn't need to be mentioned in order to
+     * be used by UNO: <code>com::sun::star::uno::XInterface</code>.
      *
-     * <p>The text produced by this method corresponds to the following one</p>
-     * <p><pre>[published ]service NAME {
+     * <p>
+     * The text produced by this method corresponds to the following one
+     * </p>
+     * <p>
+     * 
+     * <pre>
+     * [published ]service NAME {
      * [...]
-     * };</pre></p>
+     * };
+     * </pre>
+     * </p>
      *
-     * @param pName is the service name
-     * @param pIsPublished <code>true</code> if the module is a published one.
+     * @param pName
+     *            is the service name
+     * @param pIsPublished
+     *            <code>true</code> if the module is a published one.
      *
      * @see #createModulesSpaces(String) to get all the module declarations
-     * @see #createService(String, boolean, String) for complex service
-     *             creation method
+     * @see #createService(String, boolean, String) for complex service creation method
      * @see #createService(String) for a very basic service creation method
      *
      * @return the created service composite
@@ -341,21 +361,27 @@ public final class CompositeFactory {
     }
 
     /**
-     * Creates a default very basic service declaration only using the name
-     * and not published.
+     * Creates a default very basic service declaration only using the name and not published.
      *
-     * <p>The text produced by this method corresponds to the following one</p>
-     * <p><pre>service NAME {
+     * <p>
+     * The text produced by this method corresponds to the following one
+     * </p>
+     * <p>
+     * 
+     * <pre>
+     * service NAME {
      * [...]
-     * };</pre></p>
+     * };
+     * </pre>
+     * </p>
      *
-     * @param pName is the service name
+     * @param pName
+     *            is the service name
      *
      * @see #createModulesSpaces(String) to get all the module declarations
-     * @see #createService(String, boolean, String) for complex service
-     *             creation method
-     * @see #createService(String, boolean) for a basic service creation method
-     *             that lets specify if th service is published or not.
+     * @see #createService(String, boolean, String) for complex service creation method
+     * @see #createService(String, boolean) for a basic service creation method that lets specify if th service is
+     *      published or not.
      *
      * @return the created service composite
      */
@@ -364,35 +390,43 @@ public final class CompositeFactory {
     }
 
     /**
-     * Creates a Uno composite corresponding to an interface with its
-     * mandatory parent interfaces.
+     * Creates a Uno composite corresponding to an interface with its mandatory parent interfaces.
      *
-     * <p>This method returns two kind of texts depending on the number
-     * of parent interfaces name in the array. The first writing is used
-     * when there is only one parent interface:
-     * <pre>[published ]interface name [: parent::name ]{
+     * <p>
+     * This method returns two kind of texts depending on the number of parent interfaces name in the array. The first
+     * writing is used when there is only one parent interface:
+     * 
+     * <pre>
+     * [published ]interface name [: parent::name ]{
      * [...]
-     * };</pre></p>
+     * };
+     * </pre>
+     * </p>
      *
-     * <p>The other way is used when there are more than one parent
-     * interfaces:
-     * <pre>\n[published ]interface name {
+     * <p>
+     * The other way is used when there are more than one parent interfaces:
+     * 
+     * <pre>
+     * \n[published ]interface name {
      *     [[optional] ]interface parent::name; // for each parent
      *  [...]
-     * };</pre></p>
+     * };
+     * </pre>
+     * </p>
      *
-     * @param pName is the name of the interface (eg: <code>foo</code>)
-     * @param pIsPublished <code>true</code> if the interface is published
-     * @param pParentIntfNames array of all the mandatory parent interfaces
+     * @param pName
+     *            is the name of the interface (eg: <code>foo</code>)
+     * @param pIsPublished
+     *            <code>true</code> if the interface is published
+     * @param pParentIntfNames
+     *            array of all the mandatory parent interfaces
      *
-     * @see #createInterfaceInheritance(String, boolean) for the interfaces
-     *         inheritances. This method should be called for each new interface
-     *         to add or for optional interfaces. It is used in this method thought.
+     * @see #createInterfaceInheritance(String, boolean) for the interfaces inheritances. This method should be called
+     *      for each new interface to add or for optional interfaces. It is used in this method thought.
      *
      * @return a uno composite representing an interface declaration
      */
-    public static IUnoComposite createInterface(String pName,
-                    boolean pIsPublished, String[] pParentIntfNames) {
+    public static IUnoComposite createInterface(String pName, boolean pIsPublished, String[] pParentIntfNames) {
 
         IUnoComposite intf = null;
 
@@ -414,15 +448,14 @@ public final class CompositeFactory {
                 properties.put("published", ""); //$NON-NLS-1$ //$NON-NLS-2$
             }
             String template = "\n\n${published}interface ${name} ${interface}{\n" + //$NON-NLS-1$
-                            "${children}\n};\n\n"; //$NON-NLS-1$
+                "${children}\n};\n\n"; //$NON-NLS-1$
             intf.configure(properties, template);
 
             // Adds the interfaces if more than 1
             if (pParentIntfNames.length > 1) {
 
                 for (int i = 0; i < pParentIntfNames.length; i++) {
-                    IUnoComposite parent = createInterfaceInheritance(
-                                    pParentIntfNames[i], false);
+                    IUnoComposite parent = createInterfaceInheritance(pParentIntfNames[i], false);
                     if (parent != null) {
                         intf.addChild(parent);
                     }
@@ -435,11 +468,18 @@ public final class CompositeFactory {
     /**
      * Creates a UNO composite representing an interface inheritance.
      *
-     * <p>The generated text is formatted as following:
-     * <pre>\t[[optional] ]interface inheritance::name;\n</pre></p>
+     * <p>
+     * The generated text is formatted as following:
+     * 
+     * <pre>
+     * \t[[optional] ]interface inheritance::name;\n
+     * </pre>
+     * </p>
      *
-     * @param pName the fully qualified name of the interface to inherit from
-     * @param pOptional <code>true</code> if the interface is optional
+     * @param pName
+     *            the fully qualified name of the interface to inherit from
+     * @param pOptional
+     *            <code>true</code> if the interface is optional
      *
      * @return a UNO composite
      */
@@ -466,9 +506,12 @@ public final class CompositeFactory {
     /**
      * Creates an interface attribute.
      *
-     * @param pName the attribute name
-     * @param pType the type of the attribute
-     * @param pFlags the well-formatted string of flags.
+     * @param pName
+     *            the attribute name
+     * @param pType
+     *            the type of the attribute
+     * @param pFlags
+     *            the well-formatted string of flags.
      *
      * @return the attribute UNO composite
      */
@@ -509,13 +552,14 @@ public final class CompositeFactory {
     /**
      * Creates an interface method.
      *
-     * @param pName the method name
-     * @param pType the method return type
+     * @param pName
+     *            the method name
+     * @param pType
+     *            the method return type
      *
      * @return the UNO composite representing the method
      *
-     * @see #createMethodArgument(String, String, String)
-     *      for informations on how to add parameters to the method
+     * @see #createMethodArgument(String, String, String) for informations on how to add parameters to the method
      */
     public static IUnoComposite createMethod(String pName, String pType) {
 
@@ -541,15 +585,16 @@ public final class CompositeFactory {
     /**
      * Create a method argument to be added to a method UNO composite.
      *
-     * @param pName the argument name
-     * @param pType the argument type
-     * @param pDirection the argument direction among <code>in</code>, <code>out</code>,
-     *          <code>inout</code>.
+     * @param pName
+     *            the argument name
+     * @param pType
+     *            the argument type
+     * @param pDirection
+     *            the argument direction among <code>in</code>, <code>out</code>, <code>inout</code>.
      *
      * @return the UNO composite representing the parameter
      */
-    public static IUnoComposite createMethodArgument(String pName, String pType,
-                    String pDirection) {
+    public static IUnoComposite createMethodArgument(String pName, String pType, String pDirection) {
 
         IUnoComposite argument = null;
         if (pType == null) {

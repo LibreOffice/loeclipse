@@ -59,7 +59,8 @@ public class FileHelper {
     /**
      * Converts all separators to the Unix separator of forward slash.
      *
-     * @param path  the path to be changed, null ignored
+     * @param path
+     *            the path to be changed, null ignored
      * @return the updated path
      */
     public static String separatorsToUnix(String path) {
@@ -80,9 +81,8 @@ public class FileHelper {
      *            if set to <code>true</code>, overwrites the existing files
      *
      * @throws IOException
-     *             is thrown when one of the parameters is null or the
-     *             underlying file doesn't exists. This exception can also be
-     *             thrown if the writing rights are missing on dst
+     *             is thrown when one of the parameters is null or the underlying file doesn't exists. This exception
+     *             can also be thrown if the writing rights are missing on dst
      */
     public static void move(File pSrc, File pDst, boolean pForce) throws IOException {
 
@@ -121,9 +121,8 @@ public class FileHelper {
     }
 
     /**
-     * Copy the file src into the file dst. If the dst file already exists, it
-     * will be deleted before to start copying if force is set to
-     * <code>true</code>, otherwise nothing will be done.
+     * Copy the file src into the file dst. If the dst file already exists, it will be deleted before to start copying
+     * if force is set to <code>true</code>, otherwise nothing will be done.
      *
      * @param pSrc
      *            the original file
@@ -133,9 +132,12 @@ public class FileHelper {
      *            overwrite the existing destination if any
      *
      * @throws IOException
-     *             is thrown if <ul> <li>the src file is <code>null</code> or
-     *             isn't readable,</li> <li>dst is <code>null</code></li>
-     *             <li>the writing process fails</li> </ul>
+     *             is thrown if
+     *             <ul>
+     *             <li>the src file is <code>null</code> or isn't readable,</li>
+     *             <li>dst is <code>null</code></li>
+     *             <li>the writing process fails</li>
+     *             </ul>
      */
     public static void copyFile(File pSrc, File pDst, boolean pForce) throws IOException {
 

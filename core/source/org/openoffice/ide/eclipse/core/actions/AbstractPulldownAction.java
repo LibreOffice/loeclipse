@@ -83,7 +83,8 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     /**
      * Pulldown action.
      *
-     * @param pParameterName the action parameter
+     * @param pParameterName
+     *            the action parameter
      */
     public AbstractPulldownAction(String pParameterName) {
         mParameterName = pParameterName;
@@ -91,7 +92,9 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 
     /**
      * Check if the selection is valid, and if the pulldown action can be enabled.
-     * @param pSelection the current selection
+     * 
+     * @param pSelection
+     *            the current selection
      * @return <code>true</code> if the wizards can be launched.
      */
     public abstract boolean isValidSelection(IStructuredSelection pSelection);
@@ -99,7 +102,8 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     /**
      * Open the new wizard dialog.
      *
-     * @param pWizard the wizard to open
+     * @param pWizard
+     *            the wizard to open
      */
     protected void openWizard(INewWizard pWizard) {
         if (isValidSelection(getSelection())) {
@@ -159,8 +163,8 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     private Action[] getActionsFromConfig() {
         ArrayList<Action> containers = new ArrayList<Action>();
 
-        IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
-                        PlatformUI.PLUGIN_ID, "newWizards"); //$NON-NLS-1$
+        IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+            "newWizards"); //$NON-NLS-1$
         if (extensionPoint != null) {
             IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
             for (int i = 0; i < elements.length; i++) {
@@ -174,12 +178,11 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     }
 
     /**
-     * Check if the wizard defined by the configuration element has to be added
-     * to the pulldown button menu.
+     * Check if the wizard defined by the configuration element has to be added to the pulldown button menu.
      *
-     * @param pElement the wizard configuration element to check
-     * @return <code>true</code> if the wizard has to be added,
-     *             <code>false</code> otherwise.
+     * @param pElement
+     *            the wizard configuration element to check
+     * @return <code>true</code> if the wizard has to be added, <code>false</code> otherwise.
      */
     private boolean isCorrectWizard(IConfigurationElement pElement) {
         boolean isCorrect = false;
@@ -198,7 +201,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         }
         // old way, deprecated
         if (Boolean.valueOf(pElement.getAttribute("unoproject")).booleanValue()) { //$NON-NLS-1$
-            isCorrect =  true;
+            isCorrect = true;
         }
         return isCorrect;
     }
@@ -222,7 +225,8 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     /**
      * Center the new wizard on the screen.
      *
-     * @param pDialog the wizard dialog to center
+     * @param pDialog
+     *            the wizard dialog to center
      */
     private void centerOnScreen(WizardDialog pDialog) {
         Shell shell = pDialog.getShell();
@@ -236,8 +240,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     }
 
     /**
-     * Action class used in the pulldown action's menu. This action is configured
-     * using the newWizard configuration.
+     * Action class used in the pulldown action's menu. This action is configured using the newWizard configuration.
      *
      * @author cedricbosdo
      */
@@ -248,7 +251,8 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         /**
          * Create a new action associated with a new wizard configuration element.
          *
-         * @param pElement the configuration element representing the wizard.
+         * @param pElement
+         *            the configuration element representing the wizard.
          */
         public OpenUnoProjectWizardAction(IConfigurationElement pElement) {
             mConfigurationElement = pElement;
@@ -263,12 +267,13 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         /**
          * Get the action text from the new wizard configuration.
          *
-         * @param pConfig the configuration element where to look for the description
+         * @param pConfig
+         *            the configuration element where to look for the description
          * @return the text of the description or <code>""</code> if not defined
          */
         private String getDescriptionFromConfig(IConfigurationElement pConfig) {
             String description = ""; //$NON-NLS-1$
-            IConfigurationElement [] children = pConfig.getChildren("description"); //$NON-NLS-1$
+            IConfigurationElement[] children = pConfig.getChildren("description"); //$NON-NLS-1$
             if (children.length >= 1) {
                 description = children[0].getValue();
             }
@@ -278,7 +283,8 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         /**
          * Get the action's icon from the new wizard configuration.
          *
-         * @param pConfig the element from which to find the icon
+         * @param pConfig
+         *            the element from which to find the icon
          * @return the image descriptor or <code>null</code> if no icon is defined.
          */
         private ImageDescriptor getIconFromConfig(IConfigurationElement pConfig) {
@@ -294,10 +300,11 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
          * Creates the new wizard from the configuration.
          *
          * @return the created wizard
-         * @throws CoreException if anything wrong happens
+         * @throws CoreException
+         *             if anything wrong happens
          */
         private INewWizard createWizard() throws CoreException {
-            return (INewWizard)mConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+            return (INewWizard) mConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
         }
 
         /**
@@ -310,7 +317,6 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
             } catch (CoreException e) {
             }
         }
-
 
     }
 }

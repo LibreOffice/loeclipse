@@ -79,7 +79,6 @@ public class OOoContainer {
      */
     private HashMap<String, IOOo> mElements;
 
-
     /**
      * The SDK Container should not be created by another object.
      */
@@ -90,13 +89,13 @@ public class OOoContainer {
         mListeners = new Vector<IConfigListener>();
     }
 
-
-    //-------------------------- Methods to manage the listeners
+    // -------------------------- Methods to manage the listeners
 
     /**
      * Add a configuration listener to the container.
      *
-     *  @param pListener configuration listener to add
+     * @param pListener
+     *            configuration listener to add
      */
     public static void addListener(IConfigListener pListener) {
         if (null != pListener) {
@@ -107,7 +106,8 @@ public class OOoContainer {
     /**
      * Removes a configuration listener from the container.
      *
-     * @param pListener configuration listener to remove
+     * @param pListener
+     *            configuration listener to remove
      */
     public static void removeListener(IConfigListener pListener) {
         if (null != pListener) {
@@ -129,16 +129,16 @@ public class OOoContainer {
     }
 
     /**
-     * Add the OOo given in parameter to the list of the others. Do not use
-     * directly the private field to handle OOos
+     * Add the OOo given in parameter to the list of the others. Do not use directly the private field to handle OOos
      *
-     * @param pOoo OOo to add
+     * @param pOoo
+     *            OOo to add
      */
     public static void addOOo(IOOo pOoo) {
 
         /**
-         * If there already is a OOo with such an identifier, replace the
-         * values, not the object to keep the references on it
+         * If there already is a OOo with such an identifier, replace the values, not the object to keep the references
+         * on it
          */
 
         if (null != pOoo) {
@@ -153,10 +153,10 @@ public class OOoContainer {
     }
 
     /**
-     * Notify every listener that a LibreOffice instance configuration
-     * has been added.
+     * Notify every listener that a LibreOffice instance configuration has been added.
      *
-     * @param pOoo the added OOo
+     * @param pOoo
+     *            the added OOo
      */
     private void fireOOoAdded(IOOo pOoo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -166,10 +166,10 @@ public class OOoContainer {
     }
 
     /**
-     * remove the given OOo from the list. Do not use directly the private
-     * field to handle OOos
+     * remove the given OOo from the list. Do not use directly the private field to handle OOos
      *
-     * @param pOoo OOo to remove
+     * @param pOoo
+     *            OOo to remove
      */
     public static void delOOo(IOOo pOoo) {
         if (null != pOoo) {
@@ -201,9 +201,9 @@ public class OOoContainer {
     /**
      * Checks whether the corresponding LibreOffice name already exists.
      *
-     * @param pName the OOo Name to check
-     * @return <code>true</code> if the name is already present,
-     *         <code>false</code> otherwise.
+     * @param pName
+     *            the OOo Name to check
+     * @return <code>true</code> if the name is already present, <code>false</code> otherwise.
      */
     public static boolean containsName(String pName) {
         return sInstance.mElements.containsKey(pName);
@@ -212,7 +212,8 @@ public class OOoContainer {
     /**
      * Computes a unique name from the given one.
      *
-     * @param pName the name to render unique
+     * @param pName
+     *            the name to render unique
      * @return the unique name
      */
     public static String getUniqueName(String pName) {
@@ -240,10 +241,10 @@ public class OOoContainer {
     }
 
     /**
-     * Notify all the listeners that a LibreOffice instance configuration
-     * has been removed.
+     * Notify all the listeners that a LibreOffice instance configuration has been removed.
      *
-     * @param pOoo the removed LibreOffice
+     * @param pOoo
+     *            the removed LibreOffice
      */
     private void fireOOoRemoved(IOOo pOoo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -255,8 +256,10 @@ public class OOoContainer {
     /**
      * Update the with OOo from the list with the given OOo.
      *
-     * @param pOookey position of the ooo to update
-     * @param pOoo new value for the OOo
+     * @param pOookey
+     *            position of the ooo to update
+     * @param pOoo
+     *            new value for the OOo
      */
     public static void updateOOo(String pOookey, IOOo pOoo) {
         if (sInstance.mElements.containsKey(pOookey) && null != pOoo) {
@@ -277,10 +280,10 @@ public class OOoContainer {
     }
 
     /**
-     * Notify every listener that a LibreOffice instance configuration
-     * has been updated.
+     * Notify every listener that a LibreOffice instance configuration has been updated.
      *
-     * @param pOoo the updated LibreOffice
+     * @param pOoo
+     *            the updated LibreOffice
      */
     private void fireOOoUpdated(IOOo pOoo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
@@ -292,7 +295,8 @@ public class OOoContainer {
     /**
      * Returns the ooo that corresponds to the given ooo name and buildid.
      *
-     * @param pOookey unique identifier of the wanted ooo
+     * @param pOookey
+     *            unique identifier of the wanted ooo
      * @return OOo which name equals the one provided
      */
     public static IOOo getOOo(String pOookey) {
@@ -307,18 +311,19 @@ public class OOoContainer {
     /**
      * Leniently return an OOo instance descriptor from a given value.
      *
-     * <p>This method will try several ways to find an OOo. These are
-     * the following:
-     *  <ol>
-     *      <li>Check if there is a configured OOo with a name like <code>pValue</code></li>
-     *      <li>Check if there is a configured OOo at a path like <code>pValue</code></li>
-     *      <li>Check if there is an OOo at the given path and configure it if necessary</li>
-     *      <li>Get an OOo instance from the configured ones</li>
-     *  </ol>
-     * If no OOo instance can be found using one of the previous ways, <code>null</code>
-     * will be returned.</p>
+     * <p>
+     * This method will try several ways to find an OOo. These are the following:
+     * <ol>
+     * <li>Check if there is a configured OOo with a name like <code>pValue</code></li>
+     * <li>Check if there is a configured OOo at a path like <code>pValue</code></li>
+     * <li>Check if there is an OOo at the given path and configure it if necessary</li>
+     * <li>Get an OOo instance from the configured ones</li>
+     * </ol>
+     * If no OOo instance can be found using one of the previous ways, <code>null</code> will be returned.
+     * </p>
      *
-     * @param pValue the value helping to find the OOo instance.
+     * @param pValue
+     *            the value helping to find the OOo instance.
      * @return the OOo instance or <code>null</code> if not found
      */
     public static IOOo getSomeOOo(String pValue) {
@@ -383,8 +388,7 @@ public class OOoContainer {
     }
 
     /**
-     * Loads the LibreOffice already configured instances from the
-     * preferences.
+     * Loads the LibreOffice already configured instances from the preferences.
      */
     public static void load() {
 
@@ -395,8 +399,7 @@ public class OOoContainer {
     }
 
     /**
-     * Saves the LibreOffice already configured instances to the
-     * preferences.
+     * Saves the LibreOffice already configured instances to the preferences.
      */
     public static void saveOOos() {
 

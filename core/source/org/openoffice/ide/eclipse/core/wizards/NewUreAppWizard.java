@@ -47,8 +47,8 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.openoffice.ide.eclipse.core.i18n.ImagesConstants;
 
 /**
- * The new URE application wizard is simply a new UNO project wizard, with
- * the inherited interface forced to <code>com::sun::star::lang::XMain</code>.
+ * The new URE application wizard is simply a new UNO project wizard, with the inherited interface forced to
+ * <code>com::sun::star::lang::XMain</code>.
  *
  * @author cedricbosdo
  *
@@ -71,7 +71,6 @@ public class NewUreAppWizard extends NewUnoProjectWizard {
 
         mMainPage.setDescription(Messages.getString("NewUreAppWizard.Description")); //$NON-NLS-1$
         mMainPage.setTitle(Messages.getString("NewUreAppWizard.Title")); //$NON-NLS-1$
-        mMainPage.setImageDescriptor(OOEclipsePlugin.getImageDescriptor(
-                        ImagesConstants.URE_APP_WIZ));
+        mMainPage.setImageDescriptor(OOEclipsePlugin.getImageDescriptor(ImagesConstants.URE_APP_WIZ));
     }
 }

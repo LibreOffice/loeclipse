@@ -72,7 +72,8 @@ public class OfficeConnection {
     /**
      * Creates a connection representation for a given office.
      *
-     * @param pOOo the office to connect to
+     * @param pOOo
+     *            the office to connect to
      */
     public OfficeConnection(IOOo pOOo) {
         mOOo = pOOo;
@@ -95,7 +96,8 @@ public class OfficeConnection {
     /**
      * Starts the office connection and initializes the component context.
      *
-     * @throws BootstrapException if the office could be bootstrapped
+     * @throws BootstrapException
+     *             if the office could be bootstrapped
      */
     public void startOffice() throws BootstrapException {
         mContext = Bootstrap.bootstrap();
@@ -110,8 +112,7 @@ public class OfficeConnection {
             if (mContext != null) {
                 // Only the uno test suite which started the office can stop it
                 XMultiComponentFactory xMngr = mContext.getServiceManager();
-                Object oDesktop = xMngr.createInstanceWithContext(
-                                "com.sun.star.frame.Desktop", mContext); //$NON-NLS-1$
+                Object oDesktop = xMngr.createInstanceWithContext("com.sun.star.frame.Desktop", mContext); //$NON-NLS-1$
                 XDesktop xDesktop = UnoRuntime.queryInterface(XDesktop.class, oDesktop);
 
                 xDesktop.terminate();
@@ -126,7 +127,8 @@ public class OfficeConnection {
     /**
      * Convert an OS dependent file path to an OOo valid URL.
      *
-     * @param pPath the OS dependent path to convert
+     * @param pPath
+     *            the OS dependent path to convert
      *
      * @return the resulting LibreOffice URL
      */
@@ -137,7 +139,7 @@ public class OfficeConnection {
             if (pPath != null) {
                 URL externalUrl = new File(pPath).toURI().toURL();
                 XExternalUriReferenceTranslator translator = ExternalUriReferenceTranslator.create(mContext);
-                internalUrl =  translator.translateToInternal(externalUrl.toExternalForm());
+                internalUrl = translator.translateToInternal(externalUrl.toExternalForm());
             }
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("OfficeConnection.ERROR_CONVERT_URL") + pPath, e); //$NON-NLS-1$

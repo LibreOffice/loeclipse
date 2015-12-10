@@ -62,10 +62,11 @@ import org.openoffice.ide.eclipse.core.editors.syntax.UnoidlScanner;
 import org.openoffice.ide.eclipse.core.editors.utils.ColorProvider;
 
 /**
- * <p>Provides the UNO-IDL editor configuration. In order to fully understand
- * the editor mechanisms, please report to Eclipse plugin developer's guide.
- * Most of the scanners and rules used by this class are defined in the
- * <code>org.openoffice.ide.eclipse.core.editors.syntax</code> package.</p>
+ * <p>
+ * Provides the UNO-IDL editor configuration. In order to fully understand the editor mechanisms, please report to
+ * Eclipse plugin developer's guide. Most of the scanners and rules used by this class are defined in the
+ * <code>org.openoffice.ide.eclipse.core.editors.syntax</code> package.
+ * </p>
  *
  * @author cbosdonnat
  */
@@ -79,25 +80,26 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 
     /**
      * Default constructor using a color manager.
-     * @param pColorManager the color manager to colorize the syntax elements
+     * 
+     * @param pColorManager
+     *            the color manager to colorize the syntax elements
      */
     public UnoidlConfiguration(ColorProvider pColorManager) {
         this.mColorManager = pColorManager;
     }
 
-    //----------------------------------------- Text editing facilities support
+    // ----------------------------------------- Text editing facilities support
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ITextDoubleClickStrategy getDoubleClickStrategy( ISourceViewer pSourceViewer, String pContentType) {
+    public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer pSourceViewer, String pContentType) {
         if (mDoubleClickStrategy == null) {
             mDoubleClickStrategy = new UnoidlDoubleClickStrategy();
         }
         return mDoubleClickStrategy;
     }
-
 
     @Override
     public IAnnotationHover getAnnotationHover(ISourceViewer pSourceViewer) {
@@ -109,18 +111,15 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
         return new DefaultAnnotationHover(true);
     }
 
-
-    //--------------------------------------------- Syntax highlighting support
+    // --------------------------------------------- Syntax highlighting support
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String[] getConfiguredContentTypes(ISourceViewer pSourceViewer) {
-        return new String[] {
-                        UnoidlPartitionScanner.IDL_AUTOCOMMENT,
-                        UnoidlPartitionScanner.IDL_COMMENT,
-                        UnoidlPartitionScanner.IDL_PREPROCESSOR};
+        return new String[] { UnoidlPartitionScanner.IDL_AUTOCOMMENT, UnoidlPartitionScanner.IDL_COMMENT,
+            UnoidlPartitionScanner.IDL_PREPROCESSOR };
     }
 
     /**
@@ -136,17 +135,14 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
         reconciler.setRepairer(drAC, UnoidlPartitionScanner.IDL_AUTOCOMMENT);
 
         // Affects a Damager repairer for IDL_COMMENT sections
-        NonRuleBasedDamagerRepairer ndr =
-                        new NonRuleBasedDamagerRepairer(
-                                        new TextAttribute(
-                                                        mColorManager.getColor(Colors.C_COMMENT)));
+        NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(
+            new TextAttribute(mColorManager.getColor(Colors.C_COMMENT)));
 
         reconciler.setDamager(ndr, UnoidlPartitionScanner.IDL_COMMENT);
         reconciler.setRepairer(ndr, UnoidlPartitionScanner.IDL_COMMENT);
 
         // Scans the code for more precise syntax highlighting
-        DefaultDamagerRepairer drCode =
-                        new DefaultDamagerRepairer(getCodeScanner());
+        DefaultDamagerRepairer drCode = new DefaultDamagerRepairer(getCodeScanner());
         reconciler.setDamager(drCode, IDocument.DEFAULT_CONTENT_TYPE);
         reconciler.setRepairer(drCode, IDocument.DEFAULT_CONTENT_TYPE);
 
@@ -163,10 +159,7 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
     protected UnoidlScanner getCodeScanner() {
         if (mScanner == null) {
             mScanner = new UnoidlScanner(mColorManager);
-            mScanner.setDefaultReturnToken(
-                            new Token(
-                                            new TextAttribute(
-                                                            mColorManager.getColor(Colors.C_TEXT))));
+            mScanner.setDefaultReturnToken(new Token(new TextAttribute(mColorManager.getColor(Colors.C_TEXT))));
         }
         return mScanner;
     }
@@ -178,24 +171,19 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
         if (mDocScanner == null) {
             mDocScanner = new UnoidlDocScanner(mColorManager);
             mDocScanner.setDefaultReturnToken(
-                            new Token(
-                                            new TextAttribute(
-                                                            mColorManager.getColor(Colors.C_AUTODOC_COMMENT))));
+                new Token(new TextAttribute(mColorManager.getColor(Colors.C_AUTODOC_COMMENT))));
         }
         return mDocScanner;
     }
 
     /**
-     * @return the preprocessor instruction scanner if it's not already
-     *          created.
+     * @return the preprocessor instruction scanner if it's not already created.
      */
     protected UnoidlPreprocessorScanner getPreprocScanner() {
         if (mPreprocScanner == null) {
             mPreprocScanner = new UnoidlPreprocessorScanner(mColorManager);
             mPreprocScanner.setDefaultReturnToken(
-                            new Token(
-                                            new TextAttribute(
-                                                            mColorManager.getColor(Colors.C_PREPROCESSOR))));
+                new Token(new TextAttribute(mColorManager.getColor(Colors.C_PREPROCESSOR))));
         }
         return mPreprocScanner;
     }

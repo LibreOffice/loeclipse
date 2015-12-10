@@ -41,24 +41,27 @@ public interface IModel {
     /**
      * Add a model listener.
      *
-     * @param pListener the listener to add
+     * @param pListener
+     *            the listener to add
      */
-    public void addListener( IModelChangedListener pListener );
+    public void addListener(IModelChangedListener pListener);
 
     /**
      * Remove a model listener.
      *
-     * @param pListener the listener to remove
+     * @param pListener
+     *            the listener to remove
      */
-    public void removeListener( IModelChangedListener pListener );
+    public void removeListener(IModelChangedListener pListener);
 
     /**
      * @return whether the model has been changed without being saved or not.
      */
-    public boolean isDirty( );
+    public boolean isDirty();
 
     /**
-     * @param pSuspend <code>true</code> to suspend the events for the model
+     * @param pSuspend
+     *            <code>true</code> to suspend the events for the model
      */
-    public void setSuspendEvent( boolean pSuspend );
+    public void setSuspendEvent(boolean pSuspend);
 }

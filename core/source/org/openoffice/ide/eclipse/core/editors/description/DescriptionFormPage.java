@@ -64,8 +64,7 @@ import org.openoffice.ide.eclipse.core.editors.utils.LocalizedSection;
 import org.openoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
- * The form page of the package editor helping to configure the project's
- * description and main properties.
+ * The form page of the package editor helping to configure the project's description and main properties.
  *
  * @author Cédric Bosdonnat
  *
@@ -75,33 +74,36 @@ public class DescriptionFormPage extends FormPage {
     private LocaleSelector mLocaleSel;
     private DescriptionModel mModel;
 
-    private ArrayList< AbstractSection< DescriptionModel > > mSections;
+    private ArrayList<AbstractSection<DescriptionModel>> mSections;
 
     /**
      * Constructor.
      *
-     * @param pEditor the editor where to add the page
-     * @param pId the page identifier
+     * @param pEditor
+     *            the editor where to add the page
+     * @param pId
+     *            the page identifier
      */
-    public DescriptionFormPage(FormEditor pEditor, String pId ) {
+    public DescriptionFormPage(FormEditor pEditor, String pId) {
         super(pEditor, pId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
-        mSections = new ArrayList< AbstractSection< DescriptionModel > >( );
+        mSections = new ArrayList<AbstractSection<DescriptionModel>>();
     }
 
     /**
-     * @param pModel the description.xml model to set
+     * @param pModel
+     *            the description.xml model to set
      */
-    public void setModel( DescriptionModel pModel ) {
+    public void setModel(DescriptionModel pModel) {
         mModel = pModel;
-        for ( AbstractSection< DescriptionModel > section : mSections ) {
-            section.setModel( pModel );
+        for (AbstractSection<DescriptionModel> section : mSections) {
+            section.setModel(pModel);
         }
     }
 
     /**
      * @return the description model for the page.
      */
-    public DescriptionModel getModel( ) {
+    public DescriptionModel getModel() {
         return mModel;
     }
 
@@ -113,100 +115,96 @@ public class DescriptionFormPage extends FormPage {
         super.createFormContent(pManagedForm);
 
         ScrolledForm form = pManagedForm.getForm();
-        form.setText( Messages.getString("PackageOverviewFormPage.Title") ); //$NON-NLS-1$
-        Composite body = form.getBody( );
+        form.setText(Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
+        Composite body = form.getBody();
 
         FormToolkit toolkit = getManagedForm().getToolkit();
-        toolkit.decorateFormHeading( form.getForm() );
+        toolkit.decorateFormHeading(form.getForm());
 
-        Label descrLbl = toolkit.createLabel( body,
-                        Messages.getString("PackageOverviewFormPage.Description"),  //$NON-NLS-1$
-                        SWT.WRAP );
-        GridData gd = new GridData( GridData.FILL_HORIZONTAL );
+        Label descrLbl = toolkit.createLabel(body, Messages.getString("PackageOverviewFormPage.Description"), //$NON-NLS-1$
+            SWT.WRAP);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        descrLbl.setLayoutData( gd );
+        descrLbl.setLayoutData(gd);
 
-        body.setLayout( new GridLayout( 2, false ) );
+        body.setLayout(new GridLayout(2, false));
 
-        ArrayList< LocalizedSection< DescriptionModel > > sections = createMainPage( toolkit, body );
+        ArrayList<LocalizedSection<DescriptionModel>> sections = createMainPage(toolkit, body);
 
         // Create the locale selector line
-        Composite bottomLine = toolkit.createComposite( body );
-        gd = new GridData( GridData.FILL_HORIZONTAL );
+        Composite bottomLine = toolkit.createComposite(body);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        bottomLine.setLayoutData( gd );
-        bottomLine.setLayout( new GridLayout( ) );
+        bottomLine.setLayoutData(gd);
+        bottomLine.setLayout(new GridLayout());
 
-        mLocaleSel = new LocaleSelector( toolkit, bottomLine );
+        mLocaleSel = new LocaleSelector(toolkit, bottomLine);
 
         // Set the locale listeners
-        for (LocalizedSection< DescriptionModel > section : sections) {
-            mLocaleSel.addListener( section );
+        for (LocalizedSection<DescriptionModel> section : sections) {
+            mLocaleSel.addListener(section);
         }
 
-        mLocaleSel.loadLocales( mModel.getAllLocales() );
+        mLocaleSel.loadLocales(mModel.getAllLocales());
 
         // Set the model listeners
-        for ( AbstractSection< DescriptionModel > section : mSections ) {
+        for (AbstractSection<DescriptionModel> section : mSections) {
             section.loadData();
-            mModel.addListener( section );
+            mModel.addListener(section);
         }
-        mModel.setSuspendEvent( false );
+        mModel.setSuspendEvent(false);
     }
 
     /**
      * Creates the main tab page.
      *
-     * @param pToolkit the toolkit used to create the page
-     * @param pParent the parent composite where to create the page.
+     * @param pToolkit
+     *            the toolkit used to create the page
+     * @param pParent
+     *            the parent composite where to create the page.
      *
      * @return the localized sections of the page
      */
-    private ArrayList< LocalizedSection<DescriptionModel> > createMainPage( FormToolkit pToolkit, Composite pParent ) {
+    private ArrayList<LocalizedSection<DescriptionModel>> createMainPage(FormToolkit pToolkit, Composite pParent) {
 
-        ArrayList< LocalizedSection<DescriptionModel> > localized =
-                        new ArrayList< LocalizedSection<DescriptionModel> >();
+        ArrayList<LocalizedSection<DescriptionModel>> localized = new ArrayList<LocalizedSection<DescriptionModel>>();
 
-        Composite leftColumn = pToolkit.createComposite( pParent );
-        leftColumn.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-        leftColumn.setLayout( new GridLayout( ) );
+        Composite leftColumn = pToolkit.createComposite(pParent);
+        leftColumn.setLayoutData(new GridData(GridData.FILL_BOTH));
+        leftColumn.setLayout(new GridLayout());
 
+        Composite rightColumn = pToolkit.createComposite(pParent);
+        rightColumn.setLayoutData(new GridData(GridData.FILL_BOTH));
+        rightColumn.setLayout(new GridLayout());
 
-        Composite rightColumn = pToolkit.createComposite( pParent );
-        rightColumn.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-        rightColumn.setLayout( new GridLayout( ) );
-
-        IFileEditorInput input = (IFileEditorInput)getEditorInput();
+        IFileEditorInput input = (IFileEditorInput) getEditorInput();
         IProject project = input.getFile().getProject();
 
         /*
-         * Left column:                         Right column:
-         *    + Section "General"                  + Section "Update mirrors"
-         *    + Section "Integration"              + Section "License"
-         *    + Section "Publisher"
-         *    + Section "Release notes"
+         * Left column: Right column: + Section "General" + Section "Update mirrors" + Section "Integration" + Section
+         * "License" + Section "Publisher" + Section "Release notes"
          */
-        GeneralSection generalSection = new GeneralSection( leftColumn, this, project );
-        localized.add( generalSection );
-        mSections.add( generalSection );
+        GeneralSection generalSection = new GeneralSection(leftColumn, this, project);
+        localized.add(generalSection);
+        mSections.add(generalSection);
 
-        IntegrationSection integrationSection = new IntegrationSection( leftColumn, this );
-        mSections.add( integrationSection );
+        IntegrationSection integrationSection = new IntegrationSection(leftColumn, this);
+        mSections.add(integrationSection);
 
-        PublisherSection publisherSection = new PublisherSection( leftColumn, this );
-        localized.add( publisherSection );
-        mSections.add( publisherSection );
+        PublisherSection publisherSection = new PublisherSection(leftColumn, this);
+        localized.add(publisherSection);
+        mSections.add(publisherSection);
 
-        ReleaseNotesSection releaseNotesSection = new ReleaseNotesSection( leftColumn, this );
-        localized.add( releaseNotesSection );
-        mSections.add( releaseNotesSection );
+        ReleaseNotesSection releaseNotesSection = new ReleaseNotesSection(leftColumn, this);
+        localized.add(releaseNotesSection);
+        mSections.add(releaseNotesSection);
 
-        MirrorsSection mirrorSection = new MirrorsSection( rightColumn, this );
-        mSections.add( mirrorSection );
+        MirrorsSection mirrorSection = new MirrorsSection(rightColumn, this);
+        mSections.add(mirrorSection);
 
-        LicenseSection licenseSection = new LicenseSection( rightColumn, this, project );
-        mSections.add( licenseSection );
-        localized.add( licenseSection );
+        LicenseSection licenseSection = new LicenseSection(rightColumn, this, project);
+        mSections.add(licenseSection);
+        localized.add(licenseSection);
 
         return localized;
     }
@@ -216,7 +214,7 @@ public class DescriptionFormPage extends FormPage {
      */
     @Override
     public boolean canLeaveThePage() {
-        DescriptionEditor editor = (DescriptionEditor)getEditor();
+        DescriptionEditor editor = (DescriptionEditor) getEditor();
         editor.writeDescrToSource();
 
         return super.canLeaveThePage();
@@ -226,11 +224,11 @@ public class DescriptionFormPage extends FormPage {
      * Reload the data from the model in the sections.
      */
     public void reloadData() {
-        getModel().setSuspendEvent( true );
-        for ( AbstractSection<DescriptionModel> section : mSections ) {
+        getModel().setSuspendEvent(true);
+        for (AbstractSection<DescriptionModel> section : mSections) {
             section.loadData();
         }
 
-        getModel().setSuspendEvent( false );
+        getModel().setSuspendEvent(false);
     }
 }

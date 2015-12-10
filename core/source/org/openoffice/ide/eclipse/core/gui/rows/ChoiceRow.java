@@ -59,10 +59,10 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Row class that could managed a combo box to select a value among others
  *
- * <p>In order to use this class correctly, please add items and define the
- * default one. As every row type, don't forget to set the Modification
- * listener to be notified of the value changes. This class supports
- * internationalized items since the version 1.0.3.
+ * <p>
+ * In order to use this class correctly, please add items and define the default one. As every row type, don't forget to
+ * set the Modification listener to be notified of the value changes. This class supports internationalized items since
+ * the version 1.0.3.
  * </p>
  *
  * @author cedricbosdo
@@ -75,19 +75,22 @@ public class ChoiceRow extends LabeledRow {
     private ArrayList<String> mItems;
     private int mSelected;
 
-
     /**
-     * Create a new choice row with a button on the right. The parent
-     * composite should have a grid layout with 3 horizontal spans.
+     * Create a new choice row with a button on the right. The parent composite should have a grid layout with 3
+     * horizontal spans.
      *
-     * @param pParent the parent composite where to create the row
-     * @param pProperty the property name of the row
-     * @param pLabel label the label to print on the left of the row
-     * @param pBrowse the label of the button
-     * @param pLink <code>true</code> to show a link for the browse button
+     * @param pParent
+     *            the parent composite where to create the row
+     * @param pProperty
+     *            the property name of the row
+     * @param pLabel
+     *            label the label to print on the left of the row
+     * @param pBrowse
+     *            the label of the button
+     * @param pLink
+     *            <code>true</code> to show a link for the browse button
      */
-    public ChoiceRow (Composite pParent, String pProperty, String pLabel,
-                    String pBrowse, boolean pLink) {
+    public ChoiceRow(Composite pParent, String pProperty, String pLabel, String pBrowse, boolean pLink) {
 
         super(pProperty);
 
@@ -99,7 +102,7 @@ public class ChoiceRow extends LabeledRow {
         mSelected = -1;
 
         Label aLabel = null;
-        if ( pLabel != null ) {
+        if (pLabel != null) {
             aLabel = new Label(pParent, SWT.NONE);
             aLabel.setText(pLabel);
             numFields++;
@@ -109,7 +112,7 @@ public class ChoiceRow extends LabeledRow {
         aField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
-                mSelected = ((Combo)mField).getSelectionIndex();
+                mSelected = ((Combo) mField).getSelectionIndex();
                 FieldEvent fe = new FieldEvent(mProperty, getValue());
                 fireFieldChangedEvent(fe);
             }
@@ -117,20 +120,21 @@ public class ChoiceRow extends LabeledRow {
 
         createContent(pParent, aLabel, aField, pBrowse, pLink);
 
-        if ( mBrowse != null ) {
+        if (mBrowse != null) {
             numFields++;
         }
 
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = ((GridLayout)pParent.getLayout()).numColumns - numFields + 1;
+        gd.horizontalSpan = ((GridLayout) pParent.getLayout()).numColumns - numFields + 1;
         aField.setLayoutData(gd);
     }
 
     /**
-     * Set the listener for the browse button action. There is only on
-     * listener, because there is generally no need for more.
+     * Set the listener for the browse button action. There is only on listener, because there is generally no need for
+     * more.
      *
-     * @param pListener the browse action listener
+     * @param pListener
+     *            the browse action listener
      */
     public void setBrowseSelectionListener(SelectionListener pListener) {
         if (null != mBrowse) {
@@ -138,41 +142,45 @@ public class ChoiceRow extends LabeledRow {
         }
     }
 
-    //------------- Combobox handling methods
+    // ------------- Combobox handling methods
 
     /**
      * Adds all the strings contained in items at the end of the item list.
      *
-     * @param pItems Array of items to appends to the existing ones.
+     * @param pItems
+     *            Array of items to appends to the existing ones.
      */
     public void addAll(String[] pItems) {
         for (int i = 0; i < pItems.length; i++) {
-            ((Combo)mField).add(pItems[i]);
+            ((Combo) mField).add(pItems[i]);
             mItems.add(pItems[i]);
         }
     }
 
-
     /**
      * Adds a translated item.
      *
-     * <p>This method adds the text to the combo box and deals with
-     * its translation. If the text is already contained in the box,
-     * nothing will be done.</p>
+     * <p>
+     * This method adds the text to the combo box and deals with its translation. If the text is already contained in
+     * the box, nothing will be done.
+     * </p>
      *
-     * @param pText the translated item text
-     * @param pValue the item value
-     * @param pIndex the item index
+     * @param pText
+     *            the translated item text
+     * @param pValue
+     *            the item value
+     * @param pIndex
+     *            the item index
      */
     public void add(String pText, String pValue, int pIndex) {
         if (!mTranslations.containsKey(pText)) {
             mTranslations.put(pText, pValue);
             if (pIndex >= 0) {
-                ((Combo)mField).add(pText, pIndex);
-                mItems.add( pIndex, pText );
+                ((Combo) mField).add(pText, pIndex);
+                mItems.add(pIndex, pText);
             } else {
-                ((Combo)mField).add(pText);
-                mItems.add( pText );
+                ((Combo) mField).add(pText);
+                mItems.add(pText);
             }
         }
     }
@@ -180,8 +188,10 @@ public class ChoiceRow extends LabeledRow {
     /**
      * adds an internationalized item at the end of the list.
      *
-     * @param pText the internationalized text
-     * @param pValue the value of the item
+     * @param pText
+     *            the internationalized text
+     * @param pValue
+     *            the value of the item
      *
      * @see #add(String, String, int)
      */
@@ -192,8 +202,10 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Adds the provided item at the provided position.
      *
-     * @param pItem text of the item to add
-     * @param pIndex position where to add the item in the list
+     * @param pItem
+     *            text of the item to add
+     * @param pIndex
+     *            position where to add the item in the list
      * @see #add(java.lang.String, java.lang.String, int)
      */
     public void add(String pItem, int pIndex) {
@@ -203,7 +215,8 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Append the item at the end of the item list.
      *
-     * @param pItem text of the item to append
+     * @param pItem
+     *            text of the item to append
      * @see #add(java.lang.String, java.lang.String, int)
      */
     public void add(String pItem) {
@@ -213,19 +226,21 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Removes the items with the provided text.
      *
-     * @param pText text of the items to remove
+     * @param pText
+     *            text of the items to remove
      * @see Combo#remove(java.lang.String)
      */
     public void remove(String pText) {
         mTranslations.remove(pText);
-        ((Combo)mField).remove(pText);
-        mItems.remove( pText );
+        ((Combo) mField).remove(pText);
+        mItems.remove(pText);
     }
 
     /**
      * Remove the item at the position corresponding to index.
      *
-     * @param pIndex position of the item to remove
+     * @param pIndex
+     *            position of the item to remove
      * @see Combo#remove(int)
      */
     public void remove(int pIndex) {
@@ -235,8 +250,10 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Removes all the items between start and end positions.
      *
-     * @param pStart position of the first item to remove
-     * @param pEnd position of the last item to remove
+     * @param pStart
+     *            position of the first item to remove
+     * @param pEnd
+     *            position of the last item to remove
      *
      * @see Combo#remove(int, int)
      */
@@ -253,18 +270,19 @@ public class ChoiceRow extends LabeledRow {
      */
     public void removeAll() {
         mTranslations.clear();
-        ((Combo)mField).removeAll();
+        ((Combo) mField).removeAll();
         mItems.clear();
     }
 
     /**
      * Select the item at the position corresponding to index.
      *
-     * @param pIndex position of the item to select
+     * @param pIndex
+     *            position of the item to select
      * @see Combo#select(int)
      */
     public void select(int pIndex) {
-        ((Combo)mField).select(pIndex);
+        ((Combo) mField).select(pIndex);
         mSelected = pIndex;
 
         // Fire a modification event to the listener
@@ -273,15 +291,15 @@ public class ChoiceRow extends LabeledRow {
     }
 
     /**
-     * Set the provided text as the active item if the item is present
-     * in the choice. Otherwise, do nothing.
+     * Set the provided text as the active item if the item is present in the choice. Otherwise, do nothing.
      *
-     * @param pValue value of the item to select
+     * @param pValue
+     *            value of the item to select
      */
     public void select(String pValue) {
         int result = -1;
 
-        Combo cField = (Combo)mField;
+        Combo cField = (Combo) mField;
         int i = 0;
         while (i < cField.getItemCount() && -1 == result) {
             if (getValue(i).equals(pValue)) {
@@ -291,19 +309,20 @@ public class ChoiceRow extends LabeledRow {
         }
         cField.select(result);
         mSelected = result;
-        fireFieldChangedEvent( new FieldEvent( mProperty, pValue ) );
+        fireFieldChangedEvent(new FieldEvent(mProperty, pValue));
     }
 
     /**
      * Returns the index the item of the choice.
      *
-     * @param pIndex position of the item to fetch
+     * @param pIndex
+     *            position of the item to fetch
      * @return the index the item of the choice
      *
      * @see Combo#getItem(int)
      *
-     * @deprecated This methods only returns the text of the item, use
-     *     <code>getValue()</code> to get the selected value.
+     * @deprecated This methods only returns the text of the item, use <code>getValue()</code> to get the selected
+     *             value.
      */
     @Deprecated
     public String getItem(int pIndex) {
@@ -323,8 +342,7 @@ public class ChoiceRow extends LabeledRow {
     /**
      * @return the selected value.
      *
-     * @since 1.0.3
-     *      This method returns the language independent value of the item
+     * @since 1.0.3 This method returns the language independent value of the item
      */
     @Override
     public String getValue() {
@@ -340,7 +358,8 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Returns the value of the i-th item.
      *
-     * @param pIndex the index of the value to get
+     * @param pIndex
+     *            the index of the value to get
      * @return the language independent value of the item
      */
     public String getValue(int pIndex) {

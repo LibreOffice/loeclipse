@@ -60,8 +60,7 @@ import org.eclipse.core.runtime.Platform;
 public class LanguagesHelper {
 
     /**
-     * @return all the available uno-idl implementation language names
-     * installed on the platform.
+     * @return all the available uno-idl implementation language names installed on the platform.
      */
     public static String[] getAvailableLanguageNames() {
 
@@ -78,16 +77,17 @@ public class LanguagesHelper {
     }
 
     /**
-     * <p>Returns the language corresponding to a language name. The result may
-     * be <code>null</code> if:
-     *   <ul>
-     *       <li>There is no such language name</li>
-     *      <li>The corresponding class cannot be found</li>
-     *      <li>The corresponding class doesn't implement ILanguage</li>
-     *   </ul>
+     * <p>
+     * Returns the language corresponding to a language name. The result may be <code>null</code> if:
+     * <ul>
+     * <li>There is no such language name</li>
+     * <li>The corresponding class cannot be found</li>
+     * <li>The corresponding class doesn't implement ILanguage</li>
+     * </ul>
      * </p>
      *
-     * @param pName the language name to find
+     * @param pName
+     *            the language name to find
      *
      * @return the language object if found, <code>null</code> otherwise.
      */
@@ -102,11 +102,11 @@ public class LanguagesHelper {
             IConfigurationElement languagei = languages[i];
             if (languagei.getAttribute("name").equals(pName)) { //$NON-NLS-1$
                 try {
-                    Object o = languagei.createExecutableExtension( "class" ); //$NON-NLS-1$
+                    Object o = languagei.createExecutableExtension("class"); //$NON-NLS-1$
 
-                    if ( o instanceof AbstractLanguage ) {
-                        language = (AbstractLanguage)o;
-                        language.setConfigurationElement( languagei );
+                    if (o instanceof AbstractLanguage) {
+                        language = (AbstractLanguage) o;
+                        language.setConfigurationElement(languagei);
                     }
 
                 } catch (Exception e) {
@@ -120,8 +120,7 @@ public class LanguagesHelper {
     }
 
     /**
-     * Convenience method returning the language definitions from the plugins
-     * extensions points descriptions.
+     * Convenience method returning the language definitions from the plugins extensions points descriptions.
      *
      * @return the array of the configuration element for the languages.
      */
@@ -129,8 +128,7 @@ public class LanguagesHelper {
         IConfigurationElement[] result = null;
 
         IExtensionRegistry registry = Platform.getExtensionRegistry();
-        IExtensionPoint point = registry.getExtensionPoint(
-                        "org.openoffice.ide.eclipse.core.language"); //$NON-NLS-1$
+        IExtensionPoint point = registry.getExtensionPoint("org.openoffice.ide.eclipse.core.language"); //$NON-NLS-1$
         if (point != null) {
 
             IExtension[] extensions = point.getExtensions();
@@ -138,8 +136,7 @@ public class LanguagesHelper {
 
             for (int i = 0; i < extensions.length; i++) {
 
-                IConfigurationElement[] elements = extensions[i].
-                                getConfigurationElements();
+                IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 
                 for (int j = 0; j < elements.length; j++) {
                     IConfigurationElement elementj = elements[j];

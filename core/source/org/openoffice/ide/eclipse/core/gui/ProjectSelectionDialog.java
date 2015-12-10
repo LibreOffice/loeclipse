@@ -91,8 +91,10 @@ public class ProjectSelectionDialog extends Dialog {
     /**
      * Constructor.
      *
-     * @param pPrj the UNO project where to select the resource
-     * @param pDescription a message explaining the selection to the user
+     * @param pPrj
+     *            the UNO project where to select the resource
+     * @param pDescription
+     *            a message explaining the selection to the user
      */
     public ProjectSelectionDialog(IProject pPrj, String pDescription) {
         super(Display.getDefault().getActiveShell());
@@ -101,7 +103,6 @@ public class ProjectSelectionDialog extends Dialog {
 
         setShellStyle(SWT.RESIZE | SWT.APPLICATION_MODAL);
     }
-
 
     /**
      * {@inheritDoc}
@@ -112,7 +113,7 @@ public class ProjectSelectionDialog extends Dialog {
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
 
-        Rectangle screenBounds  = Display.getDefault().getClientArea();
+        Rectangle screenBounds = Display.getDefault().getClientArea();
         int x = (screenBounds.width - width) / 2;
         int y = (screenBounds.height - height) / 2;
 
@@ -124,8 +125,8 @@ public class ProjectSelectionDialog extends Dialog {
     /**
      * Set whether to show or hide the files.
      *
-     * @param pOnlyFolders <code>true</code> to show only the folder,
-     *      <code>false</code> to see everything.
+     * @param pOnlyFolders
+     *            <code>true</code> to show only the folder, <code>false</code> to see everything.
      */
     public void setShowOnlyFolders(boolean pOnlyFolders) {
         mFoldersOnly = pOnlyFolders;
@@ -141,7 +142,8 @@ public class ProjectSelectionDialog extends Dialog {
     /**
      * Set the list of elements which should be shown in the dialog.
      *
-     * @param pNotToShow the list of resources to hide.
+     * @param pNotToShow
+     *            the list of resources to hide.
      */
     public void setFilteredElements(List<IResource> pNotToShow) {
         if (mNotShownResources != null) {
@@ -155,7 +157,7 @@ public class ProjectSelectionDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(Composite pParent) {
-        Composite body = (Composite)super.createDialogArea(pParent);
+        Composite body = (Composite) super.createDialogArea(pParent);
         body.setLayout(new GridLayout());
 
         Label label = new Label(body, SWT.WRAP);
@@ -172,7 +174,7 @@ public class ProjectSelectionDialog extends Dialog {
             public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
                 boolean select = true;
                 if (pElement instanceof IAdaptable) {
-                    IAdaptable adaptable = (IAdaptable)pElement;
+                    IAdaptable adaptable = (IAdaptable) pElement;
                     select = adaptable.getAdapter(IFolder.class) != null;
 
                     if (!mFoldersOnly) {
@@ -197,10 +199,10 @@ public class ProjectSelectionDialog extends Dialog {
             @Override
             public void selectionChanged(SelectionChangedEvent pEvent) {
                 if (pEvent.getSelection() instanceof IStructuredSelection) {
-                    IStructuredSelection sel = (IStructuredSelection)pEvent.getSelection();
+                    IStructuredSelection sel = (IStructuredSelection) pEvent.getSelection();
                     Object o = sel.getFirstElement();
                     if (o instanceof IResource) {
-                        mSelected = (IResource)o;
+                        mSelected = (IResource) o;
                     } else {
                         mSelected = null;
                     }

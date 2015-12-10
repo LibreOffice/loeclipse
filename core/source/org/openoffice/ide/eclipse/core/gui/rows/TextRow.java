@@ -53,19 +53,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * GUI row for a text input. It supports only the Grid Layout
- * and can be extended to manage more complex texts.
+ * GUI row for a text input. It supports only the Grid Layout and can be extended to manage more complex texts.
  *
- * @see org.openoffice.ide.eclipse.core.gui.rows.FileRow
- *         for a file row based on this class
- * @see org.openoffice.ide.eclipse.core.gui.rows.TypeRow
- *         for a UNO type selection row based on this class
+ * @see org.openoffice.ide.eclipse.core.gui.rows.FileRow for a file row based on this class
+ * @see org.openoffice.ide.eclipse.core.gui.rows.TypeRow for a UNO type selection row based on this class
  *
  * @author cedricbosdo
  *
  */
-public class TextRow extends LabeledRow
-implements FocusListener, KeyListener {
+public class TextRow extends LabeledRow implements FocusListener, KeyListener {
 
     private String mValue = new String();
     private String mOldValue;
@@ -73,9 +69,12 @@ implements FocusListener, KeyListener {
     /**
      * Create a new text row.
      *
-     * @param pParent the parent composite where to create the row
-     * @param pProperty the property name of the row's value
-     * @param pLabel the label of the row
+     * @param pParent
+     *            the parent composite where to create the row
+     * @param pProperty
+     *            the property name of the row's value
+     * @param pLabel
+     *            the label of the row
      */
     public TextRow(Composite pParent, String pProperty, String pLabel) {
         super(pProperty);
@@ -102,8 +101,8 @@ implements FocusListener, KeyListener {
      */
     @Override
     public void focusLost(FocusEvent pEvent) {
-        if (!((Text)mField).getText().equals(mValue)) {
-            setValue(((Text)mField).getText());
+        if (!((Text) mField).getText().equals(mValue)) {
+            setValue(((Text) mField).getText());
         }
     }
 
@@ -112,7 +111,7 @@ implements FocusListener, KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent pEvent) {
-        mOldValue = ((Text)mField).getText();
+        mOldValue = ((Text) mField).getText();
     }
 
     /**
@@ -121,9 +120,9 @@ implements FocusListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent pEvent) {
         if (pEvent.getSource().equals(mField)) {
-            if (!((Text)mField).getText().equals(mOldValue)) {
-                if (!((Text)mField).getText().equals(mValue)) {
-                    setValue(((Text)mField).getText());
+            if (!((Text) mField).getText().equals(mOldValue)) {
+                if (!((Text) mField).getText().equals(mValue)) {
+                    setValue(((Text) mField).getText());
                 }
             }
         }
@@ -140,7 +139,8 @@ implements FocusListener, KeyListener {
     /**
      * Set the value of the row.
      *
-     * @param pValue the value to set
+     * @param pValue
+     *            the value to set
      */
     public void setValue(String pValue) {
         String newText = pValue;
@@ -148,8 +148,8 @@ implements FocusListener, KeyListener {
             newText = ""; //$NON-NLS-1$
         }
 
-        if (!((Text)mField).getText().equals(newText)) {
-            ((Text)mField).setText(newText);
+        if (!((Text) mField).getText().equals(newText)) {
+            ((Text) mField).setText(newText);
         }
 
         mValue = newText;
@@ -162,7 +162,7 @@ implements FocusListener, KeyListener {
      */
     public void setFocus() {
 
-        Text textField = (Text)mField;
+        Text textField = (Text) mField;
         textField.setFocus();
 
         // Makes the cursor to go at the end of the text

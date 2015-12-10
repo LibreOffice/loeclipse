@@ -103,36 +103,34 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 
             if (pEvent.getSource().equals(mProjectBtn)) {
                 ILabelProvider labelProvider = new UnoProjectLabelProvider();
-                ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-                                getShell(), labelProvider);
+                ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
                 dialog.setTitle(Messages.getString("UreTab.ProjectChooserTitle")); //$NON-NLS-1$
                 dialog.setMessage(Messages.getString("UreTab.ProjectChooserMessage")); //$NON-NLS-1$
                 dialog.setElements(ProjectsManager.getProjects());
 
                 if (dialog.open() == Window.OK) {
-                    mProject = (IUnoidlProject)dialog.getFirstResult();
+                    mProject = (IUnoidlProject) dialog.getFirstResult();
                     mProjectTxt.setText(mProject.getName());
                     setDirty(true);
                     getLaunchConfigurationDialog().updateButtons();
                 }
             } else if (pEvent.getSource().equals(mMainBtn)) {
-                ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-                                getShell(), new LabelProvider() {
-                                    @Override
-                                    public String getText(Object pElement) {
-                                        String label = null;
-                                        if (pElement instanceof String) {
-                                            label = (String)pElement;
-                                        }
-                                        return label;
-                                    }
-                                });
+                ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider() {
+                    @Override
+                    public String getText(Object pElement) {
+                        String label = null;
+                        if (pElement instanceof String) {
+                            label = (String) pElement;
+                        }
+                        return label;
+                    }
+                });
                 dialog.setTitle(Messages.getString("UreTab.MainImplementationChooserTitle")); //$NON-NLS-1$
                 dialog.setMessage(Messages.getString("UreTab.MainImplementationChooserMessage")); //$NON-NLS-1$
                 dialog.setElements(new MainImplementationsProvider().getImplementations(mProject));
 
                 if (dialog.open() == Window.OK) {
-                    mMainTxt.setText((String)dialog.getFirstResult());
+                    mMainTxt.setText((String) dialog.getFirstResult());
                     setDirty(true);
                     getLaunchConfigurationDialog().updateButtons();
                 }
@@ -146,8 +144,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
         public void modifyText(ModifyEvent pEvent) {
 
             if (pEvent.getSource() == mProjectTxt) {
-                IUnoidlProject prj = ProjectsManager.getProject(
-                                mProjectTxt.getText().trim());
+                IUnoidlProject prj = ProjectsManager.getProject(mProjectTxt.getText().trim());
                 if (prj != null) {
                     mProject = prj;
                     setErrorMessage(null);
@@ -227,12 +224,9 @@ public class UreTab extends AbstractLaunchConfigurationTab {
     @Override
     public void initializeFrom(ILaunchConfiguration pConfiguration) {
         try {
-            mProjectTxt.setText(pConfiguration.getAttribute(
-                            IUreLaunchConstants.PROJECT_NAME, "")); //$NON-NLS-1$
-            mMainTxt.setText(pConfiguration.getAttribute(
-                            IUreLaunchConstants.MAIN_TYPE, "")); //$NON-NLS-1$
-            mArgumentsTxt.setText(pConfiguration.getAttribute(
-                            IUreLaunchConstants.PROGRAM_ARGS, "")); //$NON-NLS-1$
+            mProjectTxt.setText(pConfiguration.getAttribute(IUreLaunchConstants.PROJECT_NAME, "")); //$NON-NLS-1$
+            mMainTxt.setText(pConfiguration.getAttribute(IUreLaunchConstants.MAIN_TYPE, "")); //$NON-NLS-1$
+            mArgumentsTxt.setText(pConfiguration.getAttribute(IUreLaunchConstants.PROGRAM_ARGS, "")); //$NON-NLS-1$
         } catch (CoreException e) {
             PluginLogger.error(Messages.getString("UreTab.ConfigurationError"), e); //$NON-NLS-1$
         }
@@ -244,12 +238,9 @@ public class UreTab extends AbstractLaunchConfigurationTab {
     @Override
     public void performApply(ILaunchConfigurationWorkingCopy pConfiguration) {
 
-        pConfiguration.setAttribute(IUreLaunchConstants.PROJECT_NAME,
-                        mProjectTxt.getText().trim());
-        pConfiguration.setAttribute(IUreLaunchConstants.MAIN_TYPE,
-                        mMainTxt.getText().trim());
-        pConfiguration.setAttribute(IUreLaunchConstants.PROGRAM_ARGS,
-                        mArgumentsTxt.getText().trim());
+        pConfiguration.setAttribute(IUreLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
+        pConfiguration.setAttribute(IUreLaunchConstants.MAIN_TYPE, mMainTxt.getText().trim());
+        pConfiguration.setAttribute(IUreLaunchConstants.PROGRAM_ARGS, mArgumentsTxt.getText().trim());
     }
 
     /**
@@ -270,13 +261,10 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 
         try {
 
-            boolean projectSet = !pLaunchConfig.getAttribute(
-                            IUreLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
-            boolean mainImplSet = !pLaunchConfig.getAttribute(
-                            IUreLaunchConstants.MAIN_TYPE, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
+            boolean projectSet = !pLaunchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
+            boolean mainImplSet = !pLaunchConfig.getAttribute(IUreLaunchConstants.MAIN_TYPE, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
             if (projectSet && mainImplSet) {
-                String name = pLaunchConfig.getAttribute(
-                                IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+                String name = pLaunchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;
             }
         } catch (CoreException e) {
@@ -288,7 +276,8 @@ public class UreTab extends AbstractLaunchConfigurationTab {
     /**
      * Creates the UI field for the UNO project selection.
      *
-     * @param pParent the parent composite where to draw the field
+     * @param pParent
+     *            the parent composite where to draw the field
      */
     private void createProjectField(Composite pParent) {
         Composite field = new Composite(pParent, SWT.NONE);
@@ -300,8 +289,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
         lbl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
         mProjectTxt = new Text(field, SWT.SINGLE | SWT.BORDER);
-        mProjectTxt.setLayoutData(new GridData(
-                        GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+        mProjectTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
         mProjectTxt.addModifyListener(mListener);
 
         mProjectBtn = new Button(field, SWT.PUSH);
@@ -312,7 +300,8 @@ public class UreTab extends AbstractLaunchConfigurationTab {
     /**
      * Create the UI field for the <code>XMain</code> implementation class selection.
      *
-     * @param pParent the parent composite where to draw the field
+     * @param pParent
+     *            the parent composite where to draw the field
      */
     private void createMainField(Composite pParent) {
         Composite field = new Composite(pParent, SWT.NONE);
@@ -324,8 +313,7 @@ public class UreTab extends AbstractLaunchConfigurationTab {
         lbl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
         mMainTxt = new Text(field, SWT.SINGLE | SWT.BORDER);
-        mMainTxt.setLayoutData(new GridData(
-                        GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+        mMainTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
         mMainTxt.addModifyListener(mListener);
 
         mMainBtn = new Button(field, SWT.PUSH);

@@ -75,8 +75,8 @@ import org.openoffice.ide.eclipse.core.model.config.IConfigListener;
 import org.openoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
- *This class creates the whole SDK table with it's viewer and content provider.
- * This class encloses a SDK editor dialog.
+ * This class creates the whole SDK table with it's viewer and content provider. This class encloses a SDK editor
+ * dialog.
  *
  * @see AbstractTable for the basic table functions descriptions
  *
@@ -93,24 +93,17 @@ public class SDKTable extends AbstractTable {
     private SDK mTmpSdk;
 
     /**
-     * Main constructor of the SDK Table. It's style can't be configured like
-     * other SWT composites. When using a SDK Table, you should add all the
-     * necessary Layouts and Layout Data to display it correctly.
+     * Main constructor of the SDK Table. It's style can't be configured like other SWT composites. When using a SDK
+     * Table, you should add all the necessary Layouts and Layout Data to display it correctly.
      *
-     * @param pParent Composite parent of the table.
+     * @param pParent
+     *            Composite parent of the table.
      */
     public SDKTable(Composite pParent) {
-        super(pParent,
-                        Messages.getString("SDKTable.Title"), //$NON-NLS-1$
-                        new String[] {
-                                        Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
-                                        Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
-        },
-                        new int[] {DEFAULT_WIDTH, DEFAULT_HEIGHT},
-                        new String[] {
-                                        SDK.NAME,
-                                        SDK.PATH
-        });
+        super(pParent, Messages.getString("SDKTable.Title"), //$NON-NLS-1$
+            new String[] { Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
+                Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
+            }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
 
         mTableViewer.setInput(SDKContainer.getInstance());
         mTableViewer.setContentProvider(new SDKContentProvider());
@@ -140,7 +133,7 @@ public class SDKTable extends AbstractTable {
         if (!pEvent.getSelection().isEmpty()) {
 
             // Get the double clicked SDK line
-            SDK sdk = (SDK)((IStructuredSelection)pEvent.getSelection()).getFirstElement();
+            SDK sdk = (SDK) ((IStructuredSelection) pEvent.getSelection()).getFirstElement();
 
             // Launch the dialog
             sdk = openDialog(sdk);
@@ -166,20 +159,19 @@ public class SDKTable extends AbstractTable {
     protected ITableElement removeLine() {
         ITableElement o = super.removeLine();
         if (null != o && o instanceof SDK) {
-            SDKContainer.delSDK((SDK)o);
+            SDKContainer.delSDK((SDK) o);
         }
 
         return o;
     }
 
     /**
-     * This method create and calls the dialog box to be launched on SDK
-     * edition or SDK creation. The parameter <code>pSdk</code> could be null:
-     * in this case, a new one will be created. Otherwise the fields of the
-     * old one will be changed. This is useful for SDK editing: the object
-     * reference is the same.
+     * This method create and calls the dialog box to be launched on SDK edition or SDK creation. The parameter
+     * <code>pSdk</code> could be null: in this case, a new one will be created. Otherwise the fields of the old one
+     * will be changed. This is useful for SDK editing: the object reference is the same.
      *
-     * @param pSdk the SDK instance to edit if any
+     * @param pSdk
+     *            the SDK instance to edit if any
      *
      * @return the modified or created SDK instance
      */
@@ -199,8 +191,7 @@ public class SDKTable extends AbstractTable {
                 try {
                     pSdk.setHome(newSDK.getHome());
                 } catch (InvalidConfigException e) {
-                    PluginLogger.error(
-                                    e.getLocalizedMessage(), e);
+                    PluginLogger.error(e.getLocalizedMessage(), e);
                     // localized in SDK class
                 }
             } else {
@@ -215,8 +206,7 @@ public class SDKTable extends AbstractTable {
     }
 
     /**
-     * The SDK content provider is a class which provides the SDKs objects to
-     * the viewer.
+     * The SDK content provider is a class which provides the SDKs objects to the viewer.
      *
      * @author cedricbosdo
      *
@@ -280,7 +270,7 @@ public class SDKTable extends AbstractTable {
                 // All the SDK have been removed
                 if (null != mTableViewer) {
                     int i = 0;
-                    SDK sdki = (SDK)mTableViewer.getElementAt(i);
+                    SDK sdki = (SDK) mTableViewer.getElementAt(i);
 
                     while (null != sdki) {
                         mTableViewer.remove(sdki);
@@ -312,7 +302,7 @@ public class SDKTable extends AbstractTable {
      */
     class SDKDialog extends StatusDialog implements IFieldChangedListener {
 
-        private static final String P_SDK_PATH    = "__sdk_path"; //$NON-NLS-1$
+        private static final String P_SDK_PATH = "__sdk_path"; //$NON-NLS-1$
 
         private static final int LAYOUT_COLUMNS = 3;
 
@@ -327,7 +317,8 @@ public class SDKTable extends AbstractTable {
         /**
          * Create the SDK dialog without any SDK instance.
          *
-         * @param pParentShell the shell where to put the dialog
+         * @param pParentShell
+         *            the shell where to put the dialog
          */
         protected SDKDialog(Shell pParentShell) {
             this(pParentShell, null);
@@ -336,8 +327,10 @@ public class SDKTable extends AbstractTable {
         /**
          * Create the SDK dialog with an SDK instance to edit.
          *
-         * @param pParentShell the shell where to put the dialog
-         * @param pSdk the SDK instance to edit
+         * @param pParentShell
+         *            the shell where to put the dialog
+         * @param pSdk
+         *            the SDK instance to edit
          */
         protected SDKDialog(Shell pParentShell, SDK pSdk) {
             super(pParentShell);
@@ -361,15 +354,14 @@ public class SDKTable extends AbstractTable {
 
             Label image = new Label(body, SWT.RIGHT);
             // White background
-            image.setBackground(mWHITE );
+            image.setBackground(mWHITE);
             image.setImage(OOEclipsePlugin.getImage(ImagesConstants.SDK_DIALOG_IMAGE));
             GridData gd = new GridData(GridData.FILL_HORIZONTAL);
             gd.horizontalSpan = LAYOUT_COLUMNS;
             image.setLayoutData(gd);
 
             // Creates each line of the dialog
-            mSdkpathRow = new FileRow(body, P_SDK_PATH,
-                            Messages.getString("SDKTable.PathTitle"), true); //$NON-NLS-1$
+            mSdkpathRow = new FileRow(body, P_SDK_PATH, Messages.getString("SDKTable.PathTitle"), true); //$NON-NLS-1$
             mSdkpathRow.setFieldChangedListener(this);
 
             // put the value of the edited SDK in the fields
@@ -377,8 +369,8 @@ public class SDKTable extends AbstractTable {
                 mSdkpathRow.setValue(mSdk.getHome());
             }
 
-            mBuidlidRow = new TextRow(body, "",  //$NON-NLS-1$
-                            Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
+            mBuidlidRow = new TextRow(body, "", //$NON-NLS-1$
+                Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
             // This line is only to show the value
             mBuidlidRow.setEnabled(false);
 
@@ -408,11 +400,9 @@ public class SDKTable extends AbstractTable {
                 isValid(null);
                 super.okPressed();
             } else {
-                updateStatus(new Status(IStatus.ERROR,
-                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                IStatus.ERROR,
-                                Messages.getString("SDKTable.MissingFieldError"), //$NON-NLS-1$
-                                null));
+                updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
+                    Messages.getString("SDKTable.MissingFieldError"), //$NON-NLS-1$
+                    null));
             }
         }
 
@@ -441,50 +431,39 @@ public class SDKTable extends AbstractTable {
         /**
          * Checks if the property is valid.
          *
-         * @param pProperty the property to check
-         * @return <code>true</code> if the property is valid, <code>false</code>
-         *             otherwise.
+         * @param pProperty
+         *            the property to check
+         * @return <code>true</code> if the property is valid, <code>false</code> otherwise.
          */
         private boolean isValid(String pProperty) {
             boolean result = false;
 
             // Try to create an SDK
             try {
-                mTmpSdk = new SDK (mSdkpathRow.getValue());
+                mTmpSdk = new SDK(mSdkpathRow.getValue());
 
                 if (null != mTmpSdk.getId()) {
                     mBuidlidRow.setValue(mTmpSdk.getId());
                 }
 
-                if (Platform.getOS().equals(Platform.OS_WIN32) &&
-                                mSdkpathRow.getValue().contains(" ")) { //$NON-NLS-1$
+                if (Platform.getOS().equals(Platform.OS_WIN32) && mSdkpathRow.getValue().contains(" ")) { //$NON-NLS-1$
 
-                    updateStatus(new Status(IStatus.WARNING,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.WARNING,
-                                    Messages.getString("SDKTable.SpacesSdkPathWarning"),  //$NON-NLS-1$
-                                    null));
+                    updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
+                        Messages.getString("SDKTable.SpacesSdkPathWarning"), //$NON-NLS-1$
+                        null));
                 } else {
-                    updateStatus(new Status(IStatus.OK,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.OK, "", null)); //$NON-NLS-1$
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
                 }
 
                 result = true;
 
             } catch (InvalidConfigException e) {
                 if (pProperty.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
-                    updateStatus(new Status(IStatus.ERROR,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.ERROR,
-                                    e.getMessage(),
-                                    e));
+                    updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
+                        e.getMessage(), e));
                 } else {
-                    updateStatus(new Status(IStatus.OK,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.OK,
-                                    "", //$NON-NLS-1$
-                                    e));
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
+                        e));
                 }
             }
 

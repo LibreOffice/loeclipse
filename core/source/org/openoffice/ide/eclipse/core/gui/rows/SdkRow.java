@@ -63,9 +63,12 @@ public class SdkRow extends AbstractConfigRow {
     /**
      * Constructor.
      *
-     * @param pParent the composite where to create the row
-     * @param pProperty the property for the row events
-     * @param pToSelect the configuration element to select first
+     * @param pParent
+     *            the composite where to create the row
+     * @param pProperty
+     *            the property for the row events
+     * @param pToSelect
+     *            the configuration element to select first
      */
     public SdkRow(final Composite pParent, String pProperty, ISdk pToSelect) {
         super(pParent, pProperty, Messages.getString("SdkRow.Browse"), pToSelect); //$NON-NLS-1$
@@ -127,7 +130,7 @@ public class SdkRow extends AbstractConfigRow {
      */
     @Override
     protected String getElementName(Object pToSelect) {
-        return ((ISdk)pToSelect).getId();
+        return ((ISdk) pToSelect).getId();
     }
 
     /**

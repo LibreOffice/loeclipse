@@ -57,7 +57,8 @@ public interface ITableElement {
     /**
      * Returns the column image corresponding to the property.
      *
-     * @param pProperty the property designating the column
+     * @param pProperty
+     *            the property designating the column
      * @return the image for the column
      */
     public Image getImage(String pProperty);
@@ -65,7 +66,8 @@ public interface ITableElement {
     /**
      * Returns the column label corresponding to the property.
      *
-     * @param pProperty the property designating the column
+     * @param pProperty
+     *            the property designating the column
      * @return the label for the column
      */
     public String getLabel(String pProperty);
@@ -76,10 +78,10 @@ public interface ITableElement {
     public String[] getProperties();
 
     /**
-     * Defines whether the column cell corresponding to the property can be
-     * modified.
+     * Defines whether the column cell corresponding to the property can be modified.
      *
-     * @param pProperty the property designating the column
+     * @param pProperty
+     *            the property designating the column
      * @return <code>true</code> if the cell is editable.
      */
     public boolean canModify(String pProperty);
@@ -87,17 +89,19 @@ public interface ITableElement {
     /**
      * Returns the column value corresponding to the property.
      *
-     * @param pProperty the property designating the column
+     * @param pProperty
+     *            the property designating the column
      * @return the value for the column
      */
     public Object getValue(String pProperty);
 
-
     /**
      * Sets the column value corresponding to the property.
      *
-     * @param pProperty the property designating the column
-     * @param pValue the new value for the column
+     * @param pProperty
+     *            the property designating the column
+     * @param pValue
+     *            the new value for the column
      */
     public void setValue(String pProperty, Object pValue);
 }

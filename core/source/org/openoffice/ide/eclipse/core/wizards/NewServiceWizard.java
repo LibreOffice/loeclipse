@@ -96,18 +96,14 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
             @Override
             protected IStatus run(IProgressMonitor pMonitor) {
 
-                IStatus status = new Status(IStatus.OK,
-                                OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                IStatus.OK, "", null); //$NON-NLS-1$
+                IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
                 try {
 
                     mWizardSet.doFinish(pMonitor, mActivePage);
 
                 } catch (Exception e) {
-                    status = new Status(IStatus.CANCEL,
-                                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
-                                    IStatus.OK,
-                                    Messages.getString("NewServiceWizard.CreateServiceError") , e); //$NON-NLS-1$
+                    status = new Status(IStatus.CANCEL, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK,
+                        Messages.getString("NewServiceWizard.CreateServiceError"), e); //$NON-NLS-1$
                 }
 
                 return status;
@@ -129,7 +125,8 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
         IWizardPage next = null;
         try {
             next = mWizardSet.getNextPage(pPage);
-        } catch (NoSuchPageException e) { }
+        } catch (NoSuchPageException e) {
+        }
 
         return next;
     }
@@ -142,7 +139,8 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
         IWizardPage previous = null;
         try {
             previous = mWizardSet.getPreviousPage(pPage);
-        } catch (NoSuchPageException e) { }
+        } catch (NoSuchPageException e) {
+        }
 
         return previous;
     }
@@ -157,7 +155,7 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 
         if (pSelection.getFirstElement() instanceof IAdaptable) {
 
-            IAdaptable adapter = (IAdaptable)pSelection.getFirstElement();
+            IAdaptable adapter = (IAdaptable) pSelection.getFirstElement();
             IResource resource = adapter.getAdapter(IResource.class);
 
             if (resource != null) {
@@ -169,16 +167,18 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
     /**
      * Creates all the wizard pages needed by the UNO service creation wizard.
      *
-     * <p>The created pages are described by the {@link ServiceWizardSet}.</p>
+     * <p>
+     * The created pages are described by the {@link ServiceWizardSet}.
+     * </p>
      *
-     * @param pProject the project where to create the service.
+     * @param pProject
+     *            the project where to create the service.
      */
     private void createPages(IProject pProject) {
         if (null != pProject) {
             try {
                 if (pProject.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
-                    UnoidlProject unoProject = (UnoidlProject)pProject.getNature(
-                                    OOEclipsePlugin.UNO_NATURE_ID);
+                    UnoidlProject unoProject = (UnoidlProject) pProject.getNature(OOEclipsePlugin.UNO_NATURE_ID);
 
                     mWizardSet = new ServiceWizardSet(this);
 
@@ -196,7 +196,7 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
                     UnoFactoryData serviceData = new UnoFactoryData();
                     serviceData.setProperty(IUnoFactoryConstants.TYPE_NATURE, IUnoFactoryConstants.SERVICE);
                     serviceData.setProperty(IUnoFactoryConstants.TYPE_NAME,
-                                    Messages.getString("NewServiceWizard.DefaultName")); //$NON-NLS-1$
+                        Messages.getString("NewServiceWizard.DefaultName")); //$NON-NLS-1$
 
                     data.addInnerData(serviceData);
 

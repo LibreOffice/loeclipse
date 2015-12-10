@@ -85,16 +85,15 @@ import org.openoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.openoffice.ide.eclipse.core.wizards.Messages;
 
 /**
- * Defines an interface member creation or edition dialog. To get the computed
- * data, use the {@link #getData()} method, even after disposing the dialog.
+ * Defines an interface member creation or edition dialog. To get the computed data, use the {@link #getData()} method,
+ * even after disposing the dialog.
  *
  * This class shouldn't be sub-classed.
  *
  * @author cedricbosdo
  *
  */
-public class InterfaceMemberDialog extends TitleAreaDialog implements
-IFieldChangedListener {
+public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChangedListener {
 
     private static final String MEMBER_TYPE = "__member_type"; //$NON-NLS-1$
     private static final String NAME = "__name"; //$NON-NLS-1$
@@ -145,7 +144,8 @@ IFieldChangedListener {
     /**
      * Constructor to use for member edition.
      *
-     * @param pData the member's data to edit
+     * @param pData
+     *            the member's data to edit
      */
     public InterfaceMemberDialog(UnoFactoryData pData) {
         super(Display.getDefault().getActiveShell());
@@ -156,7 +156,7 @@ IFieldChangedListener {
         mData = pData;
 
         try {
-            int type = ((Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
+            int type = ((Integer) mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
             if (type == IUnoFactoryConstants.METHOD) {
                 mTitle = Messages.getString("InterfaceMemberDialog.MethodDialogTitle"); //$NON-NLS-1$
                 mMessage = Messages.getString("InterfaceMemberDialog.EditMethodDescription"); //$NON-NLS-1$
@@ -213,7 +213,7 @@ IFieldChangedListener {
         String type = ""; //$NON-NLS-1$
         if (mData != null) {
             if (null != mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)) {
-                Integer iType = (Integer)mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE);
+                Integer iType = (Integer) mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE);
                 if (iType != null) {
                     switch (iType.intValue()) {
                         case IUnoFactoryConstants.METHOD:
@@ -254,9 +254,10 @@ IFieldChangedListener {
     /**
      * Create the dialog fields which are common to the attribute and method inputs.
      *
-     * @param pParent the composite parent where to create the fields
-     * @param pCreateTypeSelector <code>true</code> if the type selector should be created,
-     *          <code>false</code> otherwise.
+     * @param pParent
+     *            the composite parent where to create the fields
+     * @param pCreateTypeSelector
+     *            <code>true</code> if the type selector should be created, <code>false</code> otherwise.
      */
     private void createCommonRows(Composite pParent, boolean pCreateTypeSelector) {
         // Common rows
@@ -268,16 +269,13 @@ IFieldChangedListener {
             typeComposite.setLayoutData(gd);
             typeComposite.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
 
-            mMemberTypeRow = new ChoiceRow(typeComposite, MEMBER_TYPE, null, null, false );
-            mMemberTypeRow.add(
-                            Messages.getString("InterfaceMemberDialog.MethodChoice"), "method"); //$NON-NLS-1$ //$NON-NLS-2$
-            mMemberTypeRow.add(
-                            Messages.getString("InterfaceMemberDialog.AttributeChoice"), //$NON-NLS-1$
-                            "attribute"); //$NON-NLS-1$
+            mMemberTypeRow = new ChoiceRow(typeComposite, MEMBER_TYPE, null, null, false);
+            mMemberTypeRow.add(Messages.getString("InterfaceMemberDialog.MethodChoice"), "method"); //$NON-NLS-1$ //$NON-NLS-2$
+            mMemberTypeRow.add(Messages.getString("InterfaceMemberDialog.AttributeChoice"), //$NON-NLS-1$
+                "attribute"); //$NON-NLS-1$
             mMemberTypeRow.select(0);
             mMemberTypeRow.setFieldChangedListener(this);
-            mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE,
-                            Integer.valueOf(IUnoFactoryConstants.METHOD));
+            mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.METHOD));
             // Has to be the opposite to show it the first time
             mShowAttribute = true;
 
@@ -289,7 +287,7 @@ IFieldChangedListener {
 
         mNameRow = new TextRow(pParent, NAME, Messages.getString("InterfaceMemberDialog.Name")); //$NON-NLS-1$
         if (mData != null) {
-            String name = (String)mData.getProperty(IUnoFactoryConstants.NAME);
+            String name = (String) mData.getProperty(IUnoFactoryConstants.NAME);
             if (name != null) {
                 mNameRow.setValue(name);
             }
@@ -302,8 +300,8 @@ IFieldChangedListener {
         }
 
         // only simple types, interfaces, enums and structs, typedefs should be allowed
-        int types = IUnoFactoryConstants.INTERFACE | IUnoFactoryConstants.STRUCT |
-                        IUnoFactoryConstants.ENUM | IUnoFactoryConstants.TYPEDEF;
+        int types = IUnoFactoryConstants.INTERFACE | IUnoFactoryConstants.STRUCT | IUnoFactoryConstants.ENUM
+            | IUnoFactoryConstants.TYPEDEF;
         types |= IUnoFactoryConstants.BASICS;
 
         mTypeRow = new TypeRow(pParent, TYPE, typeLabel, types);
@@ -313,18 +311,18 @@ IFieldChangedListener {
         if (mData != null) {
             Object o = mData.getProperty(IUnoFactoryConstants.TYPE);
             if (o instanceof String) {
-                String memberType = (String)o;
+                String memberType = (String) o;
                 mTypeRow.setValue(memberType);
             }
         }
     }
 
     /**
-     * This method cleans up the specific composite of all its children and
-     * recreate the controls for the new type (attribute or method).
+     * This method cleans up the specific composite of all its children and recreate the controls for the new type
+     * (attribute or method).
      *
-     * @param pIsAttribute flag defining whether to show the method or attribute
-     *         controls.
+     * @param pIsAttribute
+     *            flag defining whether to show the method or attribute controls.
      */
     protected void showSpecificControls(boolean pIsAttribute) {
 
@@ -353,14 +351,14 @@ IFieldChangedListener {
     /**
      * Creates the field rows specific to the attributes.
      *
-     * @param pParent the composite parent in which to create the controls.
+     * @param pParent
+     *            the composite parent in which to create the controls.
      */
     protected void createAttributeControls(Composite pParent) {
 
         mTypeRow.setLabel(Messages.getString("InterfaceMemberDialog.Type")); //$NON-NLS-1$
 
-        mReadonlyRow = new BooleanRow(pParent, READONLY,
-                        Messages.getString("InterfaceMemberDialog.Readonly")); //$NON-NLS-1$
+        mReadonlyRow = new BooleanRow(pParent, READONLY, Messages.getString("InterfaceMemberDialog.Readonly")); //$NON-NLS-1$
         mReadonlyRow.setTooltip(Messages.getString("InterfaceMemberDialog.ReadonlyTooltip")); //$NON-NLS-1$
         mReadonlyRow.setFieldChangedListener(this);
 
@@ -372,7 +370,7 @@ IFieldChangedListener {
         if (mData != null) {
             Object o = mData.getProperty(IUnoFactoryConstants.FLAGS);
             if (o instanceof String) {
-                String flags = (String)o;
+                String flags = (String) o;
                 mReadonlyRow.setValue(flags.contains("readonly")); //$NON-NLS-1$
                 mBoundRow.setValue(flags.contains("bound")); //$NON-NLS-1$
             }
@@ -382,7 +380,8 @@ IFieldChangedListener {
     /**
      * Creates the field rows specific to the Methods.
      *
-     * @param pParent the composite parent in which to create the controls.
+     * @param pParent
+     *            the composite parent in which to create the controls.
      *
      */
     protected void createMethodControls(Composite pParent) {
@@ -418,25 +417,18 @@ IFieldChangedListener {
         mArgumentTableViewer = new TableViewer(table);
         mArgumentTableViewer.setLabelProvider(new ParamLabelProvider());
         mArgumentTableViewer.setContentProvider(new ParamContentProvider());
-        mArgumentTableViewer.setColumnProperties(new String[]{
-                        PARAM_NAME,
-                        PARAM_TYPE,
-                        PARAM_INOUT
-        });
+        mArgumentTableViewer.setColumnProperties(new String[] { PARAM_NAME, PARAM_TYPE, PARAM_INOUT });
         // only simple types, interfaces, enums and structs, typedefs should be allowed
-        int types = IUnoFactoryConstants.INTERFACE | IUnoFactoryConstants.STRUCT |
-                        IUnoFactoryConstants.ENUM | IUnoFactoryConstants.TYPEDEF;
+        int types = IUnoFactoryConstants.INTERFACE | IUnoFactoryConstants.STRUCT | IUnoFactoryConstants.ENUM
+            | IUnoFactoryConstants.TYPEDEF;
         types |= IUnoFactoryConstants.BASICS;
 
         TypeCellEditor typeCellEditor = new TypeCellEditor(table, types);
         typeCellEditor.includeSequences(true);
         typeCellEditor.includeSimpleTypes(true);
         typeCellEditor.includeVoid(false);
-        mArgumentTableViewer.setCellEditors(new CellEditor[]{
-                        new TextCellEditor(table),
-                        typeCellEditor,
-                        new ComboBoxCellEditor(table,
-                                        new String[]{"inout", "in", "out"}) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        mArgumentTableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(table), typeCellEditor,
+            new ComboBoxCellEditor(table, new String[] { "inout", "in", "out" }) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         });
         mArgumentTableViewer.setCellModifier(new ParamCellModifier());
         mArgumentTableViewer.setInput(mData);
@@ -447,7 +439,8 @@ IFieldChangedListener {
     /**
      * Create the buttons method arguments add and remove buttons.
      *
-     * @param pParent the composite where to create the buttons.
+     * @param pParent
+     *            the composite where to create the buttons.
      */
     private void createMethodButtons(Composite pParent) {
         // Create the Add-Edit / Remove buttons
@@ -481,8 +474,8 @@ IFieldChangedListener {
                 // Remove the selected attribute
                 ISelection sel = mArgumentTableViewer.getSelection();
                 if (sel instanceof IStructuredSelection) {
-                    Object element = ((IStructuredSelection)sel).getFirstElement();
-                    mData.removeInnerData((UnoFactoryData)element);
+                    Object element = ((IStructuredSelection) sel).getFirstElement();
+                    mData.removeInnerData((UnoFactoryData) element);
                     mArgumentTableViewer.remove(element);
                 }
             }
@@ -497,12 +490,10 @@ IFieldChangedListener {
         if (pEvent.getProperty().equals(MEMBER_TYPE)) {
             String type = mMemberTypeRow.getValue();
             if (type.equals("method")) { //$NON-NLS-1$
-                mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE,
-                                Integer.valueOf(IUnoFactoryConstants.METHOD));
+                mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.METHOD));
                 showSpecificControls(false);
             } else {
-                mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE,
-                                Integer.valueOf(IUnoFactoryConstants.ATTRIBUTE));
+                mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.ATTRIBUTE));
                 showSpecificControls(true);
             }
         } else if (pEvent.getProperty().equals(NAME)) {
@@ -519,10 +510,11 @@ IFieldChangedListener {
     /**
      * Toggle the flag property in the options.
      *
-     * @param pFlag the flag to toggle (<code>bound</code> or <code>readonly</code>).
+     * @param pFlag
+     *            the flag to toggle (<code>bound</code> or <code>readonly</code>).
      */
     private void toggleFlag(String pFlag) {
-        String flags = (String)mData.getProperty(IUnoFactoryConstants.FLAGS);
+        String flags = (String) mData.getProperty(IUnoFactoryConstants.FLAGS);
         if (flags != null && flags.contains(pFlag)) {
             // remove the flag
             flags = flags.replace(pFlag, "").trim(); //$NON-NLS-1$
@@ -538,8 +530,7 @@ IFieldChangedListener {
     }
 
     /**
-     * Class providing an access to the inner data of the uno factory data for
-     * the method arguments table.
+     * Class providing an access to the inner data of the uno factory data for the method arguments table.
      *
      * @author cedricbosdo
      */
@@ -570,8 +561,7 @@ IFieldChangedListener {
     }
 
     /**
-     * Simply provides the values access for the cell editors of the method
-     * arguments table.
+     * Simply provides the values access for the cell editors of the method arguments table.
      *
      * @author cedricbosdo
      */
@@ -582,8 +572,8 @@ IFieldChangedListener {
          */
         @Override
         public boolean canModify(Object pElement, String pProperty) {
-            return pElement instanceof UnoFactoryData && (pProperty.equals(PARAM_TYPE) ||
-                            pProperty.equals(PARAM_NAME) || pProperty.equals(PARAM_INOUT));
+            return pElement instanceof UnoFactoryData && (pProperty.equals(PARAM_TYPE) || pProperty.equals(PARAM_NAME)
+                || pProperty.equals(PARAM_INOUT));
         }
 
         /**
@@ -593,7 +583,7 @@ IFieldChangedListener {
         public Object getValue(Object pElement, String pProperty) {
             Object value = null;
             if (pElement instanceof UnoFactoryData) {
-                UnoFactoryData data = (UnoFactoryData)pElement;
+                UnoFactoryData data = (UnoFactoryData) pElement;
 
                 if (pProperty.equals(PARAM_NAME)) {
                     // get the value of the name
@@ -603,7 +593,7 @@ IFieldChangedListener {
                     value = data.getProperty(IUnoFactoryConstants.TYPE);
                 } else if (pProperty.equals(PARAM_INOUT)) {
                     // get the value of the direction
-                    String text = (String)data.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
+                    String text = (String) data.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
                     if ("in".equals(text)) { //$NON-NLS-1$
                         value = Integer.valueOf(1);
                     } else if ("out".equals(text)) { //$NON-NLS-1$
@@ -625,8 +615,8 @@ IFieldChangedListener {
          */
         @Override
         public void modify(Object pElement, String pProperty, Object pValue) {
-            if (((TableItem)pElement).getData() instanceof UnoFactoryData) {
-                UnoFactoryData data = (UnoFactoryData)((TableItem)pElement).getData();
+            if (((TableItem) pElement).getData() instanceof UnoFactoryData) {
+                UnoFactoryData data = (UnoFactoryData) ((TableItem) pElement).getData();
                 if (pProperty.equals(PARAM_NAME) && pValue instanceof String) {
                     // set the value of the name
                     data.setProperty(IUnoFactoryConstants.NAME, pValue);
@@ -637,7 +627,7 @@ IFieldChangedListener {
                     mArgumentTableViewer.setInput(mData);
                 } else if (pProperty.equals(PARAM_INOUT) && pValue instanceof Integer) {
                     // set the value of the direction
-                    String direction = getDirectionFromId(((Integer)pValue).intValue());
+                    String direction = getDirectionFromId(((Integer) pValue).intValue());
                     data.setProperty(IUnoFactoryConstants.ARGUMENT_INOUT, direction);
                     mArgumentTableViewer.setInput(mData);
                 }
@@ -645,10 +635,10 @@ IFieldChangedListener {
         }
 
         /**
-         * Utility method translating the direction items position in the list-box
-         * into the direction text.
+         * Utility method translating the direction items position in the list-box into the direction text.
          *
-         * @param pId the item position
+         * @param pId
+         *            the item position
          *
          * @return the direction text
          */
@@ -690,20 +680,20 @@ IFieldChangedListener {
         @Override
         public String getColumnText(Object pElement, int pColumnIndex) {
             String label = null;
-            UnoFactoryData data = (UnoFactoryData)pElement;
+            UnoFactoryData data = (UnoFactoryData) pElement;
 
             switch (pColumnIndex) {
                 case 0:
                     // Get the Argument Name
-                    label = (String)data.getProperty(IUnoFactoryConstants.NAME);
+                    label = (String) data.getProperty(IUnoFactoryConstants.NAME);
                     break;
                 case 1:
                     // Get the Argument Type
-                    label = (String)data.getProperty(IUnoFactoryConstants.TYPE);
+                    label = (String) data.getProperty(IUnoFactoryConstants.TYPE);
                     break;
                 case 2:
                     // Get the Argument IN/OUT property
-                    label = (String)data.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
+                    label = (String) data.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
                     break;
             }
 

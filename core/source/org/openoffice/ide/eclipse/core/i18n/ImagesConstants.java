@@ -44,8 +44,8 @@
 package org.openoffice.ide.eclipse.core.i18n;
 
 /**
- * Defines the keys to use for images internationalization. The default file name
- * is defined in the <code>ImageManager.properties</code> file
+ * Defines the keys to use for images internationalization. The default file name is defined in the
+ * <code>ImageManager.properties</code> file
  *
  * @author cedricbosdo
  *

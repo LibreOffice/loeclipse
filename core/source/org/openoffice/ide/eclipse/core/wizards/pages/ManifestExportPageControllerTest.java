@@ -30,8 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test for the Manifest export page controller, these tests are
- * testing the UI behaviour.
+ * Unit test for the Manifest export page controller, these tests are testing the UI behaviour.
  *
  * @author Cédric Bosdonnat
  *
@@ -45,7 +44,7 @@ public class ManifestExportPageControllerTest {
      * Create the controller to test.
      */
     @Before
-    public void setup( ) {
+    public void setup() {
         mTested = new ManifestExportPageController();
     }
 
@@ -54,9 +53,9 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetGenerateManifest() {
-        mTested.setGenerateManifest( true );
-        assertFalse( "Load path shouldn't be enabled", mTested.isLoadManifestPathEnabled() );
-        assertTrue( "Save manifest box should be enabled", mTested.isSaveManifestEnabled() );
+        mTested.setGenerateManifest(true);
+        assertFalse("Load path shouldn't be enabled", mTested.isLoadManifestPathEnabled());
+        assertTrue("Save manifest box should be enabled", mTested.isSaveManifestEnabled());
     }
 
     /**
@@ -64,9 +63,9 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetReuseManifest() {
-        mTested.setGenerateManifest( false );
-        assertTrue( "Load path should be enabled", mTested.isLoadManifestPathEnabled() );
-        assertFalse( "Save manifest box shouldn't be enabled", mTested.isSaveManifestEnabled() );
+        mTested.setGenerateManifest(false);
+        assertTrue("Load path should be enabled", mTested.isLoadManifestPathEnabled());
+        assertFalse("Save manifest box shouldn't be enabled", mTested.isSaveManifestEnabled());
     }
 
     /**
@@ -74,9 +73,9 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetSaveManifest() {
-        mTested.setGenerateManifest( true );
-        mTested.setSaveManifest( true );
-        assertTrue( "save manifest path should be enabled", mTested.isSaveManifestPathEnabled() );
+        mTested.setGenerateManifest(true);
+        mTested.setSaveManifest(true);
+        assertTrue("save manifest path should be enabled", mTested.isSaveManifestPathEnabled());
     }
 
     /**
@@ -84,9 +83,9 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetNoSaveManifest() {
-        mTested.setGenerateManifest( true );
-        mTested.setSaveManifest( false );
-        assertFalse( "save manifest path shouldn't be enabled", mTested.isSaveManifestPathEnabled() );
+        mTested.setGenerateManifest(true);
+        mTested.setSaveManifest(false);
+        assertFalse("save manifest path shouldn't be enabled", mTested.isSaveManifestPathEnabled());
     }
 
     /**
@@ -94,11 +93,11 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetSaveManifestPath() {
-        mTested.setGenerateManifest( true );
-        mTested.setSaveManifest( true );
+        mTested.setGenerateManifest(true);
+        mTested.setSaveManifest(true);
 
-        mTested.setSaveManifestPath( PATH_VALUE );
-        assertEquals( "the save path should have been set", PATH_VALUE, mTested.getSaveManifestPath() );
+        mTested.setSaveManifestPath(PATH_VALUE);
+        assertEquals("the save path should have been set", PATH_VALUE, mTested.getSaveManifestPath());
     }
 
     /**
@@ -106,10 +105,10 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetManifestPathDisabled() {
-        mTested.setGenerateManifest( false );
+        mTested.setGenerateManifest(false);
 
-        mTested.setSaveManifestPath( PATH_VALUE );
-        assertNotSame( "the save path shouldn't have been set", PATH_VALUE, mTested.getSaveManifestPath() );
+        mTested.setSaveManifestPath(PATH_VALUE);
+        assertNotSame("the save path shouldn't have been set", PATH_VALUE, mTested.getSaveManifestPath());
     }
 
     /**
@@ -117,10 +116,10 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetLoadManifestPathEnabled() {
-        mTested.setGenerateManifest( false );
+        mTested.setGenerateManifest(false);
 
-        mTested.setLoadManifestPath( PATH_VALUE );
-        assertEquals( "the load path should have been set", PATH_VALUE, mTested.getLoadManifestPath() );
+        mTested.setLoadManifestPath(PATH_VALUE);
+        assertEquals("the load path should have been set", PATH_VALUE, mTested.getLoadManifestPath());
     }
 
     /**
@@ -128,9 +127,9 @@ public class ManifestExportPageControllerTest {
      */
     @Test
     public void testSetLoadManifestPathDisabled() {
-        mTested.setGenerateManifest( true );
+        mTested.setGenerateManifest(true);
 
-        mTested.setLoadManifestPath( PATH_VALUE );
-        assertNotSame( "the load path shouldn't have been set", PATH_VALUE, mTested.getLoadManifestPath() );
+        mTested.setLoadManifestPath(PATH_VALUE);
+        assertNotSame("the load path shouldn't have been set", PATH_VALUE, mTested.getLoadManifestPath());
     }
 }
