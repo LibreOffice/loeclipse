@@ -106,7 +106,7 @@ public class OOoTable extends AbstractTable {
         super(pParent, Messages.getString("OOoTable.Title"), //$NON-NLS-1$
             new String[] { Messages.getString("OOoTable.NameTitle"), //$NON-NLS-1$
                 Messages.getString("OOoTable.PathTitle") //$NON-NLS-1$
-            }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { AbstractOOo.NAME, AbstractOOo.PATH });
+        }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { AbstractOOo.NAME, AbstractOOo.PATH });
 
         mTableViewer.setInput(OOoContainer.getInstance());
         mTableViewer.setContentProvider(new OOoContentProvider());

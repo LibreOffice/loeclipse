@@ -335,13 +335,13 @@ public class UnoComposite implements IUnoComposite {
      * At the beginning the string is assumed to be in <em>TEXT_STATE</em>. The template copy will be checked for the
      * substrings <code>"${"</code> or <code>"}"</code> depending on the state. On each substring discovery, the
      * following operations will be done:
-     * 
+     *
      * <pre>
      *     pos = templateCopy position of the substring
      *     parts.add(templateCopy before pos)
      *     templateCopy = templateCopy from pos
      * </pre>
-     * 
+     *
      * And the loop will be executed until the <code>templateCopy</code> is empty or the substring is not found. In such
      * a case the operation will depend on the current state:
      * <ul>

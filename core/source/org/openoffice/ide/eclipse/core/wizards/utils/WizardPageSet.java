@@ -193,7 +193,7 @@ public abstract class WizardPageSet {
      * <p>
      * Here is a sample replacement of the normal method in the wizard:
      * </p>
-     * 
+     *
      * <pre>
      * public IWizardPage getNextPage(IWizardPage page) {
      *     IWizardPage next = null;
@@ -255,7 +255,7 @@ public abstract class WizardPageSet {
      * <p>
      * Here is a sample replacement of the normal method in the wizard:
      * </p>
-     * 
+     *
      * <pre>
      * public IWizardPage getPreviousPage(IWizardPage page) {
      *     IWizardPage previous = null;

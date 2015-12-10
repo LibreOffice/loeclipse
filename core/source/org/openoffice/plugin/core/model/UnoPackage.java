@@ -690,7 +690,7 @@ public class UnoPackage {
         File manifest = new File(System.getProperty("java.io.tmpdir"), MANIFEST_PATH);
         if (manifest.exists()) {
             throw new IOException("I don't risk to overwrite " + manifest.getAbsolutePath()
-                + " - please delete it manually!");
+            + " - please delete it manually!");
         }
         FileOutputStream writer = new FileOutputStream(manifest);
         mManifest.write(writer);

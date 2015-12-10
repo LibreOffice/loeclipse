@@ -49,7 +49,7 @@ import org.openoffice.ide.eclipse.core.model.utils.IModel;
  *
  */
 public abstract class LocalizedSection<ModelType extends IModel> extends AbstractSection<ModelType>
-    implements ILocaleListener {
+implements ILocaleListener {
 
     protected Locale mCurrentLocale;
 

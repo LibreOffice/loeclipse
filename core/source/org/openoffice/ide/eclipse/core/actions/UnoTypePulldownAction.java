@@ -53,7 +53,7 @@ import org.openoffice.ide.eclipse.core.wizards.NewServiceWizard;
 
 /**
  * Pulldown action for the uno types. The wizard has to be defined as follows:
- * 
+ *
  * <pre>
  *     &lt;wizard
  *           canFinishEarly="false"

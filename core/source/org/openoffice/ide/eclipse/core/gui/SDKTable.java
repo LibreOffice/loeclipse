@@ -103,7 +103,7 @@ public class SDKTable extends AbstractTable {
         super(pParent, Messages.getString("SDKTable.Title"), //$NON-NLS-1$
             new String[] { Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
                 Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
-            }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
+        }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
 
         mTableViewer.setInput(SDKContainer.getInstance());
         mTableViewer.setContentProvider(new SDKContentProvider());

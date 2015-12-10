@@ -146,7 +146,7 @@ public class IdlcErrorReader {
                     // file which is compiled
                     if (IResource.FILE == marker.getResource().getType()
                         && !marker.getResource().getProjectRelativePath().toString()
-                            .equals(mCompiledFile.getProjectRelativePath().toString())) {
+                        .equals(mCompiledFile.getProjectRelativePath().toString())) {
                         marker.delete();
                     }
                 }

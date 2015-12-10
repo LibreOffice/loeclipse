@@ -80,7 +80,7 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
 
     /**
      * Default constructor using a color manager.
-     * 
+     *
      * @param pColorManager
      *            the color manager to colorize the syntax elements
      */

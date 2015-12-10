@@ -117,7 +117,7 @@ public final class CompositeFactory {
      *
      * <p>
      * The produced result will be of the following form:
-     * 
+     *
      * <pre>
      * #ifndef __define_name_idl__
      * #define __define_name_idl__
@@ -217,7 +217,7 @@ public final class CompositeFactory {
      * </p>
      *
      * <p>
-     * 
+     *
      * <pre>
      * module foo { };
      * </pre>
@@ -276,7 +276,7 @@ public final class CompositeFactory {
      * The text produced by this method corresponds to the following one
      * </p>
      * <p>
-     * 
+     *
      * <pre>
      * \n[published ]service NAME : INTERFACE {
      * [...]
@@ -337,7 +337,7 @@ public final class CompositeFactory {
      * The text produced by this method corresponds to the following one
      * </p>
      * <p>
-     * 
+     *
      * <pre>
      * [published ]service NAME {
      * [...]
@@ -367,7 +367,7 @@ public final class CompositeFactory {
      * The text produced by this method corresponds to the following one
      * </p>
      * <p>
-     * 
+     *
      * <pre>
      * service NAME {
      * [...]
@@ -395,7 +395,7 @@ public final class CompositeFactory {
      * <p>
      * This method returns two kind of texts depending on the number of parent interfaces name in the array. The first
      * writing is used when there is only one parent interface:
-     * 
+     *
      * <pre>
      * [published ]interface name [: parent::name ]{
      * [...]
@@ -405,7 +405,7 @@ public final class CompositeFactory {
      *
      * <p>
      * The other way is used when there are more than one parent interfaces:
-     * 
+     *
      * <pre>
      * \n[published ]interface name {
      *     [[optional] ]interface parent::name; // for each parent
@@ -470,7 +470,7 @@ public final class CompositeFactory {
      *
      * <p>
      * The generated text is formatted as following:
-     * 
+     *
      * <pre>
      * \t[[optional] ]interface inheritance::name;\n
      * </pre>

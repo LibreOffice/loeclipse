@@ -92,7 +92,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 
     /**
      * Check if the selection is valid, and if the pulldown action can be enabled.
-     * 
+     *
      * @param pSelection
      *            the current selection
      * @return <code>true</code> if the wizards can be launched.

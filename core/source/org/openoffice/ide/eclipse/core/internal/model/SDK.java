@@ -564,7 +564,7 @@ public class SDK implements ISdk, ITableElement {
             } catch (IOException e) {
                 throw new InvalidConfigException(
                     Messages.getString("SDK.NoReadableFileError") + //$NON-NLS-1$
-                        "settings/" + F_DK_CONFIG, //$NON-NLS-1$
+                    "settings/" + F_DK_CONFIG, //$NON-NLS-1$
                     InvalidConfigException.INVALID_SDK_HOME);
             } finally {
                 try {

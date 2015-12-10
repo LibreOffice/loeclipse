@@ -167,7 +167,7 @@ public interface IUnoComposite {
      * Example of template:
      * </p>
      * <p>
-     * 
+     *
      * <pre>
      * module ${name} { ${children}
      *  };

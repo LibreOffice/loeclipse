@@ -58,7 +58,7 @@ public class VisitableFile {
 
     /**
      * Create a new visitable file, ready to accept a visit.
-     * 
+     *
      * @param pFile
      *            the file to visit later.
      */

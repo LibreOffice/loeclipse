@@ -210,7 +210,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 mHome = null;
                 throw new InvalidConfigException(
                     Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
-                        servicesFile.getAbsolutePath(),
+                    servicesFile.getAbsolutePath(),
                     InvalidConfigException.INVALID_OOO_HOME);
             }
         }
@@ -453,7 +453,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
     /**
      * indicates if a code is a symbolic link or not. The code is an adaptation from apache commons
-     * 
+     *
      * @param file
      * @return true if the file is a symbolic link, false otherwise
      * @throws IOException

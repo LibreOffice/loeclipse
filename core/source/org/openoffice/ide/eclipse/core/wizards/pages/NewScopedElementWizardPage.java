@@ -219,11 +219,11 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
 
     /**
      * @return the types to get in the UNO types provider. The returned integer is a
-     * 
+     *
      *         <pre>
      * bit or
      *         </pre>
-     * 
+     *
      *         of the types defined in the {@link UnoTypeProvider} class.
      */
     public abstract int getProvidedTypes();

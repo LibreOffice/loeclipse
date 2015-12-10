@@ -46,7 +46,7 @@ public abstract class LanguageExportPart {
 
     /**
      * Create the controls in the part.
-     * 
+     *
      * @param pParent
      *            the parent composite where to create the controls
      */
@@ -61,7 +61,7 @@ public abstract class LanguageExportPart {
      * Run the export actions in a separate thread.
      *
      * <strong>Note that the controls might be disposed when this methods is called.</strong>
-     * 
+     *
      * @param pModel
      *            the model of the exported package
      */
