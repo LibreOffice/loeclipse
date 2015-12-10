@@ -4,7 +4,7 @@ Bundle-Name: Java Plug-in for LibreOffice eclipse integration
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.java;singleton:=true
 Bundle-Version: 1.0.3
 Bundle-Activator: org.libreoffice.ide.eclipse.java.OOoJavaPlugin
-Bundle-Vendor: Cédric Bosdonnat
+Bundle-Vendor: The Document Foundation
 Require-Bundle: org.eclipse.ui,
  org.libreoffice.ide.eclipse.core,
  org.eclipse.core.resources,

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.libreoffice.ide.eclipse.java" label="LibreOffice Extension/Component Development - Java" version="${java.Bundle-Version}" provider-name="Cédric Bosdonnat">
+<feature id="org.libreoffice.ide.eclipse.java" label="LibreOffice Extension/Component Development - Java" version="${java.Bundle-Version}" provider-name="The Document Foundation">
   <description>
       This plugin provides helps with developing Java extensions or components for LibreOffice.
    </description>
   <copyright>
       Copyright: (c) 2005-2010 Cedric Bosdonnat
-   </copyright>
+  </copyright>
   <license url="http://www.gnu.org/licenses/lgpl.txt">
       GNU LESSER GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
