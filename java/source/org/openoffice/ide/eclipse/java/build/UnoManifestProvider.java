@@ -53,7 +53,7 @@ public class UnoManifestProvider extends ManifestProvider {
      *
      * @param pRegClassname the registration class name
      */
-    public UnoManifestProvider( String pRegClassname ) {
+    public UnoManifestProvider(String pRegClassname) {
         mRegClass = pRegClassname;
     }
 
@@ -62,9 +62,9 @@ public class UnoManifestProvider extends ManifestProvider {
      */
     @Override
     protected void putAdditionalEntries(Manifest pManifest,
-                    JarPackageData pJarPackage) {
+        JarPackageData pJarPackage) {
 
-        Name name = new Attributes.Name( "RegistrationClassName" ); //$NON-NLS-1$
-        pManifest.getMainAttributes().put( name, mRegClass );
+        Name name = new Attributes.Name("RegistrationClassName"); //$NON-NLS-1$
+        pManifest.getMainAttributes().put(name, mRegClass);
     }
 }

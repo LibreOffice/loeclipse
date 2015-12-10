@@ -36,12 +36,12 @@ public class OpenOfficeConfiguration {
 
     private OpenOfficeConnection connection;
 
-    public OpenOfficeConfiguration(OpenOfficeConnection connection){
+    public OpenOfficeConfiguration(OpenOfficeConnection connection) {
         this.connection = connection;
     }
 
-    public String getOpenOfficeProperty(String nodePath, String node){
-        if (!nodePath.startsWith("/")){
+    public String getOpenOfficeProperty(String nodePath, String node) {
+        if (!nodePath.startsWith("/")) {
             nodePath = "/" + nodePath;
         }
         String property = "";
@@ -49,9 +49,9 @@ public class OpenOfficeConfiguration {
         try {
             final String sProviderService = "com.sun.star.configuration.ConfigurationProvider";
             Object configProvider = connection.getRemoteServiceManager().createInstanceWithContext(
-                            sProviderService, connection.getComponentContext());
-            XMultiServiceFactory  xConfigProvider = UnoRuntime.queryInterface(
-                            com.sun.star.lang.XMultiServiceFactory.class, configProvider);
+                sProviderService, connection.getComponentContext());
+            XMultiServiceFactory xConfigProvider = UnoRuntime.queryInterface(
+                com.sun.star.lang.XMultiServiceFactory.class, configProvider);
 
             // The service name: Need only read access:
             final String sReadOnlyView = "com.sun.star.configuration.ConfigurationAccess";
@@ -64,18 +64,17 @@ public class OpenOfficeConfiguration {
 
             // create the view
             XInterface xElement = (XInterface) xConfigProvider.createInstanceWithArguments(sReadOnlyView, aArguments);
-            XNameAccess xChildAccess =
-                            UnoRuntime.queryInterface(XNameAccess.class, xElement);
+            XNameAccess xChildAccess = UnoRuntime.queryInterface(XNameAccess.class, xElement);
 
             // get the value
             property = (String) xChildAccess.getByName(node);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new OpenOfficeException("Could not retrieve property", exception);
         }
         return property;
     }
 
-    public String getOpenOfficeVersion(){
+    public String getOpenOfficeVersion() {
         try {
             // OOo >= 2.2 returns major.minor.micro
             return getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersionAboutBox");
@@ -85,7 +84,7 @@ public class OpenOfficeConfiguration {
         }
     }
 
-    public String getOpenOfficeLocale(){
+    public String getOpenOfficeLocale() {
         return getOpenOfficeProperty(NODE_L10N, "ooLocale");
     }
 

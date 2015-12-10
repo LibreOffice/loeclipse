@@ -79,8 +79,8 @@ public abstract class RegistrationHelper {
     public static void generateFiles(IUnoidlProject pProject) {
 
         // Copy the RegistrationHandler.java.tpl file
-        TemplatesHelper.copyTemplate( pProject, CLASS_FILENAME + TemplatesHelper.JAVA_EXT,
-                        RegistrationHelper.class, new String( ) );
+        TemplatesHelper.copyTemplate(pProject, CLASS_FILENAME + TemplatesHelper.JAVA_EXT,
+            RegistrationHelper.class, new String());
 
         // Create the empty RegistrationHandler.classes file
         ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
@@ -181,7 +181,8 @@ public abstract class RegistrationHelper {
             try {
                 reader.close();
                 in.close();
-            } catch (Exception e) { }
+            } catch (Exception e) {
+            }
         }
         return classes;
     }
@@ -208,7 +209,8 @@ public abstract class RegistrationHelper {
         } finally {
             try {
                 writer.close();
-            } catch (Exception e) { }
+            } catch (Exception e) {
+            }
         }
 
         // update the list file in the workspace

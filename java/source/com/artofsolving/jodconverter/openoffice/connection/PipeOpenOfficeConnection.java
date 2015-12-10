@@ -33,6 +33,6 @@ public class PipeOpenOfficeConnection extends AbstractOpenOfficeConnection {
     }
 
     public PipeOpenOfficeConnection(String pipeName) {
-        super("pipe,name="+ pipeName);
+        super("pipe,name=" + pipeName);
     }
 }

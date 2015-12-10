@@ -76,12 +76,10 @@ public class JavaWizardPage extends LanguageWizardPage {
      */
     public JavaWizardPage() {
         super();
-        setImageDescriptor(OOoJavaPlugin.getDefault().getImageRegistry().
-                        getDescriptor(OOoJavaPlugin.WIZBAN));
+        setImageDescriptor(OOoJavaPlugin.getDefault().getImageRegistry().getDescriptor(OOoJavaPlugin.WIZBAN));
         setTitle(Messages.getString("JavaWizardPage.PageTitle")); //$NON-NLS-1$
         setDescription(Messages.getString("JavaWizardPage.PageDescription")); //$NON-NLS-1$
     }
-
 
     /**
      * {@inheritDoc}
@@ -119,9 +117,9 @@ public class JavaWizardPage extends LanguageWizardPage {
 
         // Create the Java version row
         mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION,
-                        Messages.getString("JavaWizardPage.JavaVersion"), null, false); //$NON-NLS-1$
+            Messages.getString("JavaWizardPage.JavaVersion"), null, false); //$NON-NLS-1$
         mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
-        mJavaVersionRow.setFieldChangedListener( new IFieldChangedListener() {
+        mJavaVersionRow.setFieldChangedListener(new IFieldChangedListener() {
 
             @Override
             public void fieldChanged(FieldEvent pEvent) {
@@ -132,10 +130,10 @@ public class JavaWizardPage extends LanguageWizardPage {
         mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
 
         // Create the test row
-        mJavaTestsRow = new BooleanRow( body, JAVA_TESTS,
-                        Messages.getString("JavaWizardPage.IncludeTestClasses") ); //$NON-NLS-1$
-        mJavaTestsRow.setValue( true );
-        mJavaTestsRow.setFieldChangedListener( new IFieldChangedListener() {
+        mJavaTestsRow = new BooleanRow(body, JAVA_TESTS,
+            Messages.getString("JavaWizardPage.IncludeTestClasses")); //$NON-NLS-1$
+        mJavaTestsRow.setValue(true);
+        mJavaTestsRow.setFieldChangedListener(new IFieldChangedListener() {
 
             @Override
             public void fieldChanged(FieldEvent pEvent) {

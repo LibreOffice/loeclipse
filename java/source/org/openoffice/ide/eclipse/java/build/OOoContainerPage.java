@@ -73,7 +73,7 @@ import org.openoffice.ide.eclipse.java.OOoJavaPlugin;
  *
  */
 public class OOoContainerPage extends WizardPage implements
-IClasspathContainerPage, IClasspathContainerPageExtension {
+    IClasspathContainerPage, IClasspathContainerPageExtension {
 
     private static final int LAYOUT_COLUMNS = 3;
 
@@ -93,7 +93,7 @@ IClasspathContainerPage, IClasspathContainerPageExtension {
         setTitle(Messages.getString("OOoContainerPage.DialogTitle")); //$NON-NLS-1$
         setDescription(Messages.getString("OOoContainerPage.DialogDescription")); //$NON-NLS-1$
         ImageDescriptor image = OOoJavaPlugin.getImageDescriptor(
-                        Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
+            Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
         setImageDescriptor(image);
 
         mContainer = getDefaultEntry();
@@ -174,7 +174,7 @@ IClasspathContainerPage, IClasspathContainerPageExtension {
 
         // Add a list to select the OOo configuration.
         String oooName = mContainer.getPath().segment(
-                        OooClasspathContainerInitializer.HINT_SEGMENT);
+            OooClasspathContainerInitializer.HINT_SEGMENT);
         IOOo ooo = OOoContainer.getOOo(oooName);
         mOOoRow = new OOoRow(body, OOO, ooo);
 
@@ -232,7 +232,7 @@ IClasspathContainerPage, IClasspathContainerPageExtension {
                 pProject.setRawClasspath(entries, null);
             } catch (JavaModelException e) {
                 PluginLogger.error(
-                                Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+                    Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
             }
         }
     }
@@ -263,7 +263,7 @@ IClasspathContainerPage, IClasspathContainerPageExtension {
 
         } catch (JavaModelException e) {
             PluginLogger.error(
-                            Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+                Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
         }
     }
 }

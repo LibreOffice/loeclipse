@@ -81,12 +81,12 @@ public class FileRefreshJob extends Job {
         try {
             mToRefresh.refreshLocal(IResource.DEPTH_ZERO, null);
         } catch (CoreException e) {
-            status  = new Status(
-                            IStatus.WARNING,
-                            OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
-                            IStatus.WARNING,
-                            Messages.getString("FileRefreshJob.Error"), //$NON-NLS-1$
-                            e);
+            status = new Status(
+                IStatus.WARNING,
+                OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
+                IStatus.WARNING,
+                Messages.getString("FileRefreshJob.Error"), //$NON-NLS-1$
+                e);
         }
         return status;
     }

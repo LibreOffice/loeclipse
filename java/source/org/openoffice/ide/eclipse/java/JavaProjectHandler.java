@@ -94,11 +94,11 @@ public class JavaProjectHandler implements IProjectHandler {
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
     private static final String[] KEPT_JARS = { "unoil.jar", //$NON-NLS-1$
-                    "ridl.jar", //$NON-NLS-1$
-                    "juh.jar", //$NON-NLS-1$
-                    "jurt.jar", //$NON-NLS-1$
-                    "unoloader.jar", //$NON-NLS-1$
-                    "officebean.jar" //$NON-NLS-1$
+        "ridl.jar", //$NON-NLS-1$
+        "juh.jar", //$NON-NLS-1$
+        "jurt.jar", //$NON-NLS-1$
+        "unoloader.jar", //$NON-NLS-1$
+        "officebean.jar" //$NON-NLS-1$
     };
 
     /**
@@ -175,8 +175,8 @@ public class JavaProjectHandler implements IProjectHandler {
         IPath buildPath = unoprj.getFolder(unoprj.getBuildPath()).getFullPath();
 
         IClasspathEntry[] entries = new IClasspathEntry[] { JavaCore.newSourceEntry(sourcePath),
-                        JavaRuntime.getDefaultJREContainerEntry(),
-                        JavaCore.newLibraryEntry(buildPath, null, null, false) };
+            JavaRuntime.getDefaultJREContainerEntry(),
+            JavaCore.newLibraryEntry(buildPath, null, null, false) };
 
         javaProject.setRawClasspath(entries, pMonitor);
 

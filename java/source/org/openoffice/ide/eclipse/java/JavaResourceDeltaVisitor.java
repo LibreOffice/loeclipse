@@ -80,7 +80,6 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
         if (!(pDelta.getResource() instanceof IWorkspaceRoot)) {
 
-
             IProject project = pDelta.getResource().getProject();
             IUnoidlProject unoprj = ProjectsManager.getProject(project.getName());
             if (unoprj != null) {
@@ -107,7 +106,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
      * @param pUnoprj the concerned UNO project
      */
     private void removeImplementation(IResourceDelta pDelta,
-                    IUnoidlProject pUnoprj) {
+        IUnoidlProject pUnoprj) {
         IResource res = pDelta.getResource();
         if (res.getName().endsWith(".java")) { //$NON-NLS-1$
             String prjPath = pDelta.getProjectRelativePath().toString();
@@ -171,7 +170,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                 }
 
                 String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory" + //$NON-NLS-1$
-                                "\\s+__getComponentFactory"; //$NON-NLS-1$
+                    "\\s+__getComponentFactory"; //$NON-NLS-1$
                 boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
 
                 String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo"; //$NON-NLS-1$
@@ -179,14 +178,13 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
                 // Do not consider the RegistrationHandler class as a service implementation
                 if (containsGetFactory && containsWriteService &&
-                                !pResource.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
+                    !pResource.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
                     /*
                      * Computes the class name
                      */
                     Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent); //$NON-NLS-1$
                     if (m3.matches()) {
                         String packageName = m3.group(1);
-
 
                         String fileName = pResource.getName();
                         className = fileName.substring(0, fileName.length() - ".java".length()); //$NON-NLS-1$
@@ -201,7 +199,8 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                 try {
                     reader.close();
                     in.close();
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                }
             }
         }
 

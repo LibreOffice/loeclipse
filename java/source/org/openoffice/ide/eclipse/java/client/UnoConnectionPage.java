@@ -47,6 +47,6 @@ public class UnoConnectionPage extends BaseUnoConnectionPage {
     @Override
     public void createControl(Composite pParent) {
         super.createControl(pParent);
-        setConnectionPatterns( PIPE_PATTERN, SOCKET_PATTERN );
+        setConnectionPatterns(PIPE_PATTERN, SOCKET_PATTERN);
     }
 }

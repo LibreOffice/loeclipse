@@ -40,11 +40,11 @@ public class JavaExportPageControlTest {
      * Ensure that the default values are the ones expected.
      */
     @Test
-    public void testDefaults( ) {
+    public void testDefaults() {
         JavaExportPageControl tested = new JavaExportPageControl();
-        assertFalse( "Save ant script shouldn't be default", tested.getSaveAntScript() );
-        assertFalse( "Save path shouldn't be enabled by default", tested.isSavePathEnabled() );
-        assertEquals( JavaExportPageControl.DEFAULT_ANT_FILENAME, tested.getSavePath() );
+        assertFalse("Save ant script shouldn't be default", tested.getSaveAntScript());
+        assertFalse("Save path shouldn't be enabled by default", tested.isSavePathEnabled());
+        assertEquals(JavaExportPageControl.DEFAULT_ANT_FILENAME, tested.getSavePath());
     }
 
     /**
@@ -54,13 +54,13 @@ public class JavaExportPageControlTest {
     public void testSetSaveAntScript() {
         JavaExportPageControl tested = new JavaExportPageControl();
 
-        tested.setSaveAntScript( true );
-        assertTrue( "Save ant script selection not persisting", tested.getSaveAntScript() );
-        assertTrue( "Save path should be enabled when save ant script is checked", tested.isSavePathEnabled() );
+        tested.setSaveAntScript(true);
+        assertTrue("Save ant script selection not persisting", tested.getSaveAntScript());
+        assertTrue("Save path should be enabled when save ant script is checked", tested.isSavePathEnabled());
 
-        tested.setSaveAntScript( false );
-        assertFalse( "Save ant script selection not persisting", tested.getSaveAntScript() );
-        assertFalse( "Save path should be disabled after save ant script is unchecked", tested.isSavePathEnabled() );
+        tested.setSaveAntScript(false);
+        assertFalse("Save ant script selection not persisting", tested.getSaveAntScript());
+        assertFalse("Save path should be disabled after save ant script is unchecked", tested.isSavePathEnabled());
     }
 
 }

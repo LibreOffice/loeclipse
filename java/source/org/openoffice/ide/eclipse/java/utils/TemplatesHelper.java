@@ -65,8 +65,7 @@ import org.openoffice.ide.eclipse.core.model.IUnoidlProject;
  */
 public class TemplatesHelper {
 
-
-    public static final String JAVA_EXT  = ".java"; //$NON-NLS-1$
+    public static final String JAVA_EXT = ".java"; //$NON-NLS-1$
     private static final String TEMPLATE_EXT = ".tpl"; //$NON-NLS-1$
 
     /**
@@ -79,24 +78,24 @@ public class TemplatesHelper {
      *          the implementation package.
      * @param pArgs additional arguments to pass to the formatter
      */
-    public static void copyTemplate( IUnoidlProject pProject, String pTemplateName,
-                    Class<?> pClazz, String pDestSuffix, Object... pArgs ) {
+    public static void copyTemplate(IUnoidlProject pProject, String pTemplateName,
+        Class<?> pClazz, String pDestSuffix, Object... pArgs) {
 
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject( pProject.getName() );
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pProject.getName());
 
         IPath relPath = pProject.getImplementationPath();
-        relPath = relPath.append( pDestSuffix );
+        relPath = relPath.append(pDestSuffix);
         IFolder dest = pProject.getFolder(relPath);
 
         // Compute the name of the project's implementation package
         String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension(); //$NON-NLS-1$
 
-        Object[] args = new Object[ pArgs.length + 1 ];
+        Object[] args = new Object[pArgs.length + 1];
         args[0] = implPkg;
-        System.arraycopy( pArgs, 0, args, 1, pArgs.length );
+        System.arraycopy(pArgs, 0, args, 1, pArgs.length);
 
-        copyTemplate( prj, pTemplateName, pClazz,
-                        dest.getProjectRelativePath().toString(), args );
+        copyTemplate(prj, pTemplateName, pClazz,
+            dest.getProjectRelativePath().toString(), args);
     }
 
     /**
@@ -109,15 +108,15 @@ public class TemplatesHelper {
      *          the project root.
      * @param pArgs additional arguments to pass to the formatter
      */
-    public static void copyTemplate( IProject pProject, String pTemplateName,
-                    Class<?> pClazz, String pDestPath, Object... pArgs ) {
+    public static void copyTemplate(IProject pProject, String pTemplateName,
+        Class<?> pClazz, String pDestPath, Object... pArgs) {
 
         String fileName = pTemplateName + TEMPLATE_EXT;
 
         // Get the path where to place the files
         IContainer dest = pProject;
-        if ( pDestPath != null && !pDestPath.equals( new String( ) ) ) {
-            dest = pProject.getFolder( pDestPath );
+        if (pDestPath != null && !pDestPath.equals(new String())) {
+            dest = pProject.getFolder(pDestPath);
             dest.getLocation().toFile().mkdirs();
         }
 
@@ -128,7 +127,7 @@ public class TemplatesHelper {
         InputStream in = null;
         try {
             // Destination file opening
-            IFile classIFile = dest.getFile( new Path( pTemplateName ) );
+            IFile classIFile = dest.getFile(new Path(pTemplateName));
             File classFile = classIFile.getLocation().toFile();
 
             if (!classFile.exists()) {
@@ -138,21 +137,21 @@ public class TemplatesHelper {
             writer = new FileWriter(classFile);
 
             // Input template opening
-            in = pClazz.getResourceAsStream( fileName );
+            in = pClazz.getResourceAsStream(fileName);
             patternReader = new BufferedReader(new InputStreamReader(in));
 
             // Loop over the lines, format and write them.
             String line = patternReader.readLine();
             while (line != null) {
-                line = MessageFormat.format(line, pArgs );
+                line = MessageFormat.format(line, pArgs);
                 writer.append(line + "\n"); //$NON-NLS-1$
                 line = patternReader.readLine();
             }
         } catch (IOException e) {
             // log the error
-            String msg = MessageFormat.format( Messages.getString("TemplatesHelper.ErrorPattern"),  //$NON-NLS-1$
-                            pTemplateName, Messages.getString("TemplatesHelper.ReadError") ); //$NON-NLS-1$
-            PluginLogger.error( msg, e);
+            String msg = MessageFormat.format(Messages.getString("TemplatesHelper.ErrorPattern"), //$NON-NLS-1$
+                pTemplateName, Messages.getString("TemplatesHelper.ReadError")); //$NON-NLS-1$
+            PluginLogger.error(msg, e);
         } finally {
             try {
                 patternReader.close();

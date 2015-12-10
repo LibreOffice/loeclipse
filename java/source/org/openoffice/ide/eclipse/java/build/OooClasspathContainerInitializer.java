@@ -59,7 +59,7 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
  *
  */
 public class OooClasspathContainerInitializer extends
-ClasspathContainerInitializer {
+    ClasspathContainerInitializer {
 
     static final int HINT_SEGMENT = 1;
 
@@ -68,7 +68,7 @@ ClasspathContainerInitializer {
      */
     @Override
     public void initialize(IPath pContainerPath, IJavaProject pProject)
-                    throws CoreException {
+        throws CoreException {
 
         String hint = pContainerPath.segment(HINT_SEGMENT);
         IOOo ooo = OOoContainer.getOOo(hint);
@@ -76,8 +76,8 @@ ClasspathContainerInitializer {
         if (ooo != null) {
             OOoClasspathContainer container = new OOoClasspathContainer(ooo, pContainerPath);
 
-            IJavaProject[] projects = new IJavaProject[]{pProject};
-            IClasspathContainer[] containers = new IClasspathContainer[]{container};
+            IJavaProject[] projects = new IJavaProject[] { pProject };
+            IClasspathContainer[] containers = new IClasspathContainer[] { container };
 
             JavaCore.setClasspathContainer(pContainerPath, projects, containers, null);
         }

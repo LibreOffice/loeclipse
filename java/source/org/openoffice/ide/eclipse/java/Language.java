@@ -93,7 +93,7 @@ public class Language extends AbstractLanguage {
      */
     @Override
     public void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-                    IProgressMonitor pMonitor) {
+        IProgressMonitor pMonitor) {
 
         try {
             // org.eclipse.jdt.launching.socketListenConnector
@@ -108,7 +108,7 @@ public class Language extends AbstractLanguage {
             connector.connect(argMap, pMonitor, pLaunch);
 
             pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation,
-                            new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
+                new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
         } catch (Exception e) {
             PluginLogger.error("Could not start remote debugger.", e);
         }
@@ -118,9 +118,9 @@ public class Language extends AbstractLanguage {
     public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
         String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
         pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
-                        "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
+            "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
         pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
-                        "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
+            "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
         pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
     };
 }

@@ -38,42 +38,42 @@ public class JavaExportPageControl {
      * Default constructor.
      */
     public JavaExportPageControl() {
-        setSaveAntScript( false );
-        setSavePath( DEFAULT_ANT_FILENAME );
+        setSaveAntScript(false);
+        setSavePath(DEFAULT_ANT_FILENAME);
     }
 
     /**
      * @param pSave the state of the save ant script box.
      */
-    public void setSaveAntScript( boolean pSave ) {
+    public void setSaveAntScript(boolean pSave) {
         mSaveAntScript = pSave;
     }
 
     /**
      * @param pPath the path to set in the save field
      */
-    public void setSavePath( String pPath ) {
+    public void setSavePath(String pPath) {
         mSavePath = pPath;
     }
 
     /**
      * @return the state of the save ant script box
      */
-    public boolean getSaveAntScript( ) {
+    public boolean getSaveAntScript() {
         return mSaveAntScript;
     }
 
     /**
      * @return the value of the save path text field
      */
-    public String getSavePath( ) {
+    public String getSavePath() {
         return mSavePath;
     }
 
     /**
      * @return whether the save path field is enabled
      */
-    public boolean isSavePathEnabled( ) {
+    public boolean isSavePathEnabled() {
         return mSaveAntScript;
     }
 }

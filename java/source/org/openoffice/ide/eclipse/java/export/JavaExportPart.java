@@ -79,61 +79,61 @@ public class JavaExportPart extends LanguageExportPart {
 
         mController = new JavaExportPageControl();
 
-        Label titleLbl = new Label( pParent, SWT.NONE );
-        titleLbl.setText( Messages.getString("JavaExportPart.Title") ); //$NON-NLS-1$
-        titleLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.BEGINNING, false, false ) );
+        Label titleLbl = new Label(pParent, SWT.NONE);
+        titleLbl.setText(Messages.getString("JavaExportPart.Title")); //$NON-NLS-1$
+        titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        Composite content = new Composite( pParent, SWT.NONE );
-        GridData gd = new GridData( SWT.FILL, SWT.FILL, true, true );
+        Composite content = new Composite(pParent, SWT.NONE);
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.horizontalIndent = ManifestExportPage.HORIZONTAL_INDENT;
-        content.setLayoutData( gd );
-        content.setLayout( new GridLayout() );
+        content.setLayoutData(gd);
+        content.setLayout(new GridLayout());
 
-        mSaveScripts = new Button( content, SWT.CHECK );
-        mSaveScripts.setText( Messages.getString("JavaExportPart.SaveAntScript") ); //$NON-NLS-1$
-        mSaveScripts.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
-        mSaveScripts.addSelectionListener( new SelectionListener() {
+        mSaveScripts = new Button(content, SWT.CHECK);
+        mSaveScripts.setText(Messages.getString("JavaExportPart.SaveAntScript")); //$NON-NLS-1$
+        mSaveScripts.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        mSaveScripts.addSelectionListener(new SelectionListener() {
 
             @Override
-            public void widgetSelected( SelectionEvent pE ) {
+            public void widgetSelected(SelectionEvent pE) {
 
-                mController.setSaveAntScript( mSaveScripts.getSelection() );
+                mController.setSaveAntScript(mSaveScripts.getSelection());
 
-                mNameRowLbl.setEnabled( mController.isSavePathEnabled() );
-                mNameRowTxt.setEnabled( mController.isSavePathEnabled() );
+                mNameRowLbl.setEnabled(mController.isSavePathEnabled());
+                mNameRowTxt.setEnabled(mController.isSavePathEnabled());
             }
 
             @Override
-            public void widgetDefaultSelected( SelectionEvent pE ) {
-                widgetSelected( pE );
+            public void widgetDefaultSelected(SelectionEvent pE) {
+                widgetSelected(pE);
             }
         });
 
-        mNameRow = new Composite( content, SWT.NONE );
-        mNameRow.setLayout( new GridLayout( 2, false ) );
-        gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
+        mNameRow = new Composite(content, SWT.NONE);
+        mNameRow.setLayout(new GridLayout(2, false));
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         gd.horizontalIndent = ManifestExportPage.HORIZONTAL_INDENT;
-        mNameRow.setLayoutData( gd );
+        mNameRow.setLayoutData(gd);
 
-        mNameRowLbl = new Label( mNameRow, SWT.NONE );
-        mNameRowLbl.setLayoutData( new GridData( SWT.BEGINNING, SWT.CENTER, false, false ) );
-        mNameRowLbl.setText( Messages.getString("JavaExportPart.AntFile") ); //$NON-NLS-1$
+        mNameRowLbl = new Label(mNameRow, SWT.NONE);
+        mNameRowLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+        mNameRowLbl.setText(Messages.getString("JavaExportPart.AntFile")); //$NON-NLS-1$
 
-        mNameRowTxt = new Text( mNameRow, SWT.BORDER | SWT.SINGLE );
-        mNameRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
-        mNameRowTxt.addModifyListener( new ModifyListener() {
+        mNameRowTxt = new Text(mNameRow, SWT.BORDER | SWT.SINGLE);
+        mNameRowTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mNameRowTxt.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText( ModifyEvent pEvent ) {
-                mController.setSavePath( mNameRowTxt.getText() );
+            public void modifyText(ModifyEvent pEvent) {
+                mController.setSavePath(mNameRowTxt.getText());
             }
         });
 
         // Load the default values
-        mSaveScripts.setSelection( mController.isSavePathEnabled() );
-        mNameRowTxt.setText( mController.getSavePath() );
-        mNameRowTxt.setEnabled( mController.isSavePathEnabled() );
-        mNameRowLbl.setEnabled( mController.isSavePathEnabled() );
+        mSaveScripts.setSelection(mController.isSavePathEnabled());
+        mNameRowTxt.setText(mController.getSavePath());
+        mNameRowTxt.setEnabled(mController.isSavePathEnabled());
+        mNameRowLbl.setEnabled(mController.isSavePathEnabled());
     }
 
     /**
@@ -141,7 +141,7 @@ public class JavaExportPart extends LanguageExportPart {
      */
     @Override
     public void dispose() {
-        if ( mSaveScripts != null ) {
+        if (mSaveScripts != null) {
             mSaveScripts.dispose();
             mNameRow.dispose();
         }
@@ -151,16 +151,16 @@ public class JavaExportPart extends LanguageExportPart {
      * {@inheritDoc}
      */
     @Override
-    public void doFinish( UnoPackage pModel ) {
-        if ( mController.getSaveAntScript() ) {
+    public void doFinish(UnoPackage pModel) {
+        if (mController.getSaveAntScript()) {
 
             // Generate the build script
             IUnoidlProject unoProject = getPage().getProject();
             String prjName = unoProject.getName();
             IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
 
-            TemplatesHelper.copyTemplate( project, mController.getSavePath(),
-                            JavaExportPart.class, new String( ), prjName );
+            TemplatesHelper.copyTemplate(project, mController.getSavePath(),
+                JavaExportPart.class, new String(), prjName);
 
             // Generate the build.properties file
             File dir = project.getFile(mController.getSavePath()).getLocation().toFile().getParentFile();
@@ -176,8 +176,8 @@ public class JavaExportPart extends LanguageExportPart {
                 props.put("java.debug", "false"); //$NON-NLS-1$ //$NON-NLS-2$
                 props.store(writer, "This file can contain setup-dependent data, don't commit them!"); //$NON-NLS-1$
                 writer.close();
-            } catch ( IOException e ) {
-                PluginLogger.error( Messages.getString("JavaExportPart.BuildPropertiesError"), e ); //$NON-NLS-1$
+            } catch (IOException e) {
+                PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
             }
         }
     }

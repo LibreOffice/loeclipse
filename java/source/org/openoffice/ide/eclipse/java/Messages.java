@@ -56,7 +56,7 @@ public class Messages {
     private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.java.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-                    .getBundle(BUNDLE_NAME);
+        .getBundle(BUNDLE_NAME);
 
     /**
      * Default constructor.
@@ -74,7 +74,7 @@ public class Messages {
     public static String getString(String pKey) {
         String string = '!' + pKey + '!';
         try {
-            string =  RESOURCE_BUNDLE.getString(pKey);
+            string = RESOURCE_BUNDLE.getString(pKey);
         } catch (MissingResourceException e) {
         }
         return string;

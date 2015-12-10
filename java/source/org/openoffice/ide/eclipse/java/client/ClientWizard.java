@@ -64,7 +64,7 @@ public class ClientWizard extends BasicNewResourceWizard {
     private static final String CLIENT_CLASS = "UnoClient"; //$NON-NLS-1$
     private static final String LICENSE_DIR = "third-party licenses"; //$NON-NLS-1$
     private static final String[] LICENSE_FILES = new String[] {
-                    "license-jodconnector.txt", //$NON-NLS-1$
+        "license-jodconnector.txt", //$NON-NLS-1$
     };
 
     private IWorkbenchPage mActivePage;
@@ -78,7 +78,7 @@ public class ClientWizard extends BasicNewResourceWizard {
      */
     public ClientWizard() {
         super();
-        setWindowTitle( Messages.getString("ClientWizard.Title") ); //$NON-NLS-1$
+        setWindowTitle(Messages.getString("ClientWizard.Title")); //$NON-NLS-1$
         mActivePage = WorkbenchHelper.getActivePage();
     }
 
@@ -93,20 +93,20 @@ public class ClientWizard extends BasicNewResourceWizard {
     public boolean performFinish() {
         boolean res = true;
 
-        Job job = new Job( Messages.getString("ClientWizard.CreationJobTitle") ) { //$NON-NLS-1$
+        Job job = new Job(Messages.getString("ClientWizard.CreationJobTitle")) { //$NON-NLS-1$
             @Override
-            protected IStatus run( IProgressMonitor pMonitor ) {
+            protected IStatus run(IProgressMonitor pMonitor) {
 
-                Status status = new Status( IStatus.OK, OOoJavaPlugin.PLUGIN_ID,
-                                Messages.getString("ClientWizard.ProjectCreated") ); //$NON-NLS-1$
+                Status status = new Status(IStatus.OK, OOoJavaPlugin.PLUGIN_ID,
+                    Messages.getString("ClientWizard.ProjectCreated")); //$NON-NLS-1$
 
                 try {
-                    mThirdPage.performFinish( pMonitor );
-                    setupClientProject( mThirdPage.getJavaProject(), pMonitor );
-                } catch ( Exception e ) {
-                    PluginLogger.error( Messages.getString("ClientWizard.ProjectCreationError"), e ); //$NON-NLS-1$
-                    status = new Status( IStatus.ERROR, OOoJavaPlugin.PLUGIN_ID,
-                                    Messages.getString("ClientWizard.ProjectCreationError") ); //$NON-NLS-1$
+                    mThirdPage.performFinish(pMonitor);
+                    setupClientProject(mThirdPage.getJavaProject(), pMonitor);
+                } catch (Exception e) {
+                    PluginLogger.error(Messages.getString("ClientWizard.ProjectCreationError"), e); //$NON-NLS-1$
+                    status = new Status(IStatus.ERROR, OOoJavaPlugin.PLUGIN_ID,
+                        Messages.getString("ClientWizard.ProjectCreationError")); //$NON-NLS-1$
                 }
                 return status;
             }
@@ -125,51 +125,50 @@ public class ClientWizard extends BasicNewResourceWizard {
      *
      * @throws Exception if anything wrong happens
      */
-    protected void setupClientProject(IJavaProject pJavaProject, IProgressMonitor pMonitor ) throws Exception {
+    protected void setupClientProject(IJavaProject pJavaProject, IProgressMonitor pMonitor) throws Exception {
 
         // Generate the sample classes in org.openoffice.connection
         IProject prj = pJavaProject.getProject();
 
-
         IClasspathEntry[] srcEntries = mFirstPage.getSourceClasspathEntries();
-        IFolder srcFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder( srcEntries[0].getPath() );
+        IFolder srcFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(srcEntries[0].getPath());
         IPath srcPath = srcFolder.getProjectRelativePath();
 
-        String path = srcPath.append( DEST_PACKAGE.replace( '.', '/' ) ).toString();
-        TemplatesHelper.copyTemplate( prj, CLIENT_CLASS + TemplatesHelper.JAVA_EXT,
-                        ClientWizard.class, path, DEST_PACKAGE, mCnxPage.getConnectionCode() );
+        String path = srcPath.append(DEST_PACKAGE.replace('.', '/')).toString();
+        TemplatesHelper.copyTemplate(prj, CLIENT_CLASS + TemplatesHelper.JAVA_EXT,
+            ClientWizard.class, path, DEST_PACKAGE, mCnxPage.getConnectionCode());
 
         // Copy the third-party licenses
-        IFolder licensesFolder = prj.getFolder( LICENSE_DIR );
-        licensesFolder.create( true, true, pMonitor );
+        IFolder licensesFolder = prj.getFolder(LICENSE_DIR);
+        licensesFolder.create(true, true, pMonitor);
         IPath licPath = licensesFolder.getProjectRelativePath();
-        for ( String license : LICENSE_FILES ) {
-            TemplatesHelper.copyTemplate( prj, license, ClientWizard.class, licPath.toString() );
+        for (String license : LICENSE_FILES) {
+            TemplatesHelper.copyTemplate(prj, license, ClientWizard.class, licPath.toString());
         }
 
         // Refresh the project
         try {
-            prj.refreshLocal( IResource.DEPTH_INFINITE, null);
-        } catch (Exception e ) {
+            prj.refreshLocal(IResource.DEPTH_INFINITE, null);
+        } catch (Exception e) {
         }
 
         // Show the Uno client class
-        IFolder srcDir = prj.getFolder( path );
-        IFile javaClientFile = srcDir.getFile( CLIENT_CLASS + ".java" ); //$NON-NLS-1$
-        selectAndReveal( javaClientFile );
-        WorkbenchHelper.showFile( javaClientFile, mActivePage );
+        IFolder srcDir = prj.getFolder(path);
+        IFile javaClientFile = srcDir.getFile(CLIENT_CLASS + ".java"); //$NON-NLS-1$
+        selectAndReveal(javaClientFile);
+        WorkbenchHelper.showFile(javaClientFile, mActivePage);
     }
 
     @Override
     public void addPages() {
 
         mCnxPage = new UnoConnectionPage();
-        mFirstPage = new NewJavaProjectWizardPageOne( );
-        addPage( mFirstPage );
+        mFirstPage = new NewJavaProjectWizardPageOne();
+        addPage(mFirstPage);
 
-        addPage( mCnxPage );
+        addPage(mCnxPage);
 
-        mThirdPage = new ClientWizardPageTwo( mFirstPage, mCnxPage );
-        addPage( mThirdPage );
+        mThirdPage = new ClientWizardPageTwo(mFirstPage, mCnxPage);
+        addPage(mThirdPage);
     }
 }

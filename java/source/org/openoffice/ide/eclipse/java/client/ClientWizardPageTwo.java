@@ -60,7 +60,7 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
 
     private UnoConnectionPage mCnxPage;
 
-    public ClientWizardPageTwo(NewJavaProjectWizardPageOne mainPage, UnoConnectionPage cnxPage ) {
+    public ClientWizardPageTwo(NewJavaProjectWizardPageOne mainPage, UnoConnectionPage cnxPage) {
         super(mainPage);
         mCnxPage = cnxPage;
     }
@@ -76,25 +76,25 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
 
     @Override
     public void init(IJavaProject jproject, IPath defaultOutputLocation, IClasspathEntry[] defaultEntries,
-                    boolean defaultsOverrideExistingClasspath) {
+        boolean defaultsOverrideExistingClasspath) {
 
         IProject project = jproject.getProject();
 
         // Copy the jodconnector.jar file to the new project
         try {
-            URL libUrl = OOoJavaPlugin.getDefault().getBundle().getResource( ClientWizard.JODCONNECTOR_LIBNAME );
-            URL libFileUrl = FileLocator.toFileURL( libUrl );
-            File libFile = new File( libFileUrl.toURI() );
-            InputStream in = new FileInputStream( libFile );
-            IFile destLib = project.getFile( ClientWizard.JODCONNECTOR_LIBNAME );
-            destLib.create( in, true, null );
-        } catch ( Exception e ) {
+            URL libUrl = OOoJavaPlugin.getDefault().getBundle().getResource(ClientWizard.JODCONNECTOR_LIBNAME);
+            URL libFileUrl = FileLocator.toFileURL(libUrl);
+            File libFile = new File(libFileUrl.toURI());
+            InputStream in = new FileInputStream(libFile);
+            IFile destLib = project.getFile(ClientWizard.JODCONNECTOR_LIBNAME);
+            destLib.create(in, true, null);
+        } catch (Exception e) {
         }
 
         // Refresh the project
         try {
-            project.refreshLocal( IResource.DEPTH_INFINITE, null);
-        } catch (Exception e ) {
+            project.refreshLocal(IResource.DEPTH_INFINITE, null);
+        } catch (Exception e) {
         }
 
         // Update the classpath
@@ -102,17 +102,17 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
         IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
         IClasspathEntry oooEntry = JavaCore.newContainerEntry(path);
 
-        IPath jodPath = project.getFolder( ClientWizard.JODCONNECTOR_LIBNAME ).getFullPath();
+        IPath jodPath = project.getFolder(ClientWizard.JODCONNECTOR_LIBNAME).getFullPath();
 
         IClasspathEntry[] newEntries = new IClasspathEntry[] {
-                        oooEntry,
-                        JavaCore.newLibraryEntry(jodPath, jodPath, jodPath)
+            oooEntry,
+            JavaCore.newLibraryEntry(jodPath, jodPath, jodPath)
         };
 
-        IClasspathEntry[] entries = new IClasspathEntry[ defaultEntries.length + newEntries.length ];
+        IClasspathEntry[] entries = new IClasspathEntry[defaultEntries.length + newEntries.length];
 
-        System.arraycopy( defaultEntries, 0, entries, 0, defaultEntries.length );
-        System.arraycopy( newEntries, 0, entries, defaultEntries.length, newEntries.length );
+        System.arraycopy(defaultEntries, 0, entries, 0, defaultEntries.length);
+        System.arraycopy(newEntries, 0, entries, defaultEntries.length, newEntries.length);
 
         super.init(jproject, defaultOutputLocation, entries, defaultsOverrideExistingClasspath);
     }

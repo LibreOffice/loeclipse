@@ -56,23 +56,23 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
             XComponentContext localContext = Bootstrap.createInitialComponentContext(null);
             XMultiComponentFactory localServiceManager = localContext.getServiceManager();
             XConnector connector = UnoRuntime.queryInterface(XConnector.class,
-                            localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector", localContext));
+                localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector", localContext));
             XConnection connection = connector.connect(connectionString);
             XBridgeFactory bridgeFactory = UnoRuntime.queryInterface(XBridgeFactory.class,
-                            localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
+                localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
             bridge = bridgeFactory.createBridge("", "urp", connection, null);
             bridgeComponent = UnoRuntime.queryInterface(XComponent.class, bridge);
             bridgeComponent.addEventListener(this);
             serviceManager = UnoRuntime.queryInterface(XMultiComponentFactory.class,
-                            bridge.getInstance("StarOffice.ServiceManager"));
+                bridge.getInstance("StarOffice.ServiceManager"));
             XPropertySet properties = UnoRuntime.queryInterface(XPropertySet.class, serviceManager);
             componentContext = UnoRuntime.queryInterface(XComponentContext.class,
-                            properties.getPropertyValue("DefaultContext"));
+                properties.getPropertyValue("DefaultContext"));
             connected = true;
         } catch (NoConnectException connectException) {
-            throw new ConnectException("connection failed: "+ connectionString +": " + connectException.getMessage());
+            throw new ConnectException("connection failed: " + connectionString + ": " + connectException.getMessage());
         } catch (Exception exception) {
-            throw new OpenOfficeException("connection failed: "+ connectionString, exception);
+            throw new OpenOfficeException("connection failed: " + connectionString, exception);
         }
     }
 
@@ -116,13 +116,13 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
     @Override
     public XComponentLoader getDesktop() {
         return UnoRuntime.queryInterface(XComponentLoader.class,
-                        getService("com.sun.star.frame.Desktop"));
+            getService("com.sun.star.frame.Desktop"));
     }
 
     @Override
     public XFileIdentifierConverter getFileContentProvider() {
         return UnoRuntime.queryInterface(XFileIdentifierConverter.class,
-                        getService("com.sun.star.ucb.FileContentProvider"));
+            getService("com.sun.star.ucb.FileContentProvider"));
     }
 
     @Override

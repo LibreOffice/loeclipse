@@ -96,7 +96,7 @@ public class JavaMainProvider implements IMainProvider {
                 boolean visit = true;
 
                 if (child instanceof IPackageFragmentRoot) {
-                    IPackageFragmentRoot root = (IPackageFragmentRoot)child;
+                    IPackageFragmentRoot root = (IPackageFragmentRoot) child;
                     if (root.getKind() != IPackageFragmentRoot.K_SOURCE) {
                         visit = false;
                     }
@@ -104,14 +104,14 @@ public class JavaMainProvider implements IMainProvider {
 
                 if (visit) {
                     if (child instanceof ICompilationUnit) {
-                        ICompilationUnit unit = (ICompilationUnit)child;
+                        ICompilationUnit unit = (ICompilationUnit) child;
                         IType type = unit.findPrimaryType();
 
                         if (isMainImplementation(type)) {
                             mains.add(type.getFullyQualifiedName());
                         }
                     } else if (child instanceof IParent) {
-                        mains.addAll(getInternalMainNames((IParent)child));
+                        mains.addAll(getInternalMainNames((IParent) child));
                     }
                 }
             }

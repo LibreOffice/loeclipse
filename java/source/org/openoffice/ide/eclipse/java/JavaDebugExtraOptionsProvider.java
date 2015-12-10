@@ -29,17 +29,16 @@ public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
     @Override
     public String[] addEnv(String[] pEnv) {
         String extraJavaOptEnv = System.getenv(OOO_EXTRA_JAVA_TOOL_OPTIONS);
-        if ( extraJavaOptEnv == null ) {
-            extraJavaOptEnv = new String( );
+        if (extraJavaOptEnv == null) {
+            extraJavaOptEnv = new String();
+        } else {
+            extraJavaOptEnv = extraJavaOptEnv.replaceAll("\"", "\\\""); //$NON-NLS-1$//$NON-NLS-2$
         }
-        else {
-            extraJavaOptEnv = extraJavaOptEnv.replaceAll("\"","\\\"");  //$NON-NLS-1$//$NON-NLS-2$
-        }
-
 
         pEnv = SystemHelper.addEnv(pEnv, "JAVA_TOOL_OPTIONS", //$NON-NLS-1$
-                        extraJavaOptEnv + "\"-Xdebug\" " + //$NON-NLS-1$
-                        "\"-Xrunjdwp:transport=dt_socket,address=localhost:" + mPort + "\"", null); //$NON-NLS-1$ //$NON-NLS-2$
+            extraJavaOptEnv + "\"-Xdebug\" " + //$NON-NLS-1$
+                "\"-Xrunjdwp:transport=dt_socket,address=localhost:" + mPort + "\"", //$NON-NLS-1$//$NON-NLS-2$
+            null);
         return pEnv;
     }
 

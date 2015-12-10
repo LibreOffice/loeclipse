@@ -53,8 +53,8 @@ public class FilesVisitor implements IResourceVisitor {
      *
      * @param pRes the resource to skip
      */
-    public void addException( IResource pRes ) {
-        mExceptions.add( pRes );
+    public void addException(IResource pRes) {
+        mExceptions.add(pRes);
     }
 
     /**
@@ -63,15 +63,15 @@ public class FilesVisitor implements IResourceVisitor {
     @Override
     public boolean visit(IResource pResource) throws CoreException {
 
-        if ( pResource.getType() == IResource.FILE ) {
-            mFiles.add( ( IFile )pResource );
+        if (pResource.getType() == IResource.FILE) {
+            mFiles.add((IFile) pResource);
         }
 
         boolean visitChildren = true;
 
         int i = 0;
-        while ( visitChildren && i < mExceptions.size() ) {
-            visitChildren = !mExceptions.get( i ).equals( pResource );
+        while (visitChildren && i < mExceptions.size()) {
+            visitChildren = !mExceptions.get(i).equals(pResource);
             i++;
         }
 
@@ -81,7 +81,7 @@ public class FilesVisitor implements IResourceVisitor {
     /**
      * @return all the files found during the visit.
      */
-    public IFile[] getFiles( ) {
-        return mFiles.toArray( new IFile[ mFiles.size() ] );
+    public IFile[] getFiles() {
+        return mFiles.toArray(new IFile[mFiles.size()]);
     }
 }
