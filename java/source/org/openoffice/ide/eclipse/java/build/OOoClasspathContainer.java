@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,7 +56,7 @@ import org.openoffice.ide.eclipse.java.JavaProjectHandler;
 
 /**
  * Container for the OOo classes jars.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -65,12 +65,12 @@ public class OOoClasspathContainer implements IClasspathContainer {
     public static final String ID = "org.openoffice.ide.eclipse.java.OOO_CONTAINER"; //$NON-NLS-1$
 
     private IOOo mOOo;
-    
+
     private IPath mPath;
 
     /**
      * Constructor.
-     * 
+     *
      * @param pOoo the OOo represented by the container.
      * @param pPath the path used for the container.
      */
@@ -82,10 +82,11 @@ public class OOoClasspathContainer implements IClasspathContainer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IClasspathEntry[] getClasspathEntries() {
         Vector<Path> jars = JavaProjectHandler.findJarsFromPath(mOOo);
         Vector<IClasspathEntry> entries = new Vector<IClasspathEntry>();
-        
+
         for (Path path : jars) {
             entries.add(JavaCore.newLibraryEntry(path, null, null));
         }
@@ -95,6 +96,7 @@ public class OOoClasspathContainer implements IClasspathContainer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDescription() {
         String pattern = Messages.getString("OOoClasspathContainer.LibrariesName"); //$NON-NLS-1$
         String descr = MessageFormat.format(pattern, mOOo.getName());
@@ -104,6 +106,7 @@ public class OOoClasspathContainer implements IClasspathContainer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getKind() {
         return K_APPLICATION;
     }
@@ -111,6 +114,7 @@ public class OOoClasspathContainer implements IClasspathContainer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getPath() {
         return mPath;
     }

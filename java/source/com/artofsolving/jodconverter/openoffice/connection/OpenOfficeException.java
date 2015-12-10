@@ -24,6 +24,6 @@ public class OpenOfficeException extends RuntimeException {
     }
 
     public OpenOfficeException(String message, Throwable cause) {
-		super(message, cause);
-	}
+        super(message, cause);
+    }
 }

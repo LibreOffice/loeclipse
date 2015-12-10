@@ -94,6 +94,7 @@ public class JavaExportPart extends LanguageExportPart {
         mSaveScripts.setLayoutData( new GridData( SWT.FILL, SWT.BEGINNING, true, false ) );
         mSaveScripts.addSelectionListener( new SelectionListener() {
 
+            @Override
             public void widgetSelected( SelectionEvent pE ) {
 
                 mController.setSaveAntScript( mSaveScripts.getSelection() );
@@ -102,6 +103,7 @@ public class JavaExportPart extends LanguageExportPart {
                 mNameRowTxt.setEnabled( mController.isSavePathEnabled() );
             }
 
+            @Override
             public void widgetDefaultSelected( SelectionEvent pE ) {
                 widgetSelected( pE );
             }
@@ -121,6 +123,7 @@ public class JavaExportPart extends LanguageExportPart {
         mNameRowTxt.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
         mNameRowTxt.addModifyListener( new ModifyListener() {
 
+            @Override
             public void modifyText( ModifyEvent pEvent ) {
                 mController.setSavePath( mNameRowTxt.getText() );
             }

@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -68,17 +68,17 @@ import org.openoffice.ide.eclipse.java.OOoJavaPlugin;
 
 /**
  * Edition and creation page for the LibreOffice libraries container.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class OOoContainerPage extends WizardPage implements
-        IClasspathContainerPage, IClasspathContainerPageExtension {
+IClasspathContainerPage, IClasspathContainerPageExtension {
 
     private static final int LAYOUT_COLUMNS = 3;
 
     private static final String OOO = "ooo"; //$NON-NLS-1$
-    
+
     private IClasspathEntry mContainer;
     private IJavaProject mProject;
 
@@ -89,22 +89,22 @@ public class OOoContainerPage extends WizardPage implements
      */
     public OOoContainerPage() {
         super("oocontainer"); //$NON-NLS-1$
-        
+
         setTitle(Messages.getString("OOoContainerPage.DialogTitle")); //$NON-NLS-1$
         setDescription(Messages.getString("OOoContainerPage.DialogDescription")); //$NON-NLS-1$
         ImageDescriptor image = OOoJavaPlugin.getImageDescriptor(
-                Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
+                        Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
         setImageDescriptor(image);
-        
+
         mContainer = getDefaultEntry();
     }
-    
+
     /**
      * @return the default OOo container path
      */
     private IClasspathEntry getDefaultEntry() {
         IClasspathEntry result = null;
-        
+
         IOOo someOOo = OOoContainer.getSomeOOo(null);
         if (someOOo != null) {
             String name = someOOo.getName();
@@ -117,11 +117,12 @@ public class OOoContainerPage extends WizardPage implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean finish() {
         boolean result = true;
         try {
             IOOo ooo = OOoContainer.getOOo(mOOoRow.getValue());
-            
+
             String prjName = mProject.getProject().getName();
             IUnoidlProject unoPrj = ProjectsManager.getProject(prjName);
             if (unoPrj != null) {
@@ -131,7 +132,7 @@ public class OOoContainerPage extends WizardPage implements
             } else {
                 // remove the previous libraries
                 removeOOoDependencies(mProject);
-                
+
                 // Add the new library
                 IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
                 IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
@@ -146,6 +147,7 @@ public class OOoContainerPage extends WizardPage implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public IClasspathEntry getSelection() {
         return mContainer;
     }
@@ -153,9 +155,10 @@ public class OOoContainerPage extends WizardPage implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setSelection(IClasspathEntry pContainerEntry) {
         mContainer = pContainerEntry;
-        
+
         if (mContainer == null) {
             mContainer = getDefaultEntry();
         }
@@ -164,25 +167,27 @@ public class OOoContainerPage extends WizardPage implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createControl(Composite pParent) {
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout(LAYOUT_COLUMNS, false));
-        
+
         // Add a list to select the OOo configuration.
         String oooName = mContainer.getPath().segment(
-                OooClasspathContainerInitializer.HINT_SEGMENT);
+                        OooClasspathContainerInitializer.HINT_SEGMENT);
         IOOo ooo = OOoContainer.getOOo(oooName);
         mOOoRow = new OOoRow(body, OOO, ooo);
-        
+
         setControl(body);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize(IJavaProject pProject, IClasspathEntry[] pCurrentEntries) {
         mProject = pProject;
-        
+
         boolean found = false;
         int i = 0;
         while (i < pCurrentEntries.length && !found) {
@@ -194,47 +199,47 @@ public class OOoContainerPage extends WizardPage implements
             i++;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void dispose() {
         mOOoRow.dispose();
-        
+
         super.dispose();
     }
-    
+
     /**
      * Add the LibreOffice common JARs to a projects build path.
-     * 
+     *
      * @param pOoo the ooo to use for the classpath
      * @param pProject the project to change
      */
     public static void addOOoDependencies(IOOo pOoo, IJavaProject pProject) {
-        
+
         if (null != pOoo) {
             try {
                 IClasspathEntry[] oldEntries = pProject.getRawClasspath();
                 IClasspathEntry[] entries = new IClasspathEntry[oldEntries.length + 1];
-                
+
                 System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
-                
+
                 IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + pOoo.getName());
                 IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
                 entries[entries.length - 1] = containerEntry;
-                
+
                 pProject.setRawClasspath(entries, null);
             } catch (JavaModelException e) {
                 PluginLogger.error(
-                        Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+                                Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
             }
         }
     }
-    
+
     /**
      * Remove all the OOo user libraries from the project build path.
-     * 
+     *
      * @param pProject the project to change
      */
     public static void removeOOoDependencies(IJavaProject pProject) {
@@ -245,20 +250,20 @@ public class OOoContainerPage extends WizardPage implements
             // Copy all the sources in a new entry container
             for (int i = 0, length = entries.length; i < length; i++) {
                 IClasspathEntry entry = entries[i];
-                
+
                 if (!entry.getPath().segment(0).equals(OOoClasspathContainer.ID)) {
                     newEntries.add(entry);
                 }
             }
-            
+
             IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
             result = newEntries.toArray(result);
-            
+
             pProject.setRawClasspath(result, null);
-            
+
         } catch (JavaModelException e) {
             PluginLogger.error(
-                    Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+                            Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
         }
     }
 }

@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.build;
 
@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
 
 /**
  * Messages for the package.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -43,7 +43,7 @@ public class Messages {
     private static final String BUNDLE_NAME = "org.openoffice.ide.eclipse.java.build.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME);
+                    .getBundle(BUNDLE_NAME);
 
     /**
      * Default constructor.
@@ -53,9 +53,9 @@ public class Messages {
 
     /**
      * Get the string from it's key.
-     * 
+     *
      * @param pKey the key of the string
-     * 
+     *
      * @return the internationalized string
      */
     public static String getString(String pKey) {

@@ -101,6 +101,7 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
 
         IFile jarFile = ((JavaProjectHandler)mLanguage.getProjectHandler()).getJarFile(pUnoProject);
@@ -110,7 +111,7 @@ public class JavaBuilder implements ILanguageBuilder {
         description.setJarLocation( jarFile.getLocation() );
 
         String regClassname = ((JavaProjectHandler)mLanguage.getProjectHandler()).
-        getRegistrationClassName(pUnoProject);
+                        getRegistrationClassName(pUnoProject);
         description.setManifestProvider( new UnoManifestProvider( regClassname ) );
         description.setManifestLocation( pUnoProject.getFile( "MANIFEST.MF" ).getFullPath() ); //$NON-NLS-1$
         description.setSaveManifest( false );
@@ -139,8 +140,9 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
-            File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
+                    File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
 
         if (pTypesFile.exists()) {
 
@@ -158,30 +160,32 @@ public class JavaBuilder implements ILanguageBuilder {
                 String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
 
                 String error = runJavamaker(firstModule, "UCR", oooTypesArgs, pSdk, pPrj,
-                                            pTypesFile, pBuildFolder, pMonitor);
+                                pTypesFile, pBuildFolder, pMonitor);
                 if (!error.isEmpty() && error.contains("-BUCR")) {
                     runJavamaker(firstModule, "", oooTypesArgs, pSdk, pPrj,
-                                 pTypesFile, pBuildFolder, pMonitor);
+                                    pTypesFile, pBuildFolder, pMonitor);
                 }
             }
         }
     }
 
     private String runJavamaker(String firstModule, String prefix, String oooTypesArgs,
-                                 ISdk pSdk, IProject pPrj, File pTypesFile,
-                                 File pBuildFolder, IProgressMonitor pMonitor) {
+                    ISdk pSdk, IProject pPrj, File pTypesFile,
+                    File pBuildFolder, IProgressMonitor pMonitor) {
         StringBuffer errBuf = new StringBuffer();
 
         try {
             String bflag = new String();
             if (!prefix.isEmpty())
+            {
                 bflag = "-B" + prefix; //$NON-NLS-1$
+            }
 
             String cmdPattern = "javamaker -T {0}.* -nD -Gc {1} -O \"{2}\" \"{3}\" {4}"; //$NON-NLS-1$
             String command = MessageFormat.format(cmdPattern, firstModule, bflag,
-                                                  pBuildFolder.getAbsolutePath(),
-                                                  pTypesFile.getAbsolutePath(),
-                                                  oooTypesArgs);
+                            pBuildFolder.getAbsolutePath(),
+                            pTypesFile.getAbsolutePath(),
+                            oooTypesArgs);
 
             IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
             Process process = pSdk.runTool(unoprj,command, pMonitor);
@@ -189,7 +193,7 @@ public class JavaBuilder implements ILanguageBuilder {
             process.waitFor();
 
             LineNumberReader lineReader = new LineNumberReader(
-                    new InputStreamReader(process.getErrorStream()));
+                            new InputStreamReader(process.getErrorStream()));
 
 
 
@@ -205,7 +209,7 @@ public class JavaBuilder implements ILanguageBuilder {
             }
         } catch (InterruptedException e) {
             PluginLogger.error(
-                    Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
+                            Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
         } catch (IOException e) {
             PluginLogger.warning(
                             Messages.getString("Language.UnreadableOutputError")); //$NON-NLS-1$
@@ -217,6 +221,7 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getBuildEnv(IUnoidlProject pUnoProject) {
 
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
@@ -251,7 +256,7 @@ public class JavaBuilder implements ILanguageBuilder {
 
             } catch (JavaModelException e) {
                 PluginLogger.error(
-                        Messages.getString("Language.GetClasspathError"), e); //$NON-NLS-1$
+                                Messages.getString("Language.GetClasspathError"), e); //$NON-NLS-1$
             } catch (CoreException e) {
                 // TODO log a problem to find the JVM associated to the project
             }
@@ -275,6 +280,7 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
 
         // Add the component Jar file
@@ -318,7 +324,7 @@ public class JavaBuilder implements ILanguageBuilder {
                      */
                     IPath path = entry.getPath();
                     if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
-                            path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
+                                    path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
                         // Relative to the project
                         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile( path );
                         if ( file != null && file.exists() ) {

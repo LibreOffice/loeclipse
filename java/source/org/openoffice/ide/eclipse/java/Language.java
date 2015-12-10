@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -65,7 +65,7 @@ import org.openoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 /**
  * Implementation for the Java language.
- * 
+ *
  * @author cedricbosdo
  */
 public class Language extends AbstractLanguage {
@@ -75,6 +75,7 @@ public class Language extends AbstractLanguage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ILanguageBuilder getLanguageBuidler() {
         return new JavaBuilder(this);
     }
@@ -82,6 +83,7 @@ public class Language extends AbstractLanguage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IProjectHandler getProjectHandler() {
         return new JavaProjectHandler();
     }
@@ -89,6 +91,7 @@ public class Language extends AbstractLanguage {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
                     IProgressMonitor pMonitor) {
 

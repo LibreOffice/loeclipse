@@ -50,23 +50,24 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
         this.connectionString = connectionString;
     }
 
+    @Override
     public synchronized void connect() throws ConnectException {
         try {
             XComponentContext localContext = Bootstrap.createInitialComponentContext(null);
             XMultiComponentFactory localServiceManager = localContext.getServiceManager();
-            XConnector connector = (XConnector) UnoRuntime.queryInterface(XConnector.class,
-                    localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector", localContext));
+            XConnector connector = UnoRuntime.queryInterface(XConnector.class,
+                            localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector", localContext));
             XConnection connection = connector.connect(connectionString);
-            XBridgeFactory bridgeFactory = (XBridgeFactory) UnoRuntime.queryInterface(XBridgeFactory.class,
-                    localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
+            XBridgeFactory bridgeFactory = UnoRuntime.queryInterface(XBridgeFactory.class,
+                            localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
             bridge = bridgeFactory.createBridge("", "urp", connection, null);
-            bridgeComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, bridge);
+            bridgeComponent = UnoRuntime.queryInterface(XComponent.class, bridge);
             bridgeComponent.addEventListener(this);
-            serviceManager = (XMultiComponentFactory) UnoRuntime.queryInterface(XMultiComponentFactory.class,
-                    bridge.getInstance("StarOffice.ServiceManager"));
-            XPropertySet properties = (XPropertySet) UnoRuntime.queryInterface(XPropertySet.class, serviceManager);
-            componentContext = (XComponentContext) UnoRuntime.queryInterface(XComponentContext.class,
-                    properties.getPropertyValue("DefaultContext"));
+            serviceManager = UnoRuntime.queryInterface(XMultiComponentFactory.class,
+                            bridge.getInstance("StarOffice.ServiceManager"));
+            XPropertySet properties = UnoRuntime.queryInterface(XPropertySet.class, serviceManager);
+            componentContext = UnoRuntime.queryInterface(XComponentContext.class,
+                            properties.getPropertyValue("DefaultContext"));
             connected = true;
         } catch (NoConnectException connectException) {
             throw new ConnectException("connection failed: "+ connectionString +": " + connectException.getMessage());
@@ -75,15 +76,18 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
         }
     }
 
+    @Override
     public synchronized void disconnect() {
         expectingDisconnection = true;
         bridgeComponent.dispose();
     }
 
+    @Override
     public boolean isConnected() {
-    	return connected;
+        return connected;
     }
 
+    @Override
     public void disposing(EventObject event) {
         connected = false;
         if (!expectingDisconnection) {
@@ -94,8 +98,8 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
 
     // for unit tests only
     void simulateUnexpectedDisconnection() {
-    	disposing(null);
-    	bridgeComponent.dispose();
+        disposing(null);
+        bridgeComponent.dispose();
     }
 
     private Object getService(String className) {
@@ -109,26 +113,31 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
         }
     }
 
+    @Override
     public XComponentLoader getDesktop() {
-        return (XComponentLoader) UnoRuntime.queryInterface(XComponentLoader.class,
-                getService("com.sun.star.frame.Desktop"));
+        return UnoRuntime.queryInterface(XComponentLoader.class,
+                        getService("com.sun.star.frame.Desktop"));
     }
 
+    @Override
     public XFileIdentifierConverter getFileContentProvider() {
-        return (XFileIdentifierConverter) UnoRuntime.queryInterface(XFileIdentifierConverter.class,
-                getService("com.sun.star.ucb.FileContentProvider"));
+        return UnoRuntime.queryInterface(XFileIdentifierConverter.class,
+                        getService("com.sun.star.ucb.FileContentProvider"));
     }
 
+    @Override
     public XBridge getBridge() {
-    	return bridge;
+        return bridge;
     }
 
+    @Override
     public XMultiComponentFactory getRemoteServiceManager() {
-    	return serviceManager;
+        return serviceManager;
     }
 
+    @Override
     public XComponentContext getComponentContext() {
-    	return componentContext;
+        return componentContext;
     }
 
 }

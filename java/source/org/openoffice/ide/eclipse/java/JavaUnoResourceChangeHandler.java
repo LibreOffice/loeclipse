@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -53,7 +53,7 @@ import org.openoffice.ide.eclipse.core.PluginLogger;
  * This class is responsible for reacting to the changes on the Java resources
  * in UNO projects. Its main activity is to maintain the implementation classes
  * list for the services registration.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -62,8 +62,9 @@ public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeLi
     /**
      * {@inheritDoc}
      */
+    @Override
     public void earlyStartup() {
-        // Start listening the java resources changes 
+        // Start listening the java resources changes
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
         PluginLogger.info("Java UNO resources changes are now listened"); //$NON-NLS-1$
     }
@@ -71,6 +72,7 @@ public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeLi
     /**
      * {@inheritDoc}
      */
+    @Override
     public void resourceChanged(IResourceChangeEvent pEvent) {
         try {
             pEvent.getDelta().accept(new JavaResourceDeltaVisitor());

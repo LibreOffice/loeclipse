@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Cédric Bosdonnat
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.build;
 
@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Resource visitor collecting the files of a directory.
- * 
+ *
  * @author Cédric Bosdonnat
  *
  */
@@ -47,33 +47,34 @@ public class FilesVisitor implements IResourceVisitor {
 
     ArrayList<IFile> mFiles = new ArrayList<IFile>();
     ArrayList<IResource> mExceptions = new ArrayList<IResource>();
-    
+
     /**
      * Adds a resource to skip during the visit.
-     * 
+     *
      * @param pRes the resource to skip
      */
     public void addException( IResource pRes ) {
         mExceptions.add( pRes );
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean visit(IResource pResource) throws CoreException {
-        
+
         if ( pResource.getType() == IResource.FILE ) {
             mFiles.add( ( IFile )pResource );
         }
-        
+
         boolean visitChildren = true;
-        
+
         int i = 0;
         while ( visitChildren && i < mExceptions.size() ) {
             visitChildren = !mExceptions.get( i ).equals( pResource );
             i++;
         }
-        
+
         return visitChildren;
     }
 

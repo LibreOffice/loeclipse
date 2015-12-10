@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,10 +56,10 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "org.openoffice.ide.eclipse.java"; //$NON-NLS-1$
     public static final String WIZBAN = "wizban"; //$NON-NLS-1$
     public static final String LIBS_DIR = "lib/"; //$NON-NLS-1$
-    
+
     //The shared instance.
     private static OOoJavaPlugin sPlugin;
-    
+
     /**
      * The constructor.
      */
@@ -69,20 +69,22 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
 
     /**
      * This method is called upon plug-in activation.
-     * 
+     *
      * @param pContext the bundle context
      * @throws Exception if the plugin can't be started
      */
+    @Override
     public void start(BundleContext pContext) throws Exception {
         super.start(pContext);
     }
 
     /**
      * This method is called when the plug-in is stopped.
-     * 
+     *
      * @param pContext the bundle context
      * @throws Exception if the plugin can't be stopped
      */
+    @Override
     public void stop(BundleContext pContext) throws Exception {
         super.stop(pContext);
         sPlugin = null;
@@ -105,13 +107,14 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
     public static ImageDescriptor getImageDescriptor(String pPath) {
         return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, pPath);
     }
-    
+
     /**
      * @return the image registry of the plugin.
      */
-    protected ImageRegistry createImageRegistry() {    
+    @Override
+    protected ImageRegistry createImageRegistry() {
         ImageRegistry reg = super.createImageRegistry();
-        
+
         reg.put(WIZBAN, getImageDescriptor("/icons/java_app_wiz.png")); //$NON-NLS-1$
         return reg;
     }

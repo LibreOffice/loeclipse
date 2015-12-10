@@ -22,7 +22,7 @@ package com.artofsolving.jodconverter.openoffice.connection;
  * it must be made available via the <i>java.library.path</i> parameter, e.g.
  * <pre>
  *   java -Djava.library.path=/opt/openoffice.org/program my.App
- * </pre>  
+ * </pre>
  */
 public class PipeOpenOfficeConnection extends AbstractOpenOfficeConnection {
 

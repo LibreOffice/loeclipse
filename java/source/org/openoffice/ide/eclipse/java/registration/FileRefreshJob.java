@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -54,38 +54,39 @@ import org.openoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
  * Job refreshing the RegistrationHandler.classes files.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class FileRefreshJob extends Job {
 
     private IFile mToRefresh;
-    
+
     /**
      * Job constructor.
-     *  
+     *
      * @param pToRefresh the file to refresh
      */
     public FileRefreshJob(IFile pToRefresh) {
         super("Registration Handler class refresh job"); //$NON-NLS-1$
         mToRefresh = pToRefresh;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     protected IStatus run(IProgressMonitor pMonitor) {
         IStatus status = Status.OK_STATUS;
         try {
             mToRefresh.refreshLocal(IResource.DEPTH_ZERO, null);
         } catch (CoreException e) {
             status  = new Status(
-                    Status.WARNING, 
-                    OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
-                    Status.WARNING,
-                    Messages.getString("FileRefreshJob.Error"), //$NON-NLS-1$
-                    e);
+                            IStatus.WARNING,
+                            OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
+                            IStatus.WARNING,
+                            Messages.getString("FileRefreshJob.Error"), //$NON-NLS-1$
+                            e);
         }
         return status;
     }

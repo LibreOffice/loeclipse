@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -58,7 +58,7 @@ import org.openoffice.ide.eclipse.core.launch.IMainProvider;
 
 /**
  * Class providing the XMain implementations in Java.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -67,45 +67,46 @@ public class JavaMainProvider implements IMainProvider {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Vector<String> getMainNames(IProject pProject) {
         Vector<String> mains = new Vector<String>();
-        
+
         IJavaProject javaPrj = JavaCore.create(pProject);
         try {
             mains.addAll(getInternalMainNames(javaPrj));
         } catch (Exception e) {
         }
-        
+
         return mains;
     }
-    
+
     /**
      * Recursive method to find the Classes and check their hierarchy.
-     * 
+     *
      * @param pElement the Java AST element for scan for XMain implementations
-     * @return the names of the classes implementing the XMain interface in the 
+     * @return the names of the classes implementing the XMain interface in the
      *      Java AST element.
      */
     private Vector<String> getInternalMainNames(IParent pElement) {
         Vector<String> mains = new Vector<String>();
-        
+
         try {
             for (IJavaElement child : pElement.getChildren()) {
-                
-                boolean visit = true; 
-                
+
+                boolean visit = true;
+
                 if (child instanceof IPackageFragmentRoot) {
                     IPackageFragmentRoot root = (IPackageFragmentRoot)child;
                     if (root.getKind() != IPackageFragmentRoot.K_SOURCE) {
                         visit = false;
                     }
                 }
-                
+
                 if (visit) {
                     if (child instanceof ICompilationUnit) {
                         ICompilationUnit unit = (ICompilationUnit)child;
                         IType type = unit.findPrimaryType();
-                        
+
                         if (isMainImplementation(type)) {
                             mains.add(type.getFullyQualifiedName());
                         }
@@ -116,25 +117,25 @@ public class JavaMainProvider implements IMainProvider {
             }
         } catch (Exception e) {
         }
-        
+
         return mains;
     }
-    
+
     /**
-     * Checks if the Java type implements the <code>com.sun.star.lang.XMain</code> 
+     * Checks if the Java type implements the <code>com.sun.star.lang.XMain</code>
      * interface.
-     * 
+     *
      * @param pType the Java type to check
-     * @return <code>true</code> if the type implements <code>XMain</code>, 
+     * @return <code>true</code> if the type implements <code>XMain</code>,
      *      <code>false</code> otherwise.
      */
     private boolean isMainImplementation(IType pType) {
         boolean isMainImplementation = false;
-        
+
         try {
             ITypeHierarchy hierarchy = pType.newSupertypeHierarchy(null);
             IType[] superInterfaces = hierarchy.getAllSuperInterfaces(pType);
-            
+
             int i = 0;
             while (!isMainImplementation && i < superInterfaces.length) {
                 if (superInterfaces[i].getFullyQualifiedName().equals("com.sun.star.lang.XMain")) { //$NON-NLS-1$
@@ -145,7 +146,7 @@ public class JavaMainProvider implements IMainProvider {
             }
         } catch (Exception e) {
         }
-        
+
         return isMainImplementation;
     }
 }

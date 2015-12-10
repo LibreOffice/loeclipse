@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -56,7 +56,7 @@ import org.openoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 
 /**
  * Java configuration page of the new UNO project wizard.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -64,80 +64,85 @@ public class JavaWizardPage extends LanguageWizardPage {
 
     public static final String JAVA_VERSION = "java_version"; //$NON-NLS-1$
     public static final String JAVA_TESTS = "java_tests"; //$NON-NLS-1$
-    
+
     private ChoiceRow mJavaVersionRow;
     private BooleanRow mJavaTestsRow;
-    
+
     private String mJavaVersion;
     private boolean mUseTests;
-    
+
     /**
      * Constructor.
      */
     public JavaWizardPage() {
         super();
         setImageDescriptor(OOoJavaPlugin.getDefault().getImageRegistry().
-                getDescriptor(OOoJavaPlugin.WIZBAN));
+                        getDescriptor(OOoJavaPlugin.WIZBAN));
         setTitle(Messages.getString("JavaWizardPage.PageTitle")); //$NON-NLS-1$
         setDescription(Messages.getString("JavaWizardPage.PageDescription")); //$NON-NLS-1$
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setProjectInfos(UnoFactoryData pData) {
         // default values
         mJavaVersion = "java5"; //$NON-NLS-1$
         mUseTests = true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public UnoFactoryData fillData(UnoFactoryData pData) {
-        
+
         if (pData != null) {
             pData.setProperty(JAVA_VERSION, mJavaVersion);
             pData.setProperty(JAVA_TESTS, mUseTests);
         }
-        
+
         return pData;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createControl(Composite pParent) {
-        
+
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout(2, false));
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
+
         // Create the Java version row
-        mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION, 
-                Messages.getString("JavaWizardPage.JavaVersion"), null, false); //$NON-NLS-1$
+        mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION,
+                        Messages.getString("JavaWizardPage.JavaVersion"), null, false); //$NON-NLS-1$
         mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
         mJavaVersionRow.setFieldChangedListener( new IFieldChangedListener() {
-            
+
+            @Override
             public void fieldChanged(FieldEvent pEvent) {
                 mJavaVersion = mJavaVersionRow.getValue();
             }
         });
         mJavaVersionRow.select(0);
         mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
-        
+
         // Create the test row
-        mJavaTestsRow = new BooleanRow( body, JAVA_TESTS, 
-                Messages.getString("JavaWizardPage.IncludeTestClasses") ); //$NON-NLS-1$
+        mJavaTestsRow = new BooleanRow( body, JAVA_TESTS,
+                        Messages.getString("JavaWizardPage.IncludeTestClasses") ); //$NON-NLS-1$
         mJavaTestsRow.setValue( true );
         mJavaTestsRow.setFieldChangedListener( new IFieldChangedListener() {
-            
+
+            @Override
             public void fieldChanged(FieldEvent pEvent) {
                 mUseTests = mJavaTestsRow.getBooleanValue();
             }
         });
-        
+
         setControl(body);
     }
 }

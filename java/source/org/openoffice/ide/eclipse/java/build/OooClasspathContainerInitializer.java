@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -54,13 +54,13 @@ import org.openoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Initializes a classpath container for OOo instances.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public class OooClasspathContainerInitializer extends
-        ClasspathContainerInitializer {
-    
+ClasspathContainerInitializer {
+
     static final int HINT_SEGMENT = 1;
 
     /**
@@ -68,11 +68,11 @@ public class OooClasspathContainerInitializer extends
      */
     @Override
     public void initialize(IPath pContainerPath, IJavaProject pProject)
-        throws CoreException {
+                    throws CoreException {
 
         String hint = pContainerPath.segment(HINT_SEGMENT);
         IOOo ooo = OOoContainer.getOOo(hint);
-        
+
         if (ooo != null) {
             OOoClasspathContainer container = new OOoClasspathContainer(ooo, pContainerPath);
 
@@ -82,14 +82,14 @@ public class OooClasspathContainerInitializer extends
             JavaCore.setClasspathContainer(pContainerPath, projects, containers, null);
         }
     }
-    
+
     /**
-     * Always allow container modification: it could be necessary to add additional OOo 
+     * Always allow container modification: it could be necessary to add additional OOo
      * jars or set the sources path.
-     * 
+     *
      * @param pContainerPath the path of the container
      * @param pProject the project for which to change the container
-     * 
+     *
      * @return always <code>true</code>
      */
     @Override

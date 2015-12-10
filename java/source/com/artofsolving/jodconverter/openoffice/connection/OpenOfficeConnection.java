@@ -28,26 +28,26 @@ import com.sun.star.uno.XComponentContext;
  */
 public interface OpenOfficeConnection {
 
-	public void connect() throws ConnectException;
+    public void connect() throws ConnectException;
 
-	public void disconnect();
+    public void disconnect();
 
-	public boolean isConnected();
+    public boolean isConnected();
 
-	/**
-	 * @return the com.sun.star.frame.Desktop service
-	 */
-	public XComponentLoader getDesktop();
+    /**
+     * @return the com.sun.star.frame.Desktop service
+     */
+    public XComponentLoader getDesktop();
 
-	/**
-	 * @return the com.sun.star.ucb.FileContentProvider service
-	 */
-	public XFileIdentifierConverter getFileContentProvider();
+    /**
+     * @return the com.sun.star.ucb.FileContentProvider service
+     */
+    public XFileIdentifierConverter getFileContentProvider();
 
-	public XBridge getBridge();
-	
-	public XMultiComponentFactory getRemoteServiceManager();
+    public XBridge getBridge();
 
-	public XComponentContext getComponentContext();
+    public XMultiComponentFactory getRemoteServiceManager();
+
+    public XComponentContext getComponentContext();
 
 }

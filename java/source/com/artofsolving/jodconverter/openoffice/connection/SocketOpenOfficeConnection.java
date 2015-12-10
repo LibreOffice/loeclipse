@@ -16,8 +16,8 @@
 package com.artofsolving.jodconverter.openoffice.connection;
 
 public class SocketOpenOfficeConnection extends AbstractOpenOfficeConnection {
-	
-	public static final String DEFAULT_HOST = "localhost";
+
+    public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 8100;
 
     public SocketOpenOfficeConnection() {
@@ -25,7 +25,7 @@ public class SocketOpenOfficeConnection extends AbstractOpenOfficeConnection {
     }
 
     public SocketOpenOfficeConnection(int port) {
-    	this(DEFAULT_HOST, port);
+        this(DEFAULT_HOST, port);
     }
 
     public SocketOpenOfficeConnection(String host, int port) {

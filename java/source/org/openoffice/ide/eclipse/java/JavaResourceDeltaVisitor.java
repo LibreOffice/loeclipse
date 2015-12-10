@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -64,7 +64,7 @@ import org.openoffice.ide.eclipse.java.registration.RegistrationHelper;
 /**
  * This class will visit a resource delta and perform the necessary changes
  * on Java resources included in UNO projects.
- * 
+ *
  * @author cedricbosdo
  *
  */
@@ -73,13 +73,14 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean visit(IResourceDelta pDelta) throws CoreException {
-        
+
         boolean visitChildren = true;
-        
+
         if (!(pDelta.getResource() instanceof IWorkspaceRoot)) {
-            
-        
+
+
             IProject project = pDelta.getResource().getProject();
             IUnoidlProject unoprj = ProjectsManager.getProject(project.getName());
             if (unoprj != null) {
@@ -89,24 +90,24 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                 // Check if the resource is a service implementation
                 if (pDelta.getKind() == IResourceDelta.ADDED) {
                     addImplementation(pDelta, unoprj);
-                    
+
                 } else if (pDelta.getKind() == IResourceDelta.REMOVED) {
                     removeImplementation(pDelta, unoprj);
                 }
             }
         }
-        
+
         return visitChildren;
     }
 
     /**
      * Remove the delta resource from the implementations.
-     * 
+     *
      * @param pDelta the delta to remove
      * @param pUnoprj the concerned UNO project
      */
     private void removeImplementation(IResourceDelta pDelta,
-            IUnoidlProject pUnoprj) {
+                    IUnoidlProject pUnoprj) {
         IResource res = pDelta.getResource();
         if (res.getName().endsWith(".java")) { //$NON-NLS-1$
             String prjPath = pDelta.getProjectRelativePath().toString();
@@ -124,7 +125,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
     /**
      * Add the delta resource to the implementations.
-     * 
+     *
      * @param pDelta the delta resource to add.
      * @param pUnoProject the concerned UNO project
      */
@@ -137,20 +138,20 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
     /**
      * Check whether a resource is a UNO implementation.
-     * 
+     *
      * @param pResource the resource to check.
      * @return <code>true</code> if it contains the necessary static methods for Java
      *      UNO service implementation registration.
      */
     private String isJavaServiceImpl(IResource pResource) {
-        
+
         String className = null;
         if (pResource.getType() == IResource.FILE && pResource.getName().endsWith(".java")) { //$NON-NLS-1$
-            /* 
+            /*
              * For sure the resource is a Java class file.
              * Now the file has to be read to find out if it contains the two
              * following methods:
-             * 
+             *
              *    + public static XSingleComponentFactory __getComponentFactory
              *    + public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey )
              */
@@ -160,7 +161,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                 File file = pResource.getLocation().toFile();
                 in = new FileInputStream(file);
                 reader = new BufferedReader(new InputStreamReader(in));
-                
+
                 // Read the file into a string without line delimiters
                 String line = reader.readLine();
                 String fileContent = ""; //$NON-NLS-1$
@@ -168,19 +169,19 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                     fileContent = fileContent + line;
                     line = reader.readLine();
                 }
-                
+
                 String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory" + //$NON-NLS-1$
-                        "\\s+__getComponentFactory"; //$NON-NLS-1$
+                                "\\s+__getComponentFactory"; //$NON-NLS-1$
                 boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
-                
+
                 String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo"; //$NON-NLS-1$
                 boolean containsWriteService = fileContent.split(writeServiceRegex).length > 1;
-                
+
                 // Do not consider the RegistrationHandler class as a service implementation
-                if (containsGetFactory && containsWriteService && 
-                        !pResource.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
+                if (containsGetFactory && containsWriteService &&
+                                !pResource.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
                     /*
-                     * Computes the class name 
+                     * Computes the class name
                      */
                     Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent); //$NON-NLS-1$
                     if (m3.matches()) {
@@ -193,7 +194,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                         className = packageName + "." + className; //$NON-NLS-1$
                     }
                 }
-                
+
             } catch (Exception e) {
                 // nothing to log
             } finally {
@@ -203,7 +204,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                 } catch (Exception e) { }
             }
         }
-        
+
         return className;
     }
 }

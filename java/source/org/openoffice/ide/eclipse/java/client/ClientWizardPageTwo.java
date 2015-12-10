@@ -20,13 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2013 by SUSE
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.client;
 
@@ -52,33 +52,34 @@ import org.openoffice.ide.eclipse.java.build.OOoClasspathContainer;
 
 /**
  * Overrides NewJavaProjectWizardPageTwo to add jodconnector.jar to the temporary project.
- * 
+ *
  * @author Cedric Bosdonnat
  *
  */
 public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
-    
+
     private UnoConnectionPage mCnxPage;
-    
+
     public ClientWizardPageTwo(NewJavaProjectWizardPageOne mainPage, UnoConnectionPage cnxPage ) {
         super(mainPage);
         mCnxPage = cnxPage;
     }
-    
+
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        
-        if (getContainer().getCurrentPage() == mCnxPage)
+
+        if (getContainer().getCurrentPage() == mCnxPage) {
             removeProvisonalProject();
+        }
     }
-    
+
     @Override
     public void init(IJavaProject jproject, IPath defaultOutputLocation, IClasspathEntry[] defaultEntries,
                     boolean defaultsOverrideExistingClasspath) {
-        
+
         IProject project = jproject.getProject();
-        
+
         // Copy the jodconnector.jar file to the new project
         try {
             URL libUrl = OOoJavaPlugin.getDefault().getBundle().getResource( ClientWizard.JODCONNECTOR_LIBNAME );
@@ -89,30 +90,30 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
             destLib.create( in, true, null );
         } catch ( Exception e ) {
         }
-        
+
         // Refresh the project
         try {
             project.refreshLocal( IResource.DEPTH_INFINITE, null);
         } catch (Exception e ) {
         }
-        
+
         // Update the classpath
         IOOo ooo = mCnxPage.getOoo();
         IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
         IClasspathEntry oooEntry = JavaCore.newContainerEntry(path);
-        
+
         IPath jodPath = project.getFolder( ClientWizard.JODCONNECTOR_LIBNAME ).getFullPath();
-        
+
         IClasspathEntry[] newEntries = new IClasspathEntry[] {
-            oooEntry,
-            JavaCore.newLibraryEntry(jodPath, jodPath, jodPath)
+                        oooEntry,
+                        JavaCore.newLibraryEntry(jodPath, jodPath, jodPath)
         };
-        
+
         IClasspathEntry[] entries = new IClasspathEntry[ defaultEntries.length + newEntries.length ];
-        
+
         System.arraycopy( defaultEntries, 0, entries, 0, defaultEntries.length );
         System.arraycopy( newEntries, 0, entries, defaultEntries.length, newEntries.length );
-        
+
         super.init(jproject, defaultOutputLocation, entries, defaultsOverrideExistingClasspath);
     }
 }

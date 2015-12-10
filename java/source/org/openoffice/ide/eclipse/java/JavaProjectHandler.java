@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -84,9 +84,9 @@ import org.xml.sax.InputSource;
 
 /**
  * The Project handler implementation for Java.
- * 
+ *
  * @author cedricbosdo
- * 
+ *
  */
 public class JavaProjectHandler implements IProjectHandler {
 
@@ -104,6 +104,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
 
         IJavaProject javaProject = JavaCore.create(pProject);
@@ -114,6 +115,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addProjectNature(IProject pProject) {
         try {
             if (!pProject.exists()) {
@@ -146,6 +148,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
 
         // Get the project from data
@@ -193,6 +196,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
         String prefix = pPrj.getCompanyPrefix();
         String comp = pPrj.getOutputExtension();
@@ -212,6 +216,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPath getImplementationFile(String pImplementationName) {
 
         return new Path(pImplementationName.replace(".", "/") + ".java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -220,6 +225,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
         // Get the project from data
         String name = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
@@ -231,6 +237,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
         IJavaProject javaProject = JavaCore.create(pProject);
 
@@ -240,6 +247,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getLibraryPath(IUnoidlProject pProject) {
         return getJarFile(pProject).getLocation().toOSString();
     }
@@ -247,7 +255,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * Returns a handle to the project jar file. Beware that this handle may refer to a non-existing file. Users have to
      * create it if necessary.
-     * 
+     *
      * @param pProject
      *            the concerned UNO project
      * @return a handle to the jar file of the project
@@ -260,7 +268,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * Returns a handle to the project jar file. Beware that this handle may refer to a non-existing file. Users have to
      * create it if necessary.
-     * 
+     *
      * @param pProjectDir
      *            the concerned UNO project directory
      * @return a handle to the jar file of the project
@@ -292,10 +300,10 @@ public class JavaProjectHandler implements IProjectHandler {
 
     /**
      * Get the UNO registration class name of the project.
-     * 
+     *
      * @param pProject
      *            the project for witch to get the registration class.
-     * 
+     *
      * @return the registration class name
      */
     public String getRegistrationClassName(IUnoidlProject pProject) {
@@ -305,6 +313,7 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
         ArrayList<IFolder> folders = new ArrayList<IFolder>();
 
@@ -330,7 +339,7 @@ public class JavaProjectHandler implements IProjectHandler {
 
     /**
      * returns the path of all the kept jars contained in the folder pointed by path.
-     * 
+     *
      * @param pOoo
      *            the OOo instance from which to get the jars
      * @return a vector of Path pointing to each jar.
@@ -358,7 +367,7 @@ public class JavaProjectHandler implements IProjectHandler {
 
     /**
      * Check if the specified jar file is one of those define in the KEPT_JARS constant.
-     * 
+     *
      * @param pJarName
      *            name of the jar file to check
      * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, <code>false</code> otherwise.

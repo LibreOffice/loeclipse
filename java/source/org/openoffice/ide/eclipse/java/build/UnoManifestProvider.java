@@ -20,26 +20,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Cédric Bosdonnat.
  *
  * Copyright: 2009 by Novell, Inc.
  *
  * All Rights Reserved.
- * 
+ *
  ************************************************************************/
 package org.openoffice.ide.eclipse.java.build;
 
 import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.jar.Attributes.Name;
+import java.util.jar.Manifest;
 
 import org.eclipse.jdt.internal.ui.jarpackager.ManifestProvider;
 import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 
 /**
  * Class providing the MANIFEST.MF contents to the Jar writer.
- * 
+ *
  * @author Cédric Bosdonnat
  *
  */
@@ -50,20 +50,20 @@ public class UnoManifestProvider extends ManifestProvider {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pRegClassname the registration class name
      */
     public UnoManifestProvider( String pRegClassname ) {
         mRegClass = pRegClassname;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void putAdditionalEntries(Manifest pManifest,
-            JarPackageData pJarPackage) {
-        
+                    JarPackageData pJarPackage) {
+
         Name name = new Attributes.Name( "RegistrationClassName" ); //$NON-NLS-1$
         pManifest.getMainAttributes().put( name, mRegClass );
     }

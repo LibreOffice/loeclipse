@@ -30,7 +30,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
- * 
+ *
  * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
  * Copyright: 2002 by Sun Microsystems, Inc.
@@ -62,26 +62,26 @@ import org.openoffice.ide.eclipse.java.utils.TemplatesHelper;
 /**
  * This class provides utility methods to generate the class and files needed
  * by the UNO services implementation registration.
- * 
+ *
  * @author cedricbosdo
  *
  */
 public abstract class RegistrationHelper {
 
     public static final String CLASS_FILENAME = "RegistrationHandler"; //$NON-NLS-1$
-    
+
     /**
      * Creates all the necessary files for the java registration of UNO services
      * implementations to the <code>regcomp</code> tool.
-     * 
+     *
      * @param pProject the project where to create the registration handler
      */
     public static void generateFiles(IUnoidlProject pProject) {
-        
+
         // Copy the RegistrationHandler.java.tpl file
-        TemplatesHelper.copyTemplate( pProject, CLASS_FILENAME + TemplatesHelper.JAVA_EXT, 
-                RegistrationHelper.class, new String( ) );
-        
+        TemplatesHelper.copyTemplate( pProject, CLASS_FILENAME + TemplatesHelper.JAVA_EXT,
+                        RegistrationHelper.class, new String( ) );
+
         // Create the empty RegistrationHandler.classes file
         ByteArrayInputStream empty = new ByteArrayInputStream(new byte[0]);
         try {
@@ -96,10 +96,10 @@ public abstract class RegistrationHelper {
             }
         }
     }
-    
+
     /**
      * Add a UNO service implementation to the list of the project ones.
-     *  
+     *
      * @param pProject the project where to add the implementation
      * @param pImplName the fully qualified name of the implementation to add,
      *         eg: <code>org.openoffice.comp.test.MyServiceImpl</code>
@@ -111,10 +111,10 @@ public abstract class RegistrationHelper {
         }
         writeClassesList(pProject, classes);
     }
-    
+
     /**
      * remove a UNO service implementation from the list of the project ones.
-     *  
+     *
      * @param pProject the project where to remove the implementation
      * @param pImplName the fully qualified name of the implementation to remove,
      *         eg: <code>org.openoffice.comp.test.MyServiceImpl</code>
@@ -124,13 +124,13 @@ public abstract class RegistrationHelper {
         classes.remove(pImplName);
         writeClassesList(pProject, classes);
     }
-    
+
     /**
      * Computes the registration class name for the given Uno project.
-     * 
-     * The registration class name is generally 
+     *
+     * The registration class name is generally
      * <code>&lt;COMPANY.PREFIX&gt;.&lt;OUTPUTEXT&gt;.RegistrationHandler</code>.
-     * 
+     *
      * @param pProject the project for which to compute the class name
      * @return the registration class name
      */
@@ -139,18 +139,18 @@ public abstract class RegistrationHelper {
         String implPkg = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension(); //$NON-NLS-1$
         return implPkg + "." + CLASS_FILENAME; //$NON-NLS-1$
     }
-    
+
     /**
      * Read the implementation classes list of the given UNO project.
-     * 
+     *
      * @param pProject the UNO project
-     * 
+     *
      * @return the implementation classes list
      */
     public static Vector<String> readClassesList(IUnoidlProject pProject) {
 
         Vector<String> classes = new Vector<String>();
-        
+
         IFile list = getClassesListFile(pProject);
         File file = list.getLocation().toFile();
         if (!file.exists()) {
@@ -160,7 +160,7 @@ public abstract class RegistrationHelper {
                 PluginLogger.error(Messages.getString("RegistrationHelper.WriteClassesListError"), e); //$NON-NLS-1$
             }
         }
-        
+
         // First read all the lines
         FileInputStream in = null;
         BufferedReader reader = null;
@@ -185,18 +185,18 @@ public abstract class RegistrationHelper {
         }
         return classes;
     }
-    
+
     /**
      * Writes the implementation classes list to the UNO project.
-     * 
+     *
      * @param pProject the project for which to write the list
      * @param pClasses the classes to write
      */
     private static void writeClassesList(IUnoidlProject pProject, Vector<String> pClasses) {
-        
+
         IFile list = getClassesListFile(pProject);
         File file = list.getLocation().toFile();
-        
+
         FileWriter writer = null;
         try {
             writer = new FileWriter(file);
@@ -210,23 +210,23 @@ public abstract class RegistrationHelper {
                 writer.close();
             } catch (Exception e) { }
         }
-        
+
         // update the list file in the workspace
         new FileRefreshJob(list).schedule();
     }
-    
+
     /**
      * Get the classes list file for the given UNO project.
-     * 
+     *
      * @param pProject the UNO project to get the list file from
-     * 
-     * @return the implementation classes file of the project. 
+     *
+     * @return the implementation classes file of the project.
      */
     private static IFile getClassesListFile(IUnoidlProject pProject) {
         // Get the path where to place the class and the implementations list
         IPath relPath = pProject.getImplementationPath();
         IFolder dest = pProject.getFolder(relPath);
-        
+
         return dest.getFile("RegistrationHandler.classes"); //$NON-NLS-1$
     }
 }
