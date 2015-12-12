@@ -8,7 +8,7 @@ For historic releases supporting older versions of LibreOffice (and OpenOffice) 
 ## Installation
 
 Install this plugin via an update site in Eclipse pointing to one of:
-* `http://cedric.bosdonnat.free.fr/ooeclipseintegration/` (to install a released version)
+* `http://eclipse-plugins.libreoffice.org` (to install a released version)
 * the `site` directory (when building from source)
 
 After installing the plugin, you can create new extensions/components by using *File->New->Project->LibreOffice*.
