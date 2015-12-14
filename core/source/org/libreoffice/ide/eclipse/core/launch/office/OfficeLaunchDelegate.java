@@ -89,7 +89,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
             }
 
             String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
-            boolean useCleanUserInstalation = pConfiguration
+            boolean useCleanUserInstallation = pConfiguration
                 .getAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
 
             IUnoidlProject unoprj = ProjectsManager.getProject(prjName);
@@ -97,7 +97,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
             if (null != unoprj) {
                 try {
                     IPath userInstallation = null;
-                    if (useCleanUserInstalation) {
+                    if (useCleanUserInstallation) {
                         IFolder userInstallationFolder = unoprj.getOfficeUserProfileFolder();
                         userInstallation = userInstallationFolder.getLocation();
                     }
@@ -111,7 +111,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     pMonitor.worked(1);
 
                     // When in debug env, or when using a separate user installation, don't ask when extension already exists
-                    boolean bForceDeploy = ILaunchManager.DEBUG_MODE.equals(pMode) || useCleanUserInstalation;
+                    boolean bForceDeploy = ILaunchManager.DEBUG_MODE.equals(pMode) || useCleanUserInstallation;
                     // Deploy the component
                     deployComponent(unoprj, userInstallation, destFile, bForceDeploy);
 
