@@ -110,8 +110,10 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     File destFile = exportComponent(unoprj, resources);
                     pMonitor.worked(1);
 
+                    // When in debug env, or when using a separate user installation, don't ask when extension already exists
+                    boolean bForceDeploy = ILaunchManager.DEBUG_MODE.equals(pMode) || useCleanUserInstalation;
                     // Deploy the component
-                    deployComponent(unoprj, userInstallation, destFile);
+                    deployComponent(unoprj, userInstallation, destFile, bForceDeploy);
 
                     // remove lock file not cleaned by unopkg gui
                     File lockFile = new File(userInstallation.toFile(), ".lock");
@@ -155,11 +157,13 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      *            user profile to use
      * @param pOxtFile
      *            the .oxt file
+     * @param bForceDeploy
+     *            Deploy even if the same component is already installed
      */
-    private void deployComponent(IUnoidlProject pPrj, IPath pUserInstallation, File pOxtFile) {
+    private void deployComponent(IUnoidlProject pPrj, IPath pUserInstallation, File pOxtFile, boolean bForceDeploy) {
         IOOo mOOo = pPrj.getOOo();
         if (mOOo.canManagePackages()) {
-            mOOo.updatePackage(pOxtFile, pUserInstallation);
+            mOOo.updatePackage(pOxtFile, pUserInstallation, bForceDeploy);
         }
     }
 

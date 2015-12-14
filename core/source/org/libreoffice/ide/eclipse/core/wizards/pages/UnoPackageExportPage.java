@@ -407,7 +407,7 @@ public class UnoPackageExportPage extends WizardPage {
         @Override
         public void run() {
             if (mOOo.canManagePackages()) {
-                mOOo.updatePackage(mDest, null);
+                mOOo.updatePackage(mDest, null, false);
             }
         }
     }

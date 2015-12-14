@@ -350,11 +350,11 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public void updatePackage(File pPackageFile, IPath pUserInstallation) {
+    public void updatePackage(File pPackageFile, IPath pUserInstallation, boolean bForceUpdate) {
 
         // Check if there is already a package with the same name
         try {
-            if (containsPackage(pPackageFile.getName(), pUserInstallation)) {
+            if (!bForceUpdate && containsPackage(pPackageFile.getName(), pUserInstallation)) {
                 mDoRemovePackage = false;
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
