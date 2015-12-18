@@ -3,6 +3,8 @@
 This plugin helps with developing and debugging LibreOffice extensions/components from Eclipse.
 
 This release supports only LibreOffice 5.0 and upwards (due to some changed internal paths).
+It was tested with Eclipse Mars (4.5). Older versions might still work, but are untested.
+
 For historic releases supporting older versions of LibreOffice (and OpenOffice) visit [this site](http://bosdonnat.fr/pages/libreoffice-eclipse.html).
 
 ## Installation
