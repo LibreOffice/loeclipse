@@ -135,11 +135,7 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String[] getTypesPath() {
-        String types = getHome() + FILE_SEP + "program" + //$NON-NLS-1$
-            FILE_SEP + "types.rdb"; //$NON-NLS-1$
-        if (getPlatform().equals(Platform.OS_WIN32)) {
-            types = getHome() + FILE_SEP + "misc" + FILE_SEP + "types.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        String types = getHome() + FILE_SEP + "program" + FILE_SEP + "types.rdb"; //$NON-NLS-1$
         return new String[] { types };
     }
 
@@ -148,11 +144,7 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String[] getServicesPath() {
-        String services = getHome() + FILE_SEP + "program" + //$NON-NLS-1$
-            FILE_SEP + "services.rdb"; //$NON-NLS-1$
-        if (getPlatform().equals(Platform.OS_WIN32)) {
-            services = getHome() + FILE_SEP + "misc" + FILE_SEP + "services.rdb"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        String services = getHome() + FILE_SEP + "program" + FILE_SEP + "services.rdb"; //$NON-NLS-1$
         return new String[] { services };
     }
 
@@ -161,11 +153,11 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String getUnorcPath() {
-        String path = getHome() + FILE_SEP + "program" + FILE_SEP + "unorc"; //$NON-NLS-1$ //$NON-NLS-2$
+        String filename = "unorc";
         if (getPlatform().equals(Platform.OS_WIN32)) {
-            path = getHome() + FILE_SEP + "bin" + FILE_SEP + "uno.ini"; //$NON-NLS-1$ //$NON-NLS-2$
+            filename = "uno.ini";
         }
-        return path;
+        return getHome() + FILE_SEP + "program" + FILE_SEP + filename; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -173,15 +165,14 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String getUnoPath() {
-        return getHome() + FILE_SEP + "bin" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
+        return getHome() + FILE_SEP + "program" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
     }
 
     public static String getUnoExecutable() {
-        String uno = "uno.bin"; //$NON-NLS-1$
         if (getPlatformOS().equals(Platform.OS_WIN32)) {
-            uno = "uno.exe"; //$NON-NLS-1$
+            return "uno.exe"; //$NON-NLS-1$
         }
-        return uno;
+        return "uno.bin"; //$NON-NLS-1$
     }
 
     /**
