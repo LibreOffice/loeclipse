@@ -354,16 +354,20 @@ public class OOo extends AbstractOOo {
 
         // Check if there is already a package with the same name
         try {
-            if (!bForceUpdate && containsPackage(pPackageFile.getName(), pUserInstallation)) {
-                mDoRemovePackage = false;
-                Display.getDefault().syncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDoRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-                            Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
-                            Messages.getString("OOo.PackageAlreadyInstalled")); //$NON-NLS-1$
-                    }
-                });
+            mDoRemovePackage = false;
+            if (containsPackage(pPackageFile.getName(), pUserInstallation)) {
+                if (bForceUpdate)
+                    mDoRemovePackage = true;
+                else {
+                    Display.getDefault().syncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDoRemovePackage = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+                                Messages.getString("OOo.PackageExportTitle"), //$NON-NLS-1$
+                                Messages.getString("OOo.PackageAlreadyInstalled")); //$NON-NLS-1$
+                        }
+                    });
+                }
                 if (mDoRemovePackage) {
                     // remove it
                     removePackage(pPackageFile.getName(), pUserInstallation);
