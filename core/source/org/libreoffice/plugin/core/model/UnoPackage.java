@@ -211,6 +211,7 @@ public class UnoPackage {
      */
     public void addContent(String pathInArchive, File pContent) {
         String pathname = pathInArchive == null ? "" : FilenameUtils.normalize(pathInArchive);
+        pathname = FilenameUtils.separatorsToUnix(pathname);
         if (pContent.isFile()) {
             this.addFile(pathname, pContent);
         } else if (pContent.isDirectory()) {
