@@ -767,25 +767,26 @@ public class UnoPackage {
      *            the excludes
      */
     private void addZipContent(String pRelativePath, File pFile, String[] includes, String[] excludes) {
-        if (pRelativePath != null) {
-            if (pFile.isDirectory()) {
-                // Add all the children
-                try {
-                    for (File child : pFile.listFiles()) {
-                        String path = FilenameUtils.normalize(pRelativePath + "/" + child.getName());
-                        if (shouldBeExcluded(path, includes, excludes)) {
-                            continue;
-                        }
-                        addZipContent(path, child);
+        if (pRelativePath == null)
+            return;
+
+        if (pFile.isDirectory()) {
+            // Add all the children
+            try {
+                for (File child : pFile.listFiles()) {
+                    String path = FilenameUtils.normalize(pRelativePath + "/" + child.getName());
+                    if (shouldBeExcluded(path, includes, excludes)) {
+                        continue;
                     }
-                } catch (Exception e) {
+                    addZipContent(path, child);
                 }
-            } else {
-                String zipPath = FileHelper.separatorsToUnix(pRelativePath);
-                System.out.println("Adding " + zipPath + " to oxt package");
-                ZipContent content = new ZipContent(zipPath, pFile);
-                mZipEntries.put(pRelativePath, content);
+            } catch (Exception e) {
             }
+        } else {
+            String zipPath = FileHelper.separatorsToUnix(pRelativePath);
+            System.out.println("Adding " + zipPath + " to oxt package");
+            ZipContent content = new ZipContent(zipPath, pFile);
+            mZipEntries.put(pRelativePath, content);
         }
     }
 
