@@ -377,12 +377,6 @@ public class OOoTable extends AbstractTable {
                 mNameRow.setEnabled(false);
             }
 
-            // activate the OK button only if the OOo is correct
-            Button okButton = getButton(IDialogConstants.OK_ID);
-            if (null != okButton) {
-                okButton.setEnabled(isValid(null));
-            }
-
             return body;
         }
 
@@ -396,7 +390,6 @@ public class OOoTable extends AbstractTable {
             // of the dialog.
 
             if (!mOOopathRow.getValue().equals("")) { //$NON-NLS-1$
-                isValid(null);
                 super.okPressed();
             } else {
                 updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
