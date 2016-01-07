@@ -10,6 +10,7 @@
 * Hosting now by [The Document Foundation](http://www.documentfoundation.org/)
 * Java 7 is the new baseline for the code (instead of Java 5)
 * Various internal cleanups
+* Fix #5: Invalid oxt files created on Windows
 
 ## Older versions
 
