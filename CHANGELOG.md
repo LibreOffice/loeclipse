@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.0
+## 2.0.2
+* Fix for Windows zip packaging problem (related to #5)
+* Fix a problem with lock files not being cleaned
+
+## 2.0 (released as 2.0.1)
 
 * Support for LibreOffice 5.0 added. Older releases are no longer supported.
 * Support for Eclipse Mars (4.5) added.
