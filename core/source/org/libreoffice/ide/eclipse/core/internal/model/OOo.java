@@ -386,7 +386,8 @@ public class OOo extends AbstractOOo {
         String path = pPackageFile.getAbsolutePath();
         String shellCommand = MessageFormat.format("unopkg gui -f \"{0}\"", path); //$NON-NLS-1$
 
-        String[] env = SystemHelper.getSystemEnvironement();
+        // Don't get the system env variables - the $PATH might contain other `unopkg`s which we don't want.
+        String[] env = new String[]{};
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
         env = SystemHelper.addEnv(env, "PATH", getHome() + FILE_SEP + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
         env = addUserProfile(pUserInstallation, env);
