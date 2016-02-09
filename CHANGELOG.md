@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+* #6: Use the configured `unopkg` when multiple ones are in PATH
+* #7: Deployment now without user confirmation
+
 ## 2.0.2
 * Fix for Windows zip packaging problem (related to #5)
 * Fix a problem with lock files not being cleaned
