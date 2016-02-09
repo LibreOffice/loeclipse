@@ -90,8 +90,6 @@ public class OOo extends AbstractOOo {
      */
     private static final String K_PRODUCTKEY = "ProductKey"; //$NON-NLS-1$
 
-    private boolean mDoRemovePackage = false;
-
     private OOo3PathMapper mMapper;
 
     /**
@@ -416,71 +414,6 @@ public class OOo extends AbstractOOo {
             throw new Exception(Messages.getString("OOo.PackageAddError") + //$NON-NLS-1$
                 pPackageFile.getAbsolutePath());
         }
-    }
-
-    /**
-     * Remove the named package from the LibreOffice packages.
-     *
-     * @param pName
-     *            the name of the package to remove
-     * @param pUserInstallation
-     *            the path to the office user installation to use
-     * @throws Exception
-     *             if anything wrong happens
-     */
-    private void removePackage(String pName, IPath pUserInstallation) throws Exception {
-        String shellCommand = "unopkg remove " + pName; //$NON-NLS-1$
-
-        String[] env = SystemHelper.getSystemEnvironement();
-        String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
-        String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
-        env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
-        env = addUserProfile(pUserInstallation, env);
-
-        SystemHelper.runTool(shellCommand, env, null);
-    }
-
-    /**
-     * Check if the named package is already installed on LibreOffice.
-     *
-     * @param pName
-     *            the package name to look for
-     * @param pUserInstallation
-     *            path to the user profile.
-     * @return <code>true</code> if the package is installed, <code>false</code> otherwise
-     * @throws Exception
-     *             if anything wrong happens
-     */
-    private boolean containsPackage(String pName, IPath pUserInstallation) throws Exception {
-        boolean contained = false;
-
-        String shellCommand = "unopkg list"; //$NON-NLS-1$
-
-        String[] env = SystemHelper.getSystemEnvironement();
-        String filesep = System.getProperty("file.separator"); //$NON-NLS-1$
-        String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
-        env = SystemHelper.addEnv(env, "PATH", getHome() + filesep + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
-        env = addUserProfile(pUserInstallation, env);
-
-        Process process = SystemHelper.runTool(shellCommand, env, null);
-        InputStreamReader in = new InputStreamReader(process.getInputStream());
-        LineNumberReader reader = new LineNumberReader(in);
-
-        String line = reader.readLine();
-        while (null != line && !contained) {
-            if (line.endsWith(pName)) {
-                contained = true;
-            }
-            line = reader.readLine();
-        }
-
-        try {
-            reader.close();
-            in.close();
-        } catch (Exception e) {
-        }
-
-        return contained;
     }
 
     /**
