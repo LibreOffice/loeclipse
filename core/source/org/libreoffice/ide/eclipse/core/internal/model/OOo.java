@@ -384,7 +384,7 @@ public class OOo extends AbstractOOo {
      */
     private void addPackage(File pPackageFile, IPath pUserInstallation) throws Exception {
         String path = pPackageFile.getAbsolutePath();
-        String shellCommand = MessageFormat.format("unopkg gui -f \"{0}\"", path); //$NON-NLS-1$
+        String shellCommand = MessageFormat.format("unopkg add -f \"{0}\"", path); //$NON-NLS-1$
 
         // Don't get the system env variables - the $PATH might contain other `unopkg`s which we don't want.
         String[] env = new String[]{};
