@@ -132,7 +132,7 @@ public class JavaWizardPage extends LanguageWizardPage {
         // Create the test row
         mJavaTestsRow = new BooleanRow(body, JAVA_TESTS,
             Messages.getString("JavaWizardPage.IncludeTestClasses")); //$NON-NLS-1$
-        mJavaTestsRow.setValue(true);
+        mJavaTestsRow.setValue(false);
         mJavaTestsRow.setFieldChangedListener(new IFieldChangedListener() {
 
             @Override
