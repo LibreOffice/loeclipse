@@ -15,6 +15,10 @@ Install this plugin via an update site in Eclipse pointing to one of:
 
 After installing the plugin, you can create new extensions/components by using *File->New->Project->LibreOffice*.
 
+## Getting started
+
+Have a look at the [LibreOffice Starter Extension](https://github.com/smehrbrodt/libreoffice-starter-extension). It contains a step-by-step guide to get started with extension development.
+
 ## Documentation
 
 Developer and User Documentation is found in [core/doc/help/html](https://github.com/LibreOffice/loeclipse/tree/master/core/doc/help/html).
