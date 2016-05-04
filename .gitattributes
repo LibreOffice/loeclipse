@@ -1,0 +1,6 @@
+# .tpl files are Java, not Smarty
+*.tpl linguist-language=Java
+
+# Documentation
+core/docs/* linguist-documentation
+
