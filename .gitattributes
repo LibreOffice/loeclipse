@@ -2,5 +2,5 @@
 *.tpl linguist-language=Java
 
 # Documentation
-core/docs/* linguist-documentation
+core/doc/* linguist-documentation
 
