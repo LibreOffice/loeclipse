@@ -432,7 +432,6 @@ public class OOo extends AbstractOOo {
         private URE mUre;
 
         // private fields
-        private File mapperBasisLibs;
         private File mapperBasisBins;
         private File mapperBasisClasses;
         private List<File> mapperBasisTypes;
@@ -548,35 +547,7 @@ public class OOo extends AbstractOOo {
          * @throws InvalidConfigException
          */
         public String[] getAdditionnalLibs() {
-            String[] additionnal = new String[0];
-
-            String[] ureLibs = new String[0];
-            if (mUre != null) {
-                ureLibs = mUre.getLibsPath();
-            }
-
-            File basisLibs = this.mapperBasisLibs;
-            if (basisLibs == null) {
-                try {
-                    String extension = ".so";
-                    if (getPlatform().equals(Platform.OS_WIN32)) {
-                        extension = ".dll";
-                    } else if (getPlatform().equals(Platform.OS_MACOSX)) {
-                        extension = ".dylib";
-                    }
-                    basisLibs = locateUniqueContainer(mHome, "libpyuno" + extension);
-                    this.mapperBasisLibs = basisLibs;
-                } catch (InvalidConfigException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (basisLibs != null) {
-                additionnal = mergeArrays(ureLibs, new String[] { basisLibs.getAbsolutePath() });
-            } else {
-                additionnal = ureLibs;
-            }
-
-            return additionnal;
+            return mUre.getLibsPath();
         }
 
         /**
