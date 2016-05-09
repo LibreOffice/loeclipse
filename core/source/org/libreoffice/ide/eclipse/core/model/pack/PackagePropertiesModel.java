@@ -47,7 +47,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -216,7 +216,7 @@ public class PackagePropertiesModel {
         if (!pContent.equals(initContent)) {
             mProperties.clear();
             try {
-                mProperties.load(new StringBufferInputStream(pContent));
+                mProperties.load(new StringReader(pContent));
             } catch (IOException e) {
                 // Nothing to log
             }

@@ -420,7 +420,7 @@ public class UnoidlProjectHelper {
 
                     if (!tmpFolder.exists()) {
                         tmpFolder.create(true, true, pMonitor);
-                        tmpFolder.setDerived(true);
+                        tmpFolder.setDerived(true, pMonitor);
                         PluginLogger.debug(tmpFolder.getName() + " folder created"); //$NON-NLS-1$
                     }
                     i++;

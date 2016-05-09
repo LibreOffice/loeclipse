@@ -107,7 +107,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
      * {@inheritDoc}
      */
     @Override
-    protected IProject[] build(int pKind, Map pArgs, IProgressMonitor pMonitor) throws CoreException {
+    protected IProject[] build(int pKind, Map<String, String> pArgs, IProgressMonitor pMonitor) throws CoreException {
 
         mChangedIdl = false;
 

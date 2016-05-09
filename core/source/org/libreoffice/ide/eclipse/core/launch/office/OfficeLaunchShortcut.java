@@ -114,7 +114,7 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
             ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
             ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(OFFICE_LAUNCH_CONFIG_ID);
 
-            String name = launchManager.generateUniqueLaunchConfigurationNameFrom(pProject.getName());
+            String name = launchManager.generateLaunchConfigurationName(pProject.getName());
             ILaunchConfigurationWorkingCopy createdConfiguration = type.newInstance(null, name);
 
             createdConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, pProject.getName());

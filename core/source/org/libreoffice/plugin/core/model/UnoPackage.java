@@ -438,9 +438,11 @@ public class UnoPackage {
                 }
                 if (entry.getName().endsWith("RegistrationHandler.class")
                     || entry.getName().endsWith("RegistrationHandler.classes")) {
+                    jarFile.close();
                     return true;
                 }
             }
+            jarFile.close();
         } catch (IOException ioe) {
             log.warning("can't read " + file + " (" + ioe + ")");
         }

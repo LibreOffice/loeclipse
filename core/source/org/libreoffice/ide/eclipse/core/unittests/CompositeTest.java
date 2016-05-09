@@ -264,6 +264,7 @@ public class CompositeTest extends TestCase {
 
             BufferedReader reader = new BufferedReader(new FileReader(fileTest));
             assertEquals("Wrong content of the file", "test3 text", reader.readLine()); //$NON-NLS-1$ //$NON-NLS-2$
+            reader.close();
 
             // Cleaning after the tests
             fileTest.delete();
