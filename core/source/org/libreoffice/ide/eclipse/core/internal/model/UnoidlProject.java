@@ -735,7 +735,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      */
     @Override
     public void configure() throws CoreException {
-
         // Load all the persistent properties into the members
 
         String sdkKey = getProperty(SDK_NAME);
@@ -773,9 +772,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             IOOo someOOo = OOoContainer.getSomeOOo(oooKey);
             setOOo(someOOo);
         }
-
-        // Save any change from the read project file
-        saveAllProperties();
     }
 
     /**
