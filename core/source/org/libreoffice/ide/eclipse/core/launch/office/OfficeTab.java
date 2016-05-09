@@ -188,7 +188,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy pConfiguration) {
         pConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
-        pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, true);
+        pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
     }
 
     @Override
