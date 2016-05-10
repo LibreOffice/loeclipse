@@ -43,8 +43,10 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.model.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -184,7 +186,7 @@ public class SystemHelper {
     }
 
     /**
-     * @return the system environement variables
+     * @return the system environment variables
      */
     public static String[] getSystemEnvironement() {
         Set<Entry<String, String>> envSet = System.getenv().entrySet();
@@ -259,6 +261,20 @@ public class SystemHelper {
             process = Runtime.getRuntime().exec(command, pEnv, pExecDir);
         } else {
             process = Runtime.getRuntime().exec(command, pEnv);
+        }
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            throw new IOException("Process was interrupted.");
+        }
+        if (process.exitValue() != 0) { // Failure
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            PluginLogger.error(String.format("Command failed: %s.\nOutput: %s", pShellCommand, sb));
         }
         return process;
     }

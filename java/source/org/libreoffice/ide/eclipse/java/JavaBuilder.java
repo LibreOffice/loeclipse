@@ -67,7 +67,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.jarpackager.IJarExportRunnable;
 import org.eclipse.jdt.ui.jarpackager.JarPackageData;
-import org.libreoffice.ide.eclipse.core.LogLevels;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
@@ -198,10 +197,7 @@ public class JavaBuilder implements ILanguageBuilder {
                 line = lineReader.readLine();
             }
 
-            // Only for debugging purpose
-            if (PluginLogger.isLevel(LogLevels.DEBUG)) {
-                System.out.println(errBuf);
-            }
+            PluginLogger.debug(errBuf.toString());
         } catch (InterruptedException e) {
             PluginLogger.error(
                 Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
