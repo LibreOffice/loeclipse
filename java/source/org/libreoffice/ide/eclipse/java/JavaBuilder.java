@@ -156,29 +156,19 @@ public class JavaBuilder implements ILanguageBuilder {
                 // TODO What if the user creates other root modules ?
                 String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
 
-                String error = runJavamaker(firstModule, "UCR", oooTypesArgs, pSdk, pPrj,
-                    pTypesFile, pBuildFolder, pMonitor);
-                if (!error.isEmpty() && error.contains("-BUCR")) {
-                    runJavamaker(firstModule, "", oooTypesArgs, pSdk, pPrj,
-                        pTypesFile, pBuildFolder, pMonitor);
-                }
+                runJavamaker(firstModule, oooTypesArgs, pSdk, pPrj, pTypesFile, pBuildFolder, pMonitor);
             }
         }
     }
 
-    private String runJavamaker(String firstModule, String prefix, String oooTypesArgs,
+    private void runJavamaker(String firstModule, String oooTypesArgs,
         ISdk pSdk, IProject pPrj, File pTypesFile,
         File pBuildFolder, IProgressMonitor pMonitor) {
         StringBuffer errBuf = new StringBuffer();
 
         try {
-            String bflag = new String();
-            if (!prefix.isEmpty()) {
-                bflag = "-B" + prefix; //$NON-NLS-1$
-            }
-
-            String cmdPattern = "javamaker -T {0}.* -nD -Gc {1} -O \"{2}\" \"{3}\" {4}"; //$NON-NLS-1$
-            String command = MessageFormat.format(cmdPattern, firstModule, bflag,
+            String cmdPattern = "javamaker -T {0}.* -nD -Gc {1} -O \"{2}\" {3}"; //$NON-NLS-1$
+            String command = MessageFormat.format(cmdPattern, firstModule,
                 pBuildFolder.getAbsolutePath(),
                 pTypesFile.getAbsolutePath(),
                 oooTypesArgs);
@@ -205,8 +195,6 @@ public class JavaBuilder implements ILanguageBuilder {
             PluginLogger.warning(
                 Messages.getString("Language.UnreadableOutputError")); //$NON-NLS-1$
         }
-
-        return errBuf.toString();
     }
 
     /**
