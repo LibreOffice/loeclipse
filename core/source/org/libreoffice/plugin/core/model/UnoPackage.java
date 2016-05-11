@@ -55,11 +55,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
+import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.plugin.core.utils.FileHelper;
 import org.libreoffice.plugin.core.utils.FilenameUtils;
 import org.libreoffice.plugin.core.utils.StringUtils;
@@ -89,7 +89,6 @@ public class UnoPackage {
     public static final String UNOPKG = "uno.pkg";
     public static final String OXT = "oxt";
 
-    private static final Logger log = Logger.getLogger(UnoPackage.class.getName());
     private static final String BASIC_LIBRARY_INDEX = "script.xlb";
     private static final String DIALOG_LIBRARY_INDEX = "dialog.xlb";
 
@@ -444,7 +443,7 @@ public class UnoPackage {
             }
             jarFile.close();
         } catch (IOException ioe) {
-            log.warning("can't read " + file + " (" + ioe + ")");
+            PluginLogger.warning("can't read " + file + " (" + ioe + ")");
         }
         return false;
     }
@@ -789,7 +788,7 @@ public class UnoPackage {
             }
         } else {
             String zipPath = FileHelper.separatorsToUnix(pRelativePath);
-            System.out.println("Adding " + zipPath + " to oxt package");
+            PluginLogger.debug("Adding " + zipPath + " to oxt package");
             ZipContent content = new ZipContent(zipPath, pFile);
             mZipEntries.put(pRelativePath, content);
         }
