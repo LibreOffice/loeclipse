@@ -35,14 +35,6 @@
       </classpathContainerInitializer>
    </extension>
    <extension
-         point="org.eclipse.jdt.ui.classpathContainerPage">
-      <classpathContainerPage
-            class="org.libreoffice.ide.eclipse.java.build.OOoContainerPage"
-            id="org.libreoffice.ide.eclipse.java.OOO_CONTAINER"
-            name="LibreOffice Libraries">
-      </classpathContainerPage>
-   </extension>
-   <extension
          point="org.eclipse.ui.newWizards">
       <wizard
             canFinishEarly="false"

@@ -170,13 +170,11 @@ public class UnoidlProjectHelper {
         unoProject.setLanguage(language);
 
         // Set the SDK
-        String sdkname = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_SDK);
-        ISdk sdk = SDKContainer.getSDK(sdkname);
+        ISdk sdk = SDKContainer.getSDK();
         unoProject.setSdk(sdk);
 
         // Set the OOo runtime
-        String oooname = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_OOO);
-        IOOo ooo = OOoContainer.getOOo(oooname);
+        IOOo ooo = OOoContainer.getOOo();
         unoProject.setOOo(ooo);
 
         // Set the idl directory

@@ -61,8 +61,6 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 public class OooClasspathContainerInitializer extends
     ClasspathContainerInitializer {
 
-    static final int HINT_SEGMENT = 1;
-
     /**
      * {@inheritDoc}
      */
@@ -70,8 +68,7 @@ public class OooClasspathContainerInitializer extends
     public void initialize(IPath pContainerPath, IJavaProject pProject)
         throws CoreException {
 
-        String hint = pContainerPath.segment(HINT_SEGMENT);
-        IOOo ooo = OOoContainer.getOOo(hint);
+        IOOo ooo = OOoContainer.getOOo();
 
         if (ooo != null) {
             OOoClasspathContainer container = new OOoClasspathContainer(ooo, pContainerPath);

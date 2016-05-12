@@ -76,7 +76,6 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
-import org.libreoffice.ide.eclipse.java.build.OOoContainerPage;
 import org.libreoffice.ide.eclipse.java.registration.RegistrationHelper;
 import org.libreoffice.ide.eclipse.java.tests.TestsHelper;
 import org.w3c.dom.Node;
@@ -106,10 +105,6 @@ public class JavaProjectHandler implements IProjectHandler {
      */
     @Override
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
-
-        IJavaProject javaProject = JavaCore.create(pProject);
-
-        OOoContainerPage.addOOoDependencies(pOoo, javaProject);
     }
 
     /**
@@ -239,9 +234,6 @@ public class JavaProjectHandler implements IProjectHandler {
      */
     @Override
     public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
-        IJavaProject javaProject = JavaCore.create(pProject);
-
-        OOoContainerPage.removeOOoDependencies(javaProject);
     }
 
     /**

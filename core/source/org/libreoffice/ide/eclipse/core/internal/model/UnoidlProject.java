@@ -65,9 +65,6 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.libreoffice.ide.eclipse.core.model.OOoContainer;
-import org.libreoffice.ide.eclipse.core.model.SDKContainer;
-import org.libreoffice.ide.eclipse.core.model.config.IConfigListener;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
@@ -96,16 +93,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * </p>
      */
     public static final String OUTPUT_EXT = "project.implementation"; //$NON-NLS-1$
-
-    /**
-     * Project property that stores the sdk name to use for the project build.
-     */
-    public static final String SDK_NAME = "project.sdk"; //$NON-NLS-1$
-
-    /**
-     * Project property that stores the name of the LibreOffice instance used to run / deploy the project.
-     */
-    public static final String OOO_NAME = "project.ooo"; //$NON-NLS-1$
 
     /**
      * Project property that stores the language name.
@@ -148,84 +135,12 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     private String mSourcesDir;
 
-    private IConfigListener mConfigListener;
-
-    /**
-     * Listener for the configuration to handle the changes on SDK and OOo instances.
-     *
-     * @author cedricbosdo
-     */
-    private class configListener implements IConfigListener {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void ConfigAdded(Object pElement) {
-            // the selected SDK or OOo cannot be added again...
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void ConfigRemoved(Object pElement) {
-            if (pElement instanceof ISdk) {
-                if (pElement == getSdk()) {
-
-                    // Sets the selected SDK to null, it will tag the project as invalid
-                    setSdk(null);
-                }
-            } else if (pElement instanceof IOOo) {
-                if (pElement == getOOo()) {
-
-                    // Removes OOo dependencies
-                    getLanguage().getProjectHandler().removeOOoDependencies(getOOo(), getProject());
-
-                    // Sets the selected OOo to null, it will tag the project as invalid
-                    setOOo(null);
-                }
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void ConfigUpdated(Object pElement) {
-            if (pElement instanceof IOOo) {
-                if (pElement == getOOo()) {
-                    // the ooo is updated thanks to it's reference. Remove the old jar files
-                    // from the classpath and the new ones
-
-                    // Removes OOo dependencies
-                    getLanguage().getProjectHandler().removeOOoDependencies(getOOo(), getProject());
-                    getLanguage().getProjectHandler().addOOoDependencies(getOOo(), getProject());
-                }
-            }
-        }
-    }
-
-    // ------------------------------------------------------------ Constructors
-
-    /**
-     * Default constructor initializing the configuration listener.
-     */
-    public UnoidlProject() {
-
-        mConfigListener = new configListener();
-
-        SDKContainer.addListener(mConfigListener);
-        OOoContainer.addListener(mConfigListener);
-    }
 
     /**
      * Removes the listeners needed by the UNO project.
      */
     @Override
     public void dispose() {
-        SDKContainer.removeListener(mConfigListener);
-        OOoContainer.removeListener(mConfigListener);
     }
 
     /**
@@ -691,8 +606,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             properties.load(in);
 
             properties.setProperty(LANGUAGE, mLanguage.getName());
-            properties.setProperty(OOO_NAME, mOOo.getName());
-            properties.setProperty(SDK_NAME, mSdk.getId());
             properties.setProperty(IDL_DIR, mIdlDir);
             properties.setProperty(SRC_DIRECTORY, mSourcesDir);
             properties.setProperty(COMPANY_PREFIX, mCompanyPrefix);
@@ -737,11 +650,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     public void configure() throws CoreException {
         // Load all the persistent properties into the members
 
-        String sdkKey = getProperty(SDK_NAME);
-        if (sdkKey != null) {
-            setSdk(SDKContainer.getSDK(sdkKey));
-        }
-
         String prefix = getProperty(COMPANY_PREFIX);
         if (prefix != null) {
             mCompanyPrefix = prefix;
@@ -765,12 +673,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         String srcDir = getProperty(SRC_DIRECTORY);
         if (srcDir != null) {
             setSourcesDir(srcDir);
-        }
-
-        String oooKey = getProperty(OOO_NAME);
-        if (oooKey != null) {
-            IOOo someOOo = OOoContainer.getSomeOOo(oooKey);
-            setOOo(someOOo);
         }
     }
 

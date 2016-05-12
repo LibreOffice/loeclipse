@@ -62,7 +62,6 @@ import org.eclipse.swt.graphics.Image;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.gui.ITableElement;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.config.IExtraOptionsProvider;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
@@ -86,7 +85,6 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     private static String sPlatform;
 
     private String mHome;
-    private String mName;
 
     /**
      * Creating a new OOo or URE instance specifying its home directory.
@@ -100,20 +98,9 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         setHome(pOooHome);
     }
 
-    /**
-     * Creating a new OOo or URE instance specifying its home directory and name.
-     *
-     * @param pOooHome
-     *            the LibreOffice or URE installation directory
-     * @param pName
-     *            the LibreOffice or URE instance name
-     *
-     * @throws InvalidConfigException
-     *             if the home directory doesn't contains the required files and directories
-     */
-    public AbstractOOo(String pOooHome, String pName) throws InvalidConfigException {
-        setHome(pOooHome);
-        setName(pName);
+    @Override
+    public String toString() {
+        return String.format("LibreOffice (%s)", mHome);
     }
 
     /**
@@ -153,27 +140,6 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     @Override
     public String getHome() {
         return mHome;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return mName;
-    }
-
-    /**
-     * Set the new name only if it's neither null nor the empty string. The name will be rendered unique and therefore
-     * may be changed.
-     *
-     * @param pName
-     *            the name to set
-     */
-    protected void setName(String pName) {
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
-            mName = OOoContainer.getUniqueName(pName);
-        }
     }
 
     /**
@@ -271,13 +237,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      */
     @Override
     public String getLabel(String pProperty) {
-        String result = ""; //$NON-NLS-1$
-        if (pProperty.equals(NAME)) {
-            result = getName();
-        } else if (pProperty.equals(PATH)) {
-            result = getHome();
-        }
-        return result;
+        return getHome();
     }
 
     /**

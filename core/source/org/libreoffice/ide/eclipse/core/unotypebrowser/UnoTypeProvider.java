@@ -245,7 +245,7 @@ public class UnoTypeProvider {
         }
 
         if (mOooInstance != null) {
-            containers.add(mOooInstance.getName());
+            containers.add(mOooInstance.getHome());
         }
 
         LinkedList<InternalUnoType> types = new LinkedList<InternalUnoType>();

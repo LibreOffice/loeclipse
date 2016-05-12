@@ -68,36 +68,6 @@ public class URE extends AbstractOOo {
      */
     public URE(String pHome) throws InvalidConfigException {
         super(pHome);
-        setName(null);
-    }
-
-    /**
-     * Creating a new URE instance specifying its home directory and name.
-     *
-     * @param pHome
-     *            the URE home directory
-     * @param pName
-     *            the URE name
-     *
-     * @throws InvalidConfigException
-     *             is thrown if the home directory doesn't contains the required files and directories
-     */
-    public URE(String pHome, String pName) throws InvalidConfigException {
-        super(pHome, pName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setName(String pName) {
-
-        String name = pName;
-        if (name == null || name.equals("")) { //$NON-NLS-1$
-            name = "URE"; //$NON-NLS-1$
-        }
-
-        super.setName(name);
     }
 
     /**
@@ -180,7 +150,7 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String toString() {
-        return "URE " + getName(); //$NON-NLS-1$
+        return "URE"; //$NON-NLS-1$
     }
 
     /**

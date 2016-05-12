@@ -112,14 +112,14 @@ public class BaseUnoConnectionPage extends WizardPage {
      * @return the selected OOo instance
      */
     public IOOo getOoo() {
-        return OOoContainer.getOOo(mOOoConfigPanel.getOOoName());
+        return OOoContainer.getOOo();
     }
 
     /**
      * @return the selected SDK instance
      */
     public ISdk getSdk() {
-        return SDKContainer.getSDK(mOOoConfigPanel.getSDKName());
+        return SDKContainer.getSDK();
     }
 
     /**

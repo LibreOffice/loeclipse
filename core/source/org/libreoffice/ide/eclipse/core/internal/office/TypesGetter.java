@@ -214,7 +214,7 @@ public class TypesGetter {
             String path = mExternalRegs.get(i);
             String url = mConnection.convertToUrl(path);
             if (url != null) {
-                String oooKey = mConnection.getOOo().getName();
+                String oooKey = mConnection.getOOo().getHome();
                 List<InternalUnoType> types = results.get(oooKey);
                 if (types == null) {
                     types = new ArrayList<InternalUnoType>();
