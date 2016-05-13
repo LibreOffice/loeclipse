@@ -40,7 +40,6 @@ import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 /**
  * Class providing the MANIFEST.MF contents to the Jar writer.
  *
- * @author Cédric Bosdonnat
  *
  */
 @SuppressWarnings("restriction")

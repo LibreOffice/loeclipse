@@ -58,7 +58,6 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 /**
  * This class provides colors of the editor to all the other objects.
  *
- * @author cbosdonnat
  *
  */
 public class ColorProvider {

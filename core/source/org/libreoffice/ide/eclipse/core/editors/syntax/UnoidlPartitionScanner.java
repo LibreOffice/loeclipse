@@ -54,7 +54,6 @@ import org.eclipse.jface.text.rules.Token;
  * Scanner splitting the text into partitions. In order to fully understand the editor mechanisms, please report to
  * Eclipse plugin developer's guide.
  *
- * @author cedricbosdo
  */
 public class UnoidlPartitionScanner extends RuleBasedPartitionScanner {
 

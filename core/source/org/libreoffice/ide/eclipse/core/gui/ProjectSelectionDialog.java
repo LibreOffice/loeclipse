@@ -73,7 +73,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Dialog used to select a file or folder in a UNO project.
  *
- * @author cedricbosdo
  *
  */
 public class ProjectSelectionDialog extends Dialog {

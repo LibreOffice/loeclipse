@@ -43,7 +43,6 @@ import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 /**
  * Class used to generate the test files in the Java project.
  *
- * @author cbosdonnat
  *
  */
 public class TestsHelper {

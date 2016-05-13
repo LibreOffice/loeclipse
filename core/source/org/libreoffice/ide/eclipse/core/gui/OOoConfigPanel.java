@@ -47,7 +47,6 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 /**
  * Class providing the LibreOffice and SDK configuration rows.
  *
- * @author cbosdonnat
  *
  */
 public class OOoConfigPanel {

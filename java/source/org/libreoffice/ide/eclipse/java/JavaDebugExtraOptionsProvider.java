@@ -6,7 +6,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 /**
  * Adds extra env variables to start LibreOffice with Java setup to run in debug mode.
  *
- * @author cdan
  *
  */
 public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {

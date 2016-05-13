@@ -85,7 +85,6 @@ import org.xml.sax.InputSource;
 /**
  * The Project handler implementation for Java.
  *
- * @author cedricbosdo
  *
  */
 public class JavaProjectHandler implements IProjectHandler {

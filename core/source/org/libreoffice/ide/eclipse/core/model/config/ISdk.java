@@ -51,7 +51,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 /**
  * Interface defining a LibreOffice SDK.
  *
- * @author cedricbosdo
  *
  */
 public interface ISdk {

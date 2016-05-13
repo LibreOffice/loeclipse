@@ -35,7 +35,6 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Messages for the package.
  *
- * @author cdan
  *
  */
 public class Messages extends NLS {

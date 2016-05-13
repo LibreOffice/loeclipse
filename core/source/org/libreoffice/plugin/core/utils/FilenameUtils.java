@@ -28,7 +28,6 @@ package org.libreoffice.plugin.core.utils;
  * The commons.io dependency was removed but we need some stuff from the FilenameUtils class. The missing functionality
  * is recoded here.
  *
- * @author oliver (oliver.boehm@agentes.de)
  * @since 1.1.1 (21.09.2010)
  */
 public final class FilenameUtils {

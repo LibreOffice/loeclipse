@@ -48,7 +48,6 @@ import org.eclipse.jface.text.rules.IWordDetector;
 /**
  * Basic rule to detect words in the text.
  *
- * @author cedricbosdo
  */
 public class UnoidlWordDetector implements IWordDetector {
 

@@ -52,7 +52,6 @@ import org.libreoffice.ide.eclipse.core.editors.utils.OOTextEditor;
  * Editor class to view the UNO registries, ie <code>.urd</code> and <code>.rdb</code> files. This editor is read-only
  * and simply shows the registry content without syntax highlighting.
  *
- * @author cedricbosdo
  */
 public class RegEditor extends OOTextEditor {
 

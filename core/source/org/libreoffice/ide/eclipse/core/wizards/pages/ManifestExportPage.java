@@ -69,7 +69,6 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 /**
  * Second page of the new OXT package export wizard.
  *
- * @author Cédric Bosdonnat
  *
  */
 public class ManifestExportPage extends WizardPage {

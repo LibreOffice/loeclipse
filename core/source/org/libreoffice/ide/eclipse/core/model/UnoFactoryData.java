@@ -49,7 +49,6 @@ import java.util.Vector;
 /**
  * This class contains the data describing a the object to create by the Uno factory.
  *
- * @author cedricbosdo
  *
  */
 public class UnoFactoryData {

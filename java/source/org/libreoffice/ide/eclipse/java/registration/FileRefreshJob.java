@@ -55,7 +55,6 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 /**
  * Job refreshing the RegistrationHandler.classes files.
  *
- * @author cedricbosdo
  *
  */
 public class FileRefreshJob extends Job {

@@ -62,7 +62,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
  * This class corresponds to the table of interface inheritances. The add action launches the UNO Type browser to select
  * one interface. This class shouldn't be subclassed.
  *
- * @author cedricbosdo
  */
 public class InterfacesTable extends AbstractTable {
 
@@ -139,7 +138,6 @@ public class InterfacesTable extends AbstractTable {
      * The interface names are stored in path-like strings, ie: using "::" as separator. This class describes a line in
      * the table and thus has to implement {@link ITableElement} interface
      *
-     * @author cedricbosdo
      *
      */
     public class InheritanceLine implements ITableElement {

@@ -60,7 +60,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
  * TemplatesHelper.copyTemplate( myProject, "foo/bar", LoadingClass.class );
  * </code>
  *
- * @author cbosdonnat
  *
  */
 public class TemplatesHelper {

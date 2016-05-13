@@ -56,7 +56,6 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 /**
  * Class visiting each child of the idl folder to generate the corresponding <code>urd</code> file.
  *
- * @author cedricbosdo
  *
  */
 public class IdlcBuildVisitor implements IResourceVisitor {

@@ -46,7 +46,6 @@ package org.libreoffice.ide.eclipse.core.internal.helpers;
 /**
  * Class handling a set of bit-ORed flags.
  *
- * @author cedricbosdo
  *
  */
 public class Flags {

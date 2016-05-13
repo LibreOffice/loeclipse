@@ -37,7 +37,6 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 /**
  * Abstract class for the language specific controls part in the OXT export wizard.
  *
- * @author cbosdo
  *
  */
 public abstract class LanguageExportPart {

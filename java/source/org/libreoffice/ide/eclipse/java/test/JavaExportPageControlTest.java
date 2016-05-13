@@ -31,7 +31,6 @@ import org.libreoffice.ide.eclipse.java.export.JavaExportPageControl;
 /**
  * Unit test for the Manifest export page part UI controller.
  *
- * @author Cedric Bosdonnat
  *
  */
 public class JavaExportPageControlTest {

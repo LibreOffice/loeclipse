@@ -78,7 +78,6 @@ import org.libreoffice.plugin.core.utils.ZipContent;
  * {@link "http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/Extensions/File_Format"}.
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public class UnoPackage {

@@ -70,7 +70,6 @@ import java.util.Hashtable;
  * </ol>
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public interface IUnoComposite {

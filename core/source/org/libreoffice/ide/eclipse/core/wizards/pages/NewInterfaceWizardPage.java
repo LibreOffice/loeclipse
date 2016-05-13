@@ -65,7 +65,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
 /**
  * Interface creation page.
  *
- * @author cedricbosdo
  *
  */
 public class NewInterfaceWizardPage extends NewScopedElementWizardPage implements ISelectionChangedListener {

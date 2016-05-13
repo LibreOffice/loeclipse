@@ -36,7 +36,6 @@ import java.util.ResourceBundle;
 /**
  * Messages for the package.
  *
- * @author cbosdonnat
  *
  */
 public class Messages {

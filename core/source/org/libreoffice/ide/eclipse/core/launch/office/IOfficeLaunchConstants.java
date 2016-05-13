@@ -35,7 +35,6 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 /**
  * Just a bunch of constants.
  *
- * @author cdan
  *
  */
 public interface IOfficeLaunchConstants {

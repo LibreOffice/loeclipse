@@ -52,7 +52,6 @@ package org.libreoffice.ide.eclipse.core.unotypebrowser;
  * <li>{@link #INITIALIZED} means that the types provider has fetched the types</li>
  * </ul>
  *
- * @author cbosdonnat
  *
  */
 public enum TypeProviderState {

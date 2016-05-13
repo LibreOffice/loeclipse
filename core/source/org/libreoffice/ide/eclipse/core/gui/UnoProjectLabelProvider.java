@@ -52,7 +52,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 /**
  * Class providing all the UNO projects labels to the SWT tables and trees showing UNO projects.
  *
- * @author cedricbosdo
  *
  */
 public class UnoProjectLabelProvider extends LabelProvider {

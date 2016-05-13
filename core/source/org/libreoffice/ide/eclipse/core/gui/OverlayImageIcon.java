@@ -51,7 +51,6 @@ import org.eclipse.swt.graphics.Point;
 /**
  * This class is used for overlaying image icons.
  *
- * @author cedricbosdo
  */
 public class OverlayImageIcon extends CompositeImageDescriptor {
 

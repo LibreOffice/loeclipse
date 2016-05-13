@@ -65,7 +65,6 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
  * {@link IStartup}
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public class ResourceChangesHandler implements IStartup, IResourceChangeListener {
@@ -125,7 +124,6 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
     /**
      * Job adding a project to the {@link ProjectsManager}.
      *
-     * @author cedricbosdo
      *
      */
     private class ProjectAdderJob extends WorkspaceJob {

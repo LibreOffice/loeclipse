@@ -69,7 +69,6 @@ import org.eclipse.swt.widgets.Link;
  * <li>Call createContents</li>
  * </ol>
  *
- * @author cedricbosdo
  *
  */
 public abstract class LabeledRow {

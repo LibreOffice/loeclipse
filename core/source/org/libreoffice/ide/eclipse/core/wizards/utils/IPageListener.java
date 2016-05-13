@@ -48,7 +48,6 @@ import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
 /**
  * Interface to implement to listen to the changes of a {@link WizardPageSet} page changes.
  *
- * @author cedricbosdo
  *
  */
 public interface IPageListener {

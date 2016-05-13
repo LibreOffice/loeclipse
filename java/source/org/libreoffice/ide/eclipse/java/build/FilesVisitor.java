@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Resource visitor collecting the files of a directory.
  *
- * @author Cédric Bosdonnat
  *
  */
 public class FilesVisitor implements IResourceVisitor {

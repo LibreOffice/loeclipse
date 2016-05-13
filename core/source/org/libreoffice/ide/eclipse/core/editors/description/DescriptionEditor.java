@@ -59,7 +59,6 @@ import org.xml.sax.InputSource;
 /**
  * Editor for the description.xml file.
  *
- * @author cbosdonnat
  *
  */
 public class DescriptionEditor extends FormEditor {

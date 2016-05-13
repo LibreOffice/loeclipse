@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Text;
  * Use the {@link #setPatterns(String, String)} method to define the patterns depending on the implementation language.
  * </p>
  *
- * @author cbosdonnat
  *
  */
 public class ConnectionConfigPanel {

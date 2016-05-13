@@ -65,7 +65,6 @@ import org.libreoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
  * support a simple auto-completion.
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public class TypeRow extends TextRow {

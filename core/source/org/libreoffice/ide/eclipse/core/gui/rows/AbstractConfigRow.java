@@ -56,7 +56,6 @@ import org.libreoffice.ide.eclipse.core.model.config.IConfigListener;
 /**
  * Row for the selection of a configuration element.
  *
- * @author cedricbosdo
  *
  */
 public abstract class AbstractConfigRow extends ChoiceRow {
@@ -178,7 +177,6 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * The dialog to configure the plugin configuration objects.
      *
-     * @author cedricbosdo
      *
      */
     private class TableDialog extends Dialog {
@@ -222,7 +220,6 @@ public abstract class AbstractConfigRow extends ChoiceRow {
     /**
      * Class listening for the OOo and SDK config changes and updating the fields.
      *
-     * @author cbosdonnat
      *
      */
     private class ConfigListener implements IConfigListener {

@@ -54,7 +54,6 @@ import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 /**
  * Class for the Java UNO client wizard.
  *
- * @author cbosdonnat
  *
  */
 public class ClientWizard extends BasicNewResourceWizard {

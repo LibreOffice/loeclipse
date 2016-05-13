@@ -57,7 +57,6 @@ import org.libreoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 /**
  * Java configuration page of the new UNO project wizard.
  *
- * @author cedricbosdo
  *
  */
 public class JavaWizardPage extends LanguageWizardPage {

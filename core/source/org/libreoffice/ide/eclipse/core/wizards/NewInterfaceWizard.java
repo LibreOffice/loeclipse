@@ -72,7 +72,6 @@ import org.libreoffice.ide.eclipse.core.wizards.pages.NewInterfaceWizardPage;
 /**
  * Interface creation wizard. This class uses a {@link NewInterfaceWizardPage}
  *
- * @author cedricbosdo
  *
  */
 public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWizard {

@@ -54,7 +54,6 @@ import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
  * content has not been created.
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public abstract class LanguageWizardPage extends WizardPage {

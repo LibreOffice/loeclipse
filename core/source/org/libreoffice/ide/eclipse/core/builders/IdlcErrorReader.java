@@ -60,7 +60,6 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 /**
  * Class reading the idlc error output to transform the errors into markers.
  *
- * @author cedricbosdo
  *
  */
 public class IdlcErrorReader {

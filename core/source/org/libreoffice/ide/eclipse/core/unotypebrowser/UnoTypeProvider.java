@@ -59,7 +59,6 @@ import org.libreoffice.ide.eclipse.core.office.TypesGetter;
 /**
  * Class providing UNO types from a LibreOffice instance and optionally from a UNO project.
  *
- * @author cedricbosdo
  *
  */
 public class UnoTypeProvider {
@@ -273,7 +272,6 @@ public class UnoTypeProvider {
     /**
      * The job extracting the types from LibreOffice.
      *
-     * @author cedricbosdo
      *
      */
     private class UnoTypesGetterThread extends Thread {

@@ -53,7 +53,6 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
  * {@value #OOO_PACKAGE} package. These classes have to be loaded by the {@link OfficeClassLoader}. All the classes
  * facade classes have to be in the same package than this class.
  *
- * @author cedricbosdo
  *
  */
 public class OfficeHelper {

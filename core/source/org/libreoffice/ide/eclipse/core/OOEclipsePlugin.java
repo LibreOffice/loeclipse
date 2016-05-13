@@ -64,7 +64,6 @@ import org.osgi.framework.BundleContext;
  * method is provided in this class too.
  * </p>
  *
- * @author cedricbosdo
  */
 public class OOEclipsePlugin extends AbstractUIPlugin {
 

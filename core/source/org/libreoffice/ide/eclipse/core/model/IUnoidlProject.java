@@ -54,7 +54,6 @@ import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 /**
  * Interface for a UNO project.
  *
- * @author cedricbosdo
  *
  */
 public interface IUnoidlProject {

@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * @author cedricbosdo
  *
  */
 public class LocaleCellProvider extends CellEditor {

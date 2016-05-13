@@ -51,7 +51,6 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 /**
  * Class launching the selected uno project as a LibreOffice extension.
  *
- * @author Cedric Bosdonnat
  *
  */
 public class OfficeLaunchShortcut implements ILaunchShortcut {

@@ -46,7 +46,6 @@ package org.libreoffice.ide.eclipse.core;
 /**
  * The log levels to set on {@link PluginLogger}.
  *
- * @author cedricbosdo
  *
  */
 public enum LogLevels {

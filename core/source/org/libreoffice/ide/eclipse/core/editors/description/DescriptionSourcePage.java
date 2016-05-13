@@ -36,7 +36,6 @@ import org.libreoffice.ide.eclipse.core.editors.utils.SourcePage;
 /**
  * The source page for the description.xml file.
  *
- * @author Cédric Bosdonnat
  *
  */
 public class DescriptionSourcePage extends SourcePage {

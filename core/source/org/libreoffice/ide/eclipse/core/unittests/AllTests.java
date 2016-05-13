@@ -49,7 +49,6 @@ import junit.framework.TestSuite;
 /**
  * Launches all the JUnit test.
  *
- * @author cedricbosdo
  */
 public class AllTests {
 

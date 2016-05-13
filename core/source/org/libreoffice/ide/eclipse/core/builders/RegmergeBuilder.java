@@ -62,7 +62,6 @@ import org.libreoffice.plugin.core.utils.FileHelper;
  * This builder doesn't make any difference between full and incremental builds.
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public class RegmergeBuilder {

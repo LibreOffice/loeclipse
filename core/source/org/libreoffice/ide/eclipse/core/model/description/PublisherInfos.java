@@ -33,7 +33,6 @@ package org.libreoffice.ide.eclipse.core.model.description;
 /**
  * Simple structure storing the publisher informations.
  *
- * @author cbosdonnat
  *
  */
 public class PublisherInfos {

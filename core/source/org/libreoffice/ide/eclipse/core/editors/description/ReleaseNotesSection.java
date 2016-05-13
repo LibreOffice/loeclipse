@@ -50,7 +50,6 @@ import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 /**
  * Section displaying the release notes part of the descriptions.xml file.
  *
- * @author Cédric Bosdonnat
  *
  */
 public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> implements ILocaleListener {

@@ -50,7 +50,6 @@ import org.libreoffice.ide.eclipse.core.i18n.ImagesConstants;
  * The new URE application wizard is simply a new UNO project wizard, with the inherited interface forced to
  * <code>com::sun::star::lang::XMain</code>.
  *
- * @author cedricbosdo
  *
  */
 public class NewUreAppWizard extends NewUnoProjectWizard {

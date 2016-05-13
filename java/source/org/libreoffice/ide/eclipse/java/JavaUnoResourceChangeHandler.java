@@ -54,7 +54,6 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
  * in UNO projects. Its main activity is to maintain the implementation classes
  * list for the services registration.
  *
- * @author cedricbosdo
  *
  */
 public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeListener {

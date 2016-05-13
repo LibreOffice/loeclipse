@@ -60,7 +60,6 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
  *
  * This class loader is important to bootstrap LibreOffice.
  *
- * @author cedricbosdo
  *
  */
 public class OfficeClassLoader extends URLClassLoader {

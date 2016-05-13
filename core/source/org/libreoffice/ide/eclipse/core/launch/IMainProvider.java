@@ -50,7 +50,6 @@ import org.eclipse.core.resources.IProject;
 /**
  * Provides the name of the XMain interface implementations.
  *
- * @author cedricbosdo
  *
  */
 public interface IMainProvider {

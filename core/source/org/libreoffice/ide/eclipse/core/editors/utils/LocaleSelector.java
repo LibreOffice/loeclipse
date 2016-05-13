@@ -59,7 +59,6 @@ import org.libreoffice.ide.eclipse.core.i18n.ImagesConstants;
 /**
  * Component for the selection of a locale.
  *
- * @author cbosdonnat
  *
  */
 public class LocaleSelector {

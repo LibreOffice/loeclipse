@@ -52,7 +52,6 @@ import com.sun.star.registry.XRegistryKey;
  * 
  * <p><strong>This class should not be modified.</strong></p>
  * 
- * @author Cedric Bosdonnat aka. cedricbosdo
  *
  */
 public class RegistrationHandler '{'

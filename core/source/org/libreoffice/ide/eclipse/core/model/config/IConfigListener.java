@@ -46,7 +46,6 @@ package org.libreoffice.ide.eclipse.core.model.config;
 /**
  * Interface describing a OOo or SDK configuration listener.
  *
- * @author cedricbosdo
  */
 public interface IConfigListener {
 

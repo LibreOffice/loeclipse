@@ -53,7 +53,6 @@ import org.libreoffice.ide.eclipse.java.build.OOoClasspathContainer;
 /**
  * Overrides NewJavaProjectWizardPageTwo to add jodconnector.jar to the temporary project.
  *
- * @author Cedric Bosdonnat
  *
  */
 public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {

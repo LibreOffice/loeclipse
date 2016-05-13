@@ -54,7 +54,6 @@ package org.libreoffice.ide.eclipse.core.editors.syntax;
  * </ul>
  * </p>
  *
- * @author cbosdonnat
  *
  */
 public interface IUnoidlSyntax {

@@ -57,7 +57,6 @@ import org.libreoffice.ide.eclipse.java.JavaProjectHandler;
 /**
  * Container for the OOo classes jars.
  *
- * @author cedricbosdo
  *
  */
 public class OOoClasspathContainer implements IClasspathContainer {

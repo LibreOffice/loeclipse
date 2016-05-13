@@ -46,7 +46,6 @@ package org.libreoffice.ide.eclipse.core.wizards.utils;
 /**
  * Interface that pages have to implement to be listened using {@link IPageListener}.
  *
- * @author cedricbosdo
  *
  */
 public interface IListenablePage {

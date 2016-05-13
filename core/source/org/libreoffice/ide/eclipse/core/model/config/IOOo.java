@@ -53,7 +53,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 /**
  * Interface for a LibreOffice configuration instance. This can even be implemented as an URE instance.
  *
- * @author cedricbosdo
  */
 public interface IOOo {
 

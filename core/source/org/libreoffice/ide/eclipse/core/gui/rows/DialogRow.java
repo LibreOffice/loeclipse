@@ -55,7 +55,6 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Row class with a text and a configurable button to open a dialog.
  *
- * @author cedricbosdo
  *
  */
 public class DialogRow extends LabeledRow implements ModifyListener {

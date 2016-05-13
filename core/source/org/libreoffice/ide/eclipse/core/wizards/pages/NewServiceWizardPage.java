@@ -57,7 +57,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
 /**
  * Service creation wizard page.
  *
- * @author cedricbosdo
  */
 public class NewServiceWizardPage extends NewScopedElementWizardPage {
 

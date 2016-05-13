@@ -51,7 +51,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
  * UNO connection.
  * </p>
  *
- * @author cbosdonnat
  *
  */
 public class BaseUnoConnectionPage extends WizardPage {

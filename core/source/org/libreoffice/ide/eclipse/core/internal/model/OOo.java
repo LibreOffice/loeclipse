@@ -80,7 +80,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
  * class is used to abstract the platform LibreOffice is installed on.
  * </p>
  *
- * @author cedricbosdo
  *
  */
 public class OOo extends AbstractOOo {
@@ -372,7 +371,6 @@ public class OOo extends AbstractOOo {
     /**
      * A class providing the paths for the OOo3 installation.
      *
-     * @author cbosdonnat
      *
      */
     private class OOo3PathMapper {

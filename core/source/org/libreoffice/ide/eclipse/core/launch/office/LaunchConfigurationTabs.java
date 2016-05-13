@@ -40,7 +40,6 @@ import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 /**
  * Creates tabs in the LibreOffice launcher.
  *
- * @author cdan
  *
  */
 public class LaunchConfigurationTabs extends AbstractLaunchConfigurationTabGroup {

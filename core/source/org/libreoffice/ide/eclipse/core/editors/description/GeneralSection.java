@@ -55,7 +55,6 @@ import org.libreoffice.ide.eclipse.core.gui.ProjectSelectionDialog;
 import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
- * @author Cédric Bosdonnat
  *
  */
 public class GeneralSection extends LocalizedSection<DescriptionModel> {

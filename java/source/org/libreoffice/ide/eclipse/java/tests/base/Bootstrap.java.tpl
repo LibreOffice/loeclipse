@@ -76,7 +76,6 @@ import com.sun.star.uno.XComponentContext;
         xSet.insert( aSingleComponentFactory );
     </pre>
     
-    @author cbosdo Changed the class for a better control of the bootstrap using a custom classloader
 */  
 public class Bootstrap '{'
     

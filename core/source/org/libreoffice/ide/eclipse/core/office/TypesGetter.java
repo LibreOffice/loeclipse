@@ -57,7 +57,6 @@ import org.libreoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 /**
  * Facade class loading all the methods using a LibreOffice instance.
  *
- * @author cedricbosdo
  *
  */
 public class TypesGetter {
