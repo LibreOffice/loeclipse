@@ -79,7 +79,7 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
      */
     @Override
     public boolean performOk() {
-        return configPanel.saveConfiguration();
+        return configPanel.isValid();
     }
 
     /**

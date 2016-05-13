@@ -132,6 +132,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     private TextRow mSourceRow;
 
     private TextRow mIdlDirRow;
+    
+    private OOoConfigPanel mOOoConfigPanel;
 
     /**
      * The list of the listened Text field of the super class.
@@ -153,7 +155,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
             ((NewUnoProjectWizard) getWizard()).pageChanged(NewUnoProjectPage.this);
         }
     };
-    private OOoConfigPanel mOOoConfigPanel;
 
     /**
      * Default constructor.
@@ -366,6 +367,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         mLanguageRow.select(0);
         mLanguageRow.setFieldChangedListener(this);
 
+        // Add the LibreOffice/SDK path config
         mOOoConfigPanel = new OOoConfigPanel(body);
 
         addCustomDirsControls(body);

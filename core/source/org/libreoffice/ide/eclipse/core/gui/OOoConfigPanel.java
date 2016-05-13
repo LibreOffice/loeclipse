@@ -34,9 +34,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.eclipse.swt.widgets.MessageBox;
+import org.libreoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.libreoffice.ide.eclipse.core.gui.rows.FileRow;
+import org.libreoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.SDKContainer;
 import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
@@ -56,6 +59,9 @@ public class OOoConfigPanel {
     
     private static final String P_SDK_PATH = "__sdk_path";
     private static final String P_LIBREOFFICE_PATH = "__libreoffice_path";
+    
+    private boolean isLibreOfficeValid = true;
+    private boolean isSdkValid = true;
 
     /**
      * Constructor.
@@ -72,6 +78,35 @@ public class OOoConfigPanel {
         mLibreOfficeFileRow = new FileRow(group, P_LIBREOFFICE_PATH, Messages.getString("OOoTable.PathTitle"), true);
         mSdkFileRow = new FileRow(group, P_SDK_PATH, Messages.getString("SDKTable.PathTitle"), true);
         
+        mLibreOfficeFileRow.setFieldChangedListener(new IFieldChangedListener() {
+            @Override
+            public void fieldChanged(FieldEvent pEvent) {
+                if (pEvent.getValue() == OOoContainer.getOOo().getHome())
+                    return; // No change
+                try {
+                    OOoContainer.setLibreOfficePath(pEvent.getValue());
+                    isLibreOfficeValid = true;
+                } catch (InvalidConfigException e) {
+                    showMessageBox("This is not a valid LibreOffice path.\n" + e.getLocalizedMessage());
+                    isLibreOfficeValid = false;
+                }
+            }
+        });
+        mSdkFileRow.setFieldChangedListener(new IFieldChangedListener() {
+            @Override
+            public void fieldChanged(FieldEvent pEvent) {
+                if (pEvent.getValue() == SDKContainer.getSDK().getHome())
+                    return; // No change
+                try {
+                    SDKContainer.setSdkPath(pEvent.getValue());
+                    isSdkValid = true;
+                } catch (InvalidConfigException e) {
+                    showMessageBox("This is not a valid SDK Path.\n" + e.getLocalizedMessage());
+                    isSdkValid = false;
+                }
+            }
+        });
+        
         String libreofficePath = OOoContainer.getOOo().getHome();
         if (!libreofficePath.isEmpty())
             mLibreOfficeFileRow.setValue(libreofficePath);
@@ -80,16 +115,14 @@ public class OOoConfigPanel {
             mSdkFileRow.setValue(sdkPath);
     }
     
-    public boolean saveConfiguration() {
-        try {
-            OOoContainer.setLibreOfficePath(mLibreOfficeFileRow.getValue());
-            SDKContainer.setSdkPath(mSdkFileRow.getValue());
-        } catch (InvalidConfigException e) {
-            PluginLogger.error("Could not set LibreOffice/SDK.\n" + e.getMessage());
-            return false;
-        }
-
-        return true;
+    private void showMessageBox(String msg) {
+        MessageBox msgbox = new MessageBox(Display.getDefault().getActiveShell());
+        msgbox.setMessage(msg);
+        msgbox.open();
+    }
+    
+    public boolean isValid() {
+        return isLibreOfficeValid && isSdkValid;
     }
 
     /**
