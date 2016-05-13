@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Group;
 import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.gui.rows.FileRow;
 import org.libreoffice.ide.eclipse.core.model.OOoContainer;
+import org.libreoffice.ide.eclipse.core.model.SDKContainer;
 import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
@@ -86,13 +87,12 @@ public class OOoConfigPanel {
     public boolean saveConfiguration() {
         try {
             OOoContainer.setLibreOfficePath(mLibreOfficeFileRow.getValue());
+            SDKContainer.setSdkPath(mSdkFileRow.getValue());
         } catch (InvalidConfigException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
-        preferenceStore.setValue(OOEclipsePlugin.LIBREOFFICE_PATH_PREFERENCE_KEY, mLibreOfficeFileRow.getValue());
-        preferenceStore.setValue(OOEclipsePlugin.SDK_PATH_PREFERENCE_KEY, mSdkFileRow.getValue());
 
         return true;
     }

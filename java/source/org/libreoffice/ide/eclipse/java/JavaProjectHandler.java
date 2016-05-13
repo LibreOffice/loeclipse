@@ -76,6 +76,7 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
+import org.libreoffice.ide.eclipse.java.build.OOoClasspathContainer;
 import org.libreoffice.ide.eclipse.java.registration.RegistrationHelper;
 import org.libreoffice.ide.eclipse.java.tests.TestsHelper;
 import org.w3c.dom.Node;
@@ -92,7 +93,8 @@ public class JavaProjectHandler implements IProjectHandler {
     private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
-    private static final String[] KEPT_JARS = { "unoil.jar", //$NON-NLS-1$
+    private static final String[] KEPT_JARS = { 
+        "unoil.jar", //$NON-NLS-1$
         "ridl.jar", //$NON-NLS-1$
         "juh.jar", //$NON-NLS-1$
         "jurt.jar", //$NON-NLS-1$
@@ -105,6 +107,52 @@ public class JavaProjectHandler implements IProjectHandler {
      */
     @Override
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
+        IJavaProject javaProject = JavaCore.create(pProject);
+        try {
+            IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
+            IClasspathEntry[] entries = new IClasspathEntry[oldEntries.length + 1];
+
+            System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
+
+            IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + pOoo);
+            IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
+            entries[entries.length - 1] = containerEntry;
+
+            javaProject.setRawClasspath(entries, null);
+        } catch (JavaModelException e) {
+            PluginLogger.error(
+                Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
+        IJavaProject javaProject = JavaCore.create(pProject);
+        try {
+            IClasspathEntry[] entries = javaProject.getRawClasspath();
+            Vector<IClasspathEntry> newEntries = new Vector<IClasspathEntry>();
+
+            // Copy all the sources in a new entry container
+            for (int i = 0, length = entries.length; i < length; i++) {
+                IClasspathEntry entry = entries[i];
+
+                if (!entry.getPath().segment(0).equals(OOoClasspathContainer.ID)) {
+                    newEntries.add(entry);
+                }
+            }
+
+            IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
+            result = newEntries.toArray(result);
+
+            javaProject.setRawClasspath(result, null);
+
+        } catch (JavaModelException e) {
+            PluginLogger.error(
+                Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+        }
     }
 
     /**
@@ -227,13 +275,6 @@ public class JavaProjectHandler implements IProjectHandler {
         IUnoidlProject unoprj = ProjectsManager.getProject(name);
 
         return "--" + unoprj.getProperty(P_JAVA_VERSION); //$NON-NLS-1$
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
     }
 
     /**

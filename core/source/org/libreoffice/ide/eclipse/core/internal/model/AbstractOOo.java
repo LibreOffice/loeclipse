@@ -237,7 +237,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      */
     @Override
     public String getLabel(String pProperty) {
-        return getHome();
+        return toString();
     }
 
     /**
