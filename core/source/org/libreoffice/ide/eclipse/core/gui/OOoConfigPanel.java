@@ -35,8 +35,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.libreoffice.ide.eclipse.core.gui.rows.OOoRow;
-import org.libreoffice.ide.eclipse.core.gui.rows.SdkRow;
+import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.libreoffice.ide.eclipse.core.gui.rows.FileRow;
+import org.libreoffice.ide.eclipse.core.model.OOoContainer;
+import org.libreoffice.ide.eclipse.core.model.SDKContainer;
+import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Class providing the LibreOffice and SDK configuration rows.
@@ -48,8 +51,11 @@ public class OOoConfigPanel {
 
     private static final int GRID_COLUMNS = 3;
 
-    private SdkRow mSdkRow;
-    private OOoRow mOOoRow;
+    private FileRow mLibreOfficeFileRow;
+    private FileRow mSdkFileRow;
+    
+    private static final String P_SDK_PATH = "__sdk_path";
+    private static final String P_LIBREOFFICE_PATH = "__libreoffice_path";
 
     /**
      * Constructor.
@@ -58,43 +64,45 @@ public class OOoConfigPanel {
      *            the parent composite where to create the fields
      */
     public OOoConfigPanel(Composite pParent) {
-
         Group group = new Group(pParent, SWT.NONE);
         group.setText(Messages.getString("OOoConfigPanel.GroupTitle")); //$NON-NLS-1$
         group.setLayout(new GridLayout(GRID_COLUMNS, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-
-        mSdkRow = new SdkRow(group, new String(), null);
-        mOOoRow = new OOoRow(group, new String(), null);
+        
+        mLibreOfficeFileRow = new FileRow(group, P_LIBREOFFICE_PATH, Messages.getString("OOoTable.PathTitle"), true);
+        mSdkFileRow = new FileRow(group, P_SDK_PATH, Messages.getString("SDKTable.PathTitle"), true);
+        
+        String libreofficePath = OOoContainer.getOOo().getHome();
+        if (!libreofficePath.isEmpty())
+            mLibreOfficeFileRow.setValue(libreofficePath);
+        String sdkPath = SDKContainer.getSDK().getHome();
+        if (!sdkPath.isEmpty())
+            mSdkFileRow.setValue(sdkPath);
     }
+    
+    public boolean saveConfiguration() {
+        try {
+            OOoContainer.setLibreOfficePath(mLibreOfficeFileRow.getValue());
+            SDKContainer.setSdkPath(mSdkFileRow.getValue());
+        } catch (InvalidConfigException e) {
+            PluginLogger.error("Could not set LibreOffice/SDK.\n" + e.getMessage());
+            return false;
+        }
 
-    /**
-     * Disposes the object, mainly to unregister the listeners.
-     */
-    public void dispose() {
-        mOOoRow.dispose();
-        mSdkRow.dispose();
+        return true;
     }
 
     /**
      * @return SDK name selected
      */
     public String getSDKName() {
-        String sdkName = new String();
-        if (null != mSdkRow) {
-            sdkName = mSdkRow.getValue();
-        }
-        return sdkName;
+        return mSdkFileRow.getValue();
     }
 
     /**
      * @return OOo name selected
      */
     public String getOOoName() {
-        String oooName = new String();
-        if (null != mOOoRow) {
-            oooName = mOOoRow.getValue();
-        }
-        return oooName;
+        return mLibreOfficeFileRow.getValue();
     }
 }

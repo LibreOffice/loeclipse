@@ -77,13 +77,6 @@ public interface IOOo {
     public String getHome();
 
     /**
-     * Returns the LibreOffice name. It should be a unique identifier
-     *
-     * @return LibreOffice name
-     */
-    public String getName();
-
-    /**
      * <p>
      * Returns the path to the LibreOffice classes directory. These strings could be passed to the Path constructor to
      * get the folder object.

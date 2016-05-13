@@ -236,7 +236,7 @@ public class UnoTypeProvider {
             refreshCache();
         }
 
-        ArrayList<String> containers = new ArrayList<String>();
+        List<String> containers = new ArrayList<String>();
         containers.addAll(Arrays.asList(pContainers));
 
         // Use the set OOo and project as containers
@@ -245,7 +245,7 @@ public class UnoTypeProvider {
         }
 
         if (mOooInstance != null) {
-            containers.add(mOooInstance.getName());
+            containers.add(mOooInstance.toString());
         }
 
         LinkedList<InternalUnoType> types = new LinkedList<InternalUnoType>();

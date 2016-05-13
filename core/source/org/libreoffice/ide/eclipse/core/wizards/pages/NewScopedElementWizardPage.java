@@ -557,7 +557,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
                 mElementName = pEvent.getValue();
                 // Test if there is the scoped name already exists
                 String[] containers = new String[] { getProject().getTypesPath().toOSString(),
-                    getProject().getOOo().getName() };
+                    getProject().getOOo().getHome() };
                 boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue(), containers);
                 if (exists) {
                     setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$

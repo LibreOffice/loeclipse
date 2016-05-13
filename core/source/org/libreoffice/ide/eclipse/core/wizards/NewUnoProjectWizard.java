@@ -181,7 +181,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 
                 UnoFactoryData data = new UnoFactoryData();
 
-                data.setProperty(IUnoFactoryConstants.PROJECT_OOO, OOoContainer.getOOo(mMainPage.getOOoName()));
+                data.setProperty(IUnoFactoryConstants.PROJECT_OOO, OOoContainer.getOOo());
                 data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, mMainPage.getPrefix());
 
                 UnoFactoryData serviceData = new UnoFactoryData();

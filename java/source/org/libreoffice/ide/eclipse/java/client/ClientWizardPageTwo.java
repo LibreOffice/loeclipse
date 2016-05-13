@@ -99,7 +99,7 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
 
         // Update the classpath
         IOOo ooo = mCnxPage.getOoo();
-        IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
+        IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo);
         IClasspathEntry oooEntry = JavaCore.newContainerEntry(path);
 
         IPath jodPath = project.getFolder(ClientWizard.JODCONNECTOR_LIBNAME).getFullPath();

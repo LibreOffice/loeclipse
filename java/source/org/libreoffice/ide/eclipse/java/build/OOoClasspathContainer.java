@@ -99,7 +99,7 @@ public class OOoClasspathContainer implements IClasspathContainer {
     @Override
     public String getDescription() {
         String pattern = Messages.getString("OOoClasspathContainer.LibrariesName"); //$NON-NLS-1$
-        String descr = MessageFormat.format(pattern, mOOo.getName());
+        String descr = MessageFormat.format(pattern, mOOo);
         return descr;
     }
 

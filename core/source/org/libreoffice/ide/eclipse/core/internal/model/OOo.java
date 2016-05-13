@@ -105,21 +105,6 @@ public class OOo extends AbstractOOo {
         super(pOooHome);
     }
 
-    /**
-     * Creating a new LibreOffice instance specifying its home directory and name.
-     *
-     * @param pOooHome
-     *            the LibreOffice installation path
-     * @param pOooName
-     *            the LibreOffice instance name
-     *
-     * @throws InvalidConfigException
-     *             is thrown if the home directory doesn't contains the required files and directories
-     */
-    public OOo(String pOooHome, String pOooName) throws InvalidConfigException {
-        super(pOooHome, pOooName);
-    }
-
     // ----------------------------------------------------- IOOo Implementation
 
     /**
@@ -140,6 +125,27 @@ public class OOo extends AbstractOOo {
 
         mMapper = new OOo3PathMapper(pHome);
         super.setHome(pHome);
+    }
+
+    @Override
+    public String toString() {
+        Path unorcPath = new Path(getUnorcPath());
+        File unorcFile = unorcPath.toFile();
+
+        if (unorcFile.exists() && unorcFile.isFile()) {
+
+            Properties bootstraprcProperties = new Properties();
+            try {
+                bootstraprcProperties.load(new FileInputStream(unorcFile));
+
+                if (bootstraprcProperties.containsKey(K_PRODUCTKEY)) {
+                    return bootstraprcProperties.getProperty(K_PRODUCTKEY);
+                }
+            } catch (Exception e) {
+            }
+        }
+
+        return "LibreOffice";
     }
 
     /**
@@ -217,59 +223,6 @@ public class OOo extends AbstractOOo {
     @Override
     public String getUnoPath() {
         return mMapper.getUnoPath();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setName(String pName) {
-
-        String name = pName;
-        if (name == null || name.equals("")) { //$NON-NLS-1$
-            name = getOOoName();
-        }
-
-        super.setName(name);
-    }
-
-    /**
-     * @return The LibreOffice name as defined in Bootstraprc or <code>null</code>.
-     */
-    private String getOOoName() {
-
-        String oooname = null;
-
-        Path unorcPath = new Path(getUnorcPath());
-        File unorcFile = unorcPath.toFile();
-
-        if (unorcFile.exists() && unorcFile.isFile()) {
-
-            Properties bootstraprcProperties = new Properties();
-            try {
-                bootstraprcProperties.load(new FileInputStream(unorcFile));
-
-                // Checks if the name and buildid properties are set
-                if (bootstraprcProperties.containsKey(K_PRODUCTKEY)) {
-
-                    // Sets the both value
-                    oooname = bootstraprcProperties.getProperty(K_PRODUCTKEY);
-                }
-
-            } catch (Exception e) {
-                // Nothing to report
-            }
-        }
-
-        return oooname;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "OOo " + getName(); //$NON-NLS-1$
     }
 
     /**
