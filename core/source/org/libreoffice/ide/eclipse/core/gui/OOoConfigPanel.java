@@ -51,11 +51,12 @@ public class OOoConfigPanel {
 
     private static final int GRID_COLUMNS = 3;
 
+    private IFieldChangedListener fieldChangedListener;
     private FileRow mLibreOfficeFileRow;
     private FileRow mSdkFileRow;
 
-    private static final String P_SDK_PATH = "__sdk_path";
-    private static final String P_LIBREOFFICE_PATH = "__libreoffice_path";
+    public static final String P_SDK_PATH = "__sdk_path";
+    public static final String P_LIBREOFFICE_PATH = "__libreoffice_path";
 
     private boolean isLibreOfficeValid = true;
     private boolean isSdkValid = true;
@@ -87,6 +88,10 @@ public class OOoConfigPanel {
                     showMessageBox("This is not a valid LibreOffice path.\n" + e.getLocalizedMessage());
                     isLibreOfficeValid = false;
                 }
+
+                // Notify external listeners also
+                if (fieldChangedListener != null)
+                    fieldChangedListener.fieldChanged(pEvent);
             }
         });
         mSdkFileRow.setFieldChangedListener(new IFieldChangedListener() {
@@ -101,6 +106,10 @@ public class OOoConfigPanel {
                     showMessageBox("This is not a valid SDK Path.\n" + e.getLocalizedMessage());
                     isSdkValid = false;
                 }
+
+                // Notify external listeners also
+                if (fieldChangedListener != null)
+                    fieldChangedListener.fieldChanged(pEvent);
             }
         });
 
@@ -110,6 +119,10 @@ public class OOoConfigPanel {
         String sdkPath = SDKContainer.getSDK().getHome();
         if (!sdkPath.isEmpty())
             mSdkFileRow.setValue(sdkPath);
+    }
+
+    public void setFieldChangedListener(IFieldChangedListener listener) {
+        fieldChangedListener = listener;
     }
 
     private void showMessageBox(String msg) {

@@ -366,6 +366,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
 
         // Add the LibreOffice/SDK path config
         mOOoConfigPanel = new OOoConfigPanel(body);
+        mOOoConfigPanel.setFieldChangedListener(this);
 
         addCustomDirsControls(body);
     }
@@ -495,6 +496,16 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
             boolean useCustom = mCustomDirsRow.getBooleanValue();
             mSourceRow.setEnabled(useCustom);
             mIdlDirRow.setEnabled(useCustom);
+        } else if (pEvent.getProperty().equals(OOoConfigPanel.P_LIBREOFFICE_PATH)) {
+            if (!mOOoConfigPanel.isValid()) {
+                setErrorMessage("Invalid LibreOffice path.");
+            }
+            setPageComplete(mOOoConfigPanel.isValid());
+        } else if (pEvent.getProperty().equals(OOoConfigPanel.P_SDK_PATH)) {
+            if (!mOOoConfigPanel.isValid()) {
+                setErrorMessage("Invalid SDK path.");
+            }
+            setPageComplete(mOOoConfigPanel.isValid());
         }
         ((NewUnoProjectWizard) getWizard()).pageChanged(this);
     }
