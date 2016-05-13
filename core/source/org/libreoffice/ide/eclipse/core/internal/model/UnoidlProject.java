@@ -73,9 +73,7 @@ import org.libreoffice.ide.eclipse.core.model.language.LanguagesHelper;
 
 /**
  * This class implements the UNO-IDL and project nature interface.
- *
- *
- */
+*/
 public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     /**
@@ -133,7 +131,6 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     private String mIdlDir;
 
     private String mSourcesDir;
-
 
     /**
      * Removes the listeners needed by the UNO project.

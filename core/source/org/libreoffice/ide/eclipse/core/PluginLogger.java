@@ -114,8 +114,8 @@ public class PluginLogger {
     public static void warning(String pMessage, Throwable pExc) {
         if (!sLevel.equals(LogLevels.ERROR)) {
             OOEclipsePlugin.getDefault().getLog()
-            .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
-                IStatus.WARNING, pMessage, pExc));
+                .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
+                    IStatus.WARNING, pMessage, pExc));
         }
     }
 

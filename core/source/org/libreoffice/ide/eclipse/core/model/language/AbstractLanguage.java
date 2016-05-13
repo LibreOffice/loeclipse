@@ -41,9 +41,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Base class for the language extensions.
- *
- *
- */
+*/
 public abstract class AbstractLanguage {
 
     private IConfigurationElement mConfig;

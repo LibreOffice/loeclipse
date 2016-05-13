@@ -12,9 +12,7 @@ import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
  *
  * @param <ModelType>
  *            the type of the model object for the section
- *
- *
- */
+*/
 public abstract class AbstractSection<ModelType extends IModel> extends SectionPart implements IModelChangedListener {
 
     private ModelType mModel;

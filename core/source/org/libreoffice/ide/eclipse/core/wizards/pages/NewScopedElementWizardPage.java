@@ -70,9 +70,7 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.IPageListener;
 
 /**
  * Abstract class for a wizard page to create a scoped element such as a service or an interface.
- *
- *
- */
+*/
 public abstract class NewScopedElementWizardPage extends WizardPage implements IFieldChangedListener, IListenablePage {
 
     private static final String P_PACKAGE = "__package"; //$NON-NLS-1$

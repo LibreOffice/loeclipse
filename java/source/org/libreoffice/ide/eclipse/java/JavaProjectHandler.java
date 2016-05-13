@@ -84,15 +84,13 @@ import org.xml.sax.InputSource;
 
 /**
  * The Project handler implementation for Java.
- *
- *
- */
+*/
 public class JavaProjectHandler implements IProjectHandler {
 
     private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
-    private static final String[] KEPT_JARS = { 
+    private static final String[] KEPT_JARS = {
         "unoil.jar", //$NON-NLS-1$
         "ridl.jar", //$NON-NLS-1$
         "juh.jar", //$NON-NLS-1$
@@ -123,7 +121,7 @@ public class JavaProjectHandler implements IProjectHandler {
                 Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

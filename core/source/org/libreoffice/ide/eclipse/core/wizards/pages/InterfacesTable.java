@@ -78,7 +78,7 @@ public class InterfacesTable extends AbstractTable {
         super(pParent, Messages.getString("InterfacesTable.Title"), //$NON-NLS-1$
             new String[] { Messages.getString("InterfacesTable.OptionalTitle"), //$NON-NLS-1$
                 Messages.getString("InterfacesTable.NameTitle") //$NON-NLS-1$
-        }, new int[] { OPTIONAL_WIDTH, NAME_WIDTH },
+            }, new int[] { OPTIONAL_WIDTH, NAME_WIDTH },
             new String[] { InheritanceLine.OPTIONAL, InheritanceLine.NAME });
     }
 
@@ -137,9 +137,7 @@ public class InterfacesTable extends AbstractTable {
     /**
      * The interface names are stored in path-like strings, ie: using "::" as separator. This class describes a line in
      * the table and thus has to implement {@link ITableElement} interface
-     *
-     *
-     */
+    */
     public class InheritanceLine implements ITableElement {
 
         public static final String OPTIONAL = "__optional"; //$NON-NLS-1$

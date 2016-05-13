@@ -66,9 +66,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  *        &lt;/description&gt;
  *     &lt;/wizard&gt;
  * </pre>
- *
- *
- */
+*/
 public class UnoProjectPulldownAction extends AbstractPulldownAction {
 
     /**

@@ -55,9 +55,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Interface defining a set of methods for to do the language specific tasks to build UNO projects.
- *
- *
- */
+*/
 public interface ILanguageBuilder {
 
     /**

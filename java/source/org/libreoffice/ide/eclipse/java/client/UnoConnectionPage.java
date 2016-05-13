@@ -35,9 +35,7 @@ import org.libreoffice.ide.eclipse.core.wizards.pages.BaseUnoConnectionPage;
 
 /**
  * Wizard page for the UNO Client configuration.
- *
- *
- */
+*/
 public class UnoConnectionPage extends BaseUnoConnectionPage {
 
     private static final String PIPE_PATTERN = "cnx = new PipeOpenOfficeConnection( \"{0}\" );"; //$NON-NLS-1$

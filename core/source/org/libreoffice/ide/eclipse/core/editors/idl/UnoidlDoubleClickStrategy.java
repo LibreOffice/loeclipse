@@ -50,9 +50,7 @@ import org.eclipse.jface.text.ITextViewer;
 
 /**
  * This class is responsible for the selection of words using double-clics in the UNO-IDL editor.
- *
- *
- */
+*/
 public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
     protected ITextViewer mText;

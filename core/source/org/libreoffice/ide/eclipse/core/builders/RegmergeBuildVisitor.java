@@ -53,9 +53,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Class visiting each child of the urd folder to merge it with the common <code>types.rdb</code> registry.
- *
- *
- */
+*/
 public class RegmergeBuildVisitor implements IFileVisitor {
 
     /**

@@ -52,9 +52,7 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Class representing a URE installation.
- *
- *
- */
+*/
 public class URE extends AbstractOOo {
 
     /**

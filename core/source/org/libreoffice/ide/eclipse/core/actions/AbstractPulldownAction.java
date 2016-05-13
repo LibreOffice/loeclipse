@@ -72,9 +72,7 @@ import org.libreoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
 /**
  * Abstract class to create a pulldown menu action.
- *
- *
- */
+*/
 public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldownDelegate {
 
     private String mParameterName = ""; //$NON-NLS-1$

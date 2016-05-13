@@ -60,9 +60,7 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Table representing the interface members in the interface wizard page.
- *
- *
- */
+*/
 public class InterfaceMembersTable extends AbstractTable {
 
     private static final String TYPE = "__type"; //$NON-NLS-1$
@@ -83,7 +81,7 @@ public class InterfaceMembersTable extends AbstractTable {
             new String[] { Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
                 Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
                 Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
-        }, new int[] { NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH }, new String[] { NAME, TYPE, OPTIONS });
+            }, new int[] { NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH }, new String[] { NAME, TYPE, OPTIONS });
     }
 
     /**

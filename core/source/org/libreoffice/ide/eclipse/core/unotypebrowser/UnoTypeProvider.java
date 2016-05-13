@@ -58,9 +58,7 @@ import org.libreoffice.ide.eclipse.core.office.TypesGetter;
 
 /**
  * Class providing UNO types from a LibreOffice instance and optionally from a UNO project.
- *
- *
- */
+*/
 public class UnoTypeProvider {
 
     public static final int ALL_TYPES = 2047;
@@ -271,9 +269,7 @@ public class UnoTypeProvider {
 
     /**
      * The job extracting the types from LibreOffice.
-     *
-     *
-     */
+    */
     private class UnoTypesGetterThread extends Thread {
 
         /**

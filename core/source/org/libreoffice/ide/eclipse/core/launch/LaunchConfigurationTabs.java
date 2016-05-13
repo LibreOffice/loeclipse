@@ -50,9 +50,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * Tabs in the URE launch configuration dialog.
- *
- *
- */
+*/
 public class LaunchConfigurationTabs extends AbstractLaunchConfigurationTabGroup {
 
     /**

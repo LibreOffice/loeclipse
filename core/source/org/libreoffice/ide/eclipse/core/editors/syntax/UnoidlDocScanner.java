@@ -56,9 +56,7 @@ import org.libreoffice.ide.eclipse.core.editors.utils.ColorProvider;
 /**
  * UNO-IDL comment scanner. Used by the UNO-IDL viewer configuration. In order to fully understand the editor
  * mechanisms, please report to Eclipse plugin developer's guide.
- *
- *
- */
+*/
 public class UnoidlDocScanner extends RuleBasedScanner {
 
     /**

@@ -32,9 +32,7 @@ package org.libreoffice.ide.eclipse.core.model.description;
 
 /**
  * Class defining constants for the XML tokens contained in description.xml file.
- *
- *
- */
+*/
 public class XMLTokens {
 
     public static final String ATTR_XMLNS = "xmlns"; //$NON-NLS-1$

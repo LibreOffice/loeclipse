@@ -32,9 +32,7 @@ package org.libreoffice.ide.eclipse.core.model.utils;
 
 /**
  * Interface for listened models.
- *
- *
- */
+*/
 public interface IModel {
 
     /**

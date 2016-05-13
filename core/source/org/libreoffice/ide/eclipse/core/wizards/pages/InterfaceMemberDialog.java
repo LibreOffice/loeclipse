@@ -89,9 +89,7 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
  * even after disposing the dialog.
  *
  * This class shouldn't be sub-classed.
- *
- *
- */
+*/
 public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChangedListener {
 
     private static final String MEMBER_TYPE = "__member_type"; //$NON-NLS-1$

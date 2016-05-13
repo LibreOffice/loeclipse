@@ -53,9 +53,7 @@ import org.eclipse.ui.ide.IDE;
 
 /**
  * A Text editor to use as a tab in multiple page editors.
- *
- *
- */
+*/
 public class SourcePage extends OOTextEditor implements IFormPage {
 
     private FormEditor mEditor;

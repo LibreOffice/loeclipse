@@ -66,9 +66,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * First page of the new UNO extension export wizard.
- *
- *
- */
+*/
 public class UnoPackageExportPage extends WizardPage {
 
     private static final int DESTINATION_PART_COLS = 3;
@@ -378,9 +376,7 @@ public class UnoPackageExportPage extends WizardPage {
 
     /**
      * Thread performing the package deployment into LibreOffice.
-     *
-     *
-     */
+    */
     class DeployerJob implements Runnable {
 
         private IOOo mOOo;

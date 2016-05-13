@@ -58,9 +58,7 @@ import org.libreoffice.ide.eclipse.core.editors.Messages;
 
 /**
  * Page displaying the Package properties in a more user friendly way.
- *
- *
- */
+*/
 public class PackageFormPage extends FormPage {
 
     private ContentsSection mContents;

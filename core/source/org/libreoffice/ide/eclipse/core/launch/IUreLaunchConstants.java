@@ -45,9 +45,7 @@ package org.libreoffice.ide.eclipse.core.launch;
 
 /**
  * Constants used for the URE application launch configuration.
- *
- *
- */
+*/
 public interface IUreLaunchConstants {
 
     String PROJECT_NAME = "project_name"; //$NON-NLS-1$

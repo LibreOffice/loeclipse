@@ -79,9 +79,7 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
  * A MacOS installation of LibreOffice will have some different paths, and of course the windows installation too. This
  * class is used to abstract the platform LibreOffice is installed on.
  * </p>
- *
- *
- */
+*/
 public class OOo extends AbstractOOo {
 
     /**
@@ -337,7 +335,7 @@ public class OOo extends AbstractOOo {
         String shellCommand = MessageFormat.format("unopkg add -f \"{0}\"", path); //$NON-NLS-1$
 
         // Don't get the system env variables - the $PATH might contain other `unopkg`s which we don't want.
-        String[] env = new String[]{};
+        String[] env = new String[] {};
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
         env = SystemHelper.addEnv(env, "PATH", getHome() + FILE_SEP + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
         env = addUserProfile(pUserInstallation, env);
@@ -370,9 +368,7 @@ public class OOo extends AbstractOOo {
 
     /**
      * A class providing the paths for the OOo3 installation.
-     *
-     *
-     */
+    */
     private class OOo3PathMapper {
 
         private String mHome;

@@ -64,9 +64,7 @@ import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section showing the compatibility parts of the description.xml file.
- *
- *
- */
+*/
 public class IntegrationSection extends AbstractSection<DescriptionModel> {
 
     static final String SEPARATOR = ","; //$NON-NLS-1$
@@ -206,9 +204,7 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
 
     /**
      * Dialog used to select platforms.
-     *
-     *
-     */
+    */
     private class PlatformDialog extends Dialog {
 
         private CheckboxTableViewer mList;

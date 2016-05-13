@@ -68,9 +68,7 @@ import org.eclipse.swt.widgets.Link;
  * <li>Create the label and field controls to be used</li>
  * <li>Call createContents</li>
  * </ol>
- *
- *
- */
+*/
 public abstract class LabeledRow {
 
     public static final int LAYOUT_COLUMNS = 3;

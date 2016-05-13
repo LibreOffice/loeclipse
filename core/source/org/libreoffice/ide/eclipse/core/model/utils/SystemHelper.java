@@ -62,9 +62,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Helper class for system variables handling.
- *
- *
- */
+*/
 public class SystemHelper {
 
     public static final String PATH_SEPARATOR = System.getProperty("path.separator"); //$NON-NLS-1$

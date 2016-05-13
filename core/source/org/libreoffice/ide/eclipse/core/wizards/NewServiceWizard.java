@@ -67,9 +67,7 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
  * The wizard for the creation of UNO services.
- *
- *
- */
+*/
 public class NewServiceWizard extends BasicNewResourceWizard implements INewWizard {
 
     private IWorkbenchPage mActivePage;

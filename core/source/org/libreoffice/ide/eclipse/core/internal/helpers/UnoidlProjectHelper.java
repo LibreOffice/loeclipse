@@ -80,9 +80,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Helper class for UNO-IDL project handling.
- *
- *
- */
+*/
 public class UnoidlProjectHelper {
 
     /**

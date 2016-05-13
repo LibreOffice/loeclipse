@@ -32,9 +32,7 @@ package org.libreoffice.ide.eclipse.core.model.description;
 
 /**
  * Simple structure storing the publisher informations.
- *
- *
- */
+*/
 public class PublisherInfos {
 
     private DescriptionModel mModel;

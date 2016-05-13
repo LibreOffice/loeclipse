@@ -57,9 +57,7 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
  * This class provides colors of the editor to all the other objects.
- *
- *
- */
+*/
 public class ColorProvider {
     protected Map<String, Color> mColorTable = new HashMap<String, Color>();
     private IPreferenceStore mStore;

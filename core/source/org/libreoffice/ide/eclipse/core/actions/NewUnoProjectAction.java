@@ -56,9 +56,7 @@ import org.libreoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
 /**
  * This action launches the New UNO Project wizard.
- *
- *
- */
+*/
 public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
 
     private IWorkbenchWindow mWindow;

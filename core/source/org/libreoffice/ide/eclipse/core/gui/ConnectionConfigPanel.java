@@ -56,9 +56,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * Use the {@link #setPatterns(String, String)} method to define the patterns depending on the implementation language.
  * </p>
- *
- *
- */
+*/
 public class ConnectionConfigPanel {
 
     private static final String[] TYPE_VALUES = { Messages.getString("ConnectionConfigPanel.Pipe"), //$NON-NLS-1$

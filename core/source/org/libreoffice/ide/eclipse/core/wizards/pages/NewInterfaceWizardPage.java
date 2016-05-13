@@ -64,9 +64,7 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Interface creation page.
- *
- *
- */
+*/
 public class NewInterfaceWizardPage extends NewScopedElementWizardPage implements ISelectionChangedListener {
 
     private static final int MAX_HEIGHT = 600;

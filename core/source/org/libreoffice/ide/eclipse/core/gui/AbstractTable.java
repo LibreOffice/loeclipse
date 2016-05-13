@@ -86,9 +86,7 @@ import org.eclipse.swt.widgets.TableItem;
  * <li>{@link #createCellEditors(Table)} to customize how to edit the cells of the differents columns of the table.</li>
  * </ul>
  * </p>
- *
- *
- */
+*/
 public class AbstractTable extends Composite implements ISelectionProvider {
 
     protected Table mTable;
@@ -367,9 +365,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     /**
      * Provides the content of the table. The main method used here is the {@link #getElements(Object)} one which
      * returns all the {@link ITableElement} lines.
-     *
-     *
-     */
+    */
     private class AbstractContentProvider implements IStructuredContentProvider {
 
         /**

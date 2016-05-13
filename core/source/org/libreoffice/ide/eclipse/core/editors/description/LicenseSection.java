@@ -57,9 +57,7 @@ import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * License section class.
- *
- *
- */
+*/
 public class LicenseSection extends LocalizedSection<DescriptionModel> {
 
     private static final int LAYOUT_COLS = 3;

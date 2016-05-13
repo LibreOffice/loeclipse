@@ -53,9 +53,7 @@ import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
  * Implementations should be aware that the {@link #fillData(UnoFactoryData)} method can be called even if the page
  * content has not been created.
  * </p>
- *
- *
- */
+*/
 public abstract class LanguageWizardPage extends WizardPage {
 
     /**

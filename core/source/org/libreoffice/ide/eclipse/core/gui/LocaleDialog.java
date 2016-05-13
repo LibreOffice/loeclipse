@@ -27,9 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Dialog class for the selection of a locale.
- *
- *
- */
+*/
 public class LocaleDialog extends Dialog {
 
     private ComboViewer mLocaleList;

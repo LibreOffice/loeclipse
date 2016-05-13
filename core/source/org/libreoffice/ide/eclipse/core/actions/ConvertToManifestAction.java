@@ -58,9 +58,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Action converting the legacy package.properties into manifest.xml file.
- *
- *
- */
+*/
 public class ConvertToManifestAction implements IObjectActionDelegate {
 
     private IFile mPackageFile;

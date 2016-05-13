@@ -86,9 +86,7 @@ import org.libreoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 
 /**
  * Basic and dialog libraries section of the Contents form page of the package editor.
- *
- *
- */
+*/
 public class LibsSection extends SectionPart {
 
     private static final String P_LIBTYPE = "__p_libtype"; //$NON-NLS-1$

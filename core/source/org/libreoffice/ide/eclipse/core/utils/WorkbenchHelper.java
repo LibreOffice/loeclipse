@@ -44,9 +44,7 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 
 /**
  * Provides a set of useful method to perform actions on the Eclipse workbench.
- *
- *
- */
+*/
 public class WorkbenchHelper {
 
     /**

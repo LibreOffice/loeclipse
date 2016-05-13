@@ -2,9 +2,7 @@ package org.libreoffice.ide.eclipse.core.model.config;
 
 /**
  * Gets a chance to add some more env variables just before starting an LibreOffice process.
- *
- *
- */
+*/
 public interface IExtraOptionsProvider {
 
     /**

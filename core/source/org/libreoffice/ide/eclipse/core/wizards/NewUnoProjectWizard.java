@@ -72,9 +72,7 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
  * New UNO project wizard.
- *
- *
- */
+*/
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 
     protected NewUnoProjectPage mMainPage;

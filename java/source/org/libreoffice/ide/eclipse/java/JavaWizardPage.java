@@ -56,9 +56,7 @@ import org.libreoffice.ide.eclipse.core.model.language.LanguageWizardPage;
 
 /**
  * Java configuration page of the new UNO project wizard.
- *
- *
- */
+*/
 public class JavaWizardPage extends LanguageWizardPage {
 
     public static final String JAVA_VERSION = "java_version"; //$NON-NLS-1$

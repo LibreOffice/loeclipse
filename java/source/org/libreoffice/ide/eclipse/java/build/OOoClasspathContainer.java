@@ -56,9 +56,7 @@ import org.libreoffice.ide.eclipse.java.JavaProjectHandler;
 
 /**
  * Container for the OOo classes jars.
- *
- *
- */
+*/
 public class OOoClasspathContainer implements IClasspathContainer {
 
     public static final String ID = "org.libreoffice.ide.eclipse.java.OOO_CONTAINER"; //$NON-NLS-1$

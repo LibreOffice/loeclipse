@@ -23,9 +23,7 @@ package org.libreoffice.ide.eclipse.java.export;
 
 /**
  * Controller object for the fields of the {@link JavaExportPart} view.
- *
- *
- */
+*/
 public class JavaExportPageControl {
 
     public static final String DEFAULT_ANT_FILENAME = "build.xml"; //$NON-NLS-1$

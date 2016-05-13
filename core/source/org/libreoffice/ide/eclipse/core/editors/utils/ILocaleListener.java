@@ -34,9 +34,7 @@ import java.util.Locale;
 
 /**
  * Interface to implement in order to get notified of Locale changes in a control.
- *
- *
- */
+*/
 public interface ILocaleListener {
 
     /**

@@ -53,9 +53,7 @@ import org.libreoffice.ide.eclipse.core.gui.OOoConfigPanel;
 
 /**
  * Preference page to configure the plugin available OOo and SDK instances.
- *
- *
- */
+*/
 public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPreferencePage {
 
     private OOoConfigPanel configPanel;
@@ -67,7 +65,7 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
     protected Control createContents(Composite pParent) {
         noDefaultAndApplyButton();
         setPreferenceStore(OOEclipsePlugin.getDefault().getPreferenceStore());
-                
+
         configPanel = new OOoConfigPanel(pParent);
 
         return pParent;

@@ -45,9 +45,7 @@ package org.libreoffice.ide.eclipse.core;
 
 /**
  * The log levels to set on {@link PluginLogger}.
- *
- *
- */
+*/
 public enum LogLevels {
     ERROR, WARNING, INFO, DEBUG;
 }

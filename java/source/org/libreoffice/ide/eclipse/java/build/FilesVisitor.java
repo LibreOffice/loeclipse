@@ -39,9 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Resource visitor collecting the files of a directory.
- *
- *
- */
+*/
 public class FilesVisitor implements IResourceVisitor {
 
     ArrayList<IFile> mFiles = new ArrayList<IFile>();

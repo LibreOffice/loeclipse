@@ -50,9 +50,7 @@ import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 /**
  * This interface contains the keys for the data to provide to the UNO factory. This interface shouldn't define any
  * language specific data key.
- *
- *
- */
+*/
 public interface IUnoFactoryConstants {
 
     // Project keys

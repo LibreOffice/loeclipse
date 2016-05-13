@@ -48,9 +48,7 @@ package org.libreoffice.ide.eclipse.core.gui.rows;
  *
  * @see FieldEvent for the notification event description
  * @see LabeledRow for the base class of the listened rows
- *
- *
- */
+*/
 public interface IFieldChangedListener {
 
     /**

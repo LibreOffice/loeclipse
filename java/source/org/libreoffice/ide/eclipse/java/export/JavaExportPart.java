@@ -58,9 +58,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Dialog part for the Ant scripts export configuration.
- *
- *
- */
+*/
 public class JavaExportPart extends LanguageExportPart {
 
     private Button mSaveScripts;

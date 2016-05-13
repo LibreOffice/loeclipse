@@ -67,7 +67,7 @@ public class OOoContainer {
     public static void setLibreOfficePath(String path) throws InvalidConfigException {
         sInstance.mLibreOfficeInstance = new OOo(path);
     }
-    
+
     public static IOOo getOOo() {
         return sInstance.mLibreOfficeInstance;
     }
@@ -91,7 +91,7 @@ public class OOoContainer {
      */
     public static void save() {
         IPreferenceStore store = OOEclipsePlugin.getDefault().getPreferenceStore();
-        
+
         store.setValue(OOEclipsePlugin.LIBREOFFICE_PATH_PREFERENCE_KEY, sInstance.mLibreOfficeInstance.getHome());
     }
 }

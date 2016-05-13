@@ -55,9 +55,7 @@ import org.libreoffice.ide.eclipse.core.editors.utils.OOTextEditor;
  *
  * @see UnoidlConfiguration for the viewer configuration
  * @see UnoidlDocumentProvider for the document provider
- *
- *
- */
+*/
 public class UnoidlEditor extends OOTextEditor {
 
     /**

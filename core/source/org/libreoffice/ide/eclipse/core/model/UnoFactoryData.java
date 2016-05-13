@@ -48,9 +48,7 @@ import java.util.Vector;
 
 /**
  * This class contains the data describing a the object to create by the Uno factory.
- *
- *
- */
+*/
 public class UnoFactoryData {
 
     private HashMap<String, Object> mProperties = new HashMap<String, Object>();

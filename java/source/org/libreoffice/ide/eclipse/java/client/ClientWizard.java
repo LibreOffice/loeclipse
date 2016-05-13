@@ -53,9 +53,7 @@ import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 
 /**
  * Class for the Java UNO client wizard.
- *
- *
- */
+*/
 public class ClientWizard extends BasicNewResourceWizard {
 
     public static final String JODCONNECTOR_LIBNAME = "jodconnector.jar"; //$NON-NLS-1$

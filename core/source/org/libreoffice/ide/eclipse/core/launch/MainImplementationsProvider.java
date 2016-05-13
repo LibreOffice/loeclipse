@@ -56,9 +56,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Class providing all the <code>XMain</code> implementations of a UNO project.
- *
- *
- */
+*/
 public class MainImplementationsProvider {
 
     /**

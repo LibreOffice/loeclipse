@@ -36,9 +36,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Abstract class for the language specific controls part in the OXT export wizard.
- *
- *
- */
+*/
 public abstract class LanguageExportPart {
 
     private ManifestExportPage mPage;

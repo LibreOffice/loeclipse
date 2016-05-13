@@ -61,9 +61,7 @@ import org.libreoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 
 /**
  * This preferences page defines plugin generic values like log level.
- *
- *
- */
+*/
 public class MainPage extends PreferencePage implements IWorkbenchPreferencePage {
 
     private static final String LOGLEVEL = "__log_level"; //$NON-NLS-1$

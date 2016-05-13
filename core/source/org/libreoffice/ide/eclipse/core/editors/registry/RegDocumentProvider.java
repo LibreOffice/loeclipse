@@ -63,9 +63,7 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
  * Provides the document content for the registry editor. This class uses the <code>regview</code> tool.
  *
  * @see org.libreoffice.ide.eclipse.core.editors.registry.RegEditor for the editor
- *
- *
- */
+*/
 public class RegDocumentProvider extends FileDocumentProvider {
 
     /**

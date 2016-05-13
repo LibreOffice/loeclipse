@@ -53,9 +53,7 @@ package org.libreoffice.ide.eclipse.core.editors.syntax;
  * <li>UNO-IDL types</li>
  * </ul>
  * </p>
- *
- *
- */
+*/
 public interface IUnoidlSyntax {
 
     /**

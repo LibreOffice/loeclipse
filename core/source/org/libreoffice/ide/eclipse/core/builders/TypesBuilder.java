@@ -78,9 +78,7 @@ import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
  * generating the language specific type files</li>
  * </ul>
  * </p>
- *
- *
- */
+*/
 public class TypesBuilder extends IncrementalProjectBuilder {
 
     /**

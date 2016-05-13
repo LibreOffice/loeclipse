@@ -35,9 +35,7 @@ import java.util.ResourceBundle;
 
 /**
  * Messages for the package.
- *
- *
- */
+*/
 public class Messages {
     private static final String BUNDLE_NAME = "org.libreoffice.ide.eclipse.java.build.messages"; //$NON-NLS-1$
 

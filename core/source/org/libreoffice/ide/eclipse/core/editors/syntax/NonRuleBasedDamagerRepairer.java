@@ -59,9 +59,7 @@ import org.eclipse.swt.custom.StyleRange;
 /**
  * The UNO-IDL document repairer. This is used by the UNO-IDL editor. In order to fully understand the editor
  * mechanisms, please report to Eclipse plugin developer's guide.
- *
- *
- */
+*/
 public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPresentationRepairer {
 
     /**

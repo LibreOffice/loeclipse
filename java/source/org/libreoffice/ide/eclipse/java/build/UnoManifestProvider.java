@@ -39,9 +39,7 @@ import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 
 /**
  * Class providing the MANIFEST.MF contents to the Jar writer.
- *
- *
- */
+*/
 @SuppressWarnings("restriction")
 public class UnoManifestProvider extends ManifestProvider {
 

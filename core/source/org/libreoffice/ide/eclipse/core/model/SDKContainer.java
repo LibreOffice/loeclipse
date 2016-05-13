@@ -92,7 +92,7 @@ public class SDKContainer {
      */
     public static void save() {
         IPreferenceStore store = OOEclipsePlugin.getDefault().getPreferenceStore();
-        
+
         store.setValue(OOEclipsePlugin.LIBREOFFICE_PATH_PREFERENCE_KEY, sInstance.mSdkInstance.getHome());
     }
 

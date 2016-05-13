@@ -59,9 +59,7 @@ import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 
 /**
  * This class launches the URE application from its configuration.
- *
- *
- */
+*/
 public class UreLaunchDelegate extends LaunchConfigurationDelegate {
 
     private static final int TASK_UNITS = 3;

@@ -34,9 +34,7 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 
 /**
  * Just a bunch of constants.
- *
- *
- */
+*/
 public interface IOfficeLaunchConstants {
 
     String PROJECT_NAME = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".PROJECT_ATTR";

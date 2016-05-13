@@ -12,9 +12,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Visitor looking for all the files with given extensions.
- *
- *
- */
+*/
 public class FilesFinder implements IResourceVisitor {
 
     private String[] mExtensions;

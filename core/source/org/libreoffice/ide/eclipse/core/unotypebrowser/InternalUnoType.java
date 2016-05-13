@@ -53,9 +53,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoFactoryConstants;
  *
  * Only used with the {@link UnoTypeProvider}. A UNO type is described by its name, a boolean field defining if it's a
  * local type and a path containing the fully qualified name of the type container.
- *
- *
- */
+*/
 public class InternalUnoType {
 
     public static final InternalUnoType STRING = new InternalUnoType("string", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$

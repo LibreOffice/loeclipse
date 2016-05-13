@@ -40,9 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class handling the SAX events for the description.xml file.
- *
- *
- */
+*/
 public class DescriptionHandler extends DefaultHandler {
 
     private static final int LANG_GROUP = 1;
@@ -171,9 +169,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the dependencies element.
-     *
-     *
-     */
+    */
     private class DependenciesHandler extends DefaultHandler {
 
         /**
@@ -194,9 +190,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the update-information element.
-     *
-     *
-     */
+    */
     private class UpdatesHandler extends DefaultHandler {
 
         /**
@@ -216,9 +210,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the registration element.
-     *
-     *
-     */
+    */
     private class LicenseHandler extends DefaultHandler {
 
         /**
@@ -256,9 +248,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the publisher element.
-     *
-     *
-     */
+    */
     private class PublisherHandler extends DefaultHandler {
 
         private String mRef;
@@ -311,9 +301,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the release-notes element.
-     *
-     *
-     */
+    */
     private class ReleasesHandler extends DefaultHandler {
 
         /**
@@ -336,9 +324,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the display-name element.
-     *
-     *
-     */
+    */
     private class NameHandler extends DefaultHandler {
 
         private Locale mLocale;
@@ -385,9 +371,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the icon element.
-     *
-     *
-     */
+    */
     private class IconHandler extends DefaultHandler {
 
         /**
@@ -410,9 +394,7 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the extension-description element.
-     *
-     *
-     */
+    */
     private class DescriptionsHandler extends DefaultHandler {
 
         /**

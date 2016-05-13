@@ -58,9 +58,7 @@ import org.libreoffice.ide.eclipse.core.launch.IMainProvider;
 
 /**
  * Class providing the XMain implementations in Java.
- *
- *
- */
+*/
 public class JavaMainProvider implements IMainProvider {
 
     /**

@@ -91,7 +91,7 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
      * Log level preference key, used to store the preferences.
      */
     public static final String LOGLEVEL_PREFERENCE_KEY = "loglevel"; //$NON-NLS-1$
-    
+
     /** Preference keys for LibreOffice / SDK Path */
     public static final String LIBREOFFICE_PATH_PREFERENCE_KEY = "libreoffice_path";
     public static final String SDK_PATH_PREFERENCE_KEY = "sdk_path";

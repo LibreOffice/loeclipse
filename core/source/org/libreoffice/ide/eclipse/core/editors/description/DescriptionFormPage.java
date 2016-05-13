@@ -65,9 +65,7 @@ import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * The form page of the package editor helping to configure the project's description and main properties.
- *
- *
- */
+*/
 public class DescriptionFormPage extends FormPage {
 
     private LocaleSelector mLocaleSel;

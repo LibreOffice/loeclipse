@@ -45,9 +45,7 @@ package org.libreoffice.ide.eclipse.core.gui.rows;
 
 /**
  * Event describing a raw change. Each row is associated to one property in order to recognize it when it changes.
- *
- *
- */
+*/
 public class FieldEvent {
 
     private String mProperty;

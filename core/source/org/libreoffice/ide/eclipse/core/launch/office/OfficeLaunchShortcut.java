@@ -50,9 +50,7 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Class launching the selected uno project as a LibreOffice extension.
- *
- *
- */
+*/
 public class OfficeLaunchShortcut implements ILaunchShortcut {
 
     private static final String OFFICE_LAUNCH_CONFIG_ID = "org.libreoffice.ide.eclipse.core.launchLibreOffice"; //$NON-NLS-1$

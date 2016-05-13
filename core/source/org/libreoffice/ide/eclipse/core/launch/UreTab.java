@@ -73,16 +73,12 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * URE application launch configuration tab.
- *
- *
- */
+*/
 public class UreTab extends AbstractLaunchConfigurationTab {
 
     /**
      * Class listening to the UI field changes.
-     *
-     *
-     */
+    */
     private class ChangeListener implements SelectionListener, ModifyListener {
 
         /**

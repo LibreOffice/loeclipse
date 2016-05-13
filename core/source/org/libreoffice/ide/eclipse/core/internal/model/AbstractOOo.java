@@ -70,9 +70,7 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 /**
  * Helper class to add the table element features to the OOo classes. All the {@link IOOo} interface still has to be
  * implemented by the subclasses
- *
- *
- */
+*/
 public abstract class AbstractOOo implements IOOo, ITableElement {
 
     public static final String NAME = "__ooo_name"; //$NON-NLS-1$
@@ -175,7 +173,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 mHome = null;
                 throw new InvalidConfigException(
                     Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
-                    servicesFile.getAbsolutePath(),
+                        servicesFile.getAbsolutePath(),
                     InvalidConfigException.INVALID_OOO_HOME);
             }
         }

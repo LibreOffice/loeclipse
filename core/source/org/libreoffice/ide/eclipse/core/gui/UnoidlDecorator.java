@@ -59,9 +59,7 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 /**
  * For Eclipse a decorator is a small class changing an element image and/or label. This decorator replaces the icons
  * for IDL files and registries.
- *
- *
- */
+*/
 public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
 
     /**

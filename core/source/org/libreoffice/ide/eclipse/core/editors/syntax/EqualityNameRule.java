@@ -54,9 +54,7 @@ import org.eclipse.jface.text.rules.IToken;
  * <li>foo = foo</li>
  * </ul>
  * However "=foo" wont be accepted.
- *
- *
- */
+*/
 public class EqualityNameRule extends RegexRule {
 
     /**

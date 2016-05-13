@@ -34,9 +34,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Messages for the package.
- *
- *
- */
+*/
 public class Messages extends NLS {
 
     public static String OfficeLaunchDelegate_LaunchError;

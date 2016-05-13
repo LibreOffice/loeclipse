@@ -91,9 +91,7 @@ import org.libreoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 /**
  * Uses the default Project wizard page and add some UNO-IDL special fields: SDK and OOo choices company prefix and
  * Output path.
- *
- *
- */
+*/
 public class NewUnoProjectPage extends WizardNewProjectCreationPage implements IFieldChangedListener {
 
     /* Constants defining the field properties used to react to field change events */
@@ -131,7 +129,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     private TextRow mSourceRow;
 
     private TextRow mIdlDirRow;
-    
+
     private OOoConfigPanel mOOoConfigPanel;
 
     /**

@@ -59,9 +59,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
  * <code>
  * TemplatesHelper.copyTemplate( myProject, "foo/bar", LoadingClass.class );
  * </code>
- *
- *
- */
+*/
 public class TemplatesHelper {
 
     public static final String JAVA_EXT = ".java"; //$NON-NLS-1$

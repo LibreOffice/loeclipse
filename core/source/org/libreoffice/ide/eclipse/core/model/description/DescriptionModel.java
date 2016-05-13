@@ -45,9 +45,7 @@ import org.libreoffice.plugin.core.utils.XMLWriter;
 
 /**
  * Class representing the description.xml file.
- *
- *
- */
+*/
 public class DescriptionModel implements IModel {
 
     private ArrayList<IModelChangedListener> mListeners;

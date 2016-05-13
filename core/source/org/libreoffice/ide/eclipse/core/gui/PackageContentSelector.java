@@ -61,9 +61,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Common helper GUI part to select elements to add in the UNO package to be exported.
- *
- *
- */
+*/
 @SuppressWarnings("restriction")
 public class PackageContentSelector extends Composite {
 

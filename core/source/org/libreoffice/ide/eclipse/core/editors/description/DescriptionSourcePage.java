@@ -35,9 +35,7 @@ import org.libreoffice.ide.eclipse.core.editors.utils.SourcePage;
 
 /**
  * The source page for the description.xml file.
- *
- *
- */
+*/
 public class DescriptionSourcePage extends SourcePage {
 
     /**
