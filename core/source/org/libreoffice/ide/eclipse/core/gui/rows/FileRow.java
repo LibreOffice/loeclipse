@@ -168,7 +168,8 @@ public class FileRow extends LabeledRow {
      *            the new value
      */
     public void setValue(String pValue) {
-
+        if (pValue.equals(((Text)mField).getText()))
+            return;
         ((Text) mField).setText(pValue);
         mValue = pValue;
         FieldEvent fe = new FieldEvent(getProperty(), getValue());
