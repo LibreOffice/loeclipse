@@ -9,15 +9,13 @@ For historic releases supporting older versions of LibreOffice (and OpenOffice) 
 
 ## Installation
 
-Install this plugin via an update site in Eclipse pointing to one of:
-* `http://eclipse-plugins.libreoffice.org` (to install a released version)
-* the `site` directory (when building from source)
+Install this plugin via the [Eclipse Marketplace](https://marketplace.eclipse.org/content/loeclipse):
+
+<a href="http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=2881446" class="drag" title="Drag to your running Eclipse workspace to install LOEclipse"><img class="img-responsive" src="https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png" alt="Drag to your running Eclipse workspace to install LOEclipse" /></a>
 
 After installing the plugin, you can create new extensions/components by using *File->New->Project->LibreOffice*.
 
-## Getting started
-
-Have a look at the [LibreOffice Starter Extension](https://github.com/smehrbrodt/libreoffice-starter-extension). It contains a step-by-step guide to get started with extension development.
+You can also have a look at the [LibreOffice Starter Extension](https://github.com/smehrbrodt/libreoffice-starter-extension). It contains a step-by-step guide to get started with extension development.
 
 ## Documentation
 
