@@ -9,7 +9,7 @@ For historic releases supporting older versions of LibreOffice (and OpenOffice) 
 
 ## Installation
 
-Install this plugin via the [Eclipse Marketplace](https://marketplace.eclipse.org/content/loeclipse):
+Install this plugin via the [Eclipse Marketplace](https://marketplace.eclipse.org/content/loeclipse). Drag the button below to your running Eclipse instance.
 
 <a href="http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=2881446" class="drag" title="Drag to your running Eclipse workspace to install LOEclipse"><img class="img-responsive" src="https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png" alt="Drag to your running Eclipse workspace to install LOEclipse" /></a>
 
