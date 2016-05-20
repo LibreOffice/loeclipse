@@ -178,9 +178,6 @@ public final class UnoFactory {
             String prjTypes = prj.getTypesPath().toString();
             typesReg += " -l " + prjTypes; //$NON-NLS-1$
 
-            // Get the unorc file
-            String unorc = "-env:BOOTSTRAPINI=\"" + prj.getOOo().getUnorcPath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-
             // Get the service for which to generate the skeleton
             UnoFactoryData[] inner = pData.getInnerData();
             String service = ""; //$NON-NLS-1$
@@ -206,7 +203,6 @@ public final class UnoFactory {
 
             // Run the uno-skeletonmaker command
             String command = "uno-skeletonmaker" + //$NON-NLS-1$
-                " " + unorc + //$NON-NLS-1$
                 " component " + languageOption + //$NON-NLS-1$
                 " --propertysetmixin" + //$NON-NLS-1$
                 " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$
