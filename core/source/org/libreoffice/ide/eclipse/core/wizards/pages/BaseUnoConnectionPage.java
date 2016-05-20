@@ -53,7 +53,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
 */
 public class BaseUnoConnectionPage extends WizardPage {
 
-    private OOoConfigPanel mOOoConfigPanel;
     private ConnectionConfigPanel mCnxConfigPanel;
 
     /**
@@ -75,7 +74,7 @@ public class BaseUnoConnectionPage extends WizardPage {
         body.setLayout(new GridLayout());
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        mOOoConfigPanel = new OOoConfigPanel(body);
+        new OOoConfigPanel(body);
 
         mCnxConfigPanel = new ConnectionConfigPanel(body);
         setControl(body);
