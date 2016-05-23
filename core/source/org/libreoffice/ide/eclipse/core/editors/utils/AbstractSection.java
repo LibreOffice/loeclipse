@@ -71,7 +71,6 @@ public abstract class AbstractSection<ModelType extends IModel> extends SectionP
     @Override
     public void modelChanged() {
         getManagedForm().dirtyStateChanged();
-        loadData();
     }
 
     /**
