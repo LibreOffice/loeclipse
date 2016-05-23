@@ -106,15 +106,6 @@ public class ProjectSelectionDialog extends Dialog {
      */
     @Override
     protected void configureShell(Shell pNewShell) {
-
-        int width = DEFAULT_WIDTH;
-        int height = DEFAULT_HEIGHT;
-
-        Rectangle screenBounds = Display.getDefault().getClientArea();
-        int x = (screenBounds.width - width) / 2;
-        int y = (screenBounds.height - height) / 2;
-
-        pNewShell.setBounds(x, y, width, height);
         super.configureShell(pNewShell);
         pNewShell.setText(Messages.getString("ProjectSelectionDialog.Title")); //$NON-NLS-1$
     }
