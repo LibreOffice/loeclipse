@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class DescriptionModel implements IModel {
 
     private String mId = new String();
     private String mVersion = new String();
-    private HashMap<Locale, String> mDisplayNames;
+    private Map<Locale, String> mDisplayNames;
 
     private String mMinOOo = new String();
     private String mMaxOOo = new String();
@@ -63,16 +64,16 @@ public class DescriptionModel implements IModel {
     private String mDefaultIcon = new String();
     private String mHCIcon = new String();
 
-    private HashMap<Locale, String> mDescriptions;
+    private Map<Locale, String> mDescriptions;
 
-    private HashMap<Locale, String> mReleaseNotes;
+    private Map<Locale, String> mReleaseNotes;
     private ArrayList<String> mUpdateInfos;
 
     private boolean mAcceptByUser = false;
     private boolean mSuppressOnUpdate = false;
-    private HashMap<Locale, String> mLicenses;
+    private Map<Locale, String> mLicenses;
 
-    private HashMap<Locale, PublisherInfos> mPublisherInfos;
+    private Map<Locale, PublisherInfos> mPublisherInfos;
 
     /**
      * Default constructor.
@@ -80,12 +81,12 @@ public class DescriptionModel implements IModel {
     public DescriptionModel() {
         mListeners = new ArrayList<IModelChangedListener>();
 
-        mDisplayNames = new HashMap<Locale, String>();
-        mDescriptions = new HashMap<Locale, String>();
-        mReleaseNotes = new HashMap<Locale, String>();
-        mUpdateInfos = new ArrayList<String>();
-        mLicenses = new HashMap<Locale, String>();
-        mPublisherInfos = new HashMap<Locale, PublisherInfos>();
+        mDisplayNames = new HashMap<>();
+        mDescriptions = new HashMap<>();
+        mReleaseNotes = new HashMap<>();
+        mUpdateInfos = new ArrayList<>();
+        mLicenses = new HashMap<>();
+        mPublisherInfos = new HashMap<>();
     }
 
     /**
@@ -174,9 +175,9 @@ public class DescriptionModel implements IModel {
     /**
      * @return the displayNames
      */
-    public HashMap<Locale, String> getDisplayNames() {
+    public Map<Locale, String> getDisplayNames() {
         if (mDisplayNames == null) {
-            mDisplayNames = new HashMap<Locale, String>();
+            mDisplayNames = new HashMap<>();
         }
         return mDisplayNames;
     }
@@ -303,9 +304,9 @@ public class DescriptionModel implements IModel {
     /**
      * @return the descriptions
      */
-    public HashMap<Locale, String> getDescriptions() {
+    public Map<Locale, String> getDescriptions() {
         if (mDescriptions == null) {
-            mDescriptions = new HashMap<Locale, String>();
+            mDescriptions = new HashMap<>();
         }
         return mDescriptions;
     }
@@ -342,9 +343,9 @@ public class DescriptionModel implements IModel {
     /**
      * @return the releaseNotes
      */
-    public HashMap<Locale, String> getReleaseNotes() {
+    public Map<Locale, String> getReleaseNotes() {
         if (mReleaseNotes == null) {
-            mReleaseNotes = new HashMap<Locale, String>();
+            mReleaseNotes = new HashMap<>();
         }
         return mReleaseNotes;
     }
@@ -469,9 +470,9 @@ public class DescriptionModel implements IModel {
     /**
      * @return the licenses
      */
-    public HashMap<Locale, String> getLicenses() {
+    public Map<Locale, String> getLicenses() {
         if (mLicenses == null) {
-            mLicenses = new HashMap<Locale, String>();
+            mLicenses = new HashMap<>();
         }
         return mLicenses;
     }
@@ -508,9 +509,9 @@ public class DescriptionModel implements IModel {
     /**
      * @return the publisherInfos
      */
-    public HashMap<Locale, PublisherInfos> getPublisherInfos() {
+    public Map<Locale, PublisherInfos> getPublisherInfos() {
         if (mPublisherInfos == null) {
-            mPublisherInfos = new HashMap<Locale, PublisherInfos>();
+            mPublisherInfos = new HashMap<>();
         }
         return mPublisherInfos;
     }
@@ -556,7 +557,7 @@ public class DescriptionModel implements IModel {
         try {
             writer = new XMLWriter(pOut);
 
-            HashMap<String, String> mapping = new HashMap<String, String>();
+            Map<String, String> mapping = new HashMap<>();
             mapping.put(XMLTokens.ATTR_XMLNS, XMLTokens.URI_DESCRIPTION);
             mapping.put(XMLTokens.createQName(XMLTokens.ATTR_XMLNS, XMLTokens.PREFIX_DESCRIPTION),
                 XMLTokens.URI_DESCRIPTION);
@@ -606,14 +607,14 @@ public class DescriptionModel implements IModel {
             pWriter.startTag(XMLTokens.ELEMENT_DEPENDENCIES, null);
 
             if (hasMin) {
-                HashMap<String, String> attrs = new HashMap<String, String>();
+                Map<String, String> attrs = new HashMap<>();
                 attrs.put(XMLTokens.ATTR_VALUE, mMinOOo.trim());
                 attrs.put(XMLTokens.createQName(XMLTokens.PREFIX_DESCRIPTION, XMLTokens.ELEMENT_NAME), mMinOOo.trim());
                 pWriter.printSingleTag(XMLTokens.ELEMENT_OOO_MIN, attrs);
             }
 
             if (hasMax) {
-                HashMap<String, String> attrs = new HashMap<String, String>();
+                Map<String, String> attrs = new HashMap<>();
                 attrs.put(XMLTokens.ATTR_VALUE, mMaxOOo.trim());
                 attrs.put(XMLTokens.createQName(XMLTokens.PREFIX_DESCRIPTION, XMLTokens.ELEMENT_NAME), mMaxOOo.trim());
                 pWriter.printSingleTag(XMLTokens.ELEMENT_OOO_MAX, attrs);
@@ -633,7 +634,7 @@ public class DescriptionModel implements IModel {
         if (mUpdateInfos.size() > 0) {
             pWriter.startTag(XMLTokens.ELEMENT_UPDATE_INFORMATION, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             for (String mirror : mUpdateInfos) {
                 attrs.clear();
                 attrs.put(XMLTokens.createQName(XMLTokens.PREFIX_XLINK, XMLTokens.ATTR_HREF), mirror.trim());
@@ -664,7 +665,7 @@ public class DescriptionModel implements IModel {
         if (hasLicenses) {
             pWriter.startTag(XMLTokens.ELEMENT_REGISTRATION, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             String acceptLevel = "admin"; //$NON-NLS-1$
             if (mAcceptByUser) {
                 acceptLevel = "user"; //$NON-NLS-1$
@@ -712,7 +713,7 @@ public class DescriptionModel implements IModel {
         if (hasInfos) {
             pWriter.startTag(XMLTokens.ELEMENT_PUBLISHER, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             Iterator<Entry<Locale, PublisherInfos>> iter = mPublisherInfos.entrySet().iterator();
             while (iter.hasNext()) {
                 Entry<Locale, PublisherInfos> entry = iter.next();
@@ -757,7 +758,7 @@ public class DescriptionModel implements IModel {
         if (hasReleaseNote) {
             pWriter.startTag(XMLTokens.ELEMENT_RELEASE_NOTES, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             Iterator<Entry<Locale, String>> iter = mReleaseNotes.entrySet().iterator();
             while (iter.hasNext()) {
                 Entry<Locale, String> entry = iter.next();
@@ -792,7 +793,7 @@ public class DescriptionModel implements IModel {
         if (hasReleaseNote) {
             pWriter.startTag(XMLTokens.ELEMENT_DISPLAY_NAME, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             Iterator<Entry<Locale, String>> iter = mDisplayNames.entrySet().iterator();
             while (iter.hasNext()) {
                 Entry<Locale, String> entry = iter.next();
@@ -821,7 +822,7 @@ public class DescriptionModel implements IModel {
         if (hasDefault || hasHC) {
             pWriter.startTag(XMLTokens.ELEMENT_ICON, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             if (hasDefault) {
                 attrs.put(XMLTokens.createQName(XMLTokens.PREFIX_XLINK, XMLTokens.ATTR_HREF), mDefaultIcon.trim());
                 pWriter.printSingleTag(XMLTokens.ELEMENT_DEFAULT, attrs);
@@ -857,7 +858,7 @@ public class DescriptionModel implements IModel {
         if (hasDescription) {
             pWriter.startTag(XMLTokens.ELEMENT_EXTENSION_DESCRIPTION, null);
 
-            HashMap<String, String> attrs = new HashMap<String, String>();
+            Map<String, String> attrs = new HashMap<>();
             Iterator<Entry<Locale, String>> iter = mDescriptions.entrySet().iterator();
             while (iter.hasNext()) {
                 Entry<Locale, String> entry = iter.next();
@@ -900,7 +901,7 @@ public class DescriptionModel implements IModel {
      *            the element value
      */
     private void printValueElement(XMLWriter pWriter, String pElementName, String pValue) {
-        HashMap<String, String> pAttributes = new HashMap<String, String>();
+        Map<String, String> pAttributes = new HashMap<>();
         pAttributes.put(XMLTokens.ATTR_VALUE, pValue);
         pWriter.printSingleTag(pElementName, pAttributes);
     }

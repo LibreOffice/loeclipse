@@ -103,7 +103,7 @@ public class TypesGetter {
      */
     @SuppressWarnings("unchecked")
     public Map<String, List<InternalUnoType>> getTypes(String pRoot, int pMask) {
-        Map<String, List<InternalUnoType>> types = new HashMap<String, List<InternalUnoType>>();
+        Map<String, List<InternalUnoType>> types = new HashMap<>();
 
         try {
             // Load the target class and create the getter instance

@@ -44,6 +44,7 @@
 package org.libreoffice.ide.eclipse.core.model;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -51,7 +52,7 @@ import java.util.Vector;
 */
 public class UnoFactoryData {
 
-    private HashMap<String, Object> mProperties = new HashMap<String, Object>();
+    private Map<String, Object> mProperties = new HashMap<>();
     private Vector<UnoFactoryData> mInnerData = new Vector<UnoFactoryData>();
 
     /**

@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipOutputStream;
@@ -92,7 +93,7 @@ public class UnoPackage {
     private File mDestination;
     private boolean mBuilding = false;
 
-    private HashMap<String, ZipContent> mZipEntries = new HashMap<String, ZipContent>();
+    private Map<String, ZipContent> mZipEntries = new HashMap<>();
     private ManifestModel mManifest;
     private ArrayList<File> mToClean = new ArrayList<File>();
 

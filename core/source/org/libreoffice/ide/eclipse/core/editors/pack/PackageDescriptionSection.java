@@ -97,7 +97,7 @@ public class PackageDescriptionSection extends SectionPart {
     private PackageFormPage mPage;
     private TableViewer mTableViewer;
 
-    private HashMap<IFile, Locale> mDescriptions = new HashMap<IFile, Locale>();
+    private Map<IFile, Locale> mDescriptions = new HashMap<>();
 
     /**
      * Constructor.
@@ -153,7 +153,7 @@ public class PackageDescriptionSection extends SectionPart {
      * @return the package descriptions shown in the section
      */
     public Map<Locale, IFile> getDescriptions() {
-        HashMap<Locale, IFile> descriptions = new HashMap<Locale, IFile>();
+        Map<Locale, IFile> descriptions = new HashMap<>();
 
         Iterator<Entry<IFile, Locale>> iter = mDescriptions.entrySet().iterator();
         while (iter.hasNext()) {

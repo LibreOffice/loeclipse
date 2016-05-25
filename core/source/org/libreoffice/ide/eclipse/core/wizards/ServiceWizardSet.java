@@ -44,6 +44,7 @@
 package org.libreoffice.ide.eclipse.core.wizards;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
@@ -158,7 +159,7 @@ public class ServiceWizardSet extends WizardPageSet {
             }
 
             UnoFactoryData[] inner = pData.getInnerData();
-            HashMap<Integer, Integer> ids = getPagesId(inner);
+            Map<Integer, Integer> ids = getPagesId(inner);
 
             String serviceInheritance = null;
 
@@ -311,8 +312,8 @@ public class ServiceWizardSet extends WizardPageSet {
      * @return a map, associating the keys {@link IUnoFactoryConstants#SERVICE} or
      *         {@link IUnoFactoryConstants#INTERFACE} to the type id in the array.
      */
-    private HashMap<Integer, Integer> getPagesId(UnoFactoryData[] pTypesData) {
-        HashMap<Integer, Integer> ids = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> getPagesId(UnoFactoryData[] pTypesData) {
+        Map<Integer, Integer> ids = new HashMap<>();
 
         int serviceId = -1;
         int interfaceId = -1;
@@ -374,7 +375,7 @@ public class ServiceWizardSet extends WizardPageSet {
             }
 
             UnoFactoryData[] inner = pDelta.getInnerData();
-            HashMap<Integer, Integer> ids = getPagesId(inner);
+            Map<Integer, Integer> ids = getPagesId(inner);
 
             // Set the service informations
             String serviceInheritance = null;

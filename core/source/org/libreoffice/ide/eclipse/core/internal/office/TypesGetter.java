@@ -72,7 +72,7 @@ public class TypesGetter {
 
     private static final int TYPES_MAX = 1023;
 
-    private static final HashMap<Integer, TypeClass> TYPES_MAPPING = new HashMap<Integer, TypeClass>();
+    private static final Map<Integer, TypeClass> TYPES_MAPPING = new HashMap<>();
 
     static {
         TYPES_MAPPING.put(IUnoFactoryConstants.MODULE, TypeClass.MODULE);
@@ -142,7 +142,7 @@ public class TypesGetter {
      *             if anything wrong happens
      */
     public Map<String, List<InternalUnoType>> getTypes(String pRoot, Integer pMask) throws Throwable {
-        Map<String, List<InternalUnoType>> types = new HashMap<String, List<InternalUnoType>>();
+        Map<String, List<InternalUnoType>> types = new HashMap<>();
 
         mConnection.startOffice();
 
@@ -197,7 +197,7 @@ public class TypesGetter {
      */
     private Map<String, List<InternalUnoType>> queryTypes() throws Exception {
 
-        Map<String, List<InternalUnoType>> results = new HashMap<String, List<InternalUnoType>>();
+        Map<String, List<InternalUnoType>> results = new HashMap<>();
 
         for (int i = 0, length = mLocalRegs.size(); i < length; i++) {
             String path = mLocalRegs.get(i);

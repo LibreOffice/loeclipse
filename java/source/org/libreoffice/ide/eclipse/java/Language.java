@@ -99,7 +99,7 @@ public class Language extends AbstractLanguage {
             // SocketListenConnector
             String connectorId = "org.eclipse.jdt.launching.socketListenConnector";
             IVMConnector connector = JavaRuntime.getVMConnector(connectorId);
-            Map<String, String> argMap = new HashMap<String, String>();
+            Map<String, String> argMap = new HashMap<>();
             argMap.put("timeout", "80000");
             //FIXME implement some kind of port pickup/retry mechanism in case the default port is already used.
             argMap.put("port", DEFAULT_JAVA_DEBUG_PORT);

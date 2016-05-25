@@ -15,8 +15,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A simple XML writer.
@@ -100,10 +100,10 @@ public class XMLWriter extends PrintWriter {
      * @param pParameters
      *            the tag attributes
      *
-     * @see #startTag(String, HashMap)
-     * @see #startTag(String, HashMap, boolean)
+     * @see #startTag(String, Map)
+     * @see #startTag(String, Map, boolean)
      */
-    public void printSingleTag(String pName, HashMap<String, ? extends Object> pParameters) {
+    public void printSingleTag(String pName, Map<String, ? extends Object> pParameters) {
         printTag(pName, pParameters, true, true, true);
     }
 
@@ -115,10 +115,10 @@ public class XMLWriter extends PrintWriter {
      * @param pParameters
      *            the tag attributes
      *
-     * @see #startTag(String, HashMap)
-     * @see #startTag(String, HashMap, boolean)
+     * @see #startTag(String, Map)
+     * @see #startTag(String, Map, boolean)
      */
-    public void printTag(String pName, HashMap<String, ? extends Object> pParameters) {
+    public void printTag(String pName, Map<String, ? extends Object> pParameters) {
         printTag(pName, pParameters, true, true, false);
     }
 
@@ -136,10 +136,10 @@ public class XMLWriter extends PrintWriter {
      * @param pSingleTag
      *            writes a tag in the form &lt;name /&gt;
      *
-     * @see #startTag(String, HashMap)
-     * @see #startTag(String, HashMap, boolean)
+     * @see #startTag(String, Map)
+     * @see #startTag(String, Map, boolean)
      */
-    public void printTag(String pName, HashMap<String, ? extends Object> pParameters, boolean pShouldTab,
+    public void printTag(String pName, Map<String, ? extends Object> pParameters, boolean pShouldTab,
         boolean pNewLine, boolean pSingleTag) {
         StringBuffer sb = new StringBuffer();
         sb.append("<"); //$NON-NLS-1$
@@ -176,7 +176,7 @@ public class XMLWriter extends PrintWriter {
      * @param pParameters
      *            the attributes of the element
      */
-    public void startTag(String pName, HashMap<String, ? extends Object> pParameters) {
+    public void startTag(String pName, Map<String, ? extends Object> pParameters) {
         startTag(pName, pParameters, true);
     }
 
@@ -190,7 +190,7 @@ public class XMLWriter extends PrintWriter {
      * @param pNewLine
      *            whether to add a line after the tag or not.
      */
-    public void startTag(String pName, HashMap<String, ? extends Object> pParameters, boolean pNewLine) {
+    public void startTag(String pName, Map<String, ? extends Object> pParameters, boolean pNewLine) {
         printTag(pName, pParameters, true, pNewLine, false);
         mTab++;
     }

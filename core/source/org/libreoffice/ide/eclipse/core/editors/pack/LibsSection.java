@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFolder;
@@ -102,7 +103,7 @@ public class LibsSection extends SectionPart {
     /**
      * A <code>0</code> as value, means: "Basic Library". A <code>1</code> means "Dialog Library".
      */
-    private HashMap<Object, Integer> mLibs = new HashMap<Object, Integer>();
+    private Map<Object, Integer> mLibs = new HashMap<>();
 
     /**
      * Constructor.

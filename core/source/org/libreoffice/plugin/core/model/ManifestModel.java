@@ -39,6 +39,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -50,7 +51,7 @@ public class ManifestModel {
     private static final String EXT_XCU = ".xcu";
     private static final String EXT_RDB = ".rdb";
 
-    private HashMap<String, FileType> mEntries = new HashMap<String, FileType>();
+    private Map<String, FileType> mEntries = new HashMap<>();
 
     /**
      * Add a file or directory to the package.

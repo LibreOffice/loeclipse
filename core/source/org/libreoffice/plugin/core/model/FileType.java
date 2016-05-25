@@ -33,6 +33,7 @@ package org.libreoffice.plugin.core.model;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -53,7 +54,7 @@ public class FileType {
     public static final String PARAM_PLATFORM = "platform";
 
     String mMimeType;
-    HashMap<String, String> mParams = new HashMap<String, String>();
+    Map<String, String> mParams = new HashMap<>();
 
     /**
      * Constructor.
@@ -93,8 +94,8 @@ public class FileType {
     /**
      * @return a copy of the parameters map. Changing this object will have no effect.
      */
-    public HashMap<String, String> getParams() {
-        HashMap<String, String> copy = new HashMap<String, String>();
+    public Map<String, String> getParams() {
+        Map<String, String> copy = new HashMap<>();
         copy.putAll(mParams);
         return copy;
     }

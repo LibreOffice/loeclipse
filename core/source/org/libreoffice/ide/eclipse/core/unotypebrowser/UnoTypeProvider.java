@@ -263,7 +263,7 @@ public class UnoTypeProvider {
         if (mCache != null) {
             mCache.clear();
         } else {
-            mCache = new HashMap<String, List<InternalUnoType>>();
+            mCache = new HashMap<>();
         }
     }
 

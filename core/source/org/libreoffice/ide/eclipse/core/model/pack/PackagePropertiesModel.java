@@ -460,7 +460,7 @@ public class PackagePropertiesModel {
      * @return a map of the description files accessed by their locale. There is no support of a default locale.
      */
     public Map<Locale, IFile> getDescriptionFiles() {
-        HashMap<Locale, IFile> descriptions = new HashMap<Locale, IFile>();
+        Map<Locale, IFile> descriptions = new HashMap<>();
         IProject prj = mPropertiesFile.getProject();
 
         Iterator<Object> keys = mProperties.keySet().iterator();

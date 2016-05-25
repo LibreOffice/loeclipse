@@ -49,6 +49,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
@@ -62,7 +63,7 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 */
 public class OfficeClassLoader extends URLClassLoader {
 
-    private static HashMap<String, OfficeClassLoader> sClassLoaders = new HashMap<String, OfficeClassLoader>();
+    private static Map<String, OfficeClassLoader> sClassLoaders = new HashMap<>();
 
     /**
      * Creates and initializes an {@link OfficeClassLoader} for a given office instance.
