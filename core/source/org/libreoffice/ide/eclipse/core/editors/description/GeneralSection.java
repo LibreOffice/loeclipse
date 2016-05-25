@@ -68,6 +68,10 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
     private Text mVersionTxt;
     private Text mDescriptionTxt;
     private Button mDescriptionBtn;
+    private Text mIconText;
+    private Button mIconButton;
+    private Text mIconHCText;
+    private Button mIconHCButton;
 
     /**
      * @param pParent
@@ -95,6 +99,8 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mIdTxt.setText(getModel().getId());
         mVersionTxt.setText(getModel().getVersion());
         mDescriptionTxt.setText(getModel().getDescriptions().get(mCurrentLocale));
+        mIconText.setText(getModel().getDefaultIcon());
+        mIconHCText.setText(getModel().getHCIcon());
         getModel().setSuspendEvent(false);
     }
 
@@ -153,7 +159,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         });
 
         // Description controls
-        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Description")); //$NON-NLS-1$
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.DescriptionFile")); //$NON-NLS-1$
         mDescriptionTxt = pToolkit.createText(pParent, new String());
         mDescriptionTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mDescriptionTxt.setEnabled(false);
@@ -179,6 +185,65 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
                         IFile file = (IFile) res;
                         String path = file.getProjectRelativePath().toString();
                         mDescriptionTxt.setText(path);
+                    }
+                }
+            }
+        });
+        
+        // Icons
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.Icon")); //$NON-NLS-1$
+        mIconText = pToolkit.createText(pParent, new String());
+        mIconText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mIconText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent pE) {
+                getModel().setDefaultIcon(mIconText.getText());
+            }
+        });
+        mIconButton = pToolkit.createButton(pParent, "...", SWT.PUSH);
+        mIconButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mIconButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent pE) {
+             // Open the folder selection dialog
+                ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
+                    Messages.getString("GeneralSection.FileChooserTooltip")); //$NON-NLS-1$
+
+                if (dlg.open() == Window.OK) {
+                    IResource res = dlg.getSelected();
+                    if (res != null && res.getType() == IResource.FILE) {
+                        IFile file = (IFile) res;
+                        String path = file.getProjectRelativePath().toString();
+                        mIconText.setText(path);
+                    }
+                }
+            }
+        });
+        
+        pToolkit.createLabel(pParent, Messages.getString("GeneralSection.HCIcon")); //$NON-NLS-1$
+        mIconHCText = pToolkit.createText(pParent, new String());
+        mIconHCText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mIconHCText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent pE) {
+                getModel().setHCIcon(mIconHCText.getText());
+            }
+        });
+        mIconHCButton = pToolkit.createButton(pParent, "...", SWT.PUSH);
+        mIconHCButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        mIconHCButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent pE) {
+             // Open the folder selection dialog
+                ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
+                    Messages.getString("GeneralSection.FileChooserTooltip")); //$NON-NLS-1$
+
+                if (dlg.open() == Window.OK) {
+                    IResource res = dlg.getSelected();
+                    if (res != null && res.getType() == IResource.FILE) {
+                        IFile file = (IFile) res;
+                        String path = file.getProjectRelativePath().toString();
+                        mIconHCText.setText(path);
                     }
                 }
             }

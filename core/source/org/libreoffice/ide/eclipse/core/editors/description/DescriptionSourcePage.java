@@ -30,6 +30,7 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.editors.description;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.libreoffice.ide.eclipse.core.editors.utils.SourcePage;
 
