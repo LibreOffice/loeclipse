@@ -257,7 +257,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
     public static void buildIdl(IUnoidlProject pProject, IProgressMonitor pMonitor) throws Exception {
 
         // compile each idl file
-        IFolder idlFolder = pProject.getFolder(pProject.getRootModulePath());
+        IFolder idlFolder = pProject.getFolder(pProject.getIdlPath());
         idlFolder.accept(new IdlcBuildVisitor(pMonitor));
     }
 
