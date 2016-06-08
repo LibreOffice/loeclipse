@@ -67,7 +67,10 @@ import com.sun.star.uno.XComponentContext;
 
 /**
  * Class extracting the UNO types from a selected office instance.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class TypesGetter {
 
     private static final int TYPES_MAX = 1023;
@@ -211,7 +214,7 @@ public class TypesGetter {
             String path = mExternalRegs.get(i);
             String url = mConnection.convertToUrl(path);
             if (url != null) {
-                String oooKey = mConnection.getOOo().toString();
+                String oooKey = mConnection.getOOo().getName();
                 List<InternalUnoType> types = results.get(oooKey);
                 if (types == null) {
                     types = new ArrayList<InternalUnoType>();

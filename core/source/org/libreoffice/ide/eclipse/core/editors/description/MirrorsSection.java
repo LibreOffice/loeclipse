@@ -68,7 +68,10 @@ import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section showing the update-informations part of the description.xml file.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class MirrorsSection extends AbstractSection<DescriptionModel> {
 
     private static final int COLUMN_WIDTH = 200;
@@ -211,7 +214,10 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
 
     /**
      * Label provider for the urls table.
-    */
+     *
+     * @author Cédric Bosdonnat
+     *
+     */
     private class UrlLabelProvider extends LabelProvider implements ITableLabelProvider {
 
         /**
@@ -233,7 +239,10 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
 
     /**
      * Class allowing changes from the Urls table viewer on the model.
-    */
+     *
+     * @author Cédric Bosdonnat
+     *
+     */
     private class UrlCellModifier implements ICellModifier {
 
         /**

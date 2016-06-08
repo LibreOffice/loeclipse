@@ -38,7 +38,10 @@ import java.util.Map.Entry;
 
 /**
  * Class representing the file types for the entries of the manifest.xml file.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class FileType {
 
     public static final String MIME_XCU = "application/vnd.sun.star.configuration-data";

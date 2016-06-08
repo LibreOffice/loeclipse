@@ -44,7 +44,10 @@ import java.util.Map.Entry;
 
 /**
  * Class representing the data contained in the manifest.xml file.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class ManifestModel {
 
     private static final String EXT_XCS = ".xcs";

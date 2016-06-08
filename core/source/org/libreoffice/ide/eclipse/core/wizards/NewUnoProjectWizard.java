@@ -72,7 +72,10 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
  * New UNO project wizard.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 
     protected NewUnoProjectPage mMainPage;
@@ -178,7 +181,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 
                 UnoFactoryData data = new UnoFactoryData();
 
-                data.setProperty(IUnoFactoryConstants.PROJECT_OOO, OOoContainer.getOOo());
+                data.setProperty(IUnoFactoryConstants.PROJECT_OOO, OOoContainer.getOOo(mMainPage.getOOoName()));
                 data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, mMainPage.getPrefix());
 
                 UnoFactoryData serviceData = new UnoFactoryData();
@@ -335,6 +338,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     /**
      * Thread executing the project creation tasks.
      *
+     * @author cedricbosdo
      */
     private class ProjectCreationJob extends Job {
 

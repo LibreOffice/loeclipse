@@ -50,7 +50,10 @@ import java.io.IOException;
 
 /**
  * Utility class for file handling.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class FileHelper {
 
     /**

@@ -31,7 +31,10 @@ import org.junit.Test;
 
 /**
  * Unit test for the Manifest export page controller, these tests are testing the UI behaviour.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class ManifestExportPageControllerTest {
 
     private static final String PATH_VALUE = "value";

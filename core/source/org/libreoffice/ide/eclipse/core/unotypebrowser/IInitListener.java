@@ -46,6 +46,7 @@ package org.libreoffice.ide.eclipse.core.unotypebrowser;
 /**
  * Listener interface for the {@link UnoTypeProvider} initialization.
  *
+ * @author cedricbosdo
  */
 public interface IInitListener {
 

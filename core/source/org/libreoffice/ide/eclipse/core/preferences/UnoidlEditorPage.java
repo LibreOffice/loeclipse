@@ -53,6 +53,7 @@ import org.libreoffice.ide.eclipse.core.editors.idl.Colors;
 /**
  * Preference page to change the UNO-IDL editor colors.
  *
+ * @author cedricbosdo
  */
 public class UnoidlEditorPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 

@@ -45,7 +45,10 @@ package org.libreoffice.ide.eclipse.core.wizards.utils;
 
 /**
  * Exception thrown by the {@link WizardPageSet} when the required page doesn't exists.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class NoSuchPageException extends Exception {
 
     private static final long serialVersionUID = 3825065061076844971L;

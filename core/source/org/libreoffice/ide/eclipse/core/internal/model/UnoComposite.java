@@ -54,7 +54,10 @@ import org.libreoffice.ide.eclipse.core.model.IUnoComposite;
 
 /**
  * Implements the UNO-IDL model composite. This class could certainly be rewritten using the Java Format tools.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class UnoComposite implements IUnoComposite {
 
     private Vector<IUnoComposite> mChildren = new Vector<IUnoComposite>();

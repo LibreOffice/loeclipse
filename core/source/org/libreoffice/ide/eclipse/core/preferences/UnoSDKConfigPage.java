@@ -48,15 +48,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
-import org.libreoffice.ide.eclipse.core.gui.OOoConfigPanel;
+import org.libreoffice.ide.eclipse.core.gui.OOoTable;
+import org.libreoffice.ide.eclipse.core.gui.SDKTable;
 
 /**
  * Preference page to configure the plugin available OOo and SDK instances.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private OOoConfigPanel configPanel;
+    private SDKTable mSdkTable;
+    private OOoTable mOOoTable;
 
     /**
      * {@inheritDoc}
@@ -64,9 +68,12 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
     @Override
     protected Control createContents(Composite pParent) {
         noDefaultAndApplyButton();
-        setPreferenceStore(OOEclipsePlugin.getDefault().getPreferenceStore());
 
-        configPanel = new OOoConfigPanel(pParent);
+        mSdkTable = new SDKTable(pParent);
+        mSdkTable.getPreferences();
+
+        mOOoTable = new OOoTable(pParent);
+        mOOoTable.getPreferences();
 
         return pParent;
     }
@@ -76,7 +83,10 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
      */
     @Override
     public boolean performOk() {
-        return configPanel.isValid();
+        mSdkTable.savePreferences();
+        mOOoTable.savePreferences();
+
+        return true;
     }
 
     /**
@@ -84,6 +94,8 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
      */
     @Override
     public void dispose() {
+        mSdkTable.dispose();
+        mOOoTable.dispose();
         super.dispose();
     }
 

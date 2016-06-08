@@ -71,7 +71,10 @@ import org.libreoffice.ide.eclipse.core.wizards.NewServiceWizard;
  *        &lt;/description&gt;
  *     &lt;/wizard&gt;
  * </pre>
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class UnoTypePulldownAction extends AbstractPulldownAction {
 
     /**

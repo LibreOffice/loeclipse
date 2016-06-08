@@ -70,6 +70,7 @@ import org.libreoffice.ide.eclipse.core.model.Messages;
 import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
 /**
+ * @author cedricbosdo
  *
  */
 public class PackagePropertiesModel {

@@ -56,7 +56,10 @@ import org.libreoffice.ide.eclipse.java.JavaProjectHandler;
 
 /**
  * Container for the OOo classes jars.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class OOoClasspathContainer implements IClasspathContainer {
 
     public static final String ID = "org.libreoffice.ide.eclipse.java.OOO_CONTAINER"; //$NON-NLS-1$
@@ -96,7 +99,7 @@ public class OOoClasspathContainer implements IClasspathContainer {
     @Override
     public String getDescription() {
         String pattern = Messages.getString("OOoClasspathContainer.LibrariesName"); //$NON-NLS-1$
-        String descr = MessageFormat.format(pattern, mOOo);
+        String descr = MessageFormat.format(pattern, mOOo.getName());
         return descr;
     }
 

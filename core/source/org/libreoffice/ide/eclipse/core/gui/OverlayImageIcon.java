@@ -51,6 +51,7 @@ import org.eclipse.swt.graphics.Point;
 /**
  * This class is used for overlaying image icons.
  *
+ * @author cedricbosdo
  */
 public class OverlayImageIcon extends CompositeImageDescriptor {
 
@@ -104,7 +105,9 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
      *            the top image to draw
      *
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
-    */
+     *
+     *
+     */
     @Override
     protected void drawCompositeImage(int pLower, int pUpper) {
         // Draw the base image
@@ -117,17 +120,17 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
                 drawImage(imageData, 0, 0);
                 break;
 
-            // Draw on top right corner
+                // Draw on top right corner
             case TOP_RIGHT:
                 drawImage(imageData, mSizeOfImage.x - imageData.width, 0);
                 break;
 
-            // Draw on bottom left
+                // Draw on bottom left
             case BOTTOM_LEFT:
                 drawImage(imageData, 0, mSizeOfImage.y - imageData.height);
                 break;
 
-            // Draw on bottom right corner
+                // Draw on bottom right corner
             case BOTTOM_RIGHT:
                 drawImage(imageData, mSizeOfImage.x - imageData.width, mSizeOfImage.y - imageData.height);
                 break;

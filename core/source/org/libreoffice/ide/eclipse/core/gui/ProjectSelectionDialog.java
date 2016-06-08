@@ -59,6 +59,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -71,9 +72,14 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Dialog used to select a file or folder in a UNO project.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class ProjectSelectionDialog extends Dialog {
 
+    private static final int DEFAULT_WIDTH = 300;
+    private static final int DEFAULT_HEIGHT = 350;
     private TreeViewer mTreeViewer;
     private IProject mProject;
     private String mDescription;

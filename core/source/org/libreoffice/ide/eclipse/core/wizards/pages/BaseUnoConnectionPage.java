@@ -50,9 +50,13 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
  * This class has to be sub-classed by clients to change the pages order and set the patterns for the code to open the
  * UNO connection.
  * </p>
-*/
+ *
+ * @author cbosdonnat
+ *
+ */
 public class BaseUnoConnectionPage extends WizardPage {
 
+    private OOoConfigPanel mOOoConfigPanel;
     private ConnectionConfigPanel mCnxConfigPanel;
 
     /**
@@ -74,7 +78,7 @@ public class BaseUnoConnectionPage extends WizardPage {
         body.setLayout(new GridLayout());
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        new OOoConfigPanel(body);
+        mOOoConfigPanel = new OOoConfigPanel(body);
 
         mCnxConfigPanel = new ConnectionConfigPanel(body);
         setControl(body);
@@ -108,14 +112,14 @@ public class BaseUnoConnectionPage extends WizardPage {
      * @return the selected OOo instance
      */
     public IOOo getOoo() {
-        return OOoContainer.getOOo();
+        return OOoContainer.getOOo(mOOoConfigPanel.getOOoName());
     }
 
     /**
      * @return the selected SDK instance
      */
     public ISdk getSdk() {
-        return SDKContainer.getSDK();
+        return SDKContainer.getSDK(mOOoConfigPanel.getSDKName());
     }
 
     /**

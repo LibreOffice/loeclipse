@@ -64,7 +64,10 @@ import org.libreoffice.ide.eclipse.java.registration.RegistrationHelper;
 /**
  * This class will visit a resource delta and perform the necessary changes
  * on Java resources included in UNO projects.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
     /**

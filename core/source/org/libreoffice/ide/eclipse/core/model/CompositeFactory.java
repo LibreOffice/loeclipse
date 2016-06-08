@@ -56,7 +56,10 @@ import org.libreoffice.ide.eclipse.core.internal.model.UnoComposite;
  * <p>
  * <b>Note:</b> This class has to be extended to add new UNO-IDL code generation.
  * </p>
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public final class CompositeFactory {
 
     /**

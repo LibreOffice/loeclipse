@@ -43,7 +43,10 @@ import junit.framework.TestCase;
 
 /**
  * Unit test class checking the OOo structure recognition.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class OOoTest extends TestCase {
 
     private static final String TEST_PROP = "ooo.tests"; //$NON-NLS-1$

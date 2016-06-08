@@ -58,7 +58,10 @@ import org.libreoffice.ide.eclipse.core.office.TypesGetter;
 
 /**
  * Class providing UNO types from a LibreOffice instance and optionally from a UNO project.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class UnoTypeProvider {
 
     public static final int ALL_TYPES = 2047;
@@ -233,7 +236,7 @@ public class UnoTypeProvider {
             refreshCache();
         }
 
-        List<String> containers = new ArrayList<String>();
+        ArrayList<String> containers = new ArrayList<String>();
         containers.addAll(Arrays.asList(pContainers));
 
         // Use the set OOo and project as containers
@@ -242,7 +245,7 @@ public class UnoTypeProvider {
         }
 
         if (mOooInstance != null) {
-            containers.add(mOooInstance.toString());
+            containers.add(mOooInstance.getName());
         }
 
         LinkedList<InternalUnoType> types = new LinkedList<InternalUnoType>();
@@ -269,7 +272,10 @@ public class UnoTypeProvider {
 
     /**
      * The job extracting the types from LibreOffice.
-    */
+     *
+     * @author cedricbosdo
+     *
+     */
     private class UnoTypesGetterThread extends Thread {
 
         /**

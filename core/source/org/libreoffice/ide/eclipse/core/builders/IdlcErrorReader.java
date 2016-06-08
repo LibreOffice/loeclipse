@@ -59,7 +59,10 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 
 /**
  * Class reading the idlc error output to transform the errors into markers.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class IdlcErrorReader {
 
     /**
@@ -143,7 +146,7 @@ public class IdlcErrorReader {
                     // file which is compiled
                     if (IResource.FILE == marker.getResource().getType()
                         && !marker.getResource().getProjectRelativePath().toString()
-                            .equals(mCompiledFile.getProjectRelativePath().toString())) {
+                        .equals(mCompiledFile.getProjectRelativePath().toString())) {
                         marker.delete();
                     }
                 }

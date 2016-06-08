@@ -241,6 +241,22 @@
       </perspectiveExtension>
    </extension>
    <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.libreoffice.ide.eclipse.core.preferences.ProjectPropertiesPage"
+            id="org.libreoffice.ide.eclipse.core.projectproperties"
+            name="%project.propertypage.name">
+         <filter
+               name="nature"
+               value="org.libreoffice.ide.eclipse.core.unonature"/>
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.libreoffice.ide.eclipse.core.launch.UreLaunchDelegate"

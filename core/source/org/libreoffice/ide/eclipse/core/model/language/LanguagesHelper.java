@@ -53,7 +53,10 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Helper class for implementation languages handling.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class LanguagesHelper {
 
     /**

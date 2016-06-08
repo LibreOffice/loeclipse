@@ -64,7 +64,10 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.WizardPageSet;
 
 /**
  * This wizard page set manages a service page and an interface page.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class ServiceWizardSet extends WizardPageSet {
 
     public static final String SERVICE_PAGE_ID = "service"; //$NON-NLS-1$

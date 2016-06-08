@@ -50,7 +50,10 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class for the new OXT export wizard.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class PackageExportWizard extends Wizard implements IExportWizard {
 
     private static final String DIALOG_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$

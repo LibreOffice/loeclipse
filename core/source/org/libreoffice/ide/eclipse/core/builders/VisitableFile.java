@@ -48,7 +48,10 @@ import java.io.File;
 /**
  * A little tiny interface to visit File objects. This has to be used to avoid multiple and annoying project refresh
  * operations trigerring unwanted changes.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class VisitableFile {
 
     private File mFile;

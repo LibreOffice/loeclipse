@@ -71,6 +71,7 @@ import org.libreoffice.ide.eclipse.core.utils.WorkbenchHelper;
 /**
  * This class is a factory creating UNO projects and types from data sets describing the object to get.
  *
+ * @author cedricbosdo
  */
 public final class UnoFactory {
 

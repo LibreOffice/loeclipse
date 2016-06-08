@@ -46,6 +46,7 @@ package org.libreoffice.ide.eclipse.core.model.utils;
 /**
  * Generic interface to listen to models.
  *
+ * @author cedricbosdo
  */
 public interface IModelChangedListener {
 

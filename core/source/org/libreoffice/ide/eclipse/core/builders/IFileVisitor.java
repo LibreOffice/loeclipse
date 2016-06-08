@@ -48,7 +48,10 @@ import java.io.File;
 /**
  * A little tiny interface for a File visitor. This has to be used to avoid multiple and annoying project refresh
  * operations triggering unwanted changes.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public interface IFileVisitor {
 
     /**

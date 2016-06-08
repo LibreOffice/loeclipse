@@ -51,6 +51,7 @@ import junit.framework.TestCase;
 /**
  * JUnit tests for the Uno composite factory.
  *
+ * @author cedricbosdo
  */
 public class UnoFactoryTest extends TestCase {
 

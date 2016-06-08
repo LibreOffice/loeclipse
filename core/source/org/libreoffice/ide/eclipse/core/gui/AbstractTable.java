@@ -86,7 +86,10 @@ import org.eclipse.swt.widgets.TableItem;
  * <li>{@link #createCellEditors(Table)} to customize how to edit the cells of the differents columns of the table.</li>
  * </ul>
  * </p>
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class AbstractTable extends Composite implements ISelectionProvider {
 
     protected Table mTable;
@@ -365,7 +368,10 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     /**
      * Provides the content of the table. The main method used here is the {@link #getElements(Object)} one which
      * returns all the {@link ITableElement} lines.
-    */
+     *
+     * @author cbosdonnat
+     *
+     */
     private class AbstractContentProvider implements IStructuredContentProvider {
 
         /**
@@ -399,6 +405,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
      * {@link ITableElement#canModify(String)}, {@link ITableElement#getValue(String)} and
      * {@link ITableElement#setValue(String, Object)}.
      *
+     * @author cbosdonnat
      */
     private class AbstractCellModifier implements ICellModifier {
 
@@ -448,6 +455,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
      * The class responsible to provide the labels and images for each table cell. This class will use the
      * {@link ITableElement#getLabel(String)} and {@link ITableElement#getImage(String)} methods.
      *
+     * @author cedricbosdo
      */
     private class AbstractLabelProvider extends LabelProvider implements ITableLabelProvider {
 

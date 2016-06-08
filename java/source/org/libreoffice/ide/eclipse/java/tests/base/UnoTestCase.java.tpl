@@ -25,6 +25,7 @@ import com.sun.star.uno.XComponentContext;
 /**
  * Base for all test cases to use along with '{'@link UnoTestSuite}.
  * 
+ * @author cbosdo
  *
  */
 public abstract class UnoTestCase extends TestCase '{'

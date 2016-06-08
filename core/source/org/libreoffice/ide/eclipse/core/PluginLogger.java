@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.Status;
  * This class is the plugin central log singleton. It supports 4 levels of messages on the contrary of the Java
  * <code>Logger</code> class which contains 5. This class adds the messages to the Eclipse log view.
  *
+ * @author cbosdonnat
  */
 public class PluginLogger {
 
@@ -114,8 +115,8 @@ public class PluginLogger {
     public static void warning(String pMessage, Throwable pExc) {
         if (!sLevel.equals(LogLevels.ERROR)) {
             OOEclipsePlugin.getDefault().getLog()
-                .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
-                    IStatus.WARNING, pMessage, pExc));
+            .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
+                IStatus.WARNING, pMessage, pExc));
         }
     }
 

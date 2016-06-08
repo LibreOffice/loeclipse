@@ -87,7 +87,10 @@ import org.libreoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 
 /**
  * Basic and dialog libraries section of the Contents form page of the package editor.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class LibsSection extends SectionPart {
 
     private static final String P_LIBTYPE = "__p_libtype"; //$NON-NLS-1$
@@ -335,6 +338,7 @@ public class LibsSection extends SectionPart {
     /**
      * Content provider for the libraries.
      *
+     * @author cedricbosdo
      */
     private class LibsContentProvider implements IStructuredContentProvider {
 
@@ -364,6 +368,7 @@ public class LibsSection extends SectionPart {
     /**
      * Cell modifier for the types in the table.
      *
+     * @author cedricbosdo
      */
     private class LibsCellModifier implements ICellModifier {
 
@@ -406,6 +411,7 @@ public class LibsSection extends SectionPart {
     /**
      * Label provider for the table content.
      *
+     * @author cedricbosdo
      */
     private class LibsLabelProvider extends LabelProvider implements ITableLabelProvider {
 

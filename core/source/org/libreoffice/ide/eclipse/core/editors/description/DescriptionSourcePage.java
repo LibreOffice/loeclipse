@@ -30,12 +30,16 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.editors.description;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.libreoffice.ide.eclipse.core.editors.utils.SourcePage;
 
 /**
  * The source page for the description.xml file.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class DescriptionSourcePage extends SourcePage {
 
     /**

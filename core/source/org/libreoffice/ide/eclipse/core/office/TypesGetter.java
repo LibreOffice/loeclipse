@@ -56,7 +56,10 @@ import org.libreoffice.ide.eclipse.core.unotypebrowser.InternalUnoType;
 
 /**
  * Facade class loading all the methods using a LibreOffice instance.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class TypesGetter {
 
     private static final String CLASSNAME = OfficeHelper.OOO_PACKAGE + ".TypesGetter"; //$NON-NLS-1$

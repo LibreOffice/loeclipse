@@ -55,6 +55,7 @@ import org.libreoffice.ide.eclipse.core.internal.model.UnoidlProject;
 /**
  * Singleton mapping the UNO-IDL projects to their name to provide an easy access to UNO-IDL projects.
  *
+ * @author cedricbosdo
  */
 public class ProjectsManager {
 

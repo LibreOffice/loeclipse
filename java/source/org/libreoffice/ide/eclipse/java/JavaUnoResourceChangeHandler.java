@@ -53,7 +53,10 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
  * This class is responsible for reacting to the changes on the Java resources
  * in UNO projects. Its main activity is to maintain the implementation classes
  * list for the services registration.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeListener {
 
     /**

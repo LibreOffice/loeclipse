@@ -55,6 +55,7 @@ import org.libreoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
  * {@link UnoidlConfiguration}. In order to fully understand the editor mechanisms, please report to Eclipse plugin
  * developer's guide.
  *
+ * @author cbosdonnat
  */
 public class UnoidlDocumentProvider extends FileDocumentProvider {
 

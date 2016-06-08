@@ -60,7 +60,10 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
  * Special class loader to use to load OOo related classes.
  *
  * This class loader is important to bootstrap LibreOffice.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class OfficeClassLoader extends URLClassLoader {
 
     private static Map<String, OfficeClassLoader> sClassLoaders = new HashMap<>();

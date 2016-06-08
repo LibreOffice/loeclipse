@@ -49,6 +49,7 @@ import org.eclipse.jface.text.rules.IWhitespaceDetector;
 /**
  * A basic rule to detect the white spaces in the text.
  *
+ * @author cedricbosdo
  */
 public class UnoidlWhiteSpaceDetector implements IWhitespaceDetector {
 

@@ -80,7 +80,10 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Helper class for UNO-IDL project handling.
-*/
+ *
+ * @author Cedric Bosdonnat
+ *
+ */
 public class UnoidlProjectHelper {
 
     /**
@@ -167,11 +170,13 @@ public class UnoidlProjectHelper {
         unoProject.setLanguage(language);
 
         // Set the SDK
-        ISdk sdk = SDKContainer.getSDK();
+        String sdkname = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_SDK);
+        ISdk sdk = SDKContainer.getSDK(sdkname);
         unoProject.setSdk(sdk);
 
         // Set the OOo runtime
-        IOOo ooo = OOoContainer.getOOo();
+        String oooname = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_OOO);
+        IOOo ooo = OOoContainer.getOOo(oooname);
         unoProject.setOOo(ooo);
 
         // Set the idl directory

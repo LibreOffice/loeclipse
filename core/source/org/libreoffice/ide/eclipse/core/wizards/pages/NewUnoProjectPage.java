@@ -91,7 +91,10 @@ import org.libreoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 /**
  * Uses the default Project wizard page and add some UNO-IDL special fields: SDK and OOo choices company prefix and
  * Output path.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class NewUnoProjectPage extends WizardNewProjectCreationPage implements IFieldChangedListener {
 
     /* Constants defining the field properties used to react to field change events */
@@ -130,8 +133,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
 
     private TextRow mIdlDirRow;
 
-    private OOoConfigPanel mOOoConfigPanel;
-
     /**
      * The list of the listened Text field of the super class.
      */
@@ -152,6 +153,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
             ((NewUnoProjectWizard) getWizard()).pageChanged(NewUnoProjectPage.this);
         }
     };
+    private OOoConfigPanel mOOoConfigPanel;
 
     /**
      * Default constructor.
@@ -364,9 +366,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         mLanguageRow.select(0);
         mLanguageRow.setFieldChangedListener(this);
 
-        // Add the LibreOffice/SDK path config
         mOOoConfigPanel = new OOoConfigPanel(body);
-        mOOoConfigPanel.setFieldChangedListener(this);
 
         addCustomDirsControls(body);
     }
@@ -496,16 +496,6 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
             boolean useCustom = mCustomDirsRow.getBooleanValue();
             mSourceRow.setEnabled(useCustom);
             mIdlDirRow.setEnabled(useCustom);
-        } else if (pEvent.getProperty().equals(OOoConfigPanel.P_LIBREOFFICE_PATH)) {
-            if (!mOOoConfigPanel.isValid()) {
-                setErrorMessage("Invalid LibreOffice path.");
-            }
-            setPageComplete(mOOoConfigPanel.isValid());
-        } else if (pEvent.getProperty().equals(OOoConfigPanel.P_SDK_PATH)) {
-            if (!mOOoConfigPanel.isValid()) {
-                setErrorMessage("Invalid SDK path.");
-            }
-            setPageComplete(mOOoConfigPanel.isValid());
         }
         ((NewUnoProjectWizard) getWizard()).pageChanged(this);
     }

@@ -54,6 +54,7 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 /**
  * This interface provides a set of methods to perform language specific tasks on uno-idl projects.
  *
+ * @author cedricbosdo
  */
 public interface IProjectHandler {
 

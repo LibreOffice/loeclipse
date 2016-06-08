@@ -53,7 +53,10 @@ import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 
 /**
  * Interface for a UNO project.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public interface IUnoidlProject {
 
     public static final String DESCRIPTION_FILENAME = "description.xml"; //$NON-NLS-1$

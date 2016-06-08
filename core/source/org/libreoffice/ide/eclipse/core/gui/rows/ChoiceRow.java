@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Label;
  * the version 1.0.3.
  * </p>
  *
+ * @author cedricbosdo
  * @see org.libreoffice.ide.eclipse.core.gui.rows.LabeledRow
  *
  */

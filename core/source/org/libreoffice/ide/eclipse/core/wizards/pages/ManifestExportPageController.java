@@ -24,7 +24,10 @@ package org.libreoffice.ide.eclipse.core.wizards.pages;
 /**
  * Testable controller class for the Manifest export page, this class implements all the logic ruling the dialog
  * controls.
-*/
+ *
+ * @author Cédric Bosdonnat
+ *
+ */
 public class ManifestExportPageController {
 
     /**

@@ -67,7 +67,10 @@ import org.libreoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
 
 /**
  * Table cell editor for UNO types.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class TypeCellEditor extends TextCellEditor {
 
     private Button mButton;

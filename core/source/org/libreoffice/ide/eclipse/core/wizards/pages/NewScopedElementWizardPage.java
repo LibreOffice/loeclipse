@@ -70,7 +70,10 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.IPageListener;
 
 /**
  * Abstract class for a wizard page to create a scoped element such as a service or an interface.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public abstract class NewScopedElementWizardPage extends WizardPage implements IFieldChangedListener, IListenablePage {
 
     private static final String P_PACKAGE = "__package"; //$NON-NLS-1$
@@ -554,7 +557,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
                 mElementName = pEvent.getValue();
                 // Test if there is the scoped name already exists
                 String[] containers = new String[] { getProject().getTypesPath().toOSString(),
-                    getProject().getOOo().getHome() };
+                    getProject().getOOo().getName() };
                 boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue(), containers);
                 if (exists) {
                     setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$

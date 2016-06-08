@@ -62,6 +62,7 @@ import org.eclipse.swt.graphics.Image;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.gui.ITableElement;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.config.IExtraOptionsProvider;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
@@ -70,7 +71,10 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 /**
  * Helper class to add the table element features to the OOo classes. All the {@link IOOo} interface still has to be
  * implemented by the subclasses
-*/
+ *
+ * @author cbosdonnat
+ *
+ */
 public abstract class AbstractOOo implements IOOo, ITableElement {
 
     public static final String NAME = "__ooo_name"; //$NON-NLS-1$
@@ -82,6 +86,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     private static String sPlatform;
 
     private String mHome;
+    private String mName;
 
     /**
      * Creating a new OOo or URE instance specifying its home directory.
@@ -95,9 +100,20 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         setHome(pOooHome);
     }
 
-    @Override
-    public String toString() {
-        return String.format("LibreOffice (%s)", mHome);
+    /**
+     * Creating a new OOo or URE instance specifying its home directory and name.
+     *
+     * @param pOooHome
+     *            the LibreOffice or URE installation directory
+     * @param pName
+     *            the LibreOffice or URE instance name
+     *
+     * @throws InvalidConfigException
+     *             if the home directory doesn't contains the required files and directories
+     */
+    public AbstractOOo(String pOooHome, String pName) throws InvalidConfigException {
+        setHome(pOooHome);
+        setName(pName);
     }
 
     /**
@@ -140,6 +156,27 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return mName;
+    }
+
+    /**
+     * Set the new name only if it's neither null nor the empty string. The name will be rendered unique and therefore
+     * may be changed.
+     *
+     * @param pName
+     *            the name to set
+     */
+    protected void setName(String pName) {
+        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+            mName = OOoContainer.getUniqueName(pName);
+        }
+    }
+
+    /**
      * Check if the UNO configuration file is present in the OOo installation directory.
      *
      * @throws InvalidConfigException
@@ -173,7 +210,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 mHome = null;
                 throw new InvalidConfigException(
                     Messages.getString("AbstractOOo.NoFileError") + //$NON-NLS-1$
-                        servicesFile.getAbsolutePath(),
+                    servicesFile.getAbsolutePath(),
                     InvalidConfigException.INVALID_OOO_HOME);
             }
         }
@@ -234,7 +271,13 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      */
     @Override
     public String getLabel(String pProperty) {
-        return toString();
+        String result = ""; //$NON-NLS-1$
+        if (pProperty.equals(NAME)) {
+            result = getName();
+        } else if (pProperty.equals(PATH)) {
+            result = getHome();
+        }
+        return result;
     }
 
     /**

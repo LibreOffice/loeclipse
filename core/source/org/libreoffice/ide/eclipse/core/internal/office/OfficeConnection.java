@@ -60,7 +60,10 @@ import com.sun.star.uri.XExternalUriReferenceTranslator;
 
 /**
  * Abstract class for tasks requiring an office connection.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class OfficeConnection {
 
     private IOOo mOOo;

@@ -78,7 +78,10 @@ import org.libreoffice.plugin.core.utils.ZipContent;
  * For the different file types see
  * {@link "http://wiki.services.openoffice.org/wiki/Documentation/DevGuide/Extensions/File_Format"}.
  * </p>
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class UnoPackage {
 
     public static final String MANIFEST_PATH = "manifest.xml";
@@ -692,7 +695,7 @@ public class UnoPackage {
         File manifest = new File(System.getProperty("java.io.tmpdir"), MANIFEST_PATH);
         if (manifest.exists()) {
             throw new IOException("I don't risk to overwrite " + manifest.getAbsolutePath()
-                + " - please delete it manually!");
+            + " - please delete it manually!");
         }
         FileOutputStream writer = new FileOutputStream(manifest);
         mManifest.write(writer);

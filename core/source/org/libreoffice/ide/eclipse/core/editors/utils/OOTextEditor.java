@@ -41,7 +41,10 @@ import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * Base class for an enhanced text editor to be used in the loeclipse plugins.
-*/
+ *
+ * @author Cédric Bosdonnat <cedric.bosdonnat@free.fr>
+ *
+ */
 public class OOTextEditor extends TextEditor {
 
     private Composite mMsgComposite;

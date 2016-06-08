@@ -68,6 +68,7 @@ import org.libreoffice.ide.eclipse.core.editors.utils.ColorProvider;
  * <code>org.libreoffice.ide.eclipse.core.editors.syntax</code> package.
  * </p>
  *
+ * @author cbosdonnat
  */
 public class UnoidlConfiguration extends SourceViewerConfiguration {
 

@@ -39,6 +39,7 @@ import com.sun.star.uno.XComponentContext;
  * The extension to test has to be already installed on OOo for the
  * current user.
  * 
+ * @author cbosdo
  *
  */
 public class UnoTestSuite extends TestSuite '{'

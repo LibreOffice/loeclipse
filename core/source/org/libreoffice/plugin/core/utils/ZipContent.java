@@ -52,7 +52,10 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * This class is a small structure containing the data to ZIP for one file.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class ZipContent {
 
     private static final int BUFFER_SIZE = 2048;

@@ -46,7 +46,10 @@ package org.libreoffice.ide.eclipse.core.i18n;
 /**
  * Defines the keys to use for images internationalization. The default file name is defined in the
  * <code>ImageManager.properties</code> file
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class ImagesConstants {
 
     public static final String SDK_DIALOG_IMAGE = "SDK_DIALOG_IMAGE"; //$NON-NLS-1$

@@ -69,7 +69,10 @@ import java.util.Hashtable;
  * <li>creating the composite file, folder or text</li>
  * </ol>
  * </p>
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public interface IUnoComposite {
 
     public static final int COMPOSITE_TYPE_NOTSET = -1;

@@ -28,6 +28,7 @@ package org.libreoffice.plugin.core.utils;
  * The commons.lang dependency was removed but we need some stuff from the StringUtils class. The missing functionality
  * is recoded here.
  *
+ * @author oliver (oliver.boehm@agentes.de)
  * @since 1.1.1 (08.12.2010)
  */
 public class StringUtils {

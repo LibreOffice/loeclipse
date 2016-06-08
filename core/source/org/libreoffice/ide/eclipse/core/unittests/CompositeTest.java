@@ -56,6 +56,7 @@ import junit.framework.TestCase;
 /**
  * JUnit tests for the UNO-IDL composite structure.
  *
+ * @author cedricbosdo
  */
 public class CompositeTest extends TestCase {
 

@@ -64,6 +64,7 @@ import org.osgi.framework.BundleContext;
  * method is provided in this class too.
  * </p>
  *
+ * @author cedricbosdo
  */
 public class OOEclipsePlugin extends AbstractUIPlugin {
 
@@ -91,10 +92,6 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
      * Log level preference key, used to store the preferences.
      */
     public static final String LOGLEVEL_PREFERENCE_KEY = "loglevel"; //$NON-NLS-1$
-
-    /** Preference keys for LibreOffice / SDK Path */
-    public static final String LIBREOFFICE_PATH_PREFERENCE_KEY = "libreoffice_path";
-    public static final String SDK_PATH_PREFERENCE_KEY = "sdk_path";
 
     // Light red
     public static final RGB STRING = new RGB(255, 0, 0);
@@ -162,6 +159,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
         super.stop(pContext);
         sPlugin = null;
 
+        OOoContainer.dispose();
+        SDKContainer.dispose();
         ProjectsManager.dispose();
     }
 

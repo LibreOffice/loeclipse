@@ -89,7 +89,10 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
  * even after disposing the dialog.
  *
  * This class shouldn't be sub-classed.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChangedListener {
 
     private static final String MEMBER_TYPE = "__member_type"; //$NON-NLS-1$
@@ -529,6 +532,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
     /**
      * Class providing an access to the inner data of the uno factory data for the method arguments table.
      *
+     * @author cedricbosdo
      */
     class ParamContentProvider implements IStructuredContentProvider {
 
@@ -559,6 +563,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
     /**
      * Simply provides the values access for the cell editors of the method arguments table.
      *
+     * @author cedricbosdo
      */
     class ParamCellModifier implements ICellModifier {
 
@@ -657,6 +662,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
     /**
      * Simply provides the label for the method arguments table.
      *
+     * @author cedricbosdo
      */
     class ParamLabelProvider implements ITableLabelProvider {
 

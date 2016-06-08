@@ -52,7 +52,10 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
  * Provides a set of utility methods to use to handle OOo. All the code handling LibreOffice has to be in the
  * {@value #OOO_PACKAGE} package. These classes have to be loaded by the {@link OfficeClassLoader}. All the classes
  * facade classes have to be in the same package than this class.
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class OfficeHelper {
 
     static final String OOO_PACKAGE = "org.libreoffice.ide.eclipse.core.internal.office"; //$NON-NLS-1$

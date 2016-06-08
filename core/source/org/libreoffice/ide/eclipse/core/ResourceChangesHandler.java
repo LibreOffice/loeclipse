@@ -64,7 +64,10 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
  * To be sure that this class is started early even if the OOIntegration hasn't been activated, this class implement
  * {@link IStartup}
  * </p>
-*/
+ *
+ * @author cedricbosdo
+ *
+ */
 public class ResourceChangesHandler implements IStartup, IResourceChangeListener {
 
     /**
@@ -121,7 +124,10 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
 
     /**
      * Job adding a project to the {@link ProjectsManager}.
-    */
+     *
+     * @author cedricbosdo
+     *
+     */
     private class ProjectAdderJob extends WorkspaceJob {
 
         private IProject mPrj;
