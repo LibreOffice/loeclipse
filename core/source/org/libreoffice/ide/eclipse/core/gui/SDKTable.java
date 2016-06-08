@@ -446,17 +446,8 @@ public class SDKTable extends AbstractTable {
                     mBuidlidRow.setValue(mTmpSdk.getId());
                 }
 
-                if (Platform.getOS().equals(Platform.OS_WIN32) && mSdkpathRow.getValue().contains(" ")) { //$NON-NLS-1$
-
-                    updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
-                        Messages.getString("SDKTable.SpacesSdkPathWarning"), //$NON-NLS-1$
-                        null));
-                } else {
-                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
-                }
-
+                updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
                 result = true;
-
             } catch (InvalidConfigException e) {
                 if (pProperty.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
