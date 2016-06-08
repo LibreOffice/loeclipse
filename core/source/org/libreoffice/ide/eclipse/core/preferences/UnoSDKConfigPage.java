@@ -69,11 +69,11 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
     protected Control createContents(Composite pParent) {
         noDefaultAndApplyButton();
 
-        mSdkTable = new SDKTable(pParent);
-        mSdkTable.getPreferences();
-
         mOOoTable = new OOoTable(pParent);
         mOOoTable.getPreferences();
+        
+        mSdkTable = new SDKTable(pParent);
+        mSdkTable.getPreferences();
 
         return pParent;
     }

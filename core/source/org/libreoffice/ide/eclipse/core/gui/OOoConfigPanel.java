@@ -64,8 +64,8 @@ public class OOoConfigPanel {
         group.setLayout(new GridLayout(GRID_COLUMNS, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        mSdkRow = new SdkRow(group, new String(), null);
         mOOoRow = new OOoRow(group, new String(), null);
+        mSdkRow = new SdkRow(group, new String(), null);
     }
 
     /**

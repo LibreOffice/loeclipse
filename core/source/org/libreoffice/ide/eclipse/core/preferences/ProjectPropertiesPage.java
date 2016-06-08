@@ -126,11 +126,11 @@ public class ProjectPropertiesPage extends PropertyPage implements IWorkbenchPro
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
 
-        // Add the SDK choice field
-        mSdkRow = new SdkRow(body, SDK, mProject.getSdk());
-
         // Add the OOo choice field
         mOOoRow = new OOoRow(body, OOO, mProject.getOOo());
+        
+        // Add the SDK choice field
+        mSdkRow = new SdkRow(body, SDK, mProject.getSdk());
 
         return body;
     }
