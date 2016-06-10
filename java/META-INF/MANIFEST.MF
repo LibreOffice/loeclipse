@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Java Plug-in for LibreOffice eclipse integration
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.java;singleton:=true
 Bundle-Vendor: The Document Foundation
-Bundle-Version: 2.1.0
+Bundle-Version: 2.1.1
 Bundle-Activator: org.libreoffice.ide.eclipse.java.OOoJavaPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

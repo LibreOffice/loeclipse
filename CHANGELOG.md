@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.1
+* #29: Extension output no longer printed (Regression)
+
 ## 2.1.0
 * #20: Icons can now be added in the description editor.
 * Better error reporting during deployment
