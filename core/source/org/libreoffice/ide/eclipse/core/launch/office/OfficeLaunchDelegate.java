@@ -178,7 +178,7 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      */
     private File exportComponent(IUnoidlProject pPrj, List<IResource> pResources) throws Exception {
 
-        IFolder distFolder = pPrj.getFolder(pPrj.getDistPath());
+        IFolder distFolder = pPrj.getDistFolder();
         File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
 
         UnoPackage pack = PackageContentSelector.createPackage(pPrj, destFile, pResources);
