@@ -389,7 +389,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 sPathValue.append(pathSeparator);
             }
 
-            String command = "soffice.bin";
+            String command = "soffice.bin --norestore";
 
             env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
             env = SystemHelper.addEnv(env, "SAL_ALLOW_LINKOO_SYMLINKS", "1", null);
