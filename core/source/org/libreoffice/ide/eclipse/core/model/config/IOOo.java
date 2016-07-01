@@ -204,8 +204,6 @@ public interface IOOo {
      *            the package to add or update
      * @param pUserInstallation
      *            path to the user profile folder.
-     * @param bForceUpdate
-     *            Don't ask when the package already exists, just overwrite it
      */
-    public void updatePackage(File pPackageFile, IPath pUserInstallation, boolean bForceUpdate);
+    public void updatePackage(File pPackageFile, IPath pUserInstallation);
 }

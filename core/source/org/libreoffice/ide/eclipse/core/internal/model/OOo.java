@@ -348,7 +348,7 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public void updatePackage(File pPackageFile, IPath pUserInstallation, boolean bForceUpdate) {
+    public void updatePackage(File pPackageFile, IPath pUserInstallation) {
 
         // Check if there is already a package with the same name
         try {

@@ -112,10 +112,8 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     File destFile = exportComponent(unoprj, resources);
                     pMonitor.worked(1);
 
-                    // When in debug env, or when using a separate user installation, don't ask when extension already exists
-                    boolean bForceDeploy = ILaunchManager.DEBUG_MODE.equals(pMode) || useCleanUserInstallation;
                     // Deploy the component
-                    deployComponent(unoprj, userInstallation, destFile, bForceDeploy);
+                    deployComponent(unoprj, userInstallation, destFile);
 
                     pMonitor.worked(1);
 
@@ -154,13 +152,11 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      *            user profile to use
      * @param pOxtFile
      *            the .oxt file
-     * @param bForceDeploy
-     *            Deploy even if the same component is already installed
      */
-    private void deployComponent(IUnoidlProject pPrj, IPath pUserInstallation, File pOxtFile, boolean bForceDeploy) {
+    private void deployComponent(IUnoidlProject pPrj, IPath pUserInstallation, File pOxtFile) {
         IOOo mOOo = pPrj.getOOo();
         if (mOOo.canManagePackages()) {
-            mOOo.updatePackage(pOxtFile, pUserInstallation, bForceDeploy);
+            mOOo.updatePackage(pOxtFile, pUserInstallation);
         }
     }
 

@@ -263,6 +263,6 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public void updatePackage(File pPackageFile, IPath pUserInstallation, boolean bForceUpdate) {
+    public void updatePackage(File pPackageFile, IPath pUserInstallation) {
     }
 }
