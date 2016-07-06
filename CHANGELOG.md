@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2
+* #28: Start LibreOffice with --norestore 
+* #31: Create dist folder when needed
+
 ## 2.1.1
 * #29: Extension output no longer printed (Regression)
 
