@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,7 +75,7 @@ public class LocaleDialog extends Dialog {
         mLocaleList = new ComboViewer(list);
         mLocaleList.setContentProvider(new ArrayContentProvider());
         mLocaleList.setLabelProvider(new LabelProvider());
-        mLocaleList.setSorter(new ViewerSorter());
+        mLocaleList.setComparator(new ViewerComparator());
         mLocaleList.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override

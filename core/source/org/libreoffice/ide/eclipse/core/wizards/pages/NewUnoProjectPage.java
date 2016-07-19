@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -304,13 +304,13 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         try {
             pMonitor.beginTask("", TASK_UNITS); //$NON-NLS-1$
 
-            pProjectHandle.create(pDescription, new SubProgressMonitor(pMonitor, SUBTASK_UNIT));
+            pProjectHandle.create(pDescription, SubMonitor.convert(pMonitor, SUBTASK_UNIT));
 
             if (pMonitor.isCanceled()) {
                 throw new OperationCanceledException();
             }
 
-            pProjectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(pMonitor, SUBTASK_UNIT));
+            pProjectHandle.open(IResource.BACKGROUND_REFRESH, SubMonitor.convert(pMonitor, SUBTASK_UNIT));
 
         } finally {
             pMonitor.done();
