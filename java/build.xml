@@ -122,6 +122,7 @@
 			
 			<zipfileset prefix="icons" dir="${java.basedir}/icons"/>
 			<zipfileset prefix="" file="${java.basedir}/plugin.xml" />
+			<zipfileset prefix="" file="${java.basedir}/jodconnector.jar" />
 		</jar>
 	</target>
 	
