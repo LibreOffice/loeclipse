@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.3
+* #32 Include jodconnector.jar in the build
+
 ## 2.1.2
 * #28: Start LibreOffice with --norestore 
 * #31: Create dist folder when needed
