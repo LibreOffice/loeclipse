@@ -49,17 +49,16 @@ import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 public class TestsHelper {
 
     private static final String[] TEMPLATES = new String[] {
-        "AllTests", //$NON-NLS-1$
-        "ProjectTest", //$NON-NLS-1$
-        "base/Bootstrap", //$NON-NLS-1$
-        "base/UnoTestCase", //$NON-NLS-1$
-        "base/UnoTestSuite" //$NON-NLS-1$
+        "UnoTests", //$NON-NLS-1$
+        "base/UnoSuite", //$NON-NLS-1$
+        "helper/UnoHelper",
+        "uno/WriterTest"
     };
     private static final String TEST_PATH = "tests"; //$NON-NLS-1$
 
     private static final String JUNIT_CONTAINER = "org.eclipse.jdt.junit.JUNIT_CONTAINER"; //$NON-NLS-1$
-    private static final String JUNIT3 = "3"; //$NON-NLS-1$
-    private static final IPath JUNIT3_PATH = new Path(JUNIT_CONTAINER).append(JUNIT3);
+    private static final String JUNIT4 = "4"; //$NON-NLS-1$
+    private static final IPath JUNIT4_PATH = new Path(JUNIT_CONTAINER).append(JUNIT4);
 
     /**
      * Creates all the test classes files in the UNO project.
@@ -85,7 +84,7 @@ public class TestsHelper {
 
             System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
 
-            IClasspathEntry containerEntry = JavaCore.newContainerEntry(JUNIT3_PATH);
+            IClasspathEntry containerEntry = JavaCore.newContainerEntry(JUNIT4_PATH);
             entries[entries.length - 1] = containerEntry;
 
             pProject.setRawClasspath(entries, null);
