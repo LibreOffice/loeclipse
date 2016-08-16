@@ -239,9 +239,7 @@ public class UnoPackage {
         } else if (pContent.getName().endsWith(".xcu")) {
             addConfigurationDataFile(pathname, pContent);
         } else if (pContent.getName().endsWith(".rdb")) {
-            addTypelibraryFile(pathname, pContent, "RDB");
-        } else if (pContent.getName().endsWith(".jar")) {
-            addTypelibraryFile(pathname, pContent, "Java");
+            addTypelibraryFile(pathname, pContent);
         } else if (pContent.getName().equals("description.xml")) {
             addPackageDescription(pathname, pContent, Locale.getDefault());
         } else {
@@ -351,55 +349,8 @@ public class UnoPackage {
      *            the file to add to the package
      * @param pType
      *            the type of the file to add.
-     *
-     * @see #addComponentFile(IFile, String, String) for platform support
      */
     public void addComponentFile(String pathInArchive, File pFile, String pType) {
-        addComponentFile(pathInArchive, pFile, pType, null);
-    }
-
-    /**
-     * Add a uno component file, for example a jar, shared library or python file containing the uno implementation.
-     *
-     * <p>
-     * The type of the file defines the language and should be given as defined in the OOo Developer's Guide, like Java,
-     * native, Python.
-     * </p>
-     *
-     * @param pFile
-     *            the file to add to the package
-     * @param pType
-     *            the type of the file to add.
-     * @param pPlatform
-     *            optional parameter to use only with native type. Please refer to the OOo Developer's Guide for more
-     *            information.
-     */
-    public void addComponentFile(String pathInArchive, File pFile, String pType, String pPlatform) {
-        if (!pFile.isFile()) {
-            throw new IllegalArgumentException("pFile [" + pFile + "] is not a file");
-        }
-
-        // Do not change the extension from now
-        initializeOutput();
-
-        addZipContent(pathInArchive, pFile);
-    }
-
-    /**
-     * Add a type library to the package.
-     *
-     * <p>
-     * Note that by some strange way, a jar dependency can be added in the package as a type library like RDB files.
-     * </p>
-     *
-     * @param pathInArchive
-     *            the path in the Zip archive
-     * @param pFile
-     *            the file to add
-     * @param pType
-     *            the type of the file as specified in the OOo Developer's Guide
-     */
-    public void addTypelibraryFile(String pathInArchive, File pFile, String pType) {
         if (!pFile.isFile()) {
             throw new IllegalArgumentException("pFile [" + pFile + "] is not a file");
         }
@@ -409,11 +360,29 @@ public class UnoPackage {
         // Do not change the extension from now
         initializeOutput();
 
-        if ("Java".equalsIgnoreCase(pType) && hasRegistrationHandlerInside(pFile)) {
-            mManifest.addComponentFile(pathInArchive, pType);
-        } else {
-            mManifest.addTypelibraryFile(pathInArchive, pType);
+        mManifest.addComponentFile(pathInArchive, pType);
+        addZipContent(pathInArchive, pFile);
+    }
+
+    /**
+     * Add a type library to the package.
+     *
+     * @param pathInArchive
+     *            the path in the Zip archive
+     * @param pFile
+     *            the file to add
+     */
+    public void addTypelibraryFile(String pathInArchive, File pFile) {
+        if (!pFile.isFile()) {
+            throw new IllegalArgumentException("pFile [" + pFile + "] is not a file");
         }
+
+        pathInArchive = FilenameUtils.separatorsToUnix(pathInArchive);
+
+        // Do not change the extension from now
+        initializeOutput();
+
+        mManifest.addTypelibraryFile(pathInArchive);
         addZipContent(pathInArchive, pFile);
     }
 

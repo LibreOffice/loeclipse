@@ -73,7 +73,7 @@ public class ManifestModel {
             } else if (pContent.getName().endsWith(EXT_XCU)) {
                 addConfigurationDataFile(path);
             } else if (pContent.getName().endsWith(EXT_RDB)) {
-                addTypelibraryFile(path, "RDB");
+                addTypelibraryFile(path);
             } else if (pContent.getName().equals("description.xml")) {
                 addDescription(path, Locale.getDefault());
             }
@@ -132,18 +132,12 @@ public class ManifestModel {
     /**
      * Add a type library to the package.
      *
-     * <p>
-     * Note that by some strange way, a jar dependency can be added in the package as a type library like RDB files.
-     * </p>
-     *
      * @param pFile
      *            the file to add
-     * @param pType
-     *            the type of the file as specified in the OOo Developer's Guide
      */
-    public void addTypelibraryFile(String pFile, String pType) {
+    public void addTypelibraryFile(String pFile) {
         FileType type = new FileType(FileType.MIME_UNO_TYPES);
-        type.addParam(FileType.PARAM_TYPE, pType);
+        type.addParam(FileType.PARAM_TYPE, "RDB");
 
         addEntry(pFile, type);
     }

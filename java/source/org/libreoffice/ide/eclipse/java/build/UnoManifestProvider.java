@@ -30,12 +30,18 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.java.build;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.internal.ui.jarpackager.ManifestProvider;
 import org.eclipse.jdt.ui.jarpackager.JarPackageData;
+import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
+import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class providing the MANIFEST.MF contents to the Jar writer.
@@ -47,24 +53,34 @@ import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 public class UnoManifestProvider extends ManifestProvider {
 
     private String mRegClass;
+    private IUnoidlProject mUnoProject;
+    private List<IFile> mExternalJars;
 
     /**
      * Constructor.
      *
      * @param pRegClassname the registration class name
      */
-    public UnoManifestProvider(String pRegClassname) {
+    public UnoManifestProvider(String pRegClassname, IUnoidlProject unoProject, List<IFile> externalJars) {
         mRegClass = pRegClassname;
+        mUnoProject = unoProject;
+        mExternalJars = externalJars;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void putAdditionalEntries(Manifest pManifest,
-        JarPackageData pJarPackage) {
+    protected void putAdditionalEntries(Manifest pManifest, JarPackageData pJarPackage) {
+        Name regClassName = new Attributes.Name("RegistrationClassName"); //$NON-NLS-1$
+        pManifest.getMainAttributes().put(regClassName, mRegClass);
 
-        Name name = new Attributes.Name("RegistrationClassName"); //$NON-NLS-1$
-        pManifest.getMainAttributes().put(name, mRegClass);
+        Name classPath = new Attributes.Name("Class-Path");
+        List<String> classPathList = new ArrayList<>();
+        for (IFile file:mExternalJars) {
+            classPathList.add(UnoPackage.getPathRelativeToBase(SystemHelper.getFile(file),
+                SystemHelper.getFile(mUnoProject)));
+        }
+        pManifest.getMainAttributes().put(classPath, String.join(",", classPathList));
     }
 }

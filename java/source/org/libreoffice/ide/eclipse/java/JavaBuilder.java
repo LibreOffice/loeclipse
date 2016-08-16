@@ -49,6 +49,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -102,8 +103,12 @@ public class JavaBuilder implements ILanguageBuilder {
      */
     @Override
     public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
-
         IFile jarFile = ((JavaProjectHandler) mLanguage.getProjectHandler()).getJarFile(pUnoProject);
+
+        // Add all the jar dependencies
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
+        IJavaProject javaPrj = JavaCore.create(prj);
+        List<IFile> externalJars = getLibs(javaPrj);
 
         JarPackageData description = new JarPackageData();
         description.setGenerateManifest(true);
@@ -111,7 +116,7 @@ public class JavaBuilder implements ILanguageBuilder {
 
         String regClassname = ((JavaProjectHandler) mLanguage.getProjectHandler())
             .getRegistrationClassName(pUnoProject);
-        description.setManifestProvider(new UnoManifestProvider(regClassname));
+        description.setManifestProvider(new UnoManifestProvider(regClassname, pUnoProject, externalJars));
         description.setManifestLocation(pUnoProject.getFile("MANIFEST.MF").getFullPath()); //$NON-NLS-1$
         description.setSaveManifest(false);
         description.setReuseManifest(false);
@@ -261,7 +266,6 @@ public class JavaBuilder implements ILanguageBuilder {
      */
     @Override
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
-
         // Add the component Jar file
         JavaProjectHandler handler = (JavaProjectHandler) mLanguage.getProjectHandler();
         File libFile = SystemHelper.getFile(handler.getJarFile(pUnoPrj));
@@ -277,10 +281,9 @@ public class JavaBuilder implements ILanguageBuilder {
         ArrayList<IFile> libs = getLibs(javaPrj);
         for (IFile lib : libs) {
             File jarFile = SystemHelper.getFile(lib);
-            pUnoPackage.addTypelibraryFile(
-                UnoPackage.getPathRelativeToBase(jarFile, prjFile),
-                jarFile, "Java"); //$NON-NLS-1$
+            pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
         }
+
     }
 
     /**
@@ -299,7 +302,7 @@ public class JavaBuilder implements ILanguageBuilder {
                     /*
                      * At first, add only the libraries located in the project
                      * or one of its children. All others libraries have to be
-                     * managed y the user.
+                     * managed by the user.
                      */
                     IPath path = entry.getPath();
                     if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
