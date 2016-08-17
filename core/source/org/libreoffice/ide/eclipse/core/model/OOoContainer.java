@@ -172,12 +172,11 @@ public class OOoContainer {
      *            OOo to remove
      */
     public static void delOOo(IOOo pOoo) {
-        if (null != pOoo) {
-            if (sInstance.mElements.containsKey(pOoo.getName())) {
-                sInstance.mElements.remove(pOoo.getName());
-                sInstance.fireOOoRemoved(pOoo);
-            }
-        }
+        if (null == pOoo || !sInstance.mElements.containsKey(pOoo.getName()))
+            return;
+
+        sInstance.mElements.remove(pOoo.getName());
+        sInstance.fireOOoRemoved(pOoo);
     }
 
     /**
@@ -262,21 +261,21 @@ public class OOoContainer {
      *            new value for the OOo
      */
     public static void updateOOo(String pOookey, IOOo pOoo) {
-        if (sInstance.mElements.containsKey(pOookey) && null != pOoo) {
+        if (null == pOoo || !sInstance.mElements.containsKey(pOookey))
+            return;
 
-            IOOo oooref = sInstance.mElements.get(pOookey);
+        IOOo oooref = sInstance.mElements.get(pOookey);
 
-            // update the attributes
-            try {
-                oooref.setHome(pOoo.getHome());
-            } catch (InvalidConfigException e) {
-                PluginLogger.error(e.getLocalizedMessage(), e);
-            }
-
-            // Reassign the element in the hashmap
-            sInstance.mElements.put(pOookey, oooref);
-            sInstance.fireOOoUpdated(pOoo);
+        // update the attributes
+        try {
+            oooref.setHome(pOoo.getHome());
+        } catch (InvalidConfigException e) {
+            PluginLogger.error(e.getLocalizedMessage(), e);
         }
+
+        // Reassign the element in the hashmap
+        sInstance.mElements.put(pOookey, oooref);
+        sInstance.fireOOoUpdated(pOoo);
     }
 
     /**
