@@ -269,46 +269,10 @@ public class SDK implements ISdk, ITableElement {
      *
      * @param pHome
      *            the SDK installation path
-     * @return the path to the binaries folder depending on the platform
+     * @return the path to the binaries folder
      */
     private IPath getBinPath(String pHome) {
-        IPath path = null;
-
-        // First check for the 3.0 SDK structure
-        path = new Path(pHome).append("/bin"); //$NON-NLS-1$
-        if (!path.toFile().isDirectory()) {
-            path = getSDK2BinPath(pHome);
-        }
-
-        return path;
-    }
-
-    /**
-     * Get the binaries path for the SDK 2.x structure.
-     *
-     * @param pHome
-     *            the SDK home path
-     *
-     * @return the path to the bin directory
-     */
-    private IPath getSDK2BinPath(String pHome) {
-        IPath path = null;
-
-        if (Platform.getOS().equals(Platform.OS_WIN32)) {
-            path = new Path(pHome).append("/windows/bin/"); //$NON-NLS-1$
-        } else if (Platform.getOS().equals(Platform.OS_LINUX)) {
-            path = new Path(pHome).append("/linux/bin"); //$NON-NLS-1$
-        } else if (Platform.getOS().equals(Platform.OS_SOLARIS)) {
-            if (Platform.getOSArch().equals(Platform.ARCH_SPARC)) {
-                path = new Path(pHome).append("/solsparc/bin"); //$NON-NLS-1$
-            } else if (Platform.getOSArch().equals(Platform.ARCH_X86)) {
-                path = new Path(pHome).append("/solintel/bin"); //$NON-NLS-1$
-            }
-        } else if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-            path = new Path(pHome).append("/macosx/bin"); //$NON-NLS-1$
-        }
-
-        return path;
+        return new Path(pHome).append("/bin"); //$NON-NLS-1$
     }
 
     /**
