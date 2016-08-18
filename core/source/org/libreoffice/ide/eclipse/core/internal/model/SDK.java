@@ -86,8 +86,7 @@ public class SDK implements ISdk, ITableElement {
     private static final String K_SDK_BUILDID = "BUILDID"; //$NON-NLS-1$
 
     /**
-     * private constant that hold the name of the sdk config file (normaly dk.mk) This is set to easily change if there
-     * are future sdk organization changes.
+     * private constant that hold the name of the sdk config file
      */
     private static final String F_DK_CONFIG = "dk.mk"; //$NON-NLS-1$
 
@@ -222,14 +221,7 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public String getId() {
-        String result = null;
-
-        String[] splits = mBuildId.split("\\(.*\\)"); //$NON-NLS-1$
-        if (splits.length > 0) {
-            result = splits[0];
-        }
-
-        return result;
+        return mBuildId;
     }
 
     /**
@@ -356,8 +348,6 @@ public class SDK implements ISdk, ITableElement {
      * @return the merged environment variables.
      */
     private String[] mergeVariables(String[] pBaseEnv, String[] pToMergeEnv) {
-        // TODO cdan should add a test for this method (all entries in pToMergeEnv should be found in the result)
-        // PATH merging
         String[] vars = pBaseEnv;
         for (int i = 0; i < pToMergeEnv.length; i++) {
             String envi = pToMergeEnv[i];
@@ -441,13 +431,11 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public String getLabel(String pProperty) {
-        String result = ""; //$NON-NLS-1$
-        if (pProperty.equals(NAME)) {
-            result = getId();
-        } else if (pProperty.equals(PATH)) {
-            result = getHome();
-        }
-        return result;
+        if (pProperty.equals(NAME))
+            return getId();
+        if (pProperty.equals(PATH))
+            return getHome();
+        throw new IllegalArgumentException("Invalid property: " + pProperty);
     }
 
     /**
@@ -512,10 +500,6 @@ public class SDK implements ISdk, ITableElement {
 
                 // Checks if the name and buildid properties are set
                 if (dkProperties.containsKey(K_SDK_BUILDID)) {
-
-                    mBuildId = dkProperties.getProperty(K_SDK_BUILDID);
-                } else if (dkProperties.containsKey(K_SDK_BUILDID)) {
-
                     mBuildId = dkProperties.getProperty(K_SDK_BUILDID);
                 } else {
                     throw new InvalidConfigException(Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID, //$NON-NLS-1$
