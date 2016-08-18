@@ -307,7 +307,7 @@ public class SDKTable extends AbstractTable {
 
         private FileRow mSdkpathRow;
 
-        private TextRow mBuidlidRow;
+        private TextRow mSdkNameRow;
 
         private SDK mSdk;
 
@@ -368,13 +368,13 @@ public class SDKTable extends AbstractTable {
                 mSdkpathRow.setValue(mSdk.getHome());
             }
 
-            mBuidlidRow = new TextRow(body, "", //$NON-NLS-1$
+            mSdkNameRow = new TextRow(body, "", //$NON-NLS-1$
                 Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
             // This line is only to show the value
-            mBuidlidRow.setEnabled(false);
+            mSdkNameRow.setEnabled(false);
 
             if (null != mSdk && null != mSdk.getId()) {
-                mBuidlidRow.setValue(mSdk.getId());
+                mSdkNameRow.setValue(mSdk.getId());
             }
 
             // activate the OK button only if the SDK is correct
@@ -442,7 +442,7 @@ public class SDKTable extends AbstractTable {
                 mTmpSdk = new SDK(mSdkpathRow.getValue());
 
                 if (null != mTmpSdk.getId()) {
-                    mBuidlidRow.setValue(mTmpSdk.getId());
+                    mSdkNameRow.setValue(mTmpSdk.getId());
                 }
 
                 updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
