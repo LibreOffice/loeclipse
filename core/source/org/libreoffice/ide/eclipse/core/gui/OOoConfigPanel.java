@@ -40,9 +40,6 @@ import org.libreoffice.ide.eclipse.core.gui.rows.SdkRow;
 
 /**
  * Class providing the LibreOffice and SDK configuration rows.
- *
- * @author cbosdonnat
- *
  */
 public class OOoConfigPanel {
 

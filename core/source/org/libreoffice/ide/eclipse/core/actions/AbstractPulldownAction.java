@@ -72,9 +72,6 @@ import org.libreoffice.ide.eclipse.core.utils.WorkbenchHelper;
 
 /**
  * Abstract class to create a pulldown menu action.
- *
- * @author cedricbosdo
- *
  */
 public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldownDelegate {
 
@@ -241,8 +238,6 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
 
     /**
      * Action class used in the pulldown action's menu. This action is configured using the newWizard configuration.
-     *
-     * @author cedricbosdo
      */
     private class OpenUnoProjectWizardAction extends Action {
 

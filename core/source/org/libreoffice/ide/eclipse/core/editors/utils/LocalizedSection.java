@@ -44,9 +44,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.IModel;
  *
  * @param <ModelType>
  *            the type of the model object for the section
- *
- * @author Cédric Bosdonnat
- *
  */
 public abstract class LocalizedSection<ModelType extends IModel> extends AbstractSection<ModelType>
 implements ILocaleListener {

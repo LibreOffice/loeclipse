@@ -85,7 +85,6 @@ import org.libreoffice.ide.eclipse.core.gui.ProjectSelectionDialog;
 import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 
 /**
- * @author cedricbosdo
  *
  */
 public class PackageDescriptionSection extends SectionPart {
@@ -269,8 +268,6 @@ public class PackageDescriptionSection extends SectionPart {
 
     /**
      * Provides the data for the descriptions table.
-     *
-     * @author cedricbosdo
      */
     private class DescrContentProvider implements IStructuredContentProvider {
 
@@ -299,8 +296,6 @@ public class PackageDescriptionSection extends SectionPart {
 
     /**
      * Modification handler of the description table.
-     *
-     * @author cedricbosdo
      */
     private class DescrCellModifier implements ICellModifier {
 
@@ -344,8 +339,6 @@ public class PackageDescriptionSection extends SectionPart {
 
     /**
      * Provides the labels and images to show in the descriptions table.
-     *
-     * @author cedricbosdo
      */
     private class DescrLabelProvider extends LabelProvider implements ITableLabelProvider {
 

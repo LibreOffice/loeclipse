@@ -61,9 +61,6 @@ import org.libreoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 
 /**
  * This preferences page defines plugin generic values like log level.
- *
- * @author cedricbosdo
- *
  */
 public class MainPage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -141,8 +138,6 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
 
     /**
      * Listens to the log level changes and set the correct level to the plugin logger.
-     *
-     * @author cbosdonnat
      */
     private class loglevelListener implements IFieldChangedListener {
 

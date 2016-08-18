@@ -71,9 +71,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 /**
  * Helper class to add the table element features to the OOo classes. All the {@link IOOo} interface still has to be
  * implemented by the subclasses
- *
- * @author cbosdonnat
- *
  */
 public abstract class AbstractOOo implements IOOo, ITableElement {
 

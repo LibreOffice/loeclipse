@@ -58,7 +58,6 @@ import org.libreoffice.ide.eclipse.core.editors.utils.ColorProvider;
  * Scanner splitting the preprocessor commands into items to be colorized. In order to fully understand the editor
  * mechanisms, please report to Eclipse plugin developer's guide.
  *
- * @author cedricbosdo
  */
 public class UnoidlPreprocessorScanner extends RuleBasedScanner {
 

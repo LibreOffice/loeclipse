@@ -50,9 +50,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
  * This class has to be sub-classed by clients to change the pages order and set the patterns for the code to open the
  * UNO connection.
  * </p>
- *
- * @author cbosdonnat
- *
  */
 public class BaseUnoConnectionPage extends WizardPage {
 

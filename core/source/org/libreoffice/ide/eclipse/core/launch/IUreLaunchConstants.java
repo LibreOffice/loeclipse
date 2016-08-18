@@ -45,9 +45,6 @@ package org.libreoffice.ide.eclipse.core.launch;
 
 /**
  * Constants used for the URE application launch configuration.
- *
- * @author cedricbosdo
- *
  */
 public interface IUreLaunchConstants {
 

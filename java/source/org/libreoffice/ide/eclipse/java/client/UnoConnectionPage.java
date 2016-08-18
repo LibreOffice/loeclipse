@@ -35,9 +35,6 @@ import org.libreoffice.ide.eclipse.core.wizards.pages.BaseUnoConnectionPage;
 
 /**
  * Wizard page for the UNO Client configuration.
- *
- * @author cbosdonnat
- *
  */
 public class UnoConnectionPage extends BaseUnoConnectionPage {
 

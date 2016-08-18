@@ -52,9 +52,6 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Usefull class to create a boolean choice row with a label. For further informations on rows, please report to
  * {@link LabeledRow}.
- *
- * @author cedricbosdo
- *
  */
 public class BooleanRow extends LabeledRow {
 

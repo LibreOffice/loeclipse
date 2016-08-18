@@ -64,9 +64,6 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 /**
  * Helper class for OOo and SDK preferences handling. These aren't stored in the standard plugin preferences, but in a
  * separate file: {@link org.libreoffice.ide.eclipse.core.OOEclipsePlugin#OOO_CONFIG}
- *
- * @author cedricbosdo
- *
  */
 public class PropertiesManager {
 

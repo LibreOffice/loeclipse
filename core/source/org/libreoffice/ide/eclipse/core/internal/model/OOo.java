@@ -79,9 +79,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
  * A MacOS installation of LibreOffice will have some different paths, and of course the windows installation too. This
  * class is used to abstract the platform LibreOffice is installed on.
  * </p>
- *
- * @author cedricbosdo
- *
  */
 public class OOo extends AbstractOOo {
 
@@ -418,9 +415,6 @@ public class OOo extends AbstractOOo {
 
     /**
      * A class providing the paths for the OOo3 installation.
-     *
-     * @author cbosdonnat
-     *
      */
     private class OOo3PathMapper {
 

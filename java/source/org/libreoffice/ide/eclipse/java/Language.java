@@ -65,8 +65,6 @@ import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 /**
  * Implementation for the Java language.
- *
- * @author cedricbosdo
  */
 public class Language extends AbstractLanguage {
 

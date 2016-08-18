@@ -2,9 +2,6 @@ package org.libreoffice.ide.eclipse.core.model.config;
 
 /**
  * Does nothing.
- *
- * @author cdan
- *
  */
 public class NullExtraOptionsProvider implements IExtraOptionsProvider {
 

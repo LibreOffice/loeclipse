@@ -65,7 +65,6 @@ import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 /**
  * The project preference page. This page can be used to reconfigure the project OOo and SDK.
  *
- * @author cedricbosdo
  */
 public class ProjectPropertiesPage extends PropertyPage implements IWorkbenchPropertyPage {
 

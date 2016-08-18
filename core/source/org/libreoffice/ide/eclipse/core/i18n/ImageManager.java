@@ -57,9 +57,6 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 /**
  * The image manager is an object returning an image or an image descriptor from a key. The keys are described in the
  * ImagesConstants class and the associated properties file is <code>ImageManager.properties</code>.
- *
- * @author cedricbosdo
- *
  */
 public class ImageManager {
 

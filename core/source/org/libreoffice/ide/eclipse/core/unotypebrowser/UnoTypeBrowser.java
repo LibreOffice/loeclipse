@@ -85,9 +85,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 /**
  * A dialog to browse UNO types. This class doesn't launch the types query: this job is performed by the UNO type
  * provider to avoid very slow window rendering.
- *
- * @author cedricbosdo
- *
  */
 public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListener, IInitListener {
 
@@ -356,8 +353,6 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
 
     /**
      * Provides the label and image for the list items.
-     *
-     * @author cedricbosdo
      */
     class TypeLabelProvider extends LabelProvider {
 
@@ -471,8 +466,6 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
 
     /**
      * List items filter class.
-     *
-     * @author cedricbosdo
      */
     private class UnoTypesFilter extends ViewerFilter {
 
@@ -526,9 +519,6 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
 
     /**
      * Provides the content to the list viewer.
-     *
-     * @author cedricbosdo
-     *
      */
     private class InternalTypesProvider implements IStructuredContentProvider {
 

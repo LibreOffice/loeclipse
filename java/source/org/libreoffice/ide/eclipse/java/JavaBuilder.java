@@ -81,9 +81,6 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * The language builder implementation for Java.
- *
- * @author cedricbosdo
- *
  */
 public class JavaBuilder implements ILanguageBuilder {
 

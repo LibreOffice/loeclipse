@@ -54,9 +54,6 @@ import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 
 /**
  * Row displaying the selection of an SDK instance.
- *
- * @author cedricbosdo
- *
  */
 public class SdkRow extends AbstractConfigRow {
 

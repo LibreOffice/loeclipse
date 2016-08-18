@@ -60,9 +60,6 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * LibreOffice launcher implementation.
- *
- * @author cdan
- *
  */
 public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 

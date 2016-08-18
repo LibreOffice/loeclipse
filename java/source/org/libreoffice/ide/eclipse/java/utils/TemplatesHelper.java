@@ -59,9 +59,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
  * <code>
  * TemplatesHelper.copyTemplate( myProject, "foo/bar", LoadingClass.class );
  * </code>
- *
- * @author cbosdonnat
- *
  */
 public class TemplatesHelper {
 

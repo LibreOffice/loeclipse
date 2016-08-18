@@ -59,9 +59,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
 /**
  * The project package editor.
- *
- * @author cedricbosdo
- *
  */
 public class PackagePropertiesEditor extends FormEditor {
 

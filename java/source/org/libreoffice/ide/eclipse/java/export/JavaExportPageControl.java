@@ -23,9 +23,6 @@ package org.libreoffice.ide.eclipse.java.export;
 
 /**
  * Controller object for the fields of the {@link JavaExportPart} view.
- *
- * @author Cédric Bosdonnat
- *
  */
 public class JavaExportPageControl {
 

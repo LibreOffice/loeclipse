@@ -60,9 +60,6 @@ import org.libreoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Table representing the interface members in the interface wizard page.
- *
- * @author cedricbosdo
- *
  */
 public class InterfaceMembersTable extends AbstractTable {
 
@@ -169,7 +166,6 @@ public class InterfaceMembersTable extends AbstractTable {
     /**
      * This class defines the model of the member lines.
      *
-     * @author cedricbosdo
      * @see AbstractTable
      */
     class MemberLine implements ITableElement {

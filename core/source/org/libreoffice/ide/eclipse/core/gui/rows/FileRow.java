@@ -60,9 +60,6 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 /**
  * GUI row for a file selection. It supports only the Grid Layout and can be configured to select either a file or a
  * directory.
- *
- * @author cedricbosdo
- *
  */
 public class FileRow extends LabeledRow {
 

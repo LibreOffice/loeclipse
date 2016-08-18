@@ -61,9 +61,6 @@ import org.libreoffice.plugin.core.utils.FileHelper;
  * This builder should not be associated directly to a UNO project: the right builder for this is {@link TypesBuilder}.
  * This builder doesn't make any difference between full and incremental builds.
  * </p>
- *
- * @author cedricbosdo
- *
  */
 public class RegmergeBuilder {
 

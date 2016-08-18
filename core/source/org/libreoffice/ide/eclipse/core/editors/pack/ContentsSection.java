@@ -69,9 +69,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
 /**
  * Content section of the Package Contents editor page.
- *
- * @author cedricbosdo
- *
  */
 public class ContentsSection extends SectionPart {
 

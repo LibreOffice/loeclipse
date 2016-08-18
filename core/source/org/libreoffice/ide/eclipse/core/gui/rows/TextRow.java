@@ -57,9 +57,6 @@ import org.eclipse.swt.widgets.Text;
  *
  * @see org.libreoffice.ide.eclipse.core.gui.rows.FileRow for a file row based on this class
  * @see org.libreoffice.ide.eclipse.core.gui.rows.TypeRow for a UNO type selection row based on this class
- *
- * @author cedricbosdo
- *
  */
 public class TextRow extends LabeledRow implements FocusListener, KeyListener {
 

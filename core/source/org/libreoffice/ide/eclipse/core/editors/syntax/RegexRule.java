@@ -53,7 +53,6 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * A scanning rule matching a regular expression.
  *
- * @author cedricbosdo
  */
 public class RegexRule implements IRule {
 

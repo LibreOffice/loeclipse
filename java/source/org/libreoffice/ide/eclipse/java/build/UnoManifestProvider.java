@@ -45,9 +45,6 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class providing the MANIFEST.MF contents to the Jar writer.
- *
- * @author Cédric Bosdonnat
- *
  */
 @SuppressWarnings("restriction")
 public class UnoManifestProvider extends ManifestProvider {

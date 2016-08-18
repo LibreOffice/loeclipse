@@ -41,9 +41,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Base class for the language extensions.
- *
- * @author cbosdo
- *
  */
 public abstract class AbstractLanguage {
 

@@ -67,8 +67,6 @@ import org.libreoffice.ide.eclipse.core.editors.utils.ColorProvider;
  * Eclipse plugin developer's guide. Most of the scanners and rules used by this class are defined in the
  * <code>org.libreoffice.ide.eclipse.core.editors.syntax</code> package.
  * </p>
- *
- * @author cbosdonnat
  */
 public class UnoidlConfiguration extends SourceViewerConfiguration {
 

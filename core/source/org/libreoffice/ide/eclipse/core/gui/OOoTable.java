@@ -82,9 +82,6 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
  * dialog.
  *
  * @see AbstractTable for the basic table functions descriptions
- *
- * @author cedricbosdo
- *
  */
 public class OOoTable extends AbstractTable {
 
@@ -121,7 +118,6 @@ public class OOoTable extends AbstractTable {
 
     /**
      * Saves the OOos in the OOOS_CONFIG file.
-     *
      */
     public void savePreferences() {
 
@@ -207,9 +203,6 @@ public class OOoTable extends AbstractTable {
 
     /**
      * The OOo content provider is a class which provides the OOos objects to the viewer.
-     *
-     * @author cedricbosdo
-     *
      */
     class OOoContentProvider implements IStructuredContentProvider, IConfigListener {
 
@@ -297,8 +290,6 @@ public class OOoTable extends AbstractTable {
 
     /**
      * Class for the LibreOffice add/edit dialog.
-     *
-     * @author cedricbosdo
      */
     class OOoDialog extends StatusDialog implements IFieldChangedListener {
 

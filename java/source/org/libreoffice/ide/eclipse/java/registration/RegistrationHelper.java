@@ -62,9 +62,6 @@ import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 /**
  * This class provides utility methods to generate the class and files needed
  * by the UNO services implementation registration.
- *
- * @author cedricbosdo
- *
  */
 public abstract class RegistrationHelper {
 

@@ -78,9 +78,6 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
  * dialog.
  *
  * @see AbstractTable for the basic table functions descriptions
- *
- * @author cedricbosdo
- *
  */
 public class SDKTable extends AbstractTable {
 
@@ -117,7 +114,6 @@ public class SDKTable extends AbstractTable {
 
     /**
      * Saves the SDK preferences.
-     *
      */
     public void savePreferences() {
 
@@ -206,9 +202,6 @@ public class SDKTable extends AbstractTable {
 
     /**
      * The SDK content provider is a class which provides the SDKs objects to the viewer.
-     *
-     * @author cedricbosdo
-     *
      */
     class SDKContentProvider implements IStructuredContentProvider, IConfigListener {
 
@@ -296,8 +289,6 @@ public class SDKTable extends AbstractTable {
 
     /**
      * Class for the SDK add/edit dialog.
-     *
-     * @author cedricbosdo
      */
     class SDKDialog extends StatusDialog implements IFieldChangedListener {
 

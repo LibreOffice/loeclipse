@@ -58,9 +58,6 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Tab for configuring the LibreOffice launch properties.
- *
- * @author cdan
- *
  */
 public class OfficeTab extends AbstractLaunchConfigurationTab {
 
@@ -210,10 +207,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     }
 
     /**
-     * Change listener to be notified when the user touches the UI controls :).
-     *
-     * @author cdan
-     *
+     * Change listener to be notified when the user touches the UI controls
      */
     private class ChangeListener extends SelectionAdapter {
         @Override

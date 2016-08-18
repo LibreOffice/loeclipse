@@ -64,9 +64,6 @@ import org.libreoffice.ide.eclipse.core.unotypebrowser.UnoTypeBrowser;
  * The row allows to type the text in a text field or selecting the type using the UNO type browser. The text field
  * support a simple auto-completion.
  * </p>
- *
- * @author cedricbosdo
- *
  */
 public class TypeRow extends TextRow {
 

@@ -72,9 +72,6 @@ import org.libreoffice.ide.eclipse.core.wizards.utils.NoSuchPageException;
 
 /**
  * New UNO project wizard.
- *
- * @author cedricbosdo
- *
  */
 public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implements INewWizard {
 
@@ -337,8 +334,6 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
 
     /**
      * Thread executing the project creation tasks.
-     *
-     * @author cedricbosdo
      */
     private class ProjectCreationJob extends Job {
 

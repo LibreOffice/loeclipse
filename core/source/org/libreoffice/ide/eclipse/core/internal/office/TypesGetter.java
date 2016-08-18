@@ -67,9 +67,6 @@ import com.sun.star.uno.XComponentContext;
 
 /**
  * Class extracting the UNO types from a selected office instance.
- *
- * @author cedricbosdo
- *
  */
 public class TypesGetter {
 

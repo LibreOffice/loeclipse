@@ -46,7 +46,6 @@ package org.libreoffice.ide.eclipse.core.editors.idl;
 /**
  * Interface defining the Color constants for the Idl editor partitionning.
  *
- * @author cedricbosdo
  */
 public interface Colors {
     public static final String C_KEYWORD = "keywordColor"; //$NON-NLS-1$

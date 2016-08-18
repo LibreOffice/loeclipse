@@ -48,9 +48,6 @@ import java.util.ResourceBundle;
 
 /**
  * Messages for the package.
- *
- * @author cedricbosdo
- *
  */
 public class Messages {
     private static final String BUNDLE_NAME = "org.libreoffice.ide.eclipse.core.unotypebrowser.messages"; //$NON-NLS-1$

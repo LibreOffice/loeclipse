@@ -49,9 +49,6 @@ import org.libreoffice.ide.eclipse.core.model.description.PublisherInfos;
 
 /**
  * Class implementing the publisher form section.
- *
- * @author Cédric Bosdonnat
- *
  */
 public class PublisherSection extends LocalizedSection<DescriptionModel> {
 

@@ -40,9 +40,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class handling the SAX events for the description.xml file.
- *
- * @author Cédric Bosdonnat
- *
  */
 public class DescriptionHandler extends DefaultHandler {
 
@@ -172,9 +169,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the dependencies element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class DependenciesHandler extends DefaultHandler {
 
@@ -196,9 +190,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the update-information element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class UpdatesHandler extends DefaultHandler {
 
@@ -219,9 +210,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the registration element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class LicenseHandler extends DefaultHandler {
 
@@ -260,9 +248,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the publisher element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class PublisherHandler extends DefaultHandler {
 
@@ -316,9 +301,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the release-notes element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class ReleasesHandler extends DefaultHandler {
 
@@ -342,9 +324,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the display-name element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class NameHandler extends DefaultHandler {
 
@@ -392,9 +371,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the icon element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class IconHandler extends DefaultHandler {
 
@@ -418,9 +394,6 @@ public class DescriptionHandler extends DefaultHandler {
 
     /**
      * Child handler for the extension-description element.
-     *
-     * @author cbosdonnat
-     *
      */
     private class DescriptionsHandler extends DefaultHandler {
 

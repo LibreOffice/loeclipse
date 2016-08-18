@@ -54,9 +54,6 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Row displaying the selection of an OOo instance.
- *
- * @author cedricbosdo
- *
  */
 public class OOoRow extends AbstractConfigRow {
 

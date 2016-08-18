@@ -44,9 +44,6 @@ import java.util.Map.Entry;
 
 /**
  * Class representing the data contained in the manifest.xml file.
- *
- * @author Cédric Bosdonnat
- *
  */
 public class ManifestModel {
 

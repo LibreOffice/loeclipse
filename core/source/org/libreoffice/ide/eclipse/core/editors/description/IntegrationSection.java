@@ -64,9 +64,6 @@ import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
 /**
  * Section showing the compatibility parts of the description.xml file.
- *
- * @author Cédric Bosdonnat
- *
  */
 public class IntegrationSection extends AbstractSection<DescriptionModel> {
 
@@ -207,9 +204,6 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
 
     /**
      * Dialog used to select platforms.
-     *
-     * @author cbosdonnat
-     *
      */
     private class PlatformDialog extends Dialog {
 

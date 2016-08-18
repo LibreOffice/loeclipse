@@ -53,9 +53,6 @@ import org.libreoffice.ide.eclipse.core.gui.SDKTable;
 
 /**
  * Preference page to configure the plugin available OOo and SDK instances.
- *
- * @author cedricbosdo
- *
  */
 public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPreferencePage {
 

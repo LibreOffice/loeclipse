@@ -70,9 +70,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 
 /**
  * Class representing a SDK instance used in the UNO-IDL projects.
- *
- * @author cedricbosdo
- *
  */
 public class SDK implements ISdk, ITableElement {
 

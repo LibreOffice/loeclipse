@@ -60,9 +60,6 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
  * Helper class for system variables handling.
- *
- * @author cedricbosdo
- *
  */
 public class SystemHelper {
 

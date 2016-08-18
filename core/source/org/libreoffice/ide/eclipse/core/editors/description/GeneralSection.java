@@ -54,10 +54,7 @@ import org.libreoffice.ide.eclipse.core.editors.utils.LocalizedSection;
 import org.libreoffice.ide.eclipse.core.gui.ProjectSelectionDialog;
 import org.libreoffice.ide.eclipse.core.model.description.DescriptionModel;
 
-/**
- * @author Cédric Bosdonnat
- *
- */
+
 public class GeneralSection extends LocalizedSection<DescriptionModel> {
 
     private static final int LAYOUT_COLS = 3;

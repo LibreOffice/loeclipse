@@ -49,8 +49,6 @@ import org.eclipse.core.runtime.Status;
 /**
  * This class is the plugin central log singleton. It supports 4 levels of messages on the contrary of the Java
  * <code>Logger</code> class which contains 5. This class adds the messages to the Eclipse log view.
- *
- * @author cbosdonnat
  */
 public class PluginLogger {
 

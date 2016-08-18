@@ -58,7 +58,6 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 /**
  * Singleton object containing the SDK instances.
  *
- * @author cedricbosdo
  */
 public class SDKContainer {
 

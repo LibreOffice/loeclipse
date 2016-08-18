@@ -50,7 +50,6 @@ package org.libreoffice.ide.eclipse.core.model.config;
  * @see IOOo
  * @see ISdk
  *
- * @author cedricbosdo
  */
 public class InvalidConfigException extends Exception {
 

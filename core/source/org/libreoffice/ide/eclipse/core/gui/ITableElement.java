@@ -48,9 +48,6 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Interface used by the abstract table to get the labels of it's items.
- *
- * @author cedricbosdo
- *
  */
 public interface ITableElement {
 

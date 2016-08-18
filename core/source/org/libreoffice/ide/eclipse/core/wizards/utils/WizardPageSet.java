@@ -54,9 +54,6 @@ import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
 
 /**
  * A wizard page set is a subset of a wizard which should be reused by several wizards.
- *
- * @author cedricbosdo
- *
  */
 public abstract class WizardPageSet {
 

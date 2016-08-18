@@ -61,9 +61,6 @@ import org.libreoffice.ide.eclipse.core.model.config.InvalidConfigException;
 
 /**
  * Singleton object containing the LibreOffice configurations.
- *
- * @author cedricbosdo
- *
  */
 public class OOoContainer {
 

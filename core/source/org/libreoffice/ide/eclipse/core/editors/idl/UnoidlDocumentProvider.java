@@ -54,8 +54,6 @@ import org.libreoffice.ide.eclipse.core.editors.syntax.UnoidlPartitionScanner;
  * The document provider used by the UNO-IDL editor. The partion scanner are defined in the document configuration
  * {@link UnoidlConfiguration}. In order to fully understand the editor mechanisms, please report to Eclipse plugin
  * developer's guide.
- *
- * @author cbosdonnat
  */
 public class UnoidlDocumentProvider extends FileDocumentProvider {
 

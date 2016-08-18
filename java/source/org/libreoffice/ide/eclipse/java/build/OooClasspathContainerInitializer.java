@@ -54,9 +54,6 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 
 /**
  * Initializes a classpath container for OOo instances.
- *
- * @author cedricbosdo
- *
  */
 public class OooClasspathContainerInitializer extends
     ClasspathContainerInitializer {

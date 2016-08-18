@@ -68,9 +68,6 @@ import org.libreoffice.ide.eclipse.java.OOoJavaPlugin;
 
 /**
  * Edition and creation page for the LibreOffice libraries container.
- *
- * @author cedricbosdo
- *
  */
 public class OOoContainerPage extends WizardPage implements
     IClasspathContainerPage, IClasspathContainerPageExtension {
