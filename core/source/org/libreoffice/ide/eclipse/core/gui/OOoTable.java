@@ -389,7 +389,7 @@ public class OOoTable extends AbstractTable {
             // If there is one field missing, print an error line at the bottom
             // of the dialog.
 
-            if (!mOOopathRow.getValue().equals("")) { //$NON-NLS-1$
+            if (!mOOopathRow.getValue().isEmpty()) { //$NON-NLS-1$
                 super.okPressed();
             } else {
                 updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
