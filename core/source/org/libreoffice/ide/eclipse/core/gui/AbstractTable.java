@@ -80,15 +80,12 @@ import org.eclipse.swt.widgets.TableItem;
  * In order to create a new table class, the following methods should be overridden:
  * <ul>
  * <li>{@link #addLine()} to customize the action performed when clicking on the <em>Add</em> button.</li>
- * <li>{@link #removeLine()} to customize the action performed when clicking on the <em>Del</em> button.</li>
- * <li>{@link #handleDoubleClick(DoubleClickEvent)} to customize the action performed on a doucle click on the table.
+ * <li>{@link #removeLine()} to customize the action performed when clicking on the <em>Remove</em> button.</li>
+ * <li>{@link #handleDoubleClick(DoubleClickEvent)} to customize the action performed on a double click on the table.
  * </li>
- * <li>{@link #createCellEditors(Table)} to customize how to edit the cells of the differents columns of the table.</li>
+ * <li>{@link #createCellEditors(Table)} to customize how to edit the cells of the different columns of the table.</li>
  * </ul>
  * </p>
- *
- * @author cedricbosdo
- *
  */
 public class AbstractTable extends Composite implements ISelectionProvider {
 
@@ -98,9 +95,9 @@ public class AbstractTable extends Composite implements ISelectionProvider {
 
     private Vector<ITableElement> mLines = new Vector<ITableElement>();
 
-    private Button mAdd;
+    private Button mAddButton;
 
-    private Button mDel;
+    private Button mRemoveButton;
 
     // Columns configuration
 
@@ -240,7 +237,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * Method called after an action on the <em>Del</em> button. This method should be overridden to customize the
+     * Method called after an action on the <em>Remove</em> button. This method should be overridden to customize the
      * table.
      *
      * @return the table line removed or <code>null</code> if none was removed.
@@ -274,7 +271,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     private void createTable() {
         mTable = new Table(this, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 
-        // The table uses two lines of the layout because of the two buttons Add and Del
+        // The table uses two lines of the layout because of the two buttons Add and Remove
         GridData gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
         gd.verticalSpan = 2;
         mTable.setLayoutData(gd);
@@ -314,15 +311,15 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     }
 
     /**
-     * Creates and configure the Add and Del button components.
+     * Creates and configure the Add and Remove button components.
      */
     private void createButtons() {
-        // Creates the two buttons ADD and DEL
-        mAdd = new Button(this, SWT.NONE);
-        mAdd.setText(Messages.getString("AbstractTable.Add")); //$NON-NLS-1$
+        // Creates the two buttons Add and Remove
+        mAddButton = new Button(this, SWT.NONE);
+        mAddButton.setText(Messages.getString("AbstractTable.Add")); //$NON-NLS-1$
         GridData gdAdd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-        mAdd.setLayoutData(gdAdd);
-        mAdd.addSelectionListener(new SelectionAdapter() {
+        mAddButton.setLayoutData(gdAdd);
+        mAddButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
@@ -336,11 +333,11 @@ public class AbstractTable extends Composite implements ISelectionProvider {
             }
         });
 
-        mDel = new Button(this, SWT.NONE);
-        mDel.setText(Messages.getString("AbstractTable.Del")); //$NON-NLS-1$
+        mRemoveButton = new Button(this, SWT.NONE);
+        mRemoveButton.setText(Messages.getString("AbstractTable.Del")); //$NON-NLS-1$
         GridData gdDel = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-        mDel.setLayoutData(gdDel);
-        mDel.addSelectionListener(new SelectionAdapter() {
+        mRemoveButton.setLayoutData(gdDel);
+        mRemoveButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent pEvent) {
@@ -368,8 +365,6 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     /**
      * Provides the content of the table. The main method used here is the {@link #getElements(Object)} one which
      * returns all the {@link ITableElement} lines.
-     *
-     * @author cbosdonnat
      *
      */
     private class AbstractContentProvider implements IStructuredContentProvider {
@@ -404,8 +399,6 @@ public class AbstractTable extends Composite implements ISelectionProvider {
      * This class is responsible to handle the different editon actions performed on the table cells. This uses the
      * {@link ITableElement#canModify(String)}, {@link ITableElement#getValue(String)} and
      * {@link ITableElement#setValue(String, Object)}.
-     *
-     * @author cbosdonnat
      */
     private class AbstractCellModifier implements ICellModifier {
 
@@ -454,8 +447,6 @@ public class AbstractTable extends Composite implements ISelectionProvider {
     /**
      * The class responsible to provide the labels and images for each table cell. This class will use the
      * {@link ITableElement#getLabel(String)} and {@link ITableElement#getImage(String)} methods.
-     *
-     * @author cedricbosdo
      */
     private class AbstractLabelProvider extends LabelProvider implements ITableLabelProvider {
 
@@ -486,7 +477,7 @@ public class AbstractTable extends Composite implements ISelectionProvider {
         }
     }
 
-    // ------------------------------------- Implementation of ISelectionProvider
+    // Implementation of ISelectionProvider
 
     /**
      * {@inheritDoc}
