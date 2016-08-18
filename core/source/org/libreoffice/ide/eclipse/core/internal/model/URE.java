@@ -90,7 +90,7 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    protected void setName(String pName) {
+    public void setName(String pName) {
 
         String name = pName;
         if (name == null || name.equals("")) { //$NON-NLS-1$

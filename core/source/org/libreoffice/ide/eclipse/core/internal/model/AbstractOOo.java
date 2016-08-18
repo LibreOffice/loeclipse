@@ -170,7 +170,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * @param pName
      *            the name to set
      */
-    protected void setName(String pName) {
+    public void setName(String pName) {
         if (pName != null && !pName.equals("")) { //$NON-NLS-1$
             mName = OOoContainer.getUniqueName(pName);
         }

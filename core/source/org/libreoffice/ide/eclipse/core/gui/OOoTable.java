@@ -390,6 +390,7 @@ public class OOoTable extends AbstractTable {
             // of the dialog.
 
             if (!mOOopathRow.getValue().isEmpty()) { //$NON-NLS-1$
+                mTmpOOo.setName(mNameRow.getValue());
                 super.okPressed();
             } else {
                 updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
