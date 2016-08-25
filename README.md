@@ -61,10 +61,4 @@ Run `ant help` to see the available build targets.
 * Automatic component build and packaging
 * Automatic deployment to an existing LibreOffice installation
 * Remote debugging using the Eclipse debugger
-
-**Nice to have features:**
- * Adding C++ language support
- * Adding Python language support
- * New UNO wizard for other IDL types
- * Easy support of several services implementations in a component
- * Outline view for UNOIDL file
+* Generate ant build script to build the extension without Eclipse
