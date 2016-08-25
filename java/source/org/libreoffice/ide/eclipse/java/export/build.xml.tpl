@@ -97,7 +97,8 @@
         <jar destfile="$'{'build.dir}/$'{'ant.project.name}.jar">
             <manifest>
                 <attribute name="RegistrationClassName" value="$'{'regclassname}"/>
-            	<attribute name="Class-Path" value="lib/AktensystemFullJar-jar-with-dependencies.jar"/>
+            	<!-- Add external libraries here if you need them -->
+            	<!-- <attribute name="Class-Path" value="$'{'lib.dir}/libraryname.jar"/> -->
             </manifest>
             <fileset dir="$'{'build.classes.dir}">
                 <include name="**/*.class"/>
@@ -114,7 +115,8 @@
             destdir="$'{'build.classes.dir}" excludes="**/*Test*">
             <classpath>
                 <pathelement location="$'{'build.classes.dir}"/>
-            	<pathelement location="$'{'lib.dir}$'{'file.separator}AktensystemFullJar-jar-with-dependencies.jar"/>
+                <!-- Add external libraries here if you need them -->
+            	<!-- <pathelement location="$'{'lib.dir}$'{'file.separator}libraryname.jar"/> -->
                 <path refid="office.class.path"/>
             </classpath>
         </javac>
