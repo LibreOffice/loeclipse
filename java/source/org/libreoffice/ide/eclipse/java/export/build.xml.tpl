@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="{0}" default="package-oxt" basedir=".">
+	
+	<!--
+		************************************************************
+        In order to run this script, you need to set the path of the
+        LibreOffice & SDK installation in the build.properties file
+        ************************************************************
+	-->
 
     <target name="init-env">
         
-        <!--  set properties from libreoffice install and its SDK -->
+        <!-- set properties from Libreoffice installation and its SDK -->
         <property file="$'{'ant.file}/../build.properties"/>
         
         <echo message="Initializing the properties for LibreOffice"/>
