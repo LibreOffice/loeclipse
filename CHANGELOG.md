@@ -1,5 +1,11 @@
 # Changelog
 
+## unreleased
+* #33 Migrate generated tests to JUnit 4
+* #34 Allow to give LibreOffice/SDK installations custom names
+* #35 Fix Ant support
+* #36 Fix referencing external jar files
+
 ## 2.1.3
 * #32 Include jodconnector.jar in the build
 
