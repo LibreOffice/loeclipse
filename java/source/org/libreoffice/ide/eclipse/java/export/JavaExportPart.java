@@ -170,8 +170,6 @@ public class JavaExportPart extends LanguageExportPart {
                 Properties props = new Properties();
                 props.put("office.install.dir", new String()); //$NON-NLS-1$
                 props.put("sdk.dir", new String()); //$NON-NLS-1$
-                props.put("java.debug", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-                props.store(writer, "This file can contain setup-dependent data, don't commit them!"); //$NON-NLS-1$
                 writer.close();
             } catch (IOException e) {
                 PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
