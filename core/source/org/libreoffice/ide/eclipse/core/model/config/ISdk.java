@@ -73,7 +73,7 @@ public interface ISdk {
      *                <li>an unexpected exception has been raised</li>
      *                </ul>
      */
-    public void setHome(String pHome) throws InvalidConfigException;
+    public void setHome(String pHome, String name) throws InvalidConfigException;
 
     /**
      * Returns the SDK home directory. This string could be passed to the Path constructor to get the folder object.
@@ -81,14 +81,13 @@ public interface ISdk {
      * @return SDK home directory
      */
     public String getHome();
+    
+    public void setId(String id);
 
     /**
-     * Returns the SDK build id without the parenthesized string. For example, if the full build id is
-     * <code>680m92(Build:8896)</code>, the result will be: <code>680m92</code>.
+     * Returns the SDK version number.
      *
-     * If the builid is <code>null</code>, the return will be
-     *
-     * @return the shortened build id
+     * @return the SDK version number
      */
     public String getId();
 

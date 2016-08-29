@@ -71,6 +71,8 @@ public class PropertiesManager {
      * OOo SDK path preference key. Used to store the preferences
      */
     private static final String SDKPATH_PREFERENCE_KEY = "sdkpath"; //$NON-NLS-1$
+    
+    private static final String SDKNAME_PREFERENCE_KEY = "sdkname"; //$NON-NLS-1$
 
     /**
      * OOo path preference key. Used to store the preferences
@@ -101,13 +103,14 @@ public class PropertiesManager {
 
             do {
                 String path = sdksProperties.getProperty(SDKPATH_PREFERENCE_KEY + i);
+                String name = sdksProperties.getProperty(SDKNAME_PREFERENCE_KEY + i);
 
                 found = !(null == path);
                 i++;
 
                 if (found) {
                     try {
-                        SDK sdk = new SDK(path);
+                        SDK sdk = new SDK(path, name);
                         sdks.add(sdk);
                     } catch (InvalidConfigException e) {
                         PluginLogger.error(e.getLocalizedMessage(), e);
@@ -152,7 +155,7 @@ public class PropertiesManager {
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
 
-                if (key.startsWith(SDKPATH_PREFERENCE_KEY)) {
+                if (key.startsWith(SDKPATH_PREFERENCE_KEY) || key.startsWith(SDKNAME_PREFERENCE_KEY)) {
                     sdksProperties.remove(key);
                 }
             }
@@ -161,6 +164,7 @@ public class PropertiesManager {
             for (int i = 0; i < pSdks.length; i++) {
                 ISdk sdki = pSdks[i];
                 sdksProperties.put(SDKPATH_PREFERENCE_KEY + i, sdki.getHome());
+                sdksProperties.put(SDKNAME_PREFERENCE_KEY + i, sdki.getId());
             }
 
             String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();

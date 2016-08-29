@@ -133,6 +133,7 @@ public class SDKTable extends AbstractTable {
             // Launch the dialog
             sdk = openDialog(sdk);
             SDKContainer.updateSDK(sdk.getId(), sdk);
+            mTableViewer.refresh();
         }
     }
 
@@ -184,14 +185,13 @@ public class SDKTable extends AbstractTable {
             if (null != pSdk) {
                 // Only an existing SDK modification
                 try {
-                    pSdk.setHome(newSDK.getHome());
+                    pSdk.setHome(newSDK.getHome(), newSDK.getId());
                 } catch (InvalidConfigException e) {
                     PluginLogger.error(e.getLocalizedMessage(), e);
                     // localized in SDK class
                 }
             } else {
                 // Creation of a new SDK
-
                 pSdk = newSDK;
             }
 
@@ -362,7 +362,6 @@ public class SDKTable extends AbstractTable {
             mSdkNameRow = new TextRow(body, "", //$NON-NLS-1$
                 Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
             // This line is only to show the value
-            mSdkNameRow.setEnabled(false);
 
             if (null != mSdk && null != mSdk.getId()) {
                 mSdkNameRow.setValue(mSdk.getId());
@@ -430,7 +429,7 @@ public class SDKTable extends AbstractTable {
 
             // Try to create an SDK
             try {
-                mTmpSdk = new SDK(mSdkpathRow.getValue());
+                mTmpSdk = new SDK(mSdkpathRow.getValue(), mSdkNameRow.getValue());
 
                 if (null != mTmpSdk.getId()) {
                     mSdkNameRow.setValue(mTmpSdk.getId());

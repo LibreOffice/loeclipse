@@ -108,7 +108,11 @@ public class SDK implements ISdk, ITableElement {
     public SDK(String pSdkHome) throws InvalidConfigException {
 
         // Sets the path to the SDK
-        setHome(pSdkHome);
+        setHome(pSdkHome, null);
+    }
+
+    public SDK(String pSdkHome, String pBuildId) throws InvalidConfigException {
+        setHome(pSdkHome, pBuildId);
     }
 
     // ----------------------------------------------------- ISdk Implementation
@@ -117,7 +121,7 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
-    public void setHome(String pHome) throws InvalidConfigException {
+    public void setHome(String pHome, String name) throws InvalidConfigException {
         try {
 
             // Get the file representing the given sdkHome
@@ -153,7 +157,10 @@ public class SDK implements ISdk, ITableElement {
 
                 // If the settings and idl directory both exists, then try to fetch the name and buildId from
                 // the settings/dk.mk properties file
-                readSettings(settingsFile);
+                if (name != null && !name.isEmpty())
+                    mBuildId = name;
+                else
+                    mBuildId = getBuildId(settingsFile);
                 this.mSdkHome = pHome;
 
             } else {
@@ -211,6 +218,12 @@ public class SDK implements ISdk, ITableElement {
             throw new InvalidConfigException(Messages.getString("SDK.NoIdlDirError"), //$NON-NLS-1$
                 InvalidConfigException.INVALID_SDK_HOME);
         }
+    }
+    
+
+    @Override
+    public void setId(String id) {
+        mBuildId = id;
     }
 
     /**
@@ -482,7 +495,7 @@ public class SDK implements ISdk, ITableElement {
      *             <li>one or both of the sdk name or build id key is not set</li>
      *             </ul>
      */
-    private void readSettings(File pSettingsFile) throws InvalidConfigException {
+    private String getBuildId(File pSettingsFile) throws InvalidConfigException {
 
         if (pSettingsFile.exists() && pSettingsFile.isDirectory()) {
 
@@ -497,7 +510,7 @@ public class SDK implements ISdk, ITableElement {
 
                 // Checks if the name and buildid properties are set
                 if (dkProperties.containsKey(K_SDK_BUILDID)) {
-                    mBuildId = dkProperties.getProperty(K_SDK_BUILDID);
+                    return dkProperties.getProperty(K_SDK_BUILDID);
                 } else {
                     throw new InvalidConfigException(Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID, //$NON-NLS-1$
                         InvalidConfigException.INVALID_SDK_HOME);
@@ -524,4 +537,5 @@ public class SDK implements ISdk, ITableElement {
                 InvalidConfigException.INVALID_SDK_HOME);
         }
     }
+
 }
