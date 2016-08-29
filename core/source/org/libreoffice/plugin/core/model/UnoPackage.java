@@ -58,7 +58,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipOutputStream;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.plugin.core.utils.FileHelper;
