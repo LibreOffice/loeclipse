@@ -54,8 +54,8 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 public interface ISdk {
 
     /**
-     * Set the new SDK Home after having checked for the existence of the idl and settings directory. Fetches the sdk
-     * name and buildid from the dk.mk file
+     * Set the new SDK Home after having checked for the existence of the idl and settings directory.
+     * If name is empty, it will be fetched from the dk.mk file
      *
      * @param pHome
      *            path to the new sdk home
@@ -75,7 +75,7 @@ public interface ISdk {
      *                <li>an unexpected exception has been raised</li>
      *                </ul>
      */
-    public void setHome(String pHome, String name) throws InvalidConfigException;
+    public void initialize(String pHome, String name) throws InvalidConfigException;
 
     /**
      * Returns the SDK home directory. This string could be passed to the Path constructor to get the folder object.
@@ -84,8 +84,6 @@ public interface ISdk {
      */
     public String getHome();
     
-    public void setName(String id);
-
     /**
      * Returns the SDK version number.
      *

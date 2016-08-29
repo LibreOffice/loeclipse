@@ -108,11 +108,11 @@ public class SDK implements ISdk, ITableElement {
     public SDK(String pSdkHome) throws InvalidConfigException {
 
         // Sets the path to the SDK
-        setHome(pSdkHome, null);
+        initialize(pSdkHome, null);
     }
 
     public SDK(String pSdkHome, String pBuildId) throws InvalidConfigException {
-        setHome(pSdkHome, pBuildId);
+        initialize(pSdkHome, pBuildId);
     }
 
     // ----------------------------------------------------- ISdk Implementation
@@ -121,7 +121,7 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
-    public void setHome(String pHome, String name) throws InvalidConfigException {
+    public void initialize(String pHome, String name) throws InvalidConfigException {
         try {
 
             // Get the file representing the given sdkHome
@@ -218,12 +218,6 @@ public class SDK implements ISdk, ITableElement {
             throw new InvalidConfigException(Messages.getString("SDK.NoIdlDirError"), //$NON-NLS-1$
                 InvalidConfigException.INVALID_SDK_HOME);
         }
-    }
-    
-
-    @Override
-    public void setName(String name) {
-        mSdkName = name;
     }
 
     /**

@@ -185,7 +185,7 @@ public class SDKTable extends AbstractTable {
             if (null != pSdk) {
                 // Only an existing SDK modification
                 try {
-                    pSdk.setHome(newSDK.getHome(), newSDK.getName());
+                    pSdk.initialize(newSDK.getHome(), newSDK.getName());
                 } catch (InvalidConfigException e) {
                     PluginLogger.error(e.getLocalizedMessage(), e);
                     // localized in SDK class

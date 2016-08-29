@@ -221,7 +221,7 @@ public class SDKContainer {
 
             // update the attributes
             try {
-                sdkref.setHome(pSdk.getHome(), pSdkkey);
+                sdkref.initialize(pSdk.getHome(), pSdkkey);
             } catch (InvalidConfigException e) {
                 PluginLogger.error(e.getLocalizedMessage(), e);
                 // This message is localized by the SDK class
