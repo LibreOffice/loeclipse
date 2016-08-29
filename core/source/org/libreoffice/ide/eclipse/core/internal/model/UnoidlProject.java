@@ -688,7 +688,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
             properties.setProperty(LANGUAGE, mLanguage.getName());
             properties.setProperty(OOO_NAME, mOOo.getName());
-            properties.setProperty(SDK_NAME, mSdk.getId());
+            properties.setProperty(SDK_NAME, mSdk.getName());
             properties.setProperty(IDL_DIR, mIdlDir);
             properties.setProperty(SRC_DIRECTORY, mSourcesDir);
             properties.setProperty(COMPANY_PREFIX, mCompanyPrefix);

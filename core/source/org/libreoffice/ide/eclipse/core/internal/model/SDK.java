@@ -92,7 +92,7 @@ public class SDK implements ISdk, ITableElement {
 
     /* SDK Members */
 
-    private String mBuildId;
+    private String mSdkName;
     private String mSdkHome;
 
     /**
@@ -158,9 +158,9 @@ public class SDK implements ISdk, ITableElement {
                 // If the settings and idl directory both exists, then try to fetch the name and buildId from
                 // the settings/dk.mk properties file
                 if (name != null && !name.isEmpty())
-                    mBuildId = name;
+                    mSdkName = name;
                 else
-                    mBuildId = getBuildId(settingsFile);
+                    mSdkName = getBuildId(settingsFile);
                 this.mSdkHome = pHome;
 
             } else {
@@ -222,16 +222,16 @@ public class SDK implements ISdk, ITableElement {
     
 
     @Override
-    public void setId(String id) {
-        mBuildId = id;
+    public void setName(String name) {
+        mSdkName = name;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getId() {
-        return mBuildId;
+    public String getName() {
+        return mSdkName;
     }
 
     /**
@@ -442,7 +442,7 @@ public class SDK implements ISdk, ITableElement {
     @Override
     public String getLabel(String pProperty) {
         if (pProperty.equals(NAME))
-            return getId();
+            return getName();
         if (pProperty.equals(PATH))
             return getHome();
         throw new IllegalArgumentException("Invalid property: " + pProperty);
@@ -481,11 +481,12 @@ public class SDK implements ISdk, ITableElement {
     }
 
     /**
-     * Reads the <code>dk.mk</code> file to get the SDK name and build id. They are set in the SDK object if they are
-     * both fetched. Otherwise an invalid SDK exception is thrown.
+     * Reads the <code>dk.mk</code> file to get the SDK version.
      *
      * @param pSettingsFile
      *            the setting directory file handle.
+     *
+     * @return String The sdk version number 
      *
      * @throws InvalidConfigException
      *             Exception thrown when one of the following problems happened
@@ -508,7 +509,7 @@ public class SDK implements ISdk, ITableElement {
                 in = new FileInputStream(dkFile);
                 dkProperties.load(in);
 
-                // Checks if the name and buildid properties are set
+                // Checks if the buildid properties is set
                 if (dkProperties.containsKey(K_SDK_BUILDID)) {
                     return dkProperties.getProperty(K_SDK_BUILDID);
                 } else {

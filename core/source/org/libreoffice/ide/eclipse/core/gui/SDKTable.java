@@ -132,7 +132,7 @@ public class SDKTable extends AbstractTable {
 
             // Launch the dialog
             sdk = openDialog(sdk);
-            SDKContainer.updateSDK(sdk.getId(), sdk);
+            SDKContainer.updateSDK(sdk.getName(), sdk);
             mTableViewer.refresh();
         }
     }
@@ -185,7 +185,7 @@ public class SDKTable extends AbstractTable {
             if (null != pSdk) {
                 // Only an existing SDK modification
                 try {
-                    pSdk.setHome(newSDK.getHome(), newSDK.getId());
+                    pSdk.setHome(newSDK.getHome(), newSDK.getName());
                 } catch (InvalidConfigException e) {
                     PluginLogger.error(e.getLocalizedMessage(), e);
                     // localized in SDK class
@@ -363,8 +363,8 @@ public class SDKTable extends AbstractTable {
                 Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
             // This line is only to show the value
 
-            if (null != mSdk && null != mSdk.getId()) {
-                mSdkNameRow.setValue(mSdk.getId());
+            if (null != mSdk && null != mSdk.getName()) {
+                mSdkNameRow.setValue(mSdk.getName());
             }
 
             // activate the OK button only if the SDK is correct
@@ -431,8 +431,8 @@ public class SDKTable extends AbstractTable {
             try {
                 mTmpSdk = new SDK(mSdkpathRow.getValue(), mSdkNameRow.getValue());
 
-                if (null != mTmpSdk.getId()) {
-                    mSdkNameRow.setValue(mTmpSdk.getId());
+                if (null != mTmpSdk.getName()) {
+                    mSdkNameRow.setValue(mTmpSdk.getName());
                 }
 
                 updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$

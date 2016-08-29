@@ -164,7 +164,7 @@ public class PropertiesManager {
             for (int i = 0; i < pSdks.length; i++) {
                 ISdk sdki = pSdks[i];
                 sdksProperties.put(SDKPATH_PREFERENCE_KEY + i, sdki.getHome());
-                sdksProperties.put(SDKNAME_PREFERENCE_KEY + i, sdki.getId());
+                sdksProperties.put(SDKNAME_PREFERENCE_KEY + i, sdki.getName());
             }
 
             String sdks_config_url = OOEclipsePlugin.getDefault().getStateLocation().toString();

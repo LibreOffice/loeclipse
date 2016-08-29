@@ -136,12 +136,12 @@ public class SDKContainer {
          */
 
         if (null != pSdk) {
-            if (!sInstance.mElements.containsKey(pSdk.getId())) {
-                sInstance.mElements.put(pSdk.getId(), pSdk);
+            if (!sInstance.mElements.containsKey(pSdk.getName())) {
+                sInstance.mElements.put(pSdk.getName(), pSdk);
                 sInstance.fireSDKAdded(pSdk);
             } else {
-                ISdk sdkref = sInstance.mElements.get(pSdk.getId());
-                updateSDK(sdkref.getId(), pSdk);
+                ISdk sdkref = sInstance.mElements.get(pSdk.getName());
+                updateSDK(sdkref.getName(), pSdk);
             }
         }
     }
@@ -167,8 +167,8 @@ public class SDKContainer {
      */
     public static void delSDK(ISdk pSdk) {
         if (null != pSdk) {
-            if (sInstance.mElements.containsKey(pSdk.getId())) {
-                sInstance.mElements.remove(pSdk.getId());
+            if (sInstance.mElements.containsKey(pSdk.getName())) {
+                sInstance.mElements.remove(pSdk.getName());
                 sInstance.fireSDKRemoved(pSdk);
             }
         }

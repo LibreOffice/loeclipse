@@ -59,6 +59,8 @@ public interface ISdk {
      *
      * @param pHome
      *            path to the new sdk home
+     * @param name
+     *            name of the new sdk
      *
      * @exception InvalidConfigException
      *                <p>
@@ -82,14 +84,14 @@ public interface ISdk {
      */
     public String getHome();
     
-    public void setId(String id);
+    public void setName(String id);
 
     /**
      * Returns the SDK version number.
      *
      * @return the SDK version number
      */
-    public String getId();
+    public String getName();
 
     /**
      * @return the path to the directory containing the binaries in the SDK.
