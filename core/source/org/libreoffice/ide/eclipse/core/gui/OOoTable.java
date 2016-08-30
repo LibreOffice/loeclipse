@@ -413,7 +413,7 @@ public class OOoTable extends AbstractTable {
                         updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
                     } else {
                         updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
-                            Messages.getString("OOoTable.NameExistsError"), //$NON-NLS-1$
+                            Messages.getString("OOoSDKTable.NameExistsError"), //$NON-NLS-1$
                             null));
                     }
                 }

@@ -413,7 +413,23 @@ public class SDKTable extends AbstractTable {
 
             Button okButton = getButton(IDialogConstants.OK_ID);
             if (null != okButton) {
-                okButton.setEnabled(isValid(pEvent.getProperty()));
+                
+                if (pEvent.getProperty().equals(P_SDK_PATH)) {
+                    okButton.setEnabled(isValid(pEvent.getProperty()));
+                }
+
+                // checks if the name is unique and toggle a warning
+                if (pEvent.getProperty().equals(P_SDK_PATH)) {
+                    boolean unique = !SDKContainer.containsName(pEvent.getValue());
+
+                    if (unique) {
+                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                    } else {
+                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
+                            Messages.getString("OOoSDKTable.NameExistsError"), //$NON-NLS-1$
+                            null));
+                    }
+                }
             }
         }
 

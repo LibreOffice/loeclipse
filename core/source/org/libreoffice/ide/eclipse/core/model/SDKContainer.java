@@ -192,6 +192,17 @@ public class SDKContainer {
         Set<String> names = sInstance.mElements.keySet();
         return new Vector<String>(names);
     }
+    
+    /**
+     * Checks whether the corresponding SDK name already exists.
+     *
+     * @param pName
+     *            the SDK Name to check
+     * @return <code>true</code> if the name is already present, <code>false</code> otherwise.
+     */
+    public static boolean containsName(String pName) {
+        return sInstance.mElements.containsKey(pName);
+    }
 
     /**
      * Notify all the listeners that an SDK instance configuration has been removed.
