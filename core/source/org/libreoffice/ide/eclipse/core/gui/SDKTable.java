@@ -361,7 +361,7 @@ public class SDKTable extends AbstractTable {
 
             mSdkNameRow = new TextRow(body, "", //$NON-NLS-1$
                 Messages.getString("SDKTable.NameTitle")); //$NON-NLS-1$
-            // This line is only to show the value
+            mSdkNameRow.setFieldChangedListener(this);
 
             if (null != mSdk && null != mSdk.getName()) {
                 mSdkNameRow.setValue(mSdk.getName());

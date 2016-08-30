@@ -161,6 +161,7 @@ public class OOoTable extends AbstractTable {
             // Launch the dialog
             ooo = openDialog(ooo);
             OOoContainer.updateOOo(ooo.getName(), ooo);
+            mTableViewer.refresh();
         }
     }
 
@@ -188,6 +189,7 @@ public class OOoTable extends AbstractTable {
                 // Only an existing OOo modification
                 try {
                     pOoo.setHome(newOOo.getHome());
+                    pOoo.setName(newOOo.getName());
                 } catch (InvalidConfigException e) {
                     PluginLogger.error(e.getLocalizedMessage(), e);
                     // localized in OOo class
@@ -365,7 +367,6 @@ public class OOoTable extends AbstractTable {
 
             if (null != mOOo && null != mOOo.getName()) {
                 mNameRow.setValue(mOOo.getName());
-                mNameRow.setEnabled(false);
             }
 
             return body;
@@ -381,7 +382,7 @@ public class OOoTable extends AbstractTable {
             // of the dialog.
 
             if (!mOOopathRow.getValue().isEmpty()) { //$NON-NLS-1$
-                mTmpOOo.setName(mNameRow.getValue());
+                isValid(null);
                 super.okPressed();
             } else {
                 updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
@@ -440,11 +441,8 @@ public class OOoTable extends AbstractTable {
                 updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
 
                 result = true;
-
             } catch (InvalidConfigException e) {
-
                 try {
-
                     mTmpOOo = new URE(mOOopathRow.getValue(), mNameRow.getValue());
                     if (null != mTmpOOo.getName()) {
                         mNameRow.setValue(mTmpOOo.getName());
@@ -453,7 +451,6 @@ public class OOoTable extends AbstractTable {
                     updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
 
                     result = true;
-
                 } catch (InvalidConfigException ex) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
                         Messages.getString("OOoTable.InvalidPathError"), //$NON-NLS-1$
