@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased
+## 2.2.0
 * #33 Migrate generated tests to JUnit 4
 * #34 Allow to give LibreOffice/SDK installations custom names
 * #35 Fix Ant support
