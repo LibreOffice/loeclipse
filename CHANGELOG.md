@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.1
+* #39 Fix invalid oxt files created in some cases
+
 ## 2.2.0
 * #33 Migrate generated tests to JUnit 4
 * #34 Allow to give LibreOffice/SDK installations custom names
