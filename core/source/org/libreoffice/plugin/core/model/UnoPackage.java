@@ -593,6 +593,9 @@ public class UnoPackage {
         if (!pFile.isFile()) {
             throw new IllegalArgumentException("pFile [" + pFile.getAbsolutePath() + "] is not a file");
         }
+        
+        pathInArchive = FilenameUtils.separatorsToUnix(pathInArchive);
+        
         // Do not change the extension from now
         initializeOutput();
 
