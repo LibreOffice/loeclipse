@@ -42,6 +42,7 @@ import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.libreoffice.plugin.core.model.UnoPackage;
+import org.libreoffice.plugin.core.utils.FilenameUtils;
 
 /**
  * Class providing the MANIFEST.MF contents to the Jar writer.
@@ -75,8 +76,10 @@ public class UnoManifestProvider extends ManifestProvider {
         Name classPath = new Attributes.Name("Class-Path");
         List<String> classPathList = new ArrayList<>();
         for (IFile file:mExternalJars) {
-            classPathList.add(UnoPackage.getPathRelativeToBase(SystemHelper.getFile(file),
-                SystemHelper.getFile(mUnoProject)));
+            String relativePath = UnoPackage.getPathRelativeToBase(SystemHelper.getFile(file),
+                SystemHelper.getFile(mUnoProject));
+            relativePath = FilenameUtils.separatorsToUnix(relativePath);
+            classPathList.add(relativePath);
         }
         pManifest.getMainAttributes().put(classPath, String.join(",", classPathList));
     }
