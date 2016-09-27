@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.2
+# 40 Fix jar manifests containing wrong path separator
+
 ## 2.2.1
 * #39 Fix invalid oxt files created in some cases
 
