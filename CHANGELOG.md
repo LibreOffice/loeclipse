@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.3
+* #41 Fix wrong classpath syntax for multiple jars
+
 ## 2.2.2
 * #40 Fix jar manifests containing wrong path separator
 
