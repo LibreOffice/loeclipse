@@ -72,7 +72,7 @@ public class UnoManifestProvider extends ManifestProvider {
     protected void putAdditionalEntries(Manifest pManifest, JarPackageData pJarPackage) {
         Name regClassName = new Attributes.Name("RegistrationClassName"); //$NON-NLS-1$
         pManifest.getMainAttributes().put(regClassName, mRegClass);
-
+        
         Name classPath = new Attributes.Name("Class-Path");
         List<String> classPathList = new ArrayList<>();
         for (IFile file:mExternalJars) {
@@ -81,6 +81,6 @@ public class UnoManifestProvider extends ManifestProvider {
             relativePath = FilenameUtils.separatorsToUnix(relativePath);
             classPathList.add(relativePath);
         }
-        pManifest.getMainAttributes().put(classPath, String.join(",", classPathList));
+        pManifest.getMainAttributes().put(classPath, String.join(" ", classPathList));
     }
 }
