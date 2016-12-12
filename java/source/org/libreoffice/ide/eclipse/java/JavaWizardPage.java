@@ -63,7 +63,6 @@ public class JavaWizardPage extends LanguageWizardPage {
 
     private BooleanRow mJavaTestsRow;
 
-    private String mJavaVersion;
     private boolean mUseTests;
 
     /**
@@ -81,8 +80,7 @@ public class JavaWizardPage extends LanguageWizardPage {
      */
     @Override
     public void setProjectInfos(UnoFactoryData pData) {
-        // default values
-        mJavaVersion = "java5"; //$NON-NLS-1$
+        // default value
         mUseTests = true;
     }
 
@@ -93,7 +91,7 @@ public class JavaWizardPage extends LanguageWizardPage {
     public UnoFactoryData fillData(UnoFactoryData pData) {
 
         if (pData != null) {
-            pData.setProperty(JAVA_VERSION, mJavaVersion);
+            pData.setProperty(JAVA_VERSION, "java5"); // default java version
             pData.setProperty(JAVA_TESTS, mUseTests);
         }
 
