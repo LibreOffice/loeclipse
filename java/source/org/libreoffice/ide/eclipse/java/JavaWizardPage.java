@@ -48,7 +48,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.libreoffice.ide.eclipse.core.gui.rows.BooleanRow;
-import org.libreoffice.ide.eclipse.core.gui.rows.ChoiceRow;
 import org.libreoffice.ide.eclipse.core.gui.rows.FieldEvent;
 import org.libreoffice.ide.eclipse.core.gui.rows.IFieldChangedListener;
 import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
@@ -62,7 +61,6 @@ public class JavaWizardPage extends LanguageWizardPage {
     public static final String JAVA_VERSION = "java_version"; //$NON-NLS-1$
     public static final String JAVA_TESTS = "java_tests"; //$NON-NLS-1$
 
-    private ChoiceRow mJavaVersionRow;
     private BooleanRow mJavaTestsRow;
 
     private String mJavaVersion;
@@ -109,22 +107,8 @@ public class JavaWizardPage extends LanguageWizardPage {
     public void createControl(Composite pParent) {
 
         Composite body = new Composite(pParent, SWT.NONE);
-        body.setLayout(new GridLayout(2, false));
+        body.setLayout(new GridLayout(1, false));
         body.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        // Create the Java version row
-        mJavaVersionRow = new ChoiceRow(body, JAVA_VERSION,
-            Messages.getString("JavaWizardPage.JavaVersion"), null, false); //$NON-NLS-1$
-        mJavaVersionRow.add(Messages.getString("JavaWizardPage.Java5"), "java5"); //$NON-NLS-1$ //$NON-NLS-2$
-        mJavaVersionRow.setFieldChangedListener(new IFieldChangedListener() {
-
-            @Override
-            public void fieldChanged(FieldEvent pEvent) {
-                mJavaVersion = mJavaVersionRow.getValue();
-            }
-        });
-        mJavaVersionRow.select(0);
-        mJavaVersionRow.setTooltip(Messages.getString("JavaWizardPage.JavaVersionTooltip")); //$NON-NLS-1$
 
         // Create the test row
         mJavaTestsRow = new BooleanRow(body, JAVA_TESTS,
