@@ -112,7 +112,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
             prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
             if RegistrationHelper.isFileEmpty(pUnoproj) {
-                PluginLogger.error(ResourceHelper.Messages.getString("RegistrationHelper.WriteClassesListError"));
+                PluginLogger.error(ResourceHelper.Messages.getString("RegistrationHelper.ReadClassesListError"));
             } else {
                 Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
             }
@@ -134,7 +134,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
         String className = isJavaServiceImpl(pDelta.getResource());
         if (className != null) {
             if RegistrationHelper.isFileEmpty(pUnoproj) {
-                PluginLogger.error(ResourceHelper.Messages.getString("RegistrationHelper.WriteClassesListError"));
+                PluginLogger.error(ResourceHelper.Messages.getString("RegistrationHelper.ReadClassesListError"));
             } else {
                 RegistrationHelper.addImplementation(pUnoProject, className);
             }
