@@ -59,6 +59,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
+import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.java.registration.RegistrationHelper;
 
 /**
@@ -110,7 +111,11 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
             prjPath = prjPath.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
             prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
-            Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
+            if RegistrationHelper.isFileEmpty(pUnoproj) {
+                PluginLogger.error(ResourceHelper.Messages.getString("RegistrationHelper.WriteClassesListError"));
+            } else {
+                Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
+            }
             for (String implName : classes) {
                 if (prjPath.endsWith(implName)) {
                     RegistrationHelper.removeImplementation(pUnoprj, implName);
@@ -128,7 +133,11 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     private void addImplementation(IResourceDelta pDelta, IUnoidlProject pUnoProject) {
         String className = isJavaServiceImpl(pDelta.getResource());
         if (className != null) {
-            RegistrationHelper.addImplementation(pUnoProject, className);
+            if RegistrationHelper.isFileEmpty(pUnoproj) {
+                PluginLogger.error(ResourceHelper.Messages.getString("RegistrationHelper.WriteClassesListError"));
+            } else {
+                RegistrationHelper.addImplementation(pUnoProject, className);
+            }
         }
     }
 
