@@ -108,7 +108,7 @@ public abstract class RegistrationHelper {
         try {
             in = new FileInputStream(file);
             reader = new BufferedReader(new InputStreamReader(in));
-            if (reader.readline() == null){
+            if (reader.readLine() == null){
                 return true;
             } else {
                 return false;
