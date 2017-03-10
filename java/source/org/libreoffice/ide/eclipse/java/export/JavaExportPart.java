@@ -51,6 +51,8 @@ import org.eclipse.swt.widgets.Text;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
+import org.libreoffice.ide.eclipse.core.model.OOoContainer;
+import org.libreoffice.ide.eclipse.core.model.SDKContainer;
 import org.libreoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
 import org.libreoffice.ide.eclipse.java.Messages;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
@@ -168,8 +170,17 @@ public class JavaExportPart extends LanguageExportPart {
                 writer = new FileWriter(propsFile);
 
                 Properties props = new Properties();
-                props.put("office.install.dir", new String()); //$NON-NLS-1$
-                props.put("sdk.dir", new String()); //$NON-NLS-1$
+
+                if(OOoContainer.getOOoKeys().size() > 0)
+                    props.put("office.install.dir", OOoContainer.getOOoKeys().get(0)); //$NON-NLS-1$
+                else
+                    props.put("office.install.dir", new String()); //$NON-NLS-1$
+
+                if(SDKContainer.getSDKKeys().size() > 0)
+                    props.put("sdk.dir", SDKContainer.getSDKKeys().get(0)); //$NON-NLS-1$
+                else
+                    props.put("sdk.dir", new String()); //$NON-NLS-1$
+
                 writer.close();
             } catch (IOException e) {
                 PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
