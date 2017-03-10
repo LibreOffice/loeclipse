@@ -26,12 +26,16 @@ Developer and User Documentation is found in [core/doc/help/html](https://github
 ### Prerequisites
 In order to build LOEclipseIntegration to produce an update site, you need to have LibreOffice, the LibreOffice SDK and Eclipse installed.
 
-On Ubuntu for example you need `libreoffice-dev` and `libreoffice-java-common`.
+* Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
+* Windows/macOS: Install LibreOffice and the LibreOffice SDK from http://www.libreoffice.org/download
 
-Also you need to add some jar files to the build path in Eclipse. Select the *Window->Preferences* menu in Eclipse and open the *Java->Build path->User Library* configuration page. Then add a new library named `LO-Classes` and add the following jars from the LibreOffice installation (found in `program/classes`): `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. This is necessary in order to correctly build the sources.
+### Setup Eclipse for development
 
-### Working with Eclipse
-You can run and debug this extension with Eclipse. Just import the projects using *File->Import* and run/debug the project as an *Eclipse installation*.
+1. Install *Eclipse IDE for Eclipse Committers*. The *Eclipse IDE for Java Developers* will **not** work.
+2. Clone this repository
+3. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
+4. Go to *Window->Preferences* in Eclipse and open the *Java->Build path->User Library* configuration page. Then add a new library named `LO-Classes` and add the following jars (via *Add External Jars*) from the LibreOffice installation (found in `program/classes`): `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. This is necessary in order to correctly build the sources.
+5. Go to *Run->Run Configurations*, and create a new run configuration of the type *Eclipse Application*. Now you can run or debug the LOEclipse plugin using this run configuration.
 
 ## Release Management
 
