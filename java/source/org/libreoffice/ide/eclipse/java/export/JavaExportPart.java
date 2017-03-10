@@ -172,15 +172,16 @@ public class JavaExportPart extends LanguageExportPart {
                 Properties props = new Properties();
 
                 if(OOoContainer.getOOoKeys().size() > 0)
-                    props.put("office.install.dir", OOoContainer.getOOoKeys().get(0)); //$NON-NLS-1$
+                    props.put("office.install.dir", OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome()); //$NON-NLS-1$
                 else
-                    props.put("office.install.dir", new String()); //$NON-NLS-1$
+                    props.put("office.install.dir", ""); //$NON-NLS-1$
 
                 if(SDKContainer.getSDKKeys().size() > 0)
-                    props.put("sdk.dir", SDKContainer.getSDKKeys().get(0)); //$NON-NLS-1$
+                    props.put("sdk.dir", SDKContainer.getSDK(SDKContainer.getSDKKeys().get(0)).getHome()); //$NON-NLS-1$
                 else
-                    props.put("sdk.dir", new String()); //$NON-NLS-1$
+                    props.put("sdk.dir", ""); //$NON-NLS-1$
 
+                props.store(writer, null);
                 writer.close();
             } catch (IOException e) {
                 PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
