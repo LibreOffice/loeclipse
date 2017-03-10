@@ -33,8 +33,9 @@ Also you need to add some jar files to the build path in Eclipse. Select the *Wi
 ### Working with Eclipse
 You can run and debug this extension with Eclipse. Just import the projects using *File->Import* and run/debug the project as an *Eclipse installation*.
 
-### Building an update site
-To build an update site, run the following command in the `build` folder:
+## Release Management
+
+After releasing a new version, we need to build the update site. To do that, run the following command in the `build` folder:
 
 `ant -Dlibreoffice.home=... -Declipse.home=...`
 
