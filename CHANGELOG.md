@@ -1,5 +1,9 @@
 # Changelog
 
+## unreleased
+* #38 Prefill build.properties with current LO&SDK installation
+* #43 Java version selector has been removed from the extension wizard
+
 ## 2.2.3
 * #41 Fix wrong classpath syntax for multiple jars
 
