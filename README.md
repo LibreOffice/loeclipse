@@ -34,7 +34,15 @@ In order to build LOEclipseIntegration to produce an update site, you need to ha
 1. Install *Eclipse IDE for Eclipse Committers*. The *Eclipse IDE for Java Developers* will **not** work.
 2. Clone this repository
 3. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
-4. Go to *Window->Preferences* in Eclipse and open the *Java->Build path->User Library* configuration page. Then add a new library named `LO-Classes` and add the following jars (via *Add External Jars*) from the LibreOffice installation (found in `program/classes`): `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. This is necessary in order to correctly build the sources.
+4. Add the LibreOffice jars to the build path
+  * Go to *Preferences* in Eclipse and open the *Java->Build path->User Library* configuration page.
+  * Add a new library named `LO-Classes`
+  * Select the Library, click *Add External Jars*
+  * Search for the LibreOffice jars `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. You find them here:
+    * macOS: `/Applications/LibreOffice.app/Contents/Resources/java`
+    * Ubuntu: `/usr/lib/libreoffice/program/classes`
+    * Windows: `C:\Program Files\LibreOffice 5\program\classes\`
+  * Now there should be no more project errors.
 5. Go to *Run->Run Configurations*, and create a new run configuration of the type *Eclipse Application*. Now you can run or debug the LOEclipse plugin using this run configuration.
 
 ## Release Management
