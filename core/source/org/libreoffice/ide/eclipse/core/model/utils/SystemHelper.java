@@ -163,7 +163,10 @@ public class SystemHelper {
                 result = new String[pEnv.length];
                 System.arraycopy(pEnv, 0, result, 0, pEnv.length);
                 if (null != pSeparator) {
-                    result[i] = pEnv[i] + pSeparator + pValue;
+                    // First remove the leading NAME=
+                    String tmpEnv =  pEnv[i].replaceFirst(pName+"=", "");
+                    // Put the new env in front of the existing one
+                    result[i] = pName + "=" + pValue + pSeparator + tmpEnv;
                 } else {
                     result[i] = pName + "=" + pValue; //$NON-NLS-1$
                 }
