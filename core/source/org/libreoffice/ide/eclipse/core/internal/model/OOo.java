@@ -202,7 +202,10 @@ public class OOo extends AbstractOOo {
         String path = getLibsPath()[0] + FILE_SEP + "bootstrap"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             path += ".ini"; //$NON-NLS-1$
-        } else {
+        } else if (getPlatform().equals(Platform.OS_MACOSX)){
+            path = getHome() + FILE_SEP + "Resources" + FILE_SEP + "bootstraprc";
+        }
+        else {
             path += "rc"; //$NON-NLS-1$
         }
         return path;
@@ -445,7 +448,11 @@ public class OOo extends AbstractOOo {
 
         private void initPaths() throws InvalidConfigException {
             // locate ure directory (directory which contains bin/uno.bin or bin/uno.exe
-            String unoRelativePath = "program/" + URE.getUnoExecutable();
+            String unoRelativePath;
+            if (getPlatform().equals(Platform.OS_MACOSX))
+                unoRelativePath = "MacOS/" + URE.getUnoExecutable();
+            else
+                unoRelativePath = "program/" + URE.getUnoExecutable(); //todo
             File ureDir = locateUniqueContainer(mHome, unoRelativePath);
             if (ureDir == null) {
                 mHome = null;
@@ -557,8 +564,11 @@ public class OOo extends AbstractOOo {
 
             File basisLibs = this.mapperBasisBins;
             if (basisLibs == null) {
+                String sofficeName = "soffice.bin";
+                if (getPlatform().equals(Platform.OS_MACOSX))
+                    sofficeName = "soffice";
                 try {
-                    basisLibs = locateUniqueContainer(mHome, "soffice.bin");
+                    basisLibs = locateUniqueContainer(mHome, sofficeName);
                     this.mapperBasisBins = basisLibs;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
