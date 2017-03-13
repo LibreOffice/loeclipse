@@ -3,6 +3,8 @@
 ## unreleased
 * #38 Prefill build.properties with current LO&SDK installation
 * #43 Java version selector has been removed from the extension wizard
+* #45 Fix project generation on macOS
+* #55 Fix extension deployment on Ubuntu
 
 ## 2.2.3
 * #41 Fix wrong classpath syntax for multiple jars
