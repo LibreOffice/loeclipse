@@ -24,7 +24,6 @@ Developer and User Documentation is found in [core/doc/help/html](https://github
 ## Development
 
 ### Prerequisites
-In order to build LOEclipseIntegration to produce an update site, you need to have LibreOffice, the LibreOffice SDK and Eclipse installed.
 
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
 * Windows/macOS: Install LibreOffice and the LibreOffice SDK from http://www.libreoffice.org/download
