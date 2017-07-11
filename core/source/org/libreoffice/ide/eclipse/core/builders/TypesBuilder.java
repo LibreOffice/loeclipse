@@ -255,7 +255,8 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 
         // compile each idl file
         IFolder idlFolder = pProject.getFolder(pProject.getIdlPath());
-        idlFolder.accept(new IdlcBuildVisitor(pMonitor));
+        if (idlFolder.exists())
+            idlFolder.accept(new IdlcBuildVisitor(pMonitor));
     }
 
     /**

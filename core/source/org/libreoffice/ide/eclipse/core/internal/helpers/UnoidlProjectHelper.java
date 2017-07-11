@@ -513,7 +513,8 @@ public class UnoidlProjectHelper {
         File prjFile = SystemHelper.getFile(pPrj);
 
         // Add content to the package
-        unoPackage.addTypelibraryFile(UnoPackage.getPathRelativeToBase(libFile, prjFile), libFile); //$NON-NLS-1$
+        if (libFile.exists())
+            unoPackage.addTypelibraryFile(UnoPackage.getPathRelativeToBase(libFile, prjFile), libFile); //$NON-NLS-1$
         pPrj.getLanguage().getLanguageBuidler().fillUnoPackage(unoPackage, pPrj);
 
         return unoPackage;
