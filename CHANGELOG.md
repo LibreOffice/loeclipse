@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.5
+* #58 Fix build without idl/ directory
+
 ## 2.2.4
 * #38 Prefill build.properties with current LO&SDK installation
 * #43 Java version selector has been removed from the extension wizard

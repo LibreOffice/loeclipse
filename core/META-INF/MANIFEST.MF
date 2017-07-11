@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: LibreOffice eclipse integration - core
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.core;singleton:=true
 Bundle-Vendor: The Document Foundation
-Bundle-Version: 2.2.4
+Bundle-Version: 2.2.5
 Bundle-Activator: org.libreoffice.ide.eclipse.core.OOEclipsePlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
