@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.6
+* Enabled Automated error reporting
+
 ## 2.2.5
 * #58 Fix build without idl/ directory
 
