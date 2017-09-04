@@ -3,6 +3,23 @@
 <plugin>
    <extension-point id="language" name="%extension-point.name" schema="schema/language.exsd"/>
    <extension-point id="MainProvider" name="%extension-point.name.0" schema="schema/MainProvider.exsd"/>
+   <extension point="org.eclipse.epp.logging.aeri.ide.servers">
+    <server id="org.example.aer.loeclipse"
+        name="LOEclipse"
+        description="Help improve LOEclipse by sending error reports to us."
+        class="org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection"
+        icon16="icons/libreoffice_16.png"
+        icon32="icons/libreoffice_32.png">
+
+    <link rel="provider"
+      title="LOEclipse"
+      href="https://github.com/LibreOffice/loeclipse"/>
+
+        <link rel="discovery"
+              title="Discovery URL"
+              href="https://aer.ctrlflow.com/loeclipse/community/discovery"/>
+    </server>
+   </extension>
    <extension
          point="org.eclipse.ui.editors">
       <editor
