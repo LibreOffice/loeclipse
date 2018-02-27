@@ -23,6 +23,10 @@ Developer and User Documentation is found in [core/doc/help/html](https://github
 
 ## Development
 
+### Communication
+
+Feel free to join [#libreoffice-dev on freenode](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
+
 ### Prerequisites
 
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
