@@ -144,8 +144,10 @@ public class UnoPackageExportPage extends WizardPage {
             }
             i++;
         }
-
-        mContentSelector.loadDefaults();
+        
+        if(selected!=false){
+            mContentSelector.loadDefaults();
+        }
 
         restoreWidgetValues();
     }
