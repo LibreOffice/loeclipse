@@ -237,7 +237,7 @@ public class UnoPackageExportPage extends WizardPage {
                 String path = dlg.open();
                 if (path != null) {
                     if(!path.substring(path.length()-4).equalsIgnoreCase(".oxt")){
-                        path = path + ".oxt";
+                        path += ".oxt";
                     }
                     mDestinationCombo.setText(path);
                 }
