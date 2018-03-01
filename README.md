@@ -38,14 +38,14 @@ Feel free to join [#libreoffice-dev on freenode](https://irc.documentfoundation.
 2. Clone this repository
 3. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
 4. Add the LibreOffice jars to the build path
-  * Go to *Preferences* in Eclipse and open the *Java->Build path->User Library* configuration page.
-  * Add a new library named `LO-Classes`
-  * Select the Library, click *Add External Jars*
-  * Search for the LibreOffice jars `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. You find them here:
-    * macOS: `/Applications/LibreOffice.app/Contents/Resources/java`
-    * Ubuntu: `/usr/lib/libreoffice/program/classes`
-    * Windows: `C:\Program Files\LibreOffice 5\program\classes\`
-  * Now there should be no more project errors.
+   * Go to *Preferences* in Eclipse and open the *Java->Build path->User Library* configuration page.
+   * Add a new library named `LO-Classes`
+   * Select the Library, click *Add External Jars*
+   * Search for the LibreOffice jars `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. You find them here:
+     * macOS: `/Applications/LibreOffice.app/Contents/Resources/java`
+     * Ubuntu: `/usr/lib/libreoffice/program/classes`
+     * Windows: `C:\Program Files\LibreOffice 5\program\classes\`
+   * Now there should be no more project errors.
 5. Go to *Run->Run Configurations*, and create a new run configuration of the type *Eclipse Application*. Now you can run or debug the LOEclipse plugin using this run configuration.
 
 ## Release Management
