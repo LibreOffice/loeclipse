@@ -145,7 +145,9 @@ public class UnoPackageExportPage extends WizardPage {
             i++;
         }
 
-        mContentSelector.loadDefaults();
+        if(selected) {
+            mContentSelector.loadDefaults();
+        }
 
         restoreWidgetValues();
     }
