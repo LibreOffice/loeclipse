@@ -47,7 +47,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.wizards.NewServiceWizard;
 
@@ -96,8 +99,10 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
     public boolean isValidSelection(IStructuredSelection pSelection) {
 
         boolean isValid = false;
+        boolean projectExist = false;
         if (!pSelection.isEmpty() && pSelection.getFirstElement() instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) pSelection.getFirstElement();
+            projectExist = true;
             if (adaptable.getAdapter(IResource.class) != null) {
                 IResource res = adaptable.getAdapter(IResource.class);
                 IProject prj = res.getProject();
@@ -105,6 +110,14 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
                     isValid = true;
                 }
             }
+        }
+        else {
+            Shell shell = Display.getDefault().getActiveShell();
+            MessageDialog.openError(shell, "Error", "Error occured\nYou need to create a LibreOffice project first to use the selection");
+        }
+        if(!isValid && projectExist) {
+            Shell shell = Display.getDefault().getActiveShell();
+            MessageDialog.openError(shell, "Error", "Error occured\nThe Selection only works with LibreOffice projects");
         }
 
         return isValid;

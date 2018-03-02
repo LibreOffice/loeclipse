@@ -145,6 +145,10 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
                 createPages(resource.getProject());
             }
         }
+        else {
+            Shell shell= getShell();
+            MessageDialog.openError(shell, "Error", "Error occured\nYou need to create a LibreOffice project first to use the selection");
+        }
     }
 
     /**
@@ -165,7 +169,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
                 }
                 else {
                     Shell shell= getShell();
-                    MessageDialog.openError(shell, "Error", "Error occured\nThe Selection works with only UNO type projects");
+                    MessageDialog.openError(shell, "Error", "Error occured\nThe Selection only works with LibreOffice projects");
                 }
                     
             } catch (CoreException e) {

@@ -114,10 +114,6 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
             centerOnScreen(dialog);
             dialog.open();
         }
-        else {
-            Shell shell = Display.getDefault().getActiveShell();
-            MessageDialog.openError(shell, "Error", "Error occured\nThe Selection works with only UNO type projects");
-        }
     }
 
     /**
