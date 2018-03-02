@@ -51,8 +51,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -199,6 +202,11 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 
                     mWizardSet.initialize(data);
 
+                }
+                else {
+                    Shell shell= getShell();
+                    MessageDialog.openError(shell, "Error", "Error occured\nThe Selection works with only UNO type projects");
+                    
                 }
             } catch (CoreException e) {
                 PluginLogger.debug(e.getMessage());

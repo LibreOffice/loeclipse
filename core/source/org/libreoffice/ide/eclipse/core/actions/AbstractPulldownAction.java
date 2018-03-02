@@ -57,6 +57,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -112,6 +113,10 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
             dialog.create();
             centerOnScreen(dialog);
             dialog.open();
+        }
+        else {
+            Shell shell = Display.getDefault().getActiveShell();
+            MessageDialog.openError(shell, "Error", "Error occured\nThe Selection works with only UNO type projects");
         }
     }
 
