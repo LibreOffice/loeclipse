@@ -328,6 +328,12 @@
             icon="/icons/export_package.gif"
             id="org.libreoffice.ide.eclipse.core.export.package"
             name="%wizards.export"/>
+      <wizard
+            category="org.libreoffice.ide.eclipse.core.uno"
+            class="org.libreoffice.ide.eclipse.core.wizards.AntScriptWizard"
+            icon="/icons/export_package.gif"
+            id="org.libreoffice.ide.eclipse.core.export.ant"
+            name="%wizards.ant"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

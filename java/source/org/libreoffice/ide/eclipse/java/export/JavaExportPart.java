@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -46,7 +47,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -152,40 +155,48 @@ public class JavaExportPart extends LanguageExportPart {
     @Override
     public void doFinish(UnoPackage pModel) {
         if (mController.getSaveAntScript()) {
-
-            // Generate the build script
-            IUnoidlProject unoProject = getPage().getProject();
-            String prjName = unoProject.getName();
-            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
-
-            TemplatesHelper.copyTemplate(project, mController.getSavePath(),
-                JavaExportPart.class, new String(), prjName);
-
-            // Generate the build.properties file
-            File dir = project.getFile(mController.getSavePath()).getLocation().toFile().getParentFile();
-            File propsFile = new File(dir, "build.properties"); //$NON-NLS-1$
-            FileWriter writer = null;
-
-            try {
-                writer = new FileWriter(propsFile);
-
-                Properties props = new Properties();
-
-                if(OOoContainer.getOOoKeys().size() > 0)
-                    props.put("office.install.dir", OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome()); //$NON-NLS-1$
-                else
-                    props.put("office.install.dir", ""); //$NON-NLS-1$
-
-                if(SDKContainer.getSDKKeys().size() > 0)
-                    props.put("sdk.dir", SDKContainer.getSDK(SDKContainer.getSDKKeys().get(0)).getHome()); //$NON-NLS-1$
-                else
-                    props.put("sdk.dir", ""); //$NON-NLS-1$
-
-                props.store(writer, null);
-                writer.close();
-            } catch (IOException e) {
-                PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
+            
+            if(!(mController.getSavePath().length() >= 5 && mController.getSavePath().substring(mController.getSavePath().length()-4).equalsIgnoreCase(".xml"))) {
+                Shell shell = Display.getDefault().getActiveShell();
+                MessageDialog.openInformation(shell, "Info", "File with .xml extension, needed for building Ant Script is missing \nso using 'build.xml'");
+                mController.setSavePath("build.xml");
             }
+            
+                // Generate the build script
+                IUnoidlProject unoProject = getPage().getProject();
+                String prjName = unoProject.getName();
+                IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
+    
+                TemplatesHelper.copyTemplate(project, mController.getSavePath(),
+                    JavaExportPart.class, new String(), prjName);
+    
+                // Generate the build.properties file
+                File dir = project.getFile(mController.getSavePath()).getLocation().toFile().getParentFile();
+                File propsFile = new File(dir, "build.properties"); //$NON-NLS-1$
+                FileWriter writer = null;
+    
+                try {
+                    writer = new FileWriter(propsFile);
+    
+                    Properties props = new Properties();
+    
+                    if(OOoContainer.getOOoKeys().size() > 0)
+                        props.put("office.install.dir", OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome()); //$NON-NLS-1$
+                    else
+                        props.put("office.install.dir", ""); //$NON-NLS-1$
+    
+                    if(SDKContainer.getSDKKeys().size() > 0)
+                        props.put("sdk.dir", SDKContainer.getSDK(SDKContainer.getSDKKeys().get(0)).getHome()); //$NON-NLS-1$
+                    else
+                        props.put("sdk.dir", ""); //$NON-NLS-1$
+    
+                    props.store(writer, null);
+                    writer.close();
+                
+                } catch (IOException e) {
+                    PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
+                }
+            
         }
     }
 }
