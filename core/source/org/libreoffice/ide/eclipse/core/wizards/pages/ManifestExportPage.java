@@ -122,6 +122,16 @@ public class ManifestExportPage extends WizardPage {
     }
 
     /**
+     * Set the UNO project to be used for independent ANT file creation
+     * 
+     * @param pProject
+     *            the UNO project selected for the wizard.
+     */
+    public void setProject_Ant(IUnoidlProject pProject) {
+        mProject = pProject;
+    }
+
+    /**
      * @return the UNO project to export as a package
      */
     public IUnoidlProject getProject() {
