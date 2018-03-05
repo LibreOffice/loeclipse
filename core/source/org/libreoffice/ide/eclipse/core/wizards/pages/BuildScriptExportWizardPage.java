@@ -30,47 +30,43 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.wizards.pages;
 
+import java.io.File;
+
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.libreoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
 import org.libreoffice.ide.eclipse.core.wizards.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
-import java.io.File;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Combo;
-import org.libreoffice.ide.eclipse.core.PluginLogger;
-import org.libreoffice.ide.eclipse.core.gui.PackageContentSelector;
-import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
-
-
 /**
  * The page for the Ant Script Generation wizard.
  */
-public class AntScriptWizardPage extends WizardPage {
+public class BuildScriptExportWizardPage extends WizardPage {
 
+    private IUnoidlProject sSelectedProject;
+    private LanguageExportPart sLangPart;
+    private Combo sProjectsList;
+    private PackageContentSelector sContentSelector;
+    //    private ManifestExportPage mManifestPage;
 
+    private boolean checkAntSectionDisplay = false;
 
-	private IUnoidlProject mSelectedProject;
-	private LanguageExportPart mLangPart;
-	private Combo mProjectsList;
-	private PackageContentSelector mContentSelector;
-	private ManifestExportPage mManifestPage;
-	
-	private boolean checkAntSectionDisplay = false;
-
-	/**
+    /**
      * Constructor.
      *
      * @param pPageName
@@ -78,31 +74,47 @@ public class AntScriptWizardPage extends WizardPage {
      * @param pProject
      *            the project to export
      */
-    public AntScriptWizardPage(String pPageName, IUnoidlProject pProject) {
+    public BuildScriptExportWizardPage(String pPageName, IUnoidlProject pProject) {
         super(pPageName);
 
-        setTitle(Messages.getString("AntScriptWizard.Title")); //$NON-NLS-1$
-        setDescription(Messages.getString("AntScriptWizard.Description")); //$NON-NLS-1$
+        setTitle(Messages.getString("BuildScriptExportWizard.Title")); //$NON-NLS-1$
+        setDescription(Messages.getString("BuildScriptExportWizard.Description")); //$NON-NLS-1$
 
-        mSelectedProject = pProject;
+        sSelectedProject = pProject;
     }
-    
+
     /**
      * Create the build scripts for the package model.
      *
      * @param pModel
-     *            the model to export
+     *            the model to be used to build script
      */
     public void createBuildScripts(UnoPackage pModel) {
-        mLangPart.doFinish(pModel);
+        sLangPart.doFinish(pModel);
     }
-    
+
+    /**
+     * @return the UNO project to export as a package
+     */
+    public IUnoidlProject getProject() {
+        return sSelectedProject;
+    }
+
+    /**
+     * @param pProject
+     *            the UNO project selected for the wizard.
+     */
+    public void setProject(IUnoidlProject pProject) {
+        sSelectedProject = pProject;
+        reloadLanguagePart();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void createControl(Composite pParent) {
-    	mManifestPage = new ManifestExportPage("No Page",mSelectedProject);
+        //        mManifestPage = new ManifestExportPage("No Page", sSelectedProject);
 
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout());
@@ -110,8 +122,7 @@ public class AntScriptWizardPage extends WizardPage {
         setControl(body);
 
         createProjectSelection();
-        mContentSelector = new PackageContentSelector(body, SWT.NONE);
-       
+        sContentSelector = new PackageContentSelector(body, SWT.NONE);
 
         setPageComplete(checkPageCompletion());
 
@@ -124,22 +135,22 @@ public class AntScriptWizardPage extends WizardPage {
      */
     private void loadData() {
         // Select the project
-        String[] items = mProjectsList.getItems();
+        String[] items = sProjectsList.getItems();
         int i = 0;
         boolean selected = false;
-        while (mSelectedProject != null && i < items.length && !selected) {
-            if (items[i].equals(mSelectedProject.getName())) {
-                mProjectsList.select(i);
+        while (sSelectedProject != null && i < items.length && !selected) {
+            if (items[i].equals(sSelectedProject.getName())) {
+                sProjectsList.select(i);
                 selected = true;
             }
             i++;
         }
 
-        if(selected) {
-            mContentSelector.loadDefaults();
+        if (selected) {
+            sContentSelector.loadDefaults();
         }
 
-   }
+    }
 
     /**
      * Creates the project selection part of the dialog.
@@ -151,7 +162,7 @@ public class AntScriptWizardPage extends WizardPage {
         selectionBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         Label lbl = new Label(selectionBody, SWT.NORMAL);
-        lbl.setText(Messages.getString("AntScriptWizard.Project")); //$NON-NLS-1$
+        lbl.setText(Messages.getString("BuildScriptExportWizard.Project")); //$NON-NLS-1$
         lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
         IUnoidlProject[] prjs = ProjectsManager.getProjects();
@@ -161,29 +172,28 @@ public class AntScriptWizardPage extends WizardPage {
             prjNames[i] = prj.getName();
         }
 
-        mProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
-        mProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mProjectsList.setItems(prjNames);
+        sProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
+        sProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        sProjectsList.setItems(prjNames);
 
-        mProjectsList.addModifyListener(new ModifyListener() {
+        sProjectsList.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent pE) {
-                int id = mProjectsList.getSelectionIndex();
+                int id = sProjectsList.getSelectionIndex();
                 if (id != -1) {
-                    String name = mProjectsList.getItem(id);
+                    String name = sProjectsList.getItem(id);
                     IUnoidlProject unoprj = ProjectsManager.getProject(name);
-                    mSelectedProject = unoprj;
+                    sSelectedProject = unoprj;
 
                     // Change the project in the manifest page
-                    mManifestPage.setProject_Ant(unoprj);
-                    mContentSelector.setProject(unoprj);
-                    if(!checkAntSectionDisplay) {
+                    setProject(unoprj);
+                    sContentSelector.setProject(unoprj);
+                    if (!checkAntSectionDisplay) {
                         reloadLanguagePart();
                     }
                 }
-
-                setPageComplete(checkPageCompletion());   
+                setPageComplete(checkPageCompletion());
             }
         });
     }
@@ -192,26 +202,26 @@ public class AntScriptWizardPage extends WizardPage {
      * @return <code>true</code> if the page is complete, <code>false</code> otherwise.
      */
     private boolean checkPageCompletion() {
-        return (mProjectsList.getSelectionIndex() != -1); //<---- Can be Updated when the Ant script generation & input text fields are mentioned in same project   
+        return (sProjectsList.getSelectionIndex() != -1); //<---- Can be Updated when the Ant script generation & input text fields are mentioned in same project
     }
 
     /**
      * Change the language specific part from the selected project.
      */
     private void reloadLanguagePart() {
-        if (mLangPart != null) {
-            mLangPart.dispose();
+        if (sLangPart != null) {
+            sLangPart.dispose();
         }
 
         // Add the language specific controls
-        if (mSelectedProject != null) {
-            mLangPart = mSelectedProject.getLanguage().getExportBuildPart();
-            if (mLangPart != null) {
-                mLangPart.setPage(mManifestPage);
+        if (sSelectedProject != null) {
+            sLangPart = sSelectedProject.getLanguage().getExportBuildPart();
+            if (sLangPart != null) {
+                sLangPart.setPage(this);
                 Composite body = (Composite) getControl();
                 if (body != null && !checkAntSectionDisplay) {
                     // The body can be null before the page creation
-                    mLangPart.createControls(body);
+                    sLangPart.createControls(body);
                     body.layout();
                     checkAntSectionDisplay = true;
                 }
@@ -219,8 +229,6 @@ public class AntScriptWizardPage extends WizardPage {
         }
     }
 
-    
-    
     /**
      * @return the package model built from the data provided by the user or <code>null</code> if something blocked the
      *         process.
@@ -230,33 +238,32 @@ public class AntScriptWizardPage extends WizardPage {
 
         try {
             File destFile = new File(tempPath);
-            pack = PackageContentSelector.createPackage(mSelectedProject, destFile, mContentSelector.getSelected());
-       } catch (Exception e) {
-            PluginLogger.error(Messages.getString("AntScriptWizard.LibraryCreationError"), e); //$NON-NLS-1$
+            pack = PackageContentSelector.createPackage(sSelectedProject, destFile, sContentSelector.getSelected());
+        } catch (Exception e) {
+            PluginLogger.error(Messages.getString("BuildScriptExportWizard.LibraryCreationError"), e); //$NON-NLS-1$
         }
 
         return pack;
     }
-    
+
     /**
      * Refresh the selected project.
      */
     public void refreshProject() {
         try {
             // Refresh the project and return the status
-            String prjName = mSelectedProject.getName();
+            String prjName = sSelectedProject.getName();
             IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
             prj.refreshLocal(IResource.DEPTH_INFINITE, null);
         } catch (CoreException e) {
         }
     }
-    
+
     /**
      * Returns the path of the selected Project
      */
-    public String getPath()
-    {
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(mSelectedProject.getName());
+    public String getPath() {
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(sSelectedProject.getName());
         File dir = project.getFile("build.xml").getLocation().toFile().getParentFile();
         return dir.toString();
     }

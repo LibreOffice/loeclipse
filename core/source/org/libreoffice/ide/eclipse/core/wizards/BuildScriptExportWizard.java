@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- *$RCSfile: AntScriptWizard.java,v $
+ *$RCSfile: BuildScriptExportWizard.java,v $
  *
  * $Revision: 1.0 $
  *
@@ -50,24 +50,24 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
-import org.libreoffice.ide.eclipse.core.wizards.pages.AntScriptWizardPage;
+import org.libreoffice.ide.eclipse.core.wizards.pages.BuildScriptExportWizardPage;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class for the new Ant Script Generation wizard.
  */
-public class AntScriptWizard extends Wizard implements IExportWizard {
+public class BuildScriptExportWizard extends Wizard implements IExportWizard {
 
-	private static final String DIALOG_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
+    private static final String DIALOG_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
 
-	private boolean mHasNewDialogSettings;
+    private boolean mHasNewDialogSettings;
 
-    private AntScriptWizardPage mAntScriptPage;
+    private BuildScriptExportWizardPage mBuildScriptPage;
 
     /**
      * Constructor.
      */
-    public AntScriptWizard() {
+    public BuildScriptExportWizard() {
         IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
         if (section == null) {
@@ -95,24 +95,24 @@ public class AntScriptWizard extends Wizard implements IExportWizard {
                 }
             }
         }
-        setWindowTitle(Messages.getString("AntScriptWizard.DialogTitle")); //$NON-NLS-1$
+        setWindowTitle(Messages.getString("BuildScriptExportWizard.DialogTitle")); //$NON-NLS-1$
 
-        mAntScriptPage = new AntScriptWizardPage("page1", prj); //$NON-NLS-1$
-        addPage(mAntScriptPage);
-        
+        mBuildScriptPage = new BuildScriptExportWizardPage("page1", prj); //$NON-NLS-1$
+        addPage(mBuildScriptPage);
+
     }
 
     @Override
     public boolean performFinish() {
-       boolean finished = false;
-       String directory = mAntScriptPage.getPath();
-       String tempPath = directory + "/temporary/temp.oxt";
-       UnoPackage model = mAntScriptPage.getPackageModel(tempPath);
+        boolean finished = false;
+        String directory = mBuildScriptPage.getPath();
+        String tempPath = directory + "/temporary/temp.oxt";
+        UnoPackage model = mBuildScriptPage.getPackageModel(tempPath);
         if (model != null) {
             try {
-                mAntScriptPage.createBuildScripts(model);
+                mBuildScriptPage.createBuildScripts(model);
 
-                 mAntScriptPage.refreshProject();
+                mBuildScriptPage.refreshProject();
 
                 if (mHasNewDialogSettings) {
                     IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
@@ -121,17 +121,15 @@ public class AntScriptWizard extends Wizard implements IExportWizard {
                     setDialogSettings(section);
                 }
 
-           } catch (Exception e) {
+            } catch (Exception e) {
                 PluginLogger.error("The Ant Script couldn't be built", e);
             }
         }
-        
-        File tmpDir = new File(directory+"/build.xml");
+
+        File tmpDir = new File(directory + "/build.xml");
         finished = tmpDir.exists();
-        
+
         return finished;
     }
-
-   
 
 }

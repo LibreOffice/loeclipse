@@ -330,10 +330,10 @@
             name="%wizards.export"/>
       <wizard
             category="org.libreoffice.ide.eclipse.core.uno"
-            class="org.libreoffice.ide.eclipse.core.wizards.AntScriptWizard"
+            class="org.libreoffice.ide.eclipse.core.wizards.BuildScriptExportWizard"
             icon="/icons/export_package.gif"
-            id="org.libreoffice.ide.eclipse.core.export.ant"
-            name="%wizards.ant"/>
+            id="org.libreoffice.ide.eclipse.core.export.buildScript"
+            name="%wizards.buildScript"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">

@@ -123,7 +123,7 @@ public class ManifestExportPage extends WizardPage {
 
     /**
      * Set the UNO project to be used for independent ANT file creation
-     * 
+     *
      * @param pProject
      *            the UNO project selected for the wizard.
      */
@@ -440,7 +440,7 @@ public class ManifestExportPage extends WizardPage {
         if (mProject != null) {
             mLangPart = mProject.getLanguage().getExportBuildPart();
             if (mLangPart != null) {
-                mLangPart.setPage(this);
+                //                mLangPart.setPage(this);
                 Composite body = (Composite) getControl();
                 if (body != null) {
                     // The body can be null before the page creation

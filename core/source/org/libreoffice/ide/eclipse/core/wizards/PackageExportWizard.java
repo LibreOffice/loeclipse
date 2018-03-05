@@ -88,9 +88,6 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
 
                 // TODO Run the next operations in a job
 
-                // Write the build scripts if needed
-                mManifestPage.createBuildScripts(model);
-
                 // Export the package
                 File out = model.close();
                 finished = out != null;
