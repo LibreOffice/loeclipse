@@ -50,6 +50,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.wizards.NewServiceWizard;
 
