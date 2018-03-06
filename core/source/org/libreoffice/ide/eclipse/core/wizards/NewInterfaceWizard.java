@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
@@ -143,6 +144,9 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
                 createPages(resource.getProject());
             }
         }
+        else {
+            MessageDialog.openError(getShell(), "Error", "You need to create/select a LibreOffice project first to use the selection");
+        }
     }
 
     /**
@@ -161,6 +165,10 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
 
                     addPage(mPage);
                 }
+                else {
+                   MessageDialog.openError(getShell(), "Error", "The Selection only works with LibreOffice projects");
+                }
+                    
             } catch (CoreException e) {
                 PluginLogger.debug(e.getMessage());
             }
