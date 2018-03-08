@@ -132,6 +132,7 @@ public class JavaExportPart extends LanguageExportPart {
      */
     @Override
     public void doFinish(UnoPackage pModel) {
+
         String directory = mAntScriptPage.getPath();
         File tmpDir = new File(directory + "/build.xml");
         boolean result = false;
