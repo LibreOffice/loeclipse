@@ -28,7 +28,7 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.core.wizards.pages;
+package org.libreoffice.ide.eclipse.java.export;
 
 import java.io.File;
 
@@ -50,20 +50,15 @@ import org.libreoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
-import org.libreoffice.ide.eclipse.core.wizards.Messages;
+import org.libreoffice.ide.eclipse.java.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
-/**
- * The page for the Ant Script Generation wizard.
- */
-public class BuildScriptExportWizardPage extends WizardPage {
+public class AntScriptExportWizardPage extends WizardPage {
 
     private IUnoidlProject sSelectedProject;
     private LanguageExportPart sLangPart;
     private Combo sProjectsList;
     private PackageContentSelector sContentSelector;
-    //    private ManifestExportPage mManifestPage;
-
     private boolean checkAntSectionDisplay = false;
 
     /**
@@ -74,11 +69,11 @@ public class BuildScriptExportWizardPage extends WizardPage {
      * @param pProject
      *            the project to export
      */
-    public BuildScriptExportWizardPage(String pPageName, IUnoidlProject pProject) {
+    public AntScriptExportWizardPage(String pPageName, IUnoidlProject pProject) {
         super(pPageName);
 
-        setTitle(Messages.getString("BuildScriptExportWizard.Title")); //$NON-NLS-1$
-        setDescription(Messages.getString("BuildScriptExportWizard.Description")); //$NON-NLS-1$
+        setTitle(Messages.getString("AntScriptExportWizard.Title")); //$NON-NLS-1$
+        setDescription(Messages.getString("AntScriptExportWizard.Description")); //$NON-NLS-1$
 
         sSelectedProject = pProject;
     }
@@ -94,7 +89,7 @@ public class BuildScriptExportWizardPage extends WizardPage {
     }
 
     /**
-     * @return the UNO project to export as a package
+     * @return the UNO project to be used for building the ant script
      */
     public IUnoidlProject getProject() {
         return sSelectedProject;
@@ -114,7 +109,6 @@ public class BuildScriptExportWizardPage extends WizardPage {
      */
     @Override
     public void createControl(Composite pParent) {
-        //        mManifestPage = new ManifestExportPage("No Page", sSelectedProject);
 
         Composite body = new Composite(pParent, SWT.NONE);
         body.setLayout(new GridLayout());
@@ -162,7 +156,7 @@ public class BuildScriptExportWizardPage extends WizardPage {
         selectionBody.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         Label lbl = new Label(selectionBody, SWT.NORMAL);
-        lbl.setText(Messages.getString("BuildScriptExportWizard.Project")); //$NON-NLS-1$
+        lbl.setText(Messages.getString("AntScriptExportWizard.Project")); //$NON-NLS-1$
         lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
         IUnoidlProject[] prjs = ProjectsManager.getProjects();
@@ -217,7 +211,8 @@ public class BuildScriptExportWizardPage extends WizardPage {
         if (sSelectedProject != null) {
             sLangPart = sSelectedProject.getLanguage().getExportBuildPart();
             if (sLangPart != null) {
-                sLangPart.setPage(this);
+                //****sLangPart.setPage(this);    <--- Can be used When the class LanguageExportPart is using the Object Class rather than ManifestExportPage
+                JavaExportPart.setAntScriptExportPage(this);
                 Composite body = (Composite) getControl();
                 if (body != null && !checkAntSectionDisplay) {
                     // The body can be null before the page creation
@@ -240,7 +235,7 @@ public class BuildScriptExportWizardPage extends WizardPage {
             File destFile = new File(tempPath);
             pack = PackageContentSelector.createPackage(sSelectedProject, destFile, sContentSelector.getSelected());
         } catch (Exception e) {
-            PluginLogger.error(Messages.getString("BuildScriptExportWizard.LibraryCreationError"), e); //$NON-NLS-1$
+            PluginLogger.error(Messages.getString("AntScriptExportWizard.LibraryCreationError"), e); //$NON-NLS-1$
         }
 
         return pack;
@@ -267,4 +262,5 @@ public class BuildScriptExportWizardPage extends WizardPage {
         File dir = project.getFile("build.xml").getLocation().toFile().getParentFile();
         return dir.toString();
     }
+
 }

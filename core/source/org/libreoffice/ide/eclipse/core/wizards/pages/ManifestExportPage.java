@@ -61,7 +61,6 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
 import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.libreoffice.ide.eclipse.core.wizards.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
@@ -78,7 +77,6 @@ public class ManifestExportPage extends WizardPage {
     private static final int LAYOUT_COLS = 3;
 
     private IUnoidlProject mProject;
-    private LanguageExportPart mLangPart;
 
     private Button mGenerateManifestBtn;
     private Button mReuseManifestBtn;
@@ -118,17 +116,7 @@ public class ManifestExportPage extends WizardPage {
      */
     public void setProject(IUnoidlProject pProject) {
         mProject = pProject;
-        reloadLanguagePart();
-    }
-
-    /**
-     * Set the UNO project to be used for independent ANT file creation
-     *
-     * @param pProject
-     *            the UNO project selected for the wizard.
-     */
-    public void setProject_Ant(IUnoidlProject pProject) {
-        mProject = pProject;
+        //        reloadLanguagePart();
     }
 
     /**
@@ -154,16 +142,6 @@ public class ManifestExportPage extends WizardPage {
         if (readFile != null) {
             pModel.setReadManifestFile(SystemHelper.getFile(readFile));
         }
-    }
-
-    /**
-     * Create the build scripts for the package model if required by the user.
-     *
-     * @param pModel
-     *            the model to export
-     */
-    public void createBuildScripts(UnoPackage pModel) {
-        mLangPart.doFinish(pModel);
     }
 
     /**
@@ -196,9 +174,6 @@ public class ManifestExportPage extends WizardPage {
         title.setText(Messages.getString("ManifestExportPage.DefineManifestText")); //$NON-NLS-1$
 
         createOptionsGroup(body);
-
-        // Add the language specific controls
-        reloadLanguagePart();
 
         // Load the default values
         updateControls();
@@ -426,29 +401,6 @@ public class ManifestExportPage extends WizardPage {
                 }
             }
         });
-    }
-
-    /**
-     * Change the language specific part from the selected project.
-     */
-    private void reloadLanguagePart() {
-        if (mLangPart != null) {
-            mLangPart.dispose();
-        }
-
-        // Add the language specific controls
-        if (mProject != null) {
-            mLangPart = mProject.getLanguage().getExportBuildPart();
-            if (mLangPart != null) {
-                //                mLangPart.setPage(this);
-                Composite body = (Composite) getControl();
-                if (body != null) {
-                    // The body can be null before the page creation
-                    mLangPart.createControls(body);
-                    body.layout();
-                }
-            }
-        }
     }
 
     /**

@@ -325,12 +325,13 @@ public class UnoPackageExportPage extends WizardPage {
             mOverwriteBox.setSelection(settings.getBoolean(OVERWRITE_FILES));
             mAutodeployBox.setSelection(settings.getBoolean(AUTODEPLOY));
             String[] items = settings.getArray(DESTINATION_HISTORY);
-            //            System.out.println("Items:" + items);
-            //            for (String item : items) {
-            //                if (item != null && !(0 == item.length())) {
-            //                    mDestinationCombo.add(item);
-            //                }
-            //            }
+            if (items != null) {
+                for (String item : items) {
+                    if (item != null && !(0 == item.length())) {
+                        mDestinationCombo.add(item);
+                    }
+                }
+            }
         }
     }
 

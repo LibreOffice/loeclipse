@@ -86,8 +86,6 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 // Configure the manifest.xml for the model
                 mManifestPage.configureManifest(model);
 
-                // TODO Run the next operations in a job
-
                 // Export the package
                 File out = model.close();
                 finished = out != null;

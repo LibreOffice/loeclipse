@@ -31,7 +31,6 @@
 package org.libreoffice.ide.eclipse.core.model.language;
 
 import org.eclipse.swt.widgets.Composite;
-import org.libreoffice.ide.eclipse.core.wizards.pages.BuildScriptExportWizardPage;
 import org.libreoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
@@ -41,7 +40,6 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 public abstract class LanguageExportPart {
 
     private ManifestExportPage mPage;
-    private BuildScriptExportWizardPage bPage;
 
     /**
      * Create the controls in the part.
@@ -66,33 +64,19 @@ public abstract class LanguageExportPart {
      */
     public abstract void doFinish(UnoPackage pModel);
 
-    //    /**
-    //     * @param pPage
-    //     *            the manifest page containing this part.
-    //     */
-    //    public void setPage(ManifestExportPage pPage) {
-    //        mPage = pPage;
-    //    }
-    //
-    //    /**
-    //     * @return the page containing this UI part.
-    //     */
-    //    protected ManifestExportPage getPage() {
-    //        return mPage;
-    //    }
-
     /**
      * @param pPage
      *            the manifest page containing this part.
      */
-    public void setPage(BuildScriptExportWizardPage pPage) {
-        bPage = pPage;
+    public void setPage(ManifestExportPage pPage) {
+        mPage = pPage;
     }
 
     /**
      * @return the page containing this UI part.
      */
-    protected BuildScriptExportWizardPage getPage() {
-        return bPage;
+    protected ManifestExportPage getPage() {
+        return mPage;
     }
+
 }
