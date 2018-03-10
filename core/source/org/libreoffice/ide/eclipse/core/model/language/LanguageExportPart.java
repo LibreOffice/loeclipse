@@ -78,5 +78,4 @@ public abstract class LanguageExportPart {
     protected ManifestExportPage getPage() {
         return mPage;
     }
-
 }
