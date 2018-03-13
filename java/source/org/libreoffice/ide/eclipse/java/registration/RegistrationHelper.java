@@ -93,6 +93,36 @@ public abstract class RegistrationHelper {
             }
         }
     }
+    /**
+    * Check if the RegistrationHandler.classes file is empty
+    * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>
+    *
+    * @param pProject the project where to check empty file
+    */
+    public static boolean isFileEmpty(IUnoidlProject pProject) {
+        IFile list = getClassesListFile(pProject);
+        File file = list.getLocation().toFile();
+
+        FileInputStream in = null;
+        BufferedReader reader = null;
+        try {
+            in = new FileInputStream(file);
+            reader = new BufferedReader(new InputStreamReader(in));
+            if (reader.readLine() == null){
+                return true;
+            } else {
+                return false;
+            }
+        } catch(Exception e) {
+
+        } finally {
+            try {
+                reader.close();
+                in.close();
+            } catch(Exception e) {
+            }
+        }
+    }
 
     /**
      * Add a UNO service implementation to the list of the project ones.
