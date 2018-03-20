@@ -116,7 +116,6 @@ public class ManifestExportPage extends WizardPage {
      */
     public void setProject(IUnoidlProject pProject) {
         mProject = pProject;
-        //        reloadLanguagePart();
     }
 
     /**

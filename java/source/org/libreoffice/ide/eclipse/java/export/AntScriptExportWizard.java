@@ -58,7 +58,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  */
 public class AntScriptExportWizard extends Wizard implements IExportWizard {
 
-    private static final String DIALOG_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
+    private static final String ANT_EXPORT_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
 
     private boolean mHasNewDialogSettings;
 
@@ -69,7 +69,7 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
      */
     public AntScriptExportWizard() {
         IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
+        IDialogSettings section = workbenchSettings.getSection(ANT_EXPORT_SETTINGS_KEY);
         if (section == null) {
             mHasNewDialogSettings = true;
         } else {
@@ -116,8 +116,8 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
 
                 if (mHasNewDialogSettings) {
                     IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-                    IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-                    section = workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
+                    IDialogSettings section = workbenchSettings.getSection(ANT_EXPORT_SETTINGS_KEY);
+                    section = workbenchSettings.addNewSection(ANT_EXPORT_SETTINGS_KEY);
                     setDialogSettings(section);
                 }
 
@@ -126,8 +126,8 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
             }
         }
 
-        File tmpDir = new File(directory + "/build.xml");
-        finished = tmpDir.exists();
+        File antFile = new File(directory + "/build.xml");
+        finished = antFile.exists();
 
         return finished;
     }

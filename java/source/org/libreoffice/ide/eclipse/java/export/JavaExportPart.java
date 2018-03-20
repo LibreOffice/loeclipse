@@ -41,7 +41,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -60,13 +59,14 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  */
 public class JavaExportPart extends LanguageExportPart {
 
-    private Button mSaveScripts;
     private Composite mNameRow;
     private Label mNameRowLbl;
     private Label mNameRowValueLbl;
+    private Label titleLbl;
 
     private JavaExportPageControl mController;
     private static AntScriptExportWizardPage mAntScriptPage;
+    private static boolean mAntSectionDisplay = false;
 
     public static final int HORIZONTAL_INDENT = 20;
 
@@ -79,41 +79,51 @@ public class JavaExportPart extends LanguageExportPart {
     }
 
     /**
+     * @param pAntSectionDisplay
+     *            Helps in blocking the Title and Other Displays in wizard after 1st time
+     */
+    public static void setCheckAntSectionDisplay(boolean pAntSectionDisplay) {
+        mAntSectionDisplay = pAntSectionDisplay;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void createControls(Composite pParent) {
 
         mController = new JavaExportPageControl();
-
-        Label titleLbl = new Label(pParent, SWT.NONE);
-        titleLbl.setText(Messages.getString("JavaExportPart.Title")); //$NON-NLS-1$
-        titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-
-        Composite content = new Composite(pParent, SWT.NONE);
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        gd.horizontalIndent = HORIZONTAL_INDENT;
-        content.setLayoutData(gd);
-        content.setLayout(new GridLayout());
-
         mController.setSaveAntScript(true);
 
-        mNameRow = new Composite(content, SWT.NONE);
-        mNameRow.setLayout(new GridLayout(2, false));
-        gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-        gd.horizontalIndent = HORIZONTAL_INDENT;
-        mNameRow.setLayoutData(gd);
+        if (!mAntSectionDisplay) {
+            titleLbl = new Label(pParent, SWT.NONE);
+            titleLbl.setText(Messages.getString("JavaExportPart.Title")); //$NON-NLS-1$
+            titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        mNameRowLbl = new Label(mNameRow, SWT.NONE);
-        mNameRowLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-        mNameRowLbl.setText(Messages.getString("JavaExportPart.AntFile")); //$NON-NLS-1$
+            Composite content = new Composite(pParent, SWT.NONE);
+            GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+            gd.horizontalIndent = HORIZONTAL_INDENT;
+            content.setLayoutData(gd);
+            content.setLayout(new GridLayout());
 
-        mNameRowValueLbl = new Label(mNameRow, SWT.NONE);
-        mNameRowValueLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-        mNameRowValueLbl.setText(mController.getSavePath()); //$NON-NLS-1$
+            mNameRow = new Composite(content, SWT.NONE);
+            mNameRow.setLayout(new GridLayout(2, false));
+            gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+            gd.horizontalIndent = HORIZONTAL_INDENT;
+            mNameRow.setLayoutData(gd);
 
-        mNameRowLbl.setEnabled(mController.isSavePathEnabled());
-        mNameRowValueLbl.setEnabled(mController.isSavePathEnabled());
+            mNameRowLbl = new Label(mNameRow, SWT.NONE);
+            mNameRowLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+            mNameRowLbl.setText(Messages.getString("JavaExportPart.AntFile")); //$NON-NLS-1$
+
+            mNameRowValueLbl = new Label(mNameRow, SWT.NONE);
+            mNameRowValueLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+            mNameRowValueLbl.setText(mController.getSavePath()); //$NON-NLS-1$
+
+            mNameRowLbl.setEnabled(mController.isSavePathEnabled());
+            mNameRowValueLbl.setEnabled(mController.isSavePathEnabled());
+
+        }
     }
 
     /**
@@ -121,10 +131,7 @@ public class JavaExportPart extends LanguageExportPart {
      */
     @Override
     public void dispose() {
-        if (mSaveScripts != null) {
-            mSaveScripts.dispose();
-            mNameRow.dispose();
-        }
+
     }
 
     /**
@@ -134,10 +141,10 @@ public class JavaExportPart extends LanguageExportPart {
     public void doFinish(UnoPackage pModel) {
 
         String directory = mAntScriptPage.getPath();
-        File tmpDir = new File(directory + "/build.xml");
+        File antFile = new File(directory + "/build.xml");
         boolean result = false;
 
-        if (tmpDir.exists()) {
+        if (antFile.exists()) {
             Shell shell = Display.getDefault().getActiveShell();
             result = MessageDialog.openConfirm(shell, "Confirm",
                 "build.xml exists under the selected project.\nDo you wish to overwrite it?");
