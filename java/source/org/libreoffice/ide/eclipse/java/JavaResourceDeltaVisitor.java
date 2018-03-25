@@ -105,7 +105,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     private void removeImplementation(IResourceDelta pDelta,
         IUnoidlProject pUnoprj) {
         IResource res = pDelta.getResource();
-        if (res.getName().endsWith(".java")) { //$NON-NLS-1$
+        if (res.getName().endsWith(".java")) { //$NON-NLS-1$ 
             String prjPath = pDelta.getProjectRelativePath().toString();
             prjPath = prjPath.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
             prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -116,6 +116,8 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                     RegistrationHelper.removeImplementation(pUnoprj, implName);
                 }
             }
+        } else if (res.getName().endsWith(".jar")) {
+            RegistrationHelper.isFileEmpty(pUnoprj);
         }
     }
 
