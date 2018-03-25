@@ -56,10 +56,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * This class provides utility methods to generate the class and files needed
@@ -76,6 +76,7 @@ public abstract class RegistrationHelper {
      * @param pProject the project where to create the registration handler
      */
     public static void generateFiles(IUnoidlProject pProject) {
+
         // Copy the RegistrationHandler.java.tpl file
         TemplatesHelper.copyTemplate(pProject, CLASS_FILENAME + TemplatesHelper.JAVA_EXT,
             RegistrationHelper.class, new String());
@@ -146,6 +147,7 @@ public abstract class RegistrationHelper {
      * @return the implementation classes list
      */
     public static Vector<String> readClassesList(IUnoidlProject pProject) {
+
         Vector<String> classes = new Vector<String>();
 
         IFile list = getClassesListFile(pProject);
@@ -191,6 +193,7 @@ public abstract class RegistrationHelper {
      * @param pClasses the classes to write
      */
     private static void writeClassesList(IUnoidlProject pProject, Vector<String> pClasses) {
+
         IFile list = getClassesListFile(pProject);
         File file = list.getLocation().toFile();
 
@@ -224,15 +227,16 @@ public abstract class RegistrationHelper {
         // Get the path where to place the class and the implementations list
         IPath relPath = pProject.getImplementationPath();
         IFolder dest = pProject.getFolder(relPath);
+
         return dest.getFile("RegistrationHandler.classes"); //$NON-NLS-1$
     }
 
     /**
-        * Check if the RegistrationHandler.classes file is empty
-        * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>
-        *
-        * @param pProject the project where to check empty file
-        */
+     * Check if the RegistrationHandler.classes file is empty
+     * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>
+     *
+     * @param pProject the project where to check empty file
+     */
     public static void isFileEmpty(IUnoidlProject pProject) {
         IFile list = getClassesListFile(pProject);
         File file = list.getLocation().toFile();
