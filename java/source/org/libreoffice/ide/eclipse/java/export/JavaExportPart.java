@@ -37,23 +37,19 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Shell;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
 import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.SDKContainer;
-import org.libreoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
 import org.libreoffice.ide.eclipse.java.Messages;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 import org.libreoffice.plugin.core.model.UnoPackage;
@@ -63,12 +59,32 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  */
 public class JavaExportPart extends LanguageExportPart {
 
-    private Button mSaveScripts;
     private Composite mNameRow;
     private Label mNameRowLbl;
-    private Text mNameRowTxt;
+    private Label mNameRowValueLbl;
+    private Label titleLbl;
 
     private JavaExportPageControl mController;
+    private static AntScriptExportWizardPage mAntScriptPage;
+    private static boolean mAntSectionDisplay = false;
+
+    public static final int HORIZONTAL_INDENT = 20;
+
+    /**
+     * @param pAntScriptPage
+     *            Helps in retrieving the project selected in this part.
+     */
+    public static void setAntScriptExportPage(AntScriptExportWizardPage pAntScriptPage) {
+        mAntScriptPage = pAntScriptPage;
+    }
+
+    /**
+     * @param pAntSectionDisplay
+     *            Helps in blocking the Title and Other Displays in wizard after 1st time
+     */
+    public static void setCheckAntSectionDisplay(boolean pAntSectionDisplay) {
+        mAntSectionDisplay = pAntSectionDisplay;
+    }
 
     /**
      * {@inheritDoc}
@@ -77,72 +93,36 @@ public class JavaExportPart extends LanguageExportPart {
     public void createControls(Composite pParent) {
 
         mController = new JavaExportPageControl();
+        mController.setSaveAntScript(true);
 
-        Label titleLbl = new Label(pParent, SWT.NONE);
-        titleLbl.setText(Messages.getString("JavaExportPart.Title")); //$NON-NLS-1$
-        titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+        if (!mAntSectionDisplay) {
+            titleLbl = new Label(pParent, SWT.NONE);
+            titleLbl.setText(Messages.getString("JavaExportPart.Title")); //$NON-NLS-1$
+            titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-        Composite content = new Composite(pParent, SWT.NONE);
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        gd.horizontalIndent = ManifestExportPage.HORIZONTAL_INDENT;
-        content.setLayoutData(gd);
-        content.setLayout(new GridLayout());
+            Composite content = new Composite(pParent, SWT.NONE);
+            GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+            gd.horizontalIndent = HORIZONTAL_INDENT;
+            content.setLayoutData(gd);
+            content.setLayout(new GridLayout());
 
-        mSaveScripts = new Button(content, SWT.CHECK);
-        mSaveScripts.setText(Messages.getString("JavaExportPart.SaveAntScript")); //$NON-NLS-1$
-        mSaveScripts.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-        mSaveScripts.addSelectionListener(new SelectionListener() {
+            mNameRow = new Composite(content, SWT.NONE);
+            mNameRow.setLayout(new GridLayout(2, false));
+            gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+            gd.horizontalIndent = HORIZONTAL_INDENT;
+            mNameRow.setLayoutData(gd);
 
-            @Override
-            public void widgetSelected(SelectionEvent pE) {
+            mNameRowLbl = new Label(mNameRow, SWT.NONE);
+            mNameRowLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+            mNameRowLbl.setText(Messages.getString("JavaExportPart.AntFile")); //$NON-NLS-1$
 
-                mController.setSaveAntScript(mSaveScripts.getSelection());
+            mNameRowValueLbl = new Label(mNameRow, SWT.NONE);
+            mNameRowValueLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+            mNameRowValueLbl.setText(mController.getSavePath()); //$NON-NLS-1$
 
-                mNameRowLbl.setEnabled(mController.isSavePathEnabled());
-                mNameRowTxt.setEnabled(mController.isSavePathEnabled());
-            }
+            mNameRowLbl.setEnabled(mController.isSavePathEnabled());
+            mNameRowValueLbl.setEnabled(mController.isSavePathEnabled());
 
-            @Override
-            public void widgetDefaultSelected(SelectionEvent pE) {
-                widgetSelected(pE);
-            }
-        });
-
-        mNameRow = new Composite(content, SWT.NONE);
-        mNameRow.setLayout(new GridLayout(2, false));
-        gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-        gd.horizontalIndent = ManifestExportPage.HORIZONTAL_INDENT;
-        mNameRow.setLayoutData(gd);
-
-        mNameRowLbl = new Label(mNameRow, SWT.NONE);
-        mNameRowLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-        mNameRowLbl.setText(Messages.getString("JavaExportPart.AntFile")); //$NON-NLS-1$
-
-        mNameRowTxt = new Text(mNameRow, SWT.BORDER | SWT.SINGLE);
-        mNameRowTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mNameRowTxt.addModifyListener(new ModifyListener() {
-
-            @Override
-            public void modifyText(ModifyEvent pEvent) {
-                mController.setSavePath(mNameRowTxt.getText());
-            }
-        });
-
-        // Load the default values
-        mSaveScripts.setSelection(mController.isSavePathEnabled());
-        mNameRowTxt.setText(mController.getSavePath());
-        mNameRowTxt.setEnabled(mController.isSavePathEnabled());
-        mNameRowLbl.setEnabled(mController.isSavePathEnabled());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void dispose() {
-        if (mSaveScripts != null) {
-            mSaveScripts.dispose();
-            mNameRow.dispose();
         }
     }
 
@@ -150,11 +130,33 @@ public class JavaExportPart extends LanguageExportPart {
      * {@inheritDoc}
      */
     @Override
+    public void dispose() {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void doFinish(UnoPackage pModel) {
-        if (mController.getSaveAntScript()) {
+
+        String directory = mAntScriptPage.getPath();
+        File antFile = new File(directory + "/build.xml");
+        boolean result = false;
+
+        if (antFile.exists()) {
+            Shell shell = Display.getDefault().getActiveShell();
+            result = MessageDialog.openConfirm(shell, "Confirm",
+                "build.xml exists under the selected project.\nDo you wish to overwrite it?");
+        } else {
+            result = true;
+        }
+
+        if (mController.getSaveAntScript() && result) {
 
             // Generate the build script
-            IUnoidlProject unoProject = getPage().getProject();
+            //****IUnoidlProject unoProject = getPage().getProject();   <--- Can be used When the parent class LanguageExportPart is using the Object Class rather than ManifestExportPage
+            IUnoidlProject unoProject = mAntScriptPage.getProject();
             String prjName = unoProject.getName();
             IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
 
@@ -171,21 +173,24 @@ public class JavaExportPart extends LanguageExportPart {
 
                 Properties props = new Properties();
 
-                if(OOoContainer.getOOoKeys().size() > 0)
-                    props.put("office.install.dir", OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome()); //$NON-NLS-1$
+                if (OOoContainer.getOOoKeys().size() > 0)
+                    props.put("office.install.dir", //$NON-NLS-1$
+                        OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome());
                 else
                     props.put("office.install.dir", ""); //$NON-NLS-1$
 
-                if(SDKContainer.getSDKKeys().size() > 0)
+                if (SDKContainer.getSDKKeys().size() > 0)
                     props.put("sdk.dir", SDKContainer.getSDK(SDKContainer.getSDKKeys().get(0)).getHome()); //$NON-NLS-1$
                 else
                     props.put("sdk.dir", ""); //$NON-NLS-1$
 
                 props.store(writer, null);
                 writer.close();
+
             } catch (IOException e) {
                 PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
             }
+
         }
     }
 }

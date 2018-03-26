@@ -55,6 +55,15 @@
             project="true">
       </wizard>
    </extension>
+    <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="org.libreoffice.ide.eclipse.core.uno"
+            class="org.libreoffice.ide.eclipse.java.export.AntScriptExportWizard"
+            icon="/icons/export_ant.gif"
+            id="org.libreoffice.ide.eclipse.core.java.antScript"
+            name="Generate Ant Script File"/>
+   </extension>
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet

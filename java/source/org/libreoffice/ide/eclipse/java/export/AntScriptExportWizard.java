@@ -1,5 +1,11 @@
 /*************************************************************************
  *
+ *$RCSfile: BuildScriptExportWizard.java,v $
+ *
+ * $Revision: 1.0 $
+ *
+ * last change: $Author: shobhanmandal $ $Date: 2018/03/03 18:36:29 $
+ *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -28,7 +34,7 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.core.wizards;
+package org.libreoffice.ide.eclipse.java.export;
 
 import java.io.File;
 import java.util.Iterator;
@@ -44,68 +50,32 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
-import org.libreoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
-import org.libreoffice.ide.eclipse.core.wizards.pages.UnoPackageExportPage;
+import org.libreoffice.ide.eclipse.java.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
- * Class for the new OXT export wizard.
+ * Class for the new Ant Script Generation wizard.
  */
-public class PackageExportWizard extends Wizard implements IExportWizard {
+public class AntScriptExportWizard extends Wizard implements IExportWizard {
 
-    private static final String DIALOG_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
-
-    private UnoPackageExportPage mMainPage;
-    private ManifestExportPage mManifestPage;
+    private static final String ANT_EXPORT_SETTINGS_KEY = "oxt.export"; //$NON-NLS-1$
 
     private boolean mHasNewDialogSettings;
+
+    private AntScriptExportWizardPage mAntScriptPage;
 
     /**
      * Constructor.
      */
-    public PackageExportWizard() {
+    public AntScriptExportWizard() {
         IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-        IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
+        IDialogSettings section = workbenchSettings.getSection(ANT_EXPORT_SETTINGS_KEY);
         if (section == null) {
             mHasNewDialogSettings = true;
         } else {
             mHasNewDialogSettings = false;
             setDialogSettings(section);
         }
-    }
-
-    @Override
-    public boolean performFinish() {
-        boolean finished = false;
-        UnoPackage model = mMainPage.getPackageModel();
-        if (model != null) {
-            try {
-                // Force a build on the project
-                mMainPage.forceBuild();
-
-                // Configure the manifest.xml for the model
-                mManifestPage.configureManifest(model);
-
-                // Export the package
-                File out = model.close();
-                finished = out != null;
-
-                mMainPage.refreshProject();
-
-                if (mHasNewDialogSettings) {
-                    IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-                    IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-                    section = workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
-                    setDialogSettings(section);
-                }
-
-                mMainPage.saveWidgetValues();
-            } catch (Exception e) {
-                PluginLogger.error("Project couldn't be built", e);
-            }
-        }
-
-        return finished;
     }
 
     /**
@@ -125,13 +95,41 @@ public class PackageExportWizard extends Wizard implements IExportWizard {
                 }
             }
         }
+        setWindowTitle(Messages.getString("AntScriptExportWizard.DialogTitle")); //$NON-NLS-1$
 
-        setWindowTitle(Messages.getString("PackageExportWizard2.DialogTitle")); //$NON-NLS-1$
+        mAntScriptPage = new AntScriptExportWizardPage("page1", prj); //$NON-NLS-1$
+        addPage(mAntScriptPage);
 
-        mManifestPage = new ManifestExportPage("page2", prj); //$NON-NLS-1$
-        mMainPage = new UnoPackageExportPage("page1", prj, //$NON-NLS-1$
-            mManifestPage);
-        addPage(mMainPage);
-        addPage(mManifestPage);
     }
+
+    @Override
+    public boolean performFinish() {
+        boolean finished = false;
+        String directory = mAntScriptPage.getPath();
+        String tempPath = directory + "/temporary/temp.oxt";
+        UnoPackage model = mAntScriptPage.getPackageModel(tempPath);
+        if (model != null) {
+            try {
+                mAntScriptPage.createBuildScripts(model);
+
+                mAntScriptPage.refreshProject();
+
+                if (mHasNewDialogSettings) {
+                    IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
+                    IDialogSettings section = workbenchSettings.getSection(ANT_EXPORT_SETTINGS_KEY);
+                    section = workbenchSettings.addNewSection(ANT_EXPORT_SETTINGS_KEY);
+                    setDialogSettings(section);
+                }
+
+            } catch (Exception e) {
+                PluginLogger.error("The Ant Script couldn't be built", e);
+            }
+        }
+
+        File antFile = new File(directory + "/build.xml");
+        finished = antFile.exists();
+
+        return finished;
+    }
+
 }

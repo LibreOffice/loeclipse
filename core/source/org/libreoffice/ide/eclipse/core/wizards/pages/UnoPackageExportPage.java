@@ -145,7 +145,7 @@ public class UnoPackageExportPage extends WizardPage {
             i++;
         }
 
-        if(selected) {
+        if (selected) {
             mContentSelector.loadDefaults();
         }
 
@@ -235,10 +235,10 @@ public class UnoPackageExportPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
-                dlg.setFilterExtensions(new String[] { "*.oxt"});
+                dlg.setFilterExtensions(new String[] { "*.oxt" });
                 String path = dlg.open();
                 if (path != null) {
-                    if(!path.substring(path.length()-4).equalsIgnoreCase(".oxt")){
+                    if (!path.substring(path.length() - 4).equalsIgnoreCase(".oxt")) {
                         path += ".oxt";
                     }
                     mDestinationCombo.setText(path);
@@ -325,9 +325,11 @@ public class UnoPackageExportPage extends WizardPage {
             mOverwriteBox.setSelection(settings.getBoolean(OVERWRITE_FILES));
             mAutodeployBox.setSelection(settings.getBoolean(AUTODEPLOY));
             String[] items = settings.getArray(DESTINATION_HISTORY);
-            for (String item : items) {
-                if (item != null && !(0 == item.length())) {
-                    mDestinationCombo.add(item);
+            if (items != null) {
+                for (String item : items) {
+                    if (item != null && !(0 == item.length())) {
+                        mDestinationCombo.add(item);
+                    }
                 }
             }
         }
