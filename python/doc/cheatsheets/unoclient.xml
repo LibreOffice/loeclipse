@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet
+      title="Create a Java UNO client">
+   <intro>
+      <description>
+         LibreOffice can be used as well as a server. Creating clients connecting to it is not an easy task for beginners and the informations are split all over the web.
+<br/><br/>
+<b>Follow the next steps to create a new Java UNO Client really quickly.</b>
+      </description>
+   </intro>
+   <item
+         title="Create the Java UNO Client">
+      <description>
+         Create a new project of type <b>Java UNO Client application</b> .
+<br/><br/>
+Configure the LibreOffice instance and SDK used to build to program and configure the LibreOffice connection.
+      </description>
+      <command
+            required="true"
+            serialization="org.eclipse.ui.newWizard(newWizardId=org.libreoffice.ide.eclipse.java.client)"/>
+   </item>
+   <item
+         title="Write the client code">
+      <description>
+         <b>Replace the TODO comment</b> by the code using the UNO connection to LibreOffice.
+      </description>
+   </item>
+   <item
+         title="Start LibreOffice">
+      <description>
+         LibreOffice needs to be started with the following parameter depending on your connection configuration:
+<br/><br/>
+<b>Pipe connection: </b><br/> -accept=&quot;pipe,name=<b>pipename</b>;urp;StarOffice.ServiceManager&quot;
+<br/><br/>
+<b>Socket connection: </b><br/> -accept=&quot;socket,host=<b>host</b>,port=<b>port</b>;urp;StarOffice.ServiceManager&quot;
+      </description>
+   </item>
+   <item
+         title="Run the client">
+      <description>
+         <b>Everything is done!</b> Now run the new UNO client program.
+<br/><br/>
+To run your application, right-click on your class in the Package Explorer and select Run As &gt; Java Application. The Console view should appear at the bottom and display the output.
+      </description>
+   </item>
+</cheatsheet>

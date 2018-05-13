@@ -237,6 +237,9 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                     } else {
                         // Could be null
                         next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
+                        if (mMainPage.getChosenLanguage().toString().contains("python")) {
+                            next = null;
+                        }
                     }
                 } else if (mLanguagePage != null && mLanguagePage.equals(pPage)) {
                     next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
@@ -309,7 +312,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     private void updateLoanguagePage() {
         // Create/Remove the language page if needed
         AbstractLanguage lang = mMainPage.getChosenLanguage();
-        if (lang != null) {
+        if (lang != null && !lang.toString().contains("python")) {
             UnoFactoryData data = new UnoFactoryData();
             LanguageWizardPage page = lang.getNewWizardPage();
             if (page != null) {
@@ -363,10 +366,15 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
             try {
                 IUnoidlProject prj = UnoFactory.createProject(mData, pMonitor);
 
-                mServiceSet.mProject = prj;
-                mServiceSet.doFinish(pMonitor, mActivePage);
+                AbstractLanguage language = (AbstractLanguage) mData.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
 
-                UnoidlProjectHelper.setProjectBuilders(prj);
+                if (!language.getName().contains("Python")) {
+                    mServiceSet.mProject = prj;
+                    mServiceSet.doFinish(pMonitor, mActivePage);
+
+                    UnoidlProjectHelper.setProjectBuilders(prj);
+
+                }
 
             } catch (Exception e) {
                 Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
