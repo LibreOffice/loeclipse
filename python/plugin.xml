@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.libreoffice.ide.eclipse.core.language">
+      <language
+            class="org.libreoffice.ide.eclipse.python.Language"
+            name="Python">
+         <newWizardPage
+               class="org.libreoffice.ide.eclipse.python.PythonWizardPage">
+         </newWizardPage>
+      </language>
+   </extension>
+   <extension
+         id="org.libreoffice.ide.eclipse.java.builder"
+         point="org.eclipse.core.resources.builders">
+      <builder/>
+   </extension>
+   <extension
+         point="org.libreoffice.ide.eclipse.core.MainProvider">
+      <MainProvider class="org.libreoffice.ide.eclipse.python.JavaMainProvider"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="org.libreoffice.ide.eclipse.python.JavaUnoResourceChangeHandler"/>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.libreoffice.ide.eclipse.python.build.OooClasspathContainerInitializer"
+            id="org.libreoffice.ide.eclipse.java.OOO_CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+            class="org.libreoffice.ide.eclipse.python.build.OOoContainerPage"
+            id="org.libreoffice.ide.eclipse.java.OOO_CONTAINER"
+            name="LibreOffice Libraries">
+      </classpathContainerPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="org.libreoffice.ide.eclipse.core"
+            class="org.libreoffice.ide.eclipse.python.client.ClientWizard"
+            hasPages="true"
+            icon="icons/uno_client.png"
+            id="org.libreoffice.ide.eclipse.java.client"
+            name="Java UNO client application"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatsheet
+            category="org.libreoffice.ide.eclipse.core.cheatsheets"
+            composite="false"
+            contentFile="doc/cheatsheets/unoclient.xml"
+            id="org.libreoffice.ide.eclipse.java.unoclient"
+            name="Create a Java UNO client">
+      </cheatsheet>
+   </extension>
+
+</plugin>
