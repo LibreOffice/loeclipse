@@ -55,6 +55,8 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
@@ -227,5 +229,42 @@ public abstract class RegistrationHelper {
         IFolder dest = pProject.getFolder(relPath);
 
         return dest.getFile("RegistrationHandler.classes"); //$NON-NLS-1$
+    }
+
+    /**
+     * Check if the RegistrationHandler.classes file is empty
+     * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>
+     *
+     * @param pProject the project where to check empty file
+     */
+    public static void isFileEmpty(IUnoidlProject pProject) {
+        IFile list = getClassesListFile(pProject);
+        File file = list.getLocation().toFile();
+        boolean checkFileEmpty = true;
+        FileInputStream in = null;
+        BufferedReader reader = null;
+        try {
+            in = new FileInputStream(file);
+            reader = new BufferedReader(new InputStreamReader(in));
+            if (reader.readLine() == null) {
+                checkFileEmpty = true;
+            } else {
+                checkFileEmpty = false;
+            }
+        } catch (Exception e) {
+            checkFileEmpty = true;
+
+        } finally {
+            try {
+                reader.close();
+                in.close();
+            } catch (Exception e) {
+            }
+        }
+        if (checkFileEmpty) {
+            PluginLogger.error(Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError"));
+            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+                Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError"));
+        }
     }
 }

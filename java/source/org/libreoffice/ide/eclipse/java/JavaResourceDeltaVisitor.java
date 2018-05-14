@@ -116,6 +116,8 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                     RegistrationHelper.removeImplementation(pUnoprj, implName);
                 }
             }
+        } else if (res.getName().endsWith(".jar")) {
+            RegistrationHelper.isFileEmpty(pUnoprj);
         }
     }
 
