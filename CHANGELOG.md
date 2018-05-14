@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.0
+* #52 Ant export is now a separate export option
+* #51 Automatically add .oxt extension for OXT export
+* #21 An error message is shown when RegistrationHandler.classes is empty
+* #8 Making sure a project is selected before generating an interface/a service file
+* #62 Fix Null Pointer Exception when trying to export Extension Project
+
 ## 2.2.6
 * Enabled Automated error reporting
 
