@@ -238,9 +238,6 @@ public class UnoPackageExportPage extends WizardPage {
                 dlg.setFilterExtensions(new String[] { "*.oxt" });
                 String path = dlg.open();
                 if (path != null) {
-                    if (!path.substring(path.length() - 4).equalsIgnoreCase(".oxt")) {
-                        path += ".oxt";
-                    }
                     mDestinationCombo.setText(path);
                 }
             }
