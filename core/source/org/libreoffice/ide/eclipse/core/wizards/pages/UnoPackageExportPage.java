@@ -235,12 +235,8 @@ public class UnoPackageExportPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent pE) {
                 FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
-                dlg.setFilterExtensions(new String[] { "*.oxt" });
                 String path = dlg.open();
                 if (path != null) {
-                    if (!path.substring(path.length() - 4).equalsIgnoreCase(".oxt")) {
-                        path += ".oxt";
-                    }
                     mDestinationCombo.setText(path);
                 }
             }
