@@ -39,19 +39,7 @@
             name="LibreOffice Libraries">
       </classpathContainerPage>
    </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            canFinishEarly="false"
-            category="org.libreoffice.ide.eclipse.core"
-            class="org.libreoffice.ide.eclipse.python.client.ClientWizard"
-            hasPages="true"
-            icon="icons/uno_client.png"
-            id="org.libreoffice.ide.eclipse.java.client"
-            name="Java UNO client application"
-            project="true">
-      </wizard>
-   </extension>
+   
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
