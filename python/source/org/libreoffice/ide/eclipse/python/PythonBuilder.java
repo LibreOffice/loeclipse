@@ -102,38 +102,38 @@ public class PythonBuilder implements ILanguageBuilder {
     public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
         IFile jarFile = ((PythonProjectHandler) mLanguage.getProjectHandler()).getJarFile(pUnoProject);
 
-        // Add all the jar dependencies
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
-        IJavaProject javaPrj = JavaCore.create(prj);
-        List<IFile> externalJars = getLibs(javaPrj);
-
-        JarPackageData description = new JarPackageData();
-        description.setGenerateManifest(true);
-        description.setJarLocation(jarFile.getLocation());
-
-        String regClassname = ((PythonProjectHandler) mLanguage.getProjectHandler())
-            .getRegistrationClassName(pUnoProject);
-        description.setManifestProvider(new UnoManifestProvider(regClassname, pUnoProject, externalJars));
-        description.setManifestLocation(pUnoProject.getFile("MANIFEST.MF").getFullPath()); //$NON-NLS-1$
-        description.setSaveManifest(false);
-        description.setReuseManifest(false);
-        description.setExportOutputFolders(true);
-        description.setExportClassFiles(true);
-        description.setExportWarnings(true);
-        description.setOverwrite(true);
-
-        // Get the files to export: javamaker output + project classes
-        FilesVisitor visitor = new FilesVisitor();
-        visitor.addException(pUnoProject.getFolder(pUnoProject.getUrdPath()));
-
-        IFolder buildDir = pUnoProject.getFolder(pUnoProject.getBuildPath());
-        buildDir.accept(visitor);
-        description.setElements(visitor.getFiles());
-
-        // Create the Jar file
-        IJarExportRunnable runnable = description.createJarExportRunnable(null);
-        runnable.run(new NullProgressMonitor());
-
+        //        // Add all the jar dependencies
+        //        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
+        //        IJavaProject javaPrj = JavaCore.create(prj);
+        //        List<IFile> externalJars = getLibs(javaPrj);
+        //
+        //        JarPackageData description = new JarPackageData();
+        //        description.setGenerateManifest(true);
+        //        description.setJarLocation(jarFile.getLocation());
+        //
+        //        String regClassname = ((PythonProjectHandler) mLanguage.getProjectHandler())
+        //            .getRegistrationClassName(pUnoProject);
+        //        description.setManifestProvider(new UnoManifestProvider(regClassname, pUnoProject, externalJars));
+        //        description.setManifestLocation(pUnoProject.getFile("MANIFEST.MF").getFullPath()); //$NON-NLS-1$
+        //        description.setSaveManifest(false);
+        //        description.setReuseManifest(false);
+        //        description.setExportOutputFolders(true);
+        //        description.setExportClassFiles(true);
+        //        description.setExportWarnings(true);
+        //        description.setOverwrite(true);
+        //
+        //        // Get the files to export: javamaker output + project classes
+        //        FilesVisitor visitor = new FilesVisitor();
+        //        visitor.addException(pUnoProject.getFolder(pUnoProject.getUrdPath()));
+        //
+        //        IFolder buildDir = pUnoProject.getFolder(pUnoProject.getBuildPath());
+        //        buildDir.accept(visitor);
+        //        description.setElements(visitor.getFiles());
+        //
+        //        // Create the Jar file
+        //        IJarExportRunnable runnable = description.createJarExportRunnable(null);
+        //        runnable.run(new NullProgressMonitor());
+        //
         return jarFile;
     }
 
@@ -166,7 +166,7 @@ public class PythonBuilder implements ILanguageBuilder {
     private void runJavamaker(String firstModule, String oooTypesArgs,
         ISdk pSdk, IProject pPrj, File pTypesFile,
         File pBuildFolder, IProgressMonitor pMonitor) {
-        
+
         StringBuffer errBuf = new StringBuffer();
         try {
             String cmdPattern = "javamaker -T {0}.* -nD -Gc -O {1} \"{2}\" {3}"; //$NON-NLS-1$
@@ -264,22 +264,22 @@ public class PythonBuilder implements ILanguageBuilder {
     @Override
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
         // Add the component Jar file
-        PythonProjectHandler handler = (PythonProjectHandler) mLanguage.getProjectHandler();
-        File libFile = SystemHelper.getFile(handler.getJarFile(pUnoPrj));
-        File prjFile = SystemHelper.getFile(pUnoPrj);
-
-        pUnoPackage.addComponentFile(
-            UnoPackage.getPathRelativeToBase(libFile, prjFile),
-            libFile, "Java"); //$NON-NLS-1$
-
-        // Add all the jar dependencies
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
-        IJavaProject javaPrj = JavaCore.create(prj);
-        ArrayList<IFile> libs = getLibs(javaPrj);
-        for (IFile lib : libs) {
-            File jarFile = SystemHelper.getFile(lib);
-            pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
-        }
+        //        PythonProjectHandler handler = (PythonProjectHandler) mLanguage.getProjectHandler();
+        //        File libFile = SystemHelper.getFile(handler.getJarFile(pUnoPrj));
+        //        File prjFile = SystemHelper.getFile(pUnoPrj);
+        //
+        //        pUnoPackage.addComponentFile(
+        //            UnoPackage.getPathRelativeToBase(libFile, prjFile),
+        //            libFile, "Java"); //$NON-NLS-1$
+        //
+        //        // Add all the jar dependencies
+        //        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
+        //        IJavaProject javaPrj = JavaCore.create(prj);
+        //        ArrayList<IFile> libs = getLibs(javaPrj);
+        //        for (IFile lib : libs) {
+        //            File jarFile = SystemHelper.getFile(lib);
+        //            pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
+        //        }
 
     }
 
