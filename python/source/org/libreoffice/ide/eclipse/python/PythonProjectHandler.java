@@ -77,8 +77,6 @@ import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.libreoffice.ide.eclipse.python.build.OOoContainerPage;
-import org.libreoffice.ide.eclipse.python.registration.RegistrationHelper;
-import org.libreoffice.ide.eclipse.python.tests.TestsHelper;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -90,14 +88,6 @@ public class PythonProjectHandler implements IProjectHandler {
     private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
-    private static final String[] KEPT_JARS = { "unoil.jar", //$NON-NLS-1$
-        "ridl.jar", //$NON-NLS-1$
-        "juh.jar", //$NON-NLS-1$
-        "jurt.jar", //$NON-NLS-1$
-        "unoloader.jar", //$NON-NLS-1$
-        "officebean.jar" //$NON-NLS-1$
-    };
-
     /**
      * {@inheritDoc}
      */
@@ -107,6 +97,7 @@ public class PythonProjectHandler implements IProjectHandler {
         //        IJavaProject javaProject = JavaCore.create(pProject);
         //
         //        OOoContainerPage.addOOoDependencies(pOoo, javaProject);
+        PluginLogger.debug("For a Python project 'No' OOo dependencies are added"); //$NON-NLS-1$
     }
 
     /**
@@ -345,43 +336,22 @@ public class PythonProjectHandler implements IProjectHandler {
     public static Vector<Path> findJarsFromPath(IOOo pOoo) {
         Vector<Path> jarsPath = new Vector<Path>();
 
-        String[] paths = pOoo.getClassesPath();
-        for (String path : paths) {
-            Path folderPath = new Path(path);
-            File programFolder = folderPath.toFile();
-
-            String[] content = programFolder.list();
-            for (int i = 0, length = content.length; i < length; i++) {
-                String contenti = content[i];
-                if (isKeptJar(contenti)) {
-                    Path jariPath = new Path(path + "/" + contenti); //$NON-NLS-1$
-                    jarsPath.add(jariPath);
-                }
-            }
-        }
+        //        String[] paths = pOoo.getClassesPath();
+        //        for (String path : paths) {
+        //            Path folderPath = new Path(path);
+        //            File programFolder = folderPath.toFile();
+        //
+        //            String[] content = programFolder.list();
+        //            for (int i = 0, length = content.length; i < length; i++) {
+        //                String contenti = content[i];
+        //                if (isKeptJar(contenti)) {
+        //                    Path jariPath = new Path(path + "/" + contenti); //$NON-NLS-1$
+        //                    jarsPath.add(jariPath);
+        //                }
+        //            }
+        //        }
 
         return jarsPath;
     }
 
-    /**
-     * Check if the specified jar file is one of those define in the KEPT_JARS constant.
-     *
-     * @param pJarName
-     *            name of the jar file to check
-     * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, <code>false</code> otherwise.
-     */
-    private static boolean isKeptJar(String pJarName) {
-
-        int i = 0;
-        boolean isKept = false;
-
-        while (i < KEPT_JARS.length && !isKept) {
-            if (pJarName.equals(KEPT_JARS[i])) {
-                isKept = true;
-            } else {
-                i++;
-            }
-        }
-        return isKept;
-    }
 }

@@ -64,7 +64,7 @@ import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
 
 /**
- * Implementation for the Java language.
+ * Implementation for the Python language.
  */
 public class Language extends AbstractLanguage {
 

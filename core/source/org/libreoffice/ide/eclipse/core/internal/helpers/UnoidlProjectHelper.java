@@ -196,12 +196,12 @@ public class UnoidlProjectHelper {
         // Save all the properties to the configuration file
         unoProject.saveAllProperties();
 
+        // Creation of the Code Packages
+        createCodePackage(unoProject, pMonitor);
+
         if (!language.getName().contains("Python")) {
             // Creation of the unoidl package
             createUnoidlPackage(unoProject, pMonitor);
-
-            // Creation of the Code Packages
-            createCodePackage(unoProject, pMonitor);
 
             // Creation of the urd output directory
             createUrdDir(unoProject, pMonitor);

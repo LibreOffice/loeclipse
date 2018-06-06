@@ -50,6 +50,7 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
+import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.libreoffice.ide.eclipse.java.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
@@ -92,6 +93,9 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
                 IResource res = ((IAdaptable) o).getAdapter(IResource.class);
                 if (res != null) {
                     prj = ProjectsManager.getProject(res.getProject().getName());
+                    if (!prj.getLanguage().getName().equalsIgnoreCase("Java")) {
+                        prj = null;
+                    }
                 }
             }
         }

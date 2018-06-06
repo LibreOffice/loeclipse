@@ -154,11 +154,15 @@ public class AntScriptExportWizardPage extends WizardPage {
         lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
         IUnoidlProject[] prjs = ProjectsManager.getProjects();
-        String[] prjNames = new String[prjs.length];
+        ArrayList<String> tempPrjNames = new ArrayList<>();
         for (int i = 0; i < prjs.length; i++) {
-            IUnoidlProject prj = prjs[i];
-            prjNames[i] = prj.getName();
+            //The Dropdown for Ant Script should only have Java Uno Projects
+            if (prjs[i].getLanguage().getName().equalsIgnoreCase("Java")) {
+                IUnoidlProject prj = prjs[i];
+                tempPrjNames.add(prj.getName());
+            }
         }
+        String[] prjNames = tempPrjNames.toArray(new String[tempPrjNames.size()]);
 
         sProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
         sProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
