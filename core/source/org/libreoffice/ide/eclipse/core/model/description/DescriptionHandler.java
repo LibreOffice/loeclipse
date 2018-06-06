@@ -287,6 +287,7 @@ public class DescriptionHandler extends DefaultHandler {
 
             if (XMLTokens.ELEMENT_NAME.equals(pName) && mLocale != null) {
                 PublisherInfos infos = new PublisherInfos();
+                infos.setModel(mModel);
                 infos.setName(mName);
                 infos.setUrl(mRef);
                 mModel.addPublisherInfo(mLocale, infos);

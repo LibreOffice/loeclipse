@@ -12,17 +12,17 @@
       </language>
    </extension>
    <extension
-         id="org.libreoffice.ide.eclipse.java.builder"
+         id="org.libreoffice.ide.eclipse.python.builder"
          point="org.eclipse.core.resources.builders">
       <builder/>
    </extension>
    <extension
          point="org.libreoffice.ide.eclipse.core.MainProvider">
-      <MainProvider class="org.libreoffice.ide.eclipse.python.JavaMainProvider"/>
+      <MainProvider class="org.libreoffice.ide.eclipse.python.PythonMainProvider"/>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
-      <startup class="org.libreoffice.ide.eclipse.python.JavaUnoResourceChangeHandler"/>
+      <startup class="org.libreoffice.ide.eclipse.python.PythonUnoResourceChangeHandler"/>
    </extension>
    <extension
          point="org.eclipse.jdt.core.classpathContainerInitializer">
@@ -40,15 +40,6 @@
       </classpathContainerPage>
    </extension>
    
-   <extension
-         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
-      <cheatsheet
-            category="org.libreoffice.ide.eclipse.core.cheatsheets"
-            composite="false"
-            contentFile="doc/cheatsheets/unoclient.xml"
-            id="org.libreoffice.ide.eclipse.java.unoclient"
-            name="Create a Java UNO client">
-      </cheatsheet>
-   </extension>
+   
 
 </plugin>

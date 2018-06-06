@@ -54,6 +54,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -76,7 +77,6 @@ import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.libreoffice.ide.eclipse.python.build.FilesVisitor;
-import org.libreoffice.ide.eclipse.python.build.UnoManifestProvider;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
@@ -263,60 +263,45 @@ public class PythonBuilder implements ILanguageBuilder {
      */
     @Override
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
-        // Add the component Jar file
-        //        PythonProjectHandler handler = (PythonProjectHandler) mLanguage.getProjectHandler();
-        //        File libFile = SystemHelper.getFile(handler.getJarFile(pUnoPrj));
-        //        File prjFile = SystemHelper.getFile(pUnoPrj);
-        //
-        //        pUnoPackage.addComponentFile(
-        //            UnoPackage.getPathRelativeToBase(libFile, prjFile),
-        //            libFile, "Java"); //$NON-NLS-1$
-        //
-        //        // Add all the jar dependencies
-        //        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
-        //        IJavaProject javaPrj = JavaCore.create(prj);
-        //        ArrayList<IFile> libs = getLibs(javaPrj);
-        //        for (IFile lib : libs) {
-        //            File jarFile = SystemHelper.getFile(lib);
-        //            pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
-        //        }
+        //All the constituent Python files of the project are added
+        File prjFile = SystemHelper.getFile(pUnoPrj);
+        IFolder sourceFolder = pUnoPrj.getFolder(pUnoPrj.getSourcePath());
+        ArrayList<IFile> pythonFiles = new ArrayList<IFile>();
+        getPythonFiles(sourceFolder, pythonFiles, pUnoPrj);
+
+        for (IFile pythonFile : pythonFiles) {
+            File eachFile = SystemHelper.getFile(pythonFile);
+            pUnoPackage.addComponentFile(
+                UnoPackage.getPathRelativeToBase(eachFile, prjFile),
+                eachFile, "Python"); //$NON-NLS-1$
+        }
 
     }
 
     /**
-     * Get the libraries in the classpath that are located in the project
-     * directory or one of its subfolder.
+     * Get the Python files that are located in the project
+     * directory or one of its sub-folder.
      *
-     * @param pJavaPrj the project from which to extract the libraries
-     * @return a list of all the File pointing to the libraries.
+     * @param pPythonPrj the project from which to get the Python files
+     * @return a list of all the those Python Files 
      */
-    private ArrayList<IFile> getLibs(IJavaProject pJavaPrj) {
-        ArrayList<IFile> libs = new ArrayList<IFile>();
+    private void getPythonFiles(IFolder sourceFolder, ArrayList<IFile> pythonFiles, IUnoidlProject pUnoPrj) {
         try {
-            IClasspathEntry[] entries = pJavaPrj.getResolvedClasspath(true);
-            for (IClasspathEntry entry : entries) {
-                if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-                    /*
-                     * At first, add only the libraries located in the project
-                     * or one of its children. All others libraries have to be
-                     * managed by the user.
-                     */
-                    IPath path = entry.getPath();
-                    if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
-                        path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
-                        // Relative to the project
-                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-                        if (file != null && file.exists()) {
-                            libs.add(file);
-                        }
-                    }
+            for (IResource member : sourceFolder.members()) {
+                if (member.getType() == 2) { // '1' is for file and '2' is for folder
+                    IFolder subSourceFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(member.getFullPath());
+                    getPythonFiles(subSourceFolder, pythonFiles, pUnoPrj);
+                } else {
+                    IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(member.getFullPath());
+                    pythonFiles.add(file);
                 }
-            }
 
-        } catch (JavaModelException e) {
-            // Enable to add some missing library
+            }
+        } catch (Exception e) {
+            PluginLogger.error(
+                Messages.getString("PythonExport.SourceFolderError"), e);
+
         }
 
-        return libs;
     }
 }

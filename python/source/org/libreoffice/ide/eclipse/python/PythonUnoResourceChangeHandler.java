@@ -50,11 +50,9 @@ import org.eclipse.ui.IStartup;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 
 /**
- * This class is responsible for reacting to the changes on the Java resources
- * in UNO projects. Its main activity is to maintain the implementation classes
- * list for the services registration.
+ * This class is responsible for reacting to the changes UNO projects.
  */
-public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeListener {
+public class PythonUnoResourceChangeHandler implements IStartup, IResourceChangeListener {
 
     /**
      * {@inheritDoc}
@@ -63,7 +61,7 @@ public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeLi
     public void earlyStartup() {
         // Start listening the java resources changes
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-        PluginLogger.info("Java UNO resources changes are now listened"); //$NON-NLS-1$
+        PluginLogger.info("Python UNO resources changes are now listened"); //$NON-NLS-1$
     }
 
     /**
@@ -72,7 +70,7 @@ public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeLi
     @Override
     public void resourceChanged(IResourceChangeEvent pEvent) {
         try {
-            pEvent.getDelta().accept(new JavaResourceDeltaVisitor());
+            pEvent.getDelta().accept(new PythonResourceDeltaVisitor());
         } catch (Exception e) {
             // Do nothing
         }
