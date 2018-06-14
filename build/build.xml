@@ -47,6 +47,7 @@
 
 	<import file="../core/build.xml"/>
 	<import file="../java/build.xml"/>
+	<import file="../python/build.xml"/>
 	
 	<target name="help" description="Tells how to run the script">
 		<echo>
@@ -71,7 +72,7 @@
 		</echo>
 	</target>
 	
-	<target name="init-env" depends="core.init-env, java.init-env">
+	<target name="init-env" depends="core.init-env, java.init-env, python.init-env">
 
 		<property name="package.prefix" value="org.libreoffice.ide.eclipse"/>
 
@@ -98,12 +99,12 @@
 	</target>
 	
 	<target name="purge" description="Cleans all the output results" 
-		depends="core.purge, java.purge">
+		depends="core.purge, java.purge, python.purge">
 		<delete dir="../site"/>
 		<delete file="../loeclipseintegration_site.zip" />
 	</target>
 	
-	<target name="versions" depends="core.version, java.version" />
+	<target name="versions" depends="core.version, java.version, python.version" />
 
     <target name="java.feature.nobuild" if="java.nobuild">
         <property name="includes.java" value=""/>
@@ -127,11 +128,38 @@
     </target>
 
     <target name="java.feature" depends="java.feature.build, java.feature.nobuild"/>
+	
+	<!--Addition of feature.xml for Python plugin starts-->
+	
+	<target name="python.feature.nobuild" if="python.nobuild">
+        <property name="includes.python" value=""/>
+    </target>
 
-	<target name="features" depends="versions, java.feature"/>
-	<target name="plugins" depends="core.plugin, java.plugin"/>
+	<target name="python.feature.build" depends="versions" unless="python.nobuild">
+		<copy file="features/python/feature.xml"
+			tofile="${out.path}/features/feature.xml">
+            <filterchain>
+                <expandproperties/>
+            </filterchain>
+        </copy>
+		
+		<jar destfile="${out.path}/features/${package.prefix}.python_${python.Bundle-Version}.jar">
+			<zipfileset dir="${out.path}/features" prefix="" defaultexcludes="true">
+				<include name="feature.xml"/>
+			</zipfileset>
+        </jar>
+			
+		<delete file="${out.path}/features/feature.xml"/>
+    </target>
 
-	<target name="site" depends="init-env, plugins, features, core.site, java.site"
+    <target name="python.feature" depends="python.feature.build, python.feature.nobuild"/>
+	
+	<!--Addition of feature.xml for Python plugin ends-->
+	
+	<target name="features" depends="versions, java.feature, python.feature"/>
+	<target name="plugins" depends="core.plugin, java.plugin, python.plugin"/>
+
+	<target name="site" depends="init-env, plugins, features, core.site, java.site, python.site"
 		description="Creates the Eclipse update site">
 		
 		<!-- 

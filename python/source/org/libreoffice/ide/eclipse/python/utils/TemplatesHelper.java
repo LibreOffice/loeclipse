@@ -49,12 +49,12 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Provides convenient methods to load, and save templates of Java source
+ * Provides convenient methods to load, and save templates of Python source
  * files into a target projet.
  *
- * <p>In order to generate the template <tt>foo/bar.java.tpl</tt>, the following
+ * <p>In order to generate the template <tt>foo/bar.py.tpl</tt>, the following
  * call call be used, where <tt>LoadingClass</tt> is a class from which it is
- * possible to run a <tt>getResource( "foo/bar.java.tpl" )</tt> to get the file.</p>
+ * possible to run a <tt>getResource( "foo/bar.py.tpl" )</tt> to get the file.</p>
  *
  * <code>
  * TemplatesHelper.copyTemplate( myProject, "foo/bar", LoadingClass.class );
@@ -62,7 +62,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
  */
 public class TemplatesHelper {
 
-    public static final String JAVA_EXT = ".java"; //$NON-NLS-1$
+    public static final String PYTHON_EXT = ".py"; //$NON-NLS-1$
     private static final String TEMPLATE_EXT = ".tpl"; //$NON-NLS-1$
 
     /**
@@ -92,7 +92,7 @@ public class TemplatesHelper {
         System.arraycopy(pArgs, 0, args, 1, pArgs.length);
 
         copyTemplate(prj, pTemplateName, pClazz,
-            dest.getProjectRelativePath().toString(), args);
+            dest.getProjectRelativePath().toString(), true, args);
     }
 
     /**
@@ -103,12 +103,16 @@ public class TemplatesHelper {
      * @param pClazz the class from which to load the resource file
      * @param pDestPath the path in which the file should be copied, relatively to
      *          the project root.
+     * @param sameFileName the file to be copied to has same name as template or not 
      * @param pArgs additional arguments to pass to the formatter
      */
     public static void copyTemplate(IProject pProject, String pTemplateName,
-        Class<?> pClazz, String pDestPath, Object... pArgs) {
+        Class<?> pClazz, String pDestPath, boolean sameFileName, Object... pArgs) {
 
         String fileName = pTemplateName + TEMPLATE_EXT;
+        if (!sameFileName) {
+            pTemplateName = pProject.getName() + ".py";
+        }
 
         // Get the path where to place the files
         IContainer dest = pProject;

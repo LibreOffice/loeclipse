@@ -40,10 +40,9 @@
  * Contributor(s): Cedric Bosdonnat                                                              
  ====================================================================== -->
 
-<project name="java" default="java.error">
-
+<project name="python" default="python.error">
 	
-	<target name="java.error">
+	<target name="python.error">
 		<fail>Wrong target!
 			
 			This script should not be executed directly.
@@ -52,15 +51,14 @@
 	</target>
 	
 	
-	<target name="init-env" unless="java.nobuild">
-		<dirname property="java.basedir" file="${ant.file.java}"/>
+	<target name="init-env" unless="python.nobuild">
+		<dirname property="python.basedir" file="${ant.file.python}"/>
 		
-		<property name="java.out.path" value="${java.basedir}/bin/ant" />
-		<property name="java.out.classes" value="${java.out.path}/classes"/>
-		<property name="java.sources" value="${java.basedir}/source"/>
-		<property name="jodconnector.classes" value="${java.out.path}/jodconnector"/>
+		<property name="python.out.path" value="${python.basedir}/bin/ant" />
+		<property name="python.out.classes" value="${python.out.path}/classes"/>
+		<property name="python.sources" value="${python.basedir}/source"/>
 		
-		<path id="java.dependencies.path">
+		<path id="python.dependencies.path">
 			<pathelement location="${core.out.classes}"/>
 			
 			<fileset dir="${eclipse.home}/plugins/">
@@ -68,75 +66,55 @@
 			</fileset>
 		</path>
 		
-		<mkdir dir="${java.out.path}/plugins" />
-		<mkdir dir="${java.out.classes}" />
+		<mkdir dir="${python.out.path}/plugins" />
+		<mkdir dir="${python.out.classes}" />
 	</target>
 	
-	<target name="java.version" depends="init-env">
+	<target name="python.version" depends="init-env">
 		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
-		<copy tofile="${manifest.properties}" file="${java.basedir}/META-INF/MANIFEST.MF"/>
+		<copy tofile="${manifest.properties}" file="${python.basedir}/META-INF/MANIFEST.MF"/>
 		<replace file="${manifest.properties}" token=":" value="="/>
-		<property file="${manifest.properties}" prefix="java"/>
+		<property file="${manifest.properties}" prefix="python"/>
 		<delete file="${manifest.properties}" />
 	</target>
 	
 	<target name="purge" depends="init-env">
-		<property name="java.out.path" value="${java.basedir}/bin/ant" />
-		<delete dir="${java.out.path}" />
-		<delete file="${java.basedir}/jodconnector.jar" />
-	</target>
-
-	<target name="jodconnector.compile">
-		<mkdir dir="${jodconnector.classes}"/>
-		<javac srcdir="${java.sources}" destdir="${jodconnector.classes}"
-			target="1.7" source="1.7"
-			debug="true"
-			classpathref="office.class.path" 
-			includes="com/artofsolving/**" defaultexcludes="true">
-		</javac>
+		<property name="python.out.path" value="${python.basedir}/bin/ant" />
+		<delete dir="${python.out.path}" />
 	</target>
 	
-	<target name="jodconnector.package" depends="jodconnector.compile">
-		<jar destfile="${java.basedir}/jodconnector.jar">
-			<zipfileset prefix="" dir="${jodconnector.classes}"/>
-			<zipfileset prefix="" dir="${java.sources}" defaultexcludes="true" includes="com/artofsolving/**"/>
-		</jar>
-	</target>
-	
-	<target name="java.compile" depends="init-env" unless="java.nobuild">
-		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
+	<target name="python.compile" depends="init-env" unless="python.nobuild">
+		<javac srcdir="${python.sources}" destdir="${python.out.classes}"
 			target="1.7" source="1.7"
 			debug="${debug}"
-			classpathref="java.dependencies.path" 
-			excludes="**/*Test.*,com/artofsolving/**">
+			classpathref="python.dependencies.path">
 		</javac>
 	</target>
 	
-	<target name="java.plugin" depends="java.version, java.compile, jodconnector.package" unless="java.nobuild">
-		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.Bundle-Version}.jar"
-			manifest="${java.basedir}/META-INF/MANIFEST.MF">
-			<zipfileset prefix="" dir="${java.sources}">
+	<target name="python.plugin" depends="python.version, python.compile" unless="python.nobuild">
+		<jar destfile="${python.out.path}/plugins/${package.prefix}.python_${python.Bundle-Version}.jar"
+			manifest="${python.basedir}/META-INF/MANIFEST.MF">
+			<zipfileset prefix="" dir="${python.sources}">
 				<exclude name="**/*.java"/>
 			</zipfileset>
-			<zipfileset prefix="" dir="${java.out.classes}"/>
+			<zipfileset prefix="" dir="${python.out.classes}"/>
 			
-			<zipfileset prefix="icons" dir="${java.basedir}/icons"/>
-			<zipfileset prefix="" file="${java.basedir}/plugin.xml" />
-			<zipfileset prefix="" file="${java.basedir}/jodconnector.jar" />
+			<zipfileset prefix="icons" dir="${python.basedir}/icons"/>
+			<zipfileset prefix="" file="${python.basedir}/plugin.xml" />
 		</jar>
 	</target>
 	
-    <target name="java.site" depends="java.plugin" unless="java.nobuild">
+    <target name="python.site" depends="python.plugin" unless="python.nobuild">
 
         <!-- Echo the needed bits for site.xml -->
-        <copy tofile="${out.path}/site-java.xml" file="${build.basedir}/site-feature.xml" />
-        <replace file="${out.path}/site-java.xml" token="@@URL@@" value="features/org.libreoffice.ide.eclipse.java_${java.Bundle-Version}.jar"/>
-        <replace file="${out.path}/site-java.xml" token="@@ID@@" value="org.libreoffice.ide.eclipse.java"/>
-        <replace file="${out.path}/site-java.xml" token="@@VERSION@@" value="${java.Bundle-Version}"/>
+        <copy tofile="${out.path}/site-python.xml" file="${build.basedir}/site-feature.xml" />
+        <replace file="${out.path}/site-python.xml" token="@@URL@@" value="features/org.libreoffice.ide.eclipse.python_${python.Bundle-Version}.jar"/>
+        <replace file="${out.path}/site-python.xml" token="@@ID@@" value="org.libreoffice.ide.eclipse.python"/>
+        <replace file="${out.path}/site-python.xml" token="@@VERSION@@" value="${python.Bundle-Version}"/>
 
 		<!-- Copying the plugins -->
 		<copy todir="${out.path}/plugins">
-            <fileset dir="${java.out.path}/plugins/"
+            <fileset dir="${python.out.path}/plugins/"
 				includes="*.jar" />
 			<mapper type="flatten" />
         </copy>
