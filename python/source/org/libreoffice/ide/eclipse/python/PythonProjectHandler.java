@@ -58,6 +58,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -69,24 +70,33 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.UnoFactoryData;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
-import org.libreoffice.ide.eclipse.python.build.OOoContainerPage;
+import org.libreoffice.ide.eclipse.core.utils.WorkbenchHelper;
+import org.libreoffice.ide.eclipse.python.utils.TemplatesHelper;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 /**
- * The Project handler implementation for Java.
+ * The Project handler implementation for Python.
  */
 public class PythonProjectHandler implements IProjectHandler {
 
     private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
+
+    private static final String SOURCE_BASIS = "/source"; //$NON-NLS-1$
 
     /**
      * {@inheritDoc}
@@ -143,43 +153,32 @@ public class PythonProjectHandler implements IProjectHandler {
         IProject prj = (IProject) pData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
-        // Set some properties on the project
+        //Check if the source folder exists or not
+        String sourcesDir = unoprj.getSourcePath().toPortableString();
+        if (sourcesDir == null || sourcesDir.equals("")) { //$NON-NLS-1$
+            sourcesDir = SOURCE_BASIS;
+        }
 
-        // The registration class name is always computed in the same way
-        //        String regclass = RegistrationHelper.getRegistrationClassName(unoprj);
-        //        unoprj.setProperty(P_REGISTRATION_CLASSNAME, regclass);
+        //Copy the Starting Python Source File under the source folder
+        IFolder sourceFolder = prj.getFolder(sourcesDir);
+        sourceFolder.create(true, true, pMonitor);
+        IPath sourcePath = sourceFolder.getProjectRelativePath();
+        Object[] args = { prj.getName() };
+        TemplatesHelper.copyTemplate(prj, "StartingPythonClass.py", PythonProjectHandler.class, sourcePath.toString(), //$NON-NLS-1$
+            false, args); //false denotes that the source .tpl filename and the destination filename are not same
 
-        //        // Java version
-        //        String javaversion = (String) pData.getProperty(PythonWizardPage.JAVA_VERSION);
-        //        unoprj.setProperty(P_JAVA_VERSION, javaversion);
+        // Refresh the project
+        try {
+            prj.refreshLocal(IResource.DEPTH_INFINITE, null);
+        } catch (Exception e) {
+        }
 
-        //        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoprj.getName());
-        //
-        //        // Create the project structure
-        //        IJavaProject javaProject = JavaCore.create(project);
-        //        javaProject.open(pMonitor);
-        //
-        //        IPath sourcePath = unoprj.getFolder(unoprj.getSourcePath()).getFullPath();
-        //        IPath buildPath = unoprj.getFolder(unoprj.getBuildPath()).getFullPath();
-        //        System.out.println("SourcePath::" + sourcePath + "BuildPath::" + buildPath);
-        //
-        //        IClasspathEntry[] entries = new IClasspathEntry[] { JavaCore.newSourceEntry(sourcePath),
-        //            JavaRuntime.getDefaultJREContainerEntry(),
-        //            JavaCore.newLibraryEntry(buildPath, null, null, false) };
-        //
-        //        javaProject.setRawClasspath(entries, pMonitor);
-        //
-        //        // Add the registration files
-        //        RegistrationHelper.generateFiles(unoprj);
-        //
-        //        // Tests creation
-        //        Boolean usetests = (Boolean) pData.getProperty(PythonWizardPage.JAVA_TESTS);
-        //        if (usetests.booleanValue()) {
-        //            TestsHelper.writeTestClasses(unoprj);
-        //
-        //            IJavaProject javaprj = JavaCore.create(prj);
-        //            TestsHelper.addJUnitLibraries(javaprj);
-        //        }
+        // Show the newly created Python source file
+        IFolder srcDir = prj.getFolder(sourcePath);
+        IFile pythonSourceFile = srcDir.getFile(prj.getName() + ".py"); //$NON-NLS-1$
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+        WorkbenchHelper.showFile(pythonSourceFile,
+            windows[0].getActivePage());
     }
 
     /**

@@ -51,19 +51,19 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class OOoJavaPlugin extends AbstractUIPlugin {
+public class OOoPythonPlugin extends AbstractUIPlugin {
 
-    public static final String PLUGIN_ID = "org.libreoffice.ide.eclipse.java"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "org.libreoffice.ide.eclipse.python"; //$NON-NLS-1$
     public static final String WIZBAN = "wizban"; //$NON-NLS-1$
     public static final String LIBS_DIR = "lib/"; //$NON-NLS-1$
 
     //The shared instance.
-    private static OOoJavaPlugin sPlugin;
+    private static OOoPythonPlugin sPlugin;
 
     /**
      * The constructor.
      */
-    public OOoJavaPlugin() {
+    public OOoPythonPlugin() {
         sPlugin = this;
     }
 
@@ -93,7 +93,7 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
     /**
      * @return the shared instance.
      */
-    public static OOoJavaPlugin getDefault() {
+    public static OOoPythonPlugin getDefault() {
         return sPlugin;
     }
 

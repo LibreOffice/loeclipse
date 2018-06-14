@@ -6,9 +6,6 @@
       <language
             class="org.libreoffice.ide.eclipse.python.Language"
             name="Python">
-         <newWizardPage
-               class="org.libreoffice.ide.eclipse.python.PythonWizardPage">
-         </newWizardPage>
       </language>
    </extension>
    <extension
@@ -16,30 +13,10 @@
          point="org.eclipse.core.resources.builders">
       <builder/>
    </extension>
-   <extension
-         point="org.libreoffice.ide.eclipse.core.MainProvider">
-      <MainProvider class="org.libreoffice.ide.eclipse.python.PythonMainProvider"/>
-   </extension>
+   
    <extension
          point="org.eclipse.ui.startup">
       <startup class="org.libreoffice.ide.eclipse.python.PythonUnoResourceChangeHandler"/>
    </extension>
-   <extension
-         point="org.eclipse.jdt.core.classpathContainerInitializer">
-      <classpathContainerInitializer
-            class="org.libreoffice.ide.eclipse.python.build.OooClasspathContainerInitializer"
-            id="org.libreoffice.ide.eclipse.java.OOO_CONTAINER">
-      </classpathContainerInitializer>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.ui.classpathContainerPage">
-      <classpathContainerPage
-            class="org.libreoffice.ide.eclipse.python.build.OOoContainerPage"
-            id="org.libreoffice.ide.eclipse.java.OOO_CONTAINER"
-            name="LibreOffice Libraries">
-      </classpathContainerPage>
-   </extension>
-   
-   
 
 </plugin>

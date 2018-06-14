@@ -263,6 +263,7 @@ public class PythonBuilder implements ILanguageBuilder {
      */
     @Override
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
+
         //All the constituent Python files of the project are added
         File prjFile = SystemHelper.getFile(pUnoPrj);
         IFolder sourceFolder = pUnoPrj.getFolder(pUnoPrj.getSourcePath());
