@@ -371,10 +371,8 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 if (!language.getName().contains("Python")) {
                     mServiceSet.mProject = prj;
                     mServiceSet.doFinish(pMonitor, mActivePage);
-
-                    UnoidlProjectHelper.setProjectBuilders(prj);
-
                 }
+                UnoidlProjectHelper.setProjectBuilders(prj);
 
             } catch (Exception e) {
                 Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);

@@ -50,7 +50,6 @@ import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
-import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.libreoffice.ide.eclipse.java.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
 

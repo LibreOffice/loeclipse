@@ -126,44 +126,7 @@ public class PythonBuilder implements ILanguageBuilder {
                 // TODO What if the user creates other root modules ?
                 String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
 
-                runJavamaker(firstModule, oooTypesArgs, pSdk, pPrj, pTypesFile, pBuildFolder, pMonitor);
             }
-        }
-    }
-
-    private void runJavamaker(String firstModule, String oooTypesArgs,
-        ISdk pSdk, IProject pPrj, File pTypesFile,
-        File pBuildFolder, IProgressMonitor pMonitor) {
-
-        StringBuffer errBuf = new StringBuffer();
-        try {
-            String cmdPattern = "javamaker -T {0}.* -nD -Gc -O {1} \"{2}\" {3}"; //$NON-NLS-1$
-            String command = MessageFormat.format(cmdPattern, firstModule,
-                pBuildFolder.getAbsolutePath(),
-                pTypesFile.getAbsolutePath(),
-                oooTypesArgs);
-
-            IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
-            Process process = pSdk.runTool(unoprj, command, pMonitor);
-
-            process.waitFor();
-
-            LineNumberReader lineReader = new LineNumberReader(
-                new InputStreamReader(process.getErrorStream()));
-
-            String line = lineReader.readLine();
-            while (null != line) {
-                errBuf.append(line + '\n');
-                line = lineReader.readLine();
-            }
-
-            PluginLogger.debug(errBuf.toString());
-        } catch (InterruptedException e) {
-            PluginLogger.error(
-                Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
-        } catch (IOException e) {
-            PluginLogger.warning(
-                Messages.getString("Language.UnreadableOutputError")); //$NON-NLS-1$
         }
     }
 

@@ -11,11 +11,14 @@ from com.sun.star.document import XEventListener
 class {0}(unohelper.Base, XJobExecutor, XEventListener):
     
     def trigger(self, args):
+    	pass
         
     # boilerplate code below this point
     def __init__(self, context):
+    	pass
         
     def createUnoService(self, name):
+    	pass
         
     def disposing(self, args):
         pass

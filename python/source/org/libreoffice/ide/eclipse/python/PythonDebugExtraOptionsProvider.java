@@ -6,7 +6,7 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 /**
  * Adds extra env variables to start LibreOffice with Java setup to run in debug mode.
  */
-public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
+public class PythonDebugExtraOptionsProvider implements IExtraOptionsProvider {
 
     private String mPort;
     private String OOO_EXTRA_JAVA_TOOL_OPTIONS = "OOO_EXTRA_JAVA_TOOL_OPTIONS"; //$NON-NLS-1$
@@ -16,7 +16,7 @@ public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
      * @param pPort
      *            the port to listen to.
      */
-    public JavaDebugExtraOptionsProvider(String pPort) {
+    public PythonDebugExtraOptionsProvider(String pPort) {
         this.mPort = pPort;
     }
 
