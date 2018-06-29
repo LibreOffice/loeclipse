@@ -47,6 +47,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.xpath.XPathConstants;
@@ -54,6 +56,7 @@ import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -76,6 +79,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.libreoffice.ide.eclipse.core.builders.TypesBuilder;
 import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -98,15 +102,15 @@ public class PythonProjectHandler implements IProjectHandler {
 
     private static final String SOURCE_BASIS = "/source"; //$NON-NLS-1$
 
+    private static final String PYTHON_NATURE = "org.python.pydev.pythonNature"; //$NON-NLS-1$
+    private static final String PYTHON_BUILDER = "org.python.pydev.PyDevBuilder"; //$NON-NLS-1$
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
 
-        //        IJavaProject javaProject = JavaCore.create(pProject);
-        //
-        //        OOoContainerPage.addOOoDependencies(pOoo, javaProject);
         PluginLogger.debug("For a Python project 'No' OOo dependencies are added"); //$NON-NLS-1$
     }
 
@@ -115,32 +119,48 @@ public class PythonProjectHandler implements IProjectHandler {
      */
     @Override
     public void addProjectNature(IProject pProject) {
-        //        try {
-        //            if (!pProject.exists()) {
-        //                pProject.create(null);
-        //                PluginLogger.debug("Project created during language specific operation"); //$NON-NLS-1$
-        //            }
-        //
-        //            if (!pProject.isOpen()) {
-        //                pProject.open(null);
-        //                PluginLogger.debug("Project opened"); //$NON-NLS-1$
-        //            }
-        //
-        //            IProjectDescription description = pProject.getDescription();
-        //            String[] natureIds = description.getNatureIds();
-        //            String[] newNatureIds = new String[natureIds.length + 1];
-        //            System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
-        //
-        //            // Adding the nature
-        //            newNatureIds[natureIds.length] = JavaCore.NATURE_ID;
-        //
-        //            description.setNatureIds(newNatureIds);
-        //            pProject.setDescription(description, null);
-        //            PluginLogger.debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
-        //
-        //        } catch (CoreException e) {
-        //            PluginLogger.error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
-        //        }
+        try {
+            if (!pProject.exists()) {
+                pProject.create(null);
+                PluginLogger.debug("Project created during language specific operation"); //$NON-NLS-1$
+            }
+
+            if (!pProject.isOpen()) {
+                pProject.open(null);
+                PluginLogger.debug("Project opened"); //$NON-NLS-1$
+            }
+
+            IProjectDescription description = pProject.getDescription();
+            String[] natureIds = description.getNatureIds();
+            String[] newNatureIds = new String[natureIds.length + 1];
+            System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
+
+            // Adding the nature
+            newNatureIds[natureIds.length] = PYTHON_NATURE;
+
+            // Adding the buildCommand org.python.pydev.PyDevBuilder under buildSpec in .project file 
+            ICommand[] builders = description.getBuildSpec();
+
+            ICommand typesbuilderCommand = description.newCommand();
+            typesbuilderCommand.setBuilderName(PYTHON_BUILDER); //$NON-NLS-1$
+
+            //During the eclipse startup it keeps on adding the same buildCommand again
+            List<ICommand> list = Arrays.asList(builders);
+            if (!list.contains(typesbuilderCommand)) {
+                ICommand[] newCommands = new ICommand[builders.length + 1];
+                newCommands[0] = typesbuilderCommand;
+                System.arraycopy(builders, 0, newCommands, 1, builders.length);
+
+                description.setBuildSpec(newCommands);
+            }
+
+            description.setNatureIds(newNatureIds);
+            pProject.setDescription(description, null);
+            PluginLogger.debug(Messages.getString("Language.PythonNatureBuilderSet")); //$NON-NLS-1$
+
+        } catch (CoreException e) {
+            PluginLogger.error(Messages.getString("Language.NatureSettingFailed")); //$NON-NLS-1$
+        }
     }
 
     /**
@@ -227,9 +247,6 @@ public class PythonProjectHandler implements IProjectHandler {
      */
     @Override
     public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
-        //        IJavaProject javaProject = JavaCore.create(pProject);
-        //
-        //        OOoContainerPage.removeOOoDependencies(javaProject);
     }
 
     /**

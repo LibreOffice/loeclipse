@@ -106,7 +106,7 @@ public class Language extends AbstractLanguage {
             connector.connect(argMap, pMonitor, pLaunch);
 
             pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation,
-                new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
+                new PythonDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
         } catch (Exception e) {
             PluginLogger.error("Could not start remote debugger.", e);
         }
