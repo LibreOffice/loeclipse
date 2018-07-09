@@ -51,6 +51,7 @@
 	</target>
 	
 	
+	
 	<target name="init-env" unless="python.nobuild">
 		<dirname property="python.basedir" file="${ant.file.python}"/>
 		
@@ -58,11 +59,16 @@
 		<property name="python.out.classes" value="${python.out.path}/classes"/>
 		<property name="python.sources" value="${python.basedir}/source"/>
 		
+		
 		<path id="python.dependencies.path">
 			<pathelement location="${core.out.classes}"/>
 			
 			<fileset dir="${eclipse.home}/plugins/">
 				<include name="org.eclipse*.jar"/>
+			</fileset>
+			
+			<fileset dir="${eclipse.home}/plugins/">
+				<include name="com.python.pydev.debug_*/debug.jar"/>
 			</fileset>
 		</path>
 		

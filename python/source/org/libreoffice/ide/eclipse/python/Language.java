@@ -43,9 +43,6 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.python;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,21 +51,24 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IVMConnector;
-import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.swt.widgets.Display;
+
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.launch.office.IOfficeLaunchConstants;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.libreoffice.ide.eclipse.core.model.config.NullExtraOptionsProvider;
 import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
+
+import com.python.pydev.debug.remote.client_api.PydevRemoteDebuggerServer;
 
 /**
  * Implementation for the Python language.
  */
 public class Language extends AbstractLanguage {
 
-    private static final String DEFAULT_JAVA_DEBUG_PORT = "7861";
+    //    private static final String DEFAULT_PYTHON_DEBUG_PORT = "5677";
 
     /**
      * {@inheritDoc}
@@ -94,21 +94,16 @@ public class Language extends AbstractLanguage {
         IProgressMonitor pMonitor) {
 
         try {
-            // org.eclipse.jdt.launching.socketListenConnector
-            // SocketListenConnector
-            String connectorId = "org.eclipse.jdt.launching.socketListenConnector";
-            IVMConnector connector = JavaRuntime.getVMConnector(connectorId);
-            Map<String, String> argMap = new HashMap<>();
-            argMap.put("timeout", "80000");
-            //FIXME implement some kind of port pickup/retry mechanism in case the default port is already used.
-            argMap.put("port", DEFAULT_JAVA_DEBUG_PORT);
+            if (PydevRemoteDebuggerServer.isRunning()) {
+                pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation, new NullExtraOptionsProvider(), pMonitor);
+            } else {
+                /* This allows to start the server asynchronously which will give 'Invalid thread access' Exception
+                   if started from this thread which has been called by DebugUITools.launch(...)*/
+                Display.getDefault().asyncExec(new debugSeverStart(pPrj, pLaunch, pUserInstallation, pMonitor));
+            }
 
-            connector.connect(argMap, pMonitor, pLaunch);
-
-            pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation,
-                new PythonDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
         } catch (Exception e) {
-            PluginLogger.error("Could not start remote debugger.", e);
+            PluginLogger.error("Could not go for Debugging Mode.", e);
         }
     }
 
@@ -116,9 +111,38 @@ public class Language extends AbstractLanguage {
     public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
         String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
         pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
-            "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
+            "org.eclipse.jd/t.launching.sourceLocator.JavaSourceLookupDirector");
         pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
             "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
         pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
     };
+
+    /**
+     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging 
+     */
+    private class debugSeverStart implements Runnable {
+
+        private IUnoidlProject mPrj;
+        private ILaunch mLaunch;
+        private IPath mUserInstallation;
+        private IProgressMonitor mMonitor;
+
+        public debugSeverStart(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
+            IProgressMonitor pMonitor) {
+            mPrj = pPrj;
+            mLaunch = pLaunch;
+            mUserInstallation = pUserInstallation;
+            mMonitor = pMonitor;
+        }
+
+        @Override
+        public void run() {
+            try {
+                PydevRemoteDebuggerServer.startServer();
+                mPrj.getOOo().runOffice(mPrj, mLaunch, mUserInstallation, new NullExtraOptionsProvider(), mMonitor);
+            } catch (Exception e) {
+                PluginLogger.error("Could not start the debug server and start the LibreOffice Instance.", e);
+            }
+        }
+    }
 }

@@ -18,4 +18,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.junit,
  org.eclipse.ui.ide,
  org.eclipse.ui.cheatsheets,
- org.eclipse.jdt.debug.ui;bundle-version="3.4.1"
+ org.eclipse.jdt.debug.ui;bundle-version="3.4.1",
+ com.python.pydev.debug
