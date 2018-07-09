@@ -48,6 +48,10 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import com.python.pydev.debug.remote.client_api.PydevRemoteDebuggerServer;
+
+//import com.python.pydev.debug.remote.client_api.PydevRemoteDebuggerServer;
+
 /**
  * The main plugin class to be used in the desktop.
  */
@@ -88,6 +92,9 @@ public class OOoPythonPlugin extends AbstractUIPlugin {
     public void stop(BundleContext pContext) throws Exception {
         super.stop(pContext);
         sPlugin = null;
+        if (PydevRemoteDebuggerServer.isRunning()) {
+            PydevRemoteDebuggerServer.stopServer();
+        }
     }
 
     /**

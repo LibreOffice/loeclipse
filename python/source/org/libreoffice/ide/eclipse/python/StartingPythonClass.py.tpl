@@ -2,6 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+#For Debugging you can write only pydevd and request a code-completion
+#which will add pydevd.py to sys.path and do the settrace. The line
+#where 'pydevd.settrace()' is mentioned on the next line, the debugger
+#will pause. 
 
 import uno, unohelper
 from com.sun.star.task import XJobExecutor
