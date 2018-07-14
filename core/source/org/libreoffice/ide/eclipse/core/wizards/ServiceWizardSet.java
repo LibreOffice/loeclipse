@@ -551,12 +551,14 @@ public class ServiceWizardSet extends WizardPageSet {
             UnoidlProjectHelper.forceBuild(prj, pMonitor);
 
             // Create the implementation skeleton
-            UnoFactoryData wizardSetData = new UnoFactoryData();
-            wizardSetData.addInnerData(serviceData);
-            wizardSetData.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, prj.getLanguage());
-            wizardSetData.setProperty(IUnoFactoryConstants.PROJECT_NAME, prj.getName());
-            UnoFactory.makeSkeleton(wizardSetData, pActivePage, pMonitor);
-            wizardSetData.dispose();
+            if (!prj.getLanguage().getName().contains("Python")) {
+                UnoFactoryData wizardSetData = new UnoFactoryData();
+                wizardSetData.addInnerData(serviceData);
+                wizardSetData.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, prj.getLanguage());
+                wizardSetData.setProperty(IUnoFactoryConstants.PROJECT_NAME, prj.getName());
+                UnoFactory.makeSkeleton(wizardSetData, pActivePage, pMonitor);
+                wizardSetData.dispose();
+            }
 
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("ServiceWizardSet.ServiceCreationError"), e); //$NON-NLS-1$

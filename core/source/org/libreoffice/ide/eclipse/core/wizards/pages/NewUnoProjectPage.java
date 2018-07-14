@@ -147,7 +147,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         @Override
         public void modifyText(ModifyEvent pEvent) {
             checkWhiteSpaces();
-            checkWhiteSpacesinProjectName();
+            checkSpecialSymbolsinProjectName();
             ((NewUnoProjectWizard) getWizard()).pageChanged(NewUnoProjectPage.this);
         }
     };
@@ -414,10 +414,10 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     /**
      * Shows a error if there are spaces in the project name.
      */
-    private void checkWhiteSpacesinProjectName() {
+    private void checkSpecialSymbolsinProjectName() {
 
-        if (getProjectName().contains(" ")) { //$NON-NLS-1$
-            setMessage(Messages.getString("NewUnoProjectPage.WhiteSpacesInProjectNameError"), //$NON-NLS-1$
+        if (getProjectName().contains(" ") || getProjectName().contains("_")) { //$NON-NLS-1$
+            setMessage(Messages.getString("NewUnoProjectPage.SpecialSymbolsInProjectNameError"), //$NON-NLS-1$
                 ERROR);
             setPageComplete(false);
         }
