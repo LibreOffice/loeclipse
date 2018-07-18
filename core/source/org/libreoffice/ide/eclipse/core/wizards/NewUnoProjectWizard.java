@@ -237,9 +237,6 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                     } else {
                         // Could be null
                         next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
-                        if (mMainPage.getChosenLanguage().toString().contains("python")) {
-                            next = null;
-                        }
                     }
                 } else if (mLanguagePage != null && mLanguagePage.equals(pPage)) {
                     next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
