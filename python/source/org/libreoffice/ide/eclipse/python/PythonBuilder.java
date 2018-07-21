@@ -44,39 +44,20 @@
 package org.libreoffice.ide.eclipse.python;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.ui.jarpackager.IJarExportRunnable;
-import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
-import org.libreoffice.ide.eclipse.python.build.FilesVisitor;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
@@ -112,22 +93,6 @@ public class PythonBuilder implements ILanguageBuilder {
     public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
         File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
 
-        if (pTypesFile.exists()) {
-
-            if (null != pSdk && null != pOoo) {
-
-                String[] paths = pOoo.getTypesPath();
-                String oooTypesArgs = ""; //$NON-NLS-1$
-                for (String path : paths) {
-                    IPath ooTypesPath = new Path(path);
-                    oooTypesArgs += " -X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-                }
-
-                // TODO What if the user creates other root modules ?
-                String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
-
-            }
-        }
     }
 
     /**
