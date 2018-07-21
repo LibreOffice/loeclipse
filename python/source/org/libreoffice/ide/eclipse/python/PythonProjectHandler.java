@@ -43,18 +43,9 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.python;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
-
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -72,15 +63,9 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
-import org.libreoffice.ide.eclipse.core.builders.TypesBuilder;
-import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.IUnoFactoryConstants;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
@@ -89,16 +74,11 @@ import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.libreoffice.ide.eclipse.core.utils.WorkbenchHelper;
 import org.libreoffice.ide.eclipse.python.utils.TemplatesHelper;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
 /**
  * The Project handler implementation for Python.
  */
 public class PythonProjectHandler implements IProjectHandler {
-
-    private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
-    private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
     private static final String SOURCE_BASIS = "/source"; //$NON-NLS-1$
 
@@ -206,19 +186,7 @@ public class PythonProjectHandler implements IProjectHandler {
      */
     @Override
     public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
-        String prefix = pPrj.getCompanyPrefix();
-        String comp = pPrj.getOutputExtension();
-
-        String implementationName = null;
-
-        if (pService.startsWith(prefix)) {
-            String localName = pService.substring(prefix.length());
-            implementationName = prefix + "." + comp + localName + "Impl"; //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            throw new Exception("Cannot find implementation name for service: " + pService); //$NON-NLS-1$
-        }
-
-        return implementationName;
+        return null;
     }
 
     /**
@@ -235,11 +203,7 @@ public class PythonProjectHandler implements IProjectHandler {
      */
     @Override
     public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
-        // Get the project from data
-        String name = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
-        IUnoidlProject unoprj = ProjectsManager.getProject(name);
-
-        return "--" + unoprj.getProperty(P_JAVA_VERSION); //$NON-NLS-1$
+        return null;
     }
 
     /**
@@ -271,51 +235,6 @@ public class PythonProjectHandler implements IProjectHandler {
     }
 
     /**
-     * Returns a handle to the project jar file. Beware that this handle may refer to a non-existing file. Users have to
-     * create it if necessary.
-     *
-     * @param pProjectDir
-     *            the concerned UNO project directory
-     * @return a handle to the jar file of the project
-     */
-    public File getJarFile(File pProjectDir) throws IOException, XPathException {
-        String filename = getName(pProjectDir).replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return new File(pProjectDir, filename);
-    }
-
-    private String getName(File projectDir) throws IOException, XPathException {
-        File projectFile = new File(projectDir, ".project");
-        if (!projectFile.exists()) {
-            return null;
-        }
-        final FileInputStream byteStream = new FileInputStream(projectFile);
-        InputSource source = new InputSource(byteStream);
-
-        // evaluation de l'expression XPath
-        XPathFactory factory = XPathFactory.newInstance();
-        javax.xml.xpath.XPath xpath = factory.newXPath();
-        final String xPathExpr = "//projectDescription/name";
-        XPathExpression exp = xpath.compile(xPathExpr);
-        Node node = (Node) exp.evaluate(source, XPathConstants.NODE);
-        if (node == null) {
-            return null;
-        }
-        return node.getTextContent();
-    }
-
-    /**
-     * Get the UNO registration class name of the project.
-     *
-     * @param pProject
-     *            the project for witch to get the registration class.
-     *
-     * @return the registration class name
-     */
-    public String getRegistrationClassName(IUnoidlProject pProject) {
-        return pProject.getProperty(P_REGISTRATION_CLASSNAME);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -338,36 +257,6 @@ public class PythonProjectHandler implements IProjectHandler {
         }
 
         return folders.toArray(new IFolder[folders.size()]);
-    }
-
-    // --------------------------------------------- Jar finding private methods
-
-    /**
-     * returns the path of all the kept jars contained in the folder pointed by path.
-     *
-     * @param pOoo
-     *            the OOo instance from which to get the jars
-     * @return a vector of Path pointing to each jar.
-     */
-    public static Vector<Path> findJarsFromPath(IOOo pOoo) {
-        Vector<Path> jarsPath = new Vector<Path>();
-
-        //        String[] paths = pOoo.getClassesPath();
-        //        for (String path : paths) {
-        //            Path folderPath = new Path(path);
-        //            File programFolder = folderPath.toFile();
-        //
-        //            String[] content = programFolder.list();
-        //            for (int i = 0, length = content.length; i < length; i++) {
-        //                String contenti = content[i];
-        //                if (isKeptJar(contenti)) {
-        //                    Path jariPath = new Path(path + "/" + contenti); //$NON-NLS-1$
-        //                    jarsPath.add(jariPath);
-        //                }
-        //            }
-        //        }
-
-        return jarsPath;
     }
 
 }
