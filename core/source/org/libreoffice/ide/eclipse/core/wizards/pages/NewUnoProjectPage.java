@@ -412,7 +412,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     }
 
     /**
-     * Shows a error if there are spaces in the project name.
+     * Shows a error if there are special symbols (Space and _) in the project name.
      */
     private void checkSpecialSymbolsinProjectName() {
 
@@ -507,6 +507,18 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
             boolean useCustom = mCustomDirsRow.getBooleanValue();
             mSourceRow.setEnabled(useCustom);
             mIdlDirRow.setEnabled(useCustom);
+        }
+
+        /**
+         * Shows a error if 'currently' URE based project cannot be created using the selected language .
+         */
+        if (getTitle().equalsIgnoreCase(Messages.getString("NewUreAppWizard.Title")) //$NON-NLS-1$
+            && getDescription().equalsIgnoreCase(Messages.getString("NewUreAppWizard.Description")) //$NON-NLS-1$
+            && mLanguageRow.getValue().equalsIgnoreCase("Python")) { //$NON-NLS-1$
+
+            setMessage(Messages.getString("NewUnoProjectPage.CheckLanguageUREPythonError"), //$NON-NLS-1$
+                ERROR);
+            setPageComplete(false);
         }
         ((NewUnoProjectWizard) getWizard()).pageChanged(this);
     }
