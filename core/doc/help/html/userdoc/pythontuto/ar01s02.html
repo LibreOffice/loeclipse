@@ -1,0 +1,192 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Creating the Extension Project using Python</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title="Creating an Extension Project">
+<link rel="up" href="index.html" title="Creating an Extension Project">
+<link rel="prev" href="index.html" title="Creating an Extension Project">
+<link rel="next" href="ar01s03.html"
+	title="Public Documentation License Notice ">
+<link href="../../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+	alink="#0000FF">
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="id2516711"></a>Creating
+the Extension Project using Python</h2>
+</div>
+</div>
+</div>
+<p>As stated earlier an Extension project is a way to develop extension for the LibreOffice, which can be distributed. This tutorial will talk about the development of the same using Python language
+</p>
+
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2516712"></a>Creating the Project</h3>
+</div>
+</div>
+</div>
+<p>To launch the Extension Project creation wizard, you can either
+select <span class="strong"><strong>File &gt; New &gt; Other &gt;
+LibreOffice</strong></span> and then choose <span class="strong"><strong>Extension Project</strong></span> or Right click in the open space under the Package Explorer and follow the same steps which you would have done if clicked on File. You will see a screen similar to the one below.</p>
+	<div class="figure"><a name="refIllustration1"></a>
+	<p class="title"><b>Figure 1.: New Project Wizard</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="410">
+		<tr style="height: 396px">
+			<td><img src="img/img000.png" height="396"
+				alt=": New Project Wizard"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+	
+<p>Clicking on the next will take you to the New Wizard Page which is similar to most New Wizard Pages. There you need to fill out the necessary details and select the language as Python. When you click Next you are Presented with the Service Craetion Page after that you are presented with the Interface creation Page when you click Next. The sequence of images that will follow are :</p>
+	<div class="figure"><a name="refIllustration2"></a>
+	<p class="title"><b>Figure 2.: Sequence in Project Wizard</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="1600">
+		<tr style="height: 600px">
+			<td><img src="img/img001.png" height="600"
+				alt=": Sequence in Project Wizard"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+
+
+</div>
+
+
+
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2516713"></a>Files and Folder Structure</h3>
+</div>
+</div>
+</div>
+<p>Once the project is created you will see it listed under the Package Explorer and a basic Python file with the same name as that of the Project will open. The Project tree on the Package Explorer will look the one below</p>
+
+	<div class="figure"><a name="refIllustration2"></a>
+	<p class="title"><b>Figure 3.: The Project Tree Structure</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="290">
+		<tr style="height: 400px">
+			<td><img src="img/img002.png" height="400"
+				alt=": The Project Tree Structure"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+
+<p>In the folder structure few points that are important:</p>
+<div class="itemizedlist">
+<ul type="disc">
+	<li>
+		<p>The Source Python files should be placed under the source folder, if folders are created to seggregate the python files then these folders need to be placed under the source folder.</p>
+	</li>
+	<li>
+		<p>If the associated project is being created with the help of <span class="strong"><strong>idl</strong></span> file, then you can make the changes in the idl files, these changes would be automatically reflected in the <span class="strong"><strong>urd</strong></span> and ultimately in the <span class="strong"><strong>types.rdb</strong></span> file.</p>	
+	</li>
+	<li>
+		<p>By Default <span class="strong"><strong>the contents of the source folder, types.rdb</strong></span> are selected for creation of the ".oxt" file.  Using the <span class="strong"><strong>package.properties</strong></span> file you need to select the other files that need to be present in the ".oxt" file like the desciption.xml, images folder, etc. In case if you find that any of the default files are not getting inside the ".oxt", select them from "package.properties". </p>	
+	</li>
+	<li>
+		<p>Lastly <span class="strong"><strong>description.xml</strong></span> is a file that needs to be filled out, since it contains the description regarding the extension that has been created.</p>	
+	</li>
+</ul>
+</div>
+<p>The basic Python file looks like the one below where you can make the necessary changes.</p>
+	<div class="figure"><a name="refIllustration4"></a>
+	<p class="title"><b>Figure 4.: The Starting Python File</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="600">
+		<tr style="height: 570px">
+			<td><img src="img/img003.png" height="570"
+				alt=": Starting Python File"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+</div>
+
+
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2516714"></a>How to Run the Project</h3>
+</div>
+</div>
+</div>
+<p>In order to Run the Extension Project which you created, <span class="strong"><strong> Right Click on the Project &gt; Run As &gt; LibreOffice extension </strong></span>. If the project has been properly created it will start an instance of the LibreOffice where you will have the options to select any of the LibreOffice Programs like Calc, Writer, Impress, Math. If the extension being developed is a generic one then any of the programs will work, if it is made for specific program, its better to open that particular one.  </p>
+<p> *Note: If in the first instance the LibreOffice instance does not show up, try running the Extension Project again
+	</p>
+</div>
+
+
+<div class="section" lang="en-GB">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="id2516715"></a>How to Debug the Project</h3>
+</div>
+</div>
+</div>
+<p>Now we move onto one of the most important feature which is Debugging the project. In order to "Debug" any Extension Project developed using Python <span class="strong"><strong> Right Click on the Project &gt; Debug As &gt; LibreOffice extension </strong></span>. Before you go for Debugging Remember to add the line <span class="strong"><strong>pydev.settrace()</strong></span> before the line where you would like to start the debugging.</p>
+
+<p>To import the pydev, you can write only pydevd and request a code-completion which will add pydevd.py to sys.path and do the settrace</p>
+
+	<div class="figure"><a name="refIllustration5"></a>
+	<p class="title"><b>Figure 5.: Debugging in the Python File</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="1000">
+		<tr style="height: 500px">
+			<td><img src="img/img004.png" height="500"
+				alt=": Debugging in the Python File"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+
+
+Once you have Clicked on Debug As &gt; LibreOffice extension, A LibreOffice instance will open up which will assist in the debugging. So once you have inititated the execution of the extension from the LibreOffice instance, the execution will start and pause at the line below pydev.settrace. To see that you need to switch to the <span class="strong"><strong>Debugging Perspective </strong></span> in Eclipse. If it is not showing, then <span class="strong"><strong> Click on Window on Menu Bar &gt; Perspective &gt; Open Perspective &gt; Other...</strong></span>. It will open a list of perspectives from there select <span class="strong"><strong> Debug </strong></span> option. It will open a screen like the one below, with the line highlighted where the execution has paused. You can add new breakpoints similar to how we add when we debug a Java Program. 
+
+<p>*Note : The python program which has opened is referenced from inside the oxt file. So we need to add the breakpoints to this one and not the one which we coded into.</p>
+
+	<div class="figure"><a name="refIllustration5"></a>
+	<p class="title"><b>Figure 5.: Debugger use when Debugging the Python Extension Project</b></p>
+	<div class="mediaobject">
+	<table border="0" summary="manufactured viewport for HTML img"
+		cellspacing="0" cellpadding="0" width="1000">
+		<tr style="height: 500px">
+			<td><img src="img/img005.png" height="500"
+				alt=": Debugger use when Debugging the Python Extension Project"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+
+</div>
+
+<p>A short video has been made to guide you through the process, it does not include the Services and Interface page in New Wizard and also the idl files are not present. You can check it out to get the idea specially on running and debugging. 
+
+<a href="https://youtu.be/64XCukPZsxA"
+		title="Python Language in LoEclipse Extension" target="_blank">Python Language in LoEclipse Extension</a></p>
+
+</div>
+</body>
+</html>

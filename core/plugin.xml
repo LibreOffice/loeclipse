@@ -247,6 +247,9 @@
       <toc
             file="doc/help/html/userdoc/uretuto/toc.xml"
             primary="true"/>
+      <toc
+            file="doc/help/html/userdoc/pythontuto/toc.xml"
+            primary="true"/>
             
    </extension>
    <extension

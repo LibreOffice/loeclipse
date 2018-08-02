@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * $RCSfile: JavaProjectHandler.java,v $
+ * $RCSfile: PythonProjectHandler.java,v $
  *
  * $Revision: 1.10 $
  *

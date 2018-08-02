@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * $RCSfile: JavaResourceDeltaVisitor.java,v $
+ * $RCSfile: PythonResourceDeltaVisitor.java,v $
  *
  * $Revision: 1.3 $
  *
