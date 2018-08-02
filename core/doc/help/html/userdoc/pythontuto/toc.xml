@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<toc label="Creating a Python Extension Project">
+	<topic label="Creating a Python Extension Project" href="doc/help/html/userdoc/pythontuto/index.html">
+		<topic label="Introduction" href="doc/help/html/userdoc/pythontuto/index.html#id2499940"/>
+		<topic label="Creating the Extension Project using Python" href="doc/help/html/userdoc/pythontuto/ar01s02.html">
+			<topic label="Creating the Project" href="doc/help/html/userdoc/pythontuto/ar01s02.html#id2516712"/>
+			<topic label="Files and Folder Structure" href="doc/help/html/userdoc/pythontuto/ar01s02.html#id2516713"/>
+			<topic label="How to Run the Project" href="doc/help/html/userdoc/pythontuto/ar01s02.html#id2516714"/>
+			<topic label="How to Debug the Project" href="doc/help/html/userdoc/pythontuto/ar01s02.html#id2516715"/>
+		</topic>
+		<topic label="Public Documentation License Notice " href="doc/help/html/userdoc/pythontuto/ar01s03.html"/>
+	</topic>
+</toc>

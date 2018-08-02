@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * $RCSfile: OOoJavaPlugin.java,v $
+ * $RCSfile: OOoPythonPlugin.java,v $
  *
  * $Revision: 1.4 $
  *

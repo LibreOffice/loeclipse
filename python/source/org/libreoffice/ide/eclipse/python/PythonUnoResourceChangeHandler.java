@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * $RCSfile: JavaUnoResourceChangeHandler.java,v $
+ * $RCSfile: PythonUnoResourceChangeHandler.java,v $
  *
  * $Revision: 1.3 $
  *
@@ -59,7 +59,7 @@ public class PythonUnoResourceChangeHandler implements IStartup, IResourceChange
      */
     @Override
     public void earlyStartup() {
-        // Start listening the java resources changes
+        // Start listening the Python resources changes
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
         PluginLogger.info("Python UNO resources changes are now listened"); //$NON-NLS-1$
     }

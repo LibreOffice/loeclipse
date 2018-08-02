@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * $RCSfile: JavaBuilder.java,v $
+ * $RCSfile: PythonBuilder.java,v $
  *
  * $Revision: 1.7 $
  *
@@ -70,7 +70,7 @@ public class PythonBuilder implements ILanguageBuilder {
     /**
      * Constructor.
      *
-     * @param pLanguage the Java Language object
+     * @param pLanguage the Python Language object
      */
     public PythonBuilder(Language pLanguage) {
         mLanguage = pLanguage;
