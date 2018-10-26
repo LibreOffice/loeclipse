@@ -15,17 +15,18 @@ from com.sun.star.document import XEventListener
 class {0}(unohelper.Base, XJobExecutor, XEventListener):
     
     def trigger(self, args):
-    	pass
+        pass
         
     # boilerplate code below this point
     def __init__(self, context):
-    	pass
+        pass
         
     def createUnoService(self, name):
-    	pass
-        
+        pass
+
     def disposing(self, args):
         pass
+
     def notifyEvent(self, args):
         pass
 
