@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Python Plug-in for LibreOffice eclipse integration
+Bundle-Name: Python Plug-in for LibreOffice Eclipse integration
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.python;singleton:=true
 Bundle-Vendor: The Document Foundation
 Bundle-Version: 2.2.6
