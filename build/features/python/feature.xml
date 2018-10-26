@@ -6,11 +6,11 @@
       provider-name="The Document Foundation">
 
    <description>
-      This plugin provides helps with developing Python extensions for LibreOffice.
+      This plugin helps with developing Python extensions for LibreOffice.
    </description>
 
    <copyright>
-      Copyright: (c) 2005-2010 Cedric Bosdonnat
+      Copyright (c): 2018 The Document Foundation
    </copyright>
 
    <license url="http://www.gnu.org/licenses/lgpl.txt">
