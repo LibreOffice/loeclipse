@@ -36,7 +36,7 @@ You can also write to the [LibreOffice development mailing list](https://lists.f
 
 ### Setup Eclipse for development
 
-1. Install *Eclipse IDE for Eclipse Committers*. The *Eclipse IDE for Java Developers* will **not** work.
+1. Install *[Eclipse IDE for Eclipse Committers](http://www.eclipse.org/downloads/packages/)*. The *Eclipse IDE for Java Developers* will **not** work.
 2. Clone this repository
 3. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
 4. Add the LibreOffice jars to the build path
