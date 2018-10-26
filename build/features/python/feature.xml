@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.libreoffice.ide.eclipse.python"
-      label="LibreOffice Extension/Component Development - Python"
+      label="LibreOffice Extension Development - Python (please install PyDev first)"
       version="${python.Bundle-Version}"
       provider-name="The Document Foundation">
 
@@ -321,6 +321,7 @@ version for the Library.
 
    <requires>
       <import feature="org.eclipse.jdt"/>
+      <import feature="org.python.pydev.feature"/>
    </requires>
 
    <plugin
