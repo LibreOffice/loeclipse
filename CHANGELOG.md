@@ -1,5 +1,8 @@
 # Changelog
 
+## (unreleased)
+* Python support for extension development
+
 ## 2.3.0
 * #52 Ant export is now a separate export option
 * #51 Automatically add .oxt extension for OXT export
