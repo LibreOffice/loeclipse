@@ -16,7 +16,7 @@ For historic releases supporting older versions of LibreOffice (and OpenOffice) 
 * LibreOffice (5.0 or greater)
   * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
   * Windows: Install LibreOffice and the LibreOffice SDK from https://www.libreoffice.org/download
-  * macOS: No support for macOS currently (see bug #54)
+  * macOS: No support for macOS currently (see bug [#54](https://github.com/LibreOffice/loeclipse/issues/54))
 * Eclipse (4.5 "Mars" or greater)
   * Install "Eclipse IDE for Java Developers" from https://www.eclipse.org/downloads/packages/
 
@@ -37,6 +37,8 @@ You can choose to install Java or Python support or both.
 After installing the plugin, you can create new extensions/components by using *File->New->Project->LibreOffice*.
 
 You can also have a look at the [LibreOffice Starter Extension](https://github.com/smehrbrodt/libreoffice-starter-extension). It contains a step-by-step guide to get started with Java extension development.
+
+You find more resources for extension development on https://wiki.documentfoundation.org/Development/Extension_Development
 
 ## Features
 
