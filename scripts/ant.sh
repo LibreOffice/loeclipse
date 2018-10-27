@@ -2,5 +2,5 @@
 
 cd build
 ant purge
-ant -Dlibreoffice.home=/usr/lib/libreoffice -Declipse.home=~/Programme/eclipse/ -v
+ant -Dlibreoffice.home=/usr/lib/libreoffice -Declipse.home=/home/samuel/Programme/eclipse/ -v
 

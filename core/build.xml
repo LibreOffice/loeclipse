@@ -80,7 +80,7 @@
 	<target name="purge" depends="init-env">
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<delete dir="${core.out.path}" />
-		<delete dir="${core.basedir}/doc/help/html/api" />
+		<delete dir="${core.basedir}/../docs/loeclipse-doc/help/html/api" />
 	</target>
 
     <target name="core.compile" depends="init-env">
@@ -99,7 +99,7 @@
 			<zipfileset dir="${core.sources}" prefix="">
 				<exclude name="**/*.java"/>
 			</zipfileset>
-			<zipfileset dir="${core.basedir}/doc" prefix="doc"/>
+			<zipfileset dir="${core.basedir}/../docs/loeclipse-doc" prefix="doc"/>
 			<zipfileset dir="${core.basedir}/icons" prefix="icons"/>
 			<zipfileset dir="${core.basedir}/schema" prefix="schema"/>
 			<zipfileset dir="${core.basedir}" defaultexcludes="true" prefix="">
@@ -137,7 +137,7 @@
 			useexternalfile="true"
 			packagenames="org.libreoffice.ide.eclipse.core.*"
 			classpathref="core.dependencies.path"
-			destdir="${core.basedir}/doc/help/html/api">
+			destdir="${core.basedir}/../docs/loeclipse-doc/help/html/api">
 				
 			<packageset dir="${core.basedir}/source">
 				<include name="org/libreoffice/ide/eclipse/core/**"/>

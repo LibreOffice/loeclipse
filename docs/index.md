@@ -38,6 +38,8 @@ After installing the plugin, you can create new extensions/components by using *
 
 You can also have a look at the [LibreOffice Starter Extension](https://github.com/smehrbrodt/libreoffice-starter-extension). It contains a step-by-step guide to get started with Java extension development.
 
+More instructions on how to use the LOEclipse plugin are provided via the Eclipse Help system. Go to Help->Help Contents and select "LOEclipse User Guide"
+
 You find more resources for extension development on https://wiki.documentfoundation.org/Development/Extension_Development
 
 ## Features

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <?NLS TYPE="org.eclipse.help.toc"?> 
 
-<toc label="LibreOffice plugin help">
+<toc label="LOEclipse User Guide">
 
   <topic label="User documentation" href="doc/help/html/userdoc/index.html">
 	<link toc="doc/help/html/userdoc/javatuto/toc.xml"/>
