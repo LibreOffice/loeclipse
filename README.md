@@ -2,8 +2,9 @@
 
 This plugin helps with developing and debugging LibreOffice extensions/components from Eclipse.
 
-This release supports only LibreOffice 5.0 and upwards (due to some changed internal paths).
-It was tested with Eclipse Mars (4.5). Older versions might still work, but are untested.
+Requirements:
+* LibreOffice 5.0 or greater
+* Eclipse 4.5 "Mars" or greater
 
 For historic releases supporting older versions of LibreOffice (and OpenOffice) visit [this site](http://bosdonnat.fr/pages/libreoffice-eclipse.html).
 
@@ -32,7 +33,8 @@ You can also write to the [LibreOffice development mailing list](https://lists.f
 ### Prerequisites
 
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
-* Windows/macOS: Install LibreOffice and the LibreOffice SDK from http://www.libreoffice.org/download
+* Windows: Install LibreOffice and the LibreOffice SDK from http://www.libreoffice.org/download
+* macOS: No support for macOS currently (see bug #54)
 
 ### Setup Eclipse for development
 
