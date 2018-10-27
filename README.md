@@ -4,7 +4,7 @@
 
 This plugin helps with developing and debugging LibreOffice extensions/components from Eclipse.
 
-Please visit the http://libreoffice.github.io/loeclipse/ for installation instructions and user documentation.
+Please visit the https://libreoffice.github.io/loeclipse/ for installation instructions and user documentation.
 
 Only read further if you want to work on LOEclipse itself.
 
@@ -13,12 +13,12 @@ Only read further if you want to work on LOEclipse itself.
 ### Prerequisites
 
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
-* Windows: Install LibreOffice and the LibreOffice SDK from http://www.libreoffice.org/download
+* Windows: Install LibreOffice and the LibreOffice SDK from https://www.libreoffice.org/download
 * macOS: No support for macOS currently (see bug #54)
 
 ### Setup Eclipse for development
 
-1. Install *[Eclipse IDE for Eclipse Committers](http://www.eclipse.org/downloads/packages/)*. The *Eclipse IDE for Java Developers* will **not** work.
+1. Install *[Eclipse IDE for Eclipse Committers](https://www.eclipse.org/downloads/packages/)*. The *Eclipse IDE for Java Developers* will **not** work.
 2. Clone this repository
 3. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
 4. Add the LibreOffice jars to the build path
