@@ -1,34 +1,14 @@
 # LOEclipse
 
+## Introduction
+
 This plugin helps with developing and debugging LibreOffice extensions/components from Eclipse.
 
-Requirements:
-* LibreOffice 5.0 or greater
-* Eclipse 4.5 "Mars" or greater
+Please visit the http://libreoffice.github.io/loeclipse/ for installation instructions and user documentation.
 
-For historic releases supporting older versions of LibreOffice (and OpenOffice) visit [this site](http://bosdonnat.fr/pages/libreoffice-eclipse.html).
-
-## Installation
-
-Install this plugin via the [Eclipse Marketplace](https://marketplace.eclipse.org/content/loeclipse). Drag the button below to your running Eclipse instance.
-
-<a href="http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=2881446" class="drag" title="Drag to your running Eclipse workspace to install LOEclipse"><img class="img-responsive" src="https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png" alt="Drag to your running Eclipse workspace to install LOEclipse" /></a>
-
-After installing the plugin, you can create new extensions/components by using *File->New->Project->LibreOffice*.
-
-You can also have a look at the [LibreOffice Starter Extension](https://github.com/smehrbrodt/libreoffice-starter-extension). It contains a step-by-step guide to get started with extension development.
-
-## Documentation
-
-Developer and User Documentation is found in [core/doc/help/html](https://github.com/LibreOffice/loeclipse/tree/master/core/doc/help/html).
+Only read further if you want to work on LOEclipse itself.
 
 ## Development
-
-### Communication
-
-Feel free to join [#libreoffice-dev on freenode](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
-
-You can also write to the [LibreOffice development mailing list](https://lists.freedesktop.org/mailman/listinfo/libreoffice) if you have trouble working on this project.
 
 ### Prerequisites
 
@@ -52,6 +32,12 @@ You can also write to the [LibreOffice development mailing list](https://lists.f
    * Now there should be no more project errors.
 5. Go to *Run->Run Configurations*, and create a new run configuration of the type *Eclipse Application*. Now you can run or debug the LOEclipse plugin using this run configuration.
 
+### Getting help
+
+Join [#libreoffice-dev on freenode](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
+
+You can also write to the [LibreOffice development mailing list](https://lists.freedesktop.org/mailman/listinfo/libreoffice) if you have trouble working on this project.
+
 ## Release Management
 
 After releasing a new version, we need to build the update site. To do that, run the following command in the `build` folder:
@@ -66,19 +52,3 @@ You can also persist the options by setting the `ANT_ARGS` variable to
 
 ### Available build targets
 Run `ant help` to see the available build targets.
-
-## Features
-* UNO-IDL syntax highlighting
-* SDK and LibreOffice Configuration
-* Java code generation
-* New UNO project wizard
-* New UNO file wizard
-* New UNO service wizard
-* New UNO interface wizard
-* Skeleton-maker integration for basic components creation
-* URE configuration
-* New URE application wizard
-* Automatic component build and packaging
-* Automatic deployment to an existing LibreOffice installation
-* Remote debugging using the Eclipse debugger
-* Generate ant build script to build the extension without Eclipse
