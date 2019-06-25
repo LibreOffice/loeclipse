@@ -166,10 +166,10 @@ public class JavaBuilder implements ILanguageBuilder {
     private void runJavamaker(String firstModule, String oooTypesArgs,
         ISdk pSdk, IProject pPrj, File pTypesFile,
         File pBuildFolder, IProgressMonitor pMonitor) {
-        
+
         StringBuffer errBuf = new StringBuffer();
         try {
-            String cmdPattern = "javamaker -T {0}.* -nD -Gc -O {1} \"{2}\" {3}"; //$NON-NLS-1$
+            String cmdPattern = "javamaker -T {0}.* -nD -Gc -O \"{1}\" \"{2}\" {3}"; //$NON-NLS-1$
             String command = MessageFormat.format(cmdPattern, firstModule,
                 pBuildFolder.getAbsolutePath(),
                 pTypesFile.getAbsolutePath(),
@@ -189,7 +189,9 @@ public class JavaBuilder implements ILanguageBuilder {
                 line = lineReader.readLine();
             }
 
-            PluginLogger.debug(errBuf.toString());
+            if (errBuf.length() > 0) {
+                PluginLogger.debug(errBuf.toString());
+            }
         } catch (InterruptedException e) {
             PluginLogger.error(
                 Messages.getString("Language.CreateCodeError"), e); //$NON-NLS-1$
