@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.libreoffice.ide.eclipse_3.0.1.jar" id="org.libreoffice.ide.eclipse" version="3.0.1"/>
+</site>
