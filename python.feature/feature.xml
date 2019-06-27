@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.libreoffice.ide.eclipse"
-      label="Loeclipse"
-      version="3.0.1"
-      provider-name="The Document Foundation">
+      id="org.libreoffice.ide.eclipse.python"
+      label="Loeclipse.Python"
+      version="3.0.1">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -21,21 +20,14 @@
          id="org.libreoffice.ide.eclipse.core"
          download-size="0"
          install-size="0"
-         version="3.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="org.libreoffice.ide.eclipse.java"
-         download-size="0"
-         install-size="0"
-         version="3.0.1"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.libreoffice.ide.eclipse.python"
          download-size="0"
          install-size="0"
-         version="3.0.1"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
