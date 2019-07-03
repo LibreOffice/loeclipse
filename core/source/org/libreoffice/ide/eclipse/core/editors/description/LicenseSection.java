@@ -91,7 +91,8 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
     @Override
     public void loadData() {
         getModel().setSuspendEvent(true);
-        mFileTxt.setText(getModel().getLicenses().get(mCurrentLocale));
+        if (!getModel().getLicenses().isEmpty())
+            mFileTxt.setText(getModel().getLicenses().get(mCurrentLocale));
         mSuppressUpdateBtn.setSelection(getModel().isSuppressOnUpdate());
         mUserAcceptBtn.setSelection(getModel().isAcceptByUser());
         getModel().setSuspendEvent(false);

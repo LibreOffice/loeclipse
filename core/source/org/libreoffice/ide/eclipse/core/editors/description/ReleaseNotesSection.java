@@ -75,7 +75,8 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
     @Override
     public void loadData() {
         getModel().setSuspendEvent(true);
-        mUrlTxt.setText(getModel().getReleaseNotes().get(mCurrentLocale));
+        if (!getModel().getReleaseNotes().isEmpty())
+            mUrlTxt.setText(getModel().getReleaseNotes().get(mCurrentLocale));
         getModel().setSuspendEvent(false);
     }
 
