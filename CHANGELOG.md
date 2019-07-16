@@ -3,6 +3,7 @@
 ## Unreleased
 * #72 Fix running javamaker with spaces in project path
 * Load description.xml editor even when locale is missing
+* Remove crashreport service (Service no longer exists)
 
 ## 3.0.0
 * Python support for extension development
