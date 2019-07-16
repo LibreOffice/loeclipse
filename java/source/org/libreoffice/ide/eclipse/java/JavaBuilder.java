@@ -128,6 +128,13 @@ public class JavaBuilder implements ILanguageBuilder {
 
         IFolder buildDir = pUnoProject.getFolder(pUnoProject.getBuildPath());
         buildDir.accept(visitor);
+        
+        // Adding the source directory is not strictly necessary
+        // (and it has practically no impact on the generated jar).
+        // But if the build path is empty, the build fails.
+        // So the contract seems to be that setElements must be called with a non-empty list of files.
+        IFolder sourceDir = pUnoProject.getFolder(pUnoProject.getSourcePath());
+        sourceDir.accept(visitor);
         description.setElements(visitor.getFiles());
 
         // Create the Jar file
