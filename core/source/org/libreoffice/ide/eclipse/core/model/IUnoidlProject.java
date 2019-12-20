@@ -254,12 +254,12 @@ public interface IUnoidlProject {
     public IPath getUrdPath();
 
     /**
-     * @return the path to the project's folder containing the distribution .oxf file.
+     * @return the path to the project's folder containing the distribution .oxt file.
      */
     public IPath getDistPath();
 
     /**
-     * @return the folder folder containing the distribution .oxf file. If the folder does not exist then it is created.
+     * @return the folder folder containing the distribution .oxt file. If the folder does not exist then it is created.
      * @throws CoreException
      *             if we were unable to create the folder.
      */

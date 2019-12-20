@@ -93,10 +93,12 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
     @Override
     public void loadData() {
         getModel().setSuspendEvent(true);
-        mNameTxt.setText(getModel().getDisplayNames().get(mCurrentLocale));
+        if (!getModel().getDisplayNames().isEmpty())
+            mNameTxt.setText(getModel().getDisplayNames().get(mCurrentLocale));
         mIdTxt.setText(getModel().getId());
         mVersionTxt.setText(getModel().getVersion());
-        mDescriptionTxt.setText(getModel().getDescriptions().get(mCurrentLocale));
+        if (!getModel().getDescriptions().isEmpty())
+            mDescriptionTxt.setText(getModel().getDescriptions().get(mCurrentLocale));
         mIconText.setText(getModel().getDefaultIcon());
         mIconHCText.setText(getModel().getHCIcon());
         getModel().setSuspendEvent(false);
