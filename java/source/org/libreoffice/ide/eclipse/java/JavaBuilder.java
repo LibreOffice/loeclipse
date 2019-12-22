@@ -47,9 +47,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -76,6 +80,7 @@ import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
 import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 import org.libreoffice.ide.eclipse.java.build.FilesVisitor;
+import org.libreoffice.ide.eclipse.java.build.Messages;
 import org.libreoffice.ide.eclipse.java.build.UnoManifestProvider;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
@@ -84,6 +89,7 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  */
 public class JavaBuilder implements ILanguageBuilder {
 
+    private static final String LIBS_DIR_NAME = "libs"; // subdirectory in Project, holds external jars
     private Language mLanguage;
 
     /**
@@ -128,7 +134,7 @@ public class JavaBuilder implements ILanguageBuilder {
 
         IFolder buildDir = pUnoProject.getFolder(pUnoProject.getBuildPath());
         buildDir.accept(visitor);
-        
+
         // Adding the source directory is not strictly necessary
         // (and it has practically no impact on the generated jar).
         // But if the build path is empty, the build fails.
@@ -284,12 +290,24 @@ public class JavaBuilder implements ILanguageBuilder {
         // Add all the jar dependencies
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
-        ArrayList<IFile> libs = getLibs(javaPrj);
+        List<IFile> libs = getLibs(javaPrj);
         for (IFile lib : libs) {
             File jarFile = SystemHelper.getFile(lib);
             pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
         }
 
+    }
+
+    /**
+     * either get list from libs dir when exist, or from the classpath
+     * @param pJavaPrj
+     * @return
+     */
+    private List<IFile> getLibs(IJavaProject pJavaPrj) {
+        if (pJavaPrj.getProject().getFolder(LIBS_DIR_NAME).exists()) {
+            return getLibsFromLibsDir(pJavaPrj);
+        }
+        return getLibsFromClasspath(pJavaPrj);
     }
 
     /**
@@ -299,8 +317,8 @@ public class JavaBuilder implements ILanguageBuilder {
      * @param pJavaPrj the project from which to extract the libraries
      * @return a list of all the File pointing to the libraries.
      */
-    private ArrayList<IFile> getLibs(IJavaProject pJavaPrj) {
-        ArrayList<IFile> libs = new ArrayList<IFile>();
+    private List<IFile> getLibsFromClasspath(IJavaProject pJavaPrj) {
+        ArrayList<IFile> libs = new ArrayList<>();
         try {
             IClasspathEntry[] entries = pJavaPrj.getResolvedClasspath(true);
             for (IClasspathEntry entry : entries) {
@@ -325,7 +343,30 @@ public class JavaBuilder implements ILanguageBuilder {
         } catch (JavaModelException e) {
             // Enable to add some missing library
         }
+        return libs;
+    }
 
+    /**
+     * when an libs dir exist in the project then return a list of jars
+     * @param pJavaPrj
+     * @return list of jar files
+     */
+    private List<IFile> getLibsFromLibsDir(IJavaProject javaProject) {
+        List<IFile> libs = new ArrayList<>();
+        IFolder libFolder = javaProject.getProject().getFolder(LIBS_DIR_NAME);
+        if (libFolder.exists()) {
+            IPath rawLoc = libFolder.getRawLocation();
+            String libFolderOsString = rawLoc.toOSString();
+            try (Stream<java.nio.file.Path> walk = Files.walk(Paths.get(libFolderOsString))) {
+                libs = walk.map(jarFile -> {
+                    return libFolder.getFile(jarFile.getFileName().toString());
+                }).filter(f -> f.getFileExtension() != null && f.getFileExtension().equalsIgnoreCase("jar"))
+                    .collect(Collectors.toList());
+            } catch (IOException e) {
+                PluginLogger.error(
+                    Messages.getString("JavaBuilder.GetExternalLibsFailed"), e);
+            }
+        }
         return libs;
     }
 }
