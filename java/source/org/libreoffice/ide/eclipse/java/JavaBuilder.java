@@ -318,6 +318,8 @@ public class JavaBuilder implements ILanguageBuilder {
      * @return a list of all the File pointing to the libraries.
      */
     private List<IFile> getLibsFromClasspath(IJavaProject pJavaPrj) {
+        PluginLogger.debug("Collecting Jars from .classpath");
+
         ArrayList<IFile> libs = new ArrayList<>();
         try {
             IClasspathEntry[] entries = pJavaPrj.getResolvedClasspath(true);
@@ -352,6 +354,8 @@ public class JavaBuilder implements ILanguageBuilder {
      * @return list of jar files
      */
     private List<IFile> getLibsFromLibsDir(IJavaProject javaProject) {
+        PluginLogger.debug("Collecting Jars from " + LIBS_DIR_NAME);
+
         List<IFile> libs = new ArrayList<>();
         IFolder libFolder = javaProject.getProject().getFolder(LIBS_DIR_NAME);
         if (libFolder.exists()) {
