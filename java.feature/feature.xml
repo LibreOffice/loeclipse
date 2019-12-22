@@ -2,7 +2,7 @@
 <feature
       id="org.libreoffice.ide.eclipse.java"
       label="Loeclipse.Java"
-      version="3.0.1"
+      version="3.0.2"
       provider-name="The Document Foundation">
 
    <description url="http://www.example.com/description">
@@ -44,14 +44,14 @@
          id="org.libreoffice.ide.eclipse.core"
          download-size="0"
          install-size="0"
-         version="3.0.1"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.libreoffice.ide.eclipse.java"
          download-size="0"
          install-size="0"
-         version="3.0.1"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
