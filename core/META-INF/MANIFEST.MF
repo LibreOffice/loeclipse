@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.libreoffice.ide.eclipse.core;singleton:=true
 Bundle-Vendor: The Document Foundation
 Bundle-Version: 3.0.1
 Bundle-Activator: org.libreoffice.ide.eclipse.core.OOEclipsePlugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
