@@ -1,0 +1,41 @@
+
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'org.apache.commons:commons-lang3:3.+'
+    implementation 'org.apache.logging.log4j:log4j-core:2.+'
+
+    testImplementation 'junit:junit:4.+'
+    testImplementation 'org.assertj:assertj-core:3.+'
+    testImplementation 'org.mockito:mockito-core:3.+'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.+'
+}
+
+eclipse.classpath.file {
+   withXml { 
+     def node = it.asNode()
+     def alreadyExist = node.find { entry ->
+       entry.path.text().endsWith ("LibreOffice 6.2") 
+     }
+     
+     if (!alreadyExist) {
+		node.appendNode('classpathentry', 
+		        [kind: 'con', path: 'org.libreoffice.ide.eclipse.java.OOO_CONTAINER/LibreOffice 6.2'])
+		}
+     }
+}
+
+task copyRuntimeLibs(type: Sync) {
+   	from configurations.runtimeClasspath
+   	into "libs"
+}

@@ -2,7 +2,7 @@
 <feature
       id="org.libreoffice.ide.eclipse.java"
       label="Loeclipse.Java"
-      version="3.0.2"
+      version="3.0.1"
       provider-name="The Document Foundation">
 
    <description url="http://www.example.com/description">
