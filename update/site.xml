@@ -6,5 +6,8 @@
    <feature url="features/org.libreoffice.ide.eclipse.python_3.0.1.jar" id="org.libreoffice.ide.eclipse.python" version="3.0.1">
       <category name="loeclipse"/>
    </feature>
+   <feature url="features/org.libreoffice.ide.eclipse.core_3.0.1.jar" id="org.libreoffice.ide.eclipse.core" version="3.0.1">
+      <category name="loeclipse"/>
+   </feature>
    <category-def name="loeclipse" label="loeclipse"/>
 </site>
