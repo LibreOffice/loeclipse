@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: PythonBuilder.java,v $
- *
- * $Revision: 1.7 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -130,7 +123,7 @@ public class PythonBuilder implements ILanguageBuilder {
      * directory or one of its sub-folder.
      *
      * @param pPythonPrj the project from which to get the Python files
-     * @return a list of all the those Python Files 
+     * @return a list of all the those Python Files
      */
     private void getPythonFiles(IFolder sourceFolder, ArrayList<IFile> pythonFiles, IUnoidlProject pUnoPrj) {
         try {

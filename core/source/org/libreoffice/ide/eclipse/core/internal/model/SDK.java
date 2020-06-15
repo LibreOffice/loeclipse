@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: SDK.java,v $
- *
- * $Revision: 1.11 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -480,7 +473,7 @@ public class SDK implements ISdk, ITableElement {
      * @param pSettingsFile
      *            the setting directory file handle.
      *
-     * @return String The sdk version number 
+     * @return String The sdk version number
      *
      * @throws InvalidConfigException
      *             Exception thrown when one of the following problems happened

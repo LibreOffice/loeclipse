@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: PythonProjectHandler.java,v $
- *
- * $Revision: 1.10 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -118,7 +111,7 @@ public class PythonProjectHandler implements IProjectHandler {
             // Adding the nature
             newNatureIds[natureIds.length] = PYTHON_NATURE;
 
-            // Adding the buildCommand org.python.pydev.PyDevBuilder under buildSpec in .project file 
+            // Adding the buildCommand org.python.pydev.PyDevBuilder under buildSpec in .project file
             ICommand[] builders = description.getBuildSpec();
 
             ICommand typesbuilderCommand = description.newCommand();

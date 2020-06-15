@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- *$RCSfile: BuildScriptExportWizard.java,v $
- *
- * $Revision: 1.0 $
- *
- * last change: $Author: shobhanmandal $ $Date: 2018/03/03 18:36:29 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *

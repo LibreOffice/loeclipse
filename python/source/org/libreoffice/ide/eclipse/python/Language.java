@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: Language.java,v $
- *
- * $Revision: 1.6 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -118,7 +111,7 @@ public class Language extends AbstractLanguage {
     };
 
     /**
-     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging 
+     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging
      */
     private class debugSeverStart implements Runnable {
 
