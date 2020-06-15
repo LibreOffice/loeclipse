@@ -2,6 +2,8 @@
 
 ## unreleased
 * New Java baseline: Java 8 now required (instead of Java 7)
+* Gradle/Buildship support:
+  * When subdir "libs" in Project root dir exist, then all the Jars are as external libs
 
 ## 3.0.1
 * #72 Fix running javamaker with spaces in project path
