@@ -90,7 +90,9 @@ public class JavaProjectHandler implements IProjectHandler {
     private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
-    private static final String[] KEPT_JARS = { "unoil.jar", //$NON-NLS-1$
+    private static final String[] KEPT_JARS = {
+        "libreoffice.jar", //$NON-NLS-1$
+        "unoil.jar", //$NON-NLS-1$
         "ridl.jar", //$NON-NLS-1$
         "juh.jar", //$NON-NLS-1$
         "jurt.jar", //$NON-NLS-1$
