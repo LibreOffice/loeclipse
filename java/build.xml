@@ -55,6 +55,7 @@
 	<target name="init-env" unless="java.nobuild">
 		<dirname property="java.basedir" file="${ant.file.java}"/>
 		
+		<property file = "../build.properties"/>
 		<property name="java.out.path" value="${java.basedir}/bin/ant" />
 		<property name="java.out.classes" value="${java.out.path}/classes"/>
 		<property name="java.sources" value="${java.basedir}/source"/>
@@ -89,7 +90,7 @@
 	<target name="jodconnector.compile">
 		<mkdir dir="${jodconnector.classes}"/>
 		<javac srcdir="${java.sources}" destdir="${jodconnector.classes}"
-			target="1.7" source="1.7"
+			target="${java_target}" source="${java_source}"
 			debug="true"
 			classpathref="office.class.path" 
 			includes="com/artofsolving/**" defaultexcludes="true">
@@ -105,7 +106,7 @@
 	
 	<target name="java.compile" depends="init-env" unless="java.nobuild">
 		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
-			target="1.7" source="1.7"
+			target="${java_target}" source="${java_source}"
 			debug="${debug}"
 			classpathref="java.dependencies.path" 
 			excludes="**/*Test.*,com/artofsolving/**">

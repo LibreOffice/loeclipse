@@ -55,6 +55,7 @@
 	<target name="init-env" unless="python.nobuild">
 		<dirname property="python.basedir" file="${ant.file.python}"/>
 		
+		<property file = "../build.properties"/>
 		<property name="python.out.path" value="${python.basedir}/bin/ant" />
 		<property name="python.out.classes" value="${python.out.path}/classes"/>
 		<property name="python.sources" value="${python.basedir}/source"/>
@@ -91,7 +92,7 @@
 	
 	<target name="python.compile" depends="init-env" unless="python.nobuild">
 		<javac srcdir="${python.sources}" destdir="${python.out.classes}"
-			target="1.7" source="1.7"
+			target="${java_target}" source="${java_source}"
 			debug="${debug}"
 			classpathref="python.dependencies.path">
 		</javac>

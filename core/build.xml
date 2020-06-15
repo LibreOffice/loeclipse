@@ -52,6 +52,7 @@
 	<target name="init-env">
 		<dirname property="core.basedir" file="${ant.file.core}"/>
 		
+		<property file = "../build.properties"/>
 		<property name="core.out.path" value="${core.basedir}/bin/ant" />
 		<property name="core.out.classes" value="${core.out.path}/classes"/>
 		<property name="core.sources" value="${core.basedir}/source"/>
@@ -85,7 +86,7 @@
 
     <target name="core.compile" depends="init-env">
 		<javac srcdir="${core.basedir}/source" destdir="${core.out.classes}"
-			target="1.7" source="1.7"
+			target="${java_target}" source="${java_source}"
 			debug="${debug}"
 			classpathref="core.dependencies.path" 
 			excludes="**/unittests/**"/>

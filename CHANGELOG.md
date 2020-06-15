@@ -1,5 +1,8 @@
 # Changelog
 
+## unreleased
+* New Java baseline: Java 8 now required (instead of Java 7)
+
 ## 3.0.1
 * #72 Fix running javamaker with spaces in project path
 * Load description.xml editor even when locale is missing
