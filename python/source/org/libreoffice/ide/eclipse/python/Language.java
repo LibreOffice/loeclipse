@@ -104,7 +104,7 @@ public class Language extends AbstractLanguage {
     public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
         String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
         pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
-            "org.eclipse.jd/t.launching.sourceLocator.JavaSourceLookupDirector");
+            "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
         pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
             "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
         pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
