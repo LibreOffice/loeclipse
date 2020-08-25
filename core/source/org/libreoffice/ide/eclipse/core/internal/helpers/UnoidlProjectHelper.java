@@ -510,7 +510,7 @@ public class UnoidlProjectHelper {
         // Add content to the package
         if (libFile.exists())
             unoPackage.addTypelibraryFile(UnoPackage.getPathRelativeToBase(libFile, prjFile), libFile); //$NON-NLS-1$
-        pPrj.getLanguage().getLanguageBuidler().fillUnoPackage(unoPackage, pPrj);
+        pPrj.getLanguage().getLanguageBuilder().fillUnoPackage(unoPackage, pPrj);
 
         return unoPackage;
     }

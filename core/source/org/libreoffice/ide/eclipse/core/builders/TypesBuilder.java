@@ -189,7 +189,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         File types = pPrj.getLocation().append(unoprj.getTypesPath()).toFile();
         File build = pPrj.getLocation().append(unoprj.getBuildPath()).toFile();
 
-        ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuidler();
+        ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuilder();
         languageBuilder.generateFromTypes(unoprj.getSdk(), unoprj.getOOo(), pPrj, types, build, unoprj.getRootModule(),
             pMonitor);
 

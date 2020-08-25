@@ -67,7 +67,7 @@ public class Language extends AbstractLanguage {
      * {@inheritDoc}
      */
     @Override
-    public ILanguageBuilder getLanguageBuidler() {
+    public ILanguageBuilder getLanguageBuilder() {
         return new JavaBuilder(this);
     }
 

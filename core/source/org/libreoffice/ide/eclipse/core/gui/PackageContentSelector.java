@@ -178,7 +178,7 @@ public class PackageContentSelector extends Composite {
 
         // Export the library
         IFile library = null;
-        ILanguageBuilder langBuilder = pProject.getLanguage().getLanguageBuidler();
+        ILanguageBuilder langBuilder = pProject.getLanguage().getLanguageBuilder();
         library = langBuilder.createLibrary(pProject);
 
         // Create the package model

@@ -82,7 +82,7 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         if (prj != null) {
             try {
-                ILanguageBuilder langBuilder = prj.getLanguage().getLanguageBuidler();
+                ILanguageBuilder langBuilder = prj.getLanguage().getLanguageBuilder();
                 langBuilder.createLibrary(prj);
 
                 // Run the URE Applicaton using IOOo.runUno()

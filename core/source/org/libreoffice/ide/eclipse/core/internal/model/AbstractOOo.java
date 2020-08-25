@@ -334,7 +334,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             " -l " + libpath + //$NON-NLS-1$
             " -- " + pArgs; //$NON-NLS-1$
 
-        String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
+        String[] env = pPrj.getLanguage().getLanguageBuilder().getBuildEnv(pPrj);
 
         IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
 
@@ -369,7 +369,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
         IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor) {
         try {
             IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
-            String[] env = pPrj.getLanguage().getLanguageBuidler().getBuildEnv(pPrj);
+            String[] env = pPrj.getLanguage().getLanguageBuilder().getBuildEnv(pPrj);
 
             String pathSeparator = System.getProperty("path.separator");
             String[] sPaths = pPrj.getOOo().getBinPath();
