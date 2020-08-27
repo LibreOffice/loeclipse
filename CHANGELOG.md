@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.1
+* Improved Python project support
+  * Fixed run configuration
+  * Correctly add multiple python files to build
+
 ## 4.0.0
 * New Java baseline: Java 8 now required (instead of Java 7)
 * Support LibreOffice 7.0 (recognize new libreoffice.jar)
