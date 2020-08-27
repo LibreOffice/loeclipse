@@ -184,7 +184,7 @@ public class PackageContentSelector extends Composite {
         // Create the package model
         pack = UnoidlProjectHelper.createMinimalUnoPackage(pProject, pDestFile);
 
-        if (library.exists()) {
+        if (library != null && library.exists()) {
             pack.addToClean(SystemHelper.getFile(library));
             File libraryFile = SystemHelper.getFile(library);
             pack.addFile(UnoPackage.getPathRelativeToBase(libraryFile, prjFile), libraryFile);

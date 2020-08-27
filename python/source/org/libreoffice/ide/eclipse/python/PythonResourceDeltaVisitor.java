@@ -37,7 +37,6 @@
 package org.libreoffice.ide.eclipse.python;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -88,19 +87,7 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
      */
     private void removeImplementation(IResourceDelta pDelta,
         IUnoidlProject pUnoprj) {
-        //        IResource res = pDelta.getResource();
-        //        if (res.getName().endsWith(".java")) { //$NON-NLS-1$
-        //            String prjPath = pDelta.getProjectRelativePath().toString();
-        //            prjPath = prjPath.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
-        //            prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
-        //
-        //            Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
-        //            for (String implName : classes) {
-        //                if (prjPath.endsWith(implName)) {
-        //                    RegistrationHelper.removeImplementation(pUnoprj, implName);
-        //                }
-        //            }
-        //        }
+        // Nothing to do for Python
     }
 
     /**
@@ -110,10 +97,7 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
      * @param pUnoProject the concerned UNO project
      */
     private void addImplementation(IResourceDelta pDelta, IUnoidlProject pUnoProject) {
-        //            String className = isJavaServiceImpl(pDelta.getResource());
-        //            if (className != null) {
-        //                RegistrationHelper.addImplementation(pUnoProject, className);
-        //            }
+        // Nothing to do for Python
     }
 
 }

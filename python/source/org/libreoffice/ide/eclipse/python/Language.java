@@ -68,7 +68,7 @@ public class Language extends AbstractLanguage {
      */
     @Override
     public ILanguageBuilder getLanguageBuilder() {
-        return new PythonBuilder(this);
+        return new PythonBuilder();
     }
 
     /**

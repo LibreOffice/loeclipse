@@ -57,26 +57,13 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  * The language builder implementation for Python.
  */
 public class PythonBuilder implements ILanguageBuilder {
-
-    private Language mLanguage;
-
-    /**
-     * Constructor.
-     *
-     * @param pLanguage the Python Language object
-     */
-    public PythonBuilder(Language pLanguage) {
-        mLanguage = pLanguage;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
-        IFile jarFile = ((PythonProjectHandler) mLanguage.getProjectHandler()).getJarFile(pUnoProject);
-
-        return jarFile;
+        // Nothing to do for Python
+        return null;
     }
 
     /**
@@ -85,7 +72,7 @@ public class PythonBuilder implements ILanguageBuilder {
     @Override
     public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
         File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
-
+        // Nothing to do for Python
     }
 
     /**
@@ -93,7 +80,6 @@ public class PythonBuilder implements ILanguageBuilder {
      */
     @Override
     public String[] getBuildEnv(IUnoidlProject pUnoProject) {
-
         return new String[0];
     }
 
@@ -102,20 +88,24 @@ public class PythonBuilder implements ILanguageBuilder {
      */
     @Override
     public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
+        File prjFile = SystemHelper.getFile(pUnoPrj);
+
+        // Add the "main" python file as component
+        String mainPythonFilePath = pUnoPrj.getSourcePath() + "/" + pUnoPrj.getName().replace(" ", "") + ".py";
+        File mainPythonFile = SystemHelper.getFile(pUnoPrj.getFile(mainPythonFilePath));
+        pUnoPackage.addComponentFile(
+            UnoPackage.getPathRelativeToBase(mainPythonFile, prjFile),
+            mainPythonFile, "Python");
 
         //All the constituent Python files of the project are added
-        File prjFile = SystemHelper.getFile(pUnoPrj);
         IFolder sourceFolder = pUnoPrj.getFolder(pUnoPrj.getSourcePath());
         ArrayList<IFile> pythonFiles = new ArrayList<IFile>();
         getPythonFiles(sourceFolder, pythonFiles, pUnoPrj);
 
         for (IFile pythonFile : pythonFiles) {
             File eachFile = SystemHelper.getFile(pythonFile);
-            pUnoPackage.addComponentFile(
-                UnoPackage.getPathRelativeToBase(eachFile, prjFile),
-                eachFile, "Python"); //$NON-NLS-1$
+            pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(eachFile, prjFile), eachFile);
         }
-
     }
 
     /**
@@ -131,17 +121,14 @@ public class PythonBuilder implements ILanguageBuilder {
                 if (member.getType() == 2) { // '1' is for file and '2' is for folder
                     IFolder subSourceFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(member.getFullPath());
                     getPythonFiles(subSourceFolder, pythonFiles, pUnoPrj);
-                } else {
-                    IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(member.getFullPath());
-                    pythonFiles.add(file);
+                    continue;
                 }
-
+                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(member.getFullPath());
+                pythonFiles.add(file);
             }
         } catch (Exception e) {
             PluginLogger.error(
                 Messages.getString("PythonExport.SourceFolderError"), e);
-
         }
-
     }
 }
