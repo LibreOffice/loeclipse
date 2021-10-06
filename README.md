@@ -34,7 +34,7 @@ Only read further if you want to work on LOEclipse itself.
 
 ### Getting help
 
-Join [#libreoffice-dev on freenode](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
+Join [#libreoffice-dev](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
 
 You can also write to the [LibreOffice development mailing list](https://lists.freedesktop.org/mailman/listinfo/libreoffice) if you have trouble working on this project.
 
