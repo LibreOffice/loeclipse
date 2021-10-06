@@ -40,7 +40,7 @@ You can also have a look at the [LibreOffice Starter Extension](https://github.c
 
 More instructions on how to use the LOEclipse plugin are provided via the Eclipse Help system. Go to Help->Help Contents and select "LOEclipse User Guide"
 
-You find more resources for extension development on https://wiki.documentfoundation.org/Development/Extension_Development
+You find more resources for extension development on [wiki.documentfoundation.org/Development/Extension_Development](https://wiki.documentfoundation.org/Development/Extension_Development).
 
 ## Features
 
