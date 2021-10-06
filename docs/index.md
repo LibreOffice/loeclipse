@@ -15,10 +15,10 @@ For historic releases supporting older versions of LibreOffice (and OpenOffice) 
 
 * LibreOffice (5.0 or greater)
   * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
-  * Windows: Install LibreOffice and the LibreOffice SDK from https://www.libreoffice.org/download
+  * Windows: Install LibreOffice and the LibreOffice SDK from [libreoffice.org/download](https://www.libreoffice.org/download)
   * macOS: No support for macOS currently (see bug [#54](https://github.com/LibreOffice/loeclipse/issues/54))
 * Eclipse (4.5 "Mars" or greater)
-  * Install "Eclipse IDE for Java Developers" from https://www.eclipse.org/downloads/packages/
+  * Install "Eclipse IDE for Java Developers" from [eclipse.org/downloads/packages](https://www.eclipse.org/downloads/packages/)
 
 
 Note that PyDev is required if you want to have (optional) Python extension support. You need to [install](https://marketplace.eclipse.org/content/pydev-python-ide-eclipse) that first manually.
