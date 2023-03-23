@@ -12,6 +12,8 @@ Only read further if you want to work on LOEclipse itself.
 
 ### Prerequisites
 
+*LibreOffice 7.0 or newer is required.*
+
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
 * Windows: Install LibreOffice and the LibreOffice SDK from https://www.libreoffice.org/download
 * macOS: No support for macOS currently (see bug #54)
@@ -25,7 +27,7 @@ Only read further if you want to work on LOEclipse itself.
    * Go to *Window->Preferences* in Eclipse and open the *Java->Build path->User Libraries* configuration page.
    * Add a new library named `LO-Classes`
    * Select the Library, click *Add External Jars*
-   * Add the LibreOffice jars `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. You find them here:
+   * Add the LibreOffice jars `libreoffice.jar unoil.jar`. You find them here:
      * macOS: `/Applications/LibreOffice.app/Contents/Resources/java`
      * Ubuntu: `/usr/lib/libreoffice/program/classes`
      * Windows: `C:\Program Files[ (x86)]\LibreOffice 5\program\classes\`
