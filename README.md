@@ -42,6 +42,21 @@ You can also write to the [LibreOffice development mailing list](https://lists.f
 
 ## Release Management
 
+### Release new version
+
+* Update `CHANGELOG.md`
+* Bump version in `core/META-INF/MANIFEST.MF` `java/META-INF/MANIFEST.MF` `python/META-INF/MANIFEST.MF`
+  * Use [Semantic Versioning](https://semver.org/) for version number bumps
+* Commit changes with message "Release x.y.z"
+* Create a tag: `git tag vX.Y.Z` (e.g. `git tag v4.0.2`)
+* Push changes: `git push && git push --tags`
+* Create a new release on https://github.com/LibreOffice/loeclipse/releases
+  * Choose previously created tag
+  * Release title is `vx.y.z` (e.g. v4.0.2)
+  * Copy the changelog as release notes
+
+### Publish new version
+
 After releasing a new version, we need to build the update site. To do that, run the following command in the `build` folder:
 
 `ant -Dlibreoffice.home=... -Declipse.home=...`
@@ -53,4 +68,5 @@ You can also persist the options by setting the `ANT_ARGS` variable to
 `-Dlibreoffice.home=... -Declipse.home=...`.
 
 ### Available build targets
+
 Run `ant help` to see the available build targets.
