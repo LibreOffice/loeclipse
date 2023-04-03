@@ -447,7 +447,7 @@ public class SDKTable extends AbstractTable {
                 updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
                 result = true;
             } catch (InvalidConfigException e) {
-                if (pProperty.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
+                if ((pProperty==null || pProperty.equals(P_SDK_PATH)) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
                         e.getMessage(), e));
                 } else {
