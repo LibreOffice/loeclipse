@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.2
+* #98 Support LibreOffice >= 7.5
+* #85 Detect subfolders in `lib` directory
+
 ## 4.0.1
 * Improved Python project support
   * Fixed run configuration
