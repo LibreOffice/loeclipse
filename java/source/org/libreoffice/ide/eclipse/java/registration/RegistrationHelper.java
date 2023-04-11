@@ -46,6 +46,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -247,32 +248,8 @@ public abstract class RegistrationHelper {
             errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerNotAFile");
         } else if (!Files.isReadable(listFile)) {
             errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerNotReadable");
-        } else {
-            // everything is right, check if the file is empty
-            boolean checkFileEmpty = true;
-            FileInputStream in = null;
-            BufferedReader reader = null;
-            try {
-                in = new FileInputStream(classesListFile);
-                reader = new BufferedReader(new InputStreamReader(in));
-                if (reader.readLine() == null) {
-                    checkFileEmpty = true;
-                } else {
-                    checkFileEmpty = false;
-                }
-            } catch (Exception e) {
-                PluginLogger.error("Error checking RegistrationHandler.classes: " + classesListFile, e);
-                checkFileEmpty = true;
-            } finally {
-                try {
-                    reader.close();
-                    in.close();
-                } catch (Exception e) {
-                }
-            }
-            if (checkFileEmpty) {
-                errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError");
-            }
+        } else if (classesListFile.length() == 0) {
+            errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError");
         }
 
         if (StringUtils.isNotEmpty(errMsg)) {
