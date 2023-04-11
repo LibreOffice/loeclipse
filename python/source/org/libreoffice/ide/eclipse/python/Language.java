@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: Language.java,v $
- *
- * $Revision: 1.6 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:38 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -74,8 +67,8 @@ public class Language extends AbstractLanguage {
      * {@inheritDoc}
      */
     @Override
-    public ILanguageBuilder getLanguageBuidler() {
-        return new PythonBuilder(this);
+    public ILanguageBuilder getLanguageBuilder() {
+        return new PythonBuilder();
     }
 
     /**
@@ -111,14 +104,14 @@ public class Language extends AbstractLanguage {
     public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
         String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
         pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
-            "org.eclipse.jd/t.launching.sourceLocator.JavaSourceLookupDirector");
+            "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
         pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
             "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
         pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
     };
 
     /**
-     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging 
+     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging
      */
     private class debugSeverStart implements Runnable {
 

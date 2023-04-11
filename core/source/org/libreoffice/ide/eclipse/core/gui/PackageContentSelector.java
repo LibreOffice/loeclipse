@@ -178,13 +178,13 @@ public class PackageContentSelector extends Composite {
 
         // Export the library
         IFile library = null;
-        ILanguageBuilder langBuilder = pProject.getLanguage().getLanguageBuidler();
+        ILanguageBuilder langBuilder = pProject.getLanguage().getLanguageBuilder();
         library = langBuilder.createLibrary(pProject);
 
         // Create the package model
         pack = UnoidlProjectHelper.createMinimalUnoPackage(pProject, pDestFile);
 
-        if (library.exists()) {
+        if (library != null && library.exists()) {
             pack.addToClean(SystemHelper.getFile(library));
             File libraryFile = SystemHelper.getFile(library);
             pack.addFile(UnoPackage.getPathRelativeToBase(libraryFile, prjFile), libraryFile);

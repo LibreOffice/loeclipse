@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ *
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ ====================================================================== -->
+
+<project name="core" default="core.error">
+	<target name="core.error">
+		<fail>Wrong target!
+
+			This script should not be executed directly.
+			Please, use the one in the build project
+		</fail>
+	</target>
+
+	<target name="init-env">
+		<dirname property="core.basedir" file="${ant.file.core}"/>
+
+		<property file = "../build.properties"/>
+		<property name="core.out.path" value="${core.basedir}/bin/ant" />
+		<property name="core.out.classes" value="${core.out.path}/classes"/>
+		<property name="core.sources" value="${core.basedir}/source"/>
+
+		<path id="core.dependencies.path">
+			<path refid="office.class.path"/>
+
+			<fileset dir="${eclipse.home}/plugins/">
+				<include name="org.eclipse*.jar"/>
+				<include name="org.junit*/*.jar"/>
+			</fileset>
+		</path>
+
+		<mkdir dir="${core.out.path}/plugins" />
+		<mkdir dir="${core.out.classes}" />
+	</target>
+
+	<target name="core.version" depends="init-env">
+		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
+		<copy tofile="${manifest.properties}" file="${core.basedir}/META-INF/MANIFEST.MF"/>
+		<replace file="${manifest.properties}" token=":" value="="/>
+		<property file="${manifest.properties}" prefix="core"/>
+		<delete file="${manifest.properties}" />
+	</target>
+
+	<target name="purge" depends="init-env">
+		<property name="core.out.path" value="${core.basedir}/bin/ant" />
+		<delete dir="${core.out.path}" />
+		<delete dir="${core.basedir}/../docs/loeclipse-doc/help/html/api" />
+	</target>
+
+    <target name="core.compile" depends="init-env">
+		<javac srcdir="${core.basedir}/source" destdir="${core.out.classes}"
+			target="${java_target}" source="${java_source}"
+			debug="${debug}"
+			classpathref="core.dependencies.path"
+			excludes="**/unittests/**"/>
+	</target>
+
+	<target name="core.plugin" depends="core.version, core.compile, javadocs">
+		<jar destfile="${core.out.path}/plugins/${package.prefix}.core_${core.Bundle-Version}.jar"
+			manifest="${core.basedir}/META-INF/MANIFEST.MF">
+
+			<zipfileset dir="${core.out.classes}" prefix=""/>
+			<zipfileset dir="${core.sources}" prefix="">
+				<exclude name="**/*.java"/>
+			</zipfileset>
+			<zipfileset dir="${core.basedir}/../docs/loeclipse-doc" prefix="doc"/>
+			<zipfileset dir="${core.basedir}/icons" prefix="icons"/>
+			<zipfileset dir="${core.basedir}/schema" prefix="schema"/>
+			<zipfileset dir="${core.basedir}" defaultexcludes="true" prefix="">
+				<include name="about.*"/>
+				<include name="plugin.*"/>
+			</zipfileset>
+		</jar>
+	</target>
+
+    <target name="core.site" depends="core.plugin">
+		<!-- Copying the plugins -->
+		<copy todir="${out.path}/plugins">
+            <fileset dir="${core.out.path}/plugins/"
+				includes="*.jar" />
+			<mapper type="flatten" />
+        </copy>
+    </target>
+
+	<target name="check-javadocs">
+		<condition property="javadocs.do">
+			<not>
+				<uptodate targetfile="${core.out.path}/javadocs-done">
+					<srcfiles dir="${core.sources}" defaultexcludes="true">
+						<include name="**/*.java"/>
+					</srcfiles>
+				</uptodate>
+			</not>
+		</condition>
+	</target>
+
+	<target name="javadocs" depends="init-env, check-javadocs" if="javadocs.do">
+		<echo message="Generate the javadoc API in the doc/html/api folder"/>
+
+		<javadoc
+			useexternalfile="true"
+			packagenames="org.libreoffice.ide.eclipse.core.*"
+			classpathref="core.dependencies.path"
+			destdir="${core.basedir}/../docs/loeclipse-doc/help/html/api">
+
+			<packageset dir="${core.basedir}/source">
+				<include name="org/libreoffice/ide/eclipse/core/**"/>
+				<exclude name="**/internal/**"/>
+				<exclude name="**/unittests/**"/>
+			</packageset>
+		</javadoc>
+
+		<touch file="${core.out.path}/javadocs-done"/>
+	</target>
+
+</project>
+

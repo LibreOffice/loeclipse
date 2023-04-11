@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: PythonProjectHandler.java,v $
- *
- * $Revision: 1.10 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -43,7 +36,6 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.python;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,16 +45,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
@@ -90,8 +76,7 @@ public class PythonProjectHandler implements IProjectHandler {
      */
     @Override
     public void addOOoDependencies(IOOo pOoo, IProject pProject) {
-
-        PluginLogger.debug("For a Python project 'No' OOo dependencies are added"); //$NON-NLS-1$
+        // Nothing to do for Python
     }
 
     /**
@@ -118,7 +103,7 @@ public class PythonProjectHandler implements IProjectHandler {
             // Adding the nature
             newNatureIds[natureIds.length] = PYTHON_NATURE;
 
-            // Adding the buildCommand org.python.pydev.PyDevBuilder under buildSpec in .project file 
+            // Adding the buildCommand org.python.pydev.PyDevBuilder under buildSpec in .project file
             ICommand[] builders = description.getBuildSpec();
 
             ICommand typesbuilderCommand = description.newCommand();
@@ -195,7 +180,7 @@ public class PythonProjectHandler implements IProjectHandler {
     @Override
     public IPath getImplementationFile(String pImplementationName) {
 
-        return new Path(pImplementationName.replace(".", "/") + ".java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return new Path(pImplementationName.replace(".", "/") + ".py"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     /**
@@ -218,45 +203,12 @@ public class PythonProjectHandler implements IProjectHandler {
      */
     @Override
     public String getLibraryPath(IUnoidlProject pProject) {
-        return getJarFile(pProject).getLocation().toOSString();
+        return "";
     }
 
-    /**
-     * Returns a handle to the project jar file. Beware that this handle may refer to a non-existing file. Users have to
-     * create it if necessary.
-     *
-     * @param pProject
-     *            the concerned UNO project
-     * @return a handle to the jar file of the project
-     */
-    public IFile getJarFile(IUnoidlProject pProject) {
-        String filename = pProject.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return pProject.getFile(filename);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
-        ArrayList<IFolder> folders = new ArrayList<IFolder>();
-
-        IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
-        IProject prj = workspace.getProject(pUnoidlProject.getName());
-        IJavaProject javaPrj = JavaCore.create(prj);
-        try {
-            folders.add(workspace.getFolder(javaPrj.getOutputLocation()));
-
-            IClasspathEntry[] entries = javaPrj.getRawClasspath();
-            for (IClasspathEntry entry : entries) {
-                if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getOutputLocation() != null) {
-                    folders.add(workspace.getFolder(entry.getOutputLocation()));
-                }
-            }
-        } catch (JavaModelException e) {
-        }
-
-        return folders.toArray(new IFolder[folders.size()]);
+        return null;
     }
 
 }

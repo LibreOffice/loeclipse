@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: PropertiesManager.java,v $
- *
- * $Revision: 1.9 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -71,7 +64,7 @@ public class PropertiesManager {
      * OOo SDK path preference key. Used to store the preferences
      */
     private static final String SDKPATH_PREFERENCE_KEY = "sdkpath"; //$NON-NLS-1$
-    
+
     private static final String SDKNAME_PREFERENCE_KEY = "sdkname"; //$NON-NLS-1$
 
     /**

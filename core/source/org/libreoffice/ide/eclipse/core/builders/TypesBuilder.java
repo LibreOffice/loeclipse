@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: TypesBuilder.java,v $
- *
- * $Revision: 1.15 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:50 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -196,7 +189,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         File types = pPrj.getLocation().append(unoprj.getTypesPath()).toFile();
         File build = pPrj.getLocation().append(unoprj.getBuildPath()).toFile();
 
-        ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuidler();
+        ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuilder();
         languageBuilder.generateFromTypes(unoprj.getSdk(), unoprj.getOOo(), pPrj, types, build, unoprj.getRootModule(),
             pMonitor);
 

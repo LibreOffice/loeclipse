@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: SDKContainer.java,v $
- *
- * $Revision: 1.8 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:30 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -192,7 +185,7 @@ public class SDKContainer {
         Set<String> names = sInstance.mElements.keySet();
         return new Vector<String>(names);
     }
-    
+
     /**
      * Checks whether the corresponding SDK name already exists.
      *

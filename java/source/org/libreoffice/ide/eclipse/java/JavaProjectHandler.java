@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: JavaProjectHandler.java,v $
- *
- * $Revision: 1.10 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -90,7 +83,9 @@ public class JavaProjectHandler implements IProjectHandler {
     private static final String P_REGISTRATION_CLASSNAME = "regclassname"; //$NON-NLS-1$
     private static final String P_JAVA_VERSION = "javaversion"; //$NON-NLS-1$
 
-    private static final String[] KEPT_JARS = { "unoil.jar", //$NON-NLS-1$
+    private static final String[] KEPT_JARS = {
+        "libreoffice.jar", //$NON-NLS-1$
+        "unoil.jar", //$NON-NLS-1$
         "ridl.jar", //$NON-NLS-1$
         "juh.jar", //$NON-NLS-1$
         "jurt.jar", //$NON-NLS-1$

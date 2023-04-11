@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: UnoidlDoubleClickStrategy.java,v $
- *
- * $Revision: 1.4 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *

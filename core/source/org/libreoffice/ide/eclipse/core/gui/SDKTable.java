@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: SDKTable.java,v $
- *
- * $Revision: 1.7 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:28 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -413,7 +406,7 @@ public class SDKTable extends AbstractTable {
 
             Button okButton = getButton(IDialogConstants.OK_ID);
             if (null != okButton) {
-                
+
                 if (pEvent.getProperty().equals(P_SDK_PATH)) {
                     okButton.setEnabled(isValid(pEvent.getProperty()));
                 }
@@ -454,7 +447,7 @@ public class SDKTable extends AbstractTable {
                 updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
                 result = true;
             } catch (InvalidConfigException e) {
-                if (pProperty.equals(P_SDK_PATH) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
+                if ((pProperty==null || pProperty.equals(P_SDK_PATH)) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
                         e.getMessage(), e));
                 } else {

@@ -308,7 +308,7 @@ of any version is permanent authorization for you to choose that
 version for the Library.
    </license>
   <url>
-    <update label="LOEclipse Update Site" url="http://eclipse-plugins.libreoffice.org"/>
+    <update label="LOEclipse Update Site" url="https://eclipse-plugins.libreoffice.org"/>
   </url>
   <requires>
     <import feature="org.eclipse.jdt"/>

@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: UreLaunchDelegate.java,v $
- *
- * $Revision: 1.6 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -89,7 +82,7 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         if (prj != null) {
             try {
-                ILanguageBuilder langBuilder = prj.getLanguage().getLanguageBuidler();
+                ILanguageBuilder langBuilder = prj.getLanguage().getLanguageBuilder();
                 langBuilder.createLibrary(prj);
 
                 // Run the URE Applicaton using IOOo.runUno()

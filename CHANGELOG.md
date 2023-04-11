@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.0.2
+* #98 Support LibreOffice >= 7.5
+* #85 Detect subfolders in `lib` directory
+
+## 4.0.1
+* Improved Python project support
+  * Fixed run configuration
+  * Correctly add multiple python files to build
+
+## 4.0.0
+* New Java baseline: Java 8 now required (instead of Java 7)
+* Support LibreOffice 7.0 (recognize new libreoffice.jar)
+* Gradle/Buildship support:
+  * Jars in "libs" directory in Project root dir are treated as external libs
+
 ## 3.0.1
 * #72 Fix running javamaker with spaces in project path
 * Load description.xml editor even when locale is missing

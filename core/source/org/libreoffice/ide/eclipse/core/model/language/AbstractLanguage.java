@@ -107,7 +107,7 @@ public abstract class AbstractLanguage {
     /**
      * @return the utility class for building.
      */
-    public abstract ILanguageBuilder getLanguageBuidler();
+    public abstract ILanguageBuilder getLanguageBuilder();
 
     /**
      * Launch OpenOffice for debugging and connect the eclipse debugger to it. Currently only Java debugging is

@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: JavaBuilder.java,v $
- *
- * $Revision: 1.7 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:43:02 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -359,11 +352,11 @@ public class JavaBuilder implements ILanguageBuilder {
         List<IFile> libs = new ArrayList<>();
         IFolder libFolder = javaProject.getProject().getFolder(LIBS_DIR_NAME);
         if (libFolder.exists()) {
-            IPath rawLoc = libFolder.getRawLocation();
-            String libFolderOsString = rawLoc.toOSString();
-            try (Stream<java.nio.file.Path> walk = Files.walk(Paths.get(libFolderOsString))) {
+            java.nio.file.Path pathLibs = Paths.get(libFolder.getRawLocation().toOSString());
+            try (Stream<java.nio.file.Path> walk = Files.walk(pathLibs)) {
                 libs = walk.map(jarFile -> {
-                    return libFolder.getFile(jarFile.getFileName().toString());
+                    java.nio.file.Path pathRelative = pathLibs.relativize(jarFile);
+                    return libFolder.getFile(pathRelative.toString());
                 }).filter(f -> f.getFileExtension() != null && f.getFileExtension().equalsIgnoreCase("jar"))
                     .collect(Collectors.toList());
             } catch (IOException e) {
@@ -371,6 +364,7 @@ public class JavaBuilder implements ILanguageBuilder {
                     Messages.getString("JavaBuilder.GetExternalLibsFailed"), e);
             }
         }
+        PluginLogger.debug("Found " + libs.size() + " Jars");
         return libs;
     }
 }

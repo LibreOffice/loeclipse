@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: SDK.java,v $
- *
- * $Revision: 1.11 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:48 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -131,17 +124,6 @@ public class SDK implements ISdk, ITableElement {
             // First check the existence of this directory
             if (homeFile.exists() && homeFile.isDirectory()) {
 
-                /**
-                 * <p>
-                 * If the provided sdk home does not contains
-                 * <li><code>idl</code></li>
-                 * <li><code>settings</code></li> directories, the provided sdk is considered as invalid
-                 * </p>
-                 */
-
-                // test for the idl directory
-                checkIdlDir(homeFile);
-
                 // test for the settings directory
                 File settingsFile = checkSettingsDir(homeFile);
 
@@ -155,7 +137,7 @@ public class SDK implements ISdk, ITableElement {
                         InvalidConfigException.INVALID_SDK_HOME);
                 }
 
-                // If the settings and idl directory both exists, then try to fetch the name and buildId from
+                // If the settings directory exists, then try to fetch the name and buildId from
                 // the settings/dk.mk properties file
                 if (name != null && !name.isEmpty())
                     mSdkName = name;
@@ -203,22 +185,6 @@ public class SDK implements ISdk, ITableElement {
         return settingsFile;
     }
 
-    /**
-     * Checks if the <code>idl</code> directory is contained in the SDK installation path.
-     *
-     * @param pHomeFile
-     *            the SDK installation file handle to check
-     *
-     * @throws InvalidConfigException
-     *             the the <code>idl</code> isn't found
-     */
-    private void checkIdlDir(File pHomeFile) throws InvalidConfigException {
-        File idlFile = new File(pHomeFile, "idl"); //$NON-NLS-1$
-        if (!(idlFile.exists() && idlFile.isDirectory())) {
-            throw new InvalidConfigException(Messages.getString("SDK.NoIdlDirError"), //$NON-NLS-1$
-                InvalidConfigException.INVALID_SDK_HOME);
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -480,7 +446,7 @@ public class SDK implements ISdk, ITableElement {
      * @param pSettingsFile
      *            the setting directory file handle.
      *
-     * @return String The sdk version number 
+     * @return String The sdk version number
      *
      * @throws InvalidConfigException
      *             Exception thrown when one of the following problems happened

@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: UnoidlProjectHelper.java,v $
- *
- * $Revision: 1.12 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2008/12/13 13:42:51 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -517,7 +510,7 @@ public class UnoidlProjectHelper {
         // Add content to the package
         if (libFile.exists())
             unoPackage.addTypelibraryFile(UnoPackage.getPathRelativeToBase(libFile, prjFile), libFile); //$NON-NLS-1$
-        pPrj.getLanguage().getLanguageBuidler().fillUnoPackage(unoPackage, pPrj);
+        pPrj.getLanguage().getLanguageBuilder().fillUnoPackage(unoPackage, pPrj);
 
         return unoPackage;
     }

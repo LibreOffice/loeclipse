@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!-- ======================================================================
+ * The Contents of this file are made available subject to the terms of
+ * the GNU Lesser General Public License Version 2.1
+ *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
+ * GNU Lesser General Public License Version 2.1
+ * =============================================
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ *
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
+ *
+ * Copyright: 2002 by Sun Microsystems, Inc.
+ *
+ * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ ====================================================================== -->
+
+<project name="java" default="java.error">
+
+
+	<target name="java.error">
+		<fail>Wrong target!
+
+			This script should not be executed directly.
+			Please, use the one in the build project
+		</fail>
+	</target>
+
+
+	<target name="init-env" unless="java.nobuild">
+		<dirname property="java.basedir" file="${ant.file.java}"/>
+
+		<property file = "../build.properties"/>
+		<property name="java.out.path" value="${java.basedir}/bin/ant" />
+		<property name="java.out.classes" value="${java.out.path}/classes"/>
+		<property name="java.sources" value="${java.basedir}/source"/>
+		<property name="jodconnector.classes" value="${java.out.path}/jodconnector"/>
+
+		<path id="java.dependencies.path">
+			<pathelement location="${core.out.classes}"/>
+
+			<fileset dir="${eclipse.home}/plugins/">
+				<include name="org.eclipse*.jar"/>
+			</fileset>
+		</path>
+
+		<mkdir dir="${java.out.path}/plugins" />
+		<mkdir dir="${java.out.classes}" />
+	</target>
+
+	<target name="java.version" depends="init-env">
+		<property name="manifest.properties" value="MANIFEST-MF.properties"/>
+		<copy tofile="${manifest.properties}" file="${java.basedir}/META-INF/MANIFEST.MF"/>
+		<replace file="${manifest.properties}" token=":" value="="/>
+		<property file="${manifest.properties}" prefix="java"/>
+		<delete file="${manifest.properties}" />
+	</target>
+
+	<target name="purge" depends="init-env">
+		<property name="java.out.path" value="${java.basedir}/bin/ant" />
+		<delete dir="${java.out.path}" />
+		<delete file="${java.basedir}/jodconnector.jar" />
+	</target>
+
+	<target name="jodconnector.compile">
+		<mkdir dir="${jodconnector.classes}"/>
+		<javac srcdir="${java.sources}" destdir="${jodconnector.classes}"
+			target="${java_target}" source="${java_source}"
+			debug="true"
+			classpathref="office.class.path"
+			includes="com/artofsolving/**" defaultexcludes="true">
+		</javac>
+	</target>
+
+	<target name="jodconnector.package" depends="jodconnector.compile">
+		<jar destfile="${java.basedir}/jodconnector.jar">
+			<zipfileset prefix="" dir="${jodconnector.classes}"/>
+			<zipfileset prefix="" dir="${java.sources}" defaultexcludes="true" includes="com/artofsolving/**"/>
+		</jar>
+	</target>
+
+	<target name="java.compile" depends="init-env" unless="java.nobuild">
+		<javac srcdir="${java.sources}" destdir="${java.out.classes}"
+			target="${java_target}" source="${java_source}"
+			debug="${debug}"
+			classpathref="java.dependencies.path"
+			excludes="**/*Test.*,com/artofsolving/**">
+		</javac>
+	</target>
+
+	<target name="java.plugin" depends="java.version, java.compile, jodconnector.package" unless="java.nobuild">
+		<jar destfile="${java.out.path}/plugins/${package.prefix}.java_${java.Bundle-Version}.jar"
+			manifest="${java.basedir}/META-INF/MANIFEST.MF">
+			<zipfileset prefix="" dir="${java.sources}">
+				<exclude name="**/*.java"/>
+			</zipfileset>
+			<zipfileset prefix="" dir="${java.out.classes}"/>
+
+			<zipfileset prefix="icons" dir="${java.basedir}/icons"/>
+			<zipfileset prefix="" file="${java.basedir}/plugin.xml" />
+			<zipfileset prefix="" file="${java.basedir}/jodconnector.jar" />
+		</jar>
+	</target>
+
+    <target name="java.site" depends="java.plugin" unless="java.nobuild">
+
+        <!-- Echo the needed bits for site.xml -->
+        <copy tofile="${out.path}/site-java.xml" file="${build.basedir}/site-feature.xml" />
+        <replace file="${out.path}/site-java.xml" token="@@URL@@" value="features/org.libreoffice.ide.eclipse.java_${java.Bundle-Version}.jar"/>
+        <replace file="${out.path}/site-java.xml" token="@@ID@@" value="org.libreoffice.ide.eclipse.java"/>
+        <replace file="${out.path}/site-java.xml" token="@@VERSION@@" value="${java.Bundle-Version}"/>
+
+		<!-- Copying the plugins -->
+		<copy todir="${out.path}/plugins">
+            <fileset dir="${java.out.path}/plugins/"
+				includes="*.jar" />
+			<mapper type="flatten" />
+        </copy>
+    </target>
+
+</project>
+

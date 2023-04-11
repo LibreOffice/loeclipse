@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: NewInterfaceWizard.java,v $
- *
- * $Revision: 1.6 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:29 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -168,7 +161,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
                 else {
                    MessageDialog.openError(getShell(), "Error", "The Selection only works with LibreOffice projects");
                 }
-                    
+
             } catch (CoreException e) {
                 PluginLogger.debug(e.getMessage());
             }

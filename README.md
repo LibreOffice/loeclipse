@@ -12,6 +12,8 @@ Only read further if you want to work on LOEclipse itself.
 
 ### Prerequisites
 
+*LibreOffice 7.0 or newer is required.*
+
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
 * Windows: Install LibreOffice and the LibreOffice SDK from https://www.libreoffice.org/download
 * macOS: No support for macOS currently (see bug #54)
@@ -25,7 +27,7 @@ Only read further if you want to work on LOEclipse itself.
    * Go to *Window->Preferences* in Eclipse and open the *Java->Build path->User Libraries* configuration page.
    * Add a new library named `LO-Classes`
    * Select the Library, click *Add External Jars*
-   * Add the LibreOffice jars `unoil.jar juh.jar jurt.jar ridl.jar unoloader.jar`. You find them here:
+   * Add the LibreOffice jars `libreoffice.jar unoil.jar`. You find them here:
      * macOS: `/Applications/LibreOffice.app/Contents/Resources/java`
      * Ubuntu: `/usr/lib/libreoffice/program/classes`
      * Windows: `C:\Program Files[ (x86)]\LibreOffice 5\program\classes\`
@@ -34,11 +36,26 @@ Only read further if you want to work on LOEclipse itself.
 
 ### Getting help
 
-Join [#libreoffice-dev on freenode](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
+Join [#libreoffice-dev](https://irc.documentfoundation.org/?settings=#libreoffice-dev) to get in touch with LibreOffice and LOEclipse developers.
 
 You can also write to the [LibreOffice development mailing list](https://lists.freedesktop.org/mailman/listinfo/libreoffice) if you have trouble working on this project.
 
 ## Release Management
+
+### Release new version
+
+* Update `CHANGELOG.md`
+* Bump version in `core/META-INF/MANIFEST.MF` `java/META-INF/MANIFEST.MF` `python/META-INF/MANIFEST.MF`
+  * Use [Semantic Versioning](https://semver.org/) for version number bumps
+* Commit changes with message "Release x.y.z"
+* Create a tag: `git tag vX.Y.Z` (e.g. `git tag v4.0.2`)
+* Push changes: `git push && git push --tags`
+* Create a new release on https://github.com/LibreOffice/loeclipse/releases
+  * Choose previously created tag
+  * Release title is `vx.y.z` (e.g. v4.0.2)
+  * Copy the changelog as release notes
+
+### Publish new version
 
 After releasing a new version, we need to build the update site. To do that, run the following command in the `build` folder:
 
@@ -51,4 +68,5 @@ You can also persist the options by setting the `ANT_ARGS` variable to
 `-Dlibreoffice.home=... -Declipse.home=...`.
 
 ### Available build targets
+
 Run `ant help` to see the available build targets.

@@ -1,11 +1,4 @@
 /*************************************************************************
- *
- * $RCSfile: UnoSDKConfigPage.java,v $
- *
- * $Revision: 1.4 $
- *
- * last change: $Author: cedricbosdo $ $Date: 2007/11/25 20:32:27 $
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
@@ -68,7 +61,7 @@ public class UnoSDKConfigPage extends PreferencePage implements IWorkbenchPrefer
 
         mOOoTable = new OOoTable(pParent);
         mOOoTable.getPreferences();
-        
+
         mSdkTable = new SDKTable(pParent);
         mSdkTable.getPreferences();
 
