@@ -55,7 +55,10 @@ import org.eclipse.swt.widgets.Display;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
+import org.libreoffice.plugin.core.utils.ErrorDlg;
 import org.libreoffice.plugin.core.utils.StringUtils;
+
+import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeException;
 
 /**
  * This class provides utility methods to generate the class and files needed
@@ -253,7 +256,13 @@ public abstract class RegistrationHelper {
         if (StringUtils.isNotEmpty(errMsg)) {
             PluginLogger.error("Error checking RegistrationHandler.classes: " + classesListFile);
             PluginLogger.error(errMsg);
-            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", errMsg);
+
+            String packageStr = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension();
+            String extErr = errMsg + System.lineSeparator()
+                + "The file RegistrationHandler.classes must be in the package: " + System.lineSeparator() + packageStr;
+            Display.getDefault().syncExec(new ErrorDlg(extErr));
+            throw new OpenOfficeException(extErr);
         }
     }
+
 }
