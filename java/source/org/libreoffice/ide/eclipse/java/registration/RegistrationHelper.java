@@ -43,6 +43,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -53,6 +55,10 @@ import org.eclipse.swt.widgets.Display;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
+import org.libreoffice.plugin.core.utils.ErrorDlg;
+import org.libreoffice.plugin.core.utils.StringUtils;
+
+import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeException;
 
 /**
  * This class provides utility methods to generate the class and files needed
@@ -225,39 +231,38 @@ public abstract class RegistrationHelper {
     }
 
     /**
-     * Check if the RegistrationHandler.classes file is empty
+     * Check if the RegistrationHandler.classes file exist, readable and not empty
      * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>
      *
      * @param pProject the project where to check empty file
      */
-    public static void isFileEmpty(IUnoidlProject pProject) {
-        IFile list = getClassesListFile(pProject);
-        File file = list.getLocation().toFile();
-        boolean checkFileEmpty = true;
-        FileInputStream in = null;
-        BufferedReader reader = null;
-        try {
-            in = new FileInputStream(file);
-            reader = new BufferedReader(new InputStreamReader(in));
-            if (reader.readLine() == null) {
-                checkFileEmpty = true;
-            } else {
-                checkFileEmpty = false;
-            }
-        } catch (Exception e) {
-            checkFileEmpty = true;
+    public static void checkClassesListFile(IUnoidlProject pProject) {
+        IFile iClassesListFile = getClassesListFile(pProject); // get RegistrationHandler.classes"
+        File classesListFile = iClassesListFile.getLocation().toFile();
+        Path listFile = classesListFile.toPath();
 
-        } finally {
-            try {
-                reader.close();
-                in.close();
-            } catch (Exception e) {
-            }
+        String errMsg = null;
+
+        if (!Files.exists(listFile)) {
+            errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerNotExist");
+        } else if (!Files.isRegularFile(listFile)) {
+            errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerNotAFile");
+        } else if (!Files.isReadable(listFile)) {
+            errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerNotReadable");
+        } else if (classesListFile.length() == 0) {
+            errMsg = Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError");
         }
-        if (checkFileEmpty) {
-            PluginLogger.error(Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError"));
-            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-                Messages.getString("RegistrationHelper.RegistrationHandlerEmptyClassError"));
+
+        if (StringUtils.isNotEmpty(errMsg)) {
+            PluginLogger.error("Error checking RegistrationHandler.classes: " + classesListFile);
+            PluginLogger.error(errMsg);
+
+            String packageStr = pProject.getCompanyPrefix() + "." + pProject.getOutputExtension();
+            String extErr = errMsg + System.lineSeparator()
+                + "The file RegistrationHandler.classes must be in the package: " + System.lineSeparator() + packageStr;
+            Display.getDefault().syncExec(new ErrorDlg(extErr));
+            throw new OpenOfficeException(extErr);
         }
     }
+
 }
