@@ -42,7 +42,7 @@ public class OpenOfficeConfiguration {
 
     public String getOpenOfficeProperty(String nodePath, String node) {
         if (!nodePath.startsWith("/")) {
-            nodePath = "/" + nodePath;
+            nodePath += "/";
         }
         String property = "";
         // create the provider and remember it as a XMultiServiceFactory
