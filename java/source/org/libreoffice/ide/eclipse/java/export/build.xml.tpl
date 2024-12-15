@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="{0}" default="package-oxt" basedir=".">
-	
-	<!--
-		************************************************************
+
+    <!--
+        ************************************************************
         In order to run this script, you need to set the path of the
         LibreOffice & SDK installation in the build.properties file
         ************************************************************
-	-->
+    -->
 
     <target name="init-env">
-        
+
         <!-- set properties from Libreoffice installation and its SDK -->
         <property file="$'{'ant.file}/../build.properties"/>
-        
+
         <echo message="Initializing the properties for LibreOffice"/>
         <first id="sofficeParents">
             <dirset dir="$'{'office.install.dir}">
@@ -52,18 +52,26 @@
             </union>
         </first>
         <property name="sdk.regmerge" value="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}regmerge"/>
-    	
+
         <property environment="env"/>
         <property name="office.tool.path" value="$'{'env.PATH}$'{'path.separator}$'{'office.libs.path}"/>
 
         <!-- set properties for the project structure -->
         <property file=".unoproject"/>
-        <property file="package.properties"/>
+        <loadproperties srcFile="package.properties">
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from=", " to="\n"/>
+                </tokenfilter>
+            </filterchain>
+        </loadproperties>
+        <property name="project.files" value="packagefiles.txt"/>
+        <echo file="$'{'project.files}" append="false">${contents}</echo>
         <dirname property="project.dir" file="package.properties"/>
 
         <property name="build.dir" value="$'{'project.build}"/>
         <property name="build.classes.dir" value="$'{'build.dir}$'{'file.separator}classes"/>
-    	<property name="lib.dir" value="lib"/>
+        <property name="lib.dir" value="lib"/>
         <property name="dist.dir" value="dist"/>
 
         <!-- set properties for the output structure -->
@@ -91,8 +99,8 @@
     </target>
 
     <target name="package-oxt" depends="package-jar">
-        <zip destfile="$'{'uno.package.name}" includes="$'{'contents}">
-            <fileset dir="." includes="$'{'contents}"/>
+        <zip destfile="$'{'uno.package.name}" includesfile="$'{'project.files}">
+            <fileset dir="." includesfile="$'{'project.files}"/>
             <zipfileset dir="description" includes="**/*.txt" prefix="description"/>
             <zipfileset file="manifest.xml" fullpath="META-INF/manifest.xml"/>
             <zipfileset file="$'{'build.dir}/$'{'ant.project.name}.jar" fullpath="$'{'ant.project.name}.jar"/>
@@ -104,8 +112,8 @@
         <jar destfile="$'{'build.dir}/$'{'ant.project.name}.jar">
             <manifest>
                 <attribute name="RegistrationClassName" value="$'{'regclassname}"/>
-            	<!-- Add external libraries here if you need them -->
-            	<!-- <attribute name="Class-Path" value="$'{'lib.dir}/libraryname.jar"/> -->
+                <!-- Add external libraries here if you need them -->
+                <!-- <attribute name="Class-Path" value="$'{'lib.dir}/libraryname.jar"/> -->
             </manifest>
             <fileset dir="$'{'build.classes.dir}">
                 <include name="**/*.class"/>
@@ -123,7 +131,7 @@
             <classpath>
                 <pathelement location="$'{'build.classes.dir}"/>
                 <!-- Add external libraries here if you need them -->
-            	<!-- <pathelement location="$'{'lib.dir}$'{'file.separator}libraryname.jar"/> -->
+                <!-- <pathelement location="$'{'lib.dir}$'{'file.separator}libraryname.jar"/> -->
                 <path refid="office.class.path"/>
             </classpath>
         </javac>
@@ -144,11 +152,11 @@
             <arg value="$'{'project.dir}$'{'file.separator}$'{'build.classes.dir}"/>
             <arg file="$'{'idl.rdb.fullpath}"/>
             <arg line="-X&quot;$'{'office.unotypes.rdb}&quot;"/>
-        	<arg line="$'{'args.offapi}"/>
+            <arg line="$'{'args.offapi}"/>
         </exec>
     </target>
 
-	<target name="merge-urd" depends="compile-idl">
+    <target name="merge-urd" depends="compile-idl">
         <delete file="$'{'idl.rdb.fullpath}"/>    
         <apply executable="$'{'sdk.regmerge}" failonerror="true">
             <env key="PATH" path="$'{'office.tool.path}"/>
