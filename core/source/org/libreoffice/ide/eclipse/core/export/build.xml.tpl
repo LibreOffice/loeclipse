@@ -27,12 +27,6 @@
 
         <echo message="Office libs path: $'{'office.libs.path}"/>
 
-        <path id="office.class.path">
-            <fileset dir="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}classes">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
-
         <property name="office.unotypes.rdb" 
             value="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}types.rdb"/>
 
@@ -58,20 +52,9 @@
 
         <!-- set properties for the project structure -->
         <property file=".unoproject"/>
-        <loadproperties srcFile="package.properties">
-            <filterchain>
-                <tokenfilter>
-                    <replacestring from=", " to="\n"/>
-                </tokenfilter>
-            </filterchain>
-        </loadproperties>
-        <property name="project.files" value="packagefiles.txt"/>
-        <echo file="$'{'project.files}" append="false">${contents}</echo>
         <dirname property="project.dir" file="package.properties"/>
 
         <property name="build.dir" value="$'{'project.build}"/>
-        <property name="build.classes.dir" value="$'{'build.dir}$'{'file.separator}classes"/>
-        <property name="lib.dir" value="lib"/>
         <property name="dist.dir" value="dist"/>
 
         <!-- set properties for the output structure -->
@@ -84,14 +67,37 @@
         <property name="idl.out.rdb" value="$'{'idl.out}$'{'file.separator}rdb"/>
         <property name="idl.rdb.name" value="types.rdb"/>
         <property name="idl.rdb.fullpath" value="$'{'idl.out.rdb}$'{'file.separator}$'{'idl.rdb.name}"/>
+        <property name="build.classes.dir" value="$'{'build.dir}$'{'file.separator}classes"/>
+
+        <!-- create a few temporary files -->
+        <property name="project.mimetype" value="mimetype"/>
+        <property name="project.files" value="packagefiles.txt"/>
+        <property name="project.zip" value="packagefiles.zip"/>
 
         <!-- create a few empty directories -->
         <mkdir dir="$'{'build.dir}" />
         <mkdir dir="$'{'idl.out}"/>
         <mkdir dir="$'{'idl.out.urd}"/>
         <mkdir dir="$'{'idl.out.rdb}"/>
-        <mkdir dir="$'{'build.classes.dir}"/>
         <mkdir dir="$'{'dist.dir}"/>
+    </target>
+
+    <target name="check-java" depends="init-env">
+        <available file="lib" property="project.isjava"/>
+    </target>
+
+    <target name="init-java" depends="check-java" if="project.isjava">
+
+        <path id="office.class.path">
+            <fileset dir="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}classes">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+
+        <property name="lib.dir" value="lib"/>
+
+        <!-- create a few empty directories -->
+        <mkdir dir="$'{'build.classes.dir}"/>
     </target>
 
     <target name="clean" depends="init-env">
@@ -99,16 +105,32 @@
     </target>
 
     <target name="package-oxt" depends="package-jar">
-        <zip destfile="$'{'uno.package.name}" includesfile="$'{'project.files}">
+        <loadproperties srcFile="package.properties">
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from=", " to="\n"/>
+                </tokenfilter>
+            </filterchain>
+        </loadproperties>
+        <echo file="$'{'project.files}" append="false">$'{'contents}</echo>
+        <echo file="$'{'project.mimetype}" append="false">application/vnd.openofficeorg.extension</echo>
+        <zip destfile="$'{'project.zip}">
             <fileset dir="." includesfile="$'{'project.files}"/>
             <zipfileset dir="description" includes="**/*.txt" prefix="description"/>
             <zipfileset file="manifest.xml" fullpath="META-INF/manifest.xml"/>
             <zipfileset file="$'{'build.dir}/$'{'ant.project.name}.jar" fullpath="$'{'ant.project.name}.jar"/>
             <zipfileset file="$'{'idl.rdb.fullpath}" fullpath="types.rdb"/>
         </zip>
+        <zip destfile="$'{'uno.package.name}" compress="false" keepcompression="true">
+            <zipfileset file="$'{'project.mimetype}"/>
+            <zipfileset src="$'{'project.zip}"/>
+        </zip>
+            <delete file="$'{'project.mimetype}"/>
+            <delete file="$'{'project.files}"/>
+            <delete file="$'{'project.zip}"/>
     </target>
 
-    <target name="package-jar" depends="compile-java">
+    <target name="package-jar" depends="compile-java" if="project.isjava">
         <jar destfile="$'{'build.dir}/$'{'ant.project.name}.jar">
             <manifest>
                 <attribute name="RegistrationClassName" value="$'{'regclassname}"/>
@@ -124,7 +146,7 @@
         </jar>
     </target>
 
-    <target name="compile-java" depends="types">
+    <target name="compile-java" depends="types" if="project.isjava">
         <echo message="build classes: $'{'build.classes.dir}"/>
         <javac srcdir="$'{'src.dir.absolute}" source="1.8" target="1.8" encoding="UTF-8"
             destdir="$'{'build.classes.dir}" excludes="**/*Test*">
@@ -168,7 +190,7 @@
         </apply>
     </target>
 
-    <target name="compile-idl" depends="init-env">
+    <target name="compile-idl" depends="init-java">
         <echo message="$'{'sdk.idlc}"/>
         <echo message="$'{'office.tool.path}"/>
 

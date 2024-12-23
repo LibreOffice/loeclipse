@@ -36,10 +36,8 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.editors.pack;
 
-import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.forms.IManagedForm;
@@ -48,6 +46,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.libreoffice.ide.eclipse.core.editors.Messages;
+import org.libreoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 
 /**
  * Page displaying the Package properties in a more user friendly way.
@@ -102,20 +101,13 @@ public class PackageFormPage extends FormPage {
         mLibs = new LibsSection(this);
         mDescriptions = new PackageDescriptionSection(this);
 
-        // update the model from the source
-        PackagePropertiesEditor editor = (PackagePropertiesEditor) getEditor();
-        editor.getModel().setQuiet(true);
-
-        editor.loadFromSource();
-
-        List<IResource> contents = editor.getModel().getContents();
-        mContents.setContents(contents);
 
         // Get the Libs and Descriptions properties from the document
-
-        mLibs.setLibraries(editor.getModel());
-
-        mDescriptions.setDescriptions(editor.getModel().getDescriptionFiles());
-        editor.getModel().setQuiet(false);
+        PackagePropertiesModel model = ((PackagePropertiesEditor) getEditor()).getModel();
+        model.setQuiet(true);
+        mContents.setContents();
+        mLibs.setLibraries(model);
+        mDescriptions.setDescriptions(model.getDescriptionFiles());
+        model.setQuiet(false);
     }
 }

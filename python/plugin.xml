@@ -6,6 +6,9 @@
       <language
             class="org.libreoffice.ide.eclipse.python.Language"
             name="Python">
+         <exportBuildPart
+               class="org.libreoffice.ide.eclipse.core.export.ProjectExportPart">
+         </exportBuildPart>
       </language>
    </extension>
    <extension

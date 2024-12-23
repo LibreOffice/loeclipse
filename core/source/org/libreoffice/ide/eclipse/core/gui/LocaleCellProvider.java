@@ -36,7 +36,11 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.gui;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -78,17 +82,23 @@ public class LocaleCellProvider extends CellEditor {
         body.setLayout(new GridLayout(2, false));
 
         // Create the language Combobox
-        String[] languagesISO = Locale.getISOLanguages();
-        String[] languagesDisplay = new String[languagesISO.length];
+        Map<String, String> languagesISO = new HashMap<>();
+        for (String language : Locale.getISOLanguages()) {
+            languagesISO.put(new Locale(language).getDisplayLanguage(), language);
+        }
+        String[] languagesDisplay = new String[languagesISO.size()];
         if (mLanguages == null) {
             mLanguages = new Vector<String>();
         }
         mLanguages.clear();
-        for (int i = 0; i < languagesISO.length; i++) {
-            String lang = languagesISO[i];
-            Locale locale = new Locale(lang);
-            languagesDisplay[i] = locale.getDisplayLanguage();
-            mLanguages.add(i, lang);
+
+        SortedSet<String> languages = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        languages.addAll(languagesISO.keySet());
+        int i = 0;
+        for (String language : languages) {
+            languagesDisplay[i] = language;
+            mLanguages.add(i, languagesISO.get(language));
+            i ++;
         }
 
         mLanguage = new CCombo(body, getStyle());
@@ -104,20 +114,26 @@ public class LocaleCellProvider extends CellEditor {
         });
 
         // Create the country Combobox
-        String[] countriesISO = Locale.getISOCountries();
-        String[] countriesDisplay = new String[countriesISO.length + 1];
+        Map<String, String> countriesISO = new HashMap<>();
+        for (String country : Locale.getISOCountries()) {
+            countriesISO.put(new Locale("en", country).getDisplayCountry(), country);
+        }
+        String[] countriesDisplay = new String[countriesISO.size() + 1];
         if (mCountries == null) {
             mCountries = new Vector<String>();
         }
         mCountries.clear();
+        // Allows the user to select no country
         countriesDisplay[0] = ""; //$NON-NLS-1$
         mCountries.add(""); //$NON-NLS-1$
-        // Allows the user to select no country
-        for (int i = 0; i < countriesISO.length; i++) {
-            String country = countriesISO[i];
-            Locale locale = new Locale("en", country); // $NON-NLS-1$ //$NON-NLS-1$
-            countriesDisplay[i + 1] = locale.getDisplayCountry();
-            mCountries.add(i + 1, country);
+
+        SortedSet<String> countries = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        countries.addAll(countriesISO.keySet());
+        i = 1;
+        for (String country : countries) {
+            countriesDisplay[i] = country;
+            mCountries.add(i, countriesISO.get(country));
+            i ++;
         }
 
         mCountry = new CCombo(body, getStyle());

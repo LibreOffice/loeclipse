@@ -28,7 +28,7 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.java.export;
+package org.libreoffice.ide.eclipse.core.export;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ import org.libreoffice.ide.eclipse.core.gui.PackageContentSelector;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
-import org.libreoffice.ide.eclipse.java.Messages;
+import org.libreoffice.ide.eclipse.core.Messages;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 public class AntScriptExportWizardPage extends WizardPage {
@@ -87,7 +87,7 @@ public class AntScriptExportWizardPage extends WizardPage {
     public void createBuildScripts(UnoPackage pModel) {
         sLangPart.doFinish(pModel);
         checkAntSectionDisplay = false;
-        JavaExportPart.setCheckAntSectionDisplay(checkAntSectionDisplay);
+        ProjectExportPart.setCheckAntSectionDisplay(checkAntSectionDisplay);
     }
 
     /**
@@ -157,7 +157,8 @@ public class AntScriptExportWizardPage extends WizardPage {
         ArrayList<String> tempPrjNames = new ArrayList<>();
         for (int i = 0; i < prjs.length; i++) {
             //The Dropdown for Ant Script should only have Java Uno Projects
-            if (prjs[i].getLanguage().getName().equalsIgnoreCase("Java")) {
+            String language = prjs[i].getLanguage().getName();
+            if (language.equalsIgnoreCase("Java") || language.equalsIgnoreCase("Python")) {
                 IUnoidlProject prj = prjs[i];
                 tempPrjNames.add(prj.getName());
             }
@@ -203,7 +204,7 @@ public class AntScriptExportWizardPage extends WizardPage {
             sLangPart = sSelectedProject.getLanguage().getExportBuildPart();
             if (sLangPart != null) {
                 //****sLangPart.setPage(this);    <--- Can be used When the class LanguageExportPart is using the Object Class rather than ManifestExportPage
-                JavaExportPart.setAntScriptExportPage(this);
+                ProjectExportPart.setAntScriptExportPage(this);
                 Composite body = (Composite) getControl();
 
                 if (body != null) {
@@ -211,7 +212,7 @@ public class AntScriptExportWizardPage extends WizardPage {
                     sLangPart.createControls(body);
                     body.layout();
                     checkAntSectionDisplay = true;
-                    JavaExportPart.setCheckAntSectionDisplay(checkAntSectionDisplay);
+                    ProjectExportPart.setCheckAntSectionDisplay(checkAntSectionDisplay);
                 }
             }
         }
@@ -252,7 +253,7 @@ public class AntScriptExportWizardPage extends WizardPage {
      */
     public String getPath() {
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(sSelectedProject.getName());
-        File dir = project.getFile("build.xml").getLocation().toFile().getParentFile();
+        File dir = project.getFile("package.properties").getLocation().toFile().getParentFile();
         return dir.toString();
     }
 

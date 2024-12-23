@@ -83,7 +83,7 @@
 			target="${java_target}" source="${java_source}"
 			debug="${debug}"
 			classpathref="core.dependencies.path"
-			excludes="**/unittests/**"/>
+			excludes="**/unittests/**, **Test*"/>
 	</target>
 
 	<target name="core.plugin" depends="core.version, core.compile, javadocs">

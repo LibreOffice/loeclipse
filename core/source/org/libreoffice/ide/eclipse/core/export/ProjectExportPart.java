@@ -28,7 +28,7 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.java.export;
+package org.libreoffice.ide.eclipse.core.export;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -50,21 +50,21 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
 import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.SDKContainer;
-import org.libreoffice.ide.eclipse.java.Messages;
-import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
+import org.libreoffice.ide.eclipse.core.Messages;
+import org.libreoffice.ide.eclipse.core.utils.TemplatesHelper;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Dialog part for the Ant scripts export configuration.
  */
-public class JavaExportPart extends LanguageExportPart {
+public class ProjectExportPart extends LanguageExportPart {
 
     private Composite mNameRow;
     private Label mNameRowLbl;
     private Label mNameRowValueLbl;
     private Label titleLbl;
 
-    private JavaExportPageControl mController;
+    private ProjectExportPageControl mController;
     private static AntScriptExportWizardPage mAntScriptPage;
     private static boolean mAntSectionDisplay = false;
 
@@ -92,12 +92,12 @@ public class JavaExportPart extends LanguageExportPart {
     @Override
     public void createControls(Composite pParent) {
 
-        mController = new JavaExportPageControl();
+        mController = new ProjectExportPageControl();
         mController.setSaveAntScript(true);
 
         if (!mAntSectionDisplay) {
             titleLbl = new Label(pParent, SWT.NONE);
-            titleLbl.setText(Messages.getString("JavaExportPart.Title")); //$NON-NLS-1$
+            titleLbl.setText(Messages.getString("ProjectExportPart.Title")); //$NON-NLS-1$
             titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
             Composite content = new Composite(pParent, SWT.NONE);
@@ -114,7 +114,7 @@ public class JavaExportPart extends LanguageExportPart {
 
             mNameRowLbl = new Label(mNameRow, SWT.NONE);
             mNameRowLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-            mNameRowLbl.setText(Messages.getString("JavaExportPart.AntFile")); //$NON-NLS-1$
+            mNameRowLbl.setText(Messages.getString("ProjectExportPart.AntFile")); //$NON-NLS-1$
 
             mNameRowValueLbl = new Label(mNameRow, SWT.NONE);
             mNameRowValueLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -161,7 +161,7 @@ public class JavaExportPart extends LanguageExportPart {
             IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
 
             TemplatesHelper.copyTemplate(project, mController.getSavePath(),
-                JavaExportPart.class, new String(), prjName);
+                ProjectExportPart.class, new String(), prjName);
 
             // Generate the build.properties file
             File dir = project.getFile(mController.getSavePath()).getLocation().toFile().getParentFile();
@@ -188,7 +188,7 @@ public class JavaExportPart extends LanguageExportPart {
                 writer.close();
 
             } catch (IOException e) {
-                PluginLogger.error(Messages.getString("JavaExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
+                PluginLogger.error(Messages.getString("ProjectExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
             }
 
         }
