@@ -155,7 +155,6 @@ public class PackagePropertiesEditor extends FormEditor {
     public void doSave(IProgressMonitor pMonitor) {
         try {
             writeToSource(mModel.write());
-            //mSourcePage.doRevertToSaved();
         } catch (Exception e) {
             // Log ?
         }

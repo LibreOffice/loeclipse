@@ -25,6 +25,8 @@
  *
  * Copyright: 2009 by Cédric Bosdonnat.
  *
+ * Copyright: 2024 The Document Foundation
+ *
  * All Rights Reserved.
  *
  ************************************************************************/

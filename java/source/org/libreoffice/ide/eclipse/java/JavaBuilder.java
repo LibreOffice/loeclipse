@@ -357,7 +357,7 @@ public class JavaBuilder implements ILanguageBuilder {
                 libs = walk.map(jarFile -> {
                     java.nio.file.Path pathRelative = pathLibs.relativize(jarFile);
                     return libFolder.getFile(pathRelative.toString());
-                }).filter(f -> f.getFileExtension() != null && f.getFileExtension().equalsIgnoreCase("jar"))
+                }).filter(f -> "jar".equalsIgnoreCase(f.getFileExtension()))
                     .collect(Collectors.toList());
             } catch (IOException e) {
                 PluginLogger.error(

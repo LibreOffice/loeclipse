@@ -71,7 +71,7 @@ public class IdlcBuildVisitor implements IResourceVisitor {
 
         boolean visitChildren = false;
         if (TypesBuilder.sBuildState == 1) {
-            if (IResource.FILE == pResource.getType() && "idl".equals(pResource.getFileExtension())) { //$NON-NLS-1$
+            if (IResource.FILE == pResource.getType() && "idl".equalsIgnoreCase(pResource.getFileExtension())) { //$NON-NLS-1$
 
                 TypesBuilder.runIdlcOnFile((IFile) pResource, mProgressMonitor);
                 if (mProgressMonitor != null) {

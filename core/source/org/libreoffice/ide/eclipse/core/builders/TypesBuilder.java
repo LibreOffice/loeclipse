@@ -125,7 +125,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
                             && resPath.toString().startsWith(idlPath.toString())) {
                             visitChildren = true;
                         } else {
-                            if (pDelta.getResource() instanceof IFile && resPath.getFileExtension().equals("idl")) { //$NON-NLS-1$
+                            if (pDelta.getResource() instanceof IFile && "idl".equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
                                 visitChildren = false;
                                 mChangedIdl = true;
                             } else if (pDelta.getResource() instanceof IFile
