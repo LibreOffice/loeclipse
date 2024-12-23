@@ -19,12 +19,13 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.java.export;
+package org.libreoffice.ide.eclipse.core.export;
+
 
 /**
- * Controller object for the fields of the {@link JavaExportPart} view.
+ * Controller object for the fields of the {@link ProjectExportPart} view.
  */
-public class JavaExportPageControl {
+public class ProjectExportPageControl {
 
     public static final String DEFAULT_ANT_FILENAME = "build.xml"; //$NON-NLS-1$
 
@@ -34,7 +35,7 @@ public class JavaExportPageControl {
     /**
      * Default constructor.
      */
-    public JavaExportPageControl() {
+    public ProjectExportPageControl() {
         setSaveAntScript(false);
         setSavePath(DEFAULT_ANT_FILENAME);
     }

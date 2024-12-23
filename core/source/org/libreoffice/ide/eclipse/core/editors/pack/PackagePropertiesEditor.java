@@ -38,17 +38,19 @@ package org.libreoffice.ide.eclipse.core.editors.pack;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.texteditor.IElementStateListener;
 import org.libreoffice.ide.eclipse.core.editors.utils.SourcePage;
 import org.libreoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
+
 
 /**
  * The project package editor.
@@ -76,35 +78,27 @@ public class PackagePropertiesEditor extends FormEditor {
             // Add the text page for package.properties
             mSourcePage = new SourcePage(this, "source", "package.properties"); //$NON-NLS-1$ //$NON-NLS-2$
             mSourcePage.init(getEditorSite(), getEditorInput());
-            mSourcePage.getDocumentProvider().addElementStateListener(new IElementStateListener() {
 
-                @Override
-                public void elementContentAboutToBeReplaced(Object pElement) {
-                }
+            // Add listener to be notified when the document content has be changed
+            if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
+                TextFileDocumentProvider provider = (TextFileDocumentProvider) mSourcePage.getDocumentProvider();
+                IDocument doc = provider.getDocument(mSourcePage.getEditorInput());
+                if (doc != null) {
+                    doc.addDocumentListener(new IDocumentListener() {
 
-                @Override
-                public void elementContentReplaced(Object pElement) {
+                        @Override
+                        public void documentAboutToBeChanged(DocumentEvent pEvent) {
+                        }
+                        @Override
+                        public void documentChanged(DocumentEvent pEvent) {
+                            mIgnoreSourceChanges = true;
+                            mModel.reloadFromString(pEvent.getDocument().get());
+                            mIgnoreSourceChanges = false;
+                        }
+                    });
                 }
+            }
 
-                @Override
-                public void elementDeleted(Object pElement) {
-                }
-
-                @Override
-                public void elementDirtyStateChanged(Object pElement, boolean pIsDirty) {
-                    if (!mIgnoreSourceChanges) {
-                        mModel.setQuiet(true);
-                    }
-                    loadFromSource();
-                    if (!mIgnoreSourceChanges) {
-                        mModel.setQuiet(false);
-                    }
-                }
-
-                @Override
-                public void elementMoved(Object pOriginalElement, Object pMovedElement) {
-                }
-            });
             addPage(mSourcePage);
         } catch (PartInitException e) {
             // log ?
@@ -131,8 +125,10 @@ public class PackagePropertiesEditor extends FormEditor {
 
                 @Override
                 public void modelChanged() {
+                    if (!mIgnoreSourceChanges) {
+                        writeToSource(mModel.writeToString());
+                    }
                     editorDirtyStateChanged();
-                    writeToSource();
                 }
 
                 @Override
@@ -158,8 +154,7 @@ public class PackagePropertiesEditor extends FormEditor {
     @Override
     public void doSave(IProgressMonitor pMonitor) {
         try {
-            mModel.write();
-            mSourcePage.doRevertToSaved();
+            writeToSource(mModel.write());
         } catch (Exception e) {
             // Log ?
         }
@@ -191,14 +186,12 @@ public class PackagePropertiesEditor extends FormEditor {
     /**
      * Write the properties model to the source editor page.
      */
-    public void writeToSource() {
+    public void writeToSource(String pContent) {
         if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
             TextFileDocumentProvider docProvider = (TextFileDocumentProvider) mSourcePage.getDocumentProvider();
             IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
             if (doc != null) {
-                mIgnoreSourceChanges = true;
-                doc.set(mModel.writeToString());
-                mIgnoreSourceChanges = false;
+                doc.set(pContent);
             }
         }
     }

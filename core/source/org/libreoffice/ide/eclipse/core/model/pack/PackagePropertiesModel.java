@@ -42,6 +42,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -54,10 +55,12 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.Messages;
 import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
@@ -71,9 +74,12 @@ public class PackagePropertiesModel {
     private static final String BASICLIBS = "basicLibs"; //$NON-NLS-1$
     private static final String DIALOGLIBS = "dialogLibs"; //$NON-NLS-1$
     private static final String DESCRIPTION = "description"; //$NON-NLS-1$
+    private static final String SEPARATOR = ", "; //$NON-NLS-1$
 
     private IFile mPropertiesFile;
     private Properties mProperties = new Properties();
+    private List<IResource> mFiles = null;
+    private Map<IResource, Boolean> mFolders = null;
 
     private boolean mIsDirty = false;
     private boolean mIsQuiet = false;
@@ -109,6 +115,8 @@ public class PackagePropertiesModel {
                 is.close();
             } catch (Exception e) {
             }
+            mFiles = deserializeContent();
+            mFolders = getFolderCheckState();
         }
     }
 
@@ -178,10 +186,14 @@ public class PackagePropertiesModel {
     /**
      * Writes the Package properties to the file.
      *
+     * @return the content of the package properties under the form of a string
+     *         as it would have been written to the file.
+     *
      * @throws Exception
      *             if the data can't be written
      */
-    public void write() throws Exception {
+    public String write() throws Exception {
+        String content = writeToString();
         FileOutputStream os = new FileOutputStream(mPropertiesFile.getLocation().toFile());
         try {
             mProperties.store(os, Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
@@ -192,8 +204,10 @@ public class PackagePropertiesModel {
             try {
                 os.close();
             } catch (Exception e) {
+                // Nothing to log
             }
         }
+        return content;
     }
 
     /**
@@ -211,24 +225,30 @@ public class PackagePropertiesModel {
                 mProperties.load(new StringReader(pContent));
             } catch (IOException e) {
                 // Nothing to log
-            }
+                return;
+            } 
+            mFiles.clear(); 
+            mFiles.addAll(deserializeContent());
+            mFolders.clear();
+            mFolders.putAll(getFolderCheckState());
+
             firePackageChanged();
         }
     }
 
     /**
-     * @return the content of the package properties under the form of a string as it would have been written to the
-     *         file.
+     * @return the content of the package properties under the form of a string
+     *         as it would have been written to the file.
      */
     public String writeToString() {
         String fileContent = ""; //$NON-NLS-1$
+        mProperties.setProperty(CONTENTS, serializeContent());
         Set<Entry<Object, Object>> entries = mProperties.entrySet();
         Iterator<Entry<Object, Object>> iter = entries.iterator();
         while (iter.hasNext()) {
             Entry<Object, Object> entry = iter.next();
             fileContent += (String) entry.getKey() + "=" + (String) entry.getValue() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-
         return fileContent;
     }
 
@@ -249,7 +269,7 @@ public class PackagePropertiesModel {
 
         try {
             if (!libs.equals("")) { //$NON-NLS-1$
-                libs += ", "; //$NON-NLS-1$
+                libs += SEPARATOR; //$NON-NLS-1$
             }
             libs += pLibFolder.getProjectRelativePath().toString();
         } catch (Exception e) {
@@ -275,7 +295,7 @@ public class PackagePropertiesModel {
 
         try {
             if (!libs.equals("")) { //$NON-NLS-1$
-                libs += ", "; //$NON-NLS-1$
+                libs += SEPARATOR; //$NON-NLS-1$
             }
             libs += pLibFolder.getProjectRelativePath().toString();
         } catch (Exception e) {
@@ -297,9 +317,8 @@ public class PackagePropertiesModel {
             IProject prj = mPropertiesFile.getProject();
 
             if (libs != null && !libs.equals("")) { //$NON-NLS-1$
-                String[] fileNames = libs.split(","); //$NON-NLS-1$
+                String[] fileNames = libs.split(SEPARATOR); //$NON-NLS-1$
                 for (String fileName : fileNames) {
-                    fileName = fileName.trim();
                     result.add(prj.getFolder(fileName));
                 }
             }
@@ -320,9 +339,8 @@ public class PackagePropertiesModel {
             IProject prj = mPropertiesFile.getProject();
 
             if (libs != null && !libs.equals("")) { //$NON-NLS-1$
-                String[] fileNames = libs.split(","); //$NON-NLS-1$
+                String[] fileNames = libs.split(SEPARATOR); //$NON-NLS-1$
                 for (String fileName : fileNames) {
-                    fileName = fileName.trim();
                     result.add(prj.getFolder(fileName));
                 }
             }
@@ -349,35 +367,63 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Adds a file or directory to the package properties.
-     *
-     * <p>
-     * <strong>Do not add dialog or basic libraries or package descriptions using this method: use the appropriate
-     * method</strong>.
-     * </p>
-     *
-     * @param pRes
-     *            the resource to add
-     *
-     * @throws IllegalArgumentException
-     *             is thrown if the argument is <code>null</code>
+     * add resource entry if not already in
      */
-    public void addContent(IResource pRes) throws IllegalArgumentException {
-        String libs = mProperties.getProperty(CONTENTS);
-        if (libs == null) {
-            libs = ""; //$NON-NLS-1$
-        }
-
+    public void addResource(IResource pRes) {
+        // If it's a folder we need to add all children resources
         try {
-            if (!libs.equals("")) { //$NON-NLS-1$
-                libs += ", "; //$NON-NLS-1$
+            if (pRes.getType() == IResource.FOLDER) {
+                addFolderResource(pRes);
             }
-            libs += pRes.getProjectRelativePath().toString();
-        } catch (Exception e) {
-            throw new IllegalArgumentException();
+            else if (!mFiles.contains(pRes)) {
+                addFileResource(pRes);
+            }
+            firePackageChanged();
+        } catch (CoreException e) {
+            // Log ?
+         }
+    }
+
+    /**
+     * remove resource entry if already in
+     */
+    public void removeResource(IResource pRes) {
+        // If it's a folder we need to remove all children resources to
+        try {
+            if (pRes.getType() == IResource.FOLDER) {
+                removeFolderResource(pRes);
+            } else if (mFiles.contains(pRes)) {
+                removeFileResource(pRes);
+            }
+            firePackageChanged();
+        } catch (CoreException e) {
+            // Log ?
         }
-        mProperties.setProperty(CONTENTS, libs);
-        firePackageChanged();
+    }
+
+    /**
+     * @return if resource is checked
+     */
+    public boolean isChecked(IResource pRes) {
+        boolean checked = false;
+        if (pRes.getType() == IResource.FILE) {
+            checked = mFiles.contains(pRes);
+        }
+        else if (pRes.getType() == IResource.FOLDER) {
+            checked = mFolders.containsKey(pRes);
+        }
+        return checked;
+    }
+
+    /**
+     * @return if resource is grayed
+     */
+    public boolean isGrayed(IResource pRes) {
+        boolean grayed = false;
+        if (pRes.getType() == IResource.FOLDER) {
+            grayed = mFolders.getOrDefault(pRes, false);
+        }
+        return grayed;
     }
 
     /**
@@ -385,35 +431,17 @@ public class PackagePropertiesModel {
      *         libraries or package descriptions
      */
     public List<IResource> getContents() {
-        ArrayList<IResource> result = new ArrayList<IResource>();
-
-        try {
-            String libs = mProperties.getProperty(CONTENTS);
-            IProject prj = mPropertiesFile.getProject();
-
-            if (libs != null && !libs.equals("")) { //$NON-NLS-1$
-                String[] fileNames = libs.split(","); //$NON-NLS-1$
-                for (String fileName : fileNames) {
-                    fileName = fileName.trim();
-                    if (prj.getFolder(fileName).exists()) {
-                        result.add(prj.getFolder(fileName));
-                    } else if (prj.getFile(fileName).exists()) {
-                        result.add(prj.getFile(fileName));
-                    }
-                }
-            }
-        } catch (NullPointerException e) {
-            // Nothing to do nor return
-        }
-        return result;
+        return mFiles;
     }
 
     /**
      * Removes all the file and directories from the package properties that has been added using
-     * {@link #addContent(IResource)}.
+     * {@link #addResource(IResource)}.
      */
     public void clearContents() {
         mProperties.setProperty(CONTENTS, ""); //$NON-NLS-1$
+        mFiles.clear();
+        mFolders.clear();
         firePackageChanged();
     }
 
@@ -501,4 +529,179 @@ public class PackagePropertiesModel {
             firePackageChanged();
         }
     }
+
+    /**
+     * Add all files that are members of a folder resource recursively
+     */
+    private void addFolderResource(IResource pFolder) throws CoreException {
+        mFolders.put(pFolder, false);
+        IResource[] members = ((IContainer) pFolder).members();
+        for (IResource res :members) {
+            if (res.getType() == IResource.FOLDER) {
+                addFolderResource(res);
+            }
+            else if (!mFiles.contains(res)) {
+                mFiles.add(res);
+            }
+        }
+    }
+
+    /**
+     * Remove all files that are members of a folder resource recursively
+     */
+    private void removeFolderResource(IResource pFolder) throws CoreException {
+        if (mFolders.containsKey(pFolder)) {
+            mFolders.remove(pFolder);
+        }
+        IResource[] members = ((IContainer) pFolder).members();
+        for (IResource res : members) {
+            if (res.getType() == IResource.FOLDER) {
+                removeFolderResource(res);
+            }
+            else if (mFiles.contains(res)) {
+                mFiles.remove(res);
+            }
+        }
+    }
+
+    /**
+     * Add a files and updated folders
+     */
+    private void addFileResource(IResource pFile) throws CoreException {
+        mFiles.add(pFile);
+        IProject prj = mPropertiesFile.getProject();
+        IContainer parent = pFile.getParent();
+        while (parent != null && parent != prj) {
+            parent = getParentCheckState(parent);
+        }
+    }
+
+    /**
+     * Remove a files and updated folders
+     */
+    private void removeFileResource(IResource pFile) throws CoreException {
+        if (mFiles.contains(pFile)) {
+            mFiles.remove(pFile);
+        }
+        IProject prj = mPropertiesFile.getProject();
+        IContainer parent = pFile.getParent();
+        while (parent != null && parent != prj) {
+            if (mFolders.containsKey(parent)) {
+                if (parent.members().length == 1) {
+                    mFolders.remove(parent);
+                } else {
+                    mFolders.put(parent, true);
+                }
+            }
+            parent = parent.getParent();
+        }
+    }
+
+    /**
+     * Serialize all files resource to the package properties.
+     */
+    private String serializeContent() {
+        List<String> result = new ArrayList<>();
+        for (IResource res : mFiles) {
+            if (res.getType() == IResource.FILE && res.exists()) {
+                result.add(res.getProjectRelativePath().toString());
+            }
+        }
+        Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
+        return String.join(SEPARATOR, result);
+    }
+
+    /**
+     * De-serialize all files resource from the package properties.
+     */
+    private List<IResource> deserializeContent() {
+        List<IResource> resources = new ArrayList<>();
+        try {
+            String libs = mProperties.getProperty(CONTENTS);
+            IProject prj = mPropertiesFile.getProject();
+
+            if (libs != null && !libs.equals("")) { //$NON-NLS-1$
+                for (String path : libs.split(SEPARATOR)) {
+                    if (prj.getFile(path).exists()) {
+                        resources.add(prj.getFile(path));
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            // Nothing to do nor return
+        }
+        return resources;
+    }
+
+    /**
+     * Get project check state from files resource.
+     */
+    private Map<IResource, Boolean> getFolderCheckState() {
+        Map<IResource, Boolean> resources = new HashMap<>();
+        try {
+            IResource [] members = mPropertiesFile.getProject().members();
+            for (IResource res : members) {
+                if (res.getType() == IResource.FOLDER) {
+                    getSubFolderCheckState(resources, res);
+                }
+            }
+        } catch (NullPointerException | CoreException e) {
+            // Nothing to do nor return
+        }
+        return resources;
+    }
+
+    /**
+     * Get folder check state from files resource.
+     */
+    private void getSubFolderCheckState(Map<IResource, Boolean> pFolders, IResource pParent) throws CoreException {
+        IResource[] members = ((IContainer) pParent).members();
+        boolean checked = true;
+        boolean grayed = false;
+        for (IResource res : members) {
+            if (res.getType() == IResource.FOLDER) {
+                getSubFolderCheckState(pFolders, res);
+            } else if (mFiles.contains(res)) {
+                grayed = true;
+            } else {
+                checked = false;
+            }
+        }
+        if (members.length == 0) {
+            pFolders.put(pParent, false);
+        }
+        else if (checked || grayed) {
+            pFolders.put(pParent, grayed && !checked);
+        }
+    }
+
+    /**
+     * Get parent check state from files resource.
+     */
+    private IContainer getParentCheckState(IResource pParent) throws CoreException {
+        IResource[] members = ((IContainer) pParent).members();
+        boolean checked = true;
+        boolean grayed = false;
+        for (IResource res : members) {
+            if (res.getType() == IResource.FOLDER) {
+                if (mFolders.containsKey(res)) {
+                    grayed = mFolders.get(res);
+                } else {
+                    checked = false;
+                }
+            } else if (mFiles.contains(res)) {
+                grayed = true;
+            } else {
+                checked = false;
+            }
+        }
+        if (members.length == 0) {
+            mFolders.put(pParent, false);
+        }
+        else if (checked || grayed) {
+            mFolders.put(pParent, grayed && !checked);
+        }
+        return pParent.getParent();
+    }
+
 }

@@ -363,4 +363,13 @@
          <configurationType id="org.libreoffice.ide.eclipse.core.launchlibreoffice" />
       </shortcut>
    </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="org.libreoffice.ide.eclipse.core.uno"
+            class="org.libreoffice.ide.eclipse.core.export.AntScriptExportWizard"
+            icon="/icons/export_ant.gif"
+            id="org.libreoffice.ide.eclipse.core.java.antScript"
+            name="Generate Ant Script File"/>
+   </extension>
 </plugin>

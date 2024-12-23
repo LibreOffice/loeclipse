@@ -84,8 +84,8 @@ public class PackageDescriptionSection extends SectionPart {
 
     private static final String P_NAME = "__p_name"; //$NON-NLS-1$
     private static final String P_LOCALE = "__p_locale"; //$NON-NLS-1$
-    private static final int NAME_WIDTH = 200;
-    private static final int LOCALE_WIDTH = 200;
+    private static final int NAME_WIDTH = 250;
+    private static final int LOCALE_WIDTH = 250;
 
     private PackageFormPage mPage;
     private TableViewer mTableViewer;

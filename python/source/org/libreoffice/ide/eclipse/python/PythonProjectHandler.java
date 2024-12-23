@@ -208,7 +208,7 @@ public class PythonProjectHandler implements IProjectHandler {
 
     @Override
     public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
-        return null;
+        return new IFolder[0];
     }
 
 }

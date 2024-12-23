@@ -19,14 +19,14 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.java.test;
+package org.libreoffice.ide.eclipse.core.unittests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.libreoffice.ide.eclipse.java.export.JavaExportPageControl;
+import org.libreoffice.ide.eclipse.core.export.ProjectExportPageControl;
 
 /**
  * Unit test for the Manifest export page part UI controller.
@@ -38,10 +38,10 @@ public class JavaExportPageControlTest {
      */
     @Test
     public void testDefaults() {
-        JavaExportPageControl tested = new JavaExportPageControl();
+        ProjectExportPageControl tested = new ProjectExportPageControl();
         assertFalse("Save ant script shouldn't be default", tested.getSaveAntScript());
         assertFalse("Save path shouldn't be enabled by default", tested.isSavePathEnabled());
-        assertEquals(JavaExportPageControl.DEFAULT_ANT_FILENAME, tested.getSavePath());
+        assertEquals(ProjectExportPageControl.DEFAULT_ANT_FILENAME, tested.getSavePath());
     }
 
     /**
@@ -49,7 +49,7 @@ public class JavaExportPageControlTest {
      */
     @Test
     public void testSetSaveAntScript() {
-        JavaExportPageControl tested = new JavaExportPageControl();
+        ProjectExportPageControl tested = new ProjectExportPageControl();
 
         tested.setSaveAntScript(true);
         assertTrue("Save ant script selection not persisting", tested.getSaveAntScript());

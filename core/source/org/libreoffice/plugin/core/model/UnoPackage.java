@@ -39,6 +39,7 @@ package org.libreoffice.plugin.core.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -49,6 +50,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.IPath;
@@ -81,6 +84,9 @@ public class UnoPackage {
 
     private static final String BASIC_LIBRARY_INDEX = "script.xlb";
     private static final String DIALOG_LIBRARY_INDEX = "dialog.xlb";
+
+    private static final String MIMETYPE = "mimetype";
+    private static final String MIMETYPE_CONTENT = "application/vnd.openofficeorg.extension";
 
     private File mDestination;
     private boolean mBuilding = false;
@@ -613,6 +619,19 @@ public class UnoPackage {
                 FileOutputStream out = new FileOutputStream(mDestination);
                 ZipOutputStream zipOut = new ZipOutputStream(out);
 
+                // Add mimetype file to zip file (first entry file and no compressed)
+                ZipEntry entry = new ZipEntry(MIMETYPE);
+                byte[] mimetype = MIMETYPE_CONTENT.getBytes(StandardCharsets.UTF_8);
+                entry.setMethod(ZipEntry.STORED);
+                entry.setSize(mimetype.length);
+                entry.setCompressedSize(mimetype.length);
+                CRC32 crc = new CRC32();
+                crc.update(mimetype);
+                entry.setCrc(crc.getValue());
+                zipOut.putNextEntry(entry);
+                zipOut.write(mimetype);
+
+                // Add the content files to the zip
                 Iterator<ZipContent> entries = mZipEntries.values().iterator();
                 while (entries.hasNext()) {
                     ZipContent content = entries.next();

@@ -36,19 +36,15 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.editors.pack;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -56,7 +52,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.libreoffice.ide.eclipse.core.editors.Messages;
-import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
 import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
 
@@ -80,6 +75,19 @@ public class ContentsSection extends SectionPart {
 
         mPage = pPage;
         PackagePropertiesModel model = ((PackagePropertiesEditor) mPage.getEditor()).getModel();
+
+        Section section = getSection();
+
+        section.setText(Messages.getString("ContentsSection.Title")); //$NON-NLS-1$
+        section.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        mTreeViewer = new ContainerCheckedTreeViewer(section);
+        // Configure the tree viewer
+        mTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+        WorkbenchContentProvider provider = new WorkbenchContentProvider();
+        mTreeViewer.setContentProvider(provider);
+        mTreeViewer.setComparator(new ViewerComparator(String.CASE_INSENSITIVE_ORDER));
+
         model.addChangeListener(new IModelChangedListener() {
 
             @Override
@@ -94,30 +102,43 @@ public class ContentsSection extends SectionPart {
             }
         });
 
-        Section section = getSection();
-
-        section.setText(Messages.getString("ContentsSection.Title")); //$NON-NLS-1$
-        section.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        mTreeViewer = new ContainerCheckedTreeViewer(section);
-        // Configure the tree viewer
-        mTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
-        WorkbenchContentProvider provider = new WorkbenchContentProvider();
-        mTreeViewer.setContentProvider(provider);
         mTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
             @Override
             public void checkStateChanged(CheckStateChangedEvent pEvent) {
-
-                PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
-
-                List<IResource> contents = getContents();
-                editor.getModel().clearContents();
-                for (IResource resource : contents) {
-                    editor.getModel().addContent(resource);
+                if (pEvent.getElement() instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) pEvent.getElement()).getAdapter(IResource.class);
+                    if (pEvent.getChecked()) {
+                        model.addResource(res);
+                    } else {
+                        model.removeResource(res);
+                    }
                 }
             }
         });
+
+        mTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
+
+            @Override
+            public boolean isChecked(Object pElement) {
+                if (pElement instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) pElement).getAdapter(IResource.class);
+                    return model.isChecked(res);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isGrayed(Object pElement) {
+                if (pElement instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) pElement).getAdapter(IResource.class);
+                    return model.isGrayed(res);
+                }
+                return false;
+            }
+
+        });
+
         mTreeViewer.addFilter(new ViewerFilter() {
 
             @Override
@@ -125,15 +146,15 @@ public class ContentsSection extends SectionPart {
                 /*
                  * Files to exclude: .* Folders to exclude: build, bin
                  */
-                boolean select = true;
                 if (pElement instanceof IAdaptable) {
                     IResource resource = ((IAdaptable) pElement).getAdapter(IResource.class);
                     if (resource != null) {
+                        // FIXME: If we want to be able to see soft link pointing outside
+                        // FIXME: the Package we need to accept resource not contained in package
                         if (resource.getName().startsWith(".") || //$NON-NLS-1$
                             resource.getName().equals("build") || //$NON-NLS-1$
-                            resource.getName().equals("bin") || //$NON-NLS-1$
-                            UnoidlProjectHelper.isContainedInPackage(resource)) {
-                            select = false;
+                            resource.getName().equals("bin")) { //$NON-NLS-1$
+                            return false;
                         }
 
                         // Check if the resource is already selected somewhere
@@ -143,96 +164,23 @@ public class ContentsSection extends SectionPart {
                         if (model.getBasicLibraries().contains(resource)
                             || model.getDialogLibraries().contains(resource)
                             || model.getDescriptionFiles().containsValue(resource)) {
-                            select = false;
+                            return false;
                         }
                     }
                 }
 
-                return select;
+                return true;
             }
         });
 
-        IEditorInput input = mPage.getEditorInput();
-        if (input instanceof IFileEditorInput) {
-            IFileEditorInput fileInput = (IFileEditorInput) input;
-            mTreeViewer.setInput(fileInput.getFile().getProject());
-        }
-
         section.setClient(mTreeViewer.getControl());
-
     }
 
-    /**
-     * @return the list of files and folders to add to the package
-     */
-    public List<IResource> getContents() {
-        ArrayList<IResource> contents = new ArrayList<IResource>();
-
-        // Write the selections to the document
-        Object[] checked = mTreeViewer.getCheckedElements();
-
-        for (Object o : checked) {
-            if (o instanceof IAdaptable) {
-                IResource res = ((IAdaptable) o).getAdapter(IResource.class);
-                if (res != null) {
-                    addResourceToContent(contents, res);
-                }
-            }
-        }
-
-        return contents;
-    }
-
-    /**
-     * Add a resource to the contents list, but removes all duplicates entries (all files of a selected directory).
-     *
-     * @param pContents
-     *            the resource list to update
-     * @param pResource
-     *            the resource to add
-     */
-    private void addResourceToContent(ArrayList<IResource> pContents, IResource pResource) {
-        int i = 0;
-        boolean isSubResource = false;
-
-        ArrayList<String> checkedFolderPaths = new ArrayList<String>();
-
-        while (i < checkedFolderPaths.size() && !isSubResource) {
-            String path = pResource.getProjectRelativePath().toString();
-            if (path.startsWith(checkedFolderPaths.get(i))) {
-                isSubResource = true;
-            }
-            i++;
-        }
-
-        if (!isSubResource && !mTreeViewer.getGrayed(pResource) && pResource.getType() == IResource.FOLDER) {
-            String path = pResource.getProjectRelativePath().toString();
-            checkedFolderPaths.add(path);
-            pContents.add(pResource);
-        } else if (!isSubResource && !mTreeViewer.getGrayed(pResource)) {
-            pContents.add(pResource);
+    public void setContents() {
+        // Initialize TreeView
+        if (mTreeViewer != null) {
+            mTreeViewer.setInput(mPage.getProject());
         }
     }
 
-    /**
-     * Updates the section using the new contents.
-     *
-     * @param pContents
-     *            the package contents to put in the section
-     */
-    public void setContents(List<IResource> pContents) {
-        // Split the string into several parts and find the files
-        if (mPage.getEditorInput() instanceof IFileEditorInput) {
-            IFileEditorInput input = (IFileEditorInput) mPage.getEditorInput();
-            IProject prj = input.getFile().getProject();
-
-            mTreeViewer.setCheckedElements(new Object[] {});
-
-            for (IResource res : pContents) {
-                if (res.getProject().equals(prj) && res.exists()) {
-                    mTreeViewer.setChecked(res, true);
-                }
-            }
-        }
-    }
 }
