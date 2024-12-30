@@ -60,24 +60,25 @@ public class ManifestModel {
      * This method doesn't know about the different languages contributions to the <code>manifest.xml</code> file.
      * </p>
      *
-     * @param pContent
-     *            the file or folder to add
+     * @param pPath the path
+     *
+     * @param pContent the file or folder to add
      */
-    public void addContent(String path, File pContent) {
+    public void addContent(String pPath, File pContent) {
         if (pContent.isFile()) {
             if (pContent.getName().endsWith(EXT_XCS)) {
-                addConfigurationSchemaFile(path);
+                addConfigurationSchemaFile(pPath);
             } else if (pContent.getName().endsWith(EXT_XCU)) {
-                addConfigurationDataFile(path);
+                addConfigurationDataFile(pPath);
             } else if (pContent.getName().endsWith(EXT_RDB)) {
-                addTypelibraryFile(path);
+                addTypelibraryFile(pPath);
             } else if (pContent.getName().equals("description.xml")) {
-                addDescription(path, Locale.getDefault());
+                addDescription(pPath, Locale.getDefault());
             }
         } else if (pContent.isDirectory()) {
             // Recurse on the directory
             for (File child : pContent.listFiles()) {
-                addContent(path + "/" + child.getName(), child);
+                addContent(pPath + "/" + child.getName(), child);
             }
         } else {
             throw new IllegalArgumentException("pContent [" + pContent + "] does not exists");
@@ -268,22 +269,22 @@ public class ManifestModel {
     /**
      * Write the manifest file.
      *
-     * @param writer
+     * @param pWriter
      *            the writer
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    public void write(Writer writer) throws IOException {
+    public void write(Writer pWriter) throws IOException {
         Iterator<Entry<String, FileType>> iter = mEntries.entrySet().iterator();
         String entryPattern = "\t<manifest:file-entry manifest:full-path=\"{0}\"" + " manifest:media-type=\"{1}\"/>\n";
-        writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        writer.write("<manifest:manifest xmlns:manifest=\"http://openoffice.org/2001/manifest\">\n");
+        pWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        pWriter.write("<manifest:manifest xmlns:manifest=\"http://openoffice.org/2001/manifest\">\n");
         while (iter.hasNext()) {
             Entry<String, FileType> entry = iter.next();
-            writer.write(MessageFormat.format(entryPattern, entry.getKey(), entry.getValue().toString()));
+            pWriter.write(MessageFormat.format(entryPattern, entry.getKey(), entry.getValue().toString()));
         }
-        writer.write("</manifest:manifest>\n");
-        writer.flush();
+        pWriter.write("</manifest:manifest>\n");
+        pWriter.flush();
     }
 
 }

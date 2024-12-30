@@ -49,15 +49,18 @@ public class FileHelper {
     /**
      * Converts all separators to the Unix separator of forward slash.
      *
-     * @param path
+     * @param pPath
      *            the path to be changed, null ignored
      * @return the updated path
      */
-    public static String separatorsToUnix(String path) {
-        if (path == null || path.indexOf('/') == -1) {
-            return path;
+    public static String separatorsToUnix(String pPath) {
+        String path;
+        if (pPath == null || pPath.indexOf('/') == -1) {
+            path = pPath;
+        } else {
+            path = pPath.replace('\\', '/');
         }
-        return path.replace('\\', '/');
+        return path;
     }
 
     /**
@@ -78,11 +81,19 @@ public class FileHelper {
 
         // Check for invalid arguments
         if (pSrc == null || !pSrc.canRead()) {
-            throw new IOException("FileHelper.ReadError" + (pSrc == null ? "" : pSrc.getAbsolutePath()));
+            String path = "";
+            if (pSrc != null) {
+                path = pSrc.getAbsolutePath();
+            }
+            throw new IOException("FileHelper.ReadError" + path);
         }
 
         if (pDst == null || !pDst.canWrite()) {
-            throw new IOException("FileHelper.WriteError" + (pDst == null ? "" : pDst.getAbsolutePath()));
+            String path = "";
+            if (pDst != null) {
+                path = pDst.getAbsolutePath();
+            }
+            throw new IOException("FileHelper.WriteError" + path);
         }
 
         // Now really move the content
@@ -133,9 +144,12 @@ public class FileHelper {
 
         // Check for invalid arguments
         if (pSrc == null || !pSrc.canRead()) {
-            throw new IOException("FileHelper.ReadError" + (pSrc == null ? "" : pSrc.getAbsolutePath()));
+            String msg = "FileHelper.ReadError";
+            if (pSrc != null) {
+                msg += " " + pSrc.getAbsolutePath();
+            }
+            throw new IOException(msg);
         }
-
         if (pDst == null) {
             throw new IOException("FileHelper.NullDestinationError");
         }
@@ -145,23 +159,27 @@ public class FileHelper {
             pDst.delete();
         }
 
+        // now copy the file
         if (!pDst.exists()) {
-            // now copy the file
-            FileInputStream in = new FileInputStream(pSrc);
-            FileOutputStream out = new FileOutputStream(pDst);
+            copyFile(pSrc, pDst);
+        }
+    }
 
+    private static void copyFile(File pSrc, File pDst) throws IOException {
+        FileInputStream in = new FileInputStream(pSrc);
+        FileOutputStream out = new FileOutputStream(pDst);
+
+        try {
+            int c = in.read();
+            while (c != -1) {
+                out.write(c);
+                c = in.read();
+            }
+        } finally {
             try {
-                int c = in.read();
-                while (c != -1) {
-                    out.write(c);
-                    c = in.read();
-                }
-            } finally {
-                try {
-                    in.close();
-                    out.close();
-                } catch (Exception e) {
-                }
+                in.close();
+                out.close();
+            } catch (Exception e) {
             }
         }
     }

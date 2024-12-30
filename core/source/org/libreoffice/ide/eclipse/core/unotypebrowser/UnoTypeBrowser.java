@@ -141,7 +141,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
     @Override
     protected void createButtonsForButtonBar(Composite pParent) {
 
-        mRefreshBtn = createButton(pParent, ID_REFRESH, Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
+        mRefreshBtn = createButton(pParent, ID_REFRESH,
+            Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
         Image img = OOEclipsePlugin.getImage("REFRESH"); //$NON-NLS-1$
         mRefreshBtn.setImage(img);
         mRefreshBtn.addSelectionListener(new SelectionAdapter() {
@@ -192,8 +193,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
         createList(body);
 
         // create the types filter row
-        mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER, Messages.getString("UnoTypeBrowser.FilterLabel"), null, //$NON-NLS-1$
-            false);
+        mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER,
+            Messages.getString("UnoTypeBrowser.FilterLabel"), null, false); //$NON-NLS-1$
         mTypeFilterRow.setTooltip(Messages.getString("UnoTypeBrowser.FilterTooltip")); //$NON-NLS-1$
         mTypeFilterRow.setFieldChangedListener(this);
         setFilterValues();
@@ -222,8 +223,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
                     mTypesList.refresh();
                     activateFields(true);
 
-                    updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.INFO, "", //$NON-NLS-1$
-                        null));
+                    updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.INFO, "", null)); //$NON-NLS-1$
                 }
             }
         };
@@ -266,8 +267,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
                     getButton(IDialogConstants.OK_ID).setEnabled(false);
 
                 } else {
-                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
-                        null));
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.OK, "", null)); //$NON-NLS-1$
                     getButton(IDialogConstants.OK_ID).setEnabled(true);
 
                     IStructuredSelection selection = (IStructuredSelection) pEvent.getSelection();

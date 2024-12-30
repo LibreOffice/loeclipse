@@ -75,8 +75,9 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
     @Override
     public void loadData() {
         getModel().setSuspendEvent(true);
-        if (!getModel().getReleaseNotes().isEmpty())
+        if (!getModel().getReleaseNotes().isEmpty()) {
             mUrlTxt.setText(getModel().getReleaseNotes().get(mCurrentLocale));
+        }
         getModel().setSuspendEvent(false);
     }
 
@@ -87,8 +88,8 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
         pParent.setLayout(new GridLayout(LAYOUT_COLS, false));
 
-        Label descrLbl = pToolkit.createLabel(pParent, Messages.getString("ReleaseNotesSection.Description"), //$NON-NLS-1$
-            SWT.WRAP);
+        String msg = Messages.getString("ReleaseNotesSection.Description"); //$NON-NLS-1$
+        Label descrLbl = pToolkit.createLabel(pParent, msg, SWT.WRAP);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
         descrLbl.setLayoutData(gd);

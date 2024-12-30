@@ -111,8 +111,8 @@ public class DescriptionFormPage extends FormPage {
         FormToolkit toolkit = getManagedForm().getToolkit();
         toolkit.decorateFormHeading(form.getForm());
 
-        Label descrLbl = toolkit.createLabel(body, Messages.getString("PackageOverviewFormPage.Description"), //$NON-NLS-1$
-            SWT.WRAP);
+        String msg = Messages.getString("PackageOverviewFormPage.Description"); //$NON-NLS-1$
+        Label descrLbl = toolkit.createLabel(body, msg, SWT.WRAP);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         descrLbl.setLayoutData(gd);

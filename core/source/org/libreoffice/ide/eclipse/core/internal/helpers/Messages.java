@@ -43,7 +43,8 @@ import java.util.ResourceBundle;
  * Messages for the package.
  */
 public class Messages {
-    private static final String BUNDLE_NAME = "org.libreoffice.ide.eclipse.core.internal.helpers.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = 
+        "org.libreoffice.ide.eclipse.core.internal.helpers.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

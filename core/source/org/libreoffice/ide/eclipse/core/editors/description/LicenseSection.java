@@ -91,8 +91,9 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
     @Override
     public void loadData() {
         getModel().setSuspendEvent(true);
-        if (!getModel().getLicenses().isEmpty())
+        if (!getModel().getLicenses().isEmpty()) {
             mFileTxt.setText(getModel().getLicenses().get(mCurrentLocale));
+        }
         mSuppressUpdateBtn.setSelection(getModel().isSuppressOnUpdate());
         mUserAcceptBtn.setSelection(getModel().isAcceptByUser());
         getModel().setSuspendEvent(false);
@@ -132,8 +133,8 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
             }
         });
 
-        mSuppressUpdateBtn = pToolkit.createButton(pParent, Messages.getString("LicenseSection.SuppressUpdate"), //$NON-NLS-1$
-            SWT.CHECK);
+        String msg = Messages.getString("LicenseSection.SuppressUpdate"); //$NON-NLS-1$
+        mSuppressUpdateBtn = pToolkit.createButton(pParent, msg, SWT.CHECK);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
         mSuppressUpdateBtn.setLayoutData(gd);

@@ -72,7 +72,8 @@ public class IdlcErrorReader {
      * <em>&lt;file&gt;:&lt;line number&gt; [&lt;offsetStart&gt;,&lt;offsetEnd&gt;] : &lt;message&gt;</em>
      * </p>
      */
-    private static final String R_IDLC_ERROR = "(.*):([0-9]+) \\[([0-9]+):([0-9]+)\\] :" + " (WARNING, )?(.*)"; //$NON-NLS-2$
+    private static final String R_IDLC_ERROR = "(.*):([0-9]+) \\[([0-9]+):([0-9]+)\\] :" +
+        " (WARNING, )?(.*)"; //$NON-NLS-2$
 
     private static final int IDLC_ERROR_LINE_GROUP = 2;
     private static final int IDLC_ERROR_OFFSET_START_GROUP = 3;

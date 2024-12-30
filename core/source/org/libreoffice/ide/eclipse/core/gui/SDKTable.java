@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.gui.rows.FieldEvent;
@@ -92,7 +93,7 @@ public class SDKTable extends AbstractTable {
         super(pParent, Messages.getString("SDKTable.Title"), //$NON-NLS-1$
             new String[] { Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
                 Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
-        }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
+            }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
 
         mTableViewer.setInput(SDKContainer.getInstance());
         mTableViewer.setContentProvider(new SDKContentProvider());
@@ -167,7 +168,7 @@ public class SDKTable extends AbstractTable {
     protected SDK openDialog(SDK pSdk) {
 
         // Gets the shell of the active eclipse window
-        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         SDKDialog dialog = new SDKDialog(shell, pSdk);
         if (Window.OK == dialog.open()) {
@@ -416,11 +417,11 @@ public class SDKTable extends AbstractTable {
                     boolean unique = !SDKContainer.containsName(pEvent.getValue());
 
                     if (unique) {
-                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.OK, "", null)); //$NON-NLS-1$
                     } else {
-                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
-                            Messages.getString("OOoSDKTable.NameExistsError"), //$NON-NLS-1$
-                            null));
+                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.WARNING, Messages.getString("OOoSDKTable.NameExistsError"), null)); //$NON-NLS-1$
                     }
                 }
             }
@@ -444,15 +445,17 @@ public class SDKTable extends AbstractTable {
                     mSdkNameRow.setValue(mTmpSdk.getName());
                 }
 
-                updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                    IStatus.OK, "", null)); //$NON-NLS-1$
                 result = true;
             } catch (InvalidConfigException e) {
-                if ((pProperty==null || pProperty.equals(P_SDK_PATH)) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
+                if ((pProperty == null || pProperty.equals(P_SDK_PATH)) &&
+                    InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
                         e.getMessage(), e));
                 } else {
-                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
-                        e));
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.OK, "", e)); //$NON-NLS-1$
                 }
             }
 

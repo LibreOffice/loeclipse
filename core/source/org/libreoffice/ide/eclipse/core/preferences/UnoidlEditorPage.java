@@ -75,12 +75,12 @@ public class UnoidlEditorPage extends FieldEditorPreferencePage implements IWork
             getFieldEditorParent()));
         addField(new ColorFieldEditor(Colors.C_COMMENT, Messages.getString("UnoidlEditorPage.Comment"), //$NON-NLS-1$
             getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT, Messages.getString("UnoidlEditorPage.AutodocComment"), //$NON-NLS-1$
-            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_AUTODOC_COMMENT,
+            Messages.getString("UnoidlEditorPage.AutodocComment"), getFieldEditorParent())); //$NON-NLS-1$
         addField(new ColorFieldEditor(Colors.C_XML_TAG, Messages.getString("UnoidlEditorPage.XmlTag"), //$NON-NLS-1$
             getFieldEditorParent()));
-        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR, Messages.getString("UnoidlEditorPage.PreprocessorCommand"), //$NON-NLS-1$
-            getFieldEditorParent()));
+        addField(new ColorFieldEditor(Colors.C_PREPROCESSOR,
+            Messages.getString("UnoidlEditorPage.PreprocessorCommand"), getFieldEditorParent())); //$NON-NLS-1$
     }
 
     /**

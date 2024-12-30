@@ -102,12 +102,13 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
                     isValid = true;
                 }
             }
+        } else {
+            String msg = "You need to create/select a LibreOffice project first to use the selection";
+            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", msg);
         }
-        else {
-            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "You need to create/select a LibreOffice project first to use the selection");
-        }
-        if(!isValid && projectExist) {
-            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "The Selection only works with LibreOffice projects");
+        if (!isValid && projectExist) {
+            String msg = "The Selection only works with LibreOffice projects";
+            MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", msg);
         }
 
         return isValid;

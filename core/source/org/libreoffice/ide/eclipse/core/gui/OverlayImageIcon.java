@@ -38,7 +38,7 @@ package org.libreoffice.ide.eclipse.core.gui;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -103,28 +103,29 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
     @Override
     protected void drawCompositeImage(int pLower, int pUpper) {
         // Draw the base image
-        drawImage(mBaseImage.getImageData(), 0, 0);
+        drawImage(createCachedImageDataProvider(mBaseImage), 0, 0);
 
-        ImageData imageData = mImage.getImageData();
+        ImageDataProvider provider = createCachedImageDataProvider(mImage);
         switch (mLocation) {
             // Draw on the top left corner
             case TOP_LEFT:
-                drawImage(imageData, 0, 0);
+                drawImage(provider, 0, 0);
                 break;
 
                 // Draw on top right corner
             case TOP_RIGHT:
-                drawImage(imageData, mSizeOfImage.x - imageData.width, 0);
+                drawImage(provider, mSizeOfImage.x - mImage.getBounds().width, 0);
                 break;
 
                 // Draw on bottom left
             case BOTTOM_LEFT:
-                drawImage(imageData, 0, mSizeOfImage.y - imageData.height);
+                drawImage(provider, 0, mSizeOfImage.y - mImage.getBounds().height);
                 break;
 
                 // Draw on bottom right corner
             case BOTTOM_RIGHT:
-                drawImage(imageData, mSizeOfImage.x - imageData.width, mSizeOfImage.y - imageData.height);
+                drawImage(provider, mSizeOfImage.x - mImage.getBounds().width,
+                    mSizeOfImage.y - mImage.getBounds().height);
                 break;
 
         }

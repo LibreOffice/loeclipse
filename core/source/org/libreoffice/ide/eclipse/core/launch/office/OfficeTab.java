@@ -194,7 +194,8 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
 
         try {
 
-            boolean projectSet = !pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-2$
+            boolean projectSet = !pLaunchConfig.getAttribute(
+                IOfficeLaunchConstants.PROJECT_NAME, "").equals(""); //$NON-NLS-2$
             if (projectSet) {
                 String name = pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;
@@ -207,7 +208,7 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     }
 
     /**
-     * Change listener to be notified when the user touches the UI controls
+     * Change listener to be notified when the user touches the UI controls.
      */
     private class ChangeListener extends SelectionAdapter {
         @Override

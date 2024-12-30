@@ -344,7 +344,8 @@ public class UnoPackageExportPage extends WizardPage {
             boolean doit = true;
             File destFile = new File(mDestinationCombo.getText());
             if (destFile.exists() && !mOverwriteBox.getSelection()) {
-                String msg = MessageFormat.format(Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$
+                String msg = MessageFormat.format(
+                    Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$
                     destFile.getPath());
                 doit = MessageDialog.openQuestion(getShell(), getTitle(), msg);
             }

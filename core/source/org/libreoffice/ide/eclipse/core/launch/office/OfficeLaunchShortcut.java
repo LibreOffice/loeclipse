@@ -53,7 +53,8 @@ import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
  */
 public class OfficeLaunchShortcut implements ILaunchShortcut {
 
-    private static final String OFFICE_LAUNCH_CONFIG_ID = "org.libreoffice.ide.eclipse.core.launchlibreoffice"; //$NON-NLS-1$
+    private static final String OFFICE_LAUNCH_CONFIG_ID =
+        "org.libreoffice.ide.eclipse.core.launchlibreoffice"; //$NON-NLS-1$
 
     /**
      * {@inheritDoc}

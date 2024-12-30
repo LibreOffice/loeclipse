@@ -270,24 +270,24 @@ public class JavaProjectHandler implements IProjectHandler {
         return new File(pProjectDir, filename);
     }
 
-    private String getName(File projectDir) throws IOException, XPathException {
-        File projectFile = new File(projectDir, ".project");
-        if (!projectFile.exists()) {
-            return null;
-        }
-        final FileInputStream byteStream = new FileInputStream(projectFile);
-        InputSource source = new InputSource(byteStream);
+    private String getName(File pProjectDir) throws IOException, XPathException {
+        String name = null;
+        File projectFile = new File(pProjectDir, ".project");
+        if (projectFile.exists()) {
+            final FileInputStream byteStream = new FileInputStream(projectFile);
+            InputSource source = new InputSource(byteStream);
 
-        // evaluation de l'expression XPath
-        XPathFactory factory = XPathFactory.newInstance();
-        javax.xml.xpath.XPath xpath = factory.newXPath();
-        final String xPathExpr = "//projectDescription/name";
-        XPathExpression exp = xpath.compile(xPathExpr);
-        Node node = (Node) exp.evaluate(source, XPathConstants.NODE);
-        if (node == null) {
-            return null;
+            // evaluation de l'expression XPath
+            XPathFactory factory = XPathFactory.newInstance();
+            javax.xml.xpath.XPath xpath = factory.newXPath();
+            final String xPathExpr = "//projectDescription/name";
+            XPathExpression exp = xpath.compile(xPathExpr);
+            Node node = (Node) exp.evaluate(source, XPathConstants.NODE);
+            if (node != null) {
+                name = node.getTextContent();
+            }
         }
-        return node.getTextContent();
+        return name;
     }
 
     /**

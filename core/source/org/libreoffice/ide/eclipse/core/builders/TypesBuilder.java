@@ -67,7 +67,8 @@ import org.libreoffice.ide.eclipse.core.model.language.ILanguageBuilder;
  * <ul>
  * <li>{@link RegmergeBuilder} merging the urd files into the types registry</li>
  * <li>
- * {@link ILanguageBuilder#generateFromTypes( ISdk, org.libreoffice.ide.eclipse.core.preferences.IOOo, IProject, File, File, String, IProgressMonitor)}
+ * {@link ILanguageBuilder#generateFromTypes(ISdk, org.libreoffice.ide.eclipse.core.preferences.IOOo, IProject,
+ *                                           File, File, String, IProgressMonitor)}
  * generating the language specific type files</li>
  * </ul>
  * </p>
@@ -109,23 +110,21 @@ public class TypesBuilder extends IncrementalProjectBuilder {
                     public boolean visit(IResourceDelta pDelta) throws CoreException {
 
                         boolean visitChildren = false;
-
                         IProject prj = getProject();
                         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
-                        if (unoprj == null) {
-                            return false;
-                        }
-                        IPath idlPath = unoprj.getIdlPath();
-                        IPath resPath = pDelta.getResource().getProjectRelativePath();
 
-                        if (pDelta.getResource() instanceof IContainer
-                            && resPath.segmentCount() < idlPath.segmentCount()) {
-                            visitChildren = true;
-                        } else if (pDelta.getResource() instanceof IContainer
-                            && resPath.toString().startsWith(idlPath.toString())) {
-                            visitChildren = true;
-                        } else {
-                            if (pDelta.getResource() instanceof IFile && "idl".equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
+                        if (unoprj != null) {
+                            IPath idlPath = unoprj.getIdlPath();
+                            IPath resPath = pDelta.getResource().getProjectRelativePath();
+
+                            if (pDelta.getResource() instanceof IContainer
+                                && resPath.segmentCount() < idlPath.segmentCount()) {
+                                visitChildren = true;
+                            } else if (pDelta.getResource() instanceof IContainer
+                                && resPath.toString().startsWith(idlPath.toString())) {
+                                visitChildren = true;
+                            } else if (pDelta.getResource() instanceof IFile
+                                && "idl".equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
                                 visitChildren = false;
                                 mChangedIdl = true;
                             } else if (pDelta.getResource() instanceof IFile
@@ -248,8 +247,9 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 
         // compile each idl file
         IFolder idlFolder = pProject.getFolder(pProject.getIdlPath());
-        if (idlFolder.exists())
+        if (idlFolder.exists()) {
             idlFolder.accept(new IdlcBuildVisitor(pMonitor));
+        }
     }
 
     /**

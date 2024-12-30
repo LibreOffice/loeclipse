@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
@@ -293,7 +294,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
      */
     @Override
     public IWorkbench getWorkbench() {
-        return OOEclipsePlugin.getDefault().getWorkbench();
+        return PlatformUI.getWorkbench();
     }
 
     /**
@@ -350,7 +351,8 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         @Override
         protected IStatus run(IProgressMonitor pMonitor) {
 
-            IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+            IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                IStatus.OK, "", null); //$NON-NLS-1$
 
             // Create the projet folder structure
             try {

@@ -9,7 +9,6 @@ import org.libreoffice.ide.eclipse.core.model.utils.SystemHelper;
 public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
 
     private String mPort;
-    private String OOO_EXTRA_JAVA_TOOL_OPTIONS = "OOO_EXTRA_JAVA_TOOL_OPTIONS"; //$NON-NLS-1$
 
     /**
      *
@@ -25,7 +24,7 @@ public class JavaDebugExtraOptionsProvider implements IExtraOptionsProvider {
      */
     @Override
     public String[] addEnv(String[] pEnv) {
-        String extraJavaOptEnv = System.getenv(OOO_EXTRA_JAVA_TOOL_OPTIONS);
+        String extraJavaOptEnv = System.getenv("OOO_EXTRA_JAVA_TOOL_OPTIONS");
         if (extraJavaOptEnv == null) {
             extraJavaOptEnv = new String();
         } else {

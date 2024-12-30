@@ -162,8 +162,9 @@ public class OOoContainer {
      *            OOo to remove
      */
     public static void delOOo(IOOo pOoo) {
-        if (null == pOoo || !sInstance.mElements.containsKey(pOoo.getName()))
+        if (null == pOoo || !sInstance.mElements.containsKey(pOoo.getName())) {
             return;
+        }
 
         sInstance.mElements.remove(pOoo.getName());
         sInstance.fireOOoRemoved(pOoo);
@@ -251,8 +252,9 @@ public class OOoContainer {
      *            new value for the OOo
      */
     public static void updateOOo(String pOookey, IOOo pOoo) {
-        if (null == pOoo || !sInstance.mElements.containsKey(pOookey))
+        if (null == pOoo || !sInstance.mElements.containsKey(pOookey)) {
             return;
+        }
 
         IOOo oooref = sInstance.mElements.get(pOookey);
 
@@ -323,13 +325,7 @@ public class OOoContainer {
 
         // Second attempt: try by path amongst the registered OOos
         if (found == null) {
-            Iterator<IOOo> iter = sInstance.mElements.values().iterator();
-            while (iter.hasNext() && found == null) {
-                IOOo ooo = iter.next();
-                if (ooo.getHome().equals(pValue)) {
-                    found = ooo;
-                }
-            }
+            found = getOOoFromPath(pValue);
         }
 
         // Third attempt: Try to create a new OOo an register it.
@@ -355,6 +351,18 @@ public class OOoContainer {
             found = sInstance.mElements.values().iterator().next();
         }
 
+        return found;
+    }
+
+    private static IOOo getOOoFromPath(String pValue) {
+        IOOo found = null;
+        Iterator<IOOo> iter = sInstance.mElements.values().iterator();
+        while (iter.hasNext() && found == null) {
+            IOOo ooo = iter.next();
+            if (ooo.getHome().equals(pValue)) {
+                found = ooo;
+            }
+        }
         return found;
     }
 

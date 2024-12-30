@@ -38,16 +38,16 @@ import com.sun.star.uno.XComponentContext;
 
 public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnection, XEventListener {
 
-    private String connectionString;
-    private XComponent bridgeComponent;
-    private XMultiComponentFactory serviceManager;
-    private XComponentContext componentContext;
-    private XBridge bridge;
-    private boolean connected = false;
-    private boolean expectingDisconnection = false;
+    private String mConnectionString;
+    private XComponent mBridgeComponent;
+    private XMultiComponentFactory mServiceManager;
+    private XComponentContext mComponentContext;
+    private XBridge mBridge;
+    private boolean mConnected = false;
+    private boolean mExpectingDisconnection = false;
 
-    protected AbstractOpenOfficeConnection(String connectionString) {
-        this.connectionString = connectionString;
+    protected AbstractOpenOfficeConnection(String pConnectionString) {
+        mConnectionString = pConnectionString;
     }
 
     @Override
@@ -57,59 +57,60 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
             XMultiComponentFactory localServiceManager = localContext.getServiceManager();
             XConnector connector = UnoRuntime.queryInterface(XConnector.class,
                 localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector", localContext));
-            XConnection connection = connector.connect(connectionString);
+            XConnection connection = connector.connect(mConnectionString);
             XBridgeFactory bridgeFactory = UnoRuntime.queryInterface(XBridgeFactory.class,
                 localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
-            bridge = bridgeFactory.createBridge("", "urp", connection, null);
-            bridgeComponent = UnoRuntime.queryInterface(XComponent.class, bridge);
-            bridgeComponent.addEventListener(this);
-            serviceManager = UnoRuntime.queryInterface(XMultiComponentFactory.class,
-                bridge.getInstance("StarOffice.ServiceManager"));
-            XPropertySet properties = UnoRuntime.queryInterface(XPropertySet.class, serviceManager);
-            componentContext = UnoRuntime.queryInterface(XComponentContext.class,
+            mBridge = bridgeFactory.createBridge("", "urp", connection, null);
+            mBridgeComponent = UnoRuntime.queryInterface(XComponent.class, mBridge);
+            mBridgeComponent.addEventListener(this);
+            mServiceManager = UnoRuntime.queryInterface(XMultiComponentFactory.class,
+                mBridge.getInstance("StarOffice.ServiceManager"));
+            XPropertySet properties = UnoRuntime.queryInterface(XPropertySet.class, mServiceManager);
+            mComponentContext = UnoRuntime.queryInterface(XComponentContext.class,
                 properties.getPropertyValue("DefaultContext"));
-            connected = true;
+            mConnected = true;
         } catch (NoConnectException connectException) {
-            throw new ConnectException("connection failed: " + connectionString + ": " + connectException.getMessage());
+            String msg = "connection failed: " + mConnectionString + ": " + connectException.getMessage();
+            throw new ConnectException(msg);
         } catch (Exception exception) {
-            throw new OpenOfficeException("connection failed: " + connectionString, exception);
+            throw new OpenOfficeException("connection failed: " + mConnectionString, exception);
         }
     }
 
     @Override
     public synchronized void disconnect() {
-        expectingDisconnection = true;
-        bridgeComponent.dispose();
+        mExpectingDisconnection = true;
+        mBridgeComponent.dispose();
     }
 
     @Override
     public boolean isConnected() {
-        return connected;
+        return mConnected;
     }
 
     @Override
-    public void disposing(EventObject event) {
-        connected = false;
-        if (!expectingDisconnection) {
+    public void disposing(EventObject pEvent) {
+        mConnected = false;
+        if (!mExpectingDisconnection) {
             throw new OpenOfficeException("disconnected unexpectedly");
         }
-        expectingDisconnection = false;
+        mExpectingDisconnection = false;
     }
 
     // for unit tests only
     void simulateUnexpectedDisconnection() {
         disposing(null);
-        bridgeComponent.dispose();
+        mBridgeComponent.dispose();
     }
 
-    private Object getService(String className) {
+    private Object getService(String pClassName) {
         try {
-            if (!connected) {
+            if (!mConnected) {
                 connect();
             }
-            return serviceManager.createInstanceWithContext(className, componentContext);
+            return mServiceManager.createInstanceWithContext(pClassName, mComponentContext);
         } catch (Exception exception) {
-            throw new OpenOfficeException("could not obtain service: " + className, exception);
+            throw new OpenOfficeException("could not obtain service: " + pClassName, exception);
         }
     }
 
@@ -127,17 +128,17 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
 
     @Override
     public XBridge getBridge() {
-        return bridge;
+        return mBridge;
     }
 
     @Override
     public XMultiComponentFactory getRemoteServiceManager() {
-        return serviceManager;
+        return mServiceManager;
     }
 
     @Override
     public XComponentContext getComponentContext() {
-        return componentContext;
+        return mComponentContext;
     }
 
 }

@@ -84,7 +84,8 @@ public class JavaWizardPage extends LanguageWizardPage {
     public UnoFactoryData fillData(UnoFactoryData pData) {
 
         if (pData != null) {
-            pData.setProperty(JAVA_VERSION, "java5"); // default java version
+            // default java version
+            pData.setProperty(JAVA_VERSION, "java5");
             pData.setProperty(JAVA_TESTS, mUseTests);
         }
 

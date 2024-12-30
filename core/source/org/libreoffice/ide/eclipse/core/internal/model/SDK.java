@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Image;
-import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.eclipse.ui.PlatformUI;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.gui.ITableElement;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -76,7 +76,7 @@ public class SDK implements ISdk, ITableElement {
     private static final String K_SDK_BUILDID = "BUILDID"; //$NON-NLS-1$
 
     /**
-     * private constant that hold the name of the sdk config file
+     * private constant that hold the name of the sdk config file.
      */
     private static final String F_DK_CONFIG = "dk.mk"; //$NON-NLS-1$
 
@@ -114,7 +114,7 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(String pHome, String name) throws InvalidConfigException {
+    public void initialize(String pHome, String pName) throws InvalidConfigException {
         try {
 
             // Get the file representing the given sdkHome
@@ -139,10 +139,11 @@ public class SDK implements ISdk, ITableElement {
 
                 // If the settings directory exists, then try to fetch the name and buildId from
                 // the settings/dk.mk properties file
-                if (name != null && !name.isEmpty())
-                    mSdkName = name;
-                else
+                if (pName != null && !pName.isEmpty()) {
+                    mSdkName = pName;
+                } else {
                     mSdkName = getBuildId(settingsFile);
+                }
                 this.mSdkHome = pHome;
 
             } else {
@@ -276,7 +277,7 @@ public class SDK implements ISdk, ITableElement {
             // Error while launching the process
 
             MessageDialog dialog = new MessageDialog(
-                OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 Messages.getString("SDK.PluginError"), //$NON-NLS-1$
                 null, Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
                 MessageDialog.ERROR, new String[] { Messages.getString("SDK.Ok") }, 0); //$NON-NLS-1$
@@ -288,7 +289,7 @@ public class SDK implements ISdk, ITableElement {
             // SubProcess creation unauthorized
 
             MessageDialog dialog = new MessageDialog(
-                OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(),
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 Messages.getString("SDK.PluginError"), //$NON-NLS-1$
                 null, Messages.getString("SDK.ProcessError"), //$NON-NLS-1$
                 MessageDialog.ERROR, new String[] { Messages.getString("SDK.Ok") }, 0); //$NON-NLS-1$
@@ -365,7 +366,7 @@ public class SDK implements ISdk, ITableElement {
             // Definining path variables
             pVars = SystemHelper.addPathEnv(pVars, "PATH", binPaths); //$NON-NLS-1$
 
-        } else if (Platform.getOS().equals(Platform.OS_LINUX) || Platform.getOS().equals(Platform.OS_SOLARIS)) {
+        } else if (Platform.getOS().equals(Platform.OS_LINUX)) {
 
             // An UN*X platform
             String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH", //$NON-NLS-1$
@@ -401,11 +402,15 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public String getLabel(String pProperty) {
-        if (pProperty.equals(NAME))
-            return getName();
-        if (pProperty.equals(PATH))
-            return getHome();
-        throw new IllegalArgumentException("Invalid property: " + pProperty);
+        String label;
+        if (pProperty.equals(NAME)) {
+            label = getName();
+        } else if (pProperty.equals(PATH)) {
+            label = getHome();
+        } else {
+            throw new IllegalArgumentException("Invalid property: " + pProperty);
+        }
+        return label;
     }
 
     /**
@@ -473,13 +478,13 @@ public class SDK implements ISdk, ITableElement {
                 if (dkProperties.containsKey(K_SDK_BUILDID)) {
                     return dkProperties.getProperty(K_SDK_BUILDID);
                 } else {
-                    throw new InvalidConfigException(Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID, //$NON-NLS-1$
-                        InvalidConfigException.INVALID_SDK_HOME);
+                    String msg = Messages.getString("SDK.MissingKeyError") + K_SDK_BUILDID; //$NON-NLS-1$
+                    throw new InvalidConfigException(msg, InvalidConfigException.INVALID_SDK_HOME);
                 }
 
             } catch (FileNotFoundException e) {
-                throw new InvalidConfigException(Messages.getString("SDK.NoFileError") + "settings/" + F_DK_CONFIG, //$NON-NLS-1$ //$NON-NLS-2$
-                    InvalidConfigException.INVALID_SDK_HOME);
+                String msg = Messages.getString("SDK.NoFileError") + "settings/"; //$NON-NLS-1$ //$NON-NLS-2$
+                throw new InvalidConfigException(msg + F_DK_CONFIG, InvalidConfigException.INVALID_SDK_HOME);
             } catch (IOException e) {
                 throw new InvalidConfigException(
                     Messages.getString("SDK.NoReadableFileError") + //$NON-NLS-1$

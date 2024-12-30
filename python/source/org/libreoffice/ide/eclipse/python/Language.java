@@ -111,7 +111,7 @@ public class Language extends AbstractLanguage {
     };
 
     /**
-     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging
+     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging.
      */
     private class debugSeverStart implements Runnable {
 

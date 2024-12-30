@@ -49,37 +49,50 @@ import org.libreoffice.ide.eclipse.core.model.IUnoFactoryConstants;
  */
 public class InternalUnoType {
 
-    public static final InternalUnoType STRING = new InternalUnoType("string", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType STRING = new InternalUnoType("string",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType VOID = new InternalUnoType("void", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType VOID = new InternalUnoType("void",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType BOOLEAN = new InternalUnoType("boolean", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType BOOLEAN = new InternalUnoType("boolean",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType BYTE = new InternalUnoType("byte", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType BYTE = new InternalUnoType("byte",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType SHORT = new InternalUnoType("short", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType SHORT = new InternalUnoType("short",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType LONG = new InternalUnoType("long", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType LONG = new InternalUnoType("long",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType HYPER = new InternalUnoType("hyper", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType HYPER = new InternalUnoType("hyper",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType FLOAT = new InternalUnoType("float", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType FLOAT = new InternalUnoType("float",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType DOUBLE = new InternalUnoType("double", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType DOUBLE = new InternalUnoType("double",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType CHAR = new InternalUnoType("char", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType CHAR = new InternalUnoType("char",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType TYPE = new InternalUnoType("type", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType TYPE = new InternalUnoType("type",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType ANY = new InternalUnoType("any", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType ANY = new InternalUnoType("any",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType USHORT = new InternalUnoType("unsigned short", IUnoFactoryConstants.BASICS, //$NON-NLS-1$
-        true);
+    public static final InternalUnoType USHORT = new InternalUnoType("unsigned short",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType ULONG = new InternalUnoType("unsigned long", IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
+    public static final InternalUnoType ULONG = new InternalUnoType("unsigned long",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
-    public static final InternalUnoType UHYPER = new InternalUnoType("unsigned hyper", IUnoFactoryConstants.BASICS, //$NON-NLS-1$
-        true);
+    public static final InternalUnoType UHYPER = new InternalUnoType("unsigned hyper",
+        IUnoFactoryConstants.BASICS, true); //$NON-NLS-1$
 
     public static final int ALL_TYPES = 2047;
 

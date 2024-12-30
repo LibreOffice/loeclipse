@@ -85,7 +85,7 @@ public class RegexRule implements IRule {
 
         do {
             c = pScanner.read();
-            line = line + new Character((char) c);
+            line = line + Character.valueOf((char) c);
             mCharReadNb++;
 
             if (!isEOL(c)) {

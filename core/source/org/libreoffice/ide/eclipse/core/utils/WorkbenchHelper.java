@@ -39,7 +39,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 
 /**
@@ -92,7 +91,7 @@ public class WorkbenchHelper {
     public static IWorkbenchPage getActivePage() {
         IWorkbenchPage page = null;
 
-        IWorkbenchWindow window = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (null != window) {
             page = window.getActivePage();
         }

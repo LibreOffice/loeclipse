@@ -250,8 +250,10 @@ public class UreTab extends AbstractLaunchConfigurationTab {
 
         try {
 
-            boolean projectSet = !pLaunchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
-            boolean mainImplSet = !pLaunchConfig.getAttribute(IUreLaunchConstants.MAIN_TYPE, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
+            boolean projectSet = !pLaunchConfig.getAttribute(
+                IUreLaunchConstants.PROJECT_NAME, "").equals(""); //$NON-NLS-1$ //$NON-NLS-2$
+            boolean mainImplSet = !pLaunchConfig.getAttribute(
+                IUreLaunchConstants.MAIN_TYPE, "").equals(""); //$NON-NLS-1$ //$NON-NLS-2$
             if (projectSet && mainImplSet) {
                 String name = pLaunchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;

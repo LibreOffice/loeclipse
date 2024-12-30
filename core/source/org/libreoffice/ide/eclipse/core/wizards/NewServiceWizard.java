@@ -87,7 +87,8 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
             @Override
             protected IStatus run(IProgressMonitor pMonitor) {
 
-                IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+                IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                    IStatus.OK, "", null); //$NON-NLS-1$
                 try {
 
                     mWizardSet.doFinish(pMonitor, mActivePage);
@@ -152,9 +153,9 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
             if (resource != null) {
                 createPages(resource.getProject());
             }
-        }
-        else {
-            MessageDialog.openError(getShell(), "Error", "You need to create/select a LibreOffice project first to use the selection");
+        } else {
+            MessageDialog.openError(getShell(), "Error",
+                "You need to create/select a LibreOffice project first to use the selection");
         }
     }
 
@@ -196,8 +197,7 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 
                     mWizardSet.initialize(data);
 
-                }
-                else {
+                } else {
                     MessageDialog.openError(getShell(), "Error", "The Selection only works with LibreOffice projects");
 
                 }

@@ -260,9 +260,10 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
             typeComposite.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
 
             mMemberTypeRow = new ChoiceRow(typeComposite, MEMBER_TYPE, null, null, false);
-            mMemberTypeRow.add(Messages.getString("InterfaceMemberDialog.MethodChoice"), "method"); //$NON-NLS-1$ //$NON-NLS-2$
-            mMemberTypeRow.add(Messages.getString("InterfaceMemberDialog.AttributeChoice"), //$NON-NLS-1$
-                "attribute"); //$NON-NLS-1$
+            String msg = Messages.getString("InterfaceMemberDialog.MethodChoice");
+            mMemberTypeRow.add(msg, "method"); //$NON-NLS-1$ //$NON-NLS-2$
+            msg = Messages.getString("InterfaceMemberDialog.AttributeChoice");
+            mMemberTypeRow.add(msg, "attribute"); //$NON-NLS-1$
             mMemberTypeRow.select(0);
             mMemberTypeRow.setFieldChangedListener(this);
             mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.METHOD));
@@ -348,7 +349,8 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
 
         mTypeRow.setLabel(Messages.getString("InterfaceMemberDialog.Type")); //$NON-NLS-1$
 
-        mReadonlyRow = new BooleanRow(pParent, READONLY, Messages.getString("InterfaceMemberDialog.Readonly")); //$NON-NLS-1$
+        String msg = Messages.getString("InterfaceMemberDialog.Readonly");
+        mReadonlyRow = new BooleanRow(pParent, READONLY, msg); //$NON-NLS-1$
         mReadonlyRow.setTooltip(Messages.getString("InterfaceMemberDialog.ReadonlyTooltip")); //$NON-NLS-1$
         mReadonlyRow.setFieldChangedListener(this);
 
@@ -416,8 +418,9 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
         typeCellEditor.includeSequences(true);
         typeCellEditor.includeSimpleTypes(true);
         typeCellEditor.includeVoid(false);
-        mArgumentTableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(table), typeCellEditor,
-            new ComboBoxCellEditor(table, new String[] { "inout", "in", "out" }) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        mArgumentTableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(table),
+            typeCellEditor, new ComboBoxCellEditor(table,
+                new String[] {"inout", "in", "out"}) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         });
         mArgumentTableViewer.setCellModifier(new ParamCellModifier());
         mArgumentTableViewer.setInput(mData);

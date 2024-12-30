@@ -86,24 +86,7 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
         UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(prj, new File("foo.oxt")); //$NON-NLS-1$
         ManifestModel manifestModel = unoPackage.getManifestModel();
 
-        for (IFolder lib : propsModel.getBasicLibraries()) {
-            manifestModel.addBasicLibrary(lib.getProjectRelativePath().toString());
-        }
-
-        for (IFolder lib : propsModel.getDialogLibraries()) {
-            manifestModel.addDialogLibrary(lib.getProjectRelativePath().toString());
-        }
-
-        for (IResource content : propsModel.getContents()) {
-            File contentFile = SystemHelper.getFile(content);
-            manifestModel.addContent(UnoPackage.getPathRelativeToBase(contentFile, prjFile), contentFile);
-        }
-
-        Iterator<Entry<Locale, IFile>> iter = propsModel.getDescriptionFiles().entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<Locale, IFile> entry = iter.next();
-            manifestModel.addDescription(entry.getValue().getProjectRelativePath().toString(), entry.getKey());
-        }
+        setManifestModel(propsModel, prjFile, manifestModel);
 
         // Serialize the manifest model into the manifest.xml file
         IFile manifestFile = mPackageFile.getParent().getFile(new Path(UnoPackage.MANIFEST_PATH));
@@ -129,6 +112,26 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
                 manifestFile.refreshLocal(IResource.DEPTH_ZERO, null);
             } catch (CoreException e) {
             }
+        }
+    }
+
+    private void setManifestModel(PackagePropertiesModel pPropsModel, File pPrjFile, ManifestModel pManifestModel) {
+ 
+        for (IFolder lib : pPropsModel.getBasicLibraries()) {
+            pManifestModel.addBasicLibrary(lib.getProjectRelativePath().toString());
+        }
+        for (IFolder lib : pPropsModel.getDialogLibraries()) {
+            pManifestModel.addDialogLibrary(lib.getProjectRelativePath().toString());
+        }
+        for (IResource content : pPropsModel.getContents()) {
+            File contentFile = SystemHelper.getFile(content);
+            pManifestModel.addContent(UnoPackage.getPathRelativeToBase(contentFile, pPrjFile), contentFile);
+        }
+
+        Iterator<Entry<Locale, IFile>> iter = pPropsModel.getDescriptionFiles().entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<Locale, IFile> entry = iter.next();
+            pManifestModel.addDescription(entry.getValue().getProjectRelativePath().toString(), entry.getKey());
         }
     }
 

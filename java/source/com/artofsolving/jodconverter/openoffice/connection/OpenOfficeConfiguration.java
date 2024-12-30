@@ -27,29 +27,29 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XInterface;
 
 /**
- * Utility class to access OpenOffice.org configuration properties at runtime
+ * Utility class to access OpenOffice.org configuration properties at runtime.
  */
 public class OpenOfficeConfiguration {
 
     public static final String NODE_L10N = "org.openoffice.Setup/L10N";
     public static final String NODE_PRODUCT = "org.openoffice.Setup/Product";
 
-    private OpenOfficeConnection connection;
+    private OpenOfficeConnection mConnection;
 
-    public OpenOfficeConfiguration(OpenOfficeConnection connection) {
-        this.connection = connection;
+    public OpenOfficeConfiguration(OpenOfficeConnection pConnection) {
+        mConnection = pConnection;
     }
 
-    public String getOpenOfficeProperty(String nodePath, String node) {
-        if (!nodePath.startsWith("/")) {
-            nodePath = "/" + nodePath;
+    public String getOpenOfficeProperty(String pNodePath, String pNode) {
+        if (!pNodePath.startsWith("/")) {
+            pNodePath = "/" + pNodePath;
         }
         String property = "";
         // create the provider and remember it as a XMultiServiceFactory
         try {
             final String sProviderService = "com.sun.star.configuration.ConfigurationProvider";
-            Object configProvider = connection.getRemoteServiceManager().createInstanceWithContext(
-                sProviderService, connection.getComponentContext());
+            Object configProvider = mConnection.getRemoteServiceManager().createInstanceWithContext(
+                sProviderService, mConnection.getComponentContext());
             XMultiServiceFactory xConfigProvider = UnoRuntime.queryInterface(
                 com.sun.star.lang.XMultiServiceFactory.class, configProvider);
 
@@ -58,7 +58,7 @@ public class OpenOfficeConfiguration {
             // creation arguments: nodepath
             PropertyValue aPathArgument = new PropertyValue();
             aPathArgument.Name = "nodepath";
-            aPathArgument.Value = nodePath;
+            aPathArgument.Value = pNodePath;
             Object[] aArguments = new Object[1];
             aArguments[0] = aPathArgument;
 
@@ -67,7 +67,7 @@ public class OpenOfficeConfiguration {
             XNameAccess xChildAccess = UnoRuntime.queryInterface(XNameAccess.class, xElement);
 
             // get the value
-            property = (String) xChildAccess.getByName(node);
+            property = (String) xChildAccess.getByName(pNode);
         } catch (Exception exception) {
             throw new OpenOfficeException("Could not retrieve property", exception);
         }
@@ -75,13 +75,15 @@ public class OpenOfficeConfiguration {
     }
 
     public String getOpenOfficeVersion() {
+        String version;
         try {
             // OOo >= 2.2 returns major.minor.micro
-            return getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersionAboutBox");
+            version = getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersionAboutBox");
         } catch (OpenOfficeException noSuchElementException) {
             // OOo < 2.2 only returns major.minor
-            return getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersion");
+            version = getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersion");
         }
+        return version;
     }
 
     public String getOpenOfficeLocale() {

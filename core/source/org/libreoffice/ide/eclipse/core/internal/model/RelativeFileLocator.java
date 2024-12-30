@@ -31,33 +31,33 @@ public class RelativeFileLocator {
     private File mBaseDir = null;
     private String mRelativePath = null;
 
-    public RelativeFileLocator(File baseDir, String pRelativePath) {
+    public RelativeFileLocator(File pBaseDir, String pRelativePath) {
         super();
-        this.mBaseDir = baseDir;
+        this.mBaseDir = pBaseDir;
         this.mRelativePath = pRelativePath;
     }
 
     public List<File> getFiles() {
-        if (mBaseDir == null || !mBaseDir.isDirectory()) {
-            return null;
+        List<File> fileList = null;
+        if (mBaseDir != null && mBaseDir.isDirectory()) {
+            fileList = new ArrayList<File>();
+            List<File> scannedDirList = new ArrayList<File>();
+            scannedDirList.add(mBaseDir);
+            locateRelativeFile(scannedDirList, fileList, mRelativePath);
         }
-        List<File> fileList = new ArrayList<File>();
-        List<File> scannedDirList = new ArrayList<File>();
-        scannedDirList.add(mBaseDir);
-        locateRelativeFile(scannedDirList, fileList, mRelativePath);
         return fileList;
     }
 
-    private void locateRelativeFile(List<File> scannedDirList, List<File> fileList, String relativePath) {
-        if (scannedDirList == null || scannedDirList.isEmpty()) {
+    private void locateRelativeFile(List<File> pScannedDirList, List<File> pFileList, String pRelativePath) {
+        if (pScannedDirList == null || pScannedDirList.isEmpty()) {
             return;
         }
         List<File> newScannedDirList = new ArrayList<File>();
-        for (File scanFile : scannedDirList) {
+        for (File scanFile : pScannedDirList) {
             if (scanFile.exists() && scanFile.isDirectory()) {
-                File tmpFile = new File(scanFile, relativePath);
+                File tmpFile = new File(scanFile, pRelativePath);
                 if (tmpFile.exists()) {
-                    fileList.add(scanFile);
+                    pFileList.add(scanFile);
                 }
                 File[] children = scanFile.listFiles();
                 if (children != null && children.length > 0) {
@@ -66,7 +66,7 @@ public class RelativeFileLocator {
             }
         }
         if (!newScannedDirList.isEmpty()) {
-            locateRelativeFile(newScannedDirList, fileList, relativePath);
+            locateRelativeFile(newScannedDirList, pFileList, pRelativePath);
         }
     }
 

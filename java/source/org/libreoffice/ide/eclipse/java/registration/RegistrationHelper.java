@@ -50,7 +50,6 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -232,12 +231,13 @@ public abstract class RegistrationHelper {
 
     /**
      * Check if the RegistrationHandler.classes file exist, readable and not empty
-     * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>
+     * <code>org.libreoffice.ide.eclipse.java.JavaResourceDeltaVisitor</code>.
      *
      * @param pProject the project where to check empty file
      */
     public static void checkClassesListFile(IUnoidlProject pProject) {
-        IFile iClassesListFile = getClassesListFile(pProject); // get RegistrationHandler.classes"
+        // get RegistrationHandler.classes
+        IFile iClassesListFile = getClassesListFile(pProject);
         File classesListFile = iClassesListFile.getLocation().toFile();
         Path listFile = classesListFile.toPath();
 

@@ -71,46 +71,50 @@ public class DescriptionHandler extends DefaultHandler {
 
         if (mCurrentHandler != null) {
             mCurrentHandler.startElement(pUri, pLocalName, pName, pAttributes);
-
-        } else if (XMLTokens.ELEMENT_VERSION.equals(pName)) {
-            mModel.setVersion(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-
-        } else if (XMLTokens.ELEMENT_IDENTIFIER.equals(pName)) {
-            mModel.setId(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-
-        } else if (XMLTokens.ELEMENT_PLATFORM.equals(pName)) {
-            mModel.setPlatforms(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-
-        } else if (XMLTokens.ELEMENT_DEPENDENCIES.equals(pName)) {
-            mCurrentHandler = new DependenciesHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_UPDATE_INFORMATION.equals(pName)) {
-            mCurrentHandler = new UpdatesHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_REGISTRATION.equals(pName)) {
-            mCurrentHandler = new LicenseHandler();
-            mHandlerRemoveOn = pName;
-        } else if (XMLTokens.ELEMENT_PUBLISHER.equals(pName)) {
-            mCurrentHandler = new PublisherHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_RELEASE_NOTES.equals(pName)) {
-            mCurrentHandler = new ReleasesHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_DISPLAY_NAME.equals(pName)) {
-            mCurrentHandler = new NameHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_ICON.equals(pName)) {
-            mCurrentHandler = new IconHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_EXTENSION_DESCRIPTION.equals(pName)) {
-            mCurrentHandler = new DescriptionsHandler();
-            mHandlerRemoveOn = pName;
+        } else {
+            switch (pName) {
+                case XMLTokens.ELEMENT_VERSION:
+                    mModel.setVersion(pAttributes.getValue(XMLTokens.ATTR_VALUE));
+                    break;
+                case XMLTokens.ELEMENT_IDENTIFIER:
+                    mModel.setId(pAttributes.getValue(XMLTokens.ATTR_VALUE));
+                    break;
+                case XMLTokens.ELEMENT_PLATFORM:
+                    mModel.setPlatforms(pAttributes.getValue(XMLTokens.ATTR_VALUE));
+                    break;
+                case XMLTokens.ELEMENT_DEPENDENCIES:
+                    mCurrentHandler = new DependenciesHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_UPDATE_INFORMATION:
+                    mCurrentHandler = new UpdatesHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_REGISTRATION:
+                    mCurrentHandler = new LicenseHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_PUBLISHER:
+                    mCurrentHandler = new PublisherHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_RELEASE_NOTES:
+                    mCurrentHandler = new ReleasesHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_DISPLAY_NAME:
+                    mCurrentHandler = new NameHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_ICON:
+                    mCurrentHandler = new IconHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+                case XMLTokens.ELEMENT_EXTENSION_DESCRIPTION:
+                    mCurrentHandler = new DescriptionsHandler();
+                    mHandlerRemoveOn = pName;
+                    break;
+            }
         }
     }
 

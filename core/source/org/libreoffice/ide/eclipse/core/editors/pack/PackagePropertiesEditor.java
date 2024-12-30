@@ -185,6 +185,9 @@ public class PackagePropertiesEditor extends FormEditor {
 
     /**
      * Write the properties model to the source editor page.
+     *
+     * @param pContent
+     *            the content to write
      */
     public void writeToSource(String pContent) {
         if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {

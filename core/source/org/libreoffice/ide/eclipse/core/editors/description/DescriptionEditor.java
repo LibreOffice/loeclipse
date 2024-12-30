@@ -216,7 +216,8 @@ public class DescriptionEditor extends FormEditor {
                     SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
                     // Enables the namespaces mapping
                     parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true); //$NON-NLS-1$
-                    parser.getXMLReader().setFeature("http://xml.org/sax/features/namespace-prefixes", true); //$NON-NLS-1$
+                    parser.getXMLReader().setFeature("http://xml.org/sax/features/namespace-prefixes",
+                                                     true); //$NON-NLS-1$
                     DescriptionHandler handler = new DescriptionHandler(getDescriptionModel());
 
                     reader = new StringReader(doc.get());
@@ -229,8 +230,8 @@ public class DescriptionEditor extends FormEditor {
                     getDescriptionModel().setSuspendEvent(false);
 
                 } catch (Exception e) {
-                    PluginLogger.error(Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$
-                        e);
+                    String msg = Messages.getString("PackagePropertiesEditor.DescriptionParseError"); //$NON-NLS-1$
+                    PluginLogger.error(msg, e);
                 } finally {
                     reader.close();
                 }

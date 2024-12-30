@@ -12,9 +12,9 @@ import com.sun.star.uno.UnoRuntime;
 import {0}.tests.base.UnoSuite;
 
 public class UnoHelper '{'
-	
-	public static XTextDocument getWriterDocument() throws Exception '{'
-		XMultiComponentFactory xMngr = UnoSuite.getComponentContext().getServiceManager();
+
+    public static XTextDocument getWriterDocument() throws Exception '{'
+        XMultiComponentFactory xMngr = UnoSuite.getComponentContext().getServiceManager();
         Object oDesktop = xMngr.createInstanceWithContext("com.sun.star.frame.Desktop", UnoSuite.getComponentContext());
         XComponentLoader xLoader = (XComponentLoader)UnoRuntime.queryInterface(
                 XComponentLoader.class, oDesktop);
@@ -23,6 +23,6 @@ public class UnoHelper '{'
                 FrameSearchFlag.ALL, new PropertyValue[0]);
 
         return (XTextDocument)UnoRuntime.queryInterface(XTextDocument.class, xDoc);
-	}
+    }
 
 }

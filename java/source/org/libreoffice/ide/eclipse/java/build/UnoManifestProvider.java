@@ -58,11 +58,15 @@ public class UnoManifestProvider extends ManifestProvider {
      * Constructor.
      *
      * @param pRegClassname the registration class name
+     *
+     * @param pUnoProject the Uno project
+     *
+     * @param pExternalJars the external Jars
      */
-    public UnoManifestProvider(String pRegClassname, IUnoidlProject unoProject, List<IFile> externalJars) {
+    public UnoManifestProvider(String pRegClassname, IUnoidlProject pUnoProject, List<IFile> pExternalJars) {
         mRegClass = pRegClassname;
-        mUnoProject = unoProject;
-        mExternalJars = externalJars;
+        mUnoProject = pUnoProject;
+        mExternalJars = pExternalJars;
     }
 
     /**

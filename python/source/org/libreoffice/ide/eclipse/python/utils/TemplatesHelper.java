@@ -103,14 +103,14 @@ public class TemplatesHelper {
      * @param pClazz the class from which to load the resource file
      * @param pDestPath the path in which the file should be copied, relatively to
      *          the project root.
-     * @param sameFileName the file to be copied to has same name as template or not 
+     * @param pSameFileName the file to be copied to has same name as template or not 
      * @param pArgs additional arguments to pass to the formatter
      */
     public static void copyTemplate(IProject pProject, String pTemplateName,
-        Class<?> pClazz, String pDestPath, boolean sameFileName, Object... pArgs) {
+        Class<?> pClazz, String pDestPath, boolean pSameFileName, Object... pArgs) {
 
         String fileName = pTemplateName + TEMPLATE_EXT;
-        if (!sameFileName) {
+        if (!pSameFileName) {
             pTemplateName = pProject.getName() + ".py";
         }
 

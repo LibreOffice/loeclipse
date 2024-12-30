@@ -96,7 +96,7 @@ public class OOoTable extends AbstractTable {
         super(pParent, Messages.getString("OOoTable.Title"), //$NON-NLS-1$
             new String[] { Messages.getString("OOoTable.NameTitle"), //$NON-NLS-1$
                 Messages.getString("OOoTable.PathTitle") //$NON-NLS-1$
-        }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { AbstractOOo.NAME, AbstractOOo.PATH });
+            }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { AbstractOOo.NAME, AbstractOOo.PATH });
 
         mTableViewer.setInput(OOoContainer.getInstance());
         mTableViewer.setContentProvider(new OOoContentProvider());
@@ -403,11 +403,11 @@ public class OOoTable extends AbstractTable {
                     boolean unique = !OOoContainer.containsName(pEvent.getValue());
 
                     if (unique) {
-                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.OK, "", null)); //$NON-NLS-1$
                     } else {
-                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
-                            Messages.getString("OOoSDKTable.NameExistsError"), //$NON-NLS-1$
-                            null));
+                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.WARNING, Messages.getString("OOoSDKTable.NameExistsError"), null)); //$NON-NLS-1$
                     }
                 }
             }
@@ -431,7 +431,8 @@ public class OOoTable extends AbstractTable {
                     mNameRow.setValue(mTmpOOo.getName());
                 }
 
-                updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                updateStatus(new Status(IStatus.OK,
+                    OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
 
                 result = true;
             } catch (InvalidConfigException e) {
@@ -441,13 +442,13 @@ public class OOoTable extends AbstractTable {
                         mNameRow.setValue(mTmpOOo.getName());
                     }
 
-                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                    updateStatus(new Status(IStatus.OK,
+                        OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
 
                     result = true;
                 } catch (InvalidConfigException ex) {
-                    updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
-                        Messages.getString("OOoTable.InvalidPathError"), //$NON-NLS-1$
-                        ex));
+                    updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.ERROR, Messages.getString("OOoTable.InvalidPathError"), ex)); //$NON-NLS-1$
                 }
             }
 

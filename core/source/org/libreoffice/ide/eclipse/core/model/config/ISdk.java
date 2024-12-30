@@ -52,7 +52,7 @@ public interface ISdk {
      *
      * @param pHome
      *            path to the new sdk home
-     * @param name
+     * @param pName
      *            name of the new sdk
      *
      * @exception InvalidConfigException
@@ -68,7 +68,7 @@ public interface ISdk {
      *                <li>an unexpected exception has been raised</li>
      *                </ul>
      */
-    public void initialize(String pHome, String name) throws InvalidConfigException;
+    public void initialize(String pHome, String pName) throws InvalidConfigException;
 
     /**
      * Returns the SDK home directory. This string could be passed to the Path constructor to get the folder object.

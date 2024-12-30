@@ -103,13 +103,15 @@ public class PackagePropertiesModel {
             mPropertiesFile = pFile;
         } catch (FileNotFoundException e) {
             mPropertiesFile = null;
-            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NullFileException")); //$NON-NLS-1$
+            String msg = Messages.getString("PackagePropertiesModel.NullFileException");
+            throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         try {
             mProperties.load(is);
         } catch (IOException e) {
-            PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException") + pFile.getLocation()); //$NON-NLS-1$
+            PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException")
+                + pFile.getLocation()); //$NON-NLS-1$
         } finally {
             try {
                 is.close();
@@ -367,25 +369,28 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * add resource entry if not already in
+     * add resource entry if not already in.
+     *
+     * @param pRes the resource entry to add
      */
     public void addResource(IResource pRes) {
         // If it's a folder we need to add all children resources
         try {
             if (pRes.getType() == IResource.FOLDER) {
                 addFolderResource(pRes);
-            }
-            else if (!mFiles.contains(pRes)) {
+            } else if (!mFiles.contains(pRes)) {
                 addFileResource(pRes);
             }
             firePackageChanged();
         } catch (CoreException e) {
             // Log ?
-         }
+        }
     }
 
     /**
-     * remove resource entry if already in
+     * remove resource entry if already in.
+     *
+     * @param pRes the resource entry to remove
      */
     public void removeResource(IResource pRes) {
         // If it's a folder we need to remove all children resources to
@@ -402,20 +407,23 @@ public class PackagePropertiesModel {
     }
 
     /**
+     * @param pRes the resource entry to check
+     *
      * @return if resource is checked
      */
     public boolean isChecked(IResource pRes) {
         boolean checked = false;
         if (pRes.getType() == IResource.FILE) {
             checked = mFiles.contains(pRes);
-        }
-        else if (pRes.getType() == IResource.FOLDER) {
+        } else if (pRes.getType() == IResource.FOLDER) {
             checked = mFolders.containsKey(pRes);
         }
         return checked;
     }
 
     /**
+     * @param pRes the resource entry to check
+     *
      * @return if resource is grayed
      */
     public boolean isGrayed(IResource pRes) {
@@ -460,11 +468,13 @@ public class PackagePropertiesModel {
     public void addDescriptionFile(IFile pDescription, Locale pLocale) throws IllegalArgumentException {
 
         if (pLocale == null) {
-            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoLocaleException")); //$NON-NLS-1$
+            String msg = Messages.getString("PackagePropertiesModel.NoLocaleException");
+            throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         if (pDescription == null || !pDescription.exists()) {
-            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoDescriptionFileException")); //$NON-NLS-1$
+            String msg = Messages.getString("PackagePropertiesModel.NoDescriptionFileException");
+            throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         String countryName = ""; //$NON-NLS-1$
@@ -531,7 +541,10 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Add all files that are members of a folder resource recursively
+     * Add all files that are members of a folder resource recursively.
+     *
+     * @param pFolder the resource folder entry
+     *
      */
     private void addFolderResource(IResource pFolder) throws CoreException {
         mFolders.put(pFolder, false);
@@ -539,15 +552,17 @@ public class PackagePropertiesModel {
         for (IResource res :members) {
             if (res.getType() == IResource.FOLDER) {
                 addFolderResource(res);
-            }
-            else if (!mFiles.contains(res)) {
+            } else if (!mFiles.contains(res)) {
                 mFiles.add(res);
             }
         }
     }
 
     /**
-     * Remove all files that are members of a folder resource recursively
+     * Remove all files that are members of a folder resource recursively.
+     *
+     * @param pFolder the resource folder entry
+     *
      */
     private void removeFolderResource(IResource pFolder) throws CoreException {
         if (mFolders.containsKey(pFolder)) {
@@ -557,15 +572,17 @@ public class PackagePropertiesModel {
         for (IResource res : members) {
             if (res.getType() == IResource.FOLDER) {
                 removeFolderResource(res);
-            }
-            else if (mFiles.contains(res)) {
+            } else if (mFiles.contains(res)) {
                 mFiles.remove(res);
             }
         }
     }
 
     /**
-     * Add a files and updated folders
+     * Add a files and updated folders.
+     *
+     * @param pFile the resource file entry
+     *
      */
     private void addFileResource(IResource pFile) throws CoreException {
         mFiles.add(pFile);
@@ -577,7 +594,10 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Remove a files and updated folders
+     * Remove a files and updated folders.
+     *
+     * @param pFile the resource file entry
+     *
      */
     private void removeFileResource(IResource pFile) throws CoreException {
         if (mFiles.contains(pFile)) {
@@ -599,6 +619,8 @@ public class PackagePropertiesModel {
 
     /**
      * Serialize all files resource to the package properties.
+     *
+     * @return a string corresponding to the value of the contents property of the package.properties file
      */
     private String serializeContent() {
         List<String> result = new ArrayList<>();
@@ -613,6 +635,8 @@ public class PackagePropertiesModel {
 
     /**
      * De-serialize all files resource from the package properties.
+     *
+     * @return a list of resource corresponding to the value of the contents property of the package.properties file
      */
     private List<IResource> deserializeContent() {
         List<IResource> resources = new ArrayList<>();
@@ -635,6 +659,8 @@ public class PackagePropertiesModel {
 
     /**
      * Get project check state from files resource.
+     *
+     * @return a map of resource / boolean corresponding to the folder resources
      */
     private Map<IResource, Boolean> getFolderCheckState() {
         Map<IResource, Boolean> resources = new HashMap<>();
@@ -653,6 +679,10 @@ public class PackagePropertiesModel {
 
     /**
      * Get folder check state from files resource.
+     *
+     * @param pFolders the map resource / boolean to update
+     *
+     * @param pParent the folder resource entry
      */
     private void getSubFolderCheckState(Map<IResource, Boolean> pFolders, IResource pParent) throws CoreException {
         IResource[] members = ((IContainer) pParent).members();
@@ -669,14 +699,17 @@ public class PackagePropertiesModel {
         }
         if (members.length == 0) {
             pFolders.put(pParent, false);
-        }
-        else if (checked || grayed) {
+        } else if (checked || grayed) {
             pFolders.put(pParent, grayed && !checked);
         }
     }
 
     /**
      * Get parent check state from files resource.
+     *
+     * @param pParent the folder resource entry
+     *
+     * @return the parent resource of the folder resource entry or null
      */
     private IContainer getParentCheckState(IResource pParent) throws CoreException {
         IResource[] members = ((IContainer) pParent).members();
@@ -697,8 +730,7 @@ public class PackagePropertiesModel {
         }
         if (members.length == 0) {
             mFolders.put(pParent, false);
-        }
-        else if (checked || grayed) {
+        } else if (checked || grayed) {
             mFolders.put(pParent, grayed && !checked);
         }
         return pParent.getParent();

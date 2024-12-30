@@ -195,10 +195,9 @@ public class OOo extends AbstractOOo {
         String path = getLibsPath()[0] + FILE_SEP + "bootstrap"; //$NON-NLS-1$
         if (getPlatform().equals(Platform.OS_WIN32)) {
             path += ".ini"; //$NON-NLS-1$
-        } else if (getPlatform().equals(Platform.OS_MACOSX)){
-            path = getHome() + FILE_SEP + "Resources" + FILE_SEP + "bootstraprc";
-        }
-        else {
+        } else if (getPlatform().equals(Platform.OS_MACOSX)) {
+            path = getHome() + FILE_SEP + "Resources" + FILE_SEP + "bootstraprc"; //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
             path += "rc"; //$NON-NLS-1$
         }
         return path;
@@ -422,10 +421,10 @@ public class OOo extends AbstractOOo {
         private URE mUre;
 
         // private fields
-        private File mapperBasisBins;
-        private File mapperBasisClasses;
-        private List<File> mapperBasisTypes;
-        private List<File> mapperBasisServices;
+        private File mMapperBasisBins;
+        private File mMapperBasisClasses;
+        private List<File> mMapperBasisTypes;
+        private List<File> mMapperBasisServices;
 
         /**
          * Create a new mapper object to get the OOo3 layers paths.
@@ -442,10 +441,12 @@ public class OOo extends AbstractOOo {
         private void initPaths() throws InvalidConfigException {
             // locate ure directory (directory which contains bin/uno.bin or bin/uno.exe
             String unoRelativePath;
-            if (getPlatform().equals(Platform.OS_MACOSX))
+            if (getPlatform().equals(Platform.OS_MACOSX)) {
                 unoRelativePath = "MacOS/" + URE.getUnoExecutable();
-            else
-                unoRelativePath = "program/" + URE.getUnoExecutable(); //todo
+            } else {
+                // todo
+                unoRelativePath = "program/" + URE.getUnoExecutable();
+            }
             File ureDir = locateUniqueContainer(mHome, unoRelativePath);
             if (ureDir == null) {
                 mHome = null;
@@ -455,81 +456,64 @@ public class OOo extends AbstractOOo {
             mUre = new URE(ureDir.getAbsolutePath());
         }
 
-        private File locateUniqueContainer(String baseDir, String pUnoRelativePath) throws InvalidConfigException {
-            try {
-                File base = new File(baseDir);
-                if (!base.exists() || !base.isDirectory() || !base.canRead()) {
-                    return null;
-                }
+        private File locateUniqueContainer(String pBaseDir, String pUnoRelativePath) throws InvalidConfigException {
+            File file = null;
+            File base = new File(pBaseDir);
+            if (base.exists() && base.isDirectory() && base.canRead()) {
                 List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
                 if (dirs == null) {
                     throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
                         InvalidConfigException.INVALID_OOO_HOME);
                 }
-                // remove link if there is duplicate
                 if (dirs.size() > 1) {
-                    List<File> linksList = new ArrayList<File>();
-                    for (File tmpFile : dirs) {
-                        if (AbstractOOo.isSymbolicLink(tmpFile)) {
-                            linksList.add(tmpFile);
-                        }
-                    }
-                    if (!linksList.isEmpty()) {
-                        for (File link : linksList) {
-                            File linkTarget = AbstractOOo.getTargetLink(link);
-                            if (dirs.contains(linkTarget)) {
-                                dirs.remove(linkTarget);
-                            }
-                        }
-                    }
+                    // remove link if there is duplicate
+                    removeLinks(dirs, pUnoRelativePath);
                 }
                 if (dirs.size() != 1) {
                     throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
                         InvalidConfigException.INVALID_OOO_HOME);
                 } else {
-                    return dirs.get(0);
+                    file = dirs.get(0);
                 }
-            } catch (IOException e) {
-                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
-                    InvalidConfigException.INVALID_OOO_HOME);
             }
+            return file;
         }
 
-        private List<File> locateFiles(String baseDir, String pUnoRelativePath) throws InvalidConfigException {
-            try {
-                File base = new File(baseDir);
-                if (!base.exists() || !base.isDirectory() || !base.canRead()) {
-                    return null;
-                }
+        private List<File> locateFiles(String pBaseDir, String pUnoRelativePath) throws InvalidConfigException {
+            List<File> returnList = null;
+            File base = new File(pBaseDir);
+            if (base.exists() && base.isDirectory() && base.canRead()) {
                 List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
-                if (dirs == null) {
-                    return Collections.emptyList();
-                }
-                // remove link if there is duplicate
-                if (dirs.size() > 1) {
-                    List<File> linksList = new ArrayList<File>();
+                if (dirs == null || dirs.size() == 0) {
+                    returnList = Collections.emptyList();
+                } else {
+                    // remove link if there is duplicate
+                    removeLinks(dirs, pUnoRelativePath);
+                    returnList = new ArrayList<File>();
                     for (File tmpFile : dirs) {
-                        if (AbstractOOo.isSymbolicLink(tmpFile)) {
-                            linksList.add(tmpFile);
-                        }
-                    }
-                    if (!linksList.isEmpty()) {
-                        for (File link : linksList) {
-                            File linkTarget = AbstractOOo.getTargetLink(link);
-                            if (dirs.contains(linkTarget)) {
-                                dirs.remove(linkTarget);
-                            }
-                        }
+                        returnList.add(new File(tmpFile, pUnoRelativePath));
                     }
                 }
-                if (dirs.size() == 0) {
-                    return Collections.emptyList();
+            }
+            return returnList;
+        }
+
+        private void removeLinks(List<File> pDirs, String pUnoRelativePath) throws InvalidConfigException {
+            try {
+                List<File> linksList = new ArrayList<File>();
+                for (File tmpFile : pDirs) {
+                    if (AbstractOOo.isSymbolicLink(tmpFile)) {
+                        linksList.add(tmpFile);
+                    }
                 }
-                List<File> returnList = new ArrayList<File>();
-                for (File tmpFile : dirs) {
-                    returnList.add(new File(tmpFile, pUnoRelativePath));
+                if (!linksList.isEmpty()) {
+                    for (File link : linksList) {
+                        File linkTarget = AbstractOOo.getTargetLink(link);
+                        if (pDirs.contains(linkTarget)) {
+                            pDirs.remove(linkTarget);
+                        }
+                    }
                 }
-                return returnList;
             } catch (IOException e) {
                 throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
                     InvalidConfigException.INVALID_OOO_HOME);
@@ -555,14 +539,15 @@ public class OOo extends AbstractOOo {
                 ureLibs = mUre.getBinPath();
             }
 
-            File basisLibs = this.mapperBasisBins;
+            File basisLibs = this.mMapperBasisBins;
             if (basisLibs == null) {
                 String sofficeName = "soffice.bin";
-                if (getPlatform().equals(Platform.OS_MACOSX))
+                if (getPlatform().equals(Platform.OS_MACOSX)) {
                     sofficeName = "soffice";
+                }
                 try {
                     basisLibs = locateUniqueContainer(mHome, sofficeName);
-                    this.mapperBasisBins = basisLibs;
+                    this.mMapperBasisBins = basisLibs;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
                 }
@@ -588,11 +573,11 @@ public class OOo extends AbstractOOo {
                 ureClasses = mUre.getClassesPath();
             }
 
-            File basisClasses = this.mapperBasisClasses;
-            if (mapperBasisClasses == null) {
+            File basisClasses = this.mMapperBasisClasses;
+            if (mMapperBasisClasses == null) {
                 try {
                     basisClasses = locateUniqueContainer(mHome, "unoil.jar");
-                    mapperBasisClasses = basisClasses;
+                    mMapperBasisClasses = basisClasses;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
                 }
@@ -618,11 +603,11 @@ public class OOo extends AbstractOOo {
                 ureTypes = mUre.getTypesPath();
             }
 
-            List<File> basisTypes = this.mapperBasisTypes;
-            if (mapperBasisTypes == null) {
+            List<File> basisTypes = this.mMapperBasisTypes;
+            if (mMapperBasisTypes == null) {
                 try {
                     basisTypes = locateFiles(mHome, "offapi.rdb");
-                    mapperBasisTypes = basisTypes;
+                    mMapperBasisTypes = basisTypes;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
                 }
@@ -654,11 +639,11 @@ public class OOo extends AbstractOOo {
                 ureTypes = mUre.getServicesPath();
             }
 
-            List<File> basisTypes = this.mapperBasisServices;
-            if (mapperBasisServices == null) {
+            List<File> basisTypes = this.mMapperBasisServices;
+            if (mMapperBasisServices == null) {
                 try {
                     basisTypes = locateFiles(mHome, "services.rdb");
-                    mapperBasisServices = basisTypes;
+                    mMapperBasisServices = basisTypes;
                 } catch (InvalidConfigException e) {
                     e.printStackTrace();
                 }
@@ -704,17 +689,16 @@ public class OOo extends AbstractOOo {
          * @return the array with the elements of both arrays
          */
         public String[] mergeArrays(String[] pArray1, String[] pArray2) {
+            String[] result = null;
             if (pArray1 == null) {
-                return pArray2;
+                result = pArray2;
+            } else if (pArray2 == null) {
+                result = pArray1;
+            } else {
+                result = new String[pArray1.length + pArray2.length];
+                System.arraycopy(pArray1, 0, result, 0, pArray1.length);
+                System.arraycopy(pArray2, 0, result, pArray1.length, pArray2.length);
             }
-            if (pArray2 == null) {
-                return pArray1;
-            }
-            String[] result = new String[pArray1.length + pArray2.length];
-
-            System.arraycopy(pArray1, 0, result, 0, pArray1.length);
-            System.arraycopy(pArray2, 0, result, pArray1.length, pArray2.length);
-
             return result;
         }
     }

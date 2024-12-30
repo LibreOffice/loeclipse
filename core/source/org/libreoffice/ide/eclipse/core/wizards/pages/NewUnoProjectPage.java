@@ -266,8 +266,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
                 // ie.- one of the steps resulted in a core exception
                 Throwable t = e.getTargetException();
                 PluginLogger.error(t.toString(), t);
-                ErrorDialog.openError(getShell(), Messages.getString("NewUnoProjectPage.ProjectCreationError"), //$NON-NLS-1$
-                    null, ((CoreException) t).getStatus());
+                String msg = Messages.getString("NewUnoProjectPage.ProjectCreationError"); //$NON-NLS-1$
+                ErrorDialog.openError(getShell(), msg, null, ((CoreException) t).getStatus());
                 mNewProject = null;
             }
         }
@@ -334,19 +334,22 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         prjGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Add the company prefix field
-        mPrefixRow = new TextRow(prjGroup, PREFIX, Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
+        mPrefixRow = new TextRow(prjGroup, PREFIX,
+            Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
         mPrefixRow.setValue("org.libreoffice.example"); // Setting default value //$NON-NLS-1$
         mPrefixRow.setFieldChangedListener(this);
         mPrefixRow.setTooltip(Messages.getString("NewUnoProjectPage.RootPackageTooltip")); //$NON-NLS-1$
 
         // Add the output directory field
-        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT, Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
+        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT,
+            Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
         mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
         mOutputExt.setFieldChangedListener(this);
         mOutputExt.setTooltip(Messages.getString("NewUnoProjectPage.CompExtensionTooltip")); //$NON-NLS-1$
 
         // Adding the programming language row
-        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE, Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
+        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE,
+            Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
         mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
 
         // Sets the available programming languages
@@ -376,17 +379,20 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         // Add the custom directories checkbox
-        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS, Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
+        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS,
+            Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
         mCustomDirsRow.setFieldChangedListener(this);
 
         // Add the custom source directory chooser
-        mSourceRow = new TextRow(group, CUSTOM_SRC, Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
+        mSourceRow = new TextRow(group, CUSTOM_SRC,
+            Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
         mSourceRow.setValue(UnoidlProjectHelper.SOURCE_BASIS);
         mSourceRow.setEnabled(false);
         mSourceRow.setFieldChangedListener(this);
 
         // Add the custom idl directory chooser
-        mIdlDirRow = new TextRow(group, CUSTOM_IDL, Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
+        mIdlDirRow = new TextRow(group, CUSTOM_IDL,
+            Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
         mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
         mIdlDirRow.setEnabled(false);
         mIdlDirRow.setFieldChangedListener(this);

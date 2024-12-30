@@ -138,19 +138,20 @@ public class PythonProjectHandler implements IProjectHandler {
         IProject prj = (IProject) pData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
-        //Check if the source folder exists or not
+        // Check if the source folder exists or not
         String sourcesDir = unoprj.getSourcePath().toPortableString();
         if (sourcesDir == null || sourcesDir.equals("")) { //$NON-NLS-1$
             sourcesDir = SOURCE_BASIS;
         }
 
-        //Copy the Starting Python Source File under the source folder
+        // Copy the Starting Python Source File under the source folder
         IFolder sourceFolder = prj.getFolder(sourcesDir);
         sourceFolder.create(true, true, pMonitor);
         IPath sourcePath = sourceFolder.getProjectRelativePath();
         Object[] args = { prj.getName() };
-        TemplatesHelper.copyTemplate(prj, "StartingPythonClass.py", PythonProjectHandler.class, sourcePath.toString(), //$NON-NLS-1$
-            false, args); //false denotes that the source .tpl filename and the destination filename are not same
+        // false denotes that the source .tpl filename and the destination filename are not same
+        TemplatesHelper.copyTemplate(prj, sourcePath.toString(), PythonProjectHandler.class,
+            sourcePath.toString(), false, args); //$NON-NLS-1$
 
         // Refresh the project
         try {

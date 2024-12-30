@@ -30,21 +30,21 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Helper for MessageDialog.openError in syncExec<br>
+ * Helper for MessageDialog.openError in syncExec<br>.
  * usage:
  * Display.getDefault().syncExec(new ErrorDlg(errMsg));
  */
 
 public class ErrorDlg implements Runnable {
-    final String errmsg;
+    final String mMsg;
 
-    public ErrorDlg(final String msg) {
-        Objects.requireNonNull(msg);
-        errmsg = msg;
+    public ErrorDlg(final String pMsg) {
+        Objects.requireNonNull(pMsg);
+        mMsg = pMsg;
     }
 
     @Override
     public void run() {
-        MessageDialog.openError(Display.getCurrent().getActiveShell(), "Error", errmsg);
+        MessageDialog.openError(Display.getCurrent().getActiveShell(), "Error", mMsg);
     }
 }

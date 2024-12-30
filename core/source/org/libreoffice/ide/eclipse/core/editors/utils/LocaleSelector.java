@@ -162,7 +162,8 @@ public class LocaleSelector {
      *            the composite parent where to create the label and list.
      */
     private void createList(FormToolkit pToolkit, Composite pParent) {
-        Label localeLbl = pToolkit.createLabel(pParent, Messages.getString("LocaleSelector.SelectedLocaleTitle")); //$NON-NLS-1$
+        String msg = Messages.getString("LocaleSelector.SelectedLocaleTitle"); //$NON-NLS-1$
+        Label localeLbl = pToolkit.createLabel(pParent, msg);
         localeLbl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
         Combo list = new Combo(pParent, SWT.DROP_DOWN | SWT.READ_ONLY);

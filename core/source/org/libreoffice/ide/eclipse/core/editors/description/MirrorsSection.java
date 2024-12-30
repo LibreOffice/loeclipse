@@ -128,7 +128,8 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
         createTable(clientArea);
 
         // Create the add controls
-        Label addLbl = toolkit.createLabel(clientArea, Messages.getString("MirrorsSection.MirrorTextTitle")); //$NON-NLS-1$
+        String msg = Messages.getString("MirrorsSection.MirrorTextTitle"); //$NON-NLS-1$
+        Label addLbl = toolkit.createLabel(clientArea, msg);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         addLbl.setLayoutData(gd);

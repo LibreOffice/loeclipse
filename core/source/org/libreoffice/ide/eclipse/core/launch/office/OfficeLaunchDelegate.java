@@ -104,7 +104,8 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
                     TypesBuilder.build(prj, pMonitor);
 
-                    PackagePropertiesModel pPropertiesModel = new PackagePropertiesModel(prj.getFile("package.properties"));
+                    PackagePropertiesModel pPropertiesModel = new PackagePropertiesModel(
+                        prj.getFile("package.properties"));
                     List<IResource> resources = pPropertiesModel.getContents();
                     File destFile = exportComponent(unoprj, resources);
                     pMonitor.worked(1);

@@ -59,23 +59,24 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  */
 public class ProjectExportPart extends LanguageExportPart {
 
+    public static final int HORIZONTAL_INDENT = 20;
+
+    private static AntScriptExportWizardPage sAntScriptPage;
+    private static boolean sAntSectionDisplay = false;
+
     private Composite mNameRow;
     private Label mNameRowLbl;
     private Label mNameRowValueLbl;
-    private Label titleLbl;
+    private Label mTitleLbl;
 
     private ProjectExportPageControl mController;
-    private static AntScriptExportWizardPage mAntScriptPage;
-    private static boolean mAntSectionDisplay = false;
-
-    public static final int HORIZONTAL_INDENT = 20;
 
     /**
      * @param pAntScriptPage
      *            Helps in retrieving the project selected in this part.
      */
     public static void setAntScriptExportPage(AntScriptExportWizardPage pAntScriptPage) {
-        mAntScriptPage = pAntScriptPage;
+        sAntScriptPage = pAntScriptPage;
     }
 
     /**
@@ -83,7 +84,7 @@ public class ProjectExportPart extends LanguageExportPart {
      *            Helps in blocking the Title and Other Displays in wizard after 1st time
      */
     public static void setCheckAntSectionDisplay(boolean pAntSectionDisplay) {
-        mAntSectionDisplay = pAntSectionDisplay;
+        sAntSectionDisplay = pAntSectionDisplay;
     }
 
     /**
@@ -95,10 +96,10 @@ public class ProjectExportPart extends LanguageExportPart {
         mController = new ProjectExportPageControl();
         mController.setSaveAntScript(true);
 
-        if (!mAntSectionDisplay) {
-            titleLbl = new Label(pParent, SWT.NONE);
-            titleLbl.setText(Messages.getString("ProjectExportPart.Title")); //$NON-NLS-1$
-            titleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+        if (!sAntSectionDisplay) {
+            mTitleLbl = new Label(pParent, SWT.NONE);
+            mTitleLbl.setText(Messages.getString("ProjectExportPart.Title")); //$NON-NLS-1$
+            mTitleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
             Composite content = new Composite(pParent, SWT.NONE);
             GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -140,7 +141,7 @@ public class ProjectExportPart extends LanguageExportPart {
     @Override
     public void doFinish(UnoPackage pModel) {
 
-        String directory = mAntScriptPage.getPath();
+        String directory = sAntScriptPage.getPath();
         File antFile = new File(directory + "/build.xml");
         boolean result = false;
 
@@ -155,8 +156,9 @@ public class ProjectExportPart extends LanguageExportPart {
         if (mController.getSaveAntScript() && result) {
 
             // Generate the build script
-            //****IUnoidlProject unoProject = getPage().getProject();   <--- Can be used When the parent class LanguageExportPart is using the Object Class rather than ManifestExportPage
-            IUnoidlProject unoProject = mAntScriptPage.getProject();
+            // IUnoidlProject unoProject = getPage().getProject(); <- Can be used When the parent class
+            // LanguageExportPart is using the Object Class rather than ManifestExportPage
+            IUnoidlProject unoProject = sAntScriptPage.getProject();
             String prjName = unoProject.getName();
             IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
 
@@ -173,16 +175,18 @@ public class ProjectExportPart extends LanguageExportPart {
 
                 Properties props = new Properties();
 
-                if (OOoContainer.getOOoKeys().size() > 0)
+                if (OOoContainer.getOOoKeys().size() > 0) {
                     props.put("office.install.dir", //$NON-NLS-1$
                         OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome());
-                else
+                } else {
                     props.put("office.install.dir", ""); //$NON-NLS-1$
+                }
 
-                if (SDKContainer.getSDKKeys().size() > 0)
+                if (SDKContainer.getSDKKeys().size() > 0) {
                     props.put("sdk.dir", SDKContainer.getSDK(SDKContainer.getSDKKeys().get(0)).getHome()); //$NON-NLS-1$
-                else
+                } else {
                     props.put("sdk.dir", ""); //$NON-NLS-1$
+                }
 
                 props.store(writer, null);
                 writer.close();

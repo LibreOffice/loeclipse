@@ -138,8 +138,8 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
         Composite clientArea = toolkit.createComposite(section);
         clientArea.setLayout(new GridLayout(GRID_COLUMS, false));
 
-        Label descrLbl = toolkit.createLabel(clientArea, Messages.getString("IntegrationSection.Description"), //$NON-NLS-1$
-            SWT.WRAP);
+        String msg = Messages.getString("IntegrationSection.Description"); //$NON-NLS-1$
+        Label descrLbl = toolkit.createLabel(clientArea, msg, SWT.WRAP);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = GRID_COLUMS;
         descrLbl.setLayoutData(gd);

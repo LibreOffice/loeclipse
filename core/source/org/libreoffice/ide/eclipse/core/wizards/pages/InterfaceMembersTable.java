@@ -74,7 +74,7 @@ public class InterfaceMembersTable extends AbstractTable {
             new String[] { Messages.getString("InterfaceMembersTable.NameColumnTitle"), //$NON-NLS-1$
                 Messages.getString("InterfaceMembersTable.TypeColumnTitle"), //$NON-NLS-1$
                 Messages.getString("InterfaceMembersTable.FlagsColumnTitle") //$NON-NLS-1$
-        }, new int[] { NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH }, new String[] { NAME, TYPE, OPTIONS });
+            }, new int[] { NAME_WIDTH, TYPE_WIDTH, OPTIONS_WIDTH }, new String[] { NAME, TYPE, OPTIONS });
     }
 
     /**

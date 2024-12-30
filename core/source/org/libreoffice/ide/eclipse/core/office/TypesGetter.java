@@ -103,7 +103,7 @@ public class TypesGetter {
             OfficeClassLoader oooClassLoader = OfficeClassLoader.getClassLoader(getOOo(),
                 TypesGetter.class.getClassLoader());
             Class<?> clazz = oooClassLoader.loadClass(CLASSNAME);
-            Object getter = clazz.newInstance();
+            Object getter = clazz.getDeclaredConstructor().newInstance();
 
             // Set the office
             Object oooCnx = OfficeHelper.createConnection(oooClassLoader, getOOo());
@@ -127,7 +127,7 @@ public class TypesGetter {
 
             // Get the types
             Method method = clazz.getMethod("getTypes", String.class, Integer.class); //$NON-NLS-1$
-            Object result = method.invoke(getter, pRoot, new Integer(pMask));
+            Object result = method.invoke(getter, pRoot, Integer.valueOf(pMask));
 
             types = (Map<String, List<InternalUnoType>>) result;
 

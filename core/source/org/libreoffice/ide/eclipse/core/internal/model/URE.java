@@ -96,10 +96,11 @@ public class URE extends AbstractOOo {
     @Override
     public String[] getClassesPath() {
         String jars;
-        if (getPlatform().equals(Platform.OS_MACOSX))
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
             jars = getHome() + FILE_SEP + "Resources" + FILE_SEP + "java";
-        else
+        } else {
             jars = getHome() + FILE_SEP + "program" + FILE_SEP + "classes"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
         return new String[] { jars };
     }
 
@@ -130,10 +131,12 @@ public class URE extends AbstractOOo {
     @Override
     public String[] getTypesPath() {
         String types;
-        if (getPlatform().equals(Platform.OS_MACOSX))
-            types = getHome() + FILE_SEP + "Resources" + FILE_SEP + "ure" + FILE_SEP + "share" + FILE_SEP + "misc" + FILE_SEP + "types.rdb";
-        else
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
+            types = getHome() + FILE_SEP + "Resources" + FILE_SEP + "ure" + FILE_SEP + "share" + //$NON-NLS-1$
+                FILE_SEP + "misc" + FILE_SEP + "types.rdb";
+        } else {
             types = getHome() + FILE_SEP + "program" + FILE_SEP + "types.rdb"; //$NON-NLS-1$
+        }
         return new String[] { types };
     }
 
@@ -143,10 +146,12 @@ public class URE extends AbstractOOo {
     @Override
     public String[] getServicesPath() {
         String services;
-        if (getPlatform().equals(Platform.OS_MACOSX))
-            services = getHome() + FILE_SEP + "Resources" + FILE_SEP + "ure" + FILE_SEP + "share" + FILE_SEP + "misc" + FILE_SEP + "services.rdb";
-        else
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
+            services = getHome() + FILE_SEP + "Resources" + FILE_SEP + "ure" + FILE_SEP + "share" + //$NON-NLS-1$
+                FILE_SEP + "misc" + FILE_SEP + "services.rdb";
+        } else {
             services = getHome() + FILE_SEP + "program" + FILE_SEP + "services.rdb"; //$NON-NLS-1$
+        }
         return new String[] { services };
     }
 
@@ -156,11 +161,11 @@ public class URE extends AbstractOOo {
     @Override
     public String getUnorcPath() {
         String basis = getHome() + FILE_SEP;
-        if (getPlatform().equals(Platform.OS_MACOSX))
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
             basis += "Resources" + FILE_SEP + "URE" + FILE_SEP + "etc";
-        else
+        } else {
             basis += "program";
-
+        }
         String filename = "unorc";
         if (getPlatform().equals(Platform.OS_WIN32)) {
             filename = "uno.ini";
@@ -173,18 +178,25 @@ public class URE extends AbstractOOo {
      */
     @Override
     public String getUnoPath() {
-        if (getPlatform().equals(Platform.OS_MACOSX))
-            return getHome() + FILE_SEP + "MacOS" + FILE_SEP + getUnoExecutable();
-        return getHome() + FILE_SEP + "program" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
+        String home = null;
+        if (getPlatform().equals(Platform.OS_MACOSX)) {
+            home = getHome() + FILE_SEP + "MacOS" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
+        } else {
+            home = getHome() + FILE_SEP + "program" + FILE_SEP + getUnoExecutable(); //$NON-NLS-1$
+        }
+        return home;
     }
 
     public static String getUnoExecutable() {
+        String executable = null;
         if (getPlatformOS().equals(Platform.OS_WIN32)) {
-            return "uno.exe"; //$NON-NLS-1$
+            executable = "uno.exe"; //$NON-NLS-1$
         } else if (getPlatformOS().equals(Platform.OS_MACOSX)) {
-            return "uno";
+            executable = "uno"; //$NON-NLS-1$
+        } else {
+            executable = "uno.bin"; //$NON-NLS-1$
         }
-        return "uno.bin"; //$NON-NLS-1$
+        return executable;
     }
 
     /**

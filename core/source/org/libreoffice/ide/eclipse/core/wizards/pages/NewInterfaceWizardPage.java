@@ -133,7 +133,8 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage implement
         tableParent.setLayout(new GridLayout(1, false));
 
         mInterfaceInheritances = new InterfacesTable(tableParent);
-        mInterfaceInheritances.setToolTipText(Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip")); //$NON-NLS-1$
+        String msg = Messages.getString("NewInterfaceWizardPage.InheritancesTableTooltip"); //$NON-NLS-1$
+        mInterfaceInheritances.setToolTipText(msg);
         mInterfaceInheritances.addSelectionChangedListener(this);
 
         mMembers = new InterfaceMembersTable(tableParent);

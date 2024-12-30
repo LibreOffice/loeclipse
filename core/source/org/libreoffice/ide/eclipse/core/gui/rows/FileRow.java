@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * GUI row for a file selection. It supports only the Grid Layout and can be configured to select either a file or a
@@ -114,7 +114,7 @@ public class FileRow extends LabeledRow {
      * Open the File selection dialog.
      */
     protected void doOpenFileSelectionDialog() {
-        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         String newFile = null;
 
@@ -161,8 +161,9 @@ public class FileRow extends LabeledRow {
      *            the new value
      */
     public void setValue(String pValue) {
-        if (pValue.equals(((Text)mField).getText()))
+        if (pValue.equals(((Text)mField).getText())) {
             return;
+        }
         ((Text) mField).setText(pValue);
         mValue = pValue;
         FieldEvent fe = new FieldEvent(getProperty(), getValue());

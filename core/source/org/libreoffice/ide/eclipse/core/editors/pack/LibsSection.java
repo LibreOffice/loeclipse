@@ -85,8 +85,8 @@ public class LibsSection extends SectionPart {
 
     private static final String P_LIBTYPE = "__p_libtype"; //$NON-NLS-1$
     private static final String P_NAME = "__p_name"; //$NON-NLS-1$
-    private static final Integer BASIC_LIB = new Integer(0);
-    private static final Integer DIALOG_LIB = new Integer(1);
+    private static final Integer BASIC_LIB = Integer.valueOf(0);
+    private static final Integer DIALOG_LIB = Integer.valueOf(1);
     private static final int FOLDER_COLUMN_WIDTH = 200;
     private static final int TYPE_COLUMN_WIDTH = 100;
 

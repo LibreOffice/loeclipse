@@ -444,28 +444,30 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * indicates if a code is a symbolic link or not. The code is an adaptation from apache commons
      *
-     * @param file
+     * @param pFile
      * @return true if the file is a symbolic link, false otherwise
      * @throws IOException
      */
-    protected static boolean isSymbolicLink(File file) throws IOException {
-        if (file == null) {
-            return false;
+    protected static boolean isSymbolicLink(File pFile) throws IOException {
+        boolean isLink = false;
+        if (pFile != null) {
+            File fileInCanonicalParent = null;
+            if (pFile.getParentFile() == null) {
+                fileInCanonicalParent = pFile;
+            } else {
+                File canonicalParent = pFile.getParentFile().getCanonicalFile();
+                fileInCanonicalParent = new File(canonicalParent, pFile.getName());
+            }
+            isLink = !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
         }
-        File fileInCanonicalParent = null;
-        if (file.getParentFile() == null) {
-            fileInCanonicalParent = file;
-        } else {
-            File canonicalParent = file.getParentFile().getCanonicalFile();
-            fileInCanonicalParent = new File(canonicalParent, file.getName());
-        }
-        return !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
+        return isLink;
     }
 
-    public static File getTargetLink(File link) throws IOException {
-        if (link == null) {
-            return null;
+    public static File getTargetLink(File pLink) throws IOException {
+        File target = null;
+        if (pLink != null) {
+            target = new File(pLink.getCanonicalPath());
         }
-        return new File(link.getCanonicalPath());
+        return target;
     }
 }

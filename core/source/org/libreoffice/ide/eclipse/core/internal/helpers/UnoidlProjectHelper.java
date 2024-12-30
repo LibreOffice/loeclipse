@@ -298,7 +298,8 @@ public class UnoidlProjectHelper {
 
             ((UnoidlProject) pUnoproject).getProject().refreshLocal(IResource.DEPTH_INFINITE, pMonitor);
         } else {
-            throw new IllegalArgumentException(Messages.getString("UnoidlProjectHelper.BadFullnameError")); //$NON-NLS-1$
+            String msg = Messages.getString("UnoidlProjectHelper.BadFullnameError"); //$NON-NLS-1$
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -419,7 +420,8 @@ public class UnoidlProjectHelper {
                 }
             }
         } catch (CoreException e) {
-            PluginLogger.error(Messages.getString("UnoidlProjectHelper.FolderCreationError") + URD_BASIS, e); //$NON-NLS-1$
+            String msg = Messages.getString("UnoidlProjectHelper.FolderCreationError"); //$NON-NLS-1$
+            PluginLogger.error(msg + URD_BASIS, e);
         }
     }
 
@@ -508,8 +510,9 @@ public class UnoidlProjectHelper {
         File prjFile = SystemHelper.getFile(pPrj);
 
         // Add content to the package
-        if (libFile.exists())
+        if (libFile.exists()) {
             unoPackage.addTypelibraryFile(UnoPackage.getPathRelativeToBase(libFile, prjFile), libFile); //$NON-NLS-1$
+        }
         pPrj.getLanguage().getLanguageBuilder().fillUnoPackage(unoPackage, pPrj);
 
         return unoPackage;

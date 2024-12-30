@@ -157,7 +157,7 @@ public class SystemHelper {
                 System.arraycopy(pEnv, 0, result, 0, pEnv.length);
                 if (null != pSeparator) {
                     // First remove the leading NAME=
-                    String tmpEnv =  pEnv[i].replaceFirst(pName+"=", "");
+                    String tmpEnv =  pEnv[i].replaceFirst(pName + "=", "");
                     // Put the new env in front of the existing one
                     result[i] = pName + "=" + pValue + pSeparator + tmpEnv;
                 } else {

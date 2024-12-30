@@ -73,7 +73,8 @@ public class RegDocumentProvider extends FileDocumentProvider {
     protected IDocument createDocument(Object pElement) throws CoreException {
         // create a document from the output of the regview execution
 
-        IDocument document = new Document(Messages.getString("RegDocumentProvider.DocumentCreationError")); //$NON-NLS-1$
+        String msg = Messages.getString("RegDocumentProvider.DocumentCreationError"); //$NON-NLS-1$
+        IDocument document = new Document(msg);
 
         if (pElement instanceof IFileEditorInput) {
 
