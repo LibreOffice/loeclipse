@@ -105,36 +105,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         if (sBuildState < 0) {
             IResourceDelta delta = getDelta(getProject());
             if (delta != null) {
-                delta.accept(new IResourceDeltaVisitor() {
-                    @Override
-                    public boolean visit(IResourceDelta pDelta) throws CoreException {
-
-                        boolean visitChildren = false;
-                        IProject prj = getProject();
-                        IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
-
-                        if (unoprj != null) {
-                            IPath idlPath = unoprj.getIdlPath();
-                            IPath resPath = pDelta.getResource().getProjectRelativePath();
-
-                            if (pDelta.getResource() instanceof IContainer
-                                && resPath.segmentCount() < idlPath.segmentCount()) {
-                                visitChildren = true;
-                            } else if (pDelta.getResource() instanceof IContainer
-                                && resPath.toString().startsWith(idlPath.toString())) {
-                                visitChildren = true;
-                            } else if (pDelta.getResource() instanceof IFile
-                                && "idl".equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
-                                visitChildren = false;
-                                mChangedIdl = true;
-                            } else if (pDelta.getResource() instanceof IFile
-                                && resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
-                                sBuildState = COMPLETED_STATE;
-                            }
-                        }
-                        return visitChildren;
-                    }
-                });
+                addVisitor(delta);
             } else {
                 mChangedIdl = true;
             }
@@ -159,6 +130,39 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         }
 
         return null;
+    }
+
+    private void addVisitor(IResourceDelta pDelta) throws CoreException {
+        pDelta.accept(new IResourceDeltaVisitor() {
+            @Override
+            public boolean visit(IResourceDelta pDelta) throws CoreException {
+
+                boolean visitChildren = false;
+                IProject prj = getProject();
+                IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+
+                if (unoprj != null) {
+                    IPath idlPath = unoprj.getIdlPath();
+                    IPath resPath = pDelta.getResource().getProjectRelativePath();
+
+                    if (pDelta.getResource() instanceof IContainer
+                        && resPath.segmentCount() < idlPath.segmentCount()) {
+                        visitChildren = true;
+                    } else if (pDelta.getResource() instanceof IContainer
+                        && resPath.toString().startsWith(idlPath.toString())) {
+                        visitChildren = true;
+                    } else if (pDelta.getResource() instanceof IFile
+                        && "idl".equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
+                        visitChildren = false;
+                        mChangedIdl = true;
+                    } else if (pDelta.getResource() instanceof IFile
+                        && resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
+                        sBuildState = COMPLETED_STATE;
+                    }
+                }
+                return visitChildren;
+            }
+        });
     }
 
     /**

@@ -662,18 +662,7 @@ public class UnoPackage {
 
                 // Add the manifest to the zip (if not already inside)
                 if (!mZipEntries.containsKey("META-INF/manifest.xml")) {
-                    File manifestFile = mReadManifestFile;
-                    if (manifestFile == null) {
-                        manifestFile = createManifestFile();
-                        this.addToClean(manifestFile);
-
-                        // Copy the manifest file if required
-                        if (mCopyManifestFileTo != null) {
-                            FileHelper.copyFile(manifestFile, mCopyManifestFileTo, true);
-                        }
-                    }
-                    ZipContent manifest = new ZipContent("META-INF/manifest.xml", manifestFile);
-                    manifest.writeContentToZip(zipOut);
+                    addManifestFile(zipOut);
                 }
 
                 // close the streams
@@ -691,6 +680,21 @@ public class UnoPackage {
             dispose();
         }
         return result;
+    }
+
+    private void addManifestFile(ZipOutputStream pZipOut) throws IOException {
+        File manifestFile = mReadManifestFile;
+        if (manifestFile == null) {
+            manifestFile = createManifestFile();
+            addToClean(manifestFile);
+
+            // Copy the manifest file if required
+            if (mCopyManifestFileTo != null) {
+                FileHelper.copyFile(manifestFile, mCopyManifestFileTo, true);
+            }
+        }
+        ZipContent manifest = new ZipContent("META-INF/manifest.xml", manifestFile);
+        manifest.writeContentToZip(pZipOut);
     }
 
     private File createManifestFile() throws IOException {
