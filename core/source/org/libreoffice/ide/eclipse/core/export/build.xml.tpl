@@ -84,9 +84,16 @@
 
     <target name="check-java" depends="init-env">
         <available file="lib" property="project.isjava"/>
+        <echo message="Check if Project is Java"/>
     </target>
 
     <target name="init-java" depends="check-java" if="project.isjava">
+
+        <echo message="Project is Java: $'{'project.isjava}"/>
+
+        <property name="lib.dir" value="lib"/>
+        <property name="project.jar" value="$'{'ant.project.name}.jar"/>
+        <property name="build.jar" value="$'{'build.dir}$'{'file.separator}$'{'project.jar}"/>
 
         <path id="office.class.path">
             <fileset dir="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}classes">
@@ -94,7 +101,23 @@
             </fileset>
         </path>
 
-        <property name="lib.dir" value="lib"/>
+        <path id="build.class.path">
+            <fileset dir="$'{'basedir}">
+                <include name="$'{'lib.dir}$'{'file.separator}*.jar"/>
+            </fileset>
+        </path>
+
+        <pathconvert property="manifest.class.path" pathsep=" ">
+            <path refid="build.class.path"/>
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <globmapper from="*.jar" to="$'{'lib.dir}/*.jar"/>
+                </chainedmapper>
+            </mapper>
+        </pathconvert>
+
+        <echo message="Manifest Class-Path: $'{'manifest.class.path}"/>
 
         <!-- create a few empty directories -->
         <mkdir dir="$'{'build.classes.dir}"/>
@@ -104,7 +127,7 @@
         <delete dir="$'{'build.dir}"/>
     </target>
 
-    <target name="package-oxt" depends="package-jar">
+    <target name="package-zip" depends="package-jar">
         <loadproperties srcFile="package.properties">
             <filterchain>
                 <tokenfilter>
@@ -113,29 +136,33 @@
             </filterchain>
         </loadproperties>
         <echo file="$'{'project.files}" append="false">$'{'contents}</echo>
-        <echo file="$'{'project.mimetype}" append="false">application/vnd.openofficeorg.extension</echo>
         <zip destfile="$'{'project.zip}">
             <fileset dir="." includesfile="$'{'project.files}"/>
             <zipfileset dir="description" includes="**/*.txt" prefix="description"/>
             <zipfileset file="manifest.xml" fullpath="META-INF/manifest.xml"/>
-            <zipfileset file="$'{'build.dir}/$'{'ant.project.name}.jar" fullpath="$'{'ant.project.name}.jar"/>
+            <zipfileset file="$'{'build.jar}" fullpath="$'{'project.jar}"/>
             <zipfileset file="$'{'idl.rdb.fullpath}" fullpath="types.rdb"/>
         </zip>
+        <delete file="$'{'project.files}"/>
+    </target>
+
+    <target name="package-oxt" depends="package-zip">
+        <echo file="$'{'project.mimetype}" append="false">application/vnd.openofficeorg.extension</echo>
         <zip destfile="$'{'uno.package.name}" compress="false" keepcompression="true">
             <zipfileset file="$'{'project.mimetype}"/>
             <zipfileset src="$'{'project.zip}"/>
         </zip>
-            <delete file="$'{'project.mimetype}"/>
-            <delete file="$'{'project.files}"/>
-            <delete file="$'{'project.zip}"/>
+        <delete file="$'{'project.mimetype}"/>
+        <delete file="$'{'project.zip}"/>
     </target>
 
     <target name="package-jar" depends="compile-java" if="project.isjava">
-        <jar destfile="$'{'build.dir}/$'{'ant.project.name}.jar">
+        <echo message="Build Java archive: $'{'project.jar}"/>
+
+        <jar destfile="$'{'build.jar}">
             <manifest>
                 <attribute name="RegistrationClassName" value="$'{'regclassname}"/>
-                <!-- Add external libraries here if you need them -->
-                <!-- <attribute name="Class-Path" value="$'{'lib.dir}/libraryname.jar"/> -->
+                <attribute name="Class-Path" value="$'{'manifest.class.path}"/>
             </manifest>
             <fileset dir="$'{'build.classes.dir}">
                 <include name="**/*.class"/>
@@ -147,7 +174,7 @@
     </target>
 
     <target name="compile-java" depends="types" if="project.isjava">
-        <echo message="build classes: $'{'build.classes.dir}"/>
+        <echo message="Build classes: $'{'build.classes.dir}"/>
         <javac srcdir="$'{'src.dir.absolute}" source="1.8" target="1.8" encoding="UTF-8"
             destdir="$'{'build.classes.dir}" excludes="**/*Test*">
             <classpath>

@@ -52,7 +52,6 @@ import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.SDKContainer;
 import org.libreoffice.ide.eclipse.core.Messages;
 import org.libreoffice.ide.eclipse.core.utils.TemplatesHelper;
-import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Dialog part for the Ant scripts export configuration.
@@ -139,7 +138,7 @@ public class ProjectExportPart extends LanguageExportPart {
      * {@inheritDoc}
      */
     @Override
-    public void doFinish(UnoPackage pModel) {
+    public void doFinish() {
 
         String directory = sAntScriptPage.getPath();
         File antFile = new File(directory + "/build.xml");

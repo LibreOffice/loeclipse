@@ -87,11 +87,9 @@ public class AntScriptExportWizardPage extends WizardPage {
     /**
      * Create the build scripts for the package model.
      *
-     * @param pModel
-     *            the model to be used to build script
      */
-    public void createBuildScripts(UnoPackage pModel) {
-        mLangPart.doFinish(pModel);
+    public void createBuildScripts() {
+        mLangPart.doFinish();
         mCheckAntSectionDisplay = false;
         ProjectExportPart.setCheckAntSectionDisplay(mCheckAntSectionDisplay);
     }
