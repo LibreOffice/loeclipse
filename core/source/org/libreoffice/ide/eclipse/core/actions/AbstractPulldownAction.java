@@ -144,7 +144,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
      * {@inheritDoc}
      */
     @Override
-    public void selectionChanged(IAction pAction, ISelection pSelection) {
+    public void selectionChanged(IAction action, ISelection selection) {
     }
 
     /**
@@ -170,14 +170,14 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     /**
      * Check if the wizard defined by the configuration element has to be added to the pulldown button menu.
      *
-     * @param pElement
+     * @param element
      *            the wizard configuration element to check
      * @return <code>true</code> if the wizard has to be added, <code>false</code> otherwise.
      */
-    private boolean isCorrectWizard(IConfigurationElement pElement) {
+    private boolean isCorrectWizard(IConfigurationElement element) {
         boolean isCorrect = false;
 
-        IConfigurationElement[] classElements = pElement.getChildren("class"); //$NON-NLS-1$
+        IConfigurationElement[] classElements = element.getChildren("class"); //$NON-NLS-1$
         if (classElements.length > 0) {
             for (int i = 0; i < classElements.length; i++) {
                 IConfigurationElement[] paramElements = classElements[i].getChildren("parameter"); //$NON-NLS-1$
@@ -190,7 +190,7 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
             }
         }
         // old way, deprecated
-        if (Boolean.valueOf(pElement.getAttribute("unoproject")).booleanValue()) { //$NON-NLS-1$
+        if (Boolean.valueOf(element.getAttribute("unoproject")).booleanValue()) { //$NON-NLS-1$
             isCorrect = true;
         }
         return isCorrect;
@@ -215,11 +215,11 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
     /**
      * Center the new wizard on the screen.
      *
-     * @param pDialog
+     * @param dialog
      *            the wizard dialog to center
      */
-    private void centerOnScreen(WizardDialog pDialog) {
-        Shell shell = pDialog.getShell();
+    private void centerOnScreen(WizardDialog dialog) {
+        Shell shell = dialog.getShell();
         Point size = shell.getSize();
         Rectangle screenBounds = Display.getDefault().getBounds();
 
@@ -239,12 +239,12 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         /**
          * Create a new action associated with a new wizard configuration element.
          *
-         * @param pElement
+         * @param element
          *            the configuration element representing the wizard.
          */
-        public OpenUnoProjectWizardAction(IConfigurationElement pElement) {
-            mConfigurationElement = pElement;
-            setText(pElement.getAttribute("name")); //$NON-NLS-1$
+        public OpenUnoProjectWizardAction(IConfigurationElement element) {
+            mConfigurationElement = element;
+            setText(element.getAttribute("name")); //$NON-NLS-1$
 
             String description = getDescriptionFromConfig(mConfigurationElement);
             setDescription(description);
@@ -255,13 +255,13 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         /**
          * Get the action text from the new wizard configuration.
          *
-         * @param pConfig
+         * @param config
          *            the configuration element where to look for the description
          * @return the text of the description or <code>""</code> if not defined
          */
-        private String getDescriptionFromConfig(IConfigurationElement pConfig) {
+        private String getDescriptionFromConfig(IConfigurationElement config) {
             String description = ""; //$NON-NLS-1$
-            IConfigurationElement[] children = pConfig.getChildren("description"); //$NON-NLS-1$
+            IConfigurationElement[] children = config.getChildren("description"); //$NON-NLS-1$
             if (children.length >= 1) {
                 description = children[0].getValue();
             }
@@ -271,13 +271,13 @@ public abstract class AbstractPulldownAction implements IWorkbenchWindowPulldown
         /**
          * Get the action's icon from the new wizard configuration.
          *
-         * @param pConfig
+         * @param config
          *            the element from which to find the icon
          * @return the image descriptor or <code>null</code> if no icon is defined.
          */
-        private ImageDescriptor getIconFromConfig(IConfigurationElement pConfig) {
+        private ImageDescriptor getIconFromConfig(IConfigurationElement config) {
             ImageDescriptor icon = null;
-            String iconName = pConfig.getAttribute("icon"); //$NON-NLS-1$
+            String iconName = config.getAttribute("icon"); //$NON-NLS-1$
             if (iconName != null) {
                 icon = OOEclipsePlugin.getDefault().getImageManager().getImageDescriptorFromPath(iconName);
             }

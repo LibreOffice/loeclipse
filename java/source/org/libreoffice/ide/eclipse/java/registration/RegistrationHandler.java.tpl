@@ -64,7 +64,7 @@ public class RegistrationHandler '{'
      * in the <code>RegistrationHandler.classes</code> file. <strong>This method
      * should not be modified.</strong></p>
      * 
-     * @param pImplementationName the name of the implementation to create.
+     * @param sImplementationName the name of the implementation to create.
      *  
      * @return the factory which can create the implementation.
      */
@@ -100,7 +100,7 @@ public class RegistrationHandler '{'
      * in the <code>RegistrationHandler.classes</code> file. <strong>This method
      * should not be modified.</strong></p>
      *  
-     * @param pRegistryKey the root registry key where to write the informations.
+     * @param xRegistryKey the root registry key where to write the informations.
      *  
      * @return <code>true</code> if the informations have been successfully written
      *      to the registry key, <code>false</code> otherwise.

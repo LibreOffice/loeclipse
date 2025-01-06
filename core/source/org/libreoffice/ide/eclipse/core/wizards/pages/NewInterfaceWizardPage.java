@@ -68,29 +68,29 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage implement
     /**
      * Constructor.
      *
-     * @param pPageName
+     * @param pageName
      *            the page name
-     * @param pUnoProject
+     * @param unoProject
      *            the project for which to create the interface.
      */
-    public NewInterfaceWizardPage(String pPageName, IUnoidlProject pUnoProject) {
-        super(pPageName, pUnoProject);
+    public NewInterfaceWizardPage(String pageName, IUnoidlProject unoProject) {
+        super(pageName, unoProject);
     }
 
     /**
      * Constructor.
      *
-     * @param pPageName
+     * @param pageName
      *            the page name
-     * @param pProject
+     * @param project
      *            the project for which to create the interface.
-     * @param pRootName
+     * @param rootName
      *            scoped name of the module containing the type
-     * @param pElementName
+     * @param elementName
      *            name of the type, without any '.' or '::'
      */
-    public NewInterfaceWizardPage(String pPageName, IUnoidlProject pProject, String pRootName, String pElementName) {
-        super(pPageName, pProject, pRootName, pElementName);
+    public NewInterfaceWizardPage(String pageName, IUnoidlProject project, String rootName, String elementName) {
+        super(pageName, project, rootName, elementName);
     }
 
     /**
@@ -178,21 +178,21 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage implement
      * {@inheritDoc}
      */
     @Override
-    public void selectionChanged(SelectionChangedEvent pEvent) {
+    public void selectionChanged(SelectionChangedEvent event) {
         setPageComplete(isPageComplete());
     }
 
     /**
-     * @param pData
+     * @param data
      *            the data to fill
      *
      * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
     @Override
-    public UnoFactoryData fillData(UnoFactoryData pData) {
-        pData = super.fillData(pData);
-        if (pData != null) {
-            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.INTERFACE));
+    public UnoFactoryData fillData(UnoFactoryData data) {
+        data = super.fillData(data);
+        if (data != null) {
+            data.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.INTERFACE));
 
             // Vector containing the interface inheritance paths "::" separated
             Vector<String> optionalIntf = new Vector<String>();
@@ -216,12 +216,12 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage implement
             // Get the mandatory inheritances
             String[] interfaces = new String[mandatoryIntf.size()];
             interfaces = mandatoryIntf.toArray(interfaces);
-            pData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, interfaces);
+            data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES, interfaces);
 
             // Get the optional inheritances
             String[] opt_interfaces = new String[optionalIntf.size()];
             opt_interfaces = optionalIntf.toArray(opt_interfaces);
-            pData.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, opt_interfaces);
+            data.setProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES, opt_interfaces);
 
             optionalIntf.clear();
             mandatoryIntf.clear();
@@ -230,11 +230,11 @@ public class NewInterfaceWizardPage extends NewScopedElementWizardPage implement
             if (mMembers != null) {
                 UnoFactoryData[] membersData = mMembers.getUnoFactoryData();
                 for (UnoFactoryData member : membersData) {
-                    pData.addInnerData(member);
+                    data.addInnerData(member);
                 }
             }
         }
-        return pData;
+        return data;
     }
 
     /**

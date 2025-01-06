@@ -50,7 +50,7 @@ public class LaunchConfigurationTabs extends AbstractLaunchConfigurationTabGroup
      * {@inheritDoc}
      */
     @Override
-    public void createTabs(ILaunchConfigurationDialog pDialog, String pMode) {
+    public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 
         ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] { new UreTab(), new CommonTab() };
 

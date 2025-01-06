@@ -68,16 +68,16 @@ public class SdkRow extends AbstractConfigRow {
      * {@inheritDoc}
      */
     @Override
-    protected void addListener(IConfigListener pConfigListener) {
-        SDKContainer.addListener(pConfigListener);
+    protected void addListener(IConfigListener configListener) {
+        SDKContainer.addListener(configListener);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void removeListener(IConfigListener pConfigListener) {
-        SDKContainer.removeListener(pConfigListener);
+    protected void removeListener(IConfigListener configListener) {
+        SDKContainer.removeListener(configListener);
     }
 
     /**

@@ -20,16 +20,16 @@ public abstract class AbstractSection<ModelType extends IModel> extends SectionP
     /**
      * The SectionPart constructor.
      *
-     * @param pParent
+     * @param parent
      *            the parent composite
-     * @param pPage
+     * @param page
      *            the form page to use
-     * @param pStyle
+     * @param style
      *            the SectionPart style
      */
-    public AbstractSection(Composite pParent, FormPage pPage, int pStyle) {
-        super(pParent, pPage.getManagedForm().getToolkit(), pStyle);
-        initialize(pPage.getManagedForm());
+    public AbstractSection(Composite parent, FormPage page, int style) {
+        super(parent, page.getManagedForm().getToolkit(), style);
+        initialize(page.getManagedForm());
         getManagedForm().addPart(this);
         getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
     }
@@ -42,11 +42,11 @@ public abstract class AbstractSection<ModelType extends IModel> extends SectionP
     }
 
     /**
-     * @param pModel
+     * @param model
      *            the new data model for the section
      */
-    public void setModel(ModelType pModel) {
-        mModel = pModel;
+    public void setModel(ModelType model) {
+        mModel = model;
     }
 
     /**

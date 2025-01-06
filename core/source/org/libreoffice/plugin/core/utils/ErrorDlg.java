@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Display;
 public class ErrorDlg implements Runnable {
     final String mMsg;
 
-    public ErrorDlg(final String pMsg) {
-        Objects.requireNonNull(pMsg);
-        mMsg = pMsg;
+    public ErrorDlg(final String msg) {
+        Objects.requireNonNull(msg);
+        mMsg = msg;
     }
 
     @Override

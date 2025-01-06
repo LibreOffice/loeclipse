@@ -67,11 +67,11 @@ public class PublisherInfos {
     }
 
     /**
-     * @param pName
+     * @param name
      *            the name to set
      */
-    public void setName(String pName) {
-        mName = pName;
+    public void setName(String name) {
+        mName = name;
         if (mName != null) {
             mName = mName.trim();
         }
@@ -81,10 +81,10 @@ public class PublisherInfos {
     /**
      * Set the description model in order to be able to fire the model changes.
      *
-     * @param pModel
+     * @param model
      *            the parent model
      */
-    protected void setModel(DescriptionModel pModel) {
-        mModel = pModel;
+    protected void setModel(DescriptionModel model) {
+        mModel = model;
     }
 }

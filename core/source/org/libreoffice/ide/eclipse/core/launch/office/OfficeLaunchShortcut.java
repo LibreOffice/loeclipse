@@ -60,9 +60,9 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
      * {@inheritDoc}
      */
     @Override
-    public void launch(ISelection pSelection, String pMode) {
-        if (pSelection instanceof IStructuredSelection) {
-            IStructuredSelection sel = (IStructuredSelection) pSelection;
+    public void launch(ISelection selection, String mode) {
+        if (selection instanceof IStructuredSelection) {
+            IStructuredSelection sel = (IStructuredSelection) selection;
             Iterator<?> it = sel.iterator();
 
             IUnoidlProject project = null;
@@ -78,7 +78,7 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
             }
 
             if (project != null) {
-                launch(project, pMode);
+                launch(project, mode);
             }
         }
     }
@@ -87,14 +87,14 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
      * {@inheritDoc}
      */
     @Override
-    public void launch(IEditorPart pEditor, String pMode) {
-        IEditorInput input = pEditor.getEditorInput();
+    public void launch(IEditorPart editor, String mode) {
+        IEditorInput input = editor.getEditorInput();
         IFile file = input.getAdapter(IFile.class);
 
         if (file != null) {
             IUnoidlProject prj = ProjectsManager.getProject(file.getProject().getName());
             if (prj != null) {
-                launch(prj, pMode);
+                launch(prj, mode);
             }
         }
     }
@@ -176,22 +176,22 @@ public class OfficeLaunchShortcut implements ILaunchShortcut {
     /**
      * Launch a unoidl project using the default configuration.
      *
-     * @param pProject
+     * @param project
      *            the project to launch
-     * @param pMode
+     * @param mode
      *            the mode of the launch
      */
-    private void launch(IUnoidlProject pProject, String pMode) {
+    private void launch(IUnoidlProject project, String mode) {
         ILaunchConfiguration conf = null;
-        List<ILaunchConfiguration> configurations = findExistingLaunchConfigurations(pProject);
+        List<ILaunchConfiguration> configurations = findExistingLaunchConfigurations(project);
         if (configurations.isEmpty()) {
-            conf = createDefaultLaunchConfiguration(pProject);
+            conf = createDefaultLaunchConfiguration(project);
         } else {
             conf = configurations.get(0);
         }
 
         if (conf != null) {
-            DebugUITools.launch(conf, pMode);
+            DebugUITools.launch(conf, mode);
         }
     }
 

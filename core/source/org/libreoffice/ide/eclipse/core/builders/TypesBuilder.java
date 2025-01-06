@@ -98,7 +98,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
      * {@inheritDoc}
      */
     @Override
-    protected IProject[] build(int pKind, Map<String, String> pArgs, IProgressMonitor pMonitor) throws CoreException {
+    protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
         mChangedIdl = false;
 
@@ -112,7 +112,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 
             if (mChangedIdl && sBuildState < 0) {
                 try {
-                    build(getProject(), pMonitor);
+                    build(getProject(), monitor);
                 } catch (Exception e) {
                     sBuildState = NOT_STARTED_STATE;
                     CoreException thrown = new CoreException(
@@ -132,10 +132,10 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         return null;
     }
 
-    private void addVisitor(IResourceDelta pDelta) throws CoreException {
-        pDelta.accept(new IResourceDeltaVisitor() {
+    private void addVisitor(IResourceDelta delta) throws CoreException {
+        delta.accept(new IResourceDeltaVisitor() {
             @Override
-            public boolean visit(IResourceDelta pDelta) throws CoreException {
+            public boolean visit(IResourceDelta delta) throws CoreException {
 
                 boolean visitChildren = false;
                 IProject prj = getProject();
@@ -143,19 +143,19 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 
                 if (unoprj != null) {
                     IPath idlPath = unoprj.getIdlPath();
-                    IPath resPath = pDelta.getResource().getProjectRelativePath();
+                    IPath resPath = delta.getResource().getProjectRelativePath();
 
-                    if (pDelta.getResource() instanceof IContainer
+                    if (delta.getResource() instanceof IContainer
                         && resPath.segmentCount() < idlPath.segmentCount()) {
                         visitChildren = true;
-                    } else if (pDelta.getResource() instanceof IContainer
+                    } else if (delta.getResource() instanceof IContainer
                         && resPath.toString().startsWith(idlPath.toString())) {
                         visitChildren = true;
-                    } else if (pDelta.getResource() instanceof IFile
+                    } else if (delta.getResource() instanceof IFile
                         && "idl".equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
                         visitChildren = false;
                         mChangedIdl = true;
-                    } else if (pDelta.getResource() instanceof IFile
+                    } else if (delta.getResource() instanceof IFile
                         && resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
                         sBuildState = COMPLETED_STATE;
                     }
@@ -168,35 +168,35 @@ public class TypesBuilder extends IncrementalProjectBuilder {
     /**
      * Build the types of a project.
      *
-     * @param pPrj
+     * @param prj
      *            the project to build
-     * @param pMonitor
+     * @param monitor
      *            a monitor to report the build progress
      *
      * @throws Exception
      *             if anything wrong happens during the build
      */
-    public static void build(IProject pPrj, IProgressMonitor pMonitor) throws Exception {
+    public static void build(IProject prj, IProgressMonitor monitor) throws Exception {
 
-        IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
+        IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
         // Clears the registries before beginning
         sBuildState = IDLC_STATE;
-        removeAllRegistries(pPrj);
-        buildIdl(unoprj, pMonitor);
+        removeAllRegistries(prj);
+        buildIdl(unoprj, monitor);
 
         sBuildState = REGMERGE_STATE;
-        RegmergeBuilder.build(unoprj, pMonitor);
+        RegmergeBuilder.build(unoprj, monitor);
 
         sBuildState = GENERATE_TYPES_STATE;
-        File types = pPrj.getLocation().append(unoprj.getTypesPath()).toFile();
-        File build = pPrj.getLocation().append(unoprj.getBuildPath()).toFile();
+        File types = prj.getLocation().append(unoprj.getTypesPath()).toFile();
+        File build = prj.getLocation().append(unoprj.getBuildPath()).toFile();
 
         ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuilder();
-        languageBuilder.generateFromTypes(unoprj.getSdk(), unoprj.getOOo(), pPrj, types, build, unoprj.getRootModule(),
-            pMonitor);
+        languageBuilder.generateFromTypes(unoprj.getSdk(), unoprj.getOOo(), prj, types, build, unoprj.getRootModule(),
+            monitor);
 
-        pPrj.refreshLocal(IResource.DEPTH_INFINITE, pMonitor);
+        prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
         sBuildState = NOT_STARTED_STATE;
     }
 
@@ -240,33 +240,33 @@ public class TypesBuilder extends IncrementalProjectBuilder {
     /**
      * Runs the idl files compilation.
      *
-     * @param pProject
+     * @param project
      *            the uno project to build
-     * @param pMonitor
+     * @param monitor
      *            a monitor to watch the progress
      * @throws Exception
      *             if anything wrong happened
      */
-    public static void buildIdl(IUnoidlProject pProject, IProgressMonitor pMonitor) throws Exception {
+    public static void buildIdl(IUnoidlProject project, IProgressMonitor monitor) throws Exception {
 
         // compile each idl file
-        IFolder idlFolder = pProject.getFolder(pProject.getIdlPath());
+        IFolder idlFolder = project.getFolder(project.getIdlPath());
         if (idlFolder.exists()) {
-            idlFolder.accept(new IdlcBuildVisitor(pMonitor));
+            idlFolder.accept(new IdlcBuildVisitor(monitor));
         }
     }
 
     /**
      * Convenience method to execute the <code>idlc</code> tool on a given file.
      *
-     * @param pFile
+     * @param file
      *            the file to run <code>idlc</code> on.
-     * @param pMonitor
+     * @param monitor
      *            a progress monitor
      */
-    static void runIdlcOnFile(IFile pFile, IProgressMonitor pMonitor) {
+    static void runIdlcOnFile(IFile file, IProgressMonitor monitor) {
 
-        IUnoidlProject project = ProjectsManager.getProject(pFile.getProject().getName());
+        IUnoidlProject project = ProjectsManager.getProject(file.getProject().getName());
 
         ISdk sdk = project.getSdk();
 
@@ -283,16 +283,16 @@ public class TypesBuilder extends IncrementalProjectBuilder {
             }
 
             IPath outputLocation = project.getUrdPath().append(
-                pFile.getProjectRelativePath().removeLastSegments(1).removeFirstSegments(segmentCount));
+                file.getProjectRelativePath().removeLastSegments(1).removeFirstSegments(segmentCount));
 
             String command = "idlc -O \"" + outputLocation.toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
                 " -I \"" + sdkPath.append("idl").toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 " -I \"" + project.getIdlPath().toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
-                " " + pFile.getProjectRelativePath().toOSString(); //$NON-NLS-1$
+                " " + file.getProjectRelativePath().toOSString(); //$NON-NLS-1$
 
-            Process process = project.getSdk().runTool(project, command, pMonitor);
+            Process process = project.getSdk().runTool(project, command, monitor);
 
-            IdlcErrorReader errorReader = new IdlcErrorReader(process.getErrorStream(), pFile);
+            IdlcErrorReader errorReader = new IdlcErrorReader(process.getErrorStream(), file);
             errorReader.readErrors();
         }
     }

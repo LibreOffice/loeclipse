@@ -64,32 +64,32 @@ public class InvalidConfigException extends Exception {
      * Constructor of the invalid SDK exception. It needs a message and a error code among those defined as constants of
      * this class.
      *
-     * @param pMessage
+     * @param message
      *            error message
-     * @param pCode
+     * @param code
      *            error code
      */
-    public InvalidConfigException(String pMessage, int pCode) {
-        super(pMessage);
+    public InvalidConfigException(String message, int code) {
+        super(message);
 
-        mErrorCode = pCode;
+        mErrorCode = code;
     }
 
     /**
      * Constructor of the invalid SDK exception. It needs a message and a error code among those defined as constants of
      * this class.
      *
-     * @param pMessage
+     * @param message
      *            error message
-     * @param pCode
+     * @param code
      *            error code
-     * @param pException
+     * @param exception
      *            exception in case there is one.
      */
-    public InvalidConfigException(String pMessage, int pCode, Throwable pException) {
-        super(pMessage, pException);
+    public InvalidConfigException(String message, int code, Throwable exception) {
+        super(message, exception);
 
-        mErrorCode = pCode;
+        mErrorCode = code;
     }
 
     /**

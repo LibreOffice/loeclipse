@@ -145,11 +145,11 @@ public class OOoTable extends AbstractTable {
      * {@inheritDoc}
      */
     @Override
-    protected void handleDoubleClick(DoubleClickEvent pEvent) {
-        if (!pEvent.getSelection().isEmpty()) {
+    protected void handleDoubleClick(DoubleClickEvent event) {
+        if (!event.getSelection().isEmpty()) {
 
             // Get the double clicked OOo line
-            AbstractOOo ooo = (AbstractOOo) ((IStructuredSelection) pEvent.getSelection()).getFirstElement();
+            AbstractOOo ooo = (AbstractOOo) ((IStructuredSelection) event.getSelection()).getFirstElement();
 
             // Launch the dialog
             ooo = openDialog(ooo);
@@ -163,37 +163,37 @@ public class OOoTable extends AbstractTable {
      * parameter <code>pOoo</code> could be null: in this case, a new one will be created. Otherwise the fields of the
      * old one will be changed. This is useful for OOo editing: the object reference is the same.
      *
-     * @param pOoo
+     * @param ooo
      *            the LibreOffice instance to show in the dialog
      * @return the modified or created LibreOffice instance
      */
-    protected AbstractOOo openDialog(AbstractOOo pOoo) {
+    protected AbstractOOo openDialog(AbstractOOo ooo) {
 
         // Gets the shell of the active eclipse window
         Shell shell = Display.getDefault().getActiveShell();
 
-        OOoDialog dialog = new OOoDialog(shell, pOoo);
+        OOoDialog dialog = new OOoDialog(shell, ooo);
         if (Window.OK == dialog.open()) {
             // The user validates his choice, perform the changes
             AbstractOOo newOOo = mTmpOOo;
             mTmpOOo = null;
 
-            if (null != pOoo) {
+            if (null != ooo) {
                 // Only an existing OOo modification
                 try {
-                    pOoo.setHome(newOOo.getHome());
-                    pOoo.setName(newOOo.getName());
+                    ooo.setHome(newOOo.getHome());
+                    ooo.setName(newOOo.getName());
                 } catch (InvalidConfigException e) {
                     PluginLogger.error(e.getLocalizedMessage(), e);
                     // localized in OOo class
                 }
             } else {
                 // Creation of a new OOo
-                pOoo = newOOo;
+                ooo = newOOo;
             }
 
         }
-        return pOoo;
+        return ooo;
     }
 
     /**
@@ -214,7 +214,7 @@ public class OOoTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             return OOoContainer.toArray();
         }
 
@@ -230,16 +230,16 @@ public class OOoTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void ConfigAdded(Object pElement) {
-            if (pElement instanceof OOo) {
-                mTableViewer.add(pElement);
+        public void ConfigAdded(Object element) {
+            if (element instanceof OOo) {
+                mTableViewer.add(element);
 
                 // This redrawing order is necessary to avoid having strange columns
                 mTable.redraw();
@@ -250,10 +250,10 @@ public class OOoTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigRemoved(Object pElement) {
-            if (null != pElement && pElement instanceof IOOo) {
+        public void ConfigRemoved(Object element) {
+            if (null != element && element instanceof IOOo) {
                 // Only one OOo to remove
-                mTableViewer.remove(pElement);
+                mTableViewer.remove(element);
             } else {
                 // All the OOo have been removed
                 if (null != mTableViewer) {
@@ -274,11 +274,11 @@ public class OOoTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigUpdated(Object pElement) {
-            if (pElement instanceof OOo) {
+        public void ConfigUpdated(Object element) {
+            if (element instanceof OOo) {
                 // Note that we can do this only because the OOo Container guarantees
                 // that the reference of the ooo will not change during an update
-                mTableViewer.update(pElement, null);
+                mTableViewer.update(element, null);
             }
         }
     }
@@ -313,15 +313,15 @@ public class OOoTable extends AbstractTable {
         /**
          * Create the LibreOffice dialog with an OOo instance to edit.
          *
-         * @param pParentShell
+         * @param parentShell
          *            the shell where to put the dialog
-         * @param pOoo
+         * @param ooo
          *            the OOo instance to edit
          */
-        protected OOoDialog(Shell pParentShell, AbstractOOo pOoo) {
-            super(pParentShell);
+        protected OOoDialog(Shell parentShell, AbstractOOo ooo) {
+            super(parentShell);
             setShellStyle(getShellStyle() | SWT.RESIZE);
-            this.mOOo = pOoo;
+            this.mOOo = ooo;
 
             // This dialog is a modal one
             setBlockOnOpen(true);
@@ -388,19 +388,19 @@ public class OOoTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void fieldChanged(FieldEvent pEvent) {
+        public void fieldChanged(FieldEvent event) {
 
             // The result doesn't matter: we only want to update the status of the windows
             Button okButton = getButton(IDialogConstants.OK_ID);
             if (null != okButton) {
 
-                if (pEvent.getProperty().equals(P_OOO_PATH)) {
-                    okButton.setEnabled(isValid(pEvent.getProperty()));
+                if (event.getProperty().equals(P_OOO_PATH)) {
+                    okButton.setEnabled(isValid(event.getProperty()));
                 }
 
                 // checks if the name is unique and toggle a warning
-                if (pEvent.getProperty().equals(P_OOO_NAME)) {
-                    boolean unique = !OOoContainer.containsName(pEvent.getValue());
+                if (event.getProperty().equals(P_OOO_NAME)) {
+                    boolean unique = !OOoContainer.containsName(event.getValue());
 
                     if (unique) {
                         updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,

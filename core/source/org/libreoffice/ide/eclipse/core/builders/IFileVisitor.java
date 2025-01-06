@@ -47,10 +47,10 @@ public interface IFileVisitor {
     /**
      * Simply visit the file and return if the children should be visited.
      *
-     * @param pFile
+     * @param file
      *            the file to visit
      * @return <code>true</code> if the children should be visited, <code>false</code> otherwise. This has no importance
      *         for files.
      */
-    public boolean visit(File pFile);
+    public boolean visit(File file);
 }

@@ -36,13 +36,13 @@ public class OpenOfficeConfiguration {
 
     private OpenOfficeConnection mConnection;
 
-    public OpenOfficeConfiguration(OpenOfficeConnection pConnection) {
-        mConnection = pConnection;
+    public OpenOfficeConfiguration(OpenOfficeConnection connection) {
+        mConnection = connection;
     }
 
-    public String getOpenOfficeProperty(String pNodePath, String pNode) {
-        if (!pNodePath.startsWith("/")) {
-            pNodePath = "/" + pNodePath;
+    public String getOpenOfficeProperty(String nodePath, String node) {
+        if (!nodePath.startsWith("/")) {
+            nodePath = "/" + nodePath;
         }
         String property = "";
         // create the provider and remember it as a XMultiServiceFactory
@@ -58,7 +58,7 @@ public class OpenOfficeConfiguration {
             // creation arguments: nodepath
             PropertyValue aPathArgument = new PropertyValue();
             aPathArgument.Name = "nodepath";
-            aPathArgument.Value = pNodePath;
+            aPathArgument.Value = nodePath;
             Object[] aArguments = new Object[1];
             aArguments[0] = aPathArgument;
 
@@ -67,7 +67,7 @@ public class OpenOfficeConfiguration {
             XNameAccess xChildAccess = UnoRuntime.queryInterface(XNameAccess.class, xElement);
 
             // get the value
-            property = (String) xChildAccess.getByName(pNode);
+            property = (String) xChildAccess.getByName(node);
         } catch (Exception exception) {
             throw new OpenOfficeException("Could not retrieve property", exception);
         }

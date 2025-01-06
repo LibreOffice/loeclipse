@@ -69,11 +69,11 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Test if the caret is positioned in a comment partition.
      *
-     * @param pCaretPos
+     * @param caretPos
      *            the caret position
      * @return <code>true</code> if the cursor is in a comment, <code>false</code> otherwise
      */
-    protected boolean selectComment(int pCaretPos) {
+    protected boolean selectComment(int caretPos) {
 
         boolean selected = false;
 
@@ -82,13 +82,13 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
         try {
 
-            int pos = getCommentStartPosition(pCaretPos, doc);
+            int pos = getCommentStartPosition(caretPos, doc);
             int c = doc.getChar(pos);
 
             if (c == '\"') {
                 startPos = pos;
 
-                pos = pCaretPos;
+                pos = caretPos;
                 int length = doc.getLength();
                 c = ' ';
 
@@ -118,21 +118,21 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Get the position of the start of the current comment or the same position than the caret.
      *
-     * @param pCaretPos
+     * @param caretPos
      *            the position of the caret
-     * @param pDoc
+     * @param doc
      *            the edited document
      * @return the start of the comment or the caret position
      *
      * @throws BadLocationException
      *             if something wrong happens during the document reading
      */
-    private int getCommentStartPosition(int pCaretPos, IDocument pDoc) throws BadLocationException {
-        int pos = pCaretPos;
+    private int getCommentStartPosition(int caretPos, IDocument doc) throws BadLocationException {
+        int pos = caretPos;
         char c = ' ';
 
         while (pos >= 0) {
-            c = pDoc.getChar(pos);
+            c = doc.getChar(pos);
             if (c == '\\') {
                 pos -= 2;
                 continue;
@@ -149,11 +149,11 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
     /**
      * Test if the caret is positioned in a word partition.
      *
-     * @param pCaretPos
+     * @param caretPos
      *            the caret position
      * @return <code>true</code> if the cursor is in a word, <code>false</code> ortherwise
      */
-    protected boolean selectWord(int pCaretPos) {
+    protected boolean selectWord(int caretPos) {
 
         boolean selected = false;
 
@@ -162,7 +162,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
         try {
 
-            int pos = pCaretPos;
+            int pos = caretPos;
             char c;
 
             while (pos >= 0) {
@@ -175,7 +175,7 @@ public class UnoidlDoubleClickStrategy implements ITextDoubleClickStrategy {
 
             startPos = pos;
 
-            pos = pCaretPos;
+            pos = caretPos;
             int length = doc.getLength();
 
             while (pos < length) {

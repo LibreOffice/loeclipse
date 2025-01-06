@@ -59,17 +59,17 @@ public abstract class LanguageExportPart {
      *
      * <strong>Note that the controls might be disposed when this methods is called.</strong>
      *
-     * @param pModel
+     * @param model
      *            the model of the exported package
      */
-    public abstract void doFinish(UnoPackage pModel);
+    public abstract void doFinish(UnoPackage model);
 
     /**
-     * @param pPage
+     * @param page
      *            the manifest page containing this part.
      */
-    public void setPage(ManifestExportPage pPage) {
-        mPage = pPage;
+    public void setPage(ManifestExportPage page) {
+        mPage = page;
     }
 
     /**

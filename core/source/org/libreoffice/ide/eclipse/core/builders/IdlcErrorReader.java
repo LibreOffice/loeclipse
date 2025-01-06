@@ -100,13 +100,13 @@ public class IdlcErrorReader {
      *
      * @param pStream
      *            the error stream to read
-     * @param pFile
+     * @param file
      *            the built IDL file
      */
-    public IdlcErrorReader(InputStream pStream, IFile pFile) {
+    public IdlcErrorReader(InputStream pStream, IFile file) {
         mIn = new InputStreamReader(pStream);
         mReader = new LineNumberReader(mIn);
-        mCompiledFile = pFile;
+        mCompiledFile = file;
     }
 
     /**
@@ -163,18 +163,18 @@ public class IdlcErrorReader {
      * Method that analyzes the error line and return the appropriate marker if it is possible.
      * </p>
      *
-     * @param pLine
+     * @param line
      *            error line to analyse
      * @return the corresponding marker if the line is an <code>idlc</code> error line. <code>null</code> if there were
      *         problems by creating the marker or if the line isn't an <code>idlc</code> error line.
      */
-    private IMarker analyseIdlcError(String pLine) {
+    private IMarker analyseIdlcError(String line) {
         IMarker marker = null;
 
         Pattern pSyntax = Pattern.compile(R_IDLC_ERROR);
-        Matcher mSyntax = pSyntax.matcher(pLine);
+        Matcher mSyntax = pSyntax.matcher(line);
 
-        if (!pLine.startsWith("idlc:") && mSyntax.matches()) { //$NON-NLS-1$
+        if (!line.startsWith("idlc:") && mSyntax.matches()) { //$NON-NLS-1$
             IProject project = mCompiledFile.getProject();
 
             boolean error = false;
@@ -236,16 +236,16 @@ public class IdlcErrorReader {
      * Method that analyzes the IDLC preprocessor error line and return the appropriate marker if it is possible.
      * </p>
      *
-     * @param pLine
+     * @param line
      *            error line to analyse
      * @return the corresponding marker if the line is an <code>idlc</code> error line. <code>null</code> if there were
      *         problems by creating the marker or if the line isn't an <code>idlc</code> error line.
      */
-    private IMarker analyseIdlcppError(String pLine) {
+    private IMarker analyseIdlcppError(String line) {
         IMarker marker = null;
 
         Pattern pInclude = Pattern.compile(R_IDLCPP_ERROR);
-        Matcher mInclude = pInclude.matcher(pLine);
+        Matcher mInclude = pInclude.matcher(line);
 
         if (mInclude.matches()) {
             IProject project = mCompiledFile.getProject();
@@ -293,19 +293,19 @@ public class IdlcErrorReader {
     /**
      * Get the offset of the line relatively to the document beginning.
      *
-     * @param pLine
+     * @param line
      *            the line number
      *
      * @return the computed offset
      */
-    private int getLineOffset(int pLine) {
+    private int getLineOffset(int line) {
         int offset = 0;
 
         try {
             // Get the line offset.
             LineNumberReader fileReader = new LineNumberReader(new InputStreamReader(mCompiledFile.getContents()));
 
-            for (int i = 0, length = pLine - 1; i < length; i++) {
+            for (int i = 0, length = line - 1; i < length; i++) {
                 String tmpLine = fileReader.readLine();
                 offset += tmpLine.length() + 1;
             }
@@ -319,24 +319,24 @@ public class IdlcErrorReader {
     /**
      * Get the length of the line.
      *
-     * @param pLine
+     * @param line
      *            the line number
      *
      * @return the length
      */
-    private int getLineLength(int pLine) {
+    private int getLineLength(int line) {
         int lineLen = 0;
 
         try {
             // Get the line offset.
             LineNumberReader fileReader = new LineNumberReader(new InputStreamReader(mCompiledFile.getContents()));
 
-            for (int i = 0, length = pLine - 1; i < length; i++) {
+            for (int i = 0, length = line - 1; i < length; i++) {
                 fileReader.readLine();
             }
 
-            String line = fileReader.readLine();
-            lineLen = line.length();
+            String newLine = fileReader.readLine();
+            lineLen = newLine.length();
         } catch (Exception e) {
             // Nothing to report: the marker will be bad placed perhaps...
         }

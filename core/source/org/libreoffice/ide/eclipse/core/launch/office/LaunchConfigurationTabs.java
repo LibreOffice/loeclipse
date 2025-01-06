@@ -46,9 +46,9 @@ public class LaunchConfigurationTabs extends AbstractLaunchConfigurationTabGroup
      * {@inheritDoc}
      */
     @Override
-    public void createTabs(ILaunchConfigurationDialog pDialog, String pMode) {
+    public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
         ILaunchConfigurationTab[] tabs = null;
-        if (ILaunchManager.DEBUG_MODE.equals(pMode)) {
+        if (ILaunchManager.DEBUG_MODE.equals(mode)) {
             tabs = new ILaunchConfigurationTab[] { new OfficeTab(), new SourceLookupTab(),
                 new CommonTab() };
         } else {

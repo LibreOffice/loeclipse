@@ -103,10 +103,10 @@ public interface IUnoComposite {
     /**
      * adds a child to the node. No name uniqueness will be checked.
      *
-     * @param pChild
+     * @param child
      *            the child to add
      */
-    public void addChild(IUnoComposite pChild);
+    public void addChild(IUnoComposite child);
 
     /**
      * Removes all the children nodes.
@@ -186,10 +186,10 @@ public interface IUnoComposite {
      * parents.
      * </p>
      *
-     * @param pFilename
+     * @param filename
      *            the composite filename.
      */
-    public void configure(String pFilename);
+    public void configure(String filename);
 
     /**
      * sets whether the output string of the text composite will be indented or not. The method has no effect if the
@@ -212,12 +212,12 @@ public interface IUnoComposite {
     /**
      * creates the file or folder with its non-existing parents.
      *
-     * @param pForce
+     * @param force
      *            <code>true</code> let the method overwrite the existing file if needed.
      * @throws Exception
      *             If there is any problem during the file or folder creation
      */
-    public void create(boolean pForce) throws Exception;
+    public void create(boolean force) throws Exception;
 
     /**
      * returns the string representation of the node is it has a textual representation. The string will be a reference

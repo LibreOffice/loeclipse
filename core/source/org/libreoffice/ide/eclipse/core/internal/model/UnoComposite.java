@@ -90,10 +90,10 @@ public class UnoComposite implements IUnoComposite {
      * {@inheritDoc}
      */
     @Override
-    public void addChild(IUnoComposite pChild) {
+    public void addChild(IUnoComposite child) {
 
-        if (pChild != null) {
-            mChildren.add(pChild);
+        if (child != null) {
+            mChildren.add(child);
         }
     }
 
@@ -167,10 +167,10 @@ public class UnoComposite implements IUnoComposite {
      * {@inheritDoc}
      */
     @Override
-    public void configure(String pFilename) {
+    public void configure(String filename) {
 
         if (mType == COMPOSITE_TYPE_FILE || mType == COMPOSITE_TYPE_FOLDER) {
-            mFilename = pFilename;
+            mFilename = filename;
         }
     }
 
@@ -199,7 +199,7 @@ public class UnoComposite implements IUnoComposite {
      * {@inheritDoc}
      */
     @Override
-    public void create(boolean pForce) throws Exception {
+    public void create(boolean force) throws Exception {
 
         File file;
         if (mType == COMPOSITE_TYPE_FILE || mType == COMPOSITE_TYPE_FOLDER) {
@@ -212,7 +212,7 @@ public class UnoComposite implements IUnoComposite {
             }
 
             // if the file exists and the force flag is up
-            if (file.exists() && pForce || !file.exists()) {
+            if (file.exists() && force || !file.exists()) {
                 if (mType == COMPOSITE_TYPE_FILE) {
                     file.createNewFile();
 

@@ -150,7 +150,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigAdded(Object pElement) {
+        public void ConfigAdded(Object element) {
             // the selected SDK or OOo cannot be added again...
         }
 
@@ -158,15 +158,15 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigRemoved(Object pElement) {
-            if (pElement instanceof ISdk) {
-                if (pElement == getSdk()) {
+        public void ConfigRemoved(Object element) {
+            if (element instanceof ISdk) {
+                if (element == getSdk()) {
 
                     // Sets the selected SDK to null, it will tag the project as invalid
                     setSdk(null);
                 }
-            } else if (pElement instanceof IOOo) {
-                if (pElement == getOOo()) {
+            } else if (element instanceof IOOo) {
+                if (element == getOOo()) {
 
                     // Removes OOo dependencies
                     getLanguage().getProjectHandler().removeOOoDependencies(getOOo(), getProject());
@@ -181,9 +181,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigUpdated(Object pElement) {
-            if (pElement instanceof IOOo) {
-                if (pElement == getOOo()) {
+        public void ConfigUpdated(Object element) {
+            if (element instanceof IOOo) {
+                if (element == getOOo()) {
                     // the ooo is updated thanks to it's reference. Remove the old jar files
                     // from the classpath and the new ones
 
@@ -276,10 +276,10 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void setLanguage(AbstractLanguage pNewLanguage) {
+    public void setLanguage(AbstractLanguage newLanguage) {
 
-        if (mLanguage == null && pNewLanguage != null) {
-            mLanguage = pNewLanguage;
+        if (mLanguage == null && newLanguage != null) {
+            mLanguage = newLanguage;
             mLanguage.getProjectHandler().addProjectNature(getProject());
             PluginLogger.debug("Language specific nature added"); //$NON-NLS-1$
         }
@@ -289,9 +289,9 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void setOOo(IOOo pOoo) {
+    public void setOOo(IOOo ooo) {
 
-        setErrorMarker(null == pOoo || null == getSdk());
+        setErrorMarker(null == ooo || null == getSdk());
 
         try {
             IProjectHandler langHandler = getLanguage().getProjectHandler();
@@ -300,12 +300,12 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             langHandler.removeOOoDependencies(mOOo, getProject());
 
             // Add the new ones
-            langHandler.addOOoDependencies(pOoo, getProject());
+            langHandler.addOOoDependencies(ooo, getProject());
         } catch (Exception e) {
             // This might happen at some stage of the project creation
         }
 
-        this.mOOo = pOoo;
+        this.mOOo = ooo;
     }
 
     /**
@@ -323,8 +323,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void setIdlDir(String pIdlDir) {
-        mIdlDir = pIdlDir;
+    public void setIdlDir(String idlDir) {
+        mIdlDir = idlDir;
     }
 
     /**
@@ -390,8 +390,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void setOutputExtension(String pOutputExt) {
-        mOutputExtension = pOutputExt;
+    public void setOutputExtension(String outputExt) {
+        mOutputExtension = outputExt;
     }
 
     /**
@@ -609,13 +609,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * Define a property in the UNO project configuration file.
      *
-     * @param pName
+     * @param name
      *            the property name
-     * @param pValue
+     * @param value
      *            the property value
      */
     @Override
-    public void setProperty(String pName, String pValue) {
+    public void setProperty(String name, String value) {
         Properties properties = new Properties();
         File configFile = getConfigFile();
 
@@ -630,7 +630,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             in = new FileInputStream(configFile);
             properties.load(in);
 
-            properties.setProperty(pName, pValue);
+            properties.setProperty(name, value);
 
             out = new FileOutputStream(configFile);
             properties.store(out, Messages.getString("UnoidlProject.ConfigFileComment")); //$NON-NLS-1$
@@ -640,7 +640,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
         } catch (Exception e) {
             String pattern = Messages.getString("UnoidlProject.PropertyChangeError"); //$NON-NLS-1$
-            String message = MessageFormat.format(pattern, pName, pValue);
+            String message = MessageFormat.format(pattern, name, value);
             PluginLogger.warning(message, e);
         } finally {
             try {

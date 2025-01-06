@@ -69,8 +69,8 @@ public class UnoidlDocumentProvider extends FileDocumentProvider {
      * {@inheritDoc}
      */
     @Override
-    protected IDocument createDocument(Object pElement) throws CoreException {
-        IDocument document = super.createDocument(pElement);
+    protected IDocument createDocument(Object element) throws CoreException {
+        IDocument document = super.createDocument(element);
         if (document != null) {
             IDocumentPartitioner partitioner = createIDLPartitioner();
             partitioner.connect(document);

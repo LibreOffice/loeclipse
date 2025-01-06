@@ -99,19 +99,19 @@ public class LocaleSelector {
     }
 
     /**
-     * @param pListener
+     * @param listener
      *            the listener to add
      */
-    public void addListener(ILocaleListener pListener) {
-        mListeners.add(pListener);
+    public void addListener(ILocaleListener listener) {
+        mListeners.add(listener);
     }
 
     /**
-     * @param pListener
+     * @param listener
      *            the listener to remove.
      */
-    protected void removeListener(ILocaleListener pListener) {
-        mListeners.remove(pListener);
+    protected void removeListener(ILocaleListener listener) {
+        mListeners.remove(listener);
     }
 
     /**
@@ -129,10 +129,10 @@ public class LocaleSelector {
     /**
      * Replace all the previous locales by these new ones.
      *
-     * @param pLocales
+     * @param locales
      *            the new locales to set.
      */
-    public void loadLocales(ArrayList<Locale> pLocales) {
+    public void loadLocales(ArrayList<Locale> locales) {
         // notifies the removals
         for (Locale locale : mLocales) {
             mLangList.remove(locale);
@@ -140,7 +140,7 @@ public class LocaleSelector {
         }
         mLocales.clear();
 
-        mLocales.addAll(pLocales);
+        mLocales.addAll(locales);
         // Notifies the additions
         for (Locale locale : mLocales) {
             mLangList.add(locale);
@@ -173,8 +173,8 @@ public class LocaleSelector {
         mLangList.setLabelProvider(new LabelProvider());
         mLangList.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
-            public void selectionChanged(SelectionChangedEvent pEvent) {
-                IStructuredSelection sel = (IStructuredSelection) pEvent.getSelection();
+            public void selectionChanged(SelectionChangedEvent event) {
+                IStructuredSelection sel = (IStructuredSelection) event.getSelection();
                 if (!sel.isEmpty()) {
                     mCurrentLocale = (Locale) sel.getFirstElement();
                     fireUpdateLocale(mCurrentLocale);
@@ -194,7 +194,7 @@ public class LocaleSelector {
         mAddBtn.setImage(OOEclipsePlugin.getImage(ImagesConstants.ADD));
         mAddBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
 
                 // Show the Locale selection dialog.
                 LocaleDialog dlg = new LocaleDialog();
@@ -219,7 +219,7 @@ public class LocaleSelector {
         mDelBtn.setImage(OOEclipsePlugin.getImage(ImagesConstants.DELETE));
         mDelBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
 
                 // Show the locale before the removed one
                 Locale locale = getCurrentLocale();
@@ -242,36 +242,36 @@ public class LocaleSelector {
     /**
      * Notifies the listeners that the locale selection has changed.
      *
-     * @param pLocale
+     * @param locale
      *            the locale.
      */
-    private void fireUpdateLocale(Locale pLocale) {
+    private void fireUpdateLocale(Locale locale) {
         for (ILocaleListener listener : mListeners) {
-            listener.selectLocale(pLocale);
+            listener.selectLocale(locale);
         }
     }
 
     /**
      * Notifies the listeners that a locale has been removed.
      *
-     * @param pLocale
+     * @param locale
      *            the locale.
      */
-    private void fireDeleteLocale(Locale pLocale) {
+    private void fireDeleteLocale(Locale locale) {
         for (ILocaleListener listener : mListeners) {
-            listener.deleteLocale(pLocale);
+            listener.deleteLocale(locale);
         }
     }
 
     /**
      * Notifies the listeners that a locale has been added.
      *
-     * @param pLocale
+     * @param locale
      *            the locale.
      */
-    private void fireAddLocale(Locale pLocale) {
+    private void fireAddLocale(Locale locale) {
         for (ILocaleListener listener : mListeners) {
-            listener.addLocale(pLocale);
+            listener.addLocale(locale);
         }
     }
 }

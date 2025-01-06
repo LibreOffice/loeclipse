@@ -93,16 +93,16 @@ public class DescriptionModel implements IModel {
      * {@inheritDoc}
      */
     @Override
-    public void addListener(IModelChangedListener pListener) {
-        mListeners.add(pListener);
+    public void addListener(IModelChangedListener listener) {
+        mListeners.add(listener);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeListener(IModelChangedListener pListener) {
-        mListeners.remove(pListener);
+    public void removeListener(IModelChangedListener listener) {
+        mListeners.remove(listener);
     }
 
     /**
@@ -144,12 +144,12 @@ public class DescriptionModel implements IModel {
     }
 
     /**
-     * @param pId
+     * @param id
      *            the id to set
      */
-    public void setId(String pId) {
-        if (mId != pId) {
-            mId = pId;
+    public void setId(String id) {
+        if (mId != id) {
+            mId = id;
             fireModelChanged();
         }
     }
@@ -185,15 +185,15 @@ public class DescriptionModel implements IModel {
     /**
      * Add or update a display name.
      *
-     * @param pLocale
+     * @param locale
      *            the locale for the display name to add / update
-     * @param pValue
+     * @param value
      *            the value to add / update.
      */
-    public void addDisplayName(Locale pLocale, String pValue) {
-        if (getDisplayNames().containsKey(pLocale) && !getDisplayNames().get(pLocale).equals(pValue)
-            || !getDisplayNames().containsKey(pLocale)) {
-            getDisplayNames().put(pLocale, pValue);
+    public void addDisplayName(Locale locale, String value) {
+        if (getDisplayNames().containsKey(locale) && !getDisplayNames().get(locale).equals(value)
+            || !getDisplayNames().containsKey(locale)) {
+            getDisplayNames().put(locale, value);
             fireModelChanged();
         }
     }
@@ -201,12 +201,12 @@ public class DescriptionModel implements IModel {
     /**
      * Remove a display name.
      *
-     * @param pLocale
+     * @param locale
      *            the locale of the display name to remove
      */
-    public void removeDisplayName(Locale pLocale) {
-        if (getDisplayNames().containsKey(pLocale)) {
-            getDisplayNames().remove(pLocale);
+    public void removeDisplayName(Locale locale) {
+        if (getDisplayNames().containsKey(locale)) {
+            getDisplayNames().remove(locale);
             fireModelChanged();
         }
     }
@@ -219,12 +219,12 @@ public class DescriptionModel implements IModel {
     }
 
     /**
-     * @param pMinOOo
+     * @param minOOo
      *            the minOOo to set
      */
-    public void setMinOOo(String pMinOOo) {
-        if (mMinOOo != pMinOOo) {
-            mMinOOo = pMinOOo;
+    public void setMinOOo(String minOOo) {
+        if (mMinOOo != minOOo) {
+            mMinOOo = minOOo;
             fireModelChanged();
         }
     }
@@ -237,12 +237,12 @@ public class DescriptionModel implements IModel {
     }
 
     /**
-     * @param pMaxOOo
+     * @param maxOOo
      *            the maxOOo to set
      */
-    public void setMaxOOo(String pMaxOOo) {
-        if (mMaxOOo != pMaxOOo) {
-            mMaxOOo = pMaxOOo;
+    public void setMaxOOo(String maxOOo) {
+        if (mMaxOOo != maxOOo) {
+            mMaxOOo = maxOOo;
             fireModelChanged();
         }
     }
@@ -273,12 +273,12 @@ public class DescriptionModel implements IModel {
     }
 
     /**
-     * @param pDefaultIcon
+     * @param defaultIcon
      *            the defaultIcon to set
      */
-    public void setDefaultIcon(String pDefaultIcon) {
-        if (mDefaultIcon != pDefaultIcon) {
-            mDefaultIcon = pDefaultIcon;
+    public void setDefaultIcon(String defaultIcon) {
+        if (mDefaultIcon != defaultIcon) {
+            mDefaultIcon = defaultIcon;
             fireModelChanged();
         }
     }
@@ -291,12 +291,12 @@ public class DescriptionModel implements IModel {
     }
 
     /**
-     * @param pHCIcon
+     * @param hcIcon
      *            the hCIcon to set
      */
-    public void setHCIcon(String pHCIcon) {
-        if (mHCIcon != pHCIcon) {
-            mHCIcon = pHCIcon;
+    public void setHCIcon(String hcIcon) {
+        if (mHCIcon != hcIcon) {
+            mHCIcon = hcIcon;
             fireModelChanged();
         }
     }
@@ -314,15 +314,15 @@ public class DescriptionModel implements IModel {
     /**
      * Add or update a description.
      *
-     * @param pLocale
+     * @param locale
      *            the locale for the description to add / update
-     * @param pValue
+     * @param value
      *            the value to add / update.
      */
-    public void addDescription(Locale pLocale, String pValue) {
-        if (getDescriptions().containsKey(pLocale) && !getDescriptions().get(pLocale).equals(pValue)
-            || !getDescriptions().containsKey(pLocale)) {
-            getDescriptions().put(pLocale, pValue);
+    public void addDescription(Locale locale, String value) {
+        if (getDescriptions().containsKey(locale) && !getDescriptions().get(locale).equals(value)
+            || !getDescriptions().containsKey(locale)) {
+            getDescriptions().put(locale, value);
             fireModelChanged();
         }
     }
@@ -330,12 +330,12 @@ public class DescriptionModel implements IModel {
     /**
      * Remove a description.
      *
-     * @param pLocale
+     * @param locale
      *            the locale of the description to remove
      */
-    public void removeDescription(Locale pLocale) {
-        if (getDescriptions().containsKey(pLocale)) {
-            getDescriptions().remove(pLocale);
+    public void removeDescription(Locale locale) {
+        if (getDescriptions().containsKey(locale)) {
+            getDescriptions().remove(locale);
             fireModelChanged();
         }
     }
@@ -353,15 +353,15 @@ public class DescriptionModel implements IModel {
     /**
      * Add or update a release note.
      *
-     * @param pLocale
+     * @param locale
      *            the locale for the release note to add / update
-     * @param pValue
+     * @param value
      *            the value to add / update.
      */
-    public void addReleaseNote(Locale pLocale, String pValue) {
-        if (getReleaseNotes().containsKey(pLocale) && !getReleaseNotes().get(pLocale).equals(pValue)
-            || !getReleaseNotes().containsKey(pLocale)) {
-            getReleaseNotes().put(pLocale, pValue);
+    public void addReleaseNote(Locale locale, String value) {
+        if (getReleaseNotes().containsKey(locale) && !getReleaseNotes().get(locale).equals(value)
+            || !getReleaseNotes().containsKey(locale)) {
+            getReleaseNotes().put(locale, value);
             fireModelChanged();
         }
     }
@@ -369,12 +369,12 @@ public class DescriptionModel implements IModel {
     /**
      * Remove a release note.
      *
-     * @param pLocale
+     * @param locale
      *            the locale of the release note to remove
      */
-    public void removeReleaseNote(Locale pLocale) {
-        if (getReleaseNotes().containsKey(pLocale)) {
-            getReleaseNotes().remove(pLocale);
+    public void removeReleaseNote(Locale locale) {
+        if (getReleaseNotes().containsKey(locale)) {
+            getReleaseNotes().remove(locale);
             fireModelChanged();
         }
     }
@@ -405,15 +405,15 @@ public class DescriptionModel implements IModel {
     /**
      * Replace an existing update info.
      *
-     * @param pIndex
+     * @param index
      *            the index to change
-     * @param pValue
+     * @param value
      *            the new value
      */
-    public void replaceUpdateInfo(int pIndex, String pValue) {
-        String o = getUpdateInfos().get(pIndex);
-        if (o != null && !o.equals(pValue)) {
-            getUpdateInfos().set(pIndex, pValue);
+    public void replaceUpdateInfo(int index, String value) {
+        String o = getUpdateInfos().get(index);
+        if (o != null && !o.equals(value)) {
+            getUpdateInfos().set(index, value);
             fireModelChanged();
         }
     }
@@ -439,12 +439,12 @@ public class DescriptionModel implements IModel {
     }
 
     /**
-     * @param pAcceptByUser
+     * @param acceptByUser
      *            the acceptByUser to set
      */
-    public void setAcceptByUser(boolean pAcceptByUser) {
-        if (mAcceptByUser != pAcceptByUser) {
-            mAcceptByUser = pAcceptByUser;
+    public void setAcceptByUser(boolean acceptByUser) {
+        if (mAcceptByUser != acceptByUser) {
+            mAcceptByUser = acceptByUser;
             fireModelChanged();
         }
     }
@@ -480,15 +480,15 @@ public class DescriptionModel implements IModel {
     /**
      * Add or update a license.
      *
-     * @param pLocale
+     * @param locale
      *            the locale for the license to add / update
-     * @param pValue
+     * @param value
      *            the value to add / update.
      */
-    public void addLicense(Locale pLocale, String pValue) {
-        if (getLicenses().containsKey(pLocale) && !getLicenses().get(pLocale).equals(pValue)
-            || !getLicenses().containsKey(pLocale)) {
-            getLicenses().put(pLocale, pValue);
+    public void addLicense(Locale locale, String value) {
+        if (getLicenses().containsKey(locale) && !getLicenses().get(locale).equals(value)
+            || !getLicenses().containsKey(locale)) {
+            getLicenses().put(locale, value);
             fireModelChanged();
         }
     }
@@ -496,12 +496,12 @@ public class DescriptionModel implements IModel {
     /**
      * Remove a license.
      *
-     * @param pLocale
+     * @param locale
      *            the locale of the license to remove
      */
-    public void removeLicense(Locale pLocale) {
-        if (getLicenses().containsKey(pLocale)) {
-            getLicenses().remove(pLocale);
+    public void removeLicense(Locale locale) {
+        if (getLicenses().containsKey(locale)) {
+            getLicenses().remove(locale);
             fireModelChanged();
         }
     }
@@ -519,16 +519,16 @@ public class DescriptionModel implements IModel {
     /**
      * Add or update a publisherInfo.
      *
-     * @param pLocale
+     * @param locale
      *            the locale for the publisherInfo to add / update
-     * @param pValue
+     * @param value
      *            the value to add / update.
      */
-    public void addPublisherInfo(Locale pLocale, PublisherInfos pValue) {
-        if (getPublisherInfos().containsKey(pLocale) && !getPublisherInfos().get(pLocale).equals(pValue)
-            || !getPublisherInfos().containsKey(pLocale)) {
-            pValue.setModel(this);
-            getPublisherInfos().put(pLocale, pValue);
+    public void addPublisherInfo(Locale locale, PublisherInfos value) {
+        if (getPublisherInfos().containsKey(locale) && !getPublisherInfos().get(locale).equals(value)
+            || !getPublisherInfos().containsKey(locale)) {
+            value.setModel(this);
+            getPublisherInfos().put(locale, value);
             fireModelChanged();
         }
     }
@@ -536,12 +536,12 @@ public class DescriptionModel implements IModel {
     /**
      * Remove a publisherInfo.
      *
-     * @param pLocale
+     * @param locale
      *            the locale of the publisherInfo to remove
      */
-    public void removePublisherInfo(Locale pLocale) {
-        if (getLicenses().containsKey(pLocale)) {
-            getPublisherInfos().remove(pLocale);
+    public void removePublisherInfo(Locale locale) {
+        if (getLicenses().containsKey(locale)) {
+            getPublisherInfos().remove(locale);
             fireModelChanged();
         }
     }
@@ -549,13 +549,13 @@ public class DescriptionModel implements IModel {
     /**
      * Serializes the data in XML to an output stream.
      *
-     * @param pOut
+     * @param out
      *            the output stream where to write the data
      */
-    public void serialize(OutputStream pOut) {
+    public void serialize(OutputStream out) {
         XMLWriter writer = null;
         try {
-            writer = new XMLWriter(pOut);
+            writer = new XMLWriter(out);
 
             Map<String, String> mapping = new HashMap<>();
             mapping.put(XMLTokens.ATTR_XMLNS, XMLTokens.URI_DESCRIPTION);
@@ -876,16 +876,16 @@ public class DescriptionModel implements IModel {
     /**
      * Outputs the locale in a form ready to output to description.xml file.
      *
-     * @param pLocale
+     * @param locale
      *            the locale to write.
      *
      * @return the string form of the locale
      */
-    private String writeLocale(Locale pLocale) {
+    private String writeLocale(Locale locale) {
         char sep = '-';
         String result = new String();
 
-        result = pLocale.toString().replace('_', sep);
+        result = locale.toString().replace('_', sep);
 
         return result;
     }
@@ -893,34 +893,34 @@ public class DescriptionModel implements IModel {
     /**
      * Writes an XML element of the following form: &lt;pElementName value="pValue"/&gt;.
      *
-     * @param pWriter
+     * @param writer
      *            the XML writer
-     * @param pElementName
+     * @param elementName
      *            the element name
-     * @param pValue
+     * @param value
      *            the element value
      */
-    private void printValueElement(XMLWriter pWriter, String pElementName, String pValue) {
+    private void printValueElement(XMLWriter writer, String elementName, String value) {
         Map<String, String> pAttributes = new HashMap<>();
-        pAttributes.put(XMLTokens.ATTR_VALUE, pValue);
-        pWriter.printSingleTag(pElementName, pAttributes);
+        pAttributes.put(XMLTokens.ATTR_VALUE, value);
+        writer.printSingleTag(elementName, pAttributes);
     }
 
     /**
      * Merges the pNewLocales into the pLocales, but avoids duplicates elements.
      *
-     * @param pLocales
+     * @param locales
      *            the target list
-     * @param pNewLocales
+     * @param newLocales
      *            the set of locales to add
      */
-    private void appendNew(ArrayList<Locale> pLocales, Set<Locale> pNewLocales) {
-        Iterator<Locale> iter = pNewLocales.iterator();
+    private void appendNew(ArrayList<Locale> locales, Set<Locale> newLocales) {
+        Iterator<Locale> iter = newLocales.iterator();
 
         while (iter.hasNext()) {
             Locale locale = iter.next();
-            if (!pLocales.contains(locale)) {
-                pLocales.add(locale);
+            if (!locales.contains(locale)) {
+                locales.add(locale);
             }
         }
     }

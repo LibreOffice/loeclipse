@@ -101,14 +101,14 @@ public class LibsSection extends SectionPart {
     /**
      * Constructor.
      *
-     * @param pPage
+     * @param page
      *            the form page where to create the section
      */
-    public LibsSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+    public LibsSection(PackageFormPage page) {
+        super(page.getManagedForm().getForm().getBody(), page.getManagedForm().getToolkit(),
             ExpandableComposite.TITLE_BAR);
 
-        mPage = pPage;
+        mPage = page;
 
         Section section = getSection();
 
@@ -171,13 +171,13 @@ public class LibsSection extends SectionPart {
     /**
      * Fill the libraries section from the properties file.
      *
-     * @param pModel
+     * @param model
      *            the properties file content.
      */
-    public void setLibraries(PackagePropertiesModel pModel) {
+    public void setLibraries(PackagePropertiesModel model) {
 
-        List<IFolder> basicLibs = pModel.getBasicLibraries();
-        List<IFolder> dialogLibs = pModel.getDialogLibraries();
+        List<IFolder> basicLibs = model.getBasicLibraries();
+        List<IFolder> dialogLibs = model.getDialogLibraries();
 
         // transform the value string into table elements
         mLibs.clear();
@@ -207,11 +207,11 @@ public class LibsSection extends SectionPart {
     /**
      * Creates the table GUI.
      *
-     * @param pClientArea
+     * @param clientArea
      *            the composite where to create the table
      */
-    private void createTable(Composite pClientArea) {
-        Table table = new Table(pClientArea, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+    private void createTable(Composite clientArea) {
+        Table table = new Table(clientArea, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
         table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         mTableViewer = new TableViewer(table);
@@ -241,11 +241,11 @@ public class LibsSection extends SectionPart {
     /**
      * Create the add / del buttons.
      *
-     * @param pClientArea
+     * @param clientArea
      *            the composite where to create the buttons
      */
-    private void createButtons(Composite pClientArea) {
-        Composite buttons = mPage.getManagedForm().getToolkit().createComposite(pClientArea);
+    private void createButtons(Composite clientArea) {
+        Composite buttons = mPage.getManagedForm().getToolkit().createComposite(clientArea);
         buttons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttons.setLayout(new GridLayout(2, true));
 
@@ -255,7 +255,7 @@ public class LibsSection extends SectionPart {
         addBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Open the folder chooser dialog and refresh the table
                 IProject prj = mPage.getProject();
                 PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
@@ -288,7 +288,7 @@ public class LibsSection extends SectionPart {
         delBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL));
         delBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Delete the selected line
                 ISelection sel = mTableViewer.getSelection();
                 if (sel instanceof IStructuredSelection) {
@@ -334,7 +334,7 @@ public class LibsSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             return mLibs.keySet().toArray();
         }
 
@@ -349,7 +349,7 @@ public class LibsSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
     }
 
@@ -362,18 +362,18 @@ public class LibsSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public boolean canModify(Object pElement, String pProperty) {
-            return pProperty.equals(P_LIBTYPE);
+        public boolean canModify(Object element, String property) {
+            return property.equals(P_LIBTYPE);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Object getValue(Object pElement, String pProperty) {
+        public Object getValue(Object element, String property) {
             Object value = null;
-            if (pProperty.equals(P_LIBTYPE)) {
-                value = mLibs.get(pElement);
+            if (property.equals(P_LIBTYPE)) {
+                value = mLibs.get(element);
             }
             return value;
         }
@@ -382,11 +382,11 @@ public class LibsSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public void modify(Object pElement, String pProperty, Object pValue) {
-            if (pProperty.equals(P_LIBTYPE) && pValue instanceof Integer) {
-                if (pElement instanceof TableItem) {
-                    Object o = ((TableItem) pElement).getData();
-                    mLibs.put(o, (Integer) pValue);
+        public void modify(Object element, String property, Object value) {
+            if (property.equals(P_LIBTYPE) && value instanceof Integer) {
+                if (element instanceof TableItem) {
+                    Object o = ((TableItem) element).getData();
+                    mLibs.put(o, (Integer) value);
                     mTableViewer.refresh(o);
                     fireSectionModified();
                 }
@@ -403,12 +403,12 @@ public class LibsSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public Image getColumnImage(Object pElement, int pColumnIndex) {
+        public Image getColumnImage(Object element, int columnIndex) {
             Image image = null;
-            if (pColumnIndex == 0 && pElement instanceof IFolder) {
-                IFolder folder = (IFolder) pElement;
+            if (columnIndex == 0 && element instanceof IFolder) {
+                IFolder folder = (IFolder) element;
                 IWorkbenchAdapter adapter = folder.getAdapter(IWorkbenchAdapter.class);
-                image = adapter.getImageDescriptor(pElement).createImage();
+                image = adapter.getImageDescriptor(element).createImage();
             }
             return image;
         }
@@ -417,12 +417,12 @@ public class LibsSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public String getColumnText(Object pElement, int pColumnIndex) {
+        public String getColumnText(Object element, int columnIndex) {
             String label = null;
-            if (pColumnIndex == 0 && pElement instanceof IFolder) {
-                label = ((IFolder) pElement).getProjectRelativePath().toOSString();
-            } else if (pColumnIndex == 1) {
-                if (mLibs.get(pElement).equals(BASIC_LIB)) {
+            if (columnIndex == 0 && element instanceof IFolder) {
+                label = ((IFolder) element).getProjectRelativePath().toOSString();
+            } else if (columnIndex == 1) {
+                if (mLibs.get(element).equals(BASIC_LIB)) {
                     label = Messages.getString("LibsSection.BasicLibrary"); //$NON-NLS-1$
                 } else {
                     label = Messages.getString("LibsSection.DialogLibrary"); //$NON-NLS-1$

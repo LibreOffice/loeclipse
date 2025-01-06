@@ -45,24 +45,24 @@ public interface IConfigListener {
     /**
      * Method fired when a config element has been added to the container.
      *
-     * @param pElement
+     * @param element
      *            added sdk or ooo
      */
-    public void ConfigAdded(Object pElement);
+    public void ConfigAdded(Object element);
 
     /**
      * Method fired when a config element has been removed from the container.
      *
-     * @param pElement
+     * @param element
      *            removed sdk or ooo. <code>null</code> if the container has been cleared
      */
-    public void ConfigRemoved(Object pElement);
+    public void ConfigRemoved(Object element);
 
     /**
      * Method fired when a config element has been updated in the container.
      *
-     * @param pElement
+     * @param element
      *            new value of the sdk or ooo
      */
-    public void ConfigUpdated(Object pElement);
+    public void ConfigUpdated(Object element);
 }

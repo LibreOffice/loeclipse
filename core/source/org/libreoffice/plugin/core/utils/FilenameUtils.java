@@ -86,13 +86,13 @@ public final class FilenameUtils {
     /**
      * Separators to unix.
      *
-     * @param pFileName
+     * @param fileName
      *            the filename
      * @return the string
      */
-    public static String separatorsToUnix(final String pFileName) {
+    public static String separatorsToUnix(final String fileName) {
         // return StringUtils.replaceChars(filename, '\\', '/');
-        return pFileName.replace('\\', '/');
+        return fileName.replace('\\', '/');
     }
 
 }

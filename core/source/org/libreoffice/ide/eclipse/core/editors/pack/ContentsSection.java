@@ -66,14 +66,14 @@ public class ContentsSection extends SectionPart {
     /**
      * Constructor.
      *
-     * @param pPage
+     * @param page
      *            the form page containing the section
      */
-    public ContentsSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+    public ContentsSection(PackageFormPage page) {
+        super(page.getManagedForm().getForm().getBody(), page.getManagedForm().getToolkit(),
             ExpandableComposite.TITLE_BAR);
 
-        mPage = pPage;
+        mPage = page;
         PackagePropertiesModel model = ((PackagePropertiesEditor) mPage.getEditor()).getModel();
 
         Section section = getSection();
@@ -102,8 +102,8 @@ public class ContentsSection extends SectionPart {
         }
     }
 
-    private void addChangeListener(PackagePropertiesModel pModel) {
-        pModel.addChangeListener(new IModelChangedListener() {
+    private void addChangeListener(PackagePropertiesModel model) {
+        model.addChangeListener(new IModelChangedListener() {
 
             @Override
             public void modelChanged() {
@@ -118,59 +118,59 @@ public class ContentsSection extends SectionPart {
         });
     }
 
-    private void addCheckStateListener(PackagePropertiesModel pModel) {
+    private void addCheckStateListener(PackagePropertiesModel model) {
         mTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
             @Override
-            public void checkStateChanged(CheckStateChangedEvent pEvent) {
-                if (pEvent.getElement() instanceof IAdaptable) {
-                    IResource res = ((IAdaptable) pEvent.getElement()).getAdapter(IResource.class);
-                    if (pEvent.getChecked()) {
-                        pModel.addResource(res);
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                if (event.getElement() instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) event.getElement()).getAdapter(IResource.class);
+                    if (event.getChecked()) {
+                        model.addResource(res);
                     } else {
-                        pModel.removeResource(res);
+                        model.removeResource(res);
                     }
                 }
             }
         });
     }
 
-    private void setCheckStateProvider(PackagePropertiesModel pModel) {
+    private void setCheckStateProvider(PackagePropertiesModel model) {
         mTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
 
             @Override
-            public boolean isChecked(Object pElement) {
+            public boolean isChecked(Object element) {
                 boolean checked = false;
-                if (pElement instanceof IAdaptable) {
-                    IResource res = ((IAdaptable) pElement).getAdapter(IResource.class);
-                    checked = pModel.isChecked(res);
+                if (element instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) element).getAdapter(IResource.class);
+                    checked = model.isChecked(res);
                 }
                 return checked;
             }
 
             @Override
-            public boolean isGrayed(Object pElement) {
+            public boolean isGrayed(Object element) {
                 boolean grayed = false;
-                if (pElement instanceof IAdaptable) {
-                    IResource res = ((IAdaptable) pElement).getAdapter(IResource.class);
-                    grayed = pModel.isGrayed(res);
+                if (element instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) element).getAdapter(IResource.class);
+                    grayed = model.isGrayed(res);
                 }
                 return grayed;
             }
         });
     }
 
-    private void addFilter(PackagePropertiesModel pModel) {
+    private void addFilter(PackagePropertiesModel model) {
         mTreeViewer.addFilter(new ViewerFilter() {
 
             @Override
-            public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
                 /*
                  * Files to exclude: .* Folders to exclude: build, bin
                  */
                 boolean selected = true;
-                if (pElement instanceof IAdaptable) {
-                    IResource resource = ((IAdaptable) pElement).getAdapter(IResource.class);
+                if (element instanceof IAdaptable) {
+                    IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
                     if (resource != null) {
                         // FIXME: If we want to be able to see soft link pointing outside
                         // FIXME: the Package we need to accept resource not contained in package
@@ -178,9 +178,9 @@ public class ContentsSection extends SectionPart {
                             resource.getName().equals("build") || //$NON-NLS-1$
                             resource.getName().equals("bin")) { //$NON-NLS-1$
                             selected = false;
-                        } else if (pModel.getBasicLibraries().contains(resource) ||
-                                   pModel.getDialogLibraries().contains(resource) ||
-                                   pModel.getDescriptionFiles().containsValue(resource)) {
+                        } else if (model.getBasicLibraries().contains(resource) ||
+                                   model.getDialogLibraries().contains(resource) ||
+                                   model.getDescriptionFiles().containsValue(resource)) {
                             selected = false;
                         }
                     }

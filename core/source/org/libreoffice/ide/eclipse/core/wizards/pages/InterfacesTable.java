@@ -78,15 +78,15 @@ public class InterfacesTable extends AbstractTable {
     /**
      * Add a new interface in the table.
      *
-     * @param pIfaceName
+     * @param ifaceName
      *            the name of the interface to add
-     * @param pOptional
+     * @param optional
      *            <code>true</code> if the interface is optional.
      */
-    public void addInterface(String pIfaceName, boolean pOptional) {
+    public void addInterface(String ifaceName, boolean optional) {
         InheritanceLine line = new InheritanceLine();
-        line.mInterfaceName = pIfaceName;
-        line.mOptional = pOptional;
+        line.mInterfaceName = ifaceName;
+        line.mOptional = optional;
 
         addLine(line);
     }
@@ -158,21 +158,21 @@ public class InterfacesTable extends AbstractTable {
         /**
          * Set the interface name.
          *
-         * @param pInterfaceName
+         * @param interfaceName
          *            the interface name of the inheritance
          */
-        public void setInterfaceName(String pInterfaceName) {
-            this.mInterfaceName = pInterfaceName;
+        public void setInterfaceName(String interfaceName) {
+            this.mInterfaceName = interfaceName;
         }
 
         /**
          * Set whether the inheritance is optional or not.
          *
-         * @param pOptional
+         * @param optional
          *            <code>true</code> if the inheritance is optional.
          */
-        public void setOptional(boolean pOptional) {
-            this.mOptional = pOptional;
+        public void setOptional(boolean optional) {
+            this.mOptional = optional;
         }
 
         // ----------------------------------------- ITableElement implementation

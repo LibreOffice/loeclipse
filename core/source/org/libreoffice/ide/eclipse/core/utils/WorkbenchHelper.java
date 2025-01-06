@@ -49,19 +49,19 @@ public class WorkbenchHelper {
     /**
      * Simply shows the file in the IDE.
      *
-     * @param pFile
+     * @param file
      *            the file to show
-     * @param pPage
+     * @param page
      *            the active workbench page
      */
-    public static void showFile(IFile pFile, IWorkbenchPage pPage) {
+    public static void showFile(IFile file, IWorkbenchPage page) {
 
         try {
             IWorkbench workbench = PlatformUI.getWorkbench();
-            BasicNewResourceWizard.selectAndReveal(pFile, workbench.getActiveWorkbenchWindow());
+            BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
 
-            final IWorkbenchPage activePage = pPage;
-            final IFile toShow = pFile;
+            final IWorkbenchPage activePage = page;
+            final IFile toShow = file;
 
             if (activePage != null) {
                 final Display display = Display.getDefault();

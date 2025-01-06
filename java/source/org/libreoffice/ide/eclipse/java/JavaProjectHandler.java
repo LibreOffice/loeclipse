@@ -97,11 +97,11 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void addOOoDependencies(IOOo pOoo, IProject pProject) {
+    public void addOOoDependencies(IOOo ooo, IProject project) {
 
-        IJavaProject javaProject = JavaCore.create(pProject);
+        IJavaProject javaProject = JavaCore.create(project);
 
-        OOoContainerPage.addOOoDependencies(pOoo, javaProject);
+        OOoContainerPage.addOOoDependencies(ooo, javaProject);
     }
 
     /**
@@ -141,10 +141,10 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
+    public void configureProject(UnoFactoryData data, IProgressMonitor monitor) throws Exception {
 
         // Get the project from data
-        IProject prj = (IProject) pData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
+        IProject prj = (IProject) data.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
         // Set some properties on the project
@@ -154,14 +154,14 @@ public class JavaProjectHandler implements IProjectHandler {
         unoprj.setProperty(P_REGISTRATION_CLASSNAME, regclass);
 
         // Java version
-        String javaversion = (String) pData.getProperty(JavaWizardPage.JAVA_VERSION);
+        String javaversion = (String) data.getProperty(JavaWizardPage.JAVA_VERSION);
         unoprj.setProperty(P_JAVA_VERSION, javaversion);
 
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoprj.getName());
 
         // Create the project structure
         IJavaProject javaProject = JavaCore.create(project);
-        javaProject.open(pMonitor);
+        javaProject.open(monitor);
 
         IPath sourcePath = unoprj.getFolder(unoprj.getSourcePath()).getFullPath();
         IPath buildPath = unoprj.getFolder(unoprj.getBuildPath()).getFullPath();
@@ -170,13 +170,13 @@ public class JavaProjectHandler implements IProjectHandler {
             JavaRuntime.getDefaultJREContainerEntry(),
             JavaCore.newLibraryEntry(buildPath, null, null, false) };
 
-        javaProject.setRawClasspath(entries, pMonitor);
+        javaProject.setRawClasspath(entries, monitor);
 
         // Add the registration files
         RegistrationHelper.generateFiles(unoprj);
 
         // Tests creation
-        Boolean usetests = (Boolean) pData.getProperty(JavaWizardPage.JAVA_TESTS);
+        Boolean usetests = (Boolean) data.getProperty(JavaWizardPage.JAVA_TESTS);
         if (usetests.booleanValue()) {
             TestsHelper.writeTestClasses(unoprj);
 
@@ -209,18 +209,18 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public IPath getImplementationFile(String pImplementationName) {
+    public IPath getImplementationFile(String implementationName) {
 
-        return new Path(pImplementationName.replace(".", "/") + ".java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return new Path(implementationName.replace(".", "/") + ".java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
+    public String getSkeletonMakerLanguage(UnoFactoryData data) throws Exception {
         // Get the project from data
-        String name = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+        String name = (String) data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
         IUnoidlProject unoprj = ProjectsManager.getProject(name);
 
         return "--" + unoprj.getProperty(P_JAVA_VERSION); //$NON-NLS-1$
@@ -230,8 +230,8 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
-        IJavaProject javaProject = JavaCore.create(pProject);
+    public void removeOOoDependencies(IOOo ooo, IProject project) {
+        IJavaProject javaProject = JavaCore.create(project);
 
         OOoContainerPage.removeOOoDependencies(javaProject);
     }
@@ -332,14 +332,14 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * returns the path of all the kept jars contained in the folder pointed by path.
      *
-     * @param pOoo
+     * @param ooo
      *            the OOo instance from which to get the jars
      * @return a vector of Path pointing to each jar.
      */
-    public static Vector<Path> findJarsFromPath(IOOo pOoo) {
+    public static Vector<Path> findJarsFromPath(IOOo ooo) {
         Vector<Path> jarsPath = new Vector<Path>();
 
-        String[] paths = pOoo.getClassesPath();
+        String[] paths = ooo.getClassesPath();
         for (String path : paths) {
             Path folderPath = new Path(path);
             File programFolder = folderPath.toFile();
@@ -360,17 +360,17 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * Check if the specified jar file is one of those define in the KEPT_JARS constant.
      *
-     * @param pJarName
+     * @param jarName
      *            name of the jar file to check
      * @return <code>true</code> if jarName is one of those defined in KEPT_JARS, <code>false</code> otherwise.
      */
-    private static boolean isKeptJar(String pJarName) {
+    private static boolean isKeptJar(String jarName) {
 
         int i = 0;
         boolean isKept = false;
 
         while (i < KEPT_JARS.length && !isKept) {
-            if (pJarName.equals(KEPT_JARS[i])) {
+            if (jarName.equals(KEPT_JARS[i])) {
                 isKept = true;
             } else {
                 i++;

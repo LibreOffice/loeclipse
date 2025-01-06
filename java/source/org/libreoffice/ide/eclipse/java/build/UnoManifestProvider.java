@@ -57,25 +57,25 @@ public class UnoManifestProvider extends ManifestProvider {
     /**
      * Constructor.
      *
-     * @param pRegClassname the registration class name
+     * @param regClassname the registration class name
      *
-     * @param pUnoProject the Uno project
+     * @param unoProject the Uno project
      *
-     * @param pExternalJars the external Jars
+     * @param externalJars the external Jars
      */
-    public UnoManifestProvider(String pRegClassname, IUnoidlProject pUnoProject, List<IFile> pExternalJars) {
-        mRegClass = pRegClassname;
-        mUnoProject = pUnoProject;
-        mExternalJars = pExternalJars;
+    public UnoManifestProvider(String regClassname, IUnoidlProject unoProject, List<IFile> externalJars) {
+        mRegClass = regClassname;
+        mUnoProject = unoProject;
+        mExternalJars = externalJars;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void putAdditionalEntries(Manifest pManifest, JarPackageData pJarPackage) {
+    protected void putAdditionalEntries(Manifest manifest, JarPackageData jarPackage) {
         Name regClassName = new Attributes.Name("RegistrationClassName"); //$NON-NLS-1$
-        pManifest.getMainAttributes().put(regClassName, mRegClass);
+        manifest.getMainAttributes().put(regClassName, mRegClass);
         
         Name classPath = new Attributes.Name("Class-Path");
         List<String> classPathList = new ArrayList<>();
@@ -85,6 +85,6 @@ public class UnoManifestProvider extends ManifestProvider {
             relativePath = FilenameUtils.separatorsToUnix(relativePath);
             classPathList.add(relativePath);
         }
-        pManifest.getMainAttributes().put(classPath, String.join(" ", classPathList));
+        manifest.getMainAttributes().put(classPath, String.join(" ", classPathList));
     }
 }

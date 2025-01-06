@@ -61,9 +61,9 @@ public class PythonUnoResourceChangeHandler implements IStartup, IResourceChange
      * {@inheritDoc}
      */
     @Override
-    public void resourceChanged(IResourceChangeEvent pEvent) {
+    public void resourceChanged(IResourceChangeEvent event) {
         try {
-            pEvent.getDelta().accept(new PythonResourceDeltaVisitor());
+            event.getDelta().accept(new PythonResourceDeltaVisitor());
         } catch (Exception e) {
             // Do nothing
         }

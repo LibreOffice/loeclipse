@@ -82,8 +82,8 @@ public abstract class LocalizedSection<ModelType extends IModel> extends Abstrac
      * {@inheritDoc}
      */
     @Override
-    public void selectLocale(final Locale pLocale) {
-        mCurrentLocale = pLocale;
+    public void selectLocale(final Locale locale) {
+        mCurrentLocale = locale;
     }
 
     /**

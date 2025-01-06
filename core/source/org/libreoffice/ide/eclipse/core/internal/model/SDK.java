@@ -104,8 +104,8 @@ public class SDK implements ISdk, ITableElement {
         initialize(pSdkHome, null);
     }
 
-    public SDK(String pSdkHome, String pBuildId) throws InvalidConfigException {
-        initialize(pSdkHome, pBuildId);
+    public SDK(String sdkHome, String buildId) throws InvalidConfigException {
+        initialize(sdkHome, buildId);
     }
 
     // ----------------------------------------------------- ISdk Implementation
@@ -114,11 +114,11 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(String pHome, String pName) throws InvalidConfigException {
+    public void initialize(String home, String name) throws InvalidConfigException {
         try {
 
             // Get the file representing the given sdkHome
-            Path homePath = new Path(pHome);
+            Path homePath = new Path(home);
             File homeFile = homePath.toFile();
 
             // First check the existence of this directory
@@ -132,19 +132,19 @@ public class SDK implements ISdk, ITableElement {
                 if (Platform.getOS().equals(Platform.OS_WIN32)) {
                     binName += ".exe"; //$NON-NLS-1$
                 }
-                if (!getBinPath(pHome).append(binName).toFile().exists()) {
+                if (!getBinPath(home).append(binName).toFile().exists()) {
                     throw new InvalidConfigException(Messages.getString("SDK.MinSdkVersionError"), //$NON-NLS-1$
                         InvalidConfigException.INVALID_SDK_HOME);
                 }
 
                 // If the settings directory exists, then try to fetch the name and buildId from
                 // the settings/dk.mk properties file
-                if (pName != null && !pName.isEmpty()) {
-                    mSdkName = pName;
+                if (name != null && !name.isEmpty()) {
+                    mSdkName = name;
                 } else {
                     mSdkName = getBuildId(settingsFile);
                 }
-                this.mSdkHome = pHome;
+                this.mSdkHome = home;
 
             } else {
                 throw new InvalidConfigException(Messages.getString("SDK.NoDirectoryError"), //$NON-NLS-1$
@@ -169,7 +169,7 @@ public class SDK implements ISdk, ITableElement {
     /**
      * Checks if the <code>settings</code> directory is contained in the SDK installation path.
      *
-     * @param pHomeFile
+     * @param homeFile
      *            the SDK installation file handle to check
      *
      * @return the settings file found
@@ -177,8 +177,8 @@ public class SDK implements ISdk, ITableElement {
      * @throws InvalidConfigException
      *             the the <code>settings</code> isn't found
      */
-    private File checkSettingsDir(File pHomeFile) throws InvalidConfigException {
-        File settingsFile = new File(pHomeFile, "settings"); //$NON-NLS-1$
+    private File checkSettingsDir(File homeFile) throws InvalidConfigException {
+        File settingsFile = new File(homeFile, "settings"); //$NON-NLS-1$
         if (!(settingsFile.exists() && settingsFile.isDirectory())) {
             throw new InvalidConfigException(Messages.getString("SDK.NoSettingsDirError"), //$NON-NLS-1$
                 InvalidConfigException.INVALID_SDK_HOME);
@@ -230,46 +230,46 @@ public class SDK implements ISdk, ITableElement {
     /**
      * Get the path to the executable files of the SDK.
      *
-     * @param pHome
+     * @param home
      *            the SDK installation path
      * @return the path to the binaries folder
      */
-    private IPath getBinPath(String pHome) {
-        return new Path(pHome).append("/bin"); //$NON-NLS-1$
+    private IPath getBinPath(String home) {
+        return new Path(home).append("/bin"); //$NON-NLS-1$
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Process runTool(IUnoidlProject pProject, String pShellCommand, IProgressMonitor pMonitor) {
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pProject.getName());
-        return runToolWithEnv(prj, pProject.getOOo(), pShellCommand, new String[0], pMonitor);
+    public Process runTool(IUnoidlProject project, String shellCommand, IProgressMonitor monitor) {
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName());
+        return runToolWithEnv(prj, project.getOOo(), shellCommand, new String[0], monitor);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Process runToolWithEnv(IProject pProject, IOOo pOOo, String pShellCommand, String[] pEnv,
-        IProgressMonitor pMonitor) {
+    public Process runToolWithEnv(IProject project, IOOo instance, String shellCommand, String[] env,
+        IProgressMonitor monitor) {
 
         Process process = null;
 
         try {
-            if (null != pOOo) {
+            if (null != instance) {
 
                 // Get the environment variables and copy them. Needs Java 1.5
                 String[] sysEnv = SystemHelper.getSystemEnvironement();
 
-                String[] vars = mergeVariables(sysEnv, pEnv);
+                String[] vars = mergeVariables(sysEnv, env);
 
-                vars = updateEnvironment(vars, pOOo);
+                vars = updateEnvironment(vars, instance);
 
                 // Run only if the OS and ARCH are valid for the SDK
                 if (null != vars) {
-                    File projectFile = pProject.getLocation().toFile();
-                    process = SystemHelper.runTool(pShellCommand, vars, projectFile);
+                    File projectFile = project.getLocation().toFile();
+                    process = SystemHelper.runTool(shellCommand, vars, projectFile);
                 }
             }
 
@@ -311,17 +311,17 @@ public class SDK implements ISdk, ITableElement {
      * array.
      * </p>
      *
-     * @param pBaseEnv
+     * @param baseEnv
      *            the array to modify
-     * @param pToMergeEnv
+     * @param toMergeEnv
      *            the array containing the environment variables to merge
      *
      * @return the merged environment variables.
      */
-    private String[] mergeVariables(String[] pBaseEnv, String[] pToMergeEnv) {
-        String[] vars = pBaseEnv;
-        for (int i = 0; i < pToMergeEnv.length; i++) {
-            String envi = pToMergeEnv[i];
+    private String[] mergeVariables(String[] baseEnv, String[] toMergeEnv) {
+        String[] vars = baseEnv;
+        for (int i = 0; i < toMergeEnv.length; i++) {
+            String envi = toMergeEnv[i];
             Matcher m = Pattern.compile("([^=]+)=(.*)").matcher(envi); //$NON-NLS-1$
             if (m.matches()) {
                 String name = m.group(1);
@@ -342,9 +342,9 @@ public class SDK implements ISdk, ITableElement {
      * on the platform.
      * </p>
      *
-     * @param pVars
+     * @param vars
      *            the environment variables to update
-     * @param pOoo
+     * @param ooo
      *            the LibreOffice instance to use along with the SDK
      *
      * @return the update environment variables.
@@ -352,33 +352,33 @@ public class SDK implements ISdk, ITableElement {
      * @throws Exception
      *             if the platform isn't among the platforms for which the LibreOffice SDK is available.
      */
-    private String[] updateEnvironment(String[] pVars, IOOo pOoo) throws Exception {
-        String[] oooBinPaths = pOoo.getBinPath();
+    private String[] updateEnvironment(String[] vars, IOOo ooo) throws Exception {
+        String[] oooBinPaths = ooo.getBinPath();
         String[] binPaths = new String[oooBinPaths.length + 1];
         binPaths[0] = getBinPath().toOSString();
         System.arraycopy(oooBinPaths, 0, binPaths, 1, oooBinPaths.length);
 
-        String[] oooLibs = pOoo.getLibsPath();
+        String[] oooLibs = ooo.getLibsPath();
 
         // Create the exec parameters depending on the OS
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
 
             // Definining path variables
-            pVars = SystemHelper.addPathEnv(pVars, "PATH", binPaths); //$NON-NLS-1$
+            vars = SystemHelper.addPathEnv(vars, "PATH", binPaths); //$NON-NLS-1$
 
         } else if (Platform.getOS().equals(Platform.OS_LINUX)) {
 
             // An UN*X platform
-            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH", //$NON-NLS-1$
+            String[] tmpVars = SystemHelper.addPathEnv(vars, "PATH", //$NON-NLS-1$
                 binPaths);
-            pVars = SystemHelper.addPathEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
+            vars = SystemHelper.addPathEnv(tmpVars, "LD_LIBRARY_PATH", //$NON-NLS-1$
                 oooLibs);
 
         } else if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 
-            String[] tmpVars = SystemHelper.addPathEnv(pVars, "PATH", //$NON-NLS-1$
+            String[] tmpVars = SystemHelper.addPathEnv(vars, "PATH", //$NON-NLS-1$
                 binPaths);
-            pVars = SystemHelper.addPathEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
+            vars = SystemHelper.addPathEnv(tmpVars, "DYLD_LIBRARY_PATH", //$NON-NLS-1$
                 oooLibs);
 
         } else {
@@ -386,7 +386,7 @@ public class SDK implements ISdk, ITableElement {
             throw new Exception(Messages.getString("SDK.InvalidSdkError")); //$NON-NLS-1$
         }
 
-        return pVars;
+        return vars;
     }
 
     /**

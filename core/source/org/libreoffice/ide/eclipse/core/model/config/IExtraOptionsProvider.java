@@ -44,9 +44,9 @@ public interface IExtraOptionsProvider {
     /**
      * Add your own env entries.
      *
-     * @param pEnv
+     * @param env
      *            the original env variables.
      * @return the new env variables.
      */
-    String[] addEnv(String[] pEnv);
+    String[] addEnv(String[] env);
 }

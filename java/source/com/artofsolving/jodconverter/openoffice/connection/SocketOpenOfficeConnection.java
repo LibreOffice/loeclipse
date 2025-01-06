@@ -64,7 +64,7 @@ public class SocketOpenOfficeConnection extends AbstractOpenOfficeConnection {
         this(DEFAULT_HOST, pPort);
     }
 
-    public SocketOpenOfficeConnection(String pHost, int pPort) {
-        super("socket,host=" + pHost + ",port=" + pPort + ",tcpNoDelay=1");
+    public SocketOpenOfficeConnection(String host, int port) {
+        super("socket,host=" + host + ",port=" + port + ",tcpNoDelay=1");
     }
 }

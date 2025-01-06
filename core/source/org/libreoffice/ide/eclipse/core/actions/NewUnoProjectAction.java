@@ -81,7 +81,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void run(IAction pAction) {
+    public void run(IAction action) {
 
         // Launch the new IDL Project wizard
         NewUnoProjectWizard wizard = new NewUnoProjectWizard();
@@ -100,7 +100,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void selectionChanged(IAction pAction, ISelection pSelection) {
+    public void selectionChanged(IAction action, ISelection selection) {
         // Nothing to do on selection changed
     }
 

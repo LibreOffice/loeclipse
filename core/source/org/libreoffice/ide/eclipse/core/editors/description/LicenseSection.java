@@ -71,18 +71,18 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
     private IProject mProject;
 
     /**
-     * @param pParent
+     * @param parent
      *            the parent composite where to add the section
-     * @param pPage
+     * @param page
      *            the parent page
-     * @param pProject
+     * @param project
      *            the project containing the description.xml file
      */
-    public LicenseSection(Composite pParent, DescriptionFormPage pPage, IProject pProject) {
-        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
+    public LicenseSection(Composite parent, DescriptionFormPage page, IProject project) {
+        super(parent, page, ExpandableComposite.TITLE_BAR);
 
-        mProject = pProject;
-        setModel(pPage.getModel());
+        mProject = project;
+        setModel(page.getModel());
     }
 
     /**
@@ -127,7 +127,7 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
         mUserAcceptBtn.setLayoutData(gd);
         mUserAcceptBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 getModel().setAcceptByUser(mUserAcceptBtn.getSelection());
                 markDirty();
             }
@@ -140,7 +140,7 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
         mSuppressUpdateBtn.setLayoutData(gd);
         mSuppressUpdateBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 getModel().setSuppressOnUpdate(mSuppressUpdateBtn.getSelection());
                 markDirty();
             }
@@ -165,7 +165,7 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
         mFileTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mFileTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().addLicense(mCurrentLocale, mFileTxt.getText());
                 markDirty();
             }
@@ -175,7 +175,7 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
         mFileBrowseBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         mFileBrowseBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 // Open the folder selection dialog
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
                     Messages.getString("LicenseSection.FileChooserTooltip")); //$NON-NLS-1$
@@ -196,8 +196,8 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void addLocale(Locale pLocale) {
-        getModel().addLicense(pLocale, new String());
+    public void addLocale(Locale locale) {
+        getModel().addLicense(locale, new String());
 
         // enable the text and file
         mFileBrowseBtn.setEnabled(true);
@@ -208,8 +208,8 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void deleteLocale(Locale pLocale) {
-        getModel().removeLicense(pLocale);
+    public void deleteLocale(Locale locale) {
+        getModel().removeLicense(locale);
         if (getModel().getLicenses().isEmpty()) {
             // disable the text and file
             mFileBrowseBtn.setEnabled(false);
@@ -221,12 +221,12 @@ public class LicenseSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void selectLocale(Locale pLocale) {
+    public void selectLocale(Locale locale) {
         if (mCurrentLocale != null) {
             getModel().addLicense(mCurrentLocale, mFileTxt.getText());
         }
-        super.selectLocale(pLocale);
-        String path = getModel().getLicenses().get(pLocale);
+        super.selectLocale(locale);
+        String path = getModel().getLicenses().get(locale);
         mFileTxt.setText(path);
     }
 }

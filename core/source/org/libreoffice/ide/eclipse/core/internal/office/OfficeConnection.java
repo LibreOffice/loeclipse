@@ -62,11 +62,11 @@ public class OfficeConnection {
     /**
      * Creates a connection representation for a given office.
      *
-     * @param pOOo
+     * @param ooo
      *            the office to connect to
      */
-    public OfficeConnection(IOOo pOOo) {
-        mOOo = pOOo;
+    public OfficeConnection(IOOo ooo) {
+        mOOo = ooo;
     }
 
     /**

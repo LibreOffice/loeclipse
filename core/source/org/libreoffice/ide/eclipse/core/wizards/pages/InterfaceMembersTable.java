@@ -110,10 +110,10 @@ public class InterfaceMembersTable extends AbstractTable {
      * {@inheritDoc}
      */
     @Override
-    protected void handleDoubleClick(DoubleClickEvent pEvent) {
+    protected void handleDoubleClick(DoubleClickEvent event) {
 
         // Open the Member dialog but freeze the member type
-        super.handleDoubleClick(pEvent);
+        super.handleDoubleClick(event);
 
         if (getSelection() instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection) getSelection();
@@ -130,26 +130,26 @@ public class InterfaceMembersTable extends AbstractTable {
     /**
      * Open the member dialog for edition or creation.
      *
-     * @param pContent
+     * @param content
      *            if <code>null</code>, the dialog is opened to create a new member, otherwise it reuses the given data
      *            to modify them.
      *
      * @return the created or edited data
      */
-    protected UnoFactoryData openDialog(UnoFactoryData pContent) {
+    protected UnoFactoryData openDialog(UnoFactoryData content) {
         InterfaceMemberDialog dlg;
-        UnoFactoryData result = pContent;
+        UnoFactoryData result = content;
 
-        if (pContent == null) {
+        if (content == null) {
             dlg = new InterfaceMemberDialog();
         } else {
-            dlg = new InterfaceMemberDialog(pContent);
+            dlg = new InterfaceMemberDialog(content);
         }
 
         if (Window.OK == dlg.open()) {
             result = dlg.getData();
         } else {
-            if (pContent == null) {
+            if (content == null) {
                 dlg.disposeData();
             }
         }
@@ -175,11 +175,11 @@ public class InterfaceMembersTable extends AbstractTable {
         /**
          * This constructor only makes a reference copy of the data, don't dispose them too early.
          *
-         * @param pData
+         * @param data
          *            the data for the line
          */
-        public MemberLine(UnoFactoryData pData) {
-            mData = pData;
+        public MemberLine(UnoFactoryData data) {
+            mData = data;
         }
 
         /**

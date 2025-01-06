@@ -80,7 +80,7 @@ public class UnoTypePulldownAction extends AbstractPulldownAction {
      * {@inheritDoc}
      */
     @Override
-    public void run(IAction pAction) {
+    public void run(IAction action) {
         openWizard(new NewServiceWizard());
     }
 

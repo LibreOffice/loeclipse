@@ -87,24 +87,24 @@ public abstract class LabeledRow {
     /**
      * Create a field base. This constructor may not be used by subclasses.
      *
-     * @param pParent
+     * @param parent
      *            Composite in which the row will be added
-     * @param pProperty
+     * @param property
      *            Property value given in the field changed event.
-     * @param pLabel
+     * @param label
      *            Control to use for the label. The most common is a text control, but it could be something else like
      *            an hyperlink.
-     * @param pField
+     * @param field
      *            Control containing the field data.
-     * @param pBrowseText
+     * @param browseText
      *            Button text. If <code>null</code>, the button isn't created.
-     * @param pLink
+     * @param link
      *            the browse is shown as a link if <code>true</code>, otherwise it is a button.
      */
-    public LabeledRow(Composite pParent, String pProperty, Control pLabel, Control pField, String pBrowseText,
-        boolean pLink) {
-        this.mProperty = pProperty;
-        createContent(pParent, pLabel, pField, pBrowseText, pLink);
+    public LabeledRow(Composite parent, String property, Control label, Control field, String browseText,
+        boolean link) {
+        this.mProperty = property;
+        createContent(parent, label, field, browseText, link);
     }
 
     /**
@@ -120,11 +120,11 @@ public abstract class LabeledRow {
     /**
      * Replace the current label by a new one.
      *
-     * @param pNewLabel
+     * @param newLabel
      *            New label to use
      */
-    public void setLabel(String pNewLabel) {
-        ((Label) mLabel).setText(pNewLabel);
+    public void setLabel(String newLabel) {
+        ((Label) mLabel).setText(newLabel);
         mLabel.pack(true);
         mLabel.getParent().layout(true);
     }
@@ -141,53 +141,54 @@ public abstract class LabeledRow {
     /**
      * Add a selection listener to the browse link or button (depends on the arguments of the constructor).
      *
-     * @param pListener
+     * @param listener
      *            the listener to add
      */
-    public void addBrowseSelectionListener(SelectionListener pListener) {
+    public void addBrowseSelectionListener(SelectionListener listener) {
         if (mBrowse instanceof Link) {
-            ((Link) mBrowse).addSelectionListener(pListener);
+            ((Link) mBrowse).addSelectionListener(listener);
         } else if (mBrowse instanceof Button) {
-            ((Button) mBrowse).addSelectionListener(pListener);
+            ((Button) mBrowse).addSelectionListener(listener);
         }
     }
 
     /**
      * Stores the row controls, creates the button if its text is not <code>null</code> and layout the controls.
      *
-     * @param pParent
+     * @param parent
      *            the parent composite where to create the controls
-     * @param pLabel
+     * @param label
      *            the control for the label
-     * @param pField
+     * @param field
      *            the control for the field
-     * @param pBrowseText
+     * @param browseText
      *            the text to show on the right button of the row.
-     * @param pLink
+     * @param browseLink
      *            the browse is shown as a link if <code>true</code>, otherwise it is a button.
      */
-    protected void createContent(Composite pParent, Control pLabel, Control pField, String pBrowseText, boolean pLink) {
+    protected void createContent(Composite parent, Control label, Control field, String browseText,
+        boolean browseLink) {
 
-        this.mLabel = pLabel;
-        this.mField = pField;
-        if (null != pBrowseText) {
-            if (pLink) {
-                Link link = new Link(pParent, SWT.NONE);
+        this.mLabel = label;
+        this.mField = field;
+        if (null != browseText) {
+            if (browseLink) {
+                Link link = new Link(parent, SWT.NONE);
                 link.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
-                link.setFont(pParent.getFont());
+                link.setFont(parent.getFont());
                 String linkPattern = "<A>{0}</A>"; //$NON-NLS-1$
-                String linkedText = MessageFormat.format(linkPattern, pBrowseText);
+                String linkedText = MessageFormat.format(linkPattern, browseText);
                 link.setText(linkedText);
                 mBrowse = link;
             } else {
-                Button btn = new Button(pParent, SWT.PUSH);
+                Button btn = new Button(parent, SWT.PUSH);
                 btn.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
-                btn.setText(pBrowseText);
+                btn.setText(browseText);
                 mBrowse = btn;
             }
 
         }
-        fillRow(pParent);
+        fillRow(parent);
     }
 
     /**
@@ -248,11 +249,11 @@ public abstract class LabeledRow {
     /**
      * Defines the listener that will react to the field changes.
      *
-     * @param pListener
+     * @param listener
      *            field changes listener
      */
-    public void setFieldChangedListener(IFieldChangedListener pListener) {
-        this.mListener = pListener;
+    public void setFieldChangedListener(IFieldChangedListener listener) {
+        this.mListener = listener;
     }
 
     /**
@@ -265,12 +266,12 @@ public abstract class LabeledRow {
     /**
      * Fires a change of the row.
      *
-     * @param pEvent
+     * @param event
      *            the event to throw for the change
      */
-    protected void fireFieldChangedEvent(FieldEvent pEvent) {
+    protected void fireFieldChangedEvent(FieldEvent event) {
         if (null != mListener) {
-            mListener.fieldChanged(pEvent);
+            mListener.fieldChanged(event);
         }
     }
 
@@ -306,13 +307,13 @@ public abstract class LabeledRow {
     /**
      * Set the enabled state of the field and the browse button if the latter exists.
      *
-     * @param pEnabled
+     * @param enabled
      *            <code>true</code> activate the row, otherwise the row is desactivated
      */
-    public void setEnabled(boolean pEnabled) {
-        mField.setEnabled(pEnabled);
+    public void setEnabled(boolean enabled) {
+        mField.setEnabled(enabled);
         if (null != mBrowse) {
-            mBrowse.setEnabled(pEnabled);
+            mBrowse.setEnabled(enabled);
         }
     }
 }

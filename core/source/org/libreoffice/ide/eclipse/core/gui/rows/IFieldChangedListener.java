@@ -47,8 +47,8 @@ public interface IFieldChangedListener {
     /**
      * Method called when the row has changed.
      *
-     * @param pEvent
+     * @param event
      *            the field event thrown
      */
-    public void fieldChanged(FieldEvent pEvent);
+    public void fieldChanged(FieldEvent event);
 }

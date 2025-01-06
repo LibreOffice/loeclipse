@@ -38,18 +38,18 @@ public interface IModel {
     /**
      * Add a model listener.
      *
-     * @param pListener
+     * @param listener
      *            the listener to add
      */
-    public void addListener(IModelChangedListener pListener);
+    public void addListener(IModelChangedListener listener);
 
     /**
      * Remove a model listener.
      *
-     * @param pListener
+     * @param listener
      *            the listener to remove
      */
-    public void removeListener(IModelChangedListener pListener);
+    public void removeListener(IModelChangedListener listener);
 
     /**
      * @return whether the model has been changed without being saved or not.

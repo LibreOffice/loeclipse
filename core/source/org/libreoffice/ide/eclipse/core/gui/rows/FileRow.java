@@ -64,18 +64,18 @@ public class FileRow extends LabeledRow {
      *
      * @param pParent
      *            composite parent of the row.
-     * @param pProperty
+     * @param property
      *            property name used in field changing event.
-     * @param pLabel
+     * @param label
      *            label to print on the left of the row.
-     * @param pDirectory
+     * @param directory
      *            if <code>true</code>, the field is a directory path, otherwise the field is a file path.
      */
-    public FileRow(Composite pParent, String pProperty, String pLabel, boolean pDirectory) {
-        super(pProperty);
+    public FileRow(Composite pParent, String property, String label, boolean directory) {
+        super(property);
 
         Label aLabel = new Label(pParent, SWT.SHADOW_NONE | SWT.LEFT);
-        aLabel.setText(pLabel);
+        aLabel.setText(label);
 
         Text aField = new Text(pParent, SWT.BORDER);
 
@@ -83,19 +83,19 @@ public class FileRow extends LabeledRow {
 
         mField.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusLost(FocusEvent pEvent) {
+            public void focusLost(FocusEvent event) {
                 setValue(getValue());
             }
         });
 
         addBrowseSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 browse();
             }
         });
 
-        mDirectory = pDirectory;
+        mDirectory = directory;
     }
 
     /**

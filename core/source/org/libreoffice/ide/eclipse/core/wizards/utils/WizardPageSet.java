@@ -61,9 +61,9 @@ public abstract class WizardPageSet {
          * {@inheritDoc}
          */
         @Override
-        public void pageChanged(UnoFactoryData pData) {
+        public void pageChanged(UnoFactoryData data) {
             if (!mChangingPages) {
-                dataChanged(pData);
+                dataChanged(data);
             }
         }
     };
@@ -91,15 +91,15 @@ public abstract class WizardPageSet {
     /**
      * Returns the page with the given name.
      *
-     * @param pName
+     * @param name
      *            the name of the page to look for
      * @return the page found or <code>null</code> if none has been found.
      */
-    public IWizardPage getPage(String pName) {
+    public IWizardPage getPage(String name) {
         IWizardPage page = null;
         int i = 0;
         while (page == null && i < mPages.size()) {
-            if (mPages.get(i).getName().equals(pName)) {
+            if (mPages.get(i).getName().equals(name)) {
                 page = mPages.get(i);
             }
             i++;
@@ -120,12 +120,12 @@ public abstract class WizardPageSet {
      * {@link #getNextPage(IWizardPage)} method.</strong>
      * </p>
      *
-     * @param pPage
+     * @param page
      *            the page to add.
      */
-    public void addPage(IWizardPage pPage) {
-        if (!mPages.contains(pPage)) {
-            mPages.add(pPage);
+    public void addPage(IWizardPage page) {
+        if (!mPages.contains(page)) {
+            mPages.add(page);
             mHidden.add(Boolean.FALSE);
         }
     }
@@ -156,15 +156,15 @@ public abstract class WizardPageSet {
      * taken into consideration in the wizard.
      * </p>
      *
-     * @param pPage
+     * @param page
      *            the page to hide
-     * @param pHidden
+     * @param hidden
      *            <code>true</code> to hide the page, <code>false</code> otherwise
      */
-    public void setHidden(IWizardPage pPage, boolean pHidden) {
-        int id = mPages.indexOf(pPage);
+    public void setHidden(IWizardPage page, boolean hidden) {
+        int id = mPages.indexOf(page);
         if (id != -1) {
-            mHidden.set(id, Boolean.valueOf(pHidden));
+            mHidden.set(id, Boolean.valueOf(hidden));
         }
     }
 
@@ -198,7 +198,7 @@ public abstract class WizardPageSet {
      * }
      * </pre>
      *
-     * @param pCurrentPage
+     * @param currentPage
      *            the page after which is the next page
      * @return the next page or <code>null</code> if the current page is the last one.
      * @throws NoSuchPageException
@@ -206,11 +206,11 @@ public abstract class WizardPageSet {
      *
      * @see #setHidden(IWizardPage, boolean) for more informations on hidden pages in the wizard set.
      */
-    public IWizardPage getNextPage(IWizardPage pCurrentPage) throws NoSuchPageException {
+    public IWizardPage getNextPage(IWizardPage currentPage) throws NoSuchPageException {
         IWizardPage nextPage = null;
 
-        if (mPages.contains(pCurrentPage)) {
-            int currentId = mPages.indexOf(pCurrentPage);
+        if (mPages.contains(currentPage)) {
+            int currentId = mPages.indexOf(currentPage);
             int nextId = currentId + 1;
             boolean found = false;
             while (nextId < mPages.size() && !found) {
@@ -261,7 +261,7 @@ public abstract class WizardPageSet {
      * }
      * </pre>
      *
-     * @param pCurrentPage
+     * @param currentPage
      *            the page before which is the previous page
      * @return the previous page or <code>null</code> if the current page is the first one.
      * @throws NoSuchPageException
@@ -269,11 +269,11 @@ public abstract class WizardPageSet {
      *
      * @see #setHidden(IWizardPage, boolean) for more informations on hidden pages in the wizard set.
      */
-    public IWizardPage getPreviousPage(IWizardPage pCurrentPage) throws NoSuchPageException {
+    public IWizardPage getPreviousPage(IWizardPage currentPage) throws NoSuchPageException {
         IWizardPage prevPage = null;
 
-        if (mPages.contains(pCurrentPage)) {
-            int currentId = mPages.indexOf(pCurrentPage);
+        if (mPages.contains(currentPage)) {
+            int currentId = mPages.indexOf(currentPage);
             int prevId = currentId - 1;
             boolean found = false;
             while (-1 < prevId && !found) {
@@ -305,10 +305,10 @@ public abstract class WizardPageSet {
      * action.</strong>
      * </p>
      *
-     * @param pData
+     * @param data
      *            the data describing the default/initial values of the pages
      */
-    public abstract void initialize(UnoFactoryData pData);
+    public abstract void initialize(UnoFactoryData data);
 
     /**
      * Performs the actions to run at the end of the wizard for the wizard set.
@@ -328,15 +328,15 @@ public abstract class WizardPageSet {
      * action.</strong>
      * </p>
      *
-     * @param pMonitor
+     * @param monitor
      *            the monitor used to follow the finish process.
-     * @param pActivePage
+     * @param activePage
      *            the page that was active before opening the wizard.
      *
      * @see IWizard#performFinish() for more informations on actions performed when finishing a wizard.
      *
      */
-    public abstract void doFinish(IProgressMonitor pMonitor, IWorkbenchPage pActivePage);
+    public abstract void doFinish(IProgressMonitor monitor, IWorkbenchPage activePage);
 
     /**
      * This method has to be called to ask the pages contained in the set to be updated with new external data.
@@ -346,8 +346,8 @@ public abstract class WizardPageSet {
      * action.</strong>
      * </p>
      *
-     * @param pDelta
+     * @param delta
      *            the data delta of the changed page.
      */
-    protected abstract void dataChanged(UnoFactoryData pDelta);
+    protected abstract void dataChanged(UnoFactoryData delta);
 }

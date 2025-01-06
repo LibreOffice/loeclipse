@@ -90,24 +90,24 @@ public class ImageManager {
     /**
      * Method which returns the image corresponding to the provided key.
      *
-     * @param pKey
+     * @param key
      *            Key corresponding to the image to find
      * @return image corresponding to the key, or <code>null</code> if the key doesn't exists or the bundle is null
      */
-    public Image getImage(String pKey) {
+    public Image getImage(String key) {
 
         // Tries to load the image from the registry before looking into the bundle
-        Image image = mRegistry.get(pKey);
+        Image image = mRegistry.get(key);
 
         if (null == image) {
 
             // The registry do not contain the key, so look into the bundle
-            ImageDescriptor descr = getImageDescriptor(pKey);
+            ImageDescriptor descr = getImageDescriptor(key);
 
             if (null != descr) {
                 // if the descriptor isn't null, create the image
                 image = descr.createImage();
-                mRegistry.put(pKey, image);
+                mRegistry.put(key, image);
             }
         }
 
@@ -117,17 +117,17 @@ public class ImageManager {
     /**
      * Method which returns the image descriptor corresponding to the provided key.
      *
-     * @param pKey
+     * @param key
      *            Key corresponding to the image to find
      * @return image descriptor corresponding to the key, or <code>null</code> if the key doesn't exists or the bundle
      *         is null
      */
-    public ImageDescriptor getImageDescriptor(String pKey) {
+    public ImageDescriptor getImageDescriptor(String key) {
         ImageDescriptor imageDescr = null;
 
         if (null != mImageBundle) {
             // Fetch the plugin relative path from the bundle
-            String path = mImageBundle.getString(pKey);
+            String path = mImageBundle.getString(key);
             imageDescr = AbstractUIPlugin.imageDescriptorFromPlugin(OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, path);
         }
 

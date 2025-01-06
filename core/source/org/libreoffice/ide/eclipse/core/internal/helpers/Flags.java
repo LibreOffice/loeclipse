@@ -48,17 +48,17 @@ public class Flags {
     /**
      * Initializes the flags structure with a default value and a maximum number of bits to use for the flags.
      *
-     * @param pMax
+     * @param max
      *            the number value of the flags
-     * @param pAllowed
+     * @param allowed
      *            the allowed flags
-     * @param pDefault
+     * @param deflt
      *            the default value
      */
-    public Flags(int pMax, int pAllowed, int pDefault) {
-        mFlags = pDefault;
-        mMax = pMax;
-        mAllowed = pAllowed;
+    public Flags(int max, int allowed, int deflt) {
+        mFlags = deflt;
+        mMax = max;
+        mAllowed = allowed;
     }
 
     /**
@@ -88,11 +88,11 @@ public class Flags {
     /**
      * Checks if the given flag will be queried.
      *
-     * @param pFlag
+     * @param flag
      *            the flag to match
      * @return <code>true</code> if the flag is one of the flags set
      */
-    public boolean isFlagSet(int pFlag) {
-        return (mFlags & pFlag) == pFlag;
+    public boolean isFlagSet(int flag) {
+        return (mFlags & flag) == flag;
     }
 }

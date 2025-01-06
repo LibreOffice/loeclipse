@@ -85,29 +85,29 @@ public class OOo extends AbstractOOo {
     /**
      * Creating a new LibreOffice instance specifying its home directory.
      *
-     * @param pOooHome
+     * @param home
      *            the LibreOffice home directory
      *
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
-    public OOo(String pOooHome) throws InvalidConfigException {
-        super(pOooHome);
+    public OOo(String home) throws InvalidConfigException {
+        super(home);
     }
 
     /**
      * Creating a new LibreOffice instance specifying its home directory and name.
      *
-     * @param pOooHome
+     * @param home
      *            the LibreOffice installation path
-     * @param pOooName
+     * @param oooName
      *            the LibreOffice instance name
      *
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
-    public OOo(String pOooHome, String pOooName) throws InvalidConfigException {
-        super(pOooHome, pOooName);
+    public OOo(String home, String oooName) throws InvalidConfigException {
+        super(home, oooName);
     }
 
     // ----------------------------------------------------- IOOo Implementation
@@ -115,21 +115,21 @@ public class OOo extends AbstractOOo {
     /**
      * Overridden to initialize the path mapper for 00o3 installations.
      *
-     * @param pHome
+     * @param home
      *            the LibreOffice installation path to set.
      *
      * @throws InvalidConfigException
      *             if the path doesn't point to a valid LibreOffice installation.
      */
     @Override
-    public void setHome(String pHome) throws InvalidConfigException {
+    public void setHome(String home) throws InvalidConfigException {
 
         if (getPlatform().equals(Platform.OS_MACOSX)) {
-            pHome = pHome + FILE_SEP + "Contents"; //$NON-NLS-1$
+            home = home + FILE_SEP + "Contents"; //$NON-NLS-1$
         }
 
-        mMapper = new OOo3PathMapper(pHome);
-        super.setHome(pHome);
+        mMapper = new OOo3PathMapper(home);
+        super.setHome(home);
     }
 
     /**
@@ -215,14 +215,14 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public void setName(String pName) {
+    public void setName(String name) {
 
-        String name = pName;
-        if (name == null || name.equals("")) { //$NON-NLS-1$
-            name = getOOoName();
+        String newName = name;
+        if (newName == null || newName.equals("")) { //$NON-NLS-1$
+            newName = getOOoName();
         }
 
-        super.setName(name);
+        super.setName(newName);
     }
 
     /**
@@ -268,18 +268,18 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
-        String[] pArgs) {
+    public String createUnoCommand(String implementationName, String libLocation, String[] registriesPaths,
+        String[] args) {
 
         String command = ""; //$NON-NLS-1$
 
-        if (pLibLocation != null && !pLibLocation.equals("")) { //$NON-NLS-1$
+        if (libLocation != null && !libLocation.equals("")) { //$NON-NLS-1$
             // Put the args into one string
             String sArgs = ""; //$NON-NLS-1$
-            for (int i = 0; i < pArgs.length; i++) {
-                sArgs += pArgs[i];
+            for (int i = 0; i < args.length; i++) {
+                sArgs += args[i];
 
-                if (i < pArgs.length - 1) {
+                if (i < args.length - 1) {
                     sArgs += " "; //$NON-NLS-1$
                 }
             }
@@ -307,13 +307,13 @@ public class OOo extends AbstractOOo {
                 }
             }
 
-            classpath += pLibLocation;
+            classpath += libLocation;
             if (getPlatform().equals(Platform.OS_WIN32)) {
                 classpath += "\""; //$NON-NLS-1$
             }
 
             command = "java " + classpath + " " + //$NON-NLS-1$ //$NON-NLS-2$
-                pImplementationName + " " + sArgs; //$NON-NLS-1$
+                implementationName + " " + sArgs; //$NON-NLS-1$
         }
 
         return command;
@@ -340,12 +340,12 @@ public class OOo extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public void updatePackage(File pPackageFile, IPath pUserInstallation) {
+    public void updatePackage(File packageFile, IPath userInstallation) {
 
         // Check if there is already a package with the same name
         try {
             // Add the package
-            addPackage(pPackageFile, pUserInstallation);
+            addPackage(packageFile, userInstallation);
 
         } catch (Exception e) {
             Display.getDefault().asyncExec(new Runnable() {
@@ -365,22 +365,22 @@ public class OOo extends AbstractOOo {
      *
      * FIXME This method has to handle license approval
      *
-     * @param pPackageFile
+     * @param packageFile
      *            the package file to add
-     * @param pUserInstallation
+     * @param userInstallation
      *            path to the user profile folder.
      * @throws Exception
      *             if anything wrong happens
      */
-    private void addPackage(File pPackageFile, IPath pUserInstallation) throws Exception {
-        String path = pPackageFile.getAbsolutePath();
+    private void addPackage(File packageFile, IPath userInstallation) throws Exception {
+        String path = packageFile.getAbsolutePath();
         String shellCommand = MessageFormat.format("unopkg add -f \"{0}\"", path); //$NON-NLS-1$
 
         // We need system env variables - at least on Linux the unopkg is in the global path, but not in instdir/program
         String[] env = SystemHelper.getSystemEnvironement();
         String pathsep = System.getProperty("path.separator"); //$NON-NLS-1$
         env = SystemHelper.addEnv(env, "PATH", getHome() + FILE_SEP + "program", pathsep); //$NON-NLS-1$ //$NON-NLS-2$
-        env = addUserProfile(pUserInstallation, env);
+        env = addUserProfile(userInstallation, env);
 
         Process process = SystemHelper.runTool(shellCommand, env, null);
 
@@ -404,7 +404,7 @@ public class OOo extends AbstractOOo {
 
         if (failed) {
             throw new Exception(Messages.getString("OOo.PackageAddError") + //$NON-NLS-1$
-                pPackageFile.getAbsolutePath());
+                packageFile.getAbsolutePath());
         }
     }
 
@@ -429,12 +429,12 @@ public class OOo extends AbstractOOo {
         /**
          * Create a new mapper object to get the OOo3 layers paths.
          *
-         * @param pHome
+         * @param home
          *            the LibreOffice install home
          * @throws InvalidConfigException
          */
-        public OOo3PathMapper(String pHome) throws InvalidConfigException {
-            mHome = pHome;
+        public OOo3PathMapper(String home) throws InvalidConfigException {
+            mHome = home;
             initPaths();
         }
 
@@ -456,21 +456,21 @@ public class OOo extends AbstractOOo {
             mUre = new URE(ureDir.getAbsolutePath());
         }
 
-        private File locateUniqueContainer(String pBaseDir, String pUnoRelativePath) throws InvalidConfigException {
+        private File locateUniqueContainer(String baseDir, String unoRelativePath) throws InvalidConfigException {
             File file = null;
-            File base = new File(pBaseDir);
+            File base = new File(baseDir);
             if (base.exists() && base.isDirectory() && base.canRead()) {
-                List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
+                List<File> dirs = new RelativeFileLocator(base, unoRelativePath).getFiles();
                 if (dirs == null) {
-                    throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                    throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + unoRelativePath,
                         InvalidConfigException.INVALID_OOO_HOME);
                 }
                 if (dirs.size() > 1) {
                     // remove link if there is duplicate
-                    removeLinks(dirs, pUnoRelativePath);
+                    removeLinks(dirs, unoRelativePath);
                 }
                 if (dirs.size() != 1) {
-                    throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                    throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + unoRelativePath,
                         InvalidConfigException.INVALID_OOO_HOME);
                 } else {
                     file = dirs.get(0);
@@ -479,29 +479,29 @@ public class OOo extends AbstractOOo {
             return file;
         }
 
-        private List<File> locateFiles(String pBaseDir, String pUnoRelativePath) throws InvalidConfigException {
+        private List<File> locateFiles(String baseDir, String unoRelativePath) throws InvalidConfigException {
             List<File> returnList = null;
-            File base = new File(pBaseDir);
+            File base = new File(baseDir);
             if (base.exists() && base.isDirectory() && base.canRead()) {
-                List<File> dirs = new RelativeFileLocator(base, pUnoRelativePath).getFiles();
+                List<File> dirs = new RelativeFileLocator(base, unoRelativePath).getFiles();
                 if (dirs == null || dirs.size() == 0) {
                     returnList = Collections.emptyList();
                 } else {
                     // remove link if there is duplicate
-                    removeLinks(dirs, pUnoRelativePath);
+                    removeLinks(dirs, unoRelativePath);
                     returnList = new ArrayList<File>();
                     for (File tmpFile : dirs) {
-                        returnList.add(new File(tmpFile, pUnoRelativePath));
+                        returnList.add(new File(tmpFile, unoRelativePath));
                     }
                 }
             }
             return returnList;
         }
 
-        private void removeLinks(List<File> pDirs, String pUnoRelativePath) throws InvalidConfigException {
+        private void removeLinks(List<File> dirs, String unoRelativePath) throws InvalidConfigException {
             try {
                 List<File> linksList = new ArrayList<File>();
-                for (File tmpFile : pDirs) {
+                for (File tmpFile : dirs) {
                     if (AbstractOOo.isSymbolicLink(tmpFile)) {
                         linksList.add(tmpFile);
                     }
@@ -509,13 +509,13 @@ public class OOo extends AbstractOOo {
                 if (!linksList.isEmpty()) {
                     for (File link : linksList) {
                         File linkTarget = AbstractOOo.getTargetLink(link);
-                        if (pDirs.contains(linkTarget)) {
-                            pDirs.remove(linkTarget);
+                        if (dirs.contains(linkTarget)) {
+                            dirs.remove(linkTarget);
                         }
                     }
                 }
             } catch (IOException e) {
-                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + pUnoRelativePath,
+                throw new InvalidConfigException(Messages.getString("AbstractOOo.NoFileError") + unoRelativePath,
                     InvalidConfigException.INVALID_OOO_HOME);
             }
         }
@@ -681,23 +681,23 @@ public class OOo extends AbstractOOo {
          *
          * The duplicated elements are not removed.
          *
-         * @param pArray1
+         * @param array1
          *            the first array to merge
-         * @param pArray2
+         * @param array2
          *            the second array to merge
          *
          * @return the array with the elements of both arrays
          */
-        public String[] mergeArrays(String[] pArray1, String[] pArray2) {
+        public String[] mergeArrays(String[] array1, String[] array2) {
             String[] result = null;
-            if (pArray1 == null) {
-                result = pArray2;
-            } else if (pArray2 == null) {
-                result = pArray1;
+            if (array1 == null) {
+                result = array2;
+            } else if (array2 == null) {
+                result = array1;
             } else {
-                result = new String[pArray1.length + pArray2.length];
-                System.arraycopy(pArray1, 0, result, 0, pArray1.length);
-                System.arraycopy(pArray2, 0, result, pArray1.length, pArray2.length);
+                result = new String[array1.length + array2.length];
+                System.arraycopy(array1, 0, result, 0, array1.length);
+                System.arraycopy(array2, 0, result, array1.length, array2.length);
             }
             return result;
         }

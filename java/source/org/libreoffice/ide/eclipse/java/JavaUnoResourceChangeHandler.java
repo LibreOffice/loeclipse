@@ -63,9 +63,9 @@ public class JavaUnoResourceChangeHandler implements IStartup, IResourceChangeLi
      * {@inheritDoc}
      */
     @Override
-    public void resourceChanged(IResourceChangeEvent pEvent) {
+    public void resourceChanged(IResourceChangeEvent event) {
         try {
-            pEvent.getDelta().accept(new JavaResourceDeltaVisitor());
+            event.getDelta().accept(new JavaResourceDeltaVisitor());
         } catch (Exception e) {
             // Do nothing
         }

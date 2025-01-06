@@ -91,25 +91,25 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
         Job serviceJob = new Job(Messages.getString("NewInterfaceWizard.JobName")) { //$NON-NLS-1$
 
             @Override
-            protected IStatus run(IProgressMonitor pMonitor) {
+            protected IStatus run(IProgressMonitor monitor) {
 
-                pMonitor.beginTask(Messages.getString("NewInterfaceWizard.TaskName"), 1); //$NON-NLS-1$
+                monitor.beginTask(Messages.getString("NewInterfaceWizard.TaskName"), 1); //$NON-NLS-1$
                 IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
                     IStatus.OK, "", null); //$NON-NLS-1$
                 try {
                     IUnoidlProject prj = mPage.getProject();
-                    UnoFactory.createInterface(data, prj, mActivePage, pMonitor);
+                    UnoFactory.createInterface(data, prj, mActivePage, monitor);
 
                     // Releasing the data informations
                     data.dispose();
-                    pMonitor.worked(1);
+                    monitor.worked(1);
                 } catch (Exception e) {
                     status = new Status(IStatus.CANCEL, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK,
                         Messages.getString("NewInterfaceWizard.InterfaceCreationError"), e); //$NON-NLS-1$
-                    pMonitor.setCanceled(true);
+                    monitor.setCanceled(true);
                 }
 
-                pMonitor.done();
+                monitor.done();
                 return status;
             }
 

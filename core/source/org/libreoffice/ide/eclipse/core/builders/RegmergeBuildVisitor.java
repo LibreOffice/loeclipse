@@ -58,15 +58,15 @@ public class RegmergeBuildVisitor implements IFileVisitor {
     /**
      * Default constructor.
      *
-     * @param pUnoprj
+     * @param unoProject
      *            the UNO project to visit
-     * @param pMonitor
+     * @param monitor
      *            progress monitor for the regmerge
      */
-    public RegmergeBuildVisitor(IUnoidlProject pUnoprj, IProgressMonitor pMonitor) {
+    public RegmergeBuildVisitor(IUnoidlProject unoProject, IProgressMonitor monitor) {
         super();
-        mProgressMonitor = pMonitor;
-        mUnoprj = pUnoprj;
+        mProgressMonitor = monitor;
+        mUnoprj = unoProject;
     }
 
     /**

@@ -118,11 +118,11 @@ public class SDKTable extends AbstractTable {
      * {@inheritDoc}
      */
     @Override
-    protected void handleDoubleClick(DoubleClickEvent pEvent) {
-        if (!pEvent.getSelection().isEmpty()) {
+    protected void handleDoubleClick(DoubleClickEvent event) {
+        if (!event.getSelection().isEmpty()) {
 
             // Get the double clicked SDK line
-            SDK sdk = (SDK) ((IStructuredSelection) pEvent.getSelection()).getFirstElement();
+            SDK sdk = (SDK) ((IStructuredSelection) event.getSelection()).getFirstElement();
 
             // Launch the dialog
             sdk = openDialog(sdk);
@@ -212,7 +212,7 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             return SDKContainer.toArray();
         }
 
@@ -228,16 +228,16 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void ConfigAdded(Object pElement) {
-            if (pElement instanceof SDK) {
-                mTableViewer.add(pElement);
+        public void ConfigAdded(Object element) {
+            if (element instanceof SDK) {
+                mTableViewer.add(element);
 
                 // This redrawing order is necessary to avoid having strange columns
                 mTable.redraw();
@@ -248,10 +248,10 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigRemoved(Object pElement) {
-            if (null != pElement && pElement instanceof SDK) {
+        public void ConfigRemoved(Object element) {
+            if (null != element && element instanceof SDK) {
                 // Only one SDK to remove
-                mTableViewer.remove(pElement);
+                mTableViewer.remove(element);
             } else {
                 // All the SDK have been removed
                 if (null != mTableViewer) {
@@ -272,11 +272,11 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigUpdated(Object pElement) {
-            if (pElement instanceof SDK) {
+        public void ConfigUpdated(Object element) {
+            if (element instanceof SDK) {
                 // Note that we can do this only because the SDK Container guarantees
                 // that the reference of the sdk will not change during an update
-                mTableViewer.update(pElement, null);
+                mTableViewer.update(element, null);
             }
         }
     }
@@ -402,19 +402,19 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void fieldChanged(FieldEvent pEvent) {
+        public void fieldChanged(FieldEvent event) {
             // The result doesn't matter: we only want to update the status of the windows
 
             Button okButton = getButton(IDialogConstants.OK_ID);
             if (null != okButton) {
 
-                if (pEvent.getProperty().equals(P_SDK_PATH)) {
-                    okButton.setEnabled(isValid(pEvent.getProperty()));
+                if (event.getProperty().equals(P_SDK_PATH)) {
+                    okButton.setEnabled(isValid(event.getProperty()));
                 }
 
                 // checks if the name is unique and toggle a warning
-                if (pEvent.getProperty().equals(P_SDK_PATH)) {
-                    boolean unique = !SDKContainer.containsName(pEvent.getValue());
+                if (event.getProperty().equals(P_SDK_PATH)) {
+                    boolean unique = !SDKContainer.containsName(event.getValue());
 
                     if (unique) {
                         updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,

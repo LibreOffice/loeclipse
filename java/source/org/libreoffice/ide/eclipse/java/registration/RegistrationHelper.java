@@ -97,29 +97,29 @@ public abstract class RegistrationHelper {
     /**
      * Add a UNO service implementation to the list of the project ones.
      *
-     * @param pProject the project where to add the implementation
-     * @param pImplName the fully qualified name of the implementation to add,
+     * @param project the project where to add the implementation
+     * @param implName the fully qualified name of the implementation to add,
      *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
      */
-    public static void addImplementation(IUnoidlProject pProject, String pImplName) {
-        Vector<String> classes = readClassesList(pProject);
-        if (!classes.contains(pImplName)) {
-            classes.add(pImplName);
+    public static void addImplementation(IUnoidlProject project, String implName) {
+        Vector<String> classes = readClassesList(project);
+        if (!classes.contains(implName)) {
+            classes.add(implName);
         }
-        writeClassesList(pProject, classes);
+        writeClassesList(project, classes);
     }
 
     /**
      * remove a UNO service implementation from the list of the project ones.
      *
-     * @param pProject the project where to remove the implementation
-     * @param pImplName the fully qualified name of the implementation to remove,
+     * @param project the project where to remove the implementation
+     * @param implName the fully qualified name of the implementation to remove,
      *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
      */
-    public static void removeImplementation(IUnoidlProject pProject, String pImplName) {
-        Vector<String> classes = readClassesList(pProject);
-        classes.remove(pImplName);
-        writeClassesList(pProject, classes);
+    public static void removeImplementation(IUnoidlProject project, String implName) {
+        Vector<String> classes = readClassesList(project);
+        classes.remove(implName);
+        writeClassesList(project, classes);
     }
 
     /**
@@ -187,18 +187,18 @@ public abstract class RegistrationHelper {
     /**
      * Writes the implementation classes list to the UNO project.
      *
-     * @param pProject the project for which to write the list
-     * @param pClasses the classes to write
+     * @param project the project for which to write the list
+     * @param classes the classes to write
      */
-    private static void writeClassesList(IUnoidlProject pProject, Vector<String> pClasses) {
+    private static void writeClassesList(IUnoidlProject project, Vector<String> classes) {
 
-        IFile list = getClassesListFile(pProject);
+        IFile list = getClassesListFile(project);
         File file = list.getLocation().toFile();
 
         FileWriter writer = null;
         try {
             writer = new FileWriter(file);
-            for (String implClass : pClasses) {
+            for (String implClass : classes) {
                 writer.append(implClass + "\n"); //$NON-NLS-1$
             }
         } catch (IOException e) {

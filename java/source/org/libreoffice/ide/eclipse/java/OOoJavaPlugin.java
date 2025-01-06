@@ -63,23 +63,23 @@ public class OOoJavaPlugin extends AbstractUIPlugin {
     /**
      * This method is called upon plug-in activation.
      *
-     * @param pContext the bundle context
+     * @param context the bundle context
      * @throws Exception if the plugin can't be started
      */
     @Override
-    public void start(BundleContext pContext) throws Exception {
-        super.start(pContext);
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
     }
 
     /**
      * This method is called when the plug-in is stopped.
      *
-     * @param pContext the bundle context
+     * @param context the bundle context
      * @throws Exception if the plugin can't be stopped
      */
     @Override
-    public void stop(BundleContext pContext) throws Exception {
-        super.stop(pContext);
+    public void stop(BundleContext context) throws Exception {
+        super.stop(context);
         sPlugin = null;
     }
 

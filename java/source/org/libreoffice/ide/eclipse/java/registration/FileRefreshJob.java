@@ -66,7 +66,7 @@ public class FileRefreshJob extends Job {
      * {@inheritDoc}
      */
     @Override
-    protected IStatus run(IProgressMonitor pMonitor) {
+    protected IStatus run(IProgressMonitor monitor) {
         IStatus status = Status.OK_STATUS;
         try {
             mToRefresh.refreshLocal(IResource.DEPTH_ZERO, null);

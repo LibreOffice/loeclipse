@@ -68,16 +68,16 @@ public class OOoRow extends AbstractConfigRow {
      * {@inheritDoc}
      */
     @Override
-    protected void addListener(IConfigListener pConfigListener) {
-        OOoContainer.addListener(pConfigListener);
+    protected void addListener(IConfigListener configListener) {
+        OOoContainer.addListener(configListener);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void removeListener(IConfigListener pConfigListener) {
-        OOoContainer.removeListener(pConfigListener);
+    protected void removeListener(IConfigListener configListener) {
+        OOoContainer.removeListener(configListener);
     }
 
     /**

@@ -78,23 +78,23 @@ public interface ILanguageBuilder {
      * files and the root module to avoid massive idl types creation
      * </p>
      *
-     * @param pSdk
+     * @param sdk
      *            the SDK containing the tools for generation
-     * @param pOoo
+     * @param ooo
      *            the working OpenOffice.org instance
-     * @param pPrj
+     * @param prj
      *            the project for which to generate the interfaces
-     * @param pTypesFile
+     * @param typesFile
      *            the project types.rdb path
-     * @param pBuildFolder
+     * @param buildFolder
      *            the path to the folder where to the files will be generated
-     * @param pRootModule
+     * @param rootModule
      *            the project root module (eg: <code>foo::bar</code>)
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor
      */
-    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile, File pBuildFolder,
-        String pRootModule, IProgressMonitor pMonitor);
+    public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile, File buildFolder,
+        String rootModule, IProgressMonitor monitor);
 
     /**
      * Adds all the language specific libraries to the UNO package.

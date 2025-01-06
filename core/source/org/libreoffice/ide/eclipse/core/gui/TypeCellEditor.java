@@ -97,11 +97,11 @@ public class TypeCellEditor extends TextCellEditor {
      * Set whether the row should support include auto-completion for sequences. Sequences aren't included in the
      * auto-completion by default.
      *
-     * @param pInclude
+     * @param include
      *            <code>true</code> if the row can auto-complete sequences
      */
-    public void includeSequences(boolean pInclude) {
-        mIncludeSequences = pInclude;
+    public void includeSequences(boolean include) {
+        mIncludeSequences = include;
     }
 
     /**
@@ -109,25 +109,25 @@ public class TypeCellEditor extends TextCellEditor {
      * included in the auto-completion, the void type isn't included too. Simple types aren't included in the
      * auto-completion by default.
      *
-     * @param pInclude
+     * @param include
      *            <code>true</code> if the row can auto-complete sequences
      * @see #includeVoid(boolean) to include/exclude the void type
      */
-    public void includeSimpleTypes(boolean pInclude) {
-        mIncludeSimpleTypes = pInclude;
+    public void includeSimpleTypes(boolean include) {
+        mIncludeSimpleTypes = include;
     }
 
     /**
      * Set whether the row should support include auto-completion for the void type. The void type is included in the
      * auto-completion by default as long as the simple types are included.
      *
-     * @param pInclude
+     * @param include
      *            <code>true</code> if the row can auto-complete sequences
      * @see #includeSimpleTypes(boolean) for more precisions on the inclusion of the void type dependence on the other
      *      simple types inclusion.
      */
-    public void includeVoid(boolean pInclude) {
-        mIncludeVoid = pInclude;
+    public void includeVoid(boolean include) {
+        mIncludeVoid = include;
     }
 
     /**
@@ -187,10 +187,10 @@ public class TypeCellEditor extends TextCellEditor {
         text.addKeyListener(new KeyAdapter() {
 
             @Override
-            public void keyPressed(KeyEvent pEvent) {
+            public void keyPressed(KeyEvent event) {
 
                 // react on Ctrl+space
-                if (pEvent.character == ' ' && (pEvent.stateMask & SWT.CTRL) != 0) {
+                if (event.character == ' ' && (event.stateMask & SWT.CTRL) != 0) {
                     // if the word sequence is started, complete it
                     int pos = text.getCaretPosition();
                     String value = text.getText(0, pos);
@@ -202,7 +202,7 @@ public class TypeCellEditor extends TextCellEditor {
                         text.insert(toadd);
                         setValue(text.getText().trim());
                         text.setSelection(pos + toadd.length() - 1);
-                        pEvent.doit = false;
+                        event.doit = false;
                     } else {
                         // check the simple types
                         if (mIncludeSimpleTypes) {
@@ -227,7 +227,7 @@ public class TypeCellEditor extends TextCellEditor {
                                     text.insert(toadd);
                                     setValue(text.getText().trim());
                                     text.setSelection(pos + toadd.length());
-                                    pEvent.doit = false;
+                                    event.doit = false;
                                     break;
                                 }
                             }
@@ -241,7 +241,7 @@ public class TypeCellEditor extends TextCellEditor {
         mButton.setText("..."); //$NON-NLS-1$
         mButton.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusLost(FocusEvent pEvent) {
+            public void focusLost(FocusEvent event) {
                 TypeCellEditor.this.focusLost();
             }
         });
@@ -249,7 +249,7 @@ public class TypeCellEditor extends TextCellEditor {
         // open the Uno Types Browser
         mButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 mDialogOpened = true;
 
                 Object newValue = openDialogBox(editor);
@@ -305,9 +305,9 @@ public class TypeCellEditor extends TextCellEditor {
          * {@inheritDoc}
          */
         @Override
-        public void layout(Composite pEditor, boolean pForce) {
-            Rectangle bounds = pEditor.getClientArea();
-            Point size = mButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, pForce);
+        public void layout(Composite editor, boolean force) {
+            Rectangle bounds = editor.getClientArea();
+            Point size = mButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             if (text != null) {
                 text.setBounds(0, 0, bounds.width - size.x, bounds.height);
             }
@@ -318,12 +318,12 @@ public class TypeCellEditor extends TextCellEditor {
          * {@inheritDoc}
          */
         @Override
-        public Point computeSize(Composite pEditor, int pWidth, int pHeight, boolean pForce) {
-            Point size = new Point(pWidth, pHeight);
+        public Point computeSize(Composite editor, int width, int height, boolean force) {
+            Point size = new Point(width, height);
 
-            if (pWidth == SWT.DEFAULT || pHeight == SWT.DEFAULT) {
-                Point contentsSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT, pForce);
-                Point buttonSize = mButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, pForce);
+            if (width == SWT.DEFAULT || height == SWT.DEFAULT) {
+                Point contentsSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+                Point buttonSize = mButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
                 // Just return the button width to ensure the button is not clipped
                 // if the label is long.
                 // The label will just use whatever extra width there is

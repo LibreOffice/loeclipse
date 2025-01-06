@@ -72,19 +72,19 @@ public class ProjectExportPart extends LanguageExportPart {
     private ProjectExportPageControl mController;
 
     /**
-     * @param pAntScriptPage
+     * @param antScriptPage
      *            Helps in retrieving the project selected in this part.
      */
-    public static void setAntScriptExportPage(AntScriptExportWizardPage pAntScriptPage) {
-        sAntScriptPage = pAntScriptPage;
+    public static void setAntScriptExportPage(AntScriptExportWizardPage antScriptPage) {
+        sAntScriptPage = antScriptPage;
     }
 
     /**
-     * @param pAntSectionDisplay
+     * @param antSectionDisplay
      *            Helps in blocking the Title and Other Displays in wizard after 1st time
      */
-    public static void setCheckAntSectionDisplay(boolean pAntSectionDisplay) {
-        sAntSectionDisplay = pAntSectionDisplay;
+    public static void setCheckAntSectionDisplay(boolean antSectionDisplay) {
+        sAntSectionDisplay = antSectionDisplay;
     }
 
     /**
@@ -139,7 +139,7 @@ public class ProjectExportPart extends LanguageExportPart {
      * {@inheritDoc}
      */
     @Override
-    public void doFinish(UnoPackage pModel) {
+    public void doFinish(UnoPackage model) {
 
         String directory = sAntScriptPage.getPath();
         File antFile = new File(directory + "/build.xml");

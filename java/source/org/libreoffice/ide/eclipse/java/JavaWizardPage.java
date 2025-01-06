@@ -72,7 +72,7 @@ public class JavaWizardPage extends LanguageWizardPage {
      * {@inheritDoc}
      */
     @Override
-    public void setProjectInfos(UnoFactoryData pData) {
+    public void setProjectInfos(UnoFactoryData data) {
         // default value
         mUseTests = true;
     }
@@ -81,15 +81,15 @@ public class JavaWizardPage extends LanguageWizardPage {
      * {@inheritDoc}
      */
     @Override
-    public UnoFactoryData fillData(UnoFactoryData pData) {
+    public UnoFactoryData fillData(UnoFactoryData data) {
 
-        if (pData != null) {
+        if (data != null) {
             // default java version
-            pData.setProperty(JAVA_VERSION, "java5");
-            pData.setProperty(JAVA_TESTS, mUseTests);
+            data.setProperty(JAVA_VERSION, "java5");
+            data.setProperty(JAVA_TESTS, mUseTests);
         }
 
-        return pData;
+        return data;
     }
 
     /**
@@ -109,7 +109,7 @@ public class JavaWizardPage extends LanguageWizardPage {
         mJavaTestsRow.setFieldChangedListener(new IFieldChangedListener() {
 
             @Override
-            public void fieldChanged(FieldEvent pEvent) {
+            public void fieldChanged(FieldEvent event) {
                 mUseTests = mJavaTestsRow.getBooleanValue();
             }
         });

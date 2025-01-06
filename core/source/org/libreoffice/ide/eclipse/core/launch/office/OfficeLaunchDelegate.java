@@ -72,22 +72,22 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void launch(ILaunchConfiguration pConfiguration, String pMode, ILaunch pLaunch, IProgressMonitor pMonitor)
+    public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
         throws CoreException {
-        if (pMonitor == null) {
-            pMonitor = new NullProgressMonitor();
+        if (monitor == null) {
+            monitor = new NullProgressMonitor();
         }
 
         try {
-            pMonitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
-                new Object[] { pConfiguration.getName() }), TASK_UNITS);
+            monitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
+                new Object[] { configuration.getName() }), TASK_UNITS);
             // check for cancellation
-            if (pMonitor.isCanceled()) {
+            if (monitor.isCanceled()) {
                 return;
             }
 
-            String prjName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
-            boolean useCleanUserInstallation = pConfiguration
+            String prjName = configuration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, new String());
+            boolean useCleanUserInstallation = configuration
                 .getAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
 
             IUnoidlProject unoprj = ProjectsManager.getProject(prjName);
@@ -102,27 +102,27 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
 
                     // Force the build
                     IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
-                    TypesBuilder.build(prj, pMonitor);
+                    TypesBuilder.build(prj, monitor);
 
                     PackagePropertiesModel pPropertiesModel = new PackagePropertiesModel(
                         prj.getFile("package.properties"));
                     List<IResource> resources = pPropertiesModel.getContents();
                     File destFile = exportComponent(unoprj, resources);
-                    pMonitor.worked(1);
+                    monitor.worked(1);
 
                     // Deploy the component
                     deployComponent(unoprj, userInstallation, destFile);
 
-                    pMonitor.worked(1);
+                    monitor.worked(1);
 
                     // Run an LibreOffice instance
-                    if (ILaunchManager.DEBUG_MODE.equals(pMode)) {
-                        unoprj.getLanguage().connectDebuggerToOffice(unoprj, pLaunch, userInstallation, pMonitor);
+                    if (ILaunchManager.DEBUG_MODE.equals(mode)) {
+                        unoprj.getLanguage().connectDebuggerToOffice(unoprj, launch, userInstallation, monitor);
                     } else {
-                        unoprj.getOOo().runOffice(unoprj, pLaunch, userInstallation, new NullExtraOptionsProvider(),
-                            pMonitor);
+                        unoprj.getOOo().runOffice(unoprj, launch, userInstallation, new NullExtraOptionsProvider(),
+                            monitor);
                     }
-                    pMonitor.worked(1);
+                    monitor.worked(1);
                 } catch (Exception e) {
                     PluginLogger.error(Messages.OfficeLaunchDelegate_LaunchError, e);
                     Display.getDefault().asyncExec(new Runnable() {
@@ -137,24 +137,24 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                 }
             }
         } finally {
-            pMonitor.done();
+            monitor.done();
         }
     }
 
     /**
      * Deploys the .oxt component in a LibreOffice installation.
      *
-     * @param pPrj
+     * @param prj
      *            target project
-     * @param pUserInstallation
+     * @param userInstallation
      *            user profile to use
-     * @param pOxtFile
+     * @param oxtFile
      *            the .oxt file
      */
-    private void deployComponent(IUnoidlProject pPrj, IPath pUserInstallation, File pOxtFile) {
-        IOOo mOOo = pPrj.getOOo();
+    private void deployComponent(IUnoidlProject prj, IPath userInstallation, File oxtFile) {
+        IOOo mOOo = prj.getOOo();
         if (mOOo.canManagePackages()) {
-            mOOo.updatePackage(pOxtFile, pUserInstallation);
+            mOOo.updatePackage(oxtFile, userInstallation);
         }
     }
 

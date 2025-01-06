@@ -70,8 +70,8 @@ public class PythonBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
-        File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
+    public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile,
+        File buildFolder, String rootModule, IProgressMonitor monitor) {
         // Nothing to do for Python
     }
 

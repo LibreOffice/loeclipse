@@ -49,11 +49,11 @@ public class VisitableFile {
     /**
      * Create a new visitable file, ready to accept a visit.
      *
-     * @param pFile
+     * @param file
      *            the file to visit later.
      */
-    public VisitableFile(File pFile) {
-        mFile = pFile;
+    public VisitableFile(File file) {
+        mFile = file;
     }
 
     /**

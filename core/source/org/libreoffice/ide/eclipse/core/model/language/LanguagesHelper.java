@@ -76,12 +76,12 @@ public class LanguagesHelper {
      * </ul>
      * </p>
      *
-     * @param pName
+     * @param name
      *            the language name to find
      *
      * @return the language object if found, <code>null</code> otherwise.
      */
-    public static AbstractLanguage getLanguageFromName(String pName) {
+    public static AbstractLanguage getLanguageFromName(String name) {
 
         AbstractLanguage language = null;
 
@@ -90,7 +90,7 @@ public class LanguagesHelper {
 
         while (language == null && i < languages.length) {
             IConfigurationElement languagei = languages[i];
-            if (languagei.getAttribute("name").equals(pName)) { //$NON-NLS-1$
+            if (languagei.getAttribute("name").equals(name)) { //$NON-NLS-1$
                 try {
                     Object o = languagei.createExecutableExtension("class"); //$NON-NLS-1$
 

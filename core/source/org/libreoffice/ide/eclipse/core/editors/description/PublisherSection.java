@@ -105,7 +105,7 @@ public class PublisherSection extends LocalizedSection<DescriptionModel> {
         mNameTxt.setEnabled(false);
         mNameTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 PublisherInfos infos = getModel().getPublisherInfos().get(mCurrentLocale);
                 infos.setName(mNameTxt.getText());
                 markDirty();
@@ -119,7 +119,7 @@ public class PublisherSection extends LocalizedSection<DescriptionModel> {
         mUrlTxt.setEnabled(false);
         mUrlTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 PublisherInfos infos = getModel().getPublisherInfos().get(mCurrentLocale);
                 infos.setUrl(mUrlTxt.getText());
                 markDirty();
@@ -131,9 +131,9 @@ public class PublisherSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void addLocale(Locale pLocale) {
-        if (!getModel().getPublisherInfos().containsKey(pLocale)) {
-            getModel().addPublisherInfo(pLocale, new PublisherInfos());
+    public void addLocale(Locale locale) {
+        if (!getModel().getPublisherInfos().containsKey(locale)) {
+            getModel().addPublisherInfo(locale, new PublisherInfos());
         }
         mNameTxt.setEnabled(true);
         mUrlTxt.setEnabled(true);
@@ -143,8 +143,8 @@ public class PublisherSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void deleteLocale(Locale pLocale) {
-        getModel().removePublisherInfo(pLocale);
+    public void deleteLocale(Locale locale) {
+        getModel().removePublisherInfo(locale);
         if (getModel().getPublisherInfos().isEmpty()) {
             mNameTxt.setEnabled(false);
             mUrlTxt.setEnabled(false);
@@ -155,15 +155,15 @@ public class PublisherSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void selectLocale(Locale pLocale) {
+    public void selectLocale(Locale locale) {
 
         if (mCurrentLocale != null) {
             PublisherInfos infos = getModel().getPublisherInfos().get(mCurrentLocale);
             infos.setName(mNameTxt.getText());
             infos.setUrl(mUrlTxt.getText());
         }
-        super.selectLocale(pLocale);
-        PublisherInfos infos = getModel().getPublisherInfos().get(pLocale);
+        super.selectLocale(locale);
+        PublisherInfos infos = getModel().getPublisherInfos().get(locale);
         mNameTxt.setText(infos.getName());
         mUrlTxt.setText(infos.getUrl());
     }

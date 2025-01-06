@@ -70,28 +70,28 @@ public class AntScriptExportWizardPage extends WizardPage {
     /**
      * Constructor.
      *
-     * @param pPageName
+     * @param pageName
      *            the page name
-     * @param pProject
+     * @param project
      *            the project to export
      */
-    public AntScriptExportWizardPage(String pPageName, IUnoidlProject pProject) {
-        super(pPageName);
+    public AntScriptExportWizardPage(String pageName, IUnoidlProject project) {
+        super(pageName);
 
         setTitle(Messages.getString("AntScriptExportWizard.Title")); //$NON-NLS-1$
         setDescription(Messages.getString("AntScriptExportWizard.Description")); //$NON-NLS-1$
 
-        mSelectedProject = pProject;
+        mSelectedProject = project;
     }
 
     /**
      * Create the build scripts for the package model.
      *
-     * @param pModel
+     * @param model
      *            the model to be used to build script
      */
-    public void createBuildScripts(UnoPackage pModel) {
-        mLangPart.doFinish(pModel);
+    public void createBuildScripts(UnoPackage model) {
+        mLangPart.doFinish(model);
         mCheckAntSectionDisplay = false;
         ProjectExportPart.setCheckAntSectionDisplay(mCheckAntSectionDisplay);
     }
@@ -178,7 +178,7 @@ public class AntScriptExportWizardPage extends WizardPage {
         mProjectsList.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 int id = mProjectsList.getSelectionIndex();
                 if (id != -1) {
                     String name = mProjectsList.getItem(id);

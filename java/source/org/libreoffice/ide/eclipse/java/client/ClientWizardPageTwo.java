@@ -57,14 +57,14 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
 
     private UnoConnectionPage mCnxPage;
 
-    public ClientWizardPageTwo(NewJavaProjectWizardPageOne pMainPage, UnoConnectionPage pCnxPage) {
-        super(pMainPage);
-        mCnxPage = pCnxPage;
+    public ClientWizardPageTwo(NewJavaProjectWizardPageOne mainPage, UnoConnectionPage cnxPage) {
+        super(mainPage);
+        mCnxPage = cnxPage;
     }
 
     @Override
-    public void setVisible(boolean pVisible) {
-        super.setVisible(pVisible);
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
 
         if (getContainer().getCurrentPage() == mCnxPage) {
             removeProvisonalProject();
@@ -72,10 +72,10 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
     }
 
     @Override
-    public void init(IJavaProject pJavaProject, IPath pDefaultOutputLocation, IClasspathEntry[] pDefaultEntries,
-        boolean pDefaultsOverrideExistingClasspath) {
+    public void init(IJavaProject javaProject, IPath defaultOutputLocation, IClasspathEntry[] defaultEntries,
+        boolean defaultsOverrideExistingClasspath) {
 
-        IProject project = pJavaProject.getProject();
+        IProject project = javaProject.getProject();
 
         // Copy the jodconnector.jar file to the new project
         try {
@@ -106,11 +106,11 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
             JavaCore.newLibraryEntry(jodPath, jodPath, jodPath)
         };
 
-        IClasspathEntry[] entries = new IClasspathEntry[pDefaultEntries.length + newEntries.length];
+        IClasspathEntry[] entries = new IClasspathEntry[defaultEntries.length + newEntries.length];
 
-        System.arraycopy(pDefaultEntries, 0, entries, 0, pDefaultEntries.length);
-        System.arraycopy(newEntries, 0, entries, pDefaultEntries.length, newEntries.length);
+        System.arraycopy(defaultEntries, 0, entries, 0, defaultEntries.length);
+        System.arraycopy(newEntries, 0, entries, defaultEntries.length, newEntries.length);
 
-        super.init(pJavaProject, pDefaultOutputLocation, entries, pDefaultsOverrideExistingClasspath);
+        super.init(javaProject, defaultOutputLocation, entries, defaultsOverrideExistingClasspath);
     }
 }

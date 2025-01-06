@@ -61,23 +61,23 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void launch(ILaunchConfiguration pConfiguration, String pMode, ILaunch pLaunch, IProgressMonitor pMonitor)
+    public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
         throws CoreException {
 
-        if (pMonitor == null) {
-            pMonitor = new NullProgressMonitor();
+        if (monitor == null) {
+            monitor = new NullProgressMonitor();
         }
 
-        pMonitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
-            new Object[] { pConfiguration.getName() }), TASK_UNITS);
+        monitor.beginTask(MessageFormat.format("{0}...", //$NON-NLS-1$
+            new Object[] { configuration.getName() }), TASK_UNITS);
         // check for cancellation
-        if (pMonitor.isCanceled()) {
+        if (monitor.isCanceled()) {
             return;
         }
 
-        String prjName = pConfiguration.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
-        String mainName = pConfiguration.getAttribute(IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
-        String args = pConfiguration.getAttribute(IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
+        String prjName = configuration.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+        String mainName = configuration.getAttribute(IUreLaunchConstants.MAIN_TYPE, ""); //$NON-NLS-1$
+        String args = configuration.getAttribute(IUreLaunchConstants.PROGRAM_ARGS, ""); //$NON-NLS-1$
 
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
         if (prj != null) {
@@ -86,7 +86,7 @@ public class UreLaunchDelegate extends LaunchConfigurationDelegate {
                 langBuilder.createLibrary(prj);
 
                 // Run the URE Applicaton using IOOo.runUno()
-                prj.getOOo().runUno(prj, mainName, args, pLaunch, pMonitor);
+                prj.getOOo().runUno(prj, mainName, args, launch, monitor);
             } catch (Exception e) {
                 Display.getDefault().asyncExec(new Runnable() {
 

@@ -46,8 +46,8 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
     private boolean mConnected = false;
     private boolean mExpectingDisconnection = false;
 
-    protected AbstractOpenOfficeConnection(String pConnectionString) {
-        mConnectionString = pConnectionString;
+    protected AbstractOpenOfficeConnection(String connectionString) {
+        mConnectionString = connectionString;
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
     }
 
     @Override
-    public void disposing(EventObject pEvent) {
+    public void disposing(EventObject event) {
         mConnected = false;
         if (!mExpectingDisconnection) {
             throw new OpenOfficeException("disconnected unexpectedly");
@@ -103,14 +103,14 @@ public abstract class AbstractOpenOfficeConnection implements OpenOfficeConnecti
         mBridgeComponent.dispose();
     }
 
-    private Object getService(String pClassName) {
+    private Object getService(String className) {
         try {
             if (!mConnected) {
                 connect();
             }
-            return mServiceManager.createInstanceWithContext(pClassName, mComponentContext);
+            return mServiceManager.createInstanceWithContext(className, mComponentContext);
         } catch (Exception exception) {
-            throw new OpenOfficeException("could not obtain service: " + pClassName, exception);
+            throw new OpenOfficeException("could not obtain service: " + className, exception);
         }
     }
 

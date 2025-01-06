@@ -56,7 +56,7 @@ public class UnoidlEditor extends OOTextEditor {
      */
     private IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
         @Override
-        public void propertyChange(PropertyChangeEvent pEvent) {
+        public void propertyChange(PropertyChangeEvent event) {
             getSourceViewer().invalidateTextPresentation();
 
         }

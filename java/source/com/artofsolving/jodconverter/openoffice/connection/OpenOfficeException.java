@@ -55,11 +55,11 @@ public class OpenOfficeException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public OpenOfficeException(String pMessage) {
-        super(pMessage);
+    public OpenOfficeException(String message) {
+        super(message);
     }
 
-    public OpenOfficeException(String pMessage, Throwable pCause) {
-        super(pMessage, pCause);
+    public OpenOfficeException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

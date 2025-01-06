@@ -130,18 +130,18 @@ public class InternalUnoType {
     /**
      * Constructor.
      *
-     * @param pCompleteName
+     * @param completeName
      *            the type complete name separated with "."
-     * @param pType
+     * @param type
      *            the UNO type's type
-     * @param pIsLocal
+     * @param isLocal
      *            <code>true</code> if the type is defined in the project, <code>false</code> if it's defined in an
      *            external <code>types.rdb</code>.
      */
-    public InternalUnoType(String pCompleteName, int pType, boolean pIsLocal) {
-        mLocal = pIsLocal;
-        setType(pType);
-        mPath = pCompleteName;
+    public InternalUnoType(String completeName, int type, boolean isLocal) {
+        mLocal = isLocal;
+        setType(type);
+        mPath = completeName;
     }
 
     /**

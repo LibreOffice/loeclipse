@@ -52,13 +52,13 @@ public interface IOOo {
     /**
      * Set the home directory.
      *
-     * @param pHome
+     * @param home
      *            the absolute path to the home directory
      * @throws InvalidConfigException
      *             is thrown if the path doesn't match the implementation requirement for a LibreOffice instance. The
      *             error code will be {@link InvalidConfigException#INVALID_OOO_HOME}
      */
-    public void setHome(String pHome) throws InvalidConfigException;
+    public void setHome(String home) throws InvalidConfigException;
 
     /**
      * Returns the path to the LibreOffice home directory. This string could be passed to the Path constructor to get
@@ -138,51 +138,51 @@ public interface IOOo {
     /**
      * Returns a command to execute a <code>uno</code> component.
      *
-     * @param pImplementationName
+     * @param implementationName
      *            the name of the component implementation to run
-     * @param pLibLocation
+     * @param libLocation
      *            the name of the library containing the implementation
-     * @param pRegistriesPaths
+     * @param registriesPaths
      *            the path to the additional registries
-     * @param pArgs
+     * @param args
      *            the argument for the component launch
      *
      * @return the command to execute the <code>uno</code> binary
      */
-    public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPaths,
-        String[] pArgs);
+    public String createUnoCommand(String implementationName, String libLocation, String[] registriesPaths,
+        String[] args);
 
     /**
      * Run the <code>uno</code> executable with the given Main implementation, the arguments and the launcher.
      *
-     * @param pPrj
+     * @param prj
      *            the project to run
-     * @param pMain
+     * @param main
      *            the main implementation
-     * @param pArgs
+     * @param args
      *            the argument to pass to the main implementation
-     * @param pLaunch
+     * @param launch
      *            the launcher
-     * @param pMonitor
+     * @param monitor
      *            a monitor to follow the progress
      */
-    public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, ILaunch pLaunch, IProgressMonitor pMonitor);
+    public void runUno(IUnoidlProject prj, String main, String args, ILaunch launch, IProgressMonitor monitor);
 
     /**
      *
-     * @param pPrj
+     * @param prj
      *            the project to run
-     * @param pLaunch
+     * @param launch
      *            the launcher to which we'll add our processes
-     * @param pUserInstallation
+     * @param userInstallation
      *            the userInstallation folder to use. If null we'll go with the default system one.
-     * @param pExtraOptionsProvider
+     * @param extraOptionsProvider
      *            provider for extra env variables to be set before launching.
-     * @param pMonitor
+     * @param monitor
      *            a monitor to follow the progress
      */
-    public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-        IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor);
+    public void runOffice(IUnoidlProject prj, ILaunch launch, IPath userInstallation,
+        IExtraOptionsProvider extraOptionsProvider, IProgressMonitor monitor);
 
     /**
      * @return <code>true</code> if the LibreOffice instance has a package manager.
@@ -192,10 +192,10 @@ public interface IOOo {
     /**
      * Update a package in the LibreOffice instance if it can manages packages.
      *
-     * @param pPackageFile
+     * @param packageFile
      *            the package to add or update
-     * @param pUserInstallation
+     * @param userInstallation
      *            path to the user profile folder.
      */
-    public void updatePackage(File pPackageFile, IPath pUserInstallation);
+    public void updatePackage(File packageFile, IPath userInstallation);
 }

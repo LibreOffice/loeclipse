@@ -56,11 +56,11 @@ public class IdlcBuildVisitor implements IResourceVisitor {
     /**
      * Default constructor.
      *
-     * @param pMonitor
+     * @param monitor
      *            progress monitor
      */
-    public IdlcBuildVisitor(IProgressMonitor pMonitor) {
-        mProgressMonitor = pMonitor;
+    public IdlcBuildVisitor(IProgressMonitor monitor) {
+        mProgressMonitor = monitor;
     }
 
     /**

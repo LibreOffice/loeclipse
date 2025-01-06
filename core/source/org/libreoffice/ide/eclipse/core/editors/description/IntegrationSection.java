@@ -99,18 +99,18 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
     private Text mPlatformTxt;
 
     /**
-     * @param pParent
+     * @param parent
      *            the parent composite where to add the section
-     * @param pPage
+     * @param page
      *            the parent page
      */
-    public IntegrationSection(Composite pParent, DescriptionFormPage pPage) {
-        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
-        mPage = pPage;
+    public IntegrationSection(Composite parent, DescriptionFormPage page) {
+        super(parent, page, ExpandableComposite.TITLE_BAR);
+        mPage = page;
 
         createContent();
 
-        setModel(pPage.getModel());
+        setModel(page.getModel());
     }
 
     /**
@@ -152,7 +152,7 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
         mMinOOoTxt.setLayoutData(gd);
         mMinOOoTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setMinOOo(mMinOOoTxt.getText());
                 markDirty();
             }
@@ -166,7 +166,7 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
         mMaxOOoTxt.setLayoutData(gd);
         mMaxOOoTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setMaxOOo(mMaxOOoTxt.getText());
                 markDirty();
             }
@@ -178,7 +178,7 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
         mPlatformTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mPlatformTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setPlatforms(mPlatformTxt.getText());
                 markDirty();
             }
@@ -189,7 +189,7 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
         platformBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 PlatformDialog dlg = new PlatformDialog();
                 if (dlg.open() == Window.OK) {
                     mPlatformTxt.setText(dlg.getSelected());
@@ -254,7 +254,7 @@ public class IntegrationSection extends AbstractSection<DescriptionModel> {
             mList.addCheckStateListener(new ICheckStateListener() {
 
                 @Override
-                public void checkStateChanged(CheckStateChangedEvent pEvent) {
+                public void checkStateChanged(CheckStateChangedEvent event) {
                     Object[] values = mList.getCheckedElements();
 
                     mSelected.clear();

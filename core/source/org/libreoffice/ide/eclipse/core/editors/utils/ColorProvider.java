@@ -57,7 +57,7 @@ public class ColorProvider {
 
     private final IPropertyChangeListener mPropertyListener = new IPropertyChangeListener() {
         @Override
-        public void propertyChange(PropertyChangeEvent pEvent) {
+        public void propertyChange(PropertyChangeEvent event) {
             mColorTable.clear();
         }
     };
@@ -84,16 +84,16 @@ public class ColorProvider {
     /**
      * Returns the color corresponding to the given name.
      *
-     * @param pColorString
+     * @param colorString
      *            name of the color to get
      * @return the color from the preferences or the eclipse default color
      */
-    public Color getColor(String pColorString) {
+    public Color getColor(String colorString) {
 
-        Color color = mColorTable.get(pColorString);
+        Color color = mColorTable.get(colorString);
         if (color == null) {
-            color = new Color(Display.getCurrent(), PreferenceConverter.getColor(mStore, pColorString));
-            mColorTable.put(pColorString, color);
+            color = new Color(Display.getCurrent(), PreferenceConverter.getColor(mStore, colorString));
+            mColorTable.put(colorString, color);
         }
         return color;
     }

@@ -94,11 +94,11 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
      * This is used by other wizards like the new URE application wizard.
      * </p>
      *
-     * @param pIfaceName
+     * @param ifaceName
      *            the inheritance interface to force, separated with "::"
      */
-    protected void setDisableServicePage(String pIfaceName) {
-        mServiceIfaceName = pIfaceName;
+    protected void setDisableServicePage(String ifaceName) {
+        mServiceIfaceName = ifaceName;
     }
 
     /**
@@ -125,13 +125,13 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     /**
      * Set the language page to use for the project.
      *
-     * @param pPage
+     * @param page
      *            the language page to use.
      */
-    public void setLanguagePage(LanguageWizardPage pPage) {
-        if (pPage != null) {
-            if (mLanguagePage == null || !mLanguagePage.getClass().equals(pPage.getClass())) {
-                mLanguagePage = pPage;
+    public void setLanguagePage(LanguageWizardPage page) {
+        if (page != null) {
+            if (mLanguagePage == null || !mLanguagePage.getClass().equals(page.getClass())) {
+                mLanguagePage = page;
                 addPage(mLanguagePage);
             }
         } else {
@@ -145,12 +145,12 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     /**
      * This method should be called by included pages to notify any change that could have an impact on other pages.
      *
-     * @param pPage
+     * @param page
      *            the page which has changed.
      */
-    public void pageChanged(IWizardPage pPage) {
+    public void pageChanged(IWizardPage page) {
 
-        if (mMainPage.equals(pPage)) {
+        if (mMainPage.equals(page)) {
 
             // change the language page if possible
             updateLoanguagePage();
@@ -216,23 +216,23 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
      * {@inheritDoc}
      */
     @Override
-    public IWizardPage getNextPage(IWizardPage pPage) {
+    public IWizardPage getNextPage(IWizardPage page) {
         IWizardPage next = null;
         try {
-            next = mServiceSet.getNextPage(pPage);
+            next = mServiceSet.getNextPage(page);
         } catch (NoSuchPageException e) {
             // Return the default next page if the page is not in the wizard set.
-            next = super.getNextPage(pPage);
+            next = super.getNextPage(page);
 
             try {
-                if (mMainPage.equals(pPage)) {
+                if (mMainPage.equals(page)) {
                     if (mLanguagePage != null) {
                         next = mLanguagePage;
                     } else {
                         // Could be null
                         next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
                     }
-                } else if (mLanguagePage != null && mLanguagePage.equals(pPage)) {
+                } else if (mLanguagePage != null && mLanguagePage.equals(page)) {
                     next = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
                 }
             } catch (Exception ee) {
@@ -247,20 +247,20 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
      * {@inheritDoc}
      */
     @Override
-    public IWizardPage getPreviousPage(IWizardPage pPage) {
+    public IWizardPage getPreviousPage(IWizardPage page) {
         IWizardPage previous = null;
         try {
-            previous = mServiceSet.getPreviousPage(pPage);
+            previous = mServiceSet.getPreviousPage(page);
         } catch (NoSuchPageException e) {
             // Return the default previous page if the page is not in the
             // wizard set.
-            previous = super.getPreviousPage(pPage);
+            previous = super.getPreviousPage(page);
         }
 
         // If the page is the service page, the previous page shouldn't be null
         if (mServiceSet != null) {
             IWizardPage servicePage = mServiceSet.getPage(ServiceWizardSet.SERVICE_PAGE_ID);
-            boolean isServicePage = previous == null && pPage.equals(servicePage);
+            boolean isServicePage = previous == null && page.equals(servicePage);
             if (isServicePage && mLanguagePage != null) {
                 previous = mLanguagePage;
             } else if (isServicePage && mLanguagePage == null) {
@@ -336,30 +336,30 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         /**
          * Constructor.
          *
-         * @param pData
+         * @param data
          *            the data describing the project to create.
          */
-        public ProjectCreationJob(UnoFactoryData pData) {
+        public ProjectCreationJob(UnoFactoryData data) {
             super(Messages.getString("NewUnoProjectWizard.JobName")); //$NON-NLS-1$
             setPriority(Job.INTERACTIVE);
-            mData = pData;
+            mData = data;
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        protected IStatus run(IProgressMonitor pMonitor) {
+        protected IStatus run(IProgressMonitor monitor) {
 
             IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
                 IStatus.OK, "", null); //$NON-NLS-1$
 
             // Create the projet folder structure
             try {
-                IUnoidlProject prj = UnoFactory.createProject(mData, pMonitor);
+                IUnoidlProject prj = UnoFactory.createProject(mData, monitor);
 
                 mServiceSet.mProject = prj;
-                mServiceSet.doFinish(pMonitor, mActivePage);
+                mServiceSet.doFinish(monitor, mActivePage);
 
                 UnoidlProjectHelper.setProjectBuilders(prj);
 

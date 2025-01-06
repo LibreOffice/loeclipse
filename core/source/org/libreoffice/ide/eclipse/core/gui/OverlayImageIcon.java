@@ -72,28 +72,28 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
     /**
      * Constructor.
      *
-     * @param pBaseImage
+     * @param baseImage
      *            the image to decorate
-     * @param pImage
+     * @param image
      *            the decorator image
-     * @param pLocation
+     * @param location
      *            the location of the decorator image on the base image.
      */
-    public OverlayImageIcon(Image pBaseImage, Image pImage, int pLocation) {
+    public OverlayImageIcon(Image baseImage, Image image, int location) {
         // Base image of the object
-        mBaseImage = pBaseImage;
+        mBaseImage = baseImage;
 
-        mImage = pImage;
-        mLocation = pLocation;
-        mSizeOfImage = new Point(pBaseImage.getBounds().width, pBaseImage.getBounds().height);
+        mImage = image;
+        mLocation = location;
+        mSizeOfImage = new Point(baseImage.getBounds().width, baseImage.getBounds().height);
     }
 
     /**
      * this method is called to draw the composite image.
      *
-     * @param pLower
+     * @param lower
      *            the first image to draw
-     * @param pUpper
+     * @param upper
      *            the top image to draw
      *
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
@@ -101,7 +101,7 @@ public class OverlayImageIcon extends CompositeImageDescriptor {
      *
      */
     @Override
-    protected void drawCompositeImage(int pLower, int pUpper) {
+    protected void drawCompositeImage(int lower, int upper) {
         // Draw the base image
         drawImage(createCachedImageDataProvider(mBaseImage), 0, 0);
 

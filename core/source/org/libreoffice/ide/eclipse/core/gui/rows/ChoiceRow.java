@@ -71,20 +71,20 @@ public class ChoiceRow extends LabeledRow {
      * Create a new choice row with a button on the right. The parent composite should have a grid layout with 3
      * horizontal spans.
      *
-     * @param pParent
+     * @param parent
      *            the parent composite where to create the row
-     * @param pProperty
+     * @param property
      *            the property name of the row
-     * @param pLabel
+     * @param label
      *            label the label to print on the left of the row
-     * @param pBrowse
+     * @param browse
      *            the label of the button
-     * @param pLink
+     * @param link
      *            <code>true</code> to show a link for the browse button
      */
-    public ChoiceRow(Composite pParent, String pProperty, String pLabel, String pBrowse, boolean pLink) {
+    public ChoiceRow(Composite parent, String property, String label, String browse, boolean link) {
 
-        super(pProperty);
+        super(property);
 
         // mField is always created
         int numFields = 1;
@@ -94,30 +94,30 @@ public class ChoiceRow extends LabeledRow {
         mSelected = -1;
 
         Label aLabel = null;
-        if (pLabel != null) {
-            aLabel = new Label(pParent, SWT.NONE);
-            aLabel.setText(pLabel);
+        if (label != null) {
+            aLabel = new Label(parent, SWT.NONE);
+            aLabel.setText(label);
             numFields++;
         }
 
-        Combo aField = new Combo(pParent, SWT.READ_ONLY);
+        Combo aField = new Combo(parent, SWT.READ_ONLY);
         aField.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 mSelected = ((Combo) mField).getSelectionIndex();
                 FieldEvent fe = new FieldEvent(mProperty, getValue());
                 fireFieldChangedEvent(fe);
             }
         });
 
-        createContent(pParent, aLabel, aField, pBrowse, pLink);
+        createContent(parent, aLabel, aField, browse, link);
 
         if (mBrowse != null) {
             numFields++;
         }
 
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = ((GridLayout) pParent.getLayout()).numColumns - numFields + 1;
+        gd.horizontalSpan = ((GridLayout) parent.getLayout()).numColumns - numFields + 1;
         aField.setLayoutData(gd);
     }
 
@@ -125,12 +125,12 @@ public class ChoiceRow extends LabeledRow {
      * Set the listener for the browse button action. There is only on listener, because there is generally no need for
      * more.
      *
-     * @param pListener
+     * @param listener
      *            the browse action listener
      */
-    public void setBrowseSelectionListener(SelectionListener pListener) {
+    public void setBrowseSelectionListener(SelectionListener listener) {
         if (null != mBrowse) {
-            addBrowseSelectionListener(pListener);
+            addBrowseSelectionListener(listener);
         }
     }
 
@@ -139,13 +139,13 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Adds all the strings contained in items at the end of the item list.
      *
-     * @param pItems
+     * @param items
      *            Array of items to appends to the existing ones.
      */
-    public void addAll(String[] pItems) {
-        for (int i = 0; i < pItems.length; i++) {
-            ((Combo) mField).add(pItems[i]);
-            mItems.add(pItems[i]);
+    public void addAll(String[] items) {
+        for (int i = 0; i < items.length; i++) {
+            ((Combo) mField).add(items[i]);
+            mItems.add(items[i]);
         }
     }
 
@@ -157,22 +157,22 @@ public class ChoiceRow extends LabeledRow {
      * the box, nothing will be done.
      * </p>
      *
-     * @param pText
+     * @param text
      *            the translated item text
-     * @param pValue
+     * @param value
      *            the item value
-     * @param pIndex
+     * @param index
      *            the item index
      */
-    public void add(String pText, String pValue, int pIndex) {
-        if (!mTranslations.containsKey(pText)) {
-            mTranslations.put(pText, pValue);
-            if (pIndex >= 0) {
-                ((Combo) mField).add(pText, pIndex);
-                mItems.add(pIndex, pText);
+    public void add(String text, String value, int index) {
+        if (!mTranslations.containsKey(text)) {
+            mTranslations.put(text, value);
+            if (index >= 0) {
+                ((Combo) mField).add(text, index);
+                mItems.add(index, text);
             } else {
-                ((Combo) mField).add(pText);
-                mItems.add(pText);
+                ((Combo) mField).add(text);
+                mItems.add(text);
             }
         }
     }
@@ -194,25 +194,25 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Adds the provided item at the provided position.
      *
-     * @param pItem
+     * @param item
      *            text of the item to add
-     * @param pIndex
+     * @param index
      *            position where to add the item in the list
      * @see #add(java.lang.String, java.lang.String, int)
      */
-    public void add(String pItem, int pIndex) {
-        add(pItem, pItem, pIndex);
+    public void add(String item, int index) {
+        add(item, item, index);
     }
 
     /**
      * Append the item at the end of the item list.
      *
-     * @param pItem
+     * @param item
      *            text of the item to append
      * @see #add(java.lang.String, java.lang.String, int)
      */
-    public void add(String pItem) {
-        add(pItem, pItem, -1);
+    public void add(String item) {
+        add(item, item, -1);
     }
 
     /**
@@ -231,26 +231,26 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Remove the item at the position corresponding to index.
      *
-     * @param pIndex
+     * @param index
      *            position of the item to remove
      * @see Combo#remove(int)
      */
-    public void remove(int pIndex) {
-        remove(getItem(pIndex));
+    public void remove(int index) {
+        remove(getItem(index));
     }
 
     /**
      * Removes all the items between start and end positions.
      *
-     * @param pStart
+     * @param start
      *            position of the first item to remove
-     * @param pEnd
+     * @param end
      *            position of the last item to remove
      *
      * @see Combo#remove(int, int)
      */
-    public void remove(int pStart, int pEnd) {
-        for (int i = pStart; i < pEnd; i++) {
+    public void remove(int start, int end) {
+        for (int i = start; i < end; i++) {
             remove(i);
         }
     }
@@ -269,13 +269,13 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Select the item at the position corresponding to index.
      *
-     * @param pIndex
+     * @param index
      *            position of the item to select
      * @see Combo#select(int)
      */
-    public void select(int pIndex) {
-        ((Combo) mField).select(pIndex);
-        mSelected = pIndex;
+    public void select(int index) {
+        ((Combo) mField).select(index);
+        mSelected = index;
 
         // Fire a modification event to the listener
         FieldEvent fe = new FieldEvent(this.mProperty, getValue());
@@ -307,7 +307,7 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Returns the index the item of the choice.
      *
-     * @param pIndex
+     * @param index
      *            position of the item to fetch
      * @return the index the item of the choice
      *
@@ -317,8 +317,8 @@ public class ChoiceRow extends LabeledRow {
      *             value.
      */
     @Deprecated
-    public String getItem(int pIndex) {
-        return mItems.get(pIndex);
+    public String getItem(int index) {
+        return mItems.get(index);
     }
 
     /**
@@ -350,15 +350,15 @@ public class ChoiceRow extends LabeledRow {
     /**
      * Returns the value of the i-th item.
      *
-     * @param pIndex
+     * @param index
      *            the index of the value to get
      * @return the language independent value of the item
      */
-    public String getValue(int pIndex) {
+    public String getValue(int index) {
         String result = null;
 
-        if (pIndex >= 0 && pIndex < getItemCount()) {
-            String text = mItems.get(pIndex);
+        if (index >= 0 && index < getItemCount()) {
+            String text = mItems.get(index);
             result = text;
 
             String value = mTranslations.get(text);

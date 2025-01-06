@@ -75,7 +75,7 @@ public class PythonProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void addOOoDependencies(IOOo pOoo, IProject pProject) {
+    public void addOOoDependencies(IOOo ooo, IProject project) {
         // Nothing to do for Python
     }
 
@@ -83,19 +83,19 @@ public class PythonProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void addProjectNature(IProject pProject) {
+    public void addProjectNature(IProject project) {
         try {
-            if (!pProject.exists()) {
-                pProject.create(null);
+            if (!project.exists()) {
+                project.create(null);
                 PluginLogger.debug("Project created during language specific operation"); //$NON-NLS-1$
             }
 
-            if (!pProject.isOpen()) {
-                pProject.open(null);
+            if (!project.isOpen()) {
+                project.open(null);
                 PluginLogger.debug("Project opened"); //$NON-NLS-1$
             }
 
-            IProjectDescription description = pProject.getDescription();
+            IProjectDescription description = project.getDescription();
             String[] natureIds = description.getNatureIds();
             String[] newNatureIds = new String[natureIds.length + 1];
             System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
@@ -120,7 +120,7 @@ public class PythonProjectHandler implements IProjectHandler {
             }
 
             description.setNatureIds(newNatureIds);
-            pProject.setDescription(description, null);
+            project.setDescription(description, null);
             PluginLogger.debug(Messages.getString("Language.PythonNatureBuilderSet")); //$NON-NLS-1$
 
         } catch (CoreException e) {
@@ -132,10 +132,10 @@ public class PythonProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void configureProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
+    public void configureProject(UnoFactoryData data, IProgressMonitor monitor) throws Exception {
 
         // Get the project from data
-        IProject prj = (IProject) pData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
+        IProject prj = (IProject) data.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
         // Check if the source folder exists or not
@@ -146,7 +146,7 @@ public class PythonProjectHandler implements IProjectHandler {
 
         // Copy the Starting Python Source File under the source folder
         IFolder sourceFolder = prj.getFolder(sourcesDir);
-        sourceFolder.create(true, true, pMonitor);
+        sourceFolder.create(true, true, monitor);
         IPath sourcePath = sourceFolder.getProjectRelativePath();
         Object[] args = { prj.getName() };
         // false denotes that the source .tpl filename and the destination filename are not same
@@ -171,7 +171,7 @@ public class PythonProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
+    public String getImplementationName(IUnoidlProject prj, String service) throws Exception {
         return null;
     }
 
@@ -179,16 +179,16 @@ public class PythonProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public IPath getImplementationFile(String pImplementationName) {
+    public IPath getImplementationFile(String implementationName) {
 
-        return new Path(pImplementationName.replace(".", "/") + ".py"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return new Path(implementationName.replace(".", "/") + ".py"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getSkeletonMakerLanguage(UnoFactoryData pData) throws Exception {
+    public String getSkeletonMakerLanguage(UnoFactoryData data) throws Exception {
         return null;
     }
 
@@ -196,19 +196,19 @@ public class PythonProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void removeOOoDependencies(IOOo pOoo, IProject pProject) {
+    public void removeOOoDependencies(IOOo ooo, IProject project) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getLibraryPath(IUnoidlProject pProject) {
+    public String getLibraryPath(IUnoidlProject project) {
         return "";
     }
 
     @Override
-    public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
+    public IFolder[] getBinFolders(IUnoidlProject unoidlProject) {
         return new IFolder[0];
     }
 

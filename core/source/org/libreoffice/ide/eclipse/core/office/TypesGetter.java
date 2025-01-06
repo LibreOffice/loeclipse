@@ -61,11 +61,11 @@ public class TypesGetter {
     /**
      * Set the LibreOffice instance to use for the different operations.
      *
-     * @param pOOo
+     * @param ooo
      *            the LibreOffice instance to set.
      */
-    public void setOOo(IOOo pOOo) {
-        mOOo = pOOo;
+    public void setOOo(IOOo ooo) {
+        mOOo = ooo;
     }
 
     /**
@@ -76,26 +76,26 @@ public class TypesGetter {
     }
 
     /**
-     * @param pLocalRegs
+     * @param localRegs
      *            the local registries to search
      */
-    public void setLocalRegs(List<String> pLocalRegs) {
-        mLocalRegs = pLocalRegs;
+    public void setLocalRegs(List<String> localRegs) {
+        mLocalRegs = localRegs;
     }
 
     /**
      * Get the UNO types from an office instance.
      *
-     * @param pRoot
+     * @param root
      *            the root registry key where to look for the types. If the value is <code>null</code> the whole
      *            registry will be searched
-     * @param pMask
+     * @param mask
      *            the bit-ORed types to search. The types are defined in the {@link IUnoFactoryConstants} class.
      *
      * @return the list of types available in the office
      */
     @SuppressWarnings("unchecked")
-    public Map<String, List<InternalUnoType>> getTypes(String pRoot, int pMask) {
+    public Map<String, List<InternalUnoType>> getTypes(String root, int mask) {
         Map<String, List<InternalUnoType>> types = new HashMap<>();
 
         try {
@@ -127,7 +127,7 @@ public class TypesGetter {
 
             // Get the types
             Method method = clazz.getMethod("getTypes", String.class, Integer.class); //$NON-NLS-1$
-            Object result = method.invoke(getter, pRoot, Integer.valueOf(pMask));
+            Object result = method.invoke(getter, root, Integer.valueOf(mask));
 
             types = (Map<String, List<InternalUnoType>>) result;
 

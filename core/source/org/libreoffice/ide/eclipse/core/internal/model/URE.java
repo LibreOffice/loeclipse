@@ -51,43 +51,43 @@ public class URE extends AbstractOOo {
     /**
      * Creating a new URE instance specifying its home directory.
      *
-     * @param pHome
+     * @param home
      *            the URE home directory
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
-    public URE(String pHome) throws InvalidConfigException {
-        super(pHome);
+    public URE(String home) throws InvalidConfigException {
+        super(home);
         setName(null);
     }
 
     /**
      * Creating a new URE instance specifying its home directory and name.
      *
-     * @param pHome
+     * @param home
      *            the URE home directory
-     * @param pName
+     * @param name
      *            the URE name
      *
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
-    public URE(String pHome, String pName) throws InvalidConfigException {
-        super(pHome, pName);
+    public URE(String home, String name) throws InvalidConfigException {
+        super(home, name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setName(String pName) {
+    public void setName(String name) {
 
-        String name = pName;
-        if (name == null || name.equals("")) { //$NON-NLS-1$
-            name = "URE"; //$NON-NLS-1$
+        String newName = name;
+        if (newName == null || newName.equals("")) { //$NON-NLS-1$
+            newName = "URE"; //$NON-NLS-1$
         }
 
-        super.setName(name);
+        super.setName(newName);
     }
 
     /**
@@ -211,27 +211,27 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public String createUnoCommand(String pImplementationName, String pLibLocation, String[] pRegistriesPath,
-        String[] pArgs) {
+    public String createUnoCommand(String implementationName, String libLocation, String[] registriesPath,
+        String[] args) {
 
         String command = ""; //$NON-NLS-1$
 
         // Put the args into one string
         String sArgs = ""; //$NON-NLS-1$
-        for (int i = 0; i < pArgs.length; i++) {
-            sArgs += pArgs[i];
+        for (int i = 0; i < args.length; i++) {
+            sArgs += args[i];
 
-            if (i < pArgs.length - 1) {
+            if (i < args.length - 1) {
                 sArgs += " "; //$NON-NLS-1$
             }
         }
 
         // Transform the registries into a string to give to UNO
         String additionnalRegistries = ""; //$NON-NLS-1$
-        for (int i = 0; i < pRegistriesPath.length; i++) {
-            additionnalRegistries += "-ro " + pRegistriesPath[i]; //$NON-NLS-1$
+        for (int i = 0; i < registriesPath.length; i++) {
+            additionnalRegistries += "-ro " + registriesPath[i]; //$NON-NLS-1$
 
-            if (i < pRegistriesPath.length - 1) {
+            if (i < registriesPath.length - 1) {
                 additionnalRegistries += " "; //$NON-NLS-1$
             }
         }
@@ -258,8 +258,8 @@ public class URE extends AbstractOOo {
             unoPath = "\"" + unoPath + "\""; // escape spaces in windows names //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        command = unoPath + " -c " + pImplementationName + //$NON-NLS-1$
-            " -l " + pLibLocation + //$NON-NLS-1$
+        command = unoPath + " -c " + implementationName + //$NON-NLS-1$
+            " -l " + libLocation + //$NON-NLS-1$
             typesArg + " -ro file:///" + serviceArgs + //$NON-NLS-1$
             " " + additionnalRegistries + //$NON-NLS-1$
             " -- " + sArgs; //$NON-NLS-1$
@@ -287,6 +287,6 @@ public class URE extends AbstractOOo {
      * {@inheritDoc}
      */
     @Override
-    public void updatePackage(File pPackageFile, IPath pUserInstallation) {
+    public void updatePackage(File packageFile, IPath userInstallation) {
     }
 }

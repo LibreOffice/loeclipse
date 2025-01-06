@@ -57,14 +57,14 @@ public class Messages {
     /**
      * Get the string from it's key.
      *
-     * @param pKey the key of the string
+     * @param key the key of the string
      *
      * @return the internationalized string
      */
-    public static String getString(String pKey) {
-        String string = '!' + pKey + '!';
+    public static String getString(String key) {
+        String string = '!' + key + '!';
         try {
-            string = RESOURCE_BUNDLE.getString(pKey);
+            string = RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
         }
         return string;

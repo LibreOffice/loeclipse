@@ -46,8 +46,8 @@ public interface IPageListener {
     /**
      * Event raised when one of the listened page has changed.
      *
-     * @param pData
+     * @param data
      *            the new data of the page.
      */
-    public void pageChanged(UnoFactoryData pData);
+    public void pageChanged(UnoFactoryData data);
 }

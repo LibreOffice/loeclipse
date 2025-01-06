@@ -32,13 +32,13 @@ public class XMLWriter extends PrintWriter {
     /**
      * Creates a new writer using the given output stream to write the data.
      *
-     * @param pOutput
+     * @param output
      *            where to write the XML
      * @throws UnsupportedEncodingException
      *             if the UTF8 charset isn't supported (would be strange)
      */
-    public XMLWriter(OutputStream pOutput) throws UnsupportedEncodingException {
-        super(new OutputStreamWriter(pOutput, "UTF8")); //$NON-NLS-1$
+    public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
+        super(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
         mTab = 0;
         println(XML_VERSION);
     }
@@ -46,40 +46,40 @@ public class XMLWriter extends PrintWriter {
     /**
      * Write the end of an XML tag.
      *
-     * @param pName
+     * @param name
      *            the name of the tag
      */
-    public void endTag(String pName) {
+    public void endTag(String name) {
         mTab--;
-        printTag('/' + pName, null);
+        printTag('/' + name, null);
     }
 
     /**
      * Write the end of an XML tag.
      *
-     * @param pName
+     * @param name
      *            the name of the tag
-     * @param pIndentation
+     * @param indentation
      *            whether to print the indentation or not
      */
-    public void endTag(String pName, boolean pIndentation) {
+    public void endTag(String name, boolean indentation) {
         mTab--;
-        printTag('/' + pName, null, pIndentation, true, false);
+        printTag('/' + name, null, indentation, true, false);
     }
 
     /**
      * Write a simple XML tag, on the form &lt;name&gt;value&lt;/name&gt;.
      *
-     * @param pName
+     * @param name
      *            the name of the tag
-     * @param pValue
+     * @param value
      *            the value
      */
-    public void printSimpleTag(String pName, Object pValue) {
-        if (pValue != null) {
-            printTag(pName, null, true, false, false);
-            print(getEscaped(String.valueOf(pValue)));
-            printTag('/' + pName, null, false, true, false);
+    public void printSimpleTag(String name, Object value) {
+        if (value != null) {
+            printTag(name, null, true, false, false);
+            print(getEscaped(String.valueOf(value)));
+            printTag('/' + name, null, false, true, false);
         }
     }
 
@@ -95,73 +95,73 @@ public class XMLWriter extends PrintWriter {
     /**
      * Print an XML Tag in the form &lt;name .../&gt;.
      *
-     * @param pName
+     * @param name
      *            the tag name
-     * @param pParameters
+     * @param parameters
      *            the tag attributes
      *
      * @see #startTag(String, Map)
      * @see #startTag(String, Map, boolean)
      */
-    public void printSingleTag(String pName, Map<String, ? extends Object> pParameters) {
-        printTag(pName, pParameters, true, true, true);
+    public void printSingleTag(String name, Map<String, ? extends Object> parameters) {
+        printTag(name, parameters, true, true, true);
     }
 
     /**
      * Print an XML Tag.
      *
-     * @param pName
+     * @param name
      *            the tag name
-     * @param pParameters
+     * @param parameters
      *            the tag attributes
      *
      * @see #startTag(String, Map)
      * @see #startTag(String, Map, boolean)
      */
-    public void printTag(String pName, Map<String, ? extends Object> pParameters) {
-        printTag(pName, pParameters, true, true, false);
+    public void printTag(String name, Map<String, ? extends Object> parameters) {
+        printTag(name, parameters, true, true, false);
     }
 
     /**
      * Print an XML tag.
      *
-     * @param pName
+     * @param name
      *            the tag name
-     * @param pParameters
+     * @param parameters
      *            the tag attributes
-     * @param pShouldTab
+     * @param shouldTab
      *            whether to add a tab or not before the tag
-     * @param pNewLine
+     * @param newLine
      *            whether to add a new line or not after the tag
-     * @param pSingleTag
+     * @param singleTag
      *            writes a tag in the form &lt;name /&gt;
      *
      * @see #startTag(String, Map)
      * @see #startTag(String, Map, boolean)
      */
-    public void printTag(String pName, Map<String, ? extends Object> pParameters, boolean pShouldTab,
-        boolean pNewLine, boolean pSingleTag) {
+    public void printTag(String name, Map<String, ? extends Object> parameters, boolean shouldTab,
+        boolean newLine, boolean singleTag) {
         StringBuffer sb = new StringBuffer();
         sb.append("<"); //$NON-NLS-1$
-        sb.append(pName);
-        if (pParameters != null) {
-            for (Iterator<String> it = pParameters.keySet().iterator(); it.hasNext();) {
+        sb.append(name);
+        if (parameters != null) {
+            for (Iterator<String> it = parameters.keySet().iterator(); it.hasNext();) {
                 sb.append(" "); //$NON-NLS-1$
                 String key = it.next();
                 sb.append(key);
                 sb.append("=\""); //$NON-NLS-1$
-                sb.append(getEscaped(String.valueOf(pParameters.get(key))));
+                sb.append(getEscaped(String.valueOf(parameters.get(key))));
                 sb.append("\""); //$NON-NLS-1$
             }
         }
-        if (pSingleTag) {
+        if (singleTag) {
             sb.append("/"); //$NON-NLS-1$
         }
         sb.append(">"); //$NON-NLS-1$
-        if (pShouldTab) {
+        if (shouldTab) {
             printTabulation();
         }
-        if (pNewLine) {
+        if (newLine) {
             println(sb.toString());
         } else {
             print(sb.toString());
@@ -171,46 +171,46 @@ public class XMLWriter extends PrintWriter {
     /**
      * Write the start of an XML element.
      *
-     * @param pName
+     * @param name
      *            the name of the element
-     * @param pParameters
+     * @param parameters
      *            the attributes of the element
      */
-    public void startTag(String pName, Map<String, ? extends Object> pParameters) {
-        startTag(pName, pParameters, true);
+    public void startTag(String name, Map<String, ? extends Object> parameters) {
+        startTag(name, parameters, true);
     }
 
     /**
      * Write the start of an XML element.
      *
-     * @param pName
+     * @param name
      *            the name of the element
-     * @param pParameters
+     * @param parameters
      *            the attributes of the element
-     * @param pNewLine
+     * @param newLine
      *            whether to add a line after the tag or not.
      */
-    public void startTag(String pName, Map<String, ? extends Object> pParameters, boolean pNewLine) {
-        printTag(pName, pParameters, true, pNewLine, false);
+    public void startTag(String name, Map<String, ? extends Object> parameters, boolean newLine) {
+        printTag(name, parameters, true, newLine, false);
         mTab++;
     }
 
     /**
      * Safely add a character to the buffer, replaces it by the corresponding XML entity if needed.
      *
-     * @param pBuffer
+     * @param buffer
      *            where to write the character
-     * @param pC
+     * @param c
      *            the character to add
      */
-    private static void appendEscapedChar(StringBuffer pBuffer, char pC) {
-        String replacement = getReplacement(pC);
+    private static void appendEscapedChar(StringBuffer buffer, char c) {
+        String replacement = getReplacement(c);
         if (replacement != null) {
-            pBuffer.append('&');
-            pBuffer.append(replacement);
-            pBuffer.append(';');
+            buffer.append('&');
+            buffer.append(replacement);
+            buffer.append(';');
         } else {
-            pBuffer.append(pC);
+            buffer.append(c);
         }
     }
 
@@ -233,15 +233,15 @@ public class XMLWriter extends PrintWriter {
     /**
      * Get the XML entity name for a character, or <code>null</code> if there is no replacement for this character.
      *
-     * @param pC
+     * @param c
      *            the character for which to get an XML entity
      * @return the XML entity name
      */
-    private static String getReplacement(char pC) {
+    private static String getReplacement(char c) {
         // Encode special XML characters into the equivalent character references.
         // These five are defined by default for all XML documents.
         String result = null;
-        switch (pC) {
+        switch (c) {
             case '<':
                 result = "lt"; //$NON-NLS-1$
             case '>':

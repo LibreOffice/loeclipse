@@ -81,24 +81,24 @@ public class SDKContainer {
     /**
      * Add a SDK listener to the container.
      *
-     * @param pListener
+     * @param listener
      *            SDK listener to add
      */
-    public static void addListener(IConfigListener pListener) {
-        if (null != pListener) {
-            sInstance.mListeners.add(pListener);
+    public static void addListener(IConfigListener listener) {
+        if (null != listener) {
+            sInstance.mListeners.add(listener);
         }
     }
 
     /**
      * Removes a SDK listener from the container.
      *
-     * @param pListener
+     * @param listener
      *            SDK listener to remove
      */
-    public static void removeListener(IConfigListener pListener) {
-        if (null != pListener) {
-            sInstance.mListeners.remove(pListener);
+    public static void removeListener(IConfigListener listener) {
+        if (null != listener) {
+            sInstance.mListeners.remove(listener);
         }
     }
 
@@ -189,12 +189,12 @@ public class SDKContainer {
     /**
      * Checks whether the corresponding SDK name already exists.
      *
-     * @param pName
+     * @param name
      *            the SDK Name to check
      * @return <code>true</code> if the name is already present, <code>false</code> otherwise.
      */
-    public static boolean containsName(String pName) {
-        return sInstance.mElements.containsKey(pName);
+    public static boolean containsName(String name) {
+        return sInstance.mElements.containsKey(name);
     }
 
     /**

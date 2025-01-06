@@ -45,8 +45,8 @@ public class NullExtraOptionsProvider implements IExtraOptionsProvider {
      * {@inheritDoc}
      */
     @Override
-    public String[] addEnv(String[] pEnv) {
-        return pEnv;
+    public String[] addEnv(String[] env) {
+        return env;
     }
 
 }

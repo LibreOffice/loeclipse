@@ -67,7 +67,7 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void setActivePart(IAction pAction, IWorkbenchPart pTargetPart) {
+    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
         // No need of the target part
     }
 
@@ -75,7 +75,7 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void run(IAction pAction) {
+    public void run(IAction action) {
         PackagePropertiesModel propsModel = new PackagePropertiesModel(mPackageFile);
 
         String prjName = mPackageFile.getProject().getName();
@@ -115,23 +115,23 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
         }
     }
 
-    private void setManifestModel(PackagePropertiesModel pPropsModel, File pPrjFile, ManifestModel pManifestModel) {
+    private void setManifestModel(PackagePropertiesModel propsModel, File prjFile, ManifestModel manifestModel) {
  
-        for (IFolder lib : pPropsModel.getBasicLibraries()) {
-            pManifestModel.addBasicLibrary(lib.getProjectRelativePath().toString());
+        for (IFolder lib : propsModel.getBasicLibraries()) {
+            manifestModel.addBasicLibrary(lib.getProjectRelativePath().toString());
         }
-        for (IFolder lib : pPropsModel.getDialogLibraries()) {
-            pManifestModel.addDialogLibrary(lib.getProjectRelativePath().toString());
+        for (IFolder lib : propsModel.getDialogLibraries()) {
+            manifestModel.addDialogLibrary(lib.getProjectRelativePath().toString());
         }
-        for (IResource content : pPropsModel.getContents()) {
+        for (IResource content : propsModel.getContents()) {
             File contentFile = SystemHelper.getFile(content);
-            pManifestModel.addContent(UnoPackage.getPathRelativeToBase(contentFile, pPrjFile), contentFile);
+            manifestModel.addContent(UnoPackage.getPathRelativeToBase(contentFile, prjFile), contentFile);
         }
 
-        Iterator<Entry<Locale, IFile>> iter = pPropsModel.getDescriptionFiles().entrySet().iterator();
+        Iterator<Entry<Locale, IFile>> iter = propsModel.getDescriptionFiles().entrySet().iterator();
         while (iter.hasNext()) {
             Entry<Locale, IFile> entry = iter.next();
-            pManifestModel.addDescription(entry.getValue().getProjectRelativePath().toString(), entry.getKey());
+            manifestModel.addDescription(entry.getValue().getProjectRelativePath().toString(), entry.getKey());
         }
     }
 
@@ -139,9 +139,9 @@ public class ConvertToManifestAction implements IObjectActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void selectionChanged(IAction pAction, ISelection pSelection) {
-        if (!pSelection.isEmpty() && pSelection instanceof IStructuredSelection) {
-            IStructuredSelection sel = (IStructuredSelection) pSelection;
+    public void selectionChanged(IAction action, ISelection selection) {
+        if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+            IStructuredSelection sel = (IStructuredSelection) selection;
             Object o = sel.getFirstElement();
             if (o instanceof IFile) {
                 mPackageFile = (IFile) o;

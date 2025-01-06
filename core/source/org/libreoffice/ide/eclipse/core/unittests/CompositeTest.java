@@ -55,11 +55,11 @@ public class CompositeTest extends TestCase {
     /**
      * Constructor.
      *
-     * @param pName
+     * @param name
      *            the test case name
      */
-    public CompositeTest(String pName) {
-        super(pName);
+    public CompositeTest(String name) {
+        super(name);
     }
 
     /**

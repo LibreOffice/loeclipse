@@ -62,26 +62,26 @@ public class ManifestModel {
      *
      * @param pPath the path
      *
-     * @param pContent the file or folder to add
+     * @param content the file or folder to add
      */
-    public void addContent(String pPath, File pContent) {
-        if (pContent.isFile()) {
-            if (pContent.getName().endsWith(EXT_XCS)) {
+    public void addContent(String pPath, File content) {
+        if (content.isFile()) {
+            if (content.getName().endsWith(EXT_XCS)) {
                 addConfigurationSchemaFile(pPath);
-            } else if (pContent.getName().endsWith(EXT_XCU)) {
+            } else if (content.getName().endsWith(EXT_XCU)) {
                 addConfigurationDataFile(pPath);
-            } else if (pContent.getName().endsWith(EXT_RDB)) {
+            } else if (content.getName().endsWith(EXT_RDB)) {
                 addTypelibraryFile(pPath);
-            } else if (pContent.getName().equals("description.xml")) {
+            } else if (content.getName().equals("description.xml")) {
                 addDescription(pPath, Locale.getDefault());
             }
-        } else if (pContent.isDirectory()) {
+        } else if (content.isDirectory()) {
             // Recurse on the directory
-            for (File child : pContent.listFiles()) {
+            for (File child : content.listFiles()) {
                 addContent(pPath + "/" + child.getName(), child);
             }
         } else {
-            throw new IllegalArgumentException("pContent [" + pContent + "] does not exists");
+            throw new IllegalArgumentException("pContent [" + content + "] does not exists");
         }
     }
 
@@ -90,15 +90,15 @@ public class ManifestModel {
      * type of the file defines the language and should be given as defined in the OOo Developer's Guide, like Java,
      * native, Python.
      *
-     * @param pFile
+     * @param file
      *            the file to add to the package
-     * @param pType
+     * @param type
      *            the type of the file to add.
      *
      * @see #addComponentFile(File, String, String) for platform support
      */
-    public void addComponentFile(String pFile, String pType) {
-        addComponentFile(pFile, pType, null);
+    public void addComponentFile(String file, String type) {
+        addComponentFile(file, type, null);
     }
 
     /**
@@ -109,35 +109,35 @@ public class ManifestModel {
      * native, Python.
      * </p>
      *
-     * @param pFile
+     * @param file
      *            the file to add to the package
-     * @param pType
+     * @param type
      *            the type of the file to add.
-     * @param pPlatform
+     * @param platform
      *            optional parameter to use only with native type. Please refer to the OOo Developer's Guide for more
      *            information.
      */
-    public void addComponentFile(String pFile, String pType, String pPlatform) {
-        FileType type = new FileType(FileType.MIME_UNO_COMPONENT);
-        type.addParam(FileType.PARAM_TYPE, pType);
-        if (pPlatform != null && pType.equals("native")) {
-            type.addParam(FileType.PARAM_PLATFORM, pPlatform);
+    public void addComponentFile(String file, String type, String platform) {
+        FileType newType = new FileType(FileType.MIME_UNO_COMPONENT);
+        newType.addParam(FileType.PARAM_TYPE, type);
+        if (platform != null && type.equals("native")) {
+            newType.addParam(FileType.PARAM_PLATFORM, platform);
         }
 
-        addEntry(pFile, type);
+        addEntry(file, newType);
     }
 
     /**
      * Add a type library to the package.
      *
-     * @param pFile
+     * @param file
      *            the file to add
      */
-    public void addTypelibraryFile(String pFile) {
+    public void addTypelibraryFile(String file) {
         FileType type = new FileType(FileType.MIME_UNO_TYPES);
         type.addParam(FileType.PARAM_TYPE, "RDB");
 
-        addEntry(pFile, type);
+        addEntry(file, type);
     }
 
     /**
@@ -147,13 +147,13 @@ public class ManifestModel {
      * Even if this method may not be used, it is possible.
      * </p>
      *
-     * @param pDir
+     * @param dir
      *            the directory of the basic library.
      */
-    public void addBasicLibrary(String pDir) {
+    public void addBasicLibrary(String dir) {
         FileType type = new FileType(FileType.MIME_BASIC_LIB);
 
-        addEntry(pDir, type);
+        addEntry(dir, type);
     }
 
     /**
@@ -163,56 +163,56 @@ public class ManifestModel {
      * Even if this method may not be used, it is possible.
      * </p>
      *
-     * @param pDir
+     * @param dir
      *            the directory of the dialog library.
      */
-    public void addDialogLibrary(String pDir) {
+    public void addDialogLibrary(String dir) {
         FileType type = new FileType(FileType.MIME_DIALOG_LIB);
 
-        addEntry(pDir, type);
+        addEntry(dir, type);
     }
 
     /**
      * Add an xcu configuration to the package.
      *
-     * @param pFile
+     * @param file
      *            the xcu file to add
      */
-    public void addConfigurationDataFile(String pFile) {
-        if (new File(pFile).getName().endsWith(EXT_XCU)) {
+    public void addConfigurationDataFile(String file) {
+        if (new File(file).getName().endsWith(EXT_XCU)) {
             FileType type = new FileType(FileType.MIME_XCU);
 
-            addEntry(pFile, type);
+            addEntry(file, type);
         }
     }
 
     /**
      * Add an xcs configuration to the package.
      *
-     * @param pFile
+     * @param file
      *            the xcs file to add
      */
-    public void addConfigurationSchemaFile(String pFile) {
-        if (new File(pFile).getName().endsWith(EXT_XCS)) {
+    public void addConfigurationSchemaFile(String file) {
+        if (new File(file).getName().endsWith(EXT_XCS)) {
             FileType type = new FileType(FileType.MIME_XCS);
 
-            addEntry(pFile, type);
+            addEntry(file, type);
         }
     }
 
     /**
      * Add a localized description of the package.
      *
-     * @param pDescriptionFile
+     * @param descriptionFile
      *            the file containing the description for that locale
-     * @param pLocale
+     * @param locale
      *            the locale of the description. Can be <code>null</code>.
      */
-    public void addDescription(String pDescriptionFile, Locale pLocale) {
+    public void addDescription(String descriptionFile, Locale locale) {
         // write the description to a file
         String localeString = new String();
-        if (pLocale != null) {
-            localeString = pLocale.toString();
+        if (locale != null) {
+            localeString = locale.toString();
             localeString = localeString.replace("_", "-"); //$NON-NLS-2$
         }
 
@@ -222,7 +222,7 @@ public class ManifestModel {
             type.addParam(FileType.PARAM_LOCALE, localeString);
         }
 
-        addEntry(pDescriptionFile, type);
+        addEntry(descriptionFile, type);
     }
 
     /**
@@ -245,12 +245,12 @@ public class ManifestModel {
     /**
      * Output the manifest.xml file.
      *
-     * @param pOut
+     * @param out
      *            where to write the manifest.
      * @throws IOException
      *             if something happened when writing to the output stream
      */
-    public void write(OutputStream pOut) throws IOException {
+    public void write(OutputStream out) throws IOException {
         // Iterator<Entry<String, FileType>> iter = mEntries.entrySet().iterator();
         // String entryPattern = "\t<manifest:file-entry manifest:full-path=\"{0}\"" +
         // " manifest:media-type=\"{1}\"/>\n";
@@ -262,8 +262,8 @@ public class ManifestModel {
         // }
         // pOut.write("</manifest:manifest>\n".getBytes());
         // pOut.flush();
-        write(new OutputStreamWriter(pOut));
-        pOut.flush();
+        write(new OutputStreamWriter(out));
+        out.flush();
     }
 
     /**

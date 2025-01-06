@@ -64,24 +64,24 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
      * {@inheritDoc}
      */
     @Override
-    public boolean visit(IResourceDelta pDelta) throws CoreException {
+    public boolean visit(IResourceDelta delta) throws CoreException {
 
         boolean visitChildren = true;
 
-        if (!(pDelta.getResource() instanceof IWorkspaceRoot)) {
+        if (!(delta.getResource() instanceof IWorkspaceRoot)) {
 
-            IProject project = pDelta.getResource().getProject();
+            IProject project = delta.getResource().getProject();
             IUnoidlProject unoprj = ProjectsManager.getProject(project.getName());
             if (unoprj != null) {
                 // The resource is a UNO project or is contained in a UNO project
                 visitChildren = true;
 
                 // Check if the resource is a service implementation
-                if (pDelta.getKind() == IResourceDelta.ADDED) {
-                    addImplementation(pDelta, unoprj);
+                if (delta.getKind() == IResourceDelta.ADDED) {
+                    addImplementation(delta, unoprj);
 
-                } else if (pDelta.getKind() == IResourceDelta.REMOVED) {
-                    removeImplementation(pDelta, unoprj);
+                } else if (delta.getKind() == IResourceDelta.REMOVED) {
+                    removeImplementation(delta, unoprj);
                 }
             }
         }
@@ -92,14 +92,14 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     /**
      * Remove the delta resource from the implementations.
      *
-     * @param pDelta the delta to remove
+     * @param delta the delta to remove
      * @param pUnoprj the concerned UNO project
      */
-    private void removeImplementation(IResourceDelta pDelta,
+    private void removeImplementation(IResourceDelta delta,
         IUnoidlProject pUnoprj) {
-        IResource res = pDelta.getResource();
+        IResource res = delta.getResource();
         if (res.getName().endsWith(".java")) { //$NON-NLS-1$
-            String prjPath = pDelta.getProjectRelativePath().toString();
+            String prjPath = delta.getProjectRelativePath().toString();
             prjPath = prjPath.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
             prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -117,13 +117,13 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     /**
      * Add the delta resource to the implementations.
      *
-     * @param pDelta the delta resource to add.
-     * @param pUnoProject the concerned UNO project
+     * @param delta the delta resource to add.
+     * @param unoProject the concerned UNO project
      */
-    private void addImplementation(IResourceDelta pDelta, IUnoidlProject pUnoProject) {
-        String className = isJavaServiceImpl(pDelta.getResource());
+    private void addImplementation(IResourceDelta delta, IUnoidlProject unoProject) {
+        String className = isJavaServiceImpl(delta.getResource());
         if (className != null) {
-            RegistrationHelper.addImplementation(pUnoProject, className);
+            RegistrationHelper.addImplementation(unoProject, className);
         }
     }
 

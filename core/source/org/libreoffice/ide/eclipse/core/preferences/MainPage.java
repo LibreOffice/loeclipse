@@ -138,10 +138,10 @@ public class MainPage extends PreferencePage implements IWorkbenchPreferencePage
          * {@inheritDoc}
          */
         @Override
-        public void fieldChanged(FieldEvent pE) {
-            if (pE.getProperty().equals(LOGLEVEL)) {
+        public void fieldChanged(FieldEvent e) {
+            if (e.getProperty().equals(LOGLEVEL)) {
                 // set the new logger level
-                PluginLogger.setLevel(LogLevels.valueOf(pE.getValue()));
+                PluginLogger.setLevel(LogLevels.valueOf(e.getValue()));
             }
         }
     }

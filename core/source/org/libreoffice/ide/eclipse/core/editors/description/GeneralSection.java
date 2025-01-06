@@ -72,19 +72,19 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
     private Button mIconHCButton;
 
     /**
-     * @param pParent
+     * @param parent
      *            the parent composite where to add the section
-     * @param pPage
+     * @param page
      *            the parent page
-     * @param pProject
+     * @param project
      *            the project containing the description.xml file
      */
-    public GeneralSection(Composite pParent, DescriptionFormPage pPage, IProject pProject) {
-        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
+    public GeneralSection(Composite parent, DescriptionFormPage page, IProject project) {
+        super(parent, page, ExpandableComposite.TITLE_BAR);
         getSection().setText(Messages.getString("GeneralSection.Title")); //$NON-NLS-1$
 
-        mProject = pProject;
-        setModel(pPage.getModel());
+        mProject = project;
+        setModel(page.getModel());
     }
 
     /**
@@ -131,12 +131,12 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void addLocale(Locale pLocale) {
-        if (!getModel().getDisplayNames().containsKey(pLocale)) {
-            getModel().addDisplayName(pLocale, new String());
+    public void addLocale(Locale locale) {
+        if (!getModel().getDisplayNames().containsKey(locale)) {
+            getModel().addDisplayName(locale, new String());
         }
-        if (!getModel().getDescriptions().containsKey(pLocale)) {
-            getModel().addDescription(pLocale, new String());
+        if (!getModel().getDescriptions().containsKey(locale)) {
+            getModel().addDescription(locale, new String());
         }
         mNameTxt.setEnabled(true);
         mDescriptionTxt.setEnabled(true);
@@ -147,9 +147,9 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void deleteLocale(Locale pLocale) {
-        getModel().removeDisplayName(pLocale);
-        getModel().removeDescription(pLocale);
+    public void deleteLocale(Locale locale) {
+        getModel().removeDisplayName(locale);
+        getModel().removeDescription(locale);
         if (getModel().getDisplayNames().isEmpty()) {
             mNameTxt.setEnabled(false);
         }
@@ -164,16 +164,16 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
      * {@inheritDoc}
      */
     @Override
-    public void selectLocale(Locale pLocale) {
+    public void selectLocale(Locale locale) {
 
         if (mCurrentLocale != null) {
             getModel().addDisplayName(mCurrentLocale, mNameTxt.getText());
             getModel().addDescription(mCurrentLocale, mDescriptionTxt.getText());
         }
-        super.selectLocale(pLocale);
-        String name = getModel().getDisplayNames().get(pLocale);
+        super.selectLocale(locale);
+        String name = getModel().getDisplayNames().get(locale);
         mNameTxt.setText(name);
-        mDescriptionTxt.setText(getModel().getDescriptions().get(pLocale));
+        mDescriptionTxt.setText(getModel().getDescriptions().get(locale));
     }
 
     private void createNameControls(FormToolkit pToolkit, Composite pParent) {
@@ -185,7 +185,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mNameTxt.setEnabled(false);
         mNameTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().addDisplayName(mCurrentLocale, mNameTxt.getText());
             }
         });
@@ -199,7 +199,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mIdTxt.setLayoutData(gd);
         mIdTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setId(mIdTxt.getText());
             }
         });
@@ -213,7 +213,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mVersionTxt.setLayoutData(gd);
         mVersionTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setVersion(mVersionTxt.getText());
             }
         });
@@ -226,7 +226,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mDescriptionTxt.setEnabled(false);
         mDescriptionTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pEvent) {
+            public void modifyText(ModifyEvent event) {
                 getModel().addDescription(mCurrentLocale, mDescriptionTxt.getText());
             }
         });
@@ -235,7 +235,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mDescriptionBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         mDescriptionBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Open the folder selection dialog
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
                     Messages.getString("GeneralSection.FileChooserTooltip")); //$NON-NLS-1$
@@ -258,7 +258,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mIconText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mIconText.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setDefaultIcon(mIconText.getText());
             }
         });
@@ -266,7 +266,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mIconButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         mIconButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
              // Open the folder selection dialog
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
                     Messages.getString("GeneralSection.FileChooserTooltip")); //$NON-NLS-1$
@@ -287,7 +287,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mIconHCText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         mIconHCText.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().setHCIcon(mIconHCText.getText());
             }
         });
@@ -295,7 +295,7 @@ public class GeneralSection extends LocalizedSection<DescriptionModel> {
         mIconHCButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         mIconHCButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
              // Open the folder selection dialog
                 ProjectSelectionDialog dlg = new ProjectSelectionDialog(mProject,
                     Messages.getString("GeneralSection.FileChooserTooltip")); //$NON-NLS-1$

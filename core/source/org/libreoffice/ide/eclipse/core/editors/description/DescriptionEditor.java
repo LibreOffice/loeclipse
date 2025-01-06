@@ -91,12 +91,12 @@ public class DescriptionEditor extends FormEditor {
      * {@inheritDoc}
      */
     @Override
-    public void init(IEditorSite pSite, IEditorInput pInput) throws PartInitException {
-        super.init(pSite, pInput);
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
 
-        if (pInput instanceof IFileEditorInput) {
+        if (input instanceof IFileEditorInput) {
 
-            IFileEditorInput fileInput = (IFileEditorInput) pInput;
+            IFileEditorInput fileInput = (IFileEditorInput) input;
 
             setPartName(fileInput.getName());
 
@@ -131,7 +131,7 @@ public class DescriptionEditor extends FormEditor {
      * {@inheritDoc}
      */
     @Override
-    public void doSave(IProgressMonitor pMonitor) {
+    public void doSave(IProgressMonitor monitor) {
         OutputStream out = null;
         try {
             FileEditorInput input = (FileEditorInput) getEditorInput();
@@ -139,7 +139,7 @@ public class DescriptionEditor extends FormEditor {
             out = new FileOutputStream(file);
             getDescriptionModel().serialize(out);
 
-            input.getFile().refreshLocal(IResource.DEPTH_ZERO, pMonitor);
+            input.getFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("DescriptionEditor.ErrorSaving"), e); //$NON-NLS-1$
         } finally {

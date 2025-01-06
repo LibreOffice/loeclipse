@@ -89,10 +89,10 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * Constructor.
      *
-     * @param pLanguage the Java Language object
+     * @param language the Java Language object
      */
-    public JavaBuilder(Language pLanguage) {
-        mLanguage = pLanguage;
+    public JavaBuilder(Language language) {
+        mLanguage = language;
     }
 
     /**
@@ -148,14 +148,14 @@ public class JavaBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
-        File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
+    public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile,
+        File buildFolder, String rootModule, IProgressMonitor monitor) {
 
-        if (pTypesFile.exists()) {
+        if (typesFile.exists()) {
 
-            if (null != pSdk && null != pOoo) {
+            if (null != sdk && null != ooo) {
 
-                String[] paths = pOoo.getTypesPath();
+                String[] paths = ooo.getTypesPath();
                 String oooTypesArgs = ""; //$NON-NLS-1$
                 for (String path : paths) {
                     IPath ooTypesPath = new Path(path);
@@ -163,27 +163,27 @@ public class JavaBuilder implements ILanguageBuilder {
                 }
 
                 // Todo: What if the user creates other root modules ?
-                String firstModule = pRootModule.split("::")[0]; //$NON-NLS-1$
+                String firstModule = rootModule.split("::")[0]; //$NON-NLS-1$
 
-                runJavamaker(firstModule, oooTypesArgs, pSdk, pPrj, pTypesFile, pBuildFolder, pMonitor);
+                runJavamaker(firstModule, oooTypesArgs, sdk, prj, typesFile, buildFolder, monitor);
             }
         }
     }
 
-    private void runJavamaker(String pFirstModule, String pTypesArgs,
-        ISdk pSdk, IProject pPrj, File pTypesFile,
-        File pBuildFolder, IProgressMonitor pMonitor) {
+    private void runJavamaker(String firstModule, String typesArgs,
+        ISdk sdk, IProject prj, File typesFile,
+        File buildFolder, IProgressMonitor monitor) {
 
         StringBuffer errBuf = new StringBuffer();
         try {
             String cmdPattern = "javamaker -T {0}.* -nD -Gc -O \"{1}\" \"{2}\" {3}"; //$NON-NLS-1$
-            String command = MessageFormat.format(cmdPattern, pFirstModule,
-                pBuildFolder.getAbsolutePath(),
-                pTypesFile.getAbsolutePath(),
-                pTypesArgs);
+            String command = MessageFormat.format(cmdPattern, firstModule,
+                buildFolder.getAbsolutePath(),
+                typesFile.getAbsolutePath(),
+                typesArgs);
 
-            IUnoidlProject unoprj = ProjectsManager.getProject(pPrj.getName());
-            Process process = pSdk.runTool(unoprj, command, pMonitor);
+            IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+            Process process = sdk.runTool(unoprj, command, monitor);
 
             process.waitFor();
 
@@ -295,16 +295,16 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * either get list from libs dir when exist, or from the classpath.
      * 
-     * @param pJavaPrj the project from which to extract the libraries
+     * @param javaPrj the project from which to extract the libraries
      * 
      * @return list of IFile
      */
-    private List<IFile> getLibs(IJavaProject pJavaPrj) {
+    private List<IFile> getLibs(IJavaProject javaPrj) {
         List<IFile> libs = new ArrayList<>();
-        if (pJavaPrj.getProject().getFolder(LIBS_DIR_NAME).exists()) {
-            libs = getLibsFromLibsDir(pJavaPrj);
+        if (javaPrj.getProject().getFolder(LIBS_DIR_NAME).exists()) {
+            libs = getLibsFromLibsDir(javaPrj);
         } else {
-            libs = getLibsFromClasspath(pJavaPrj);
+            libs = getLibsFromClasspath(javaPrj);
         }
         return libs;
     }
@@ -313,16 +313,16 @@ public class JavaBuilder implements ILanguageBuilder {
      * Get the libraries in the classpath that are located in the project
      * directory or one of its subfolder.
      *
-     * @param pJavaPrj the project from which to extract the libraries
+     * @param javaPrj the project from which to extract the libraries
      * 
      * @return a list of all the File pointing to the libraries.
      */
-    private List<IFile> getLibsFromClasspath(IJavaProject pJavaPrj) {
+    private List<IFile> getLibsFromClasspath(IJavaProject javaPrj) {
         PluginLogger.debug("Collecting Jars from .classpath");
 
         ArrayList<IFile> libs = new ArrayList<>();
         try {
-            IClasspathEntry[] entries = pJavaPrj.getResolvedClasspath(true);
+            IClasspathEntry[] entries = javaPrj.getResolvedClasspath(true);
             for (IClasspathEntry entry : entries) {
                 if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
                     /*
@@ -332,7 +332,7 @@ public class JavaBuilder implements ILanguageBuilder {
                      */
                     IPath path = entry.getPath();
                     if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
-                        path.toString().startsWith("/" + pJavaPrj.getProject().getName())) { //$NON-NLS-1$
+                        path.toString().startsWith("/" + javaPrj.getProject().getName())) { //$NON-NLS-1$
                         // Relative to the project
                         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
                         if (file != null && file.exists()) {
@@ -351,15 +351,15 @@ public class JavaBuilder implements ILanguageBuilder {
     /**
      * when an libs dir exist in the project then return a list of jars.
      * 
-     * @param pJavaProject the java project
+     * @param javaProject the java project
      * 
      * @return list of jar files
      */
-    private List<IFile> getLibsFromLibsDir(IJavaProject pJavaProject) {
+    private List<IFile> getLibsFromLibsDir(IJavaProject javaProject) {
         PluginLogger.debug("Collecting Jars from " + LIBS_DIR_NAME);
 
         List<IFile> libs = new ArrayList<>();
-        IFolder libFolder = pJavaProject.getProject().getFolder(LIBS_DIR_NAME);
+        IFolder libFolder = javaProject.getProject().getFolder(LIBS_DIR_NAME);
         if (libFolder.exists()) {
             java.nio.file.Path pathLibs = Paths.get(libFolder.getRawLocation().toOSString());
             try (Stream<java.nio.file.Path> walk = Files.walk(pathLibs)) {

@@ -73,15 +73,15 @@ public class JavaMainProvider implements IMainProvider {
     /**
      * Recursive method to find the Classes and check their hierarchy.
      *
-     * @param pElement the Java AST element for scan for XMain implementations
+     * @param element the Java AST element for scan for XMain implementations
      * @return the names of the classes implementing the XMain interface in the
      *      Java AST element.
      */
-    private Vector<String> getInternalMainNames(IParent pElement) {
+    private Vector<String> getInternalMainNames(IParent element) {
         Vector<String> mains = new Vector<String>();
 
         try {
-            for (IJavaElement child : pElement.getChildren()) {
+            for (IJavaElement child : element.getChildren()) {
 
                 boolean visit = true;
 
