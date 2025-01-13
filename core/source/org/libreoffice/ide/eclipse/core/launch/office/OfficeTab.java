@@ -149,11 +149,11 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
      * {@inheritDoc}
      */
     @Override
-    public void initializeFrom(ILaunchConfiguration pConfiguration) {
+    public void initializeFrom(ILaunchConfiguration configuration) {
         try {
-            mProjectTxt.setText(pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""));
+            mProjectTxt.setText(configuration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""));
             mUseCleanUserInstallation.setSelection(
-                pConfiguration.getAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false));
+                configuration.getAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false));
         } catch (CoreException e) {
             PluginLogger.error(Messages.OfficeTab_Configurationerror, e);
         }
@@ -163,16 +163,16 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
      * {@inheritDoc}
      */
     @Override
-    public void performApply(ILaunchConfigurationWorkingCopy pConfiguration) {
-        pConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
-        pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION,
+    public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+        configuration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
+        configuration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION,
             mUseCleanUserInstallation.getSelection());
 
         try {
-            String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
+            String projectName = configuration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
             IUnoidlProject project = ProjectsManager.getProject(projectName);
             if (null != project) {
-                project.getLanguage().configureSourceLocator(pConfiguration);
+                project.getLanguage().configureSourceLocator(configuration);
             }
         } catch (CoreException e) {
             PluginLogger.error("Could not set language specific source locator attributes.", e);
@@ -183,20 +183,21 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
      * {@inheritDoc}
      */
     @Override
-    public void setDefaults(ILaunchConfigurationWorkingCopy pConfiguration) {
-        pConfiguration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
-        pConfiguration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
+    public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+        configuration.setAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
+        configuration.setAttribute(IOfficeLaunchConstants.CLEAN_USER_INSTALLATION, false);
     }
 
     @Override
-    public boolean isValid(ILaunchConfiguration pLaunchConfig) {
+    public boolean isValid(ILaunchConfiguration launchConfig) {
         boolean valid = false;
 
         try {
 
-            boolean projectSet = !pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-2$
+            boolean projectSet = !launchConfig.getAttribute(
+                IOfficeLaunchConstants.PROJECT_NAME, "").equals(""); //$NON-NLS-2$
             if (projectSet) {
-                String name = pLaunchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+                String name = launchConfig.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;
             }
         } catch (CoreException e) {
@@ -207,12 +208,12 @@ public class OfficeTab extends AbstractLaunchConfigurationTab {
     }
 
     /**
-     * Change listener to be notified when the user touches the UI controls
+     * Change listener to be notified when the user touches the UI controls.
      */
     private class ChangeListener extends SelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent pEvent) {
-            if (pEvent.getSource().equals(mProjectBtn)) {
+        public void widgetSelected(SelectionEvent event) {
+            if (event.getSource().equals(mProjectBtn)) {
                 ILabelProvider labelProvider = new UnoProjectLabelProvider();
                 ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
                 dialog.setTitle(Messages.OfficeTab_ProjectChooserTitle);

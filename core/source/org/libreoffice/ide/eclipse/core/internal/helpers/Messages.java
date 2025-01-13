@@ -43,7 +43,8 @@ import java.util.ResourceBundle;
  * Messages for the package.
  */
 public class Messages {
-    private static final String BUNDLE_NAME = "org.libreoffice.ide.eclipse.core.internal.helpers.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = 
+        "org.libreoffice.ide.eclipse.core.internal.helpers.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
@@ -56,15 +57,15 @@ public class Messages {
     /**
      * Get the string from it's key.
      *
-     * @param pKey
+     * @param key
      *            the key of the string
      *
      * @return the internationalized string
      */
-    public static String getString(String pKey) {
-        String string = '!' + pKey + '!';
+    public static String getString(String key) {
+        String string = '!' + key + '!';
         try {
-            string = RESOURCE_BUNDLE.getString(pKey);
+            string = RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
         }
         return string;

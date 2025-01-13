@@ -71,9 +71,9 @@ public final class UnoFactory {
      * Creates a UNO project from scratch. It creates the directories, initial types and generates the basic
      * implementation.
      *
-     * @param pData
+     * @param data
      *            the project description
-     * @param pMonitor
+     * @param monitor
      *            the monitor to report the progress of the project creation
      *
      * @return the created UNO project
@@ -81,9 +81,9 @@ public final class UnoFactory {
      * @throws Exception
      *             if anything wrong happens during the project creation
      */
-    public static IUnoidlProject createProject(UnoFactoryData pData, IProgressMonitor pMonitor) throws Exception {
+    public static IUnoidlProject createProject(UnoFactoryData data, IProgressMonitor monitor) throws Exception {
 
-        IUnoidlProject prj = UnoidlProjectHelper.createStructure(pData, pMonitor);
+        IUnoidlProject prj = UnoidlProjectHelper.createStructure(data, monitor);
 
         // Creates an empty package.properties file
         prj.getFile("package.properties").getLocation().toFile().createNewFile(); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public final class UnoFactory {
         }
 
         UnoidlProjectHelper.refreshProject(prj, null);
-        UnoidlProjectHelper.forceBuild(prj, pMonitor);
+        UnoidlProjectHelper.forceBuild(prj, monitor);
 
         return prj;
     }
@@ -135,25 +135,25 @@ public final class UnoFactory {
      * </ul>
      * </p>
      *
-     * @param pData
+     * @param data
      *            the project data for which to create the component implementation skeleton.
-     * @param pActivePage
+     * @param activePage
      *            the page in which to open the created file
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor to report the operation progress
      *
      * @throws Exception
      *             is thrown if anything wrong happens
      */
-    public static void makeSkeleton(UnoFactoryData pData, IWorkbenchPage pActivePage, IProgressMonitor pMonitor)
+    public static void makeSkeleton(UnoFactoryData data, IWorkbenchPage activePage, IProgressMonitor monitor)
         throws Exception {
 
-        String prjName = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+        String prjName = (String) data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
 
-        AbstractLanguage lang = (AbstractLanguage) pData.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
+        AbstractLanguage lang = (AbstractLanguage) data.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
         IProjectHandler langProjectHandler = lang.getProjectHandler();
-        String languageOption = langProjectHandler.getSkeletonMakerLanguage(pData);
+        String languageOption = langProjectHandler.getSkeletonMakerLanguage(data);
 
         if (languageOption != null) {
 
@@ -172,7 +172,7 @@ public final class UnoFactory {
             typesReg += " -l " + prjTypes; //$NON-NLS-1$
 
             // Get the service for which to generate the skeleton
-            UnoFactoryData[] inner = pData.getInnerData();
+            UnoFactoryData[] inner = data.getInnerData();
             String service = ""; //$NON-NLS-1$
             int i = 0;
 
@@ -203,7 +203,7 @@ public final class UnoFactory {
                 " -n " + implementationName + //$NON-NLS-1$
                 " -t " + service; //$NON-NLS-1$
 
-            Process process = prj.getSdk().runTool(prj, command, pMonitor);
+            Process process = prj.getSdk().runTool(prj, command, monitor);
 
             // Process the error output to add it to the log if needed
             InputStream err = process.getErrorStream();
@@ -237,7 +237,7 @@ public final class UnoFactory {
             implementationPath = prj.getSourcePath().append(implementationPath);
             IFile implementationFile = prj.getFile(implementationPath);
 
-            WorkbenchHelper.showFile(implementationFile, pActivePage);
+            WorkbenchHelper.showFile(implementationFile, activePage);
         }
     }
 
@@ -256,20 +256,20 @@ public final class UnoFactory {
      * </ul>
      * </p>
      *
-     * @param pData
+     * @param data
      *            the data describing the service
-     * @param pPrj
+     * @param prj
      *            the uno project that will contain the service
-     * @param pActivePage
+     * @param activePage
      *            the page in which to open the created file
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor to report the operation progress
      * @throws Exception
      *             is thrown if anything wrong happens
      */
-    public static void createService(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
-        IProgressMonitor pMonitor) throws Exception {
-        createService(pData, pPrj, pActivePage, pMonitor, true);
+    public static void createService(UnoFactoryData data, IUnoidlProject prj, IWorkbenchPage activePage,
+        IProgressMonitor monitor) throws Exception {
+        createService(data, prj, activePage, monitor, true);
     }
 
     /**
@@ -291,36 +291,36 @@ public final class UnoFactory {
      * The created file can be opened if <code>openFile</code> is set to <code>true</code>.
      * </p>
      *
-     * @param pData
+     * @param data
      *            the data describing the service
-     * @param pPrj
+     * @param prj
      *            the uno project that will contain the service
-     * @param pActivePage
+     * @param activePage
      *            the page in which to open the created file
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor to report the operation progress
-     * @param pOpenFile
+     * @param openFile
      *            opens the created file if set to <code>true</code>
      * @throws Exception
      *             is thrown if anything wrong happens
      */
-    public static void createService(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
-        IProgressMonitor pMonitor, boolean pOpenFile) throws Exception {
+    public static void createService(UnoFactoryData data, IUnoidlProject prj, IWorkbenchPage activePage,
+        IProgressMonitor monitor, boolean openFile) throws Exception {
 
         // Extract the data
-        String path = (String) pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+        String path = (String) data.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
         path = path.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
-        String name = (String) pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
-        String[] inheritedIfaces = (String[]) pData.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
-        boolean published = ((Boolean) pData.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
+        String name = (String) data.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        String[] inheritedIfaces = (String[]) data.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
+        boolean published = ((Boolean) data.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
 
         // Create the necessary modules
-        UnoidlProjectHelper.createModules(path, pPrj, null);
+        UnoidlProjectHelper.createModules(path, prj, null);
 
         String typepath = path + "::" + name; //$NON-NLS-1$
 
         // Create the file node
-        IUnoComposite file = CompositeFactory.createTypeFile(typepath, pPrj);
+        IUnoComposite file = CompositeFactory.createTypeFile(typepath, prj);
 
         // Create the file content skeleton
         IUnoComposite fileContent = CompositeFactory.createFileContent(typepath);
@@ -329,7 +329,7 @@ public final class UnoFactory {
         // Add the include line for the inheritance interface
         createIncludes(fileContent, inheritedIfaces);
 
-        String[] includes = getNeededIncludes(pData);
+        String[] includes = getNeededIncludes(data);
         createIncludes(fileContent, includes);
 
         IUnoComposite currentModule = createParentModules(fileContent, path);
@@ -343,57 +343,57 @@ public final class UnoFactory {
         file.dispose();
 
         // show the generated file
-        if (pOpenFile) {
-            showType(typepath, pPrj, pActivePage);
+        if (openFile) {
+            showType(typepath, prj, activePage);
         }
     }
 
     /**
      * Creates an interface from its factory data and opens the created file.
      *
-     * @param pData
+     * @param data
      *            the data describing the interface
-     * @param pPrj
+     * @param prj
      *            the UNO project that will contain the interface
-     * @param pActivePage
+     * @param activePage
      *            the page in which to open the created file
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor to report the operation progress
      * @throws Exception
      *             is thrown if anything wrong happens
      */
-    public static void createInterface(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
-        IProgressMonitor pMonitor) throws Exception {
-        createInterface(pData, pPrj, pActivePage, pMonitor, true);
+    public static void createInterface(UnoFactoryData data, IUnoidlProject prj, IWorkbenchPage activePage,
+        IProgressMonitor monitor) throws Exception {
+        createInterface(data, prj, activePage, monitor, true);
     }
 
     /**
      * Creates an interface from its factory data. The created file can be opened if <code>openFile</code> is set to
      * <code>true</code>.
      *
-     * @param pData
+     * @param data
      *            the data describing the interface
-     * @param pPrj
+     * @param prj
      *            the UNO project that will contain the interface
-     * @param pActivePage
+     * @param activePage
      *            the page in which to open the created file
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor to report the operation progress
-     * @param pOpenFile
+     * @param openFile
      *            opens the created file if set to <code>true</code>
      * @throws Exception
      *             is thrown if anything wrong happens
      */
-    public static void createInterface(UnoFactoryData pData, IUnoidlProject pPrj, IWorkbenchPage pActivePage,
-        IProgressMonitor pMonitor, boolean pOpenFile) throws Exception {
+    public static void createInterface(UnoFactoryData data, IUnoidlProject prj, IWorkbenchPage activePage,
+        IProgressMonitor monitor, boolean openFile) throws Exception {
 
         // Extract the data
-        String path = (String) pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+        String path = (String) data.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
         path = path.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
-        String name = (String) pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
-        String[] interfaces = (String[]) pData.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
-        String[] opt_interfaces = (String[]) pData.getProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES);
-        boolean published = ((Boolean) pData.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
+        String name = (String) data.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        String[] interfaces = (String[]) data.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
+        String[] opt_interfaces = (String[]) data.getProperty(IUnoFactoryConstants.OPT_INHERITED_INTERFACES);
+        boolean published = ((Boolean) data.getProperty(IUnoFactoryConstants.TYPE_PUBLISHED)).booleanValue();
 
         if (0 == interfaces.length && 0 < opt_interfaces.length) {
             interfaces = new String[] { opt_interfaces[0] };
@@ -405,12 +405,12 @@ public final class UnoFactory {
         }
 
         // Create the necessary modules
-        UnoidlProjectHelper.createModules(path, pPrj, null);
+        UnoidlProjectHelper.createModules(path, prj, null);
 
         String typepath = path + "::" + name; //$NON-NLS-1$
 
         // Create the file node
-        IUnoComposite file = CompositeFactory.createTypeFile(typepath, pPrj);
+        IUnoComposite file = CompositeFactory.createTypeFile(typepath, prj);
 
         // Create the file content skeleton
         IUnoComposite fileContent = CompositeFactory.createFileContent(typepath);
@@ -419,7 +419,7 @@ public final class UnoFactory {
         createIncludes(fileContent, interfaces);
         createIncludes(fileContent, opt_interfaces);
 
-        String[] includes = getNeededIncludes(pData);
+        String[] includes = getNeededIncludes(data);
         createIncludes(fileContent, includes);
 
         IUnoComposite currentModule = createParentModules(fileContent, path);
@@ -434,7 +434,7 @@ public final class UnoFactory {
         }
 
         // Creates all the members
-        for (UnoFactoryData memberData : pData.getInnerData()) {
+        for (UnoFactoryData memberData : data.getInnerData()) {
 
             // Get the member type: Attribute or Method
             Integer memberType = (Integer) memberData.getProperty(IUnoFactoryConstants.MEMBER_TYPE);
@@ -463,49 +463,49 @@ public final class UnoFactory {
         file.create(true);
         file.dispose();
 
-        if (pOpenFile) {
-            showType(typepath, pPrj, pActivePage);
+        if (openFile) {
+            showType(typepath, prj, activePage);
         }
     }
 
     /**
      * Show the file declaring a UNO type.
      *
-     * @param pTypepath
+     * @param typePath
      *            the complete name of the type to show separated by <code>::</code>.
-     * @param pPrj
+     * @param prj
      *            the project containing the type
-     * @param pActivePage
+     * @param activePage
      *            the workbench active page
      */
-    private static void showType(String pTypepath, IUnoidlProject pPrj, IWorkbenchPage pActivePage) {
+    private static void showType(String typePath, IUnoidlProject prj, IWorkbenchPage activePage) {
         // show the generated file
-        String filename = pTypepath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        UnoidlProjectHelper.refreshProject(pPrj, null);
-        IFile interfaceFile = pPrj.getFile(pPrj.getIdlPath().append(filename));
-        WorkbenchHelper.showFile(interfaceFile, pActivePage);
+        String filename = typePath.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        UnoidlProjectHelper.refreshProject(prj, null);
+        IFile interfaceFile = prj.getFile(prj.getIdlPath().append(filename));
+        WorkbenchHelper.showFile(interfaceFile, activePage);
     }
 
     /**
      * Get the includes to add from the children.
      *
-     * @param pData
+     * @param data
      *            the data to look for includes declarations needs.
      * @return a list of UNO types (separator <code>::</code>)
      */
-    private static String[] getNeededIncludes(UnoFactoryData pData) {
+    private static String[] getNeededIncludes(UnoFactoryData data) {
 
         ArrayList<String> includes = new ArrayList<String>();
 
-        String[] properties = pData.getKeys();
+        String[] properties = data.getKeys();
         for (String name : properties) {
-            String stringValue = pData.getProperty(name).toString();
+            String stringValue = data.getProperty(name).toString();
             if (stringValue.contains("::") && !name.equals(IUnoFactoryConstants.PACKAGE_NAME)) { //$NON-NLS-1$
                 includes.add(stringValue);
             }
         }
 
-        for (UnoFactoryData child : pData.getInnerData()) {
+        for (UnoFactoryData child : data.getInnerData()) {
             String[] childIncludes = getNeededIncludes(child);
             includes.addAll(Arrays.asList(childIncludes));
         }
@@ -516,17 +516,17 @@ public final class UnoFactory {
     /**
      * Create the parent modules and return the deepest one.
      *
-     * @param pFileContent
+     * @param fileContent
      *            the file content UNO composite where to add the modules
-     * @param pTypePath
+     * @param typePath
      *            the "::" separated path of the modules to create.
      *
      * @return the deepest created module
      */
-    private static IUnoComposite createParentModules(IUnoComposite pFileContent, String pTypePath) {
+    private static IUnoComposite createParentModules(IUnoComposite fileContent, String typePath) {
         // Create the module node using the cascading method
-        IUnoComposite topModule = CompositeFactory.createModulesSpaces(pTypePath);
-        pFileContent.addChild(topModule);
+        IUnoComposite topModule = CompositeFactory.createModulesSpaces(typePath);
+        fileContent.addChild(topModule);
 
         IUnoComposite currentModule = topModule;
         while (currentModule.getChildren().length > 0) {
@@ -544,14 +544,14 @@ public final class UnoFactory {
     /**
      * Adds includes composites in a type file.
      *
-     * @param pFileContent
+     * @param fileContent
      *            the file content composite where to add the includes
-     * @param pTypes
+     * @param types
      *            the types for which to add the includes
      */
-    private static void createIncludes(IUnoComposite pFileContent, String[] pTypes) {
-        for (int i = 0; i < pTypes.length; i++) {
-            pFileContent.addChild(CompositeFactory.createInclude(pTypes[i]));
+    private static void createIncludes(IUnoComposite fileContent, String[] types) {
+        for (int i = 0; i < types.length; i++) {
+            fileContent.addChild(CompositeFactory.createInclude(types[i]));
         }
     }
 }

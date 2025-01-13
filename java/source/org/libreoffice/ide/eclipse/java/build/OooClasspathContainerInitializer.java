@@ -57,19 +57,19 @@ public class OooClasspathContainerInitializer extends
      * {@inheritDoc}
      */
     @Override
-    public void initialize(IPath pContainerPath, IJavaProject pProject)
+    public void initialize(IPath containerPath, IJavaProject project)
         throws CoreException {
 
-        String hint = pContainerPath.segment(HINT_SEGMENT);
+        String hint = containerPath.segment(HINT_SEGMENT);
         IOOo ooo = OOoContainer.getOOo(hint);
 
         if (ooo != null) {
-            OOoClasspathContainer container = new OOoClasspathContainer(ooo, pContainerPath);
+            OOoClasspathContainer container = new OOoClasspathContainer(ooo, containerPath);
 
-            IJavaProject[] projects = new IJavaProject[] { pProject };
+            IJavaProject[] projects = new IJavaProject[] { project };
             IClasspathContainer[] containers = new IClasspathContainer[] { container };
 
-            JavaCore.setClasspathContainer(pContainerPath, projects, containers, null);
+            JavaCore.setClasspathContainer(containerPath, projects, containers, null);
         }
     }
 
@@ -77,13 +77,13 @@ public class OooClasspathContainerInitializer extends
      * Always allow container modification: it could be necessary to add additional OOo
      * jars or set the sources path.
      *
-     * @param pContainerPath the path of the container
-     * @param pProject the project for which to change the container
+     * @param containerPath the path of the container
+     * @param project the project for which to change the container
      *
      * @return always <code>true</code>
      */
     @Override
-    public boolean canUpdateClasspathContainer(IPath pContainerPath, IJavaProject pProject) {
+    public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
         return true;
     }
 }

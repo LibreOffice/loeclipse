@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.gui.rows.FieldEvent;
@@ -92,7 +93,7 @@ public class SDKTable extends AbstractTable {
         super(pParent, Messages.getString("SDKTable.Title"), //$NON-NLS-1$
             new String[] { Messages.getString("SDKTable.NameTitle"), //$NON-NLS-1$
                 Messages.getString("SDKTable.PathTitle") //$NON-NLS-1$
-        }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
+            }, new int[] { DEFAULT_WIDTH, DEFAULT_HEIGHT }, new String[] { SDK.NAME, SDK.PATH });
 
         mTableViewer.setInput(SDKContainer.getInstance());
         mTableViewer.setContentProvider(new SDKContentProvider());
@@ -117,11 +118,11 @@ public class SDKTable extends AbstractTable {
      * {@inheritDoc}
      */
     @Override
-    protected void handleDoubleClick(DoubleClickEvent pEvent) {
-        if (!pEvent.getSelection().isEmpty()) {
+    protected void handleDoubleClick(DoubleClickEvent event) {
+        if (!event.getSelection().isEmpty()) {
 
             // Get the double clicked SDK line
-            SDK sdk = (SDK) ((IStructuredSelection) pEvent.getSelection()).getFirstElement();
+            SDK sdk = (SDK) ((IStructuredSelection) event.getSelection()).getFirstElement();
 
             // Launch the dialog
             sdk = openDialog(sdk);
@@ -167,7 +168,7 @@ public class SDKTable extends AbstractTable {
     protected SDK openDialog(SDK pSdk) {
 
         // Gets the shell of the active eclipse window
-        Shell shell = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         SDKDialog dialog = new SDKDialog(shell, pSdk);
         if (Window.OK == dialog.open()) {
@@ -211,7 +212,7 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             return SDKContainer.toArray();
         }
 
@@ -227,16 +228,16 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void ConfigAdded(Object pElement) {
-            if (pElement instanceof SDK) {
-                mTableViewer.add(pElement);
+        public void ConfigAdded(Object element) {
+            if (element instanceof SDK) {
+                mTableViewer.add(element);
 
                 // This redrawing order is necessary to avoid having strange columns
                 mTable.redraw();
@@ -247,10 +248,10 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigRemoved(Object pElement) {
-            if (null != pElement && pElement instanceof SDK) {
+        public void ConfigRemoved(Object element) {
+            if (null != element && element instanceof SDK) {
                 // Only one SDK to remove
-                mTableViewer.remove(pElement);
+                mTableViewer.remove(element);
             } else {
                 // All the SDK have been removed
                 if (null != mTableViewer) {
@@ -271,11 +272,11 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void ConfigUpdated(Object pElement) {
-            if (pElement instanceof SDK) {
+        public void ConfigUpdated(Object element) {
+            if (element instanceof SDK) {
                 // Note that we can do this only because the SDK Container guarantees
                 // that the reference of the sdk will not change during an update
-                mTableViewer.update(pElement, null);
+                mTableViewer.update(element, null);
             }
         }
     }
@@ -401,26 +402,26 @@ public class SDKTable extends AbstractTable {
          * {@inheritDoc}
          */
         @Override
-        public void fieldChanged(FieldEvent pEvent) {
+        public void fieldChanged(FieldEvent event) {
             // The result doesn't matter: we only want to update the status of the windows
 
             Button okButton = getButton(IDialogConstants.OK_ID);
             if (null != okButton) {
 
-                if (pEvent.getProperty().equals(P_SDK_PATH)) {
-                    okButton.setEnabled(isValid(pEvent.getProperty()));
+                if (event.getProperty().equals(P_SDK_PATH)) {
+                    okButton.setEnabled(isValid(event.getProperty()));
                 }
 
                 // checks if the name is unique and toggle a warning
-                if (pEvent.getProperty().equals(P_SDK_PATH)) {
-                    boolean unique = !SDKContainer.containsName(pEvent.getValue());
+                if (event.getProperty().equals(P_SDK_PATH)) {
+                    boolean unique = !SDKContainer.containsName(event.getValue());
 
                     if (unique) {
-                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                        updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.OK, "", null)); //$NON-NLS-1$
                     } else {
-                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.WARNING,
-                            Messages.getString("OOoSDKTable.NameExistsError"), //$NON-NLS-1$
-                            null));
+                        updateStatus(new Status(IStatus.WARNING, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                            IStatus.WARNING, Messages.getString("OOoSDKTable.NameExistsError"), null)); //$NON-NLS-1$
                     }
                 }
             }
@@ -444,15 +445,17 @@ public class SDKTable extends AbstractTable {
                     mSdkNameRow.setValue(mTmpSdk.getName());
                 }
 
-                updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null)); //$NON-NLS-1$
+                updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                    IStatus.OK, "", null)); //$NON-NLS-1$
                 result = true;
             } catch (InvalidConfigException e) {
-                if ((pProperty==null || pProperty.equals(P_SDK_PATH)) && InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
+                if ((pProperty == null || pProperty.equals(P_SDK_PATH)) &&
+                    InvalidConfigException.INVALID_SDK_HOME == e.getErrorCode()) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
                         e.getMessage(), e));
                 } else {
-                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
-                        e));
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.OK, "", e)); //$NON-NLS-1$
                 }
             }
 

@@ -70,14 +70,15 @@ public class RegDocumentProvider extends FileDocumentProvider {
      * {@inheritDoc}
      */
     @Override
-    protected IDocument createDocument(Object pElement) throws CoreException {
+    protected IDocument createDocument(Object element) throws CoreException {
         // create a document from the output of the regview execution
 
-        IDocument document = new Document(Messages.getString("RegDocumentProvider.DocumentCreationError")); //$NON-NLS-1$
+        String msg = Messages.getString("RegDocumentProvider.DocumentCreationError"); //$NON-NLS-1$
+        IDocument document = new Document(msg);
 
-        if (pElement instanceof IFileEditorInput) {
+        if (element instanceof IFileEditorInput) {
 
-            IFile file = ((IFileEditorInput) pElement).getFile();
+            IFile file = ((IFileEditorInput) element).getFile();
             IUnoidlProject unoproject = ProjectsManager.getProject(file.getProject().getName());
 
             // Try to run regview on the file
@@ -126,7 +127,7 @@ public class RegDocumentProvider extends FileDocumentProvider {
      * {@inheritDoc}
      */
     @Override
-    protected IAnnotationModel createAnnotationModel(Object pElement) throws CoreException {
+    protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 
         // there is no need of an annotation model here
         return null;
@@ -136,7 +137,7 @@ public class RegDocumentProvider extends FileDocumentProvider {
      * {@inheritDoc}
      */
     @Override
-    protected void doSaveDocument(IProgressMonitor pMonitor, Object pElement, IDocument pDocument, boolean pOverwrite)
+    protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite)
         throws CoreException {
 
         // This kind of document cannot be edited, nor saved

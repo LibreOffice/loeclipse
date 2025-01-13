@@ -39,7 +39,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 
 /**
@@ -50,19 +49,19 @@ public class WorkbenchHelper {
     /**
      * Simply shows the file in the IDE.
      *
-     * @param pFile
+     * @param file
      *            the file to show
-     * @param pPage
+     * @param page
      *            the active workbench page
      */
-    public static void showFile(IFile pFile, IWorkbenchPage pPage) {
+    public static void showFile(IFile file, IWorkbenchPage page) {
 
         try {
             IWorkbench workbench = PlatformUI.getWorkbench();
-            BasicNewResourceWizard.selectAndReveal(pFile, workbench.getActiveWorkbenchWindow());
+            BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
 
-            final IWorkbenchPage activePage = pPage;
-            final IFile toShow = pFile;
+            final IWorkbenchPage activePage = page;
+            final IFile toShow = file;
 
             if (activePage != null) {
                 final Display display = Display.getDefault();
@@ -92,7 +91,7 @@ public class WorkbenchHelper {
     public static IWorkbenchPage getActivePage() {
         IWorkbenchPage page = null;
 
-        IWorkbenchWindow window = OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (null != window) {
             page = window.getActivePage();
         }

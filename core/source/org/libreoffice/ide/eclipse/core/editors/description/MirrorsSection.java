@@ -82,17 +82,17 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
     private MenuItem mDeleteAction;
 
     /**
-     * @param pParent
+     * @param parent
      *            the parent composite where to add the section
-     * @param pPage
+     * @param page
      *            the parent page
      */
-    public MirrorsSection(Composite pParent, DescriptionFormPage pPage) {
-        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
-        mPage = pPage;
+    public MirrorsSection(Composite parent, DescriptionFormPage page) {
+        super(parent, page, ExpandableComposite.TITLE_BAR);
+        mPage = page;
 
         createContent();
-        setModel(pPage.getModel());
+        setModel(page.getModel());
     }
 
     /**
@@ -128,7 +128,8 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
         createTable(clientArea);
 
         // Create the add controls
-        Label addLbl = toolkit.createLabel(clientArea, Messages.getString("MirrorsSection.MirrorTextTitle")); //$NON-NLS-1$
+        String msg = Messages.getString("MirrorsSection.MirrorTextTitle"); //$NON-NLS-1$
+        Label addLbl = toolkit.createLabel(clientArea, msg);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         addLbl.setLayoutData(gd);
@@ -138,7 +139,7 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
         mUrlTxt.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 mAddBtn.setEnabled(!(0 == mUrlTxt.getText().trim().length()));
             }
         });
@@ -147,7 +148,7 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
         mAddBtn.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         mAddBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 String text = mUrlTxt.getText();
                 getModel().addUpdateInfo(text);
                 mTable.add(text);
@@ -190,7 +191,7 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
         mDeleteAction.setEnabled(false);
         mDeleteAction.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection sel = (IStructuredSelection) mTable.getSelection();
                 Object selected = sel.getFirstElement();
                 mTable.remove(selected);
@@ -202,8 +203,8 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
         mTable.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
-            public void selectionChanged(SelectionChangedEvent pEvent) {
-                mDeleteAction.setEnabled(!pEvent.getSelection().isEmpty());
+            public void selectionChanged(SelectionChangedEvent e) {
+                mDeleteAction.setEnabled(!e.getSelection().isEmpty());
             }
         });
 
@@ -219,7 +220,7 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
          * {@inheritDoc}
          */
         @Override
-        public Image getColumnImage(Object pElement, int pColumnIndex) {
+        public Image getColumnImage(Object element, int columnIndex) {
             return null;
         }
 
@@ -227,8 +228,8 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
          * {@inheritDoc}
          */
         @Override
-        public String getColumnText(Object pElement, int pColumnIndex) {
-            return pElement.toString();
+        public String getColumnText(Object element, int columnIndex) {
+            return element.toString();
         }
     }
 
@@ -241,7 +242,7 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
          * {@inheritDoc}
          */
         @Override
-        public boolean canModify(Object pElement, String pProperty) {
+        public boolean canModify(Object element, String property) {
             return true;
         }
 
@@ -249,22 +250,22 @@ public class MirrorsSection extends AbstractSection<DescriptionModel> {
          * {@inheritDoc}
          */
         @Override
-        public Object getValue(Object pElement, String pProperty) {
-            return pElement;
+        public Object getValue(Object element, String property) {
+            return element;
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void modify(Object pElement, String pProperty, Object pValue) {
-            if (pElement instanceof TableItem) {
-                Object o = ((TableItem) pElement).getData();
+        public void modify(Object element, String property, Object value) {
+            if (element instanceof TableItem) {
+                Object o = ((TableItem) element).getData();
                 String oldValue = o.toString();
 
                 int pos = getModel().getUpdateInfos().indexOf(oldValue);
-                getModel().replaceUpdateInfo(pos, pValue.toString());
-                mTable.replace(pValue, pos);
+                getModel().replaceUpdateInfo(pos, value.toString());
+                mTable.replace(value, pos);
                 mTable.refresh(o);
                 markDirty();
             }

@@ -81,38 +81,38 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * Creating a new OOo or URE instance specifying its home directory.
      *
-     * @param pOooHome
+     * @param home
      *            the LibreOffice or URE home directory
      * @throws InvalidConfigException
      *             is thrown if the home directory doesn't contains the required files and directories
      */
-    public AbstractOOo(String pOooHome) throws InvalidConfigException {
-        setHome(pOooHome);
+    public AbstractOOo(String home) throws InvalidConfigException {
+        setHome(home);
     }
 
     /**
      * Creating a new OOo or URE instance specifying its home directory and name.
      *
-     * @param pOooHome
+     * @param home
      *            the LibreOffice or URE installation directory
-     * @param pName
+     * @param name
      *            the LibreOffice or URE instance name
      *
      * @throws InvalidConfigException
      *             if the home directory doesn't contains the required files and directories
      */
-    public AbstractOOo(String pOooHome, String pName) throws InvalidConfigException {
-        setHome(pOooHome);
-        setName(pName);
+    public AbstractOOo(String home, String name) throws InvalidConfigException {
+        setHome(home);
+        setName(name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setHome(String pHome) throws InvalidConfigException {
+    public void setHome(String home) throws InvalidConfigException {
 
-        Path homePath = new Path(pHome);
+        Path homePath = new Path(home);
         File homeFile = homePath.toFile();
 
         /* Checks if the directory exists */
@@ -122,7 +122,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 homeFile.getAbsolutePath(), InvalidConfigException.INVALID_OOO_HOME);
         }
 
-        mHome = pHome;
+        mHome = home;
 
         /* Checks if the classes paths are directories */
         checkClassesDir();
@@ -157,12 +157,12 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * Set the new name only if it's neither null nor the empty string. The name will be rendered unique and therefore
      * may be changed.
      *
-     * @param pName
+     * @param name
      *            the name to set
      */
-    public void setName(String pName) {
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
-            mName = OOoContainer.getUniqueName(pName);
+    public void setName(String name) {
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
+            mName = OOoContainer.getUniqueName(name);
         }
     }
 
@@ -305,21 +305,21 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * Run a UNO application using an implementation of the <code>XMain</code> interface.
      *
-     * @param pPrj
+     * @param prj
      *            the UNO project to run
-     * @param pMain
+     * @param main
      *            the fully qualified name of the main service to run
-     * @param pArgs
+     * @param args
      *            the UNO program arguments
-     * @param pLaunch
+     * @param launch
      *            the Eclipse launch instance
-     * @param pMonitor
+     * @param monitor
      *            the monitor reporting the run progress
      */
     @Override
-    public void runUno(IUnoidlProject pPrj, String pMain, String pArgs, ILaunch pLaunch, IProgressMonitor pMonitor) {
+    public void runUno(IUnoidlProject prj, String main, String args, ILaunch launch, IProgressMonitor monitor) {
 
-        String libpath = pPrj.getLanguage().getProjectHandler().getLibraryPath(pPrj);
+        String libpath = prj.getLanguage().getProjectHandler().getLibraryPath(prj);
         libpath = libpath.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
         libpath = libpath.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
         libpath = "file:///" + libpath; //$NON-NLS-1$
@@ -330,16 +330,16 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             unoPath = "uno"; //$NON-NLS-1$
         }
 
-        String command = unoPath + " -c " + pMain + //$NON-NLS-1$
+        String command = unoPath + " -c " + main + //$NON-NLS-1$
             " -l " + libpath + //$NON-NLS-1$
-            " -- " + pArgs; //$NON-NLS-1$
+            " -- " + args; //$NON-NLS-1$
 
-        String[] env = pPrj.getLanguage().getLanguageBuilder().getBuildEnv(pPrj);
+        String[] env = prj.getLanguage().getLanguageBuilder().getBuildEnv(prj);
 
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(prj.getName());
 
         if (getJavaldxPath() != null) {
-            Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), getJavaldxPath(), env, pMonitor);
+            Process p = prj.getSdk().runToolWithEnv(project, prj.getOOo(), getJavaldxPath(), env, monitor);
             InputStream out = p.getInputStream();
             StringWriter writer = new StringWriter();
 
@@ -357,22 +357,22 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 System.getProperty("path.separator")); //$NON-NLS-1$
         }
 
-        Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
-        DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.UreProcessName") + pMain); //$NON-NLS-1$
+        Process p = prj.getSdk().runToolWithEnv(project, prj.getOOo(), command, env, monitor);
+        DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.UreProcessName") + main); //$NON-NLS-1$
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void runOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-        IExtraOptionsProvider pExtraOptionsProvider, IProgressMonitor pMonitor) {
+    public void runOffice(IUnoidlProject prj, ILaunch launch, IPath userInstallation,
+        IExtraOptionsProvider extraOptionsProvider, IProgressMonitor monitor) {
         try {
-            IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
-            String[] env = pPrj.getLanguage().getLanguageBuilder().getBuildEnv(pPrj);
+            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(prj.getName());
+            String[] env = prj.getLanguage().getLanguageBuilder().getBuildEnv(prj);
 
             String pathSeparator = System.getProperty("path.separator");
-            String[] sPaths = pPrj.getOOo().getBinPath();
+            String[] sPaths = prj.getOOo().getBinPath();
             StringBuilder sPathValue = new StringBuilder();
             for (String sPath : sPaths) {
                 sPathValue.append(sPath);
@@ -383,12 +383,12 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
             env = SystemHelper.addEnv(env, "PATH", sPathValue.toString(), pathSeparator);
             env = SystemHelper.addEnv(env, "SAL_ALLOW_LINKOO_SYMLINKS", "1", null);
-            env = addUserProfile(pUserInstallation, env);
-            env = pExtraOptionsProvider.addEnv(env);
+            env = addUserProfile(userInstallation, env);
+            env = extraOptionsProvider.addEnv(env);
 
             PluginLogger.debug("Launching LibreOffice from commandline: " + command);
-            Process p = pPrj.getSdk().runToolWithEnv(prj, pPrj.getOOo(), command, env, pMonitor);
-            DebugPlugin.newProcess(pLaunch, p, Messages.getString("AbstractOOo.LibreOfficeProcessName")); //$NON-NLS-1$
+            Process p = prj.getSdk().runToolWithEnv(project, prj.getOOo(), command, env, monitor);
+            DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.LibreOfficeProcessName")); //$NON-NLS-1$
         } catch (Exception e) {
             e.printStackTrace();
             PluginLogger.error("Error running LibreOffice", e);
@@ -398,22 +398,22 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     /**
      * Adds the proper env variables for the user profile.
      *
-     * @param pUserInstallation
+     * @param userInstallation
      *            the path to the user profile foldr.
-     * @param pEnv
+     * @param env
      *            the original env.
      * @return the new env.
      * @throws URISyntaxException
      *             if something goes wrong.
      */
-    protected String[] addUserProfile(IPath pUserInstallation, String[] pEnv) throws URISyntaxException {
-        if (null != pUserInstallation) {
+    protected String[] addUserProfile(IPath userInstallation, String[] env) throws URISyntaxException {
+        if (null != userInstallation) {
             // We have to turn the path to a URI something like file:///foo/bar/.ooo-debug
             // TODO find a better way to get the proper URI.
-            URI userInstallationURI = new URI("file", "", pUserInstallation.toFile().toURI().getPath(), null);
-            pEnv = SystemHelper.addEnv(pEnv, "UserInstallation", userInstallationURI.toString(), null);
+            URI userInstallationURI = new URI("file", "", userInstallation.toFile().toURI().getPath(), null);
+            env = SystemHelper.addEnv(env, "UserInstallation", userInstallationURI.toString(), null);
         }
-        return pEnv;
+        return env;
     }
 
     /**
@@ -449,23 +449,25 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * @throws IOException
      */
     protected static boolean isSymbolicLink(File file) throws IOException {
-        if (file == null) {
-            return false;
+        boolean isLink = false;
+        if (file != null) {
+            File fileInCanonicalParent = null;
+            if (file.getParentFile() == null) {
+                fileInCanonicalParent = file;
+            } else {
+                File canonicalParent = file.getParentFile().getCanonicalFile();
+                fileInCanonicalParent = new File(canonicalParent, file.getName());
+            }
+            isLink = !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
         }
-        File fileInCanonicalParent = null;
-        if (file.getParentFile() == null) {
-            fileInCanonicalParent = file;
-        } else {
-            File canonicalParent = file.getParentFile().getCanonicalFile();
-            fileInCanonicalParent = new File(canonicalParent, file.getName());
-        }
-        return !fileInCanonicalParent.getCanonicalFile().equals(fileInCanonicalParent.getAbsoluteFile());
+        return isLink;
     }
 
     public static File getTargetLink(File link) throws IOException {
-        if (link == null) {
-            return null;
+        File target = null;
+        if (link != null) {
+            target = new File(link.getCanonicalPath());
         }
-        return new File(link.getCanonicalPath());
+        return target;
     }
 }

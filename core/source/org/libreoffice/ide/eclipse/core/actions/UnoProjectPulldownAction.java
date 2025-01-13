@@ -73,8 +73,8 @@ public class UnoProjectPulldownAction extends AbstractPulldownAction {
      * {@inheritDoc}
      */
     @Override
-    public void run(IAction pAction) {
-        new NewUnoProjectAction().run(pAction);
+    public void run(IAction action) {
+        new NewUnoProjectAction().run(action);
     }
 
     /**

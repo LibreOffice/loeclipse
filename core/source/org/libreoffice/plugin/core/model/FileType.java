@@ -59,11 +59,11 @@ public class FileType {
     /**
      * Constructor.
      *
-     * @param pMime
+     * @param mime
      *            the mime type of the file.
      */
-    public FileType(String pMime) {
-        mMimeType = pMime;
+    public FileType(String mime) {
+        mMimeType = mime;
     }
 
     /**
@@ -74,21 +74,21 @@ public class FileType {
     }
 
     /**
-     * @param pName
+     * @param name
      *            the name of the parameter to add
-     * @param pValue
+     * @param value
      *            the value of the parameter to add
      */
-    public void addParam(String pName, String pValue) {
-        mParams.put(pName, pValue);
+    public void addParam(String name, String value) {
+        mParams.put(name, value);
     }
 
     /**
-     * @param pName
+     * @param name
      *            the name of the parameter to remove
      */
-    public void removeParam(String pName) {
-        mParams.remove(pName);
+    public void removeParam(String name) {
+        mParams.remove(name);
     }
 
     /**

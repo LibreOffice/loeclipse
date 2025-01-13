@@ -92,14 +92,14 @@ public class ClientWizard extends BasicNewResourceWizard {
 
         Job job = new Job(Messages.getString("ClientWizard.CreationJobTitle")) { //$NON-NLS-1$
             @Override
-            protected IStatus run(IProgressMonitor pMonitor) {
+            protected IStatus run(IProgressMonitor monitor) {
 
                 Status status = new Status(IStatus.OK, OOoJavaPlugin.PLUGIN_ID,
                     Messages.getString("ClientWizard.ProjectCreated")); //$NON-NLS-1$
 
                 try {
-                    mThirdPage.performFinish(pMonitor);
-                    setupClientProject(mThirdPage.getJavaProject(), pMonitor);
+                    mThirdPage.performFinish(monitor);
+                    setupClientProject(mThirdPage.getJavaProject(), monitor);
                 } catch (Exception e) {
                     PluginLogger.error(Messages.getString("ClientWizard.ProjectCreationError"), e); //$NON-NLS-1$
                     status = new Status(IStatus.ERROR, OOoJavaPlugin.PLUGIN_ID,
@@ -117,15 +117,15 @@ public class ClientWizard extends BasicNewResourceWizard {
     /**
      * Configure the Java project in order to have a Java UNO client project.
      *
-     * @param pJavaProject the Java project to configure
-     * @param pMonitor progress monitor to update
+     * @param javaProject the Java project to configure
+     * @param monitor progress monitor to update
      *
      * @throws Exception if anything wrong happens
      */
-    protected void setupClientProject(IJavaProject pJavaProject, IProgressMonitor pMonitor) throws Exception {
+    protected void setupClientProject(IJavaProject javaProject, IProgressMonitor monitor) throws Exception {
 
         // Generate the sample classes in org.libreoffice.connection
-        IProject prj = pJavaProject.getProject();
+        IProject prj = javaProject.getProject();
 
         IClasspathEntry[] srcEntries = mFirstPage.getSourceClasspathEntries();
         IFolder srcFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(srcEntries[0].getPath());
@@ -137,7 +137,7 @@ public class ClientWizard extends BasicNewResourceWizard {
 
         // Copy the third-party licenses
         IFolder licensesFolder = prj.getFolder(LICENSE_DIR);
-        licensesFolder.create(true, true, pMonitor);
+        licensesFolder.create(true, true, monitor);
         IPath licPath = licensesFolder.getProjectRelativePath();
         for (String license : LICENSE_FILES) {
             TemplatesHelper.copyTemplate(prj, license, ClientWizard.class, licPath.toString());

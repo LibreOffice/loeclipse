@@ -52,28 +52,28 @@ public class UnoFactoryData {
      * Add or replace the property value associated with the key. Nothing happens if the key is <code>null</code> or an
      * empty string.
      *
-     * @param pKey
+     * @param key
      *            the name of the property
-     * @param pValue
+     * @param value
      *            the value of the property
      */
-    public void setProperty(String pKey, Object pValue) {
-        if (pKey != null && !pKey.equals("")) { //$NON-NLS-1$
-            mProperties.put(pKey, pValue);
+    public void setProperty(String key, Object value) {
+        if (key != null && !key.equals("")) { //$NON-NLS-1$
+            mProperties.put(key, value);
         }
     }
 
     /**
-     * @param pKey
+     * @param key
      *            the key of the property to get.
      *
      * @return the property corresponding to the key or <code>null</code> if the key is null or an empty string or if
      *         there is such a key.
      */
-    public Object getProperty(String pKey) {
+    public Object getProperty(String key) {
         Object result = null;
-        if (pKey != null && !pKey.equals("")) { //$NON-NLS-1$
-            result = mProperties.get(pKey);
+        if (key != null && !key.equals("")) { //$NON-NLS-1$
+            result = mProperties.get(key);
         }
         return result;
     }
@@ -104,24 +104,24 @@ public class UnoFactoryData {
     /**
      * Adds an inner data if it is neither <code>null</code> nor already present in the inner data.
      *
-     * @param pData
+     * @param data
      *            the data to add
      */
-    public void addInnerData(UnoFactoryData pData) {
-        if (pData != null && !mInnerData.contains(pData)) {
-            mInnerData.add(pData);
+    public void addInnerData(UnoFactoryData data) {
+        if (data != null && !mInnerData.contains(data)) {
+            mInnerData.add(data);
         }
     }
 
     /**
      * Removes an inner data if it isn't <code>null</code> and already present in the inner data.
      *
-     * @param pData
+     * @param data
      *            the data to remove
      */
-    public void removeInnerData(UnoFactoryData pData) {
-        if (pData != null && mInnerData.contains(pData)) {
-            mInnerData.remove(pData);
+    public void removeInnerData(UnoFactoryData data) {
+        if (data != null && mInnerData.contains(data)) {
+            mInnerData.remove(data);
         }
     }
 

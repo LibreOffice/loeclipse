@@ -107,18 +107,18 @@ public class UnoTypeProvider {
      *
      * @param pScopedName
      *            the type name to match
-     * @param pContainers
+     * @param containers
      *            the UNO types containers to look in. These have to be either the path to a project RDB file or a
      *            LibreOffice name
      *
      * @return <code>true</code> if the list contains a type with this name
      */
-    public boolean contains(String pScopedName, String[] pContainers) {
+    public boolean contains(String pScopedName, String[] containers) {
         boolean result = false;
         pScopedName = pScopedName.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (getState().equals(TypeProviderState.INITIALIZED)) {
-            for (String container : pContainers) {
+            for (String container : containers) {
                 List<InternalUnoType> types = mCache.get(container);
                 if (types != null) {
                     Iterator<InternalUnoType> iter = types.iterator();
@@ -157,14 +157,14 @@ public class UnoTypeProvider {
     /**
      * Sets the OOo if the new one is different from the old one.
      *
-     * @param pOOoInstance
+     * @param instance
      *            LibreOffice instance to bootstrap
      */
-    public void setOOoInstance(IOOo pOOoInstance) {
+    public void setOOoInstance(IOOo instance) {
 
-        if (null != pOOoInstance && !pOOoInstance.equals(mOooInstance)) {
-            mOooInstance = pOOoInstance;
-            PluginLogger.debug("UnoTypeProvider initialized with " + pOOoInstance); //$NON-NLS-1$
+        if (null != instance && !instance.equals(mOooInstance)) {
+            mOooInstance = instance;
+            PluginLogger.debug("UnoTypeProvider initialized with " + instance); //$NON-NLS-1$
         }
     }
 
@@ -180,21 +180,21 @@ public class UnoTypeProvider {
     /**
      * Register the given listener.
      *
-     * @param pListener
+     * @param listener
      *            the listener to add
      */
-    public void addInitListener(IInitListener pListener) {
-        mListeners.add(pListener);
+    public void addInitListener(IInitListener listener) {
+        mListeners.add(listener);
     }
 
     /**
      * Makes the given initialization listener stop listening.
      *
-     * @param pListener
+     * @param listener
      *            the listener to remove
      */
-    public void removeInitListener(IInitListener pListener) {
-        mListeners.remove(pListener);
+    public void removeInitListener(IInitListener listener) {
+        mListeners.remove(listener);
     }
 
     /**
@@ -213,33 +213,33 @@ public class UnoTypeProvider {
     /**
      * Initializes the cache if needed and get the cached data.
      *
-     * @param pContainers
+     * @param containers
      *            the container from which to get the types.
      *
      * @return the types list as an array.
      *
      * @see org.libreoffice.ide.eclipse.core.internal.office.TypesGetter
      */
-    protected Object[] toArray(String[] pContainers) {
+    protected Object[] toArray(String[] containers) {
         // Fill in the cache if necessary
         if (mCache == null) {
             refreshCache();
         }
 
-        ArrayList<String> containers = new ArrayList<String>();
-        containers.addAll(Arrays.asList(pContainers));
+        ArrayList<String> newContainers = new ArrayList<String>();
+        newContainers.addAll(Arrays.asList(containers));
 
         // Use the set OOo and project as containers
         if (mPathToRegister != null) {
-            containers.add(mPathToRegister);
+            newContainers.add(mPathToRegister);
         }
 
         if (mOooInstance != null) {
-            containers.add(mOooInstance.getName());
+            newContainers.add(mOooInstance.getName());
         }
 
         LinkedList<InternalUnoType> types = new LinkedList<InternalUnoType>();
-        for (String container : containers) {
+        for (String container : newContainers) {
             List<InternalUnoType> regTypes = mCache.get(container);
             if (regTypes != null) {
                 types.addAll(regTypes);

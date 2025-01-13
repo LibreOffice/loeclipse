@@ -59,21 +59,21 @@ public class TextRow extends LabeledRow implements FocusListener, KeyListener {
     /**
      * Create a new text row.
      *
-     * @param pParent
+     * @param parent
      *            the parent composite where to create the row
-     * @param pProperty
+     * @param property
      *            the property name of the row's value
-     * @param pLabel
+     * @param label
      *            the label of the row
      */
-    public TextRow(Composite pParent, String pProperty, String pLabel) {
-        super(pProperty);
+    public TextRow(Composite parent, String property, String label) {
+        super(property);
 
-        Label aLabel = new Label(pParent, SWT.LEFT | SWT.SHADOW_NONE);
-        aLabel.setText(pLabel);
-        Text aField = new Text(pParent, SWT.BORDER);
+        Label aLabel = new Label(parent, SWT.LEFT | SWT.SHADOW_NONE);
+        aLabel.setText(label);
+        Text aField = new Text(parent, SWT.BORDER);
 
-        createContent(pParent, aLabel, aField, null, false);
+        createContent(parent, aLabel, aField, null, false);
         mField.addFocusListener(this);
         mField.addKeyListener(this);
     }
@@ -82,7 +82,7 @@ public class TextRow extends LabeledRow implements FocusListener, KeyListener {
      * {@inheritDoc}
      */
     @Override
-    public void focusGained(FocusEvent pEvent) {
+    public void focusGained(FocusEvent event) {
         // Ne fait rien...
     }
 
@@ -90,7 +90,7 @@ public class TextRow extends LabeledRow implements FocusListener, KeyListener {
      * {@inheritDoc}
      */
     @Override
-    public void focusLost(FocusEvent pEvent) {
+    public void focusLost(FocusEvent event) {
         if (!((Text) mField).getText().equals(mValue)) {
             setValue(((Text) mField).getText());
         }
@@ -100,7 +100,7 @@ public class TextRow extends LabeledRow implements FocusListener, KeyListener {
      * {@inheritDoc}
      */
     @Override
-    public void keyPressed(KeyEvent pEvent) {
+    public void keyPressed(KeyEvent event) {
         mOldValue = ((Text) mField).getText();
     }
 
@@ -108,8 +108,8 @@ public class TextRow extends LabeledRow implements FocusListener, KeyListener {
      * {@inheritDoc}
      */
     @Override
-    public void keyReleased(KeyEvent pEvent) {
-        if (pEvent.getSource().equals(mField)) {
+    public void keyReleased(KeyEvent event) {
+        if (event.getSource().equals(mField)) {
             if (!((Text) mField).getText().equals(mOldValue)) {
                 if (!((Text) mField).getText().equals(mValue)) {
                     setValue(((Text) mField).getText());

@@ -44,17 +44,17 @@ public interface IListenablePage {
     /**
      * Add the page listener.
      *
-     * @param pListener
+     * @param listener
      *            the page listener to add
      */
-    public void addPageListener(IPageListener pListener);
+    public void addPageListener(IPageListener listener);
 
     /**
      * Remove the page listener.
      *
-     * @param pListener
+     * @param listener
      *            the listener to remove.
      */
-    public void removePageListener(IPageListener pListener);
+    public void removePageListener(IPageListener listener);
 
 }

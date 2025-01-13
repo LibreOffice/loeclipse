@@ -159,10 +159,10 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
      * {@inheritDoc}
      */
     @Override
-    public void fieldChanged(FieldEvent pEvent) {
-        super.fieldChanged(pEvent);
+    public void fieldChanged(FieldEvent event) {
+        super.fieldChanged(event);
 
-        if (pEvent.getProperty().equals(P_IFACE_INHERITANCE) && !mChanging) {
+        if (event.getProperty().equals(P_IFACE_INHERITANCE) && !mChanging) {
             mInheritanceChanged = true;
         }
     }
@@ -188,25 +188,25 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
      * application.
      * </p>
      *
-     * @param pValue
+     * @param value
      *            the interface fully qualified name
-     * @param pForced
+     * @param forced
      *            disables the field if <code>true</code>
      */
-    public void setInheritanceName(String pValue, boolean pForced) {
+    public void setInheritanceName(String value, boolean forced) {
 
-        if (pValue.matches("([a-zA-Z][a-zA-Z0-9]*)(::[a-zA-Z][a-zA-Z0-9]*)*")) { //$NON-NLS-1$
+        if (value.matches("([a-zA-Z][a-zA-Z0-9]*)(::[a-zA-Z][a-zA-Z0-9]*)*")) { //$NON-NLS-1$
 
             if (mIfaceInheritanceRow != null) {
                 mChanging = true;
 
-                mIfaceInheritanceRow.setValue(pValue);
-                mIfaceInheritanceRow.setEnabled(!pForced);
+                mIfaceInheritanceRow.setValue(value);
+                mIfaceInheritanceRow.setEnabled(!forced);
                 mInheritanceChanged = false;
 
                 mChanging = false;
             } else {
-                mInheritedInterface = pValue;
+                mInheritedInterface = value;
             }
         }
     }
@@ -221,23 +221,23 @@ public class NewServiceWizardPage extends NewScopedElementWizardPage {
     }
 
     /**
-     * @param pData
+     * @param data
      *            the data to fill
      *
      * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
     @Override
-    public UnoFactoryData fillData(UnoFactoryData pData) {
+    public UnoFactoryData fillData(UnoFactoryData data) {
 
-        pData = super.fillData(pData);
+        data = super.fillData(data);
 
-        if (pData != null) {
-            pData.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.SERVICE));
-            pData.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES,
+        if (data != null) {
+            data.setProperty(IUnoFactoryConstants.TYPE_NATURE, Integer.valueOf(IUnoFactoryConstants.SERVICE));
+            data.setProperty(IUnoFactoryConstants.INHERITED_INTERFACES,
                 new String[] { getInheritanceName().replace(".", "::") }); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        return pData;
+        return data;
     }
 
     /**

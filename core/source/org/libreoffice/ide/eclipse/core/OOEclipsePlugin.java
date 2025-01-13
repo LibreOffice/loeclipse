@@ -132,8 +132,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
      * {@inheritDoc}
      */
     @Override
-    public void start(BundleContext pContext) throws Exception {
-        super.start(pContext);
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
         setDefaultPreferences();
 
         // Creates the SDK container
@@ -147,8 +147,8 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
      * {@inheritDoc}
      */
     @Override
-    public void stop(BundleContext pContext) throws Exception {
-        super.stop(pContext);
+    public void stop(BundleContext context) throws Exception {
+        super.stop(context);
         sPlugin = null;
 
         OOoContainer.dispose();
@@ -180,28 +180,28 @@ public class OOEclipsePlugin extends AbstractUIPlugin {
      * Returns the image corresponding to the provided key. If the image file or the key doesn't exists, the method
      * returns <code>null</code>.
      *
-     * @param pKey
+     * @param key
      *            Key designing the image
      * @return the image associated to the key
      *
      * @see ImageManager#getImage(String)
      */
-    public static Image getImage(String pKey) {
-        return getDefault().getImageManager().getImage(pKey);
+    public static Image getImage(String key) {
+        return getDefault().getImageManager().getImage(key);
     }
 
     /**
      * Returns the image descriptor corresponding to the provided key. If the image file or the key doesn't exists, the
      * method returns <code>null</code>.
      *
-     * @param pKey
+     * @param key
      *            Key designing the image
      * @return the image descriptor associated to the key
      *
      * @see ImageManager#getImageDescriptor(String)
      */
-    public static ImageDescriptor getImageDescriptor(String pKey) {
-        return getDefault().getImageManager().getImageDescriptor(pKey);
+    public static ImageDescriptor getImageDescriptor(String key) {
+        return getDefault().getImageManager().getImageDescriptor(key);
     }
 
     /**

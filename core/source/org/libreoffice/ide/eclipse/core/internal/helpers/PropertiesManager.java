@@ -242,17 +242,17 @@ public class PropertiesManager {
      * If the path doesn't refer to a valid URE, nothing is changed in the list of OOo instances
      * </p>
      *
-     * @param pPath
+     * @param path
      *            the path to the URE installation
-     * @param pName
+     * @param name
      *            the name of the URE
-     * @param pOoos
+     * @param instances
      *            the list of OOo instances where to add the URE
      */
-    private static void addURE(String pPath, String pName, Vector<IOOo> pOoos) {
+    private static void addURE(String path, String name, Vector<IOOo> instances) {
         try {
-            URE ure = new URE(pPath, pName);
-            pOoos.add(ure);
+            URE ure = new URE(path, name);
+            instances.add(ure);
         } catch (InvalidConfigException e) {
             PluginLogger.error(e.getLocalizedMessage(), e);
         }
@@ -261,10 +261,10 @@ public class PropertiesManager {
     /**
      * Saves the OOo properties.
      *
-     * @param pOoos
+     * @param ooos
      *            the OOos to save
      */
-    public static void saveOOos(IOOo[] pOoos) {
+    public static void saveOOos(IOOo[] ooos) {
 
         FileOutputStream out = null;
 
@@ -282,8 +282,8 @@ public class PropertiesManager {
             }
 
             // Saving the new OOos
-            for (int i = 0; i < pOoos.length; i++) {
-                IOOo oooi = pOoos[i];
+            for (int i = 0; i < ooos.length; i++) {
+                IOOo oooi = ooos[i];
                 ooosProperties.put(OOOPATH_PREFERENCE_KEY + i, oooi.getHome());
                 ooosProperties.put(OOONAME_PREFERENCE_KEY + i, oooi.getName());
             }

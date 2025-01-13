@@ -80,17 +80,17 @@ public class UreTab extends AbstractLaunchConfigurationTab {
          * {@inheritDoc}
          */
         @Override
-        public void widgetDefaultSelected(SelectionEvent pEvent) {
-            widgetSelected(pEvent);
+        public void widgetDefaultSelected(SelectionEvent event) {
+            widgetSelected(event);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void widgetSelected(SelectionEvent pEvent) {
+        public void widgetSelected(SelectionEvent event) {
 
-            if (pEvent.getSource().equals(mProjectBtn)) {
+            if (event.getSource().equals(mProjectBtn)) {
                 ILabelProvider labelProvider = new UnoProjectLabelProvider();
                 ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
                 dialog.setTitle(Messages.getString("UreTab.ProjectChooserTitle")); //$NON-NLS-1$
@@ -103,13 +103,13 @@ public class UreTab extends AbstractLaunchConfigurationTab {
                     setDirty(true);
                     getLaunchConfigurationDialog().updateButtons();
                 }
-            } else if (pEvent.getSource().equals(mMainBtn)) {
+            } else if (event.getSource().equals(mMainBtn)) {
                 ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider() {
                     @Override
-                    public String getText(Object pElement) {
+                    public String getText(Object element) {
                         String label = null;
-                        if (pElement instanceof String) {
-                            label = (String) pElement;
+                        if (element instanceof String) {
+                            label = (String) element;
                         }
                         return label;
                     }
@@ -130,9 +130,9 @@ public class UreTab extends AbstractLaunchConfigurationTab {
          * {@inheritDoc}
          */
         @Override
-        public void modifyText(ModifyEvent pEvent) {
+        public void modifyText(ModifyEvent event) {
 
-            if (pEvent.getSource() == mProjectTxt) {
+            if (event.getSource() == mProjectTxt) {
                 IUnoidlProject prj = ProjectsManager.getProject(mProjectTxt.getText().trim());
                 if (prj != null) {
                     mProject = prj;
@@ -211,11 +211,11 @@ public class UreTab extends AbstractLaunchConfigurationTab {
      * {@inheritDoc}
      */
     @Override
-    public void initializeFrom(ILaunchConfiguration pConfiguration) {
+    public void initializeFrom(ILaunchConfiguration configuration) {
         try {
-            mProjectTxt.setText(pConfiguration.getAttribute(IUreLaunchConstants.PROJECT_NAME, "")); //$NON-NLS-1$
-            mMainTxt.setText(pConfiguration.getAttribute(IUreLaunchConstants.MAIN_TYPE, "")); //$NON-NLS-1$
-            mArgumentsTxt.setText(pConfiguration.getAttribute(IUreLaunchConstants.PROGRAM_ARGS, "")); //$NON-NLS-1$
+            mProjectTxt.setText(configuration.getAttribute(IUreLaunchConstants.PROJECT_NAME, "")); //$NON-NLS-1$
+            mMainTxt.setText(configuration.getAttribute(IUreLaunchConstants.MAIN_TYPE, "")); //$NON-NLS-1$
+            mArgumentsTxt.setText(configuration.getAttribute(IUreLaunchConstants.PROGRAM_ARGS, "")); //$NON-NLS-1$
         } catch (CoreException e) {
             PluginLogger.error(Messages.getString("UreTab.ConfigurationError"), e); //$NON-NLS-1$
         }
@@ -225,18 +225,18 @@ public class UreTab extends AbstractLaunchConfigurationTab {
      * {@inheritDoc}
      */
     @Override
-    public void performApply(ILaunchConfigurationWorkingCopy pConfiguration) {
+    public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 
-        pConfiguration.setAttribute(IUreLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
-        pConfiguration.setAttribute(IUreLaunchConstants.MAIN_TYPE, mMainTxt.getText().trim());
-        pConfiguration.setAttribute(IUreLaunchConstants.PROGRAM_ARGS, mArgumentsTxt.getText().trim());
+        configuration.setAttribute(IUreLaunchConstants.PROJECT_NAME, mProjectTxt.getText().trim());
+        configuration.setAttribute(IUreLaunchConstants.MAIN_TYPE, mMainTxt.getText().trim());
+        configuration.setAttribute(IUreLaunchConstants.PROGRAM_ARGS, mArgumentsTxt.getText().trim());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setDefaults(ILaunchConfigurationWorkingCopy pConfiguration) {
+    public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 
     }
 
@@ -244,16 +244,18 @@ public class UreTab extends AbstractLaunchConfigurationTab {
      * {@inheritDoc}
      */
     @Override
-    public boolean isValid(ILaunchConfiguration pLaunchConfig) {
+    public boolean isValid(ILaunchConfiguration launchConfig) {
 
         boolean valid = false;
 
         try {
 
-            boolean projectSet = !pLaunchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
-            boolean mainImplSet = !pLaunchConfig.getAttribute(IUreLaunchConstants.MAIN_TYPE, "").equals("");//$NON-NLS-1$ //$NON-NLS-2$
+            boolean projectSet = !launchConfig.getAttribute(
+                IUreLaunchConstants.PROJECT_NAME, "").equals(""); //$NON-NLS-1$ //$NON-NLS-2$
+            boolean mainImplSet = !launchConfig.getAttribute(
+                IUreLaunchConstants.MAIN_TYPE, "").equals(""); //$NON-NLS-1$ //$NON-NLS-2$
             if (projectSet && mainImplSet) {
-                String name = pLaunchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
+                String name = launchConfig.getAttribute(IUreLaunchConstants.PROJECT_NAME, ""); //$NON-NLS-1$
                 valid = ProjectsManager.getProject(name) != null;
             }
         } catch (CoreException e) {

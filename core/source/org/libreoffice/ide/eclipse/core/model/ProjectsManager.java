@@ -64,15 +64,15 @@ public class ProjectsManager {
     /**
      * Returns the unoidl project with the given name, if it exists. Otherwise <code>null</code> is returned
      *
-     * @param pName
+     * @param name
      *            the name of the project to find
      * @return the found project.
      */
-    public static IUnoidlProject getProject(String pName) {
+    public static IUnoidlProject getProject(String name) {
 
         IUnoidlProject result = null;
-        if (pName != null && sProjects.containsKey(pName)) {
-            result = sProjects.get(pName);
+        if (name != null && sProjects.containsKey(name)) {
+            result = sProjects.get(name);
         }
         return result;
     }
@@ -116,14 +116,14 @@ public class ProjectsManager {
     /**
      * Removes a project from the manager.
      *
-     * @param pName
+     * @param name
      *            the name of the project to remove
      */
-    public static void removeProject(String pName) {
-        if (sProjects.containsKey(pName)) {
-            IUnoidlProject prj = sProjects.get(pName);
+    public static void removeProject(String name) {
+        if (sProjects.containsKey(name)) {
+            IUnoidlProject prj = sProjects.get(name);
             prj.dispose();
-            sProjects.remove(pName);
+            sProjects.remove(name);
         }
     }
 

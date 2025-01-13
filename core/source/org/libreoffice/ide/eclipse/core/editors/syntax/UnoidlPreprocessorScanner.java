@@ -73,21 +73,21 @@ public class UnoidlPreprocessorScanner extends RuleBasedScanner {
     /**
      * Constructor initializing the rules for the preprocessor command analysis.
      *
-     * @param pColorManager
+     * @param colorManager
      *            the color manager from where to get the colors
      */
-    public UnoidlPreprocessorScanner(ColorProvider pColorManager) {
+    public UnoidlPreprocessorScanner(ColorProvider colorManager) {
 
-        IToken path = new Token(new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.ITALIC));
+        IToken path = new Token(new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.ITALIC));
 
         IToken condition = new Token(
-            new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.ITALIC));
+            new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.ITALIC));
 
         IToken definition = condition;
 
-        IToken other = new Token(new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR)));
+        IToken other = new Token(new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR)));
 
-        IToken command = new Token(new TextAttribute(pColorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.BOLD));
+        IToken command = new Token(new TextAttribute(colorManager.getColor(Colors.C_PREPROCESSOR), null, SWT.BOLD));
 
         WordRule wordRule = new WordRule(new UnoidlWordDetector(), other);
         for (int i = 0; i < PREPROC_COMMANDS.length; i++) {

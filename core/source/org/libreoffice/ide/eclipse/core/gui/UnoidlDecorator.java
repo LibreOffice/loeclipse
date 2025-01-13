@@ -59,25 +59,25 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
      * {@inheritDoc}
      */
     @Override
-    public Image decorateImage(Image pImage, Object pElement) {
+    public Image decorateImage(Image image, Object element) {
 
         Image newImage = null;
 
-        if (isIdlFolder(pElement)) {
-            newImage = new OverlayImageIcon(pImage, OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
+        if (isIdlFolder(element)) {
+            newImage = new OverlayImageIcon(image, OOEclipsePlugin.getImage(ImagesConstants.IDL_MODIFIER),
                 OverlayImageIcon.TOP_LEFT).getImage();
-        } else if (pElement instanceof IProject) {
-            IProject project = (IProject) pElement;
+        } else if (element instanceof IProject) {
+            IProject project = (IProject) element;
             try {
                 if (project.hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
-                    newImage = new OverlayImageIcon(pImage, OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
+                    newImage = new OverlayImageIcon(image, OOEclipsePlugin.getImage(ImagesConstants.PRJ_MODIFIER),
                         OverlayImageIcon.BOTTOM_RIGHT).getImage();
                 }
             } catch (CoreException e) {
                 // Nothing to do: no uno nature found
             }
-        } else if (isDbFolder(pElement)) {
-            newImage = new OverlayImageIcon(pImage, OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
+        } else if (isDbFolder(element)) {
+            newImage = new OverlayImageIcon(image, OOEclipsePlugin.getImage(ImagesConstants.DB_MODIFIER),
                 OverlayImageIcon.TOP_LEFT).getImage();
         }
 
@@ -88,28 +88,28 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
      * {@inheritDoc}
      */
     @Override
-    public String decorateText(String pText, Object pElement) {
+    public String decorateText(String text, Object element) {
 
-        if (isIdlFolder(pElement)) {
+        if (isIdlFolder(element)) {
 
-            pText = pText.replaceAll("\\.", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+            text = text.replaceAll("\\.", "/"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        return pText;
+        return text;
     }
 
     /**
      * Tests if the element is a folder contained in the project idl directory.
      *
-     * @param pElement
+     * @param element
      *            element to check
      * @return <code>true</code> if the element is an IDL directory, <code>false</code> otherwise.
      */
-    private boolean isIdlFolder(Object pElement) {
+    private boolean isIdlFolder(Object element) {
         boolean result = false;
 
-        if (pElement instanceof IResource) {
-            IResource resource = (IResource) pElement;
+        if (element instanceof IResource) {
+            IResource resource = (IResource) element;
 
             try {
                 if (IResource.FOLDER == resource.getType()) {
@@ -132,18 +132,18 @@ public class UnoidlDecorator extends LabelProvider implements ILabelDecorator {
     /**
      * Tests if the elements is the urd folder of a unoidl project or one of its children.
      *
-     * @param pElement
+     * @param element
      *            the element to test
      * @return <code>true</code> if the element is the urd folder of a unoidl project or one of its children. Otherwise
      *         of if the element is a urd child but not a folder, <code>false</code> is returned
      */
-    private boolean isDbFolder(Object pElement) {
+    private boolean isDbFolder(Object element) {
         boolean result = false;
 
-        if (pElement instanceof IFolder) {
+        if (element instanceof IFolder) {
 
             try {
-                IFolder folder = (IFolder) pElement;
+                IFolder folder = (IFolder) element;
 
                 IUnoidlProject project = ProjectsManager.getProject(folder.getProject().getName());
 

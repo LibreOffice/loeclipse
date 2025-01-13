@@ -84,100 +84,100 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
     /**
      * Default constructor to use when neither the project nor the OOo instance is known.
      *
-     * @param pName
+     * @param name
      *            wizard page name
      */
-    public NewScopedElementWizardPage(String pName) {
-        this(pName, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    public NewScopedElementWizardPage(String name) {
+        this(name, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
      * Constructor to use when the UNO project is already created.
      *
-     * @param pPageName
+     * @param pageName
      *            name of the page
-     * @param pUnoProject
+     * @param unoProject
      *            UNO project in which to create a scoped type
      */
-    public NewScopedElementWizardPage(String pPageName, IUnoidlProject pUnoProject) {
-        this(pPageName, pUnoProject, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    public NewScopedElementWizardPage(String pageName, IUnoidlProject unoProject) {
+        this(pageName, unoProject, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
      * Constructor to use when the UNO project is already created, the scoped type name and it's path already known.
      *
-     * @param pPageName
+     * @param pageName
      *            name of the wizard page
-     * @param pProject
+     * @param project
      *            UNO project in which to create a scoped type
-     * @param pRootName
+     * @param rootName
      *            scoped name of the module containing the type
-     * @param pElementName
+     * @param elementName
      *            name of the type, without any '.' or '::'
      */
-    public NewScopedElementWizardPage(String pPageName, IUnoidlProject pProject, String pRootName,
-        String pElementName) {
+    public NewScopedElementWizardPage(String pageName, IUnoidlProject project, String rootName,
+        String elementName) {
 
-        this(pPageName, pRootName, pElementName);
-        setUnoidlProject(pProject);
+        this(pageName, rootName, elementName);
+        setUnoidlProject(project);
     }
 
     /**
      * Creates a default scoped name type wizard page with blank container path and type name.
      *
-     * @param pPageName
+     * @param pageName
      *            name of the wizard page
-     * @param pOOoInstance
+     * @param instance
      *            the OOo instance to use to retrieve the types
      */
-    public NewScopedElementWizardPage(String pPageName, IOOo pOOoInstance) {
-        this(pPageName, "", "", pOOoInstance); //$NON-NLS-1$ //$NON-NLS-2$
+    public NewScopedElementWizardPage(String pageName, IOOo instance) {
+        this(pageName, "", "", instance); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
      * Constructor to use when the UNO project is already created, the scoped type name and it's path already known.
      *
-     * @param pPageName
+     * @param pageName
      *            name of the wizard page
-     * @param pRootName
+     * @param rootName
      *            scoped name of the module containing the type
-     * @param pElementName
+     * @param elementName
      *            name of the type, without any '.' or '::'
-     * @param pOOoInstance
+     * @param instance
      *            the reference to the OOo to use for type selection
      */
-    public NewScopedElementWizardPage(String pPageName, String pRootName, String pElementName, IOOo pOOoInstance) {
+    public NewScopedElementWizardPage(String pageName, String rootName, String elementName, IOOo instance) {
 
-        this(pPageName, pRootName, pElementName);
-        setOOoInstance(pOOoInstance);
+        this(pageName, rootName, elementName);
+        setOOoInstance(instance);
     }
 
     /**
      * Creates a default page for a scoped element like an interface or a service. This constructor let provide default
      * values for the container path and the type name.
      *
-     * @param pPageName
+     * @param pageName
      *            name of the wizard page
-     * @param pRootName
+     * @param rootName
      *            scoped name of the module containing the type
-     * @param pElementName
+     * @param elementName
      *            name of the type, without any '.' or '::'
      */
-    private NewScopedElementWizardPage(String pPageName, String pRootName, String pElementName) {
+    private NewScopedElementWizardPage(String pageName, String rootName, String elementName) {
 
-        super(pPageName);
+        super(pageName);
 
         setTitle(getTitle());
         setDescription(getDescription());
         setImageDescriptor(getImageDescriptor());
 
         mRootName = ""; //$NON-NLS-1$
-        if (null != pRootName) {
-            mRootName = pRootName;
+        if (null != rootName) {
+            mRootName = rootName;
         }
         mElementName = ""; //$NON-NLS-1$
-        if (null != pElementName) {
-            mElementName = pElementName;
+        if (null != elementName) {
+            mElementName = elementName;
         }
         mSubpackageName = ""; //$NON-NLS-1$
     }
@@ -221,13 +221,13 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
     /**
      * Set the OOo instance to query the types from.
      *
-     * @param pOOoInstance
+     * @param instance
      *            OOo instance to use.
      */
-    public void setOOoInstance(IOOo pOOoInstance) {
-        if (pOOoInstance != null) {
+    public void setOOoInstance(IOOo instance) {
+        if (instance != null) {
             UnoTypeProvider provider = UnoTypeProvider.getInstance();
-            provider.setOOoInstance(pOOoInstance);
+            provider.setOOoInstance(instance);
         }
     }
 
@@ -303,45 +303,45 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
      * the container name of the type to create is composed of two parts: the package root and the package. This method
      * sets the second part.
      *
-     * @param pValue
+     * @param value
      *            the new package value
-     * @param pForced
+     * @param forced
      *            <code>true</code> will replace the current value, <code>false</code> will set the value only if the
      *            current package is empty or <code>null</code>.
      */
-    public void setPackage(String pValue, boolean pForced) {
+    public void setPackage(String value, boolean forced) {
         String moduleSep = "::"; //$NON-NLS-1$
 
-        if (pValue.startsWith(moduleSep)) {
-            pValue = pValue.substring(moduleSep.length());
+        if (value.startsWith(moduleSep)) {
+            value = value.substring(moduleSep.length());
         }
 
         if (mPackageRow != null) {
-            mPackageRow.setValue(pValue);
-            mPackageRow.setEnabled(!pForced);
+            mPackageRow.setValue(value);
+            mPackageRow.setEnabled(!forced);
         } else {
-            mSubpackageName = pValue;
+            mSubpackageName = value;
         }
     }
 
     /**
      * Sets the name of the element to create.
      *
-     * @param pValue
+     * @param value
      *            the new package value
-     * @param pForced
+     * @param forced
      *            <code>true</code> will replace the current value, <code>false</code> will set the value only if the
      *            current package is empty or <code>null</code>.
      */
-    public void setName(String pValue, boolean pForced) {
+    public void setName(String value, boolean forced) {
 
-        mElementName = pValue;
+        mElementName = value;
         if (mNameRow != null) {
 
-            pValue = pValue.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            value = value.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
-            mNameRow.setValue(pValue);
-            mNameRow.setEnabled(!pForced);
+            mNameRow.setValue(value);
+            mNameRow.setEnabled(!forced);
         }
         setPageComplete(isPageComplete());
     }
@@ -360,15 +360,15 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
     /**
      * Sets whether the type is published or not.
      *
-     * @param pValue
+     * @param value
      *            <code>true</code> if the type is published, <code>false</code> otherwise
-     * @param pForced
+     * @param forced
      *            <code>true</code> to overwrite the existing value.
      */
-    public void setPublished(boolean pValue, boolean pForced) {
+    public void setPublished(boolean value, boolean forced) {
 
-        mPublishedRow.setValue(pValue);
-        mPublishedRow.setEnabled(!pForced);
+        mPublishedRow.setValue(value);
+        mPublishedRow.setEnabled(!forced);
     }
 
     /**
@@ -393,9 +393,9 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
      * {@inheritDoc}
      */
     @Override
-    public void addPageListener(IPageListener pListener) {
-        if (!mListeners.contains(pListener)) {
-            mListeners.add(pListener);
+    public void addPageListener(IPageListener listener) {
+        if (!mListeners.contains(listener)) {
+            mListeners.add(listener);
         }
     }
 
@@ -403,21 +403,21 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
      * {@inheritDoc}
      */
     @Override
-    public void removePageListener(IPageListener pListener) {
-        if (mListeners.contains(pListener)) {
-            mListeners.remove(pListener);
+    public void removePageListener(IPageListener listener) {
+        if (mListeners.contains(listener)) {
+            mListeners.remove(listener);
         }
     }
 
     /**
      * Notifies all the page listeners that the pages data have changed.
      *
-     * @param pData
+     * @param data
      *            the new data of the page.
      */
-    protected void firePageChanged(UnoFactoryData pData) {
+    protected void firePageChanged(UnoFactoryData data) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
-            mListeners.get(i).pageChanged(pData);
+            mListeners.get(i).pageChanged(data);
         }
     }
 
@@ -480,18 +480,18 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
     }
 
     /**
-     * @param pData
+     * @param data
      *            the UNO data to complete
      *
      * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
-    public UnoFactoryData fillData(UnoFactoryData pData) {
-        if (pData != null) {
-            pData.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
-            pData.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
-            pData.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, Boolean.valueOf(isPublished()));
+    public UnoFactoryData fillData(UnoFactoryData data) {
+        if (data != null) {
+            data.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
+            data.setProperty(IUnoFactoryConstants.TYPE_NAME, getElementName());
+            data.setProperty(IUnoFactoryConstants.TYPE_PUBLISHED, Boolean.valueOf(isPublished()));
         }
-        return pData;
+        return data;
     }
 
     /**
@@ -502,21 +502,21 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
     public abstract UnoFactoryData getEmptyTypeData();
 
     /**
-     * @param pData
+     * @param data
      *            the data of the project for which to get the default type data.
      *
      * @return the default type data for the project
      */
-    public static UnoFactoryData getTypeData(UnoFactoryData pData) {
+    public static UnoFactoryData getTypeData(UnoFactoryData data) {
         UnoFactoryData typeData = new UnoFactoryData();
 
-        if (pData != null) {
+        if (data != null) {
             try {
-                String name = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+                String name = (String) data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
                 name = name.substring(0, 1).toUpperCase() + name.substring(1);
                 name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
-                String packageName = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
+                String packageName = (String) data.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
                 packageName = packageName.replace(".", "::"); //$NON-NLS-1$ //$NON-NLS-2$
 
                 // put the properties in the data
@@ -534,27 +534,27 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
      * {@inheritDoc}
      */
     @Override
-    public void fieldChanged(FieldEvent pEvent) {
+    public void fieldChanged(FieldEvent event) {
 
         UnoFactoryData typeDelta = null;
 
         try {
-            if (pEvent.getProperty().equals(P_PACKAGE)) {
+            if (event.getProperty().equals(P_PACKAGE)) {
                 typeDelta = getEmptyTypeData();
                 typeDelta.setProperty(IUnoFactoryConstants.PACKAGE_NAME, getPackage());
 
-            } else if (pEvent.getProperty().equals(P_NAME)) {
-                mElementName = pEvent.getValue();
+            } else if (event.getProperty().equals(P_NAME)) {
+                mElementName = event.getValue();
                 // Test if there is the scoped name already exists
                 String[] containers = new String[] { getProject().getTypesPath().toOSString(),
                     getProject().getOOo().getName() };
-                boolean exists = UnoTypeProvider.getInstance().contains(pEvent.getValue(), containers);
+                boolean exists = UnoTypeProvider.getInstance().contains(event.getValue(), containers);
                 if (exists) {
                     setErrorMessage(Messages.getString("NewScopedElementWizardPage.NameExistsError")); //$NON-NLS-1$
                 } else {
                     setErrorMessage(null);
                     typeDelta = getEmptyTypeData();
-                    typeDelta.setProperty(IUnoFactoryConstants.TYPE_NAME, pEvent.getValue());
+                    typeDelta.setProperty(IUnoFactoryConstants.TYPE_NAME, event.getValue());
                 }
             }
         } catch (NullPointerException e) {
@@ -616,21 +616,21 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
      * </ul>
      * </p>
      *
-     * @param pIdlFullName
+     * @param idlFullName
      *            the full name of the IDL file check
      * @param pPrj
      *            the project where to look for the IDL file
      *
      * @return <code>true</code> if the an IDL file corresponds to the searched type, <code>false</code> otherwise.
      */
-    public static boolean existsIdlFile(String pIdlFullName, IUnoidlProject pPrj) {
+    public static boolean existsIdlFile(String idlFullName, IUnoidlProject pPrj) {
 
         boolean exists = false;
 
         if (pPrj != null) {
             try {
                 IPath idlPath = pPrj.getIdlPath();
-                String slashedName = pIdlFullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+                String slashedName = idlFullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
                 idlPath = idlPath.append(slashedName + ".idl"); //$NON-NLS-1$
 
                 idlPath = pPrj.getProjectPath().append(idlPath);
@@ -638,7 +638,7 @@ public abstract class NewScopedElementWizardPage extends WizardPage implements I
                 exists = idlPath.toFile().exists();
             } catch (Exception e) {
                 String pattern = Messages.getString("ServiceWizardSet.IsIdlTypeExistingWarning"); //$NON-NLS-1$
-                String msg = MessageFormat.format(pattern, pIdlFullName);
+                String msg = MessageFormat.format(pattern, idlFullName);
                 PluginLogger.warning(msg, e);
             }
         }

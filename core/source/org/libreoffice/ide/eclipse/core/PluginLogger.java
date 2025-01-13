@@ -50,117 +50,117 @@ public class PluginLogger {
     /**
      * Logs a debug message.
      *
-     * @param pMessage
+     * @param message
      *            the message to log
-     * @param pExc
+     * @param exc
      *            the exception causing the message
      */
-    public static void debug(String pMessage, Throwable pExc) {
+    public static void debug(String message, Throwable exc) {
         if (sLevel.equals(LogLevels.DEBUG)) {
             OOEclipsePlugin.getDefault().getLog().log(new Status(IStatus.OK,
-                OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, pMessage, pExc));
+                OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, message, exc));
         }
     }
 
     /**
      * Logs a debug message.
      *
-     * @param pMessage
+     * @param message
      *            the message to log
      */
-    public static void debug(String pMessage) {
-        debug(pMessage, null);
+    public static void debug(String message) {
+        debug(message, null);
     }
 
     /**
      * Logs a information message.
      *
-     * @param pMessage
+     * @param message
      *            the message to log
      */
-    public static void info(String pMessage) {
+    public static void info(String message) {
         if (sLevel.equals(LogLevels.DEBUG) || sLevel.equals(LogLevels.INFO)) {
             OOEclipsePlugin.getDefault().getLog().log(new Status(IStatus.INFO,
-                OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.INFO, pMessage, null));
+                OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.INFO, message, null));
         }
     }
 
     /**
      * Logs a warning message.
      *
-     * @param pMessage
+     * @param message
      *            the message to log
      */
-    public static void warning(String pMessage) {
-        warning(pMessage, null);
+    public static void warning(String message) {
+        warning(message, null);
     }
 
     /**
      * Logs a warning message caused by an exception.
      *
-     * @param pMessage
+     * @param message
      *            the message to log
-     * @param pExc
+     * @param exc
      *            exception raised. Could be <code>null</code>
      */
-    public static void warning(String pMessage, Throwable pExc) {
+    public static void warning(String message, Throwable exc) {
         if (!sLevel.equals(LogLevels.ERROR)) {
             OOEclipsePlugin.getDefault().getLog()
-            .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
-                IStatus.WARNING, pMessage, pExc));
+                .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
+                IStatus.WARNING, message, exc));
         }
     }
 
     /**
      * Logs an error message an optionally the stack trace of the exception which causes the error.
      *
-     * @param pMessage
+     * @param message
      *            Message to print in the error log view
-     * @param pExc
+     * @param exc
      *            Exception raised. Could be <code>null</code>.
      */
-    public static void error(String pMessage, Throwable pExc) {
+    public static void error(String message, Throwable exc) {
 
         OOEclipsePlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
-            OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.ERROR, pMessage, pExc));
+            OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.ERROR, message, exc));
     }
 
     /**
      * Logs an error message without cause exception.
      *
-     * @param pMessage
+     * @param message
      *            Message to print in the error log view
      */
-    public static void error(String pMessage) {
-        error(pMessage, null);
+    public static void error(String message) {
+        error(message, null);
     }
 
     /**
      * Changes the minimum level of the message printed to the log view.
      *
-     * @param pLevel
+     * @param level
      *            the level to set
      */
-    public static void setLevel(LogLevels pLevel) {
-        sLevel = pLevel;
+    public static void setLevel(LogLevels level) {
+        sLevel = level;
     };
 
     /**
      * Checks whether the logger will return a message of a certain level.
      *
-     * @param pLevel
+     * @param level
      *            the level of the message to print
      * @return <code>true</code> if the level is higher or equals to the current log level.
      */
-    public static boolean isLevel(LogLevels pLevel) {
+    public static boolean isLevel(LogLevels level) {
 
         boolean result = false;
 
-        boolean testWarning = pLevel.equals(LogLevels.WARNING) && !sLevel.equals(LogLevels.ERROR);
-        boolean testInfo = pLevel.equals(LogLevels.INFO)
+        boolean testWarning = level.equals(LogLevels.WARNING) && !sLevel.equals(LogLevels.ERROR);
+        boolean testInfo = level.equals(LogLevels.INFO)
             && (sLevel.equals(LogLevels.DEBUG) || sLevel.equals(LogLevels.INFO));
-        boolean testDebug = pLevel.equals(LogLevels.DEBUG) && sLevel.equals(LogLevels.DEBUG);
-        if (pLevel.equals(LogLevels.ERROR) || testWarning || testInfo || testDebug) {
+        boolean testDebug = level.equals(LogLevels.DEBUG) && sLevel.equals(LogLevels.DEBUG);
+        if (level.equals(LogLevels.ERROR) || testWarning || testInfo || testDebug) {
             result = true;
         }
 

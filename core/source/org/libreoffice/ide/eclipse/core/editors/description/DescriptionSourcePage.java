@@ -41,15 +41,15 @@ public class DescriptionSourcePage extends SourcePage {
     /**
      * Description source editor page constructor.
      *
-     * @param pFormEditor
+     * @param formEditor
      *            the editor hosting the page.
-     * @param pId
+     * @param pageId
      *            the page identifier
-     * @param pTitle
+     * @param title
      *            the page title
      */
-    public DescriptionSourcePage(FormEditor pFormEditor, String pId, String pTitle) {
-        super(pFormEditor, pId, pTitle);
+    public DescriptionSourcePage(FormEditor formEditor, String pageId, String title) {
+        super(formEditor, pageId, title);
     }
 
     /**

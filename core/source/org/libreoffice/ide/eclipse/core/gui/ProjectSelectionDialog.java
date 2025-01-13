@@ -78,15 +78,15 @@ public class ProjectSelectionDialog extends Dialog {
     /**
      * Constructor.
      *
-     * @param pPrj
+     * @param prj
      *            the UNO project where to select the resource
-     * @param pDescription
+     * @param description
      *            a message explaining the selection to the user
      */
-    public ProjectSelectionDialog(IProject pPrj, String pDescription) {
+    public ProjectSelectionDialog(IProject prj, String description) {
         super(Display.getDefault().getActiveShell());
-        mProject = pPrj;
-        mDescription = pDescription;
+        mProject = prj;
+        mDescription = description;
 
         setShellStyle(SWT.RESIZE | SWT.APPLICATION_MODAL);
     }
@@ -95,19 +95,19 @@ public class ProjectSelectionDialog extends Dialog {
      * {@inheritDoc}
      */
     @Override
-    protected void configureShell(Shell pNewShell) {
-        super.configureShell(pNewShell);
-        pNewShell.setText(Messages.getString("ProjectSelectionDialog.Title")); //$NON-NLS-1$
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.getString("ProjectSelectionDialog.Title")); //$NON-NLS-1$
     }
 
     /**
      * Set whether to show or hide the files.
      *
-     * @param pOnlyFolders
+     * @param onlyFolders
      *            <code>true</code> to show only the folder, <code>false</code> to see everything.
      */
-    public void setShowOnlyFolders(boolean pOnlyFolders) {
-        mFoldersOnly = pOnlyFolders;
+    public void setShowOnlyFolders(boolean onlyFolders) {
+        mFoldersOnly = onlyFolders;
     }
 
     /**
@@ -120,14 +120,14 @@ public class ProjectSelectionDialog extends Dialog {
     /**
      * Set the list of elements which should be shown in the dialog.
      *
-     * @param pNotToShow
+     * @param notToShow
      *            the list of resources to hide.
      */
-    public void setFilteredElements(List<IResource> pNotToShow) {
+    public void setFilteredElements(List<IResource> notToShow) {
         if (mNotShownResources != null) {
             mNotShownResources.clear();
         }
-        mNotShownResources = pNotToShow;
+        mNotShownResources = notToShow;
     }
 
     /**
@@ -149,10 +149,10 @@ public class ProjectSelectionDialog extends Dialog {
         mTreeViewer.addFilter(new ViewerFilter() {
 
             @Override
-            public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
                 boolean select = true;
-                if (pElement instanceof IAdaptable) {
-                    IAdaptable adaptable = (IAdaptable) pElement;
+                if (element instanceof IAdaptable) {
+                    IAdaptable adaptable = (IAdaptable) element;
                     select = adaptable.getAdapter(IFolder.class) != null;
 
                     if (!mFoldersOnly) {
@@ -163,7 +163,7 @@ public class ProjectSelectionDialog extends Dialog {
                     }
 
                     // Test if the resource has to be hidden
-                    if (select && mNotShownResources.contains(pElement)) {
+                    if (select && mNotShownResources.contains(element)) {
                         select = false;
                     }
                 }
@@ -175,9 +175,9 @@ public class ProjectSelectionDialog extends Dialog {
         mTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
-            public void selectionChanged(SelectionChangedEvent pEvent) {
-                if (pEvent.getSelection() instanceof IStructuredSelection) {
-                    IStructuredSelection sel = (IStructuredSelection) pEvent.getSelection();
+            public void selectionChanged(SelectionChangedEvent event) {
+                if (event.getSelection() instanceof IStructuredSelection) {
+                    IStructuredSelection sel = (IStructuredSelection) event.getSelection();
                     Object o = sel.getFirstElement();
                     if (o instanceof IResource) {
                         mSelected = (IResource) o;

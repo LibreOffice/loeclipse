@@ -1,11 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
+Automatic-Module-Name: org.libreoffice.ide.eclipse.core
 Bundle-Name: LibreOffice eclipse integration - core
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.core;singleton:=true
 Bundle-Vendor: The Document Foundation
 Bundle-Version: 4.0.2
 Bundle-Activator: org.libreoffice.ide.eclipse.core.OOEclipsePlugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,

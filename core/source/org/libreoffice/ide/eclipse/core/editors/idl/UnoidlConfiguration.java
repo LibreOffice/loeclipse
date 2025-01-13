@@ -72,11 +72,11 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
     /**
      * Default constructor using a color manager.
      *
-     * @param pColorManager
+     * @param colorManager
      *            the color manager to colorize the syntax elements
      */
-    public UnoidlConfiguration(ColorProvider pColorManager) {
-        this.mColorManager = pColorManager;
+    public UnoidlConfiguration(ColorProvider colorManager) {
+        this.mColorManager = colorManager;
     }
 
     // ----------------------------------------- Text editing facilities support
@@ -85,7 +85,7 @@ public class UnoidlConfiguration extends SourceViewerConfiguration {
      * {@inheritDoc}
      */
     @Override
-    public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer pSourceViewer, String pContentType) {
+    public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
         if (mDoubleClickStrategy == null) {
             mDoubleClickStrategy = new UnoidlDoubleClickStrategy();
         }

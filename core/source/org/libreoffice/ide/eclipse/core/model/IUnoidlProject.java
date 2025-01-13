@@ -92,18 +92,18 @@ public interface IUnoidlProject {
      * Set the language of the project implementation. This method can be called only once on a project to avoid project
      * nature problems.
      *
-     * @param pLanguage
+     * @param language
      *            the new language
      */
-    public void setLanguage(AbstractLanguage pLanguage);
+    public void setLanguage(AbstractLanguage language);
 
     /**
      * Sets the selected LibreOffice.
      *
-     * @param pOOo
+     * @param ooo
      *            the selected LibreOffice
      */
-    public void setOOo(IOOo pOOo);
+    public void setOOo(IOOo ooo);
 
     /**
      * Sets the selected SDK.
@@ -120,12 +120,12 @@ public interface IUnoidlProject {
      * This can be used by plugins to set their own properties on the project.
      * </p>
      *
-     * @param pName
+     * @param name
      *            the property name
-     * @param pValue
+     * @param value
      *            the property value
      */
-    public void setProperty(String pName, String pValue);
+    public void setProperty(String name, String value);
 
     /**
      * Get a project's property.
@@ -134,11 +134,11 @@ public interface IUnoidlProject {
      * This can be used by plugins to get their own properties from the project.
      * </p>
      *
-     * @param pName
+     * @param name
      *            the property name
      * @return the value of the property or <code>null</code> if it doesn't exists
      */
-    public String getProperty(String pName);
+    public String getProperty(String name);
 
     // -------------------------------------------------------- Config accessors
 
@@ -185,10 +185,10 @@ public interface IUnoidlProject {
     /**
      * Sets the output extension.
      *
-     * @param pOutputExt
+     * @param outputExt
      *            new output extension to set
      */
-    public void setOutputExtension(String pOutputExt);
+    public void setOutputExtension(String outputExt);
 
     /**
      * Returns the package or namespace name used for the implementation.
@@ -330,10 +330,10 @@ public interface IUnoidlProject {
     /**
      * Defines the directory containing the IDL files.
      *
-     * @param pIdlDir
+     * @param idlDir
      *            the IDL directory
      */
-    public void setIdlDir(String pIdlDir);
+    public void setIdlDir(String idlDir);
 
     /**
      * Defines the directory containing the sources.

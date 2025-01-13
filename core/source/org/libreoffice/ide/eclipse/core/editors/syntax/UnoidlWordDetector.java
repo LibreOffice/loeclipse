@@ -48,18 +48,18 @@ public class UnoidlWordDetector implements IWordDetector {
      * {@inheritDoc}
      */
     @Override
-    public boolean isWordStart(char pChar) {
-        boolean isLower = pChar >= 'a' && pChar <= 'z';
-        boolean isUpper = pChar >= 'A' && pChar <= 'Z';
+    public boolean isWordStart(char ch) {
+        boolean isLower = ch >= 'a' && ch <= 'z';
+        boolean isUpper = ch >= 'A' && ch <= 'Z';
 
-        return isLower || isUpper || pChar == '.' || pChar == '_';
+        return isLower || isUpper || ch == '.' || ch == '_';
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isWordPart(char pChar) {
-        return isWordStart(pChar) || pChar >= '0' && pChar <= '9';
+    public boolean isWordPart(char ch) {
+        return isWordStart(ch) || ch >= '0' && ch <= '9';
     }
 }

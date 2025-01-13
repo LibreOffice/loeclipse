@@ -55,9 +55,9 @@ public class OfficeHelper {
     /**
      * Create an office connection object using a given class loader.
      *
-     * @param pClassLoader
+     * @param classLoader
      *            the class loader to use
-     * @param pOOo
+     * @param ooo
      *            the office to set in the connection
      *
      * @return the office connection object
@@ -65,11 +65,11 @@ public class OfficeHelper {
      * @throws Exception
      *             if the class cannot be found or the constructor cannot be called.
      */
-    static Object createConnection(URLClassLoader pClassLoader, IOOo pOOo) throws Exception {
+    static Object createConnection(URLClassLoader classLoader, IOOo ooo) throws Exception {
         String className = CLASS_CONNECTION;
-        Class<?> clazz = pClassLoader.loadClass(className);
+        Class<?> clazz = classLoader.loadClass(className);
 
         Constructor<?> constr = clazz.getConstructor(IOOo.class);
-        return constr.newInstance(pOOo);
+        return constr.newInstance(ooo);
     }
 }

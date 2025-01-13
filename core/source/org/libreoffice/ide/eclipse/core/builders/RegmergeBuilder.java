@@ -67,46 +67,46 @@ public class RegmergeBuilder {
      * resulting file is given by {@link IUnoidlProject#getTypesPath()}. This methods simply launches the
      * {@link RegmergeBuildVisitor} on the urd folder.
      *
-     * @param pUnoprj
+     * @param unoProject
      *            the project to build
-     * @param pMonitor
+     * @param monitor
      *            a monitor to watch the build progress
      * @throws Exception
      *             is thrown is anything wrong happens
      */
-    public static void build(IUnoidlProject pUnoprj, IProgressMonitor pMonitor) throws Exception {
+    public static void build(IUnoidlProject unoProject, IProgressMonitor monitor) throws Exception {
 
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoprj.getName());
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
 
-        IFile typesFile = pUnoprj.getFile(pUnoprj.getTypesPath());
+        IFile typesFile = unoProject.getFile(unoProject.getTypesPath());
         File mergeFile = prj.getLocation().append(typesFile.getProjectRelativePath()).toFile();
         if (mergeFile != null && mergeFile.exists()) {
             FileHelper.remove(mergeFile);
         }
 
         // merge each urd file
-        IFolder urdFolder = pUnoprj.getFolder(pUnoprj.getUrdPath());
+        IFolder urdFolder = unoProject.getFolder(unoProject.getUrdPath());
         IPath urdPath = prj.getLocation().append(urdFolder.getProjectRelativePath());
         File urdFile = urdPath.toFile();
         VisitableFile visitableUrd = new VisitableFile(urdFile);
-        visitableUrd.accept(new RegmergeBuildVisitor(pUnoprj, pMonitor));
+        visitableUrd.accept(new RegmergeBuildVisitor(unoProject, monitor));
     }
 
     /**
      * Convenience method to execute the <code>regmerge</code> tool on a given file.
      *
-     * @param pFile
+     * @param file
      *            the file to run <code>regmerge</code> on.
-     * @param pUnoprj
+     * @param unoProject
      *            the UNO project on which to run the <code>regmerge</code> tool
-     * @param pMonitor
+     * @param monitor
      *            a progress monitor
      */
-    static void runRegmergeOnFile(File pFile, IUnoidlProject pUnoprj, IProgressMonitor pMonitor) {
+    static void runRegmergeOnFile(File file, IUnoidlProject unoProject, IProgressMonitor monitor) {
 
         // The registry file is placed in the root of the project as announced
         // to the api-dev mailing-list
-        IFile mergeFile = pUnoprj.getFile(pUnoprj.getTypesPath());
+        IFile mergeFile = unoProject.getFile(unoProject.getTypesPath());
 
         String existingReg = ""; //$NON-NLS-1$
         if (mergeFile.exists()) {
@@ -114,10 +114,10 @@ public class RegmergeBuilder {
         }
 
         String command = "regmerge types.rdb " + TYPE_ROOT_KEY + " " + //$NON-NLS-1$ //$NON-NLS-2$
-            existingReg + "\"" + pFile.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+            existingReg + "\"" + file.getAbsolutePath() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 
         // Process creation. Need to set the PATH value using OOo path: due to some tools changes in 3.1
-        String[] sPaths = pUnoprj.getOOo().getBinPath();
+        String[] sPaths = unoProject.getOOo().getBinPath();
         String sPathValue = "PATH="; //$NON-NLS-1$
         for (String sPath : sPaths) {
             if (!sPathValue.endsWith("=")) { //$NON-NLS-1$
@@ -126,9 +126,9 @@ public class RegmergeBuilder {
             sPathValue += sPath;
         }
 
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoprj.getName());
-        Process process = pUnoprj.getSdk().runToolWithEnv(prj, pUnoprj.getOOo(), command, new String[] { sPathValue },
-            pMonitor);
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
+        Process process = unoProject.getSdk().runToolWithEnv(prj, unoProject.getOOo(), command,
+            new String[] { sPathValue }, monitor);
 
         // Just wait for the process to end before destroying it
         try {

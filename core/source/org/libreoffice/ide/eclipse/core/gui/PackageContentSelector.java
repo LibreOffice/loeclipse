@@ -158,11 +158,11 @@ public class PackageContentSelector extends Composite {
     /**
      * Convenience method to create and populate the UnoPackage.
      *
-     * @param pProject
+     * @param project
      *            the project to export
-     * @param pDestFile
+     * @param destFile
      *            the file to export to
-     * @param pResources
+     * @param resources
      *            the files and folder to add to the OXT
      *
      * @return the populated package model
@@ -170,19 +170,19 @@ public class PackageContentSelector extends Composite {
      * @throws Exception
      *             if anything goes wrong.
      */
-    public static UnoPackage createPackage(IUnoidlProject pProject, File pDestFile, List<?> pResources)
+    public static UnoPackage createPackage(IUnoidlProject project, File destFile, List<?> resources)
         throws Exception {
         UnoPackage pack = null;
 
-        File prjFile = SystemHelper.getFile(pProject);
+        File prjFile = SystemHelper.getFile(project);
 
         // Export the library
         IFile library = null;
-        ILanguageBuilder langBuilder = pProject.getLanguage().getLanguageBuilder();
-        library = langBuilder.createLibrary(pProject);
+        ILanguageBuilder langBuilder = project.getLanguage().getLanguageBuilder();
+        library = langBuilder.createLibrary(project);
 
         // Create the package model
-        pack = UnoidlProjectHelper.createMinimalUnoPackage(pProject, pDestFile);
+        pack = UnoidlProjectHelper.createMinimalUnoPackage(project, destFile);
 
         if (library != null && library.exists()) {
             pack.addToClean(SystemHelper.getFile(library));
@@ -190,14 +190,14 @@ public class PackageContentSelector extends Composite {
             pack.addFile(UnoPackage.getPathRelativeToBase(libraryFile, prjFile), libraryFile);
         }
 
-        IFile descrFile = pProject.getFile(IUnoidlProject.DESCRIPTION_FILENAME);
+        IFile descrFile = project.getFile(IUnoidlProject.DESCRIPTION_FILENAME);
         if (descrFile.exists()) {
             File resFile = SystemHelper.getFile(descrFile);
             pack.addContent(UnoPackage.getPathRelativeToBase(resFile, prjFile), resFile);
         }
 
         // Add the additional content to the package
-        for (Object item : pResources) {
+        for (Object item : resources) {
             if (item instanceof IResource) {
                 File resFile = SystemHelper.getFile((IResource) item);
                 pack.addContent(UnoPackage.getPathRelativeToBase(resFile, prjFile), resFile);
@@ -216,20 +216,20 @@ public class PackageContentSelector extends Composite {
     private ITreeContentProvider getResourceProvider(final int pResourceType) {
         return new WorkbenchContentProvider() {
             @Override
-            public Object[] getChildren(Object pObject) {
+            public Object[] getChildren(Object object) {
                 ArrayList<IResource> results = new ArrayList<IResource>();
 
-                if (pObject instanceof ArrayList<?>) {
-                    ArrayList<?> objs = (ArrayList<?>) pObject;
+                if (object instanceof ArrayList<?>) {
+                    ArrayList<?> objs = (ArrayList<?>) object;
                     for (Object o : objs) {
                         if (o instanceof IResource) {
                             results.add((IResource) o);
                         }
                     }
-                } else if (pObject instanceof IContainer) {
+                } else if (object instanceof IContainer) {
                     IResource[] members = null;
                     try {
-                        members = ((IContainer) pObject).members();
+                        members = ((IContainer) object).members();
 
                         // filter out the desired resource types
                         for (int i = 0; i < members.length; i++) {

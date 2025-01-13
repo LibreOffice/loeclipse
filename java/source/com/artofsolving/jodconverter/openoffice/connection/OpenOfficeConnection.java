@@ -24,7 +24,7 @@ import com.sun.star.ucb.XFileIdentifierConverter;
 import com.sun.star.uno.XComponentContext;
 
 /**
- * A UNO remote protocol connection to a listening OpenOffice.org instance
+ * A UNO remote protocol connection to a listening OpenOffice.org instance.
  */
 public interface OpenOfficeConnection {
 

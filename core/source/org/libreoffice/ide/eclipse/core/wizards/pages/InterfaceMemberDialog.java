@@ -134,16 +134,16 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
     /**
      * Constructor to use for member edition.
      *
-     * @param pData
+     * @param data
      *            the member's data to edit
      */
-    public InterfaceMemberDialog(UnoFactoryData pData) {
+    public InterfaceMemberDialog(UnoFactoryData data) {
         super(Display.getDefault().getActiveShell());
         setShellStyle(getShellStyle() | SWT.RESIZE);
 
         // This dialog is a modal one
         setBlockOnOpen(true);
-        mData = pData;
+        mData = data;
 
         try {
             int type = ((Integer) mData.getProperty(IUnoFactoryConstants.MEMBER_TYPE)).intValue();
@@ -244,25 +244,26 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
     /**
      * Create the dialog fields which are common to the attribute and method inputs.
      *
-     * @param pParent
+     * @param parent
      *            the composite parent where to create the fields
-     * @param pCreateTypeSelector
+     * @param createTypeSelector
      *            <code>true</code> if the type selector should be created, <code>false</code> otherwise.
      */
-    private void createCommonRows(Composite pParent, boolean pCreateTypeSelector) {
+    private void createCommonRows(Composite parent, boolean createTypeSelector) {
         // Common rows
-        if (pCreateTypeSelector) {
+        if (createTypeSelector) {
 
-            Composite typeComposite = new Composite(pParent, SWT.NONE);
+            Composite typeComposite = new Composite(parent, SWT.NONE);
             GridData gd = new GridData(GridData.FILL_HORIZONTAL);
             gd.horizontalSpan = LabeledRow.LAYOUT_COLUMNS;
             typeComposite.setLayoutData(gd);
             typeComposite.setLayout(new GridLayout(LabeledRow.LAYOUT_COLUMNS, false));
 
             mMemberTypeRow = new ChoiceRow(typeComposite, MEMBER_TYPE, null, null, false);
-            mMemberTypeRow.add(Messages.getString("InterfaceMemberDialog.MethodChoice"), "method"); //$NON-NLS-1$ //$NON-NLS-2$
-            mMemberTypeRow.add(Messages.getString("InterfaceMemberDialog.AttributeChoice"), //$NON-NLS-1$
-                "attribute"); //$NON-NLS-1$
+            String msg = Messages.getString("InterfaceMemberDialog.MethodChoice");
+            mMemberTypeRow.add(msg, "method"); //$NON-NLS-1$ //$NON-NLS-2$
+            msg = Messages.getString("InterfaceMemberDialog.AttributeChoice");
+            mMemberTypeRow.add(msg, "attribute"); //$NON-NLS-1$
             mMemberTypeRow.select(0);
             mMemberTypeRow.setFieldChangedListener(this);
             mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.METHOD));
@@ -275,7 +276,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
             sep.setLayoutData(gd);
         }
 
-        mNameRow = new TextRow(pParent, NAME, Messages.getString("InterfaceMemberDialog.Name")); //$NON-NLS-1$
+        mNameRow = new TextRow(parent, NAME, Messages.getString("InterfaceMemberDialog.Name")); //$NON-NLS-1$
         if (mData != null) {
             String name = (String) mData.getProperty(IUnoFactoryConstants.NAME);
             if (name != null) {
@@ -294,7 +295,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
             | IUnoFactoryConstants.TYPEDEF;
         types |= IUnoFactoryConstants.BASICS;
 
-        mTypeRow = new TypeRow(pParent, TYPE, typeLabel, types);
+        mTypeRow = new TypeRow(parent, TYPE, typeLabel, types);
         mTypeRow.includeSequences(true);
         mTypeRow.includeSimpleTypes(true);
         mTypeRow.setFieldChangedListener(this);
@@ -311,12 +312,12 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
      * This method cleans up the specific composite of all its children and recreate the controls for the new type
      * (attribute or method).
      *
-     * @param pIsAttribute
+     * @param isAttribute
      *            flag defining whether to show the method or attribute controls.
      */
-    protected void showSpecificControls(boolean pIsAttribute) {
+    protected void showSpecificControls(boolean isAttribute) {
 
-        if (mShowAttribute != pIsAttribute) {
+        if (mShowAttribute != isAttribute) {
 
             // Cleans up the previous controls
             Control[] children = mSpecificPanel.getChildren();
@@ -325,7 +326,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
             }
 
             // Creates the new controls
-            if (pIsAttribute) {
+            if (isAttribute) {
                 mShowAttribute = true;
                 createAttributeControls(mSpecificPanel);
             } else {
@@ -348,7 +349,8 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
 
         mTypeRow.setLabel(Messages.getString("InterfaceMemberDialog.Type")); //$NON-NLS-1$
 
-        mReadonlyRow = new BooleanRow(pParent, READONLY, Messages.getString("InterfaceMemberDialog.Readonly")); //$NON-NLS-1$
+        String msg = Messages.getString("InterfaceMemberDialog.Readonly");
+        mReadonlyRow = new BooleanRow(pParent, READONLY, msg); //$NON-NLS-1$
         mReadonlyRow.setTooltip(Messages.getString("InterfaceMemberDialog.ReadonlyTooltip")); //$NON-NLS-1$
         mReadonlyRow.setFieldChangedListener(this);
 
@@ -416,8 +418,9 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
         typeCellEditor.includeSequences(true);
         typeCellEditor.includeSimpleTypes(true);
         typeCellEditor.includeVoid(false);
-        mArgumentTableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(table), typeCellEditor,
-            new ComboBoxCellEditor(table, new String[] { "inout", "in", "out" }) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        mArgumentTableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(table),
+            typeCellEditor, new ComboBoxCellEditor(table,
+                new String[] {"inout", "in", "out"}) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         });
         mArgumentTableViewer.setCellModifier(new ParamCellModifier());
         mArgumentTableViewer.setInput(mData);
@@ -444,7 +447,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
         mAddButton.setLayoutData(new GridData());
         mAddButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 UnoFactoryData data = new UnoFactoryData();
                 data.setProperty(IUnoFactoryConstants.NAME, "arg"); //$NON-NLS-1$
                 data.setProperty(IUnoFactoryConstants.TYPE, "short"); //$NON-NLS-1$
@@ -459,7 +462,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
         mDelButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL));
         mDelButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Remove the selected attribute
                 ISelection sel = mArgumentTableViewer.getSelection();
                 if (sel instanceof IStructuredSelection) {
@@ -475,8 +478,8 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
      * {@inheritDoc}
      */
     @Override
-    public void fieldChanged(FieldEvent pEvent) {
-        if (pEvent.getProperty().equals(MEMBER_TYPE)) {
+    public void fieldChanged(FieldEvent event) {
+        if (event.getProperty().equals(MEMBER_TYPE)) {
             String type = mMemberTypeRow.getValue();
             if (type.equals("method")) { //$NON-NLS-1$
                 mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.METHOD));
@@ -485,13 +488,13 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
                 mData.setProperty(IUnoFactoryConstants.MEMBER_TYPE, Integer.valueOf(IUnoFactoryConstants.ATTRIBUTE));
                 showSpecificControls(true);
             }
-        } else if (pEvent.getProperty().equals(NAME)) {
-            mData.setProperty(IUnoFactoryConstants.NAME, pEvent.getValue().trim());
-        } else if (pEvent.getProperty().equals(TYPE)) {
-            mData.setProperty(IUnoFactoryConstants.TYPE, pEvent.getValue().trim());
-        } else if (pEvent.getProperty().equals(BOUND)) {
+        } else if (event.getProperty().equals(NAME)) {
+            mData.setProperty(IUnoFactoryConstants.NAME, event.getValue().trim());
+        } else if (event.getProperty().equals(TYPE)) {
+            mData.setProperty(IUnoFactoryConstants.TYPE, event.getValue().trim());
+        } else if (event.getProperty().equals(BOUND)) {
             toggleFlag("bound"); //$NON-NLS-1$
-        } else if (pEvent.getProperty().equals(READONLY)) {
+        } else if (event.getProperty().equals(READONLY)) {
             toggleFlag("readonly"); //$NON-NLS-1$
         }
     }
@@ -499,20 +502,20 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
     /**
      * Toggle the flag property in the options.
      *
-     * @param pFlag
+     * @param flag
      *            the flag to toggle (<code>bound</code> or <code>readonly</code>).
      */
-    private void toggleFlag(String pFlag) {
+    private void toggleFlag(String flag) {
         String flags = (String) mData.getProperty(IUnoFactoryConstants.FLAGS);
-        if (flags != null && flags.contains(pFlag)) {
+        if (flags != null && flags.contains(flag)) {
             // remove the flag
-            flags = flags.replace(pFlag, "").trim(); //$NON-NLS-1$
+            flags = flags.replace(flag, "").trim(); //$NON-NLS-1$
         } else {
             // Set the flag
             if (flags == null) {
                 flags = ""; //$NON-NLS-1$
             }
-            flags += " " + pFlag; //$NON-NLS-1$
+            flags += " " + flag; //$NON-NLS-1$
             flags = flags.trim();
         }
         mData.setProperty(IUnoFactoryConstants.FLAGS, flags);
@@ -527,7 +530,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             return mData.getInnerData();
         }
 
@@ -542,7 +545,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
 
     }
@@ -557,27 +560,27 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public boolean canModify(Object pElement, String pProperty) {
-            return pElement instanceof UnoFactoryData && (pProperty.equals(PARAM_TYPE) || pProperty.equals(PARAM_NAME)
-                || pProperty.equals(PARAM_INOUT));
+        public boolean canModify(Object element, String property) {
+            return element instanceof UnoFactoryData && (property.equals(PARAM_TYPE) || property.equals(PARAM_NAME)
+                || property.equals(PARAM_INOUT));
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Object getValue(Object pElement, String pProperty) {
+        public Object getValue(Object element, String property) {
             Object value = null;
-            if (pElement instanceof UnoFactoryData) {
-                UnoFactoryData data = (UnoFactoryData) pElement;
+            if (element instanceof UnoFactoryData) {
+                UnoFactoryData data = (UnoFactoryData) element;
 
-                if (pProperty.equals(PARAM_NAME)) {
+                if (property.equals(PARAM_NAME)) {
                     // get the value of the name
                     value = data.getProperty(IUnoFactoryConstants.NAME);
-                } else if (pProperty.equals(PARAM_TYPE)) {
+                } else if (property.equals(PARAM_TYPE)) {
                     // get the value of the type
                     value = data.getProperty(IUnoFactoryConstants.TYPE);
-                } else if (pProperty.equals(PARAM_INOUT)) {
+                } else if (property.equals(PARAM_INOUT)) {
                     // get the value of the direction
                     String text = (String) data.getProperty(IUnoFactoryConstants.ARGUMENT_INOUT);
                     if ("in".equals(text)) { //$NON-NLS-1$
@@ -600,20 +603,20 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public void modify(Object pElement, String pProperty, Object pValue) {
-            if (((TableItem) pElement).getData() instanceof UnoFactoryData) {
-                UnoFactoryData data = (UnoFactoryData) ((TableItem) pElement).getData();
-                if (pProperty.equals(PARAM_NAME) && pValue instanceof String) {
+        public void modify(Object element, String property, Object value) {
+            if (((TableItem) element).getData() instanceof UnoFactoryData) {
+                UnoFactoryData data = (UnoFactoryData) ((TableItem) element).getData();
+                if (property.equals(PARAM_NAME) && value instanceof String) {
                     // set the value of the name
-                    data.setProperty(IUnoFactoryConstants.NAME, pValue);
+                    data.setProperty(IUnoFactoryConstants.NAME, value);
                     mArgumentTableViewer.setInput(mData);
-                } else if (pProperty.equals(PARAM_TYPE) && pValue instanceof String) {
+                } else if (property.equals(PARAM_TYPE) && value instanceof String) {
                     // set the value of the type
-                    data.setProperty(IUnoFactoryConstants.TYPE, pValue);
+                    data.setProperty(IUnoFactoryConstants.TYPE, value);
                     mArgumentTableViewer.setInput(mData);
-                } else if (pProperty.equals(PARAM_INOUT) && pValue instanceof Integer) {
+                } else if (property.equals(PARAM_INOUT) && value instanceof Integer) {
                     // set the value of the direction
-                    String direction = getDirectionFromId(((Integer) pValue).intValue());
+                    String direction = getDirectionFromId(((Integer) value).intValue());
                     data.setProperty(IUnoFactoryConstants.ARGUMENT_INOUT, direction);
                     mArgumentTableViewer.setInput(mData);
                 }
@@ -623,14 +626,14 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
         /**
          * Utility method translating the direction items position in the list-box into the direction text.
          *
-         * @param pId
+         * @param id
          *            the item position
          *
          * @return the direction text
          */
-        private String getDirectionFromId(int pId) {
+        private String getDirectionFromId(int id) {
             String direction = null;
-            switch (pId) {
+            switch (id) {
                 case 0:
                     direction = "inout"; //$NON-NLS-1$
                     break;
@@ -654,7 +657,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public Image getColumnImage(Object pElement, int pColumnIndex) {
+        public Image getColumnImage(Object element, int columnIndex) {
             return null;
         }
 
@@ -662,11 +665,11 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public String getColumnText(Object pElement, int pColumnIndex) {
+        public String getColumnText(Object element, int columnIndex) {
             String label = null;
-            UnoFactoryData data = (UnoFactoryData) pElement;
+            UnoFactoryData data = (UnoFactoryData) element;
 
-            switch (pColumnIndex) {
+            switch (columnIndex) {
                 case 0:
                     // Get the Argument Name
                     label = (String) data.getProperty(IUnoFactoryConstants.NAME);
@@ -688,7 +691,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public void addListener(ILabelProviderListener pListener) {
+        public void addListener(ILabelProviderListener listener) {
         }
 
         /**
@@ -702,7 +705,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public boolean isLabelProperty(Object pElement, String pProperty) {
+        public boolean isLabelProperty(Object element, String property) {
             return true;
         }
 
@@ -710,7 +713,7 @@ public class InterfaceMemberDialog extends TitleAreaDialog implements IFieldChan
          * {@inheritDoc}
          */
         @Override
-        public void removeListener(ILabelProviderListener pListener) {
+        public void removeListener(ILabelProviderListener listener) {
         }
     }
 }

@@ -53,36 +53,36 @@ public class BooleanRow extends LabeledRow {
     /**
      * Creates a new boolean raw. The parent composite should have a grid layout with 2 or 3 horizontal spans.
      *
-     * @param pParent
+     * @param parent
      *            the parent composite where to create the row.
-     * @param pProperty
+     * @param property
      *            the property name of the row.
-     * @param pLabel
+     * @param label
      *            the label to print on the left of the raw
      */
-    public BooleanRow(Composite pParent, String pProperty, String pLabel) {
-        super(pProperty);
+    public BooleanRow(Composite parent, String property, String label) {
+        super(property);
 
-        Button checkbox = new Button(pParent, SWT.CHECK);
+        Button checkbox = new Button(parent, SWT.CHECK);
         checkbox.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(org.eclipse.swt.events.SelectionEvent pEvent) {
+            public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
                 toggleValue();
             };
         });
-        checkbox.setText(pLabel);
+        checkbox.setText(label);
 
-        Label text = new Label(pParent, SWT.NONE);
+        Label text = new Label(parent, SWT.NONE);
 
-        createContent(pParent, checkbox, text, null, false);
+        createContent(parent, checkbox, text, null, false);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setLabel(String pNewLabel) {
-        ((Label) mField).setText(pNewLabel);
+    public void setLabel(String newLabel) {
+        ((Label) mField).setText(newLabel);
     }
 
     /**
@@ -133,7 +133,7 @@ public class BooleanRow extends LabeledRow {
      * {@inheritDoc}
      */
     @Override
-    public void setEnabled(boolean pEnabled) {
-        ((Button) mLabel).setEnabled(pEnabled);
+    public void setEnabled(boolean enabled) {
+        ((Button) mLabel).setEnabled(enabled);
     }
 }

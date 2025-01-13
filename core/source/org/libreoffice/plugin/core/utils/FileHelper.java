@@ -49,49 +49,60 @@ public class FileHelper {
     /**
      * Converts all separators to the Unix separator of forward slash.
      *
-     * @param path
+     * @param pPath
      *            the path to be changed, null ignored
      * @return the updated path
      */
-    public static String separatorsToUnix(String path) {
-        if (path == null || path.indexOf('/') == -1) {
-            return path;
+    public static String separatorsToUnix(String pPath) {
+        String path;
+        if (pPath == null || pPath.indexOf('/') == -1) {
+            path = pPath;
+        } else {
+            path = pPath.replace('\\', '/');
         }
-        return path.replace('\\', '/');
+        return path;
     }
 
     /**
      * Moves the src directory or file to the dst container.
      *
-     * @param pSrc
+     * @param src
      *            the file or directory to move
-     * @param pDst
+     * @param dst
      *            the destination directory
-     * @param pForce
+     * @param force
      *            if set to <code>true</code>, overwrites the existing files
      *
      * @throws IOException
      *             is thrown when one of the parameters is null or the underlying file doesn't exists. This exception
      *             can also be thrown if the writing rights are missing on dst
      */
-    public static void move(File pSrc, File pDst, boolean pForce) throws IOException {
+    public static void move(File src, File dst, boolean force) throws IOException {
 
         // Check for invalid arguments
-        if (pSrc == null || !pSrc.canRead()) {
-            throw new IOException("FileHelper.ReadError" + (pSrc == null ? "" : pSrc.getAbsolutePath()));
+        if (src == null || !src.canRead()) {
+            String path = "";
+            if (src != null) {
+                path = src.getAbsolutePath();
+            }
+            throw new IOException("FileHelper.ReadError" + path);
         }
 
-        if (pDst == null || !pDst.canWrite()) {
-            throw new IOException("FileHelper.WriteError" + (pDst == null ? "" : pDst.getAbsolutePath()));
+        if (dst == null || !dst.canWrite()) {
+            String path = "";
+            if (dst != null) {
+                path = dst.getAbsolutePath();
+            }
+            throw new IOException("FileHelper.WriteError" + path);
         }
 
         // Now really move the content
-        if (pSrc.isFile()) {
-            copyFile(pSrc, new File(pDst, pSrc.getName()), pForce);
-            pSrc.delete();
+        if (src.isFile()) {
+            copyFile(src, new File(dst, src.getName()), force);
+            src.delete();
         } else {
 
-            File dstdir = new File(pDst, pSrc.getName());
+            File dstdir = new File(dst, src.getName());
 
             // if the new dir doesn't exists, then create it
             if (!dstdir.exists()) {
@@ -99,14 +110,14 @@ public class FileHelper {
             }
 
             // copy each contained file
-            File[] files = pSrc.listFiles();
+            File[] files = src.listFiles();
             for (int i = 0; i < files.length; i++) {
                 File filei = files[i];
-                move(filei, dstdir, pForce);
+                move(filei, dstdir, force);
                 filei.delete();
             }
 
-            pSrc.delete();
+            src.delete();
         }
     }
 
@@ -114,11 +125,11 @@ public class FileHelper {
      * Copy the file src into the file dst. If the dst file already exists, it will be deleted before to start copying
      * if force is set to <code>true</code>, otherwise nothing will be done.
      *
-     * @param pSrc
+     * @param src
      *            the original file
-     * @param pDst
+     * @param dst
      *            the file to create
-     * @param pForce
+     * @param force
      *            overwrite the existing destination if any
      *
      * @throws IOException
@@ -129,39 +140,46 @@ public class FileHelper {
      *             <li>the writing process fails</li>
      *             </ul>
      */
-    public static void copyFile(File pSrc, File pDst, boolean pForce) throws IOException {
+    public static void copyFile(File src, File dst, boolean force) throws IOException {
 
         // Check for invalid arguments
-        if (pSrc == null || !pSrc.canRead()) {
-            throw new IOException("FileHelper.ReadError" + (pSrc == null ? "" : pSrc.getAbsolutePath()));
+        if (src == null || !src.canRead()) {
+            String msg = "FileHelper.ReadError";
+            if (src != null) {
+                msg += " " + src.getAbsolutePath();
+            }
+            throw new IOException(msg);
         }
-
-        if (pDst == null) {
+        if (dst == null) {
             throw new IOException("FileHelper.NullDestinationError");
         }
 
         // clean the existing file if any and force
-        if (pForce && pDst.exists() && pDst.isFile()) {
-            pDst.delete();
+        if (force && dst.exists() && dst.isFile()) {
+            dst.delete();
         }
 
-        if (!pDst.exists()) {
-            // now copy the file
-            FileInputStream in = new FileInputStream(pSrc);
-            FileOutputStream out = new FileOutputStream(pDst);
+        // now copy the file
+        if (!dst.exists()) {
+            copyFile(src, dst);
+        }
+    }
 
+    private static void copyFile(File src, File dst) throws IOException {
+        FileInputStream in = new FileInputStream(src);
+        FileOutputStream out = new FileOutputStream(dst);
+
+        try {
+            int c = in.read();
+            while (c != -1) {
+                out.write(c);
+                c = in.read();
+            }
+        } finally {
             try {
-                int c = in.read();
-                while (c != -1) {
-                    out.write(c);
-                    c = in.read();
-                }
-            } finally {
-                try {
-                    in.close();
-                    out.close();
-                } catch (Exception e) {
-                }
+                in.close();
+                out.close();
+            } catch (Exception e) {
             }
         }
     }
@@ -169,23 +187,23 @@ public class FileHelper {
     /**
      * Removes a file or directory.
      *
-     * @param pFile
+     * @param file
      *            the file or directory to remove
      */
-    public static void remove(File pFile) {
-        if (pFile.isFile()) {
-            pFile.delete();
+    public static void remove(File file) {
+        if (file.isFile()) {
+            file.delete();
         } else {
-            String[] children = pFile.list();
+            String[] children = file.list();
             if (null != children) {
                 for (String child : children) {
                     if (!child.equals(".") && !child.equals("..")) { //$NON-NLS-2$
-                        File childFile = new File(pFile, child);
+                        File childFile = new File(file, child);
                         remove(childFile);
                     }
                 }
             }
-            pFile.delete();
+            file.delete();
         }
     }
 }

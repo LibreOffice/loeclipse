@@ -49,7 +49,7 @@ public class UnoidlWhiteSpaceDetector implements IWhitespaceDetector {
      * {@inheritDoc}
      */
     @Override
-    public boolean isWhitespace(char pChar) {
-        return Character.isWhitespace(pChar);
+    public boolean isWhitespace(char ch) {
+        return Character.isWhitespace(ch);
     }
 }

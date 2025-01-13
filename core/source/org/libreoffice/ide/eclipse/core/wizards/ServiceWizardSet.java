@@ -135,23 +135,23 @@ public class ServiceWizardSet extends WizardPageSet {
      * service fields. If the service inherited interface isn't provided, a default interface based on the service name
      * will be chosen.
      *
-     * @param pData
+     * @param data
      *            the service initialization data as described above.
      */
     @Override
-    public void initialize(UnoFactoryData pData) {
+    public void initialize(UnoFactoryData data) {
         try {
             // Get the project infos
-            String prjName = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_NAME);
-            IOOo ooo = (IOOo) pData.getProperty(IUnoFactoryConstants.PROJECT_OOO);
-            String prefix = (String) pData.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
+            String prjName = (String) data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+            IOOo ooo = (IOOo) data.getProperty(IUnoFactoryConstants.PROJECT_OOO);
+            String prefix = (String) data.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
 
             String packageRoot = null;
             if (prefix != null) {
                 packageRoot = prefix.replaceAll("\\.", "::"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            UnoFactoryData[] inner = pData.getInnerData();
+            UnoFactoryData[] inner = data.getInnerData();
             Map<Integer, Integer> ids = getPagesId(inner);
 
             String serviceInheritance = null;
@@ -177,44 +177,44 @@ public class ServiceWizardSet extends WizardPageSet {
     /**
      * Set the interface creation page data from the interface {@link UnoFactoryData} and the different external data.
      *
-     * @param pData
+     * @param data
      *            the interface data
-     * @param pPackageRoot
+     * @param packageRoot
      *            the project company prefix
-     * @param pPrjName
+     * @param prjName
      *            the project name
-     * @param pOOo
+     * @param prjOOo
      *            the OOo used for the project configuration
-     * @param pServiceInheritance
+     * @param serviceInheritance
      *            the service inheritance interface
      */
-    private void setInterfacePageData(UnoFactoryData pData, String pPackageRoot, String pPrjName, IOOo pOOo,
-        String pServiceInheritance) {
+    private void setInterfacePageData(UnoFactoryData data, String packageRoot, String prjName, IOOo prjOOo,
+        String serviceInheritance) {
 
         // Get the interface infos
-        String ifaceName = (String) pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
-        String ifacePackage = (String) pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+        String ifaceName = (String) data.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        String ifacePackage = (String) data.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
 
         if (ifaceName == null) {
-            ifaceName = pServiceInheritance.substring(pServiceInheritance.lastIndexOf(':') + 1);
+            ifaceName = serviceInheritance.substring(serviceInheritance.lastIndexOf(':') + 1);
         }
 
         if (ifacePackage == null) {
-            ifacePackage = pServiceInheritance.substring(0, pServiceInheritance.lastIndexOf(":") - 1); //$NON-NLS-1$
+            ifacePackage = serviceInheritance.substring(0, serviceInheritance.lastIndexOf(":") - 1); //$NON-NLS-1$
         }
 
-        IUnoidlProject prj = ProjectsManager.getProject(pPrjName);
-        checkIsInterfacePageNeeded(prj, pServiceInheritance);
+        IUnoidlProject prj = ProjectsManager.getProject(prjName);
+        checkIsInterfacePageNeeded(prj, serviceInheritance);
 
         /*
          * Change the interface name if serviceInheritance has changed
          */
-        if (pServiceInheritance != null) {
+        if (serviceInheritance != null) {
             /*
              * compute the interface name and package from the service inheritance
              */
-            ifaceName = pServiceInheritance.substring(pServiceInheritance.lastIndexOf(':') + 1);
-            ifacePackage = pServiceInheritance.substring(0, pServiceInheritance.lastIndexOf(":") - 1); //$NON-NLS-1$
+            ifaceName = serviceInheritance.substring(serviceInheritance.lastIndexOf(':') + 1);
+            ifacePackage = serviceInheritance.substring(0, serviceInheritance.lastIndexOf(":") - 1); //$NON-NLS-1$
         }
 
         NewInterfaceWizardPage ifacePage = (NewInterfaceWizardPage) getPage(INTERFACE_PAGE_ID);
@@ -223,11 +223,11 @@ public class ServiceWizardSet extends WizardPageSet {
         mChangingPages = true;
 
         // Set the data into the interface page
-        ifacePage.setPackageRoot(pPackageRoot);
-        ifacePage.setPackage(ifacePackage.substring(pPackageRoot.length()), false);
+        ifacePage.setPackageRoot(packageRoot);
+        ifacePage.setPackage(ifacePackage.substring(packageRoot.length()), false);
         ifacePage.setName(ifaceName, false);
-        if (pOOo != null) {
-            ifacePage.setOOoInstance(pOOo);
+        if (prjOOo != null) {
+            ifacePage.setOOoInstance(prjOOo);
         }
         if (prj != null) {
             ifacePage.setUnoidlProject(prj);
@@ -239,22 +239,22 @@ public class ServiceWizardSet extends WizardPageSet {
     /**
      * Set the service creation page data from the service {@link UnoFactoryData} and the different external data.
      *
-     * @param pServiceData
+     * @param serviceData
      *            the service data
-     * @param pPackageRoot
+     * @param packageRoot
      *            the project company prefix
-     * @param pPrjName
+     * @param prjName
      *            the project name
-     * @param pOOo
+     * @param ooo
      *            the OOo used for the project configuration
      */
-    private void setServicePageData(UnoFactoryData pServiceData, String pPackageRoot, String pPrjName, IOOo pOOo) {
+    private void setServicePageData(UnoFactoryData serviceData, String packageRoot, String prjName, IOOo ooo) {
         // Get the service infos
         String serviceName = null;
         String servicePackage = null;
 
-        serviceName = (String) pServiceData.getProperty(IUnoFactoryConstants.TYPE_NAME);
-        servicePackage = (String) pServiceData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+        serviceName = (String) serviceData.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        servicePackage = (String) serviceData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
 
         // Get the service package and name from the dialog if null: may be
         // called on data change
@@ -269,26 +269,26 @@ public class ServiceWizardSet extends WizardPageSet {
 
         // If the service package and service names aren't defined in the page, use defaults
         if (servicePackage == null || servicePackage.equals("")) { //$NON-NLS-1$
-            servicePackage = pPackageRoot;
+            servicePackage = packageRoot;
         }
-        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) { //$NON-NLS-1$
-            serviceName = pPrjName.replace("\\W", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        if ((serviceName == null || serviceName.equals("")) && prjName != null) { //$NON-NLS-1$
+            serviceName = prjName.replace("\\W", ""); //$NON-NLS-1$ //$NON-NLS-2$
             serviceName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1);
         }
 
-        String serviceInheritance = getServiceInheritance(pServiceData, pPackageRoot, pPrjName);
-        servicePackage = guessPackage(servicePackage, pPackageRoot);
+        String serviceInheritance = getServiceInheritance(serviceData, packageRoot, prjName);
+        servicePackage = guessPackage(servicePackage, packageRoot);
 
         mChangingPages = true;
 
         servicePage.setName(serviceName, false);
-        servicePage.setPackageRoot(pPackageRoot);
+        servicePage.setPackageRoot(packageRoot);
         servicePage.setPackage(servicePackage, false);
-        if (pOOo != null) {
-            servicePage.setOOoInstance(pOOo);
+        if (ooo != null) {
+            servicePage.setOOoInstance(ooo);
         }
-        if (pPrjName != null) {
-            IUnoidlProject prj = ProjectsManager.getProject(pPrjName);
+        if (prjName != null) {
+            IUnoidlProject prj = ProjectsManager.getProject(prjName);
             servicePage.setUnoidlProject(prj);
         }
         servicePage.setInheritanceName(serviceInheritance, false);
@@ -343,19 +343,19 @@ public class ServiceWizardSet extends WizardPageSet {
      * This doesn't apply if the service inheritance has been manually changed by the user.
      * </p>
      *
-     * @param pDelta
+     * @param delta
      *            the data delta to update the pages with
      *
      * @see #initialize(UnoFactoryData) for details on how the delta should be structured
      */
     @Override
-    public void dataChanged(UnoFactoryData pDelta) {
+    public void dataChanged(UnoFactoryData delta) {
 
         try {
             // Get the project infos
-            String prjName = (String) pDelta.getProperty(IUnoFactoryConstants.PROJECT_NAME);
-            IOOo ooo = (IOOo) pDelta.getProperty(IUnoFactoryConstants.PROJECT_OOO);
-            String prefix = (String) pDelta.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
+            String prjName = (String) delta.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+            IOOo ooo = (IOOo) delta.getProperty(IUnoFactoryConstants.PROJECT_OOO);
+            String prefix = (String) delta.getProperty(IUnoFactoryConstants.PROJECT_PREFIX);
 
             String packageRoot = null;
             if (prefix != null) {
@@ -367,7 +367,7 @@ public class ServiceWizardSet extends WizardPageSet {
                 packageRoot = servicePage.getPackageRoot();
             }
 
-            UnoFactoryData[] inner = pDelta.getInnerData();
+            UnoFactoryData[] inner = delta.getInnerData();
             Map<Integer, Integer> ids = getPagesId(inner);
 
             // Set the service informations
@@ -393,23 +393,23 @@ public class ServiceWizardSet extends WizardPageSet {
     /**
      * Computes the service inheritance name.
      *
-     * @param pData
+     * @param data
      *            the service data
-     * @param pPackageRoot
+     * @param packageRoot
      *            the project company prefix
-     * @param pPrjName
+     * @param prjName
      *            the project name
      *
      * @return the computed service inheritance
      */
-    private String getServiceInheritance(UnoFactoryData pData, String pPackageRoot, String pPrjName) {
+    private String getServiceInheritance(UnoFactoryData data, String packageRoot, String prjName) {
         String serviceInheritance = null;
 
         String serviceName = null;
         String servicePackage = null;
 
-        serviceName = (String) pData.getProperty(IUnoFactoryConstants.TYPE_NAME);
-        servicePackage = (String) pData.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+        serviceName = (String) data.getProperty(IUnoFactoryConstants.TYPE_NAME);
+        servicePackage = (String) data.getProperty(IUnoFactoryConstants.PACKAGE_NAME);
 
         // Get the service package and name from the dialog if null: may be
         // called on data change
@@ -424,14 +424,14 @@ public class ServiceWizardSet extends WizardPageSet {
 
         // Otherwise computes it from the project
         if (servicePackage == null) {
-            servicePackage = pPackageRoot;
+            servicePackage = packageRoot;
         }
-        if ((serviceName == null || serviceName.equals("")) && pPrjName != null) { //$NON-NLS-1$
-            serviceName = pPrjName.replace("\\W", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        if ((serviceName == null || serviceName.equals("")) && prjName != null) { //$NON-NLS-1$
+            serviceName = prjName.replace("\\W", ""); //$NON-NLS-1$ //$NON-NLS-2$
             serviceName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1);
         }
 
-        String[] inheritances = (String[]) pData.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
+        String[] inheritances = (String[]) data.getProperty(IUnoFactoryConstants.INHERITED_INTERFACES);
         if (inheritances != null && inheritances.length > 0) {
             serviceInheritance = inheritances[0];
         }
@@ -484,36 +484,36 @@ public class ServiceWizardSet extends WizardPageSet {
     /**
      * Finds the package module after the root module (company prefix).
      *
-     * @param pTypePackage
+     * @param typePackage
      *            the service package contained in the data delta.
-     * @param pPackageRoot
+     * @param packageRoot
      *            the company prefix if contained in the delta.
      *
      * @return the package without the company prefix separated by "::"
      */
-    private String guessPackage(String pTypePackage, String pPackageRoot) {
+    private String guessPackage(String typePackage, String packageRoot) {
 
-        if (pPackageRoot == null) {
+        if (packageRoot == null) {
             // Get the UNO project to fetch the missing package root
             NewServiceWizardPage servicePage = (NewServiceWizardPage) getPage(SERVICE_PAGE_ID);
-            pPackageRoot = servicePage.getPackageRoot();
+            packageRoot = servicePage.getPackageRoot();
         }
 
-        if (pTypePackage != null) {
-            pTypePackage = pTypePackage.substring(pPackageRoot.length());
-            if (pTypePackage.startsWith("::")) { //$NON-NLS-1$
-                pTypePackage = pTypePackage.substring(2);
+        if (typePackage != null) {
+            typePackage = typePackage.substring(packageRoot.length());
+            if (typePackage.startsWith("::")) { //$NON-NLS-1$
+                typePackage = typePackage.substring(2);
             }
         }
 
-        return pTypePackage;
+        return typePackage;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doFinish(IProgressMonitor pMonitor, IWorkbenchPage pActivePage) {
+    public void doFinish(IProgressMonitor monitor, IWorkbenchPage activePage) {
         NewServiceWizardPage servicePage = (NewServiceWizardPage) getPage(SERVICE_PAGE_ID);
         NewInterfaceWizardPage ifacePage = (NewInterfaceWizardPage) getPage(INTERFACE_PAGE_ID);
 
@@ -531,17 +531,17 @@ public class ServiceWizardSet extends WizardPageSet {
             if (mShowInterfacePage) {
                 UnoFactoryData ifaceData = new UnoFactoryData();
                 ifaceData = ifacePage.fillData(ifaceData);
-                UnoFactory.createInterface(ifaceData, prj, pActivePage, pMonitor, false);
+                UnoFactory.createInterface(ifaceData, prj, activePage, monitor, false);
                 ifaceData.dispose();
             }
 
             // Create the service file
             UnoFactoryData serviceData = new UnoFactoryData();
             serviceData = servicePage.fillData(serviceData);
-            UnoFactory.createService(serviceData, prj, pActivePage, pMonitor, false);
+            UnoFactory.createService(serviceData, prj, activePage, monitor, false);
 
             UnoidlProjectHelper.refreshProject(prj, null);
-            UnoidlProjectHelper.forceBuild(prj, pMonitor);
+            UnoidlProjectHelper.forceBuild(prj, monitor);
 
             // Create the implementation skeleton
             if (!prj.getLanguage().getName().contains("Python")) {
@@ -549,7 +549,7 @@ public class ServiceWizardSet extends WizardPageSet {
                 wizardSetData.addInnerData(serviceData);
                 wizardSetData.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, prj.getLanguage());
                 wizardSetData.setProperty(IUnoFactoryConstants.PROJECT_NAME, prj.getName());
-                UnoFactory.makeSkeleton(wizardSetData, pActivePage, pMonitor);
+                UnoFactory.makeSkeleton(wizardSetData, activePage, monitor);
                 wizardSetData.dispose();
             }
 

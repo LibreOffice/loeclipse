@@ -64,11 +64,11 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
      * {@inheritDoc}
      */
     @Override
-    public void resourceChanged(IResourceChangeEvent pEvent) {
+    public void resourceChanged(IResourceChangeEvent event) {
 
-        if (IResourceChangeEvent.POST_CHANGE == pEvent.getType()) {
+        if (IResourceChangeEvent.POST_CHANGE == event.getType()) {
             // Extract all the additions among the changes
-            IResourceDelta delta = pEvent.getDelta();
+            IResourceDelta delta = event.getDelta();
             IResourceDelta[] added = delta.getAffectedChildren();
 
             // In all the added resources, process the projects
@@ -84,14 +84,14 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
                     job.schedule();
                 }
             }
-        } else if (IResourceChangeEvent.PRE_DELETE == pEvent.getType()) {
+        } else if (IResourceChangeEvent.PRE_DELETE == event.getType()) {
             // detect UNO IDL project about to be deleted
-            IResource removed = pEvent.getResource();
+            IResource removed = event.getResource();
             if (ProjectsManager.getProject(removed.getName()) != null) {
                 ProjectsManager.removeProject(removed.getName());
             }
-        } else if (IResourceChangeEvent.PRE_CLOSE == pEvent.getType()) {
-            IResource res = pEvent.getResource();
+        } else if (IResourceChangeEvent.PRE_CLOSE == event.getType()) {
+            IResource res = event.getResource();
             if (res != null && ProjectsManager.getProject(res.getName()) != null) {
                 // Project about to be closed: remove for the available uno projects
                 ProjectsManager.removeProject(res.getName());
@@ -136,7 +136,7 @@ public class ResourceChangesHandler implements IStartup, IResourceChangeListener
          * {@inheritDoc}
          */
         @Override
-        public IStatus runInWorkspace(IProgressMonitor pMonitor) throws CoreException {
+        public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
             ProjectsManager.addProject(mPrj);
             return Status.OK_STATUS;
         }

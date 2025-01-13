@@ -1,11 +1,14 @@
 /*************************************************************************
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
  * GNU Lesser General Public License Version 2.1
  * =============================================
- * Copyright 2009 by Cédric Bosdonnat
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,11 +24,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  *
- * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
- * Copyright: 2009 by Cédric Bosdonnat
+ * Copyright: 2002 by Sun Microsystems, Inc.
  *
  * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
  *
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.export;
@@ -56,45 +62,45 @@ import org.libreoffice.plugin.core.model.UnoPackage;
 
 public class AntScriptExportWizardPage extends WizardPage {
 
-    private IUnoidlProject sSelectedProject;
-    private LanguageExportPart sLangPart;
-    private Combo sProjectsList;
-    private boolean checkAntSectionDisplay = false;
+    private IUnoidlProject mSelectedProject;
+    private LanguageExportPart mLangPart;
+    private Combo mProjectsList;
+    private boolean mCheckAntSectionDisplay = false;
 
     /**
      * Constructor.
      *
-     * @param pPageName
+     * @param pageName
      *            the page name
-     * @param pProject
+     * @param project
      *            the project to export
      */
-    public AntScriptExportWizardPage(String pPageName, IUnoidlProject pProject) {
-        super(pPageName);
+    public AntScriptExportWizardPage(String pageName, IUnoidlProject project) {
+        super(pageName);
 
         setTitle(Messages.getString("AntScriptExportWizard.Title")); //$NON-NLS-1$
         setDescription(Messages.getString("AntScriptExportWizard.Description")); //$NON-NLS-1$
 
-        sSelectedProject = pProject;
+        mSelectedProject = project;
     }
 
     /**
      * Create the build scripts for the package model.
      *
-     * @param pModel
+     * @param model
      *            the model to be used to build script
      */
-    public void createBuildScripts(UnoPackage pModel) {
-        sLangPart.doFinish(pModel);
-        checkAntSectionDisplay = false;
-        ProjectExportPart.setCheckAntSectionDisplay(checkAntSectionDisplay);
+    public void createBuildScripts(UnoPackage model) {
+        mLangPart.doFinish(model);
+        mCheckAntSectionDisplay = false;
+        ProjectExportPart.setCheckAntSectionDisplay(mCheckAntSectionDisplay);
     }
 
     /**
      * @return the UNO project to be used for building the ant script
      */
     public IUnoidlProject getProject() {
-        return sSelectedProject;
+        return mSelectedProject;
     }
 
     /**
@@ -102,7 +108,7 @@ public class AntScriptExportWizardPage extends WizardPage {
      *            the UNO project selected for the wizard.
      */
     public void setProject(IUnoidlProject pProject) {
-        sSelectedProject = pProject;
+        mSelectedProject = pProject;
         reloadLanguagePart();
     }
 
@@ -130,11 +136,11 @@ public class AntScriptExportWizardPage extends WizardPage {
      */
     private void loadData() {
         // Select the project
-        String[] items = sProjectsList.getItems();
+        String[] items = mProjectsList.getItems();
         int i = 0;
-        while (sSelectedProject != null && i < items.length) {
-            if (items[i].equals(sSelectedProject.getName())) {
-                sProjectsList.select(i);
+        while (mSelectedProject != null && i < items.length) {
+            if (items[i].equals(mSelectedProject.getName())) {
+                mProjectsList.select(i);
             }
             i++;
         }
@@ -165,19 +171,19 @@ public class AntScriptExportWizardPage extends WizardPage {
         }
         String[] prjNames = tempPrjNames.toArray(new String[tempPrjNames.size()]);
 
-        sProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
-        sProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        sProjectsList.setItems(prjNames);
+        mProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
+        mProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        mProjectsList.setItems(prjNames);
 
-        sProjectsList.addModifyListener(new ModifyListener() {
+        mProjectsList.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
-                int id = sProjectsList.getSelectionIndex();
+            public void modifyText(ModifyEvent e) {
+                int id = mProjectsList.getSelectionIndex();
                 if (id != -1) {
-                    String name = sProjectsList.getItem(id);
+                    String name = mProjectsList.getItem(id);
                     IUnoidlProject unoprj = ProjectsManager.getProject(name);
-                    sSelectedProject = unoprj;
+                    mSelectedProject = unoprj;
 
                     // Change the project in the AntScriptExportPage
                     setProject(unoprj);
@@ -191,7 +197,7 @@ public class AntScriptExportWizardPage extends WizardPage {
      * @return <code>true</code> if the page is complete, <code>false</code> otherwise.
      */
     private boolean checkPageCompletion() {
-        return (sProjectsList.getSelectionIndex() != -1);
+        return mProjectsList.getSelectionIndex() != -1;
     }
 
     /**
@@ -200,34 +206,37 @@ public class AntScriptExportWizardPage extends WizardPage {
     private void reloadLanguagePart() {
 
         // Add the language specific controls
-        if (sSelectedProject != null) {
-            sLangPart = sSelectedProject.getLanguage().getExportBuildPart();
-            if (sLangPart != null) {
-                //****sLangPart.setPage(this);    <--- Can be used When the class LanguageExportPart is using the Object Class rather than ManifestExportPage
+        if (mSelectedProject != null) {
+            mLangPart = mSelectedProject.getLanguage().getExportBuildPart();
+            if (mLangPart != null) {
+                // sLangPart.setPage(this); <- Can be used When the class LanguageExportPart is using
+                // the Object Class rather than ManifestExportPage
                 ProjectExportPart.setAntScriptExportPage(this);
                 Composite body = (Composite) getControl();
 
                 if (body != null) {
                     // The body can be null before the page creation
-                    sLangPart.createControls(body);
+                    mLangPart.createControls(body);
                     body.layout();
-                    checkAntSectionDisplay = true;
-                    ProjectExportPart.setCheckAntSectionDisplay(checkAntSectionDisplay);
+                    mCheckAntSectionDisplay = true;
+                    ProjectExportPart.setCheckAntSectionDisplay(mCheckAntSectionDisplay);
                 }
             }
         }
     }
 
     /**
+     * @param pTempPath
+     *            the t.
      * @return the package model built from the data provided by the user or <code>null</code> if something blocked the
      *         process.
      */
-    public UnoPackage getPackageModel(String tempPath) {
+    public UnoPackage getPackageModel(String pTempPath) {
         UnoPackage pack = null;
 
         try {
-            File destFile = new File(tempPath);
-            pack = PackageContentSelector.createPackage(sSelectedProject, destFile, new ArrayList<Object>());
+            File destFile = new File(pTempPath);
+            pack = PackageContentSelector.createPackage(mSelectedProject, destFile, new ArrayList<Object>());
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("AntScriptExportWizard.LibraryCreationError"), e); //$NON-NLS-1$
         }
@@ -241,7 +250,7 @@ public class AntScriptExportWizardPage extends WizardPage {
     public void refreshProject() {
         try {
             // Refresh the project and return the status
-            String prjName = sSelectedProject.getName();
+            String prjName = mSelectedProject.getName();
             IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
             prj.refreshLocal(IResource.DEPTH_INFINITE, null);
         } catch (CoreException e) {
@@ -249,10 +258,12 @@ public class AntScriptExportWizardPage extends WizardPage {
     }
 
     /**
-     * Returns the path of the selected Project
+     * Returns the path of the selected Project.
+     *
+     * @return the path of the selected Project.
      */
     public String getPath() {
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(sSelectedProject.getName());
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(mSelectedProject.getName());
         File dir = project.getFile("package.properties").getLocation().toFile().getParentFile();
         return dir.toString();
     }

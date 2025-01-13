@@ -75,20 +75,20 @@ public class TypeRow extends TextRow {
      * defined in {@link InternalUnoType} class.
      * </p>
      *
-     * @param pParent
+     * @param parent
      *            the parent composite where to create the row
-     * @param pProperty
+     * @param property
      *            the property name of the row
-     * @param pLabel
+     * @param label
      *            the label of the row
-     * @param pType
+     * @param type
      *            the types mask of the row.
      */
-    public TypeRow(Composite pParent, String pProperty, String pLabel, int pType) {
-        super(pParent, pProperty, pLabel);
+    public TypeRow(Composite parent, String property, String label, int type) {
+        super(parent, property, label);
 
-        if (pType >= 0 && pType <= InternalUnoType.ALL_TYPES) {
-            mType = pType;
+        if (type >= 0 && type <= InternalUnoType.ALL_TYPES) {
+            mType = type;
         }
     }
 
@@ -96,11 +96,11 @@ public class TypeRow extends TextRow {
      * Set whether the row should support include auto-completion for sequences. Sequences aren't included in the
      * auto-completion by default.
      *
-     * @param pInclude
+     * @param include
      *            <code>true</code> if the row can auto-complete sequences
      */
-    public void includeSequences(boolean pInclude) {
-        mIncludeSequences = pInclude;
+    public void includeSequences(boolean include) {
+        mIncludeSequences = include;
     }
 
     /**
@@ -108,34 +108,35 @@ public class TypeRow extends TextRow {
      * included in the auto-completion, the void type isn't included too. Simple types aren't included in the
      * auto-completion by default.
      *
-     * @param pInclude
+     * @param include
      *            <code>true</code> if the row can auto-complete sequences
      * @see #includeVoid(boolean) to include/exclude the void type
      */
-    public void includeSimpleTypes(boolean pInclude) {
-        mIncludeSimpleTypes = pInclude;
+    public void includeSimpleTypes(boolean include) {
+        mIncludeSimpleTypes = include;
     }
 
     /**
      * Set whether the row should support include auto-completion for the void type. The void type is included in the
      * auto-completion by default as long as the simple types are included.
      *
-     * @param pInclude
+     * @param include
      *            <code>true</code> if the row can auto-complete sequences
      * @see #includeSimpleTypes(boolean) for more precisions on the inclusion of the void type dependence on the other
      *      simple types inclusion.
      */
-    public void includeVoid(boolean pInclude) {
-        mIncludeVoid = pInclude;
+    public void includeVoid(boolean include) {
+        mIncludeVoid = include;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void createContent(Composite pParent, Control pLabel, Control pField, String pBrowseText, boolean pLink) {
+    protected void createContent(Composite parent, Control label, Control field, String browseText,
+        boolean browseLink) {
 
-        super.createContent(pParent, pLabel, pField, Messages.getString("TypeRow.Browse"), true); //$NON-NLS-1$
+        super.createContent(parent, label, field, Messages.getString("TypeRow.Browse"), true); //$NON-NLS-1$
 
         // Add a completion listener on the Text field
         ((Text) mField).addKeyListener(new KeyAdapter() {
@@ -144,10 +145,10 @@ public class TypeRow extends TextRow {
              * {@inheritDoc}
              */
             @Override
-            public void keyPressed(KeyEvent pEvent) {
+            public void keyPressed(KeyEvent event) {
 
                 // react on Ctrl+space
-                if (pEvent.character == ' ' && (pEvent.stateMask & SWT.CTRL) != 0) {
+                if (event.character == ' ' && (event.stateMask & SWT.CTRL) != 0) {
                     // if the word sequence is started, complete it
                     Text text = (Text) mField;
 
@@ -161,7 +162,7 @@ public class TypeRow extends TextRow {
                         text.insert(toadd);
                         setValue(text.getText().trim());
                         text.setSelection(pos + toadd.length() - 1);
-                        pEvent.doit = false;
+                        event.doit = false;
                     } else {
                         // check the simple types
                         if (mIncludeSimpleTypes) {
@@ -186,7 +187,7 @@ public class TypeRow extends TextRow {
                                     text.insert(toadd);
                                     setValue(text.getText().trim());
                                     text.setSelection(pos + toadd.length());
-                                    pEvent.doit = false;
+                                    event.doit = false;
                                     break;
                                 }
                             }
@@ -196,12 +197,12 @@ public class TypeRow extends TextRow {
             }
         });
 
-        final Shell shell = pParent.getShell();
+        final Shell shell = parent.getShell();
 
         addBrowseSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
-                super.widgetSelected(pEvent);
+            public void widgetSelected(SelectionEvent event) {
+                super.widgetSelected(event);
 
                 // Remove the module type from the current types
                 int allowedTypes = mType & Integer.MAX_VALUE - IUnoFactoryConstants.MODULE;

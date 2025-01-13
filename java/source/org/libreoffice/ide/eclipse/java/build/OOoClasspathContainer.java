@@ -61,12 +61,12 @@ public class OOoClasspathContainer implements IClasspathContainer {
     /**
      * Constructor.
      *
-     * @param pOoo the OOo represented by the container.
-     * @param pPath the path used for the container.
+     * @param ooo the OOo represented by the container.
+     * @param path the path used for the container.
      */
-    public OOoClasspathContainer(IOOo pOoo, IPath pPath) {
-        mOOo = pOoo;
-        mPath = pPath;
+    public OOoClasspathContainer(IOOo ooo, IPath path) {
+        mOOo = ooo;
+        mPath = path;
     }
 
     /**

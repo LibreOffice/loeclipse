@@ -31,20 +31,20 @@ public class RelativeFileLocator {
     private File mBaseDir = null;
     private String mRelativePath = null;
 
-    public RelativeFileLocator(File baseDir, String pRelativePath) {
+    public RelativeFileLocator(File baseDir, String relativePath) {
         super();
         this.mBaseDir = baseDir;
-        this.mRelativePath = pRelativePath;
+        this.mRelativePath = relativePath;
     }
 
     public List<File> getFiles() {
-        if (mBaseDir == null || !mBaseDir.isDirectory()) {
-            return null;
+        List<File> fileList = null;
+        if (mBaseDir != null && mBaseDir.isDirectory()) {
+            fileList = new ArrayList<File>();
+            List<File> scannedDirList = new ArrayList<File>();
+            scannedDirList.add(mBaseDir);
+            locateRelativeFile(scannedDirList, fileList, mRelativePath);
         }
-        List<File> fileList = new ArrayList<File>();
-        List<File> scannedDirList = new ArrayList<File>();
-        scannedDirList.add(mBaseDir);
-        locateRelativeFile(scannedDirList, fileList, mRelativePath);
         return fileList;
     }
 

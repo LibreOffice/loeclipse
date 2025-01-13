@@ -85,12 +85,13 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
         Job serviceJob = new Job(Messages.getString("NewServiceWizard.JobName")) { //$NON-NLS-1$
 
             @Override
-            protected IStatus run(IProgressMonitor pMonitor) {
+            protected IStatus run(IProgressMonitor monitor) {
 
-                IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+                IStatus status = new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                    IStatus.OK, "", null); //$NON-NLS-1$
                 try {
 
-                    mWizardSet.doFinish(pMonitor, mActivePage);
+                    mWizardSet.doFinish(monitor, mActivePage);
 
                 } catch (Exception e) {
                     status = new Status(IStatus.CANCEL, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK,
@@ -112,10 +113,10 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
      * {@inheritDoc}
      */
     @Override
-    public IWizardPage getNextPage(IWizardPage pPage) {
+    public IWizardPage getNextPage(IWizardPage page) {
         IWizardPage next = null;
         try {
-            next = mWizardSet.getNextPage(pPage);
+            next = mWizardSet.getNextPage(page);
         } catch (NoSuchPageException e) {
         }
 
@@ -126,10 +127,10 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
      * {@inheritDoc}
      */
     @Override
-    public IWizardPage getPreviousPage(IWizardPage pPage) {
+    public IWizardPage getPreviousPage(IWizardPage page) {
         IWizardPage previous = null;
         try {
-            previous = mWizardSet.getPreviousPage(pPage);
+            previous = mWizardSet.getPreviousPage(page);
         } catch (NoSuchPageException e) {
         }
 
@@ -152,9 +153,9 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
             if (resource != null) {
                 createPages(resource.getProject());
             }
-        }
-        else {
-            MessageDialog.openError(getShell(), "Error", "You need to create/select a LibreOffice project first to use the selection");
+        } else {
+            MessageDialog.openError(getShell(), "Error",
+                "You need to create/select a LibreOffice project first to use the selection");
         }
     }
 
@@ -196,8 +197,7 @@ public class NewServiceWizard extends BasicNewResourceWizard implements INewWiza
 
                     mWizardSet.initialize(data);
 
-                }
-                else {
+                } else {
                     MessageDialog.openError(getShell(), "Error", "The Selection only works with LibreOffice projects");
 
                 }

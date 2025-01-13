@@ -76,7 +76,7 @@ public class LocaleDialog extends Dialog {
         mLocaleList.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
-            public void selectionChanged(SelectionChangedEvent pEvent) {
+            public void selectionChanged(SelectionChangedEvent event) {
                 Locale locale = null;
                 IStructuredSelection sel = (IStructuredSelection) mLocaleList.getSelection();
                 if (!sel.isEmpty()) {

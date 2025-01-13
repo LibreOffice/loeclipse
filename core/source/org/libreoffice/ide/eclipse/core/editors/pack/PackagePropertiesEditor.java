@@ -87,12 +87,12 @@ public class PackagePropertiesEditor extends FormEditor {
                     doc.addDocumentListener(new IDocumentListener() {
 
                         @Override
-                        public void documentAboutToBeChanged(DocumentEvent pEvent) {
+                        public void documentAboutToBeChanged(DocumentEvent event) {
                         }
                         @Override
-                        public void documentChanged(DocumentEvent pEvent) {
+                        public void documentChanged(DocumentEvent event) {
                             mIgnoreSourceChanges = true;
-                            mModel.reloadFromString(pEvent.getDocument().get());
+                            mModel.reloadFromString(event.getDocument().get());
                             mIgnoreSourceChanges = false;
                         }
                     });
@@ -109,12 +109,12 @@ public class PackagePropertiesEditor extends FormEditor {
      * {@inheritDoc}
      */
     @Override
-    public void init(IEditorSite pSite, IEditorInput pInput) throws PartInitException {
-        super.init(pSite, pInput);
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
 
-        if (pInput instanceof IFileEditorInput) {
+        if (input instanceof IFileEditorInput) {
 
-            IFileEditorInput fileInput = (IFileEditorInput) pInput;
+            IFileEditorInput fileInput = (IFileEditorInput) input;
             IProject prj = fileInput.getFile().getProject();
             String projectName = prj.getName();
             setPartName(projectName);
@@ -152,7 +152,7 @@ public class PackagePropertiesEditor extends FormEditor {
      * {@inheritDoc}
      */
     @Override
-    public void doSave(IProgressMonitor pMonitor) {
+    public void doSave(IProgressMonitor monitor) {
         try {
             writeToSource(mModel.write());
         } catch (Exception e) {
@@ -185,13 +185,16 @@ public class PackagePropertiesEditor extends FormEditor {
 
     /**
      * Write the properties model to the source editor page.
+     *
+     * @param content
+     *            the content to write
      */
-    public void writeToSource(String pContent) {
+    public void writeToSource(String content) {
         if (mSourcePage.getDocumentProvider() instanceof TextFileDocumentProvider) {
             TextFileDocumentProvider docProvider = (TextFileDocumentProvider) mSourcePage.getDocumentProvider();
             IDocument doc = docProvider.getDocument(mSourcePage.getEditorInput());
             if (doc != null) {
-                doc.set(pContent);
+                doc.set(content);
             }
         }
     }

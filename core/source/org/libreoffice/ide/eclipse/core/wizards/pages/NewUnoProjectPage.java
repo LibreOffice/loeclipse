@@ -138,7 +138,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     private ModifyListener mModifListener = new ModifyListener() {
 
         @Override
-        public void modifyText(ModifyEvent pEvent) {
+        public void modifyText(ModifyEvent event) {
             checkWhiteSpaces();
             checkSpecialSymbolsinProjectName();
             ((NewUnoProjectWizard) getWizard()).pageChanged(NewUnoProjectPage.this);
@@ -251,8 +251,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
             // create the new project operation
             WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
                 @Override
-                protected void execute(IProgressMonitor pMonitor) throws CoreException {
-                    createProject(description, newProjectHandle, pMonitor);
+                protected void execute(IProgressMonitor monitor) throws CoreException {
+                    createProject(description, newProjectHandle, monitor);
                 }
             };
 
@@ -266,8 +266,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
                 // ie.- one of the steps resulted in a core exception
                 Throwable t = e.getTargetException();
                 PluginLogger.error(t.toString(), t);
-                ErrorDialog.openError(getShell(), Messages.getString("NewUnoProjectPage.ProjectCreationError"), //$NON-NLS-1$
-                    null, ((CoreException) t).getStatus());
+                String msg = Messages.getString("NewUnoProjectPage.ProjectCreationError"); //$NON-NLS-1$
+                ErrorDialog.openError(getShell(), msg, null, ((CoreException) t).getStatus());
                 mNewProject = null;
             }
         }
@@ -278,11 +278,11 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     /**
      * Creates a project resource given the project handle and description.
      *
-     * @param pDescription
+     * @param description
      *            the project description to create a project resource for
-     * @param pProjectHandle
+     * @param projectHandle
      *            the project handle to create a project resource for
-     * @param pMonitor
+     * @param monitor
      *            the progress monitor to show visual progress with
      *
      * @exception CoreException
@@ -290,21 +290,21 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
      * @exception OperationCanceledException
      *                if the operation is canceled
      */
-    void createProject(IProjectDescription pDescription, IProject pProjectHandle, IProgressMonitor pMonitor)
+    void createProject(IProjectDescription description, IProject projectHandle, IProgressMonitor monitor)
         throws CoreException, OperationCanceledException {
         try {
-            pMonitor.beginTask("", TASK_UNITS); //$NON-NLS-1$
+            monitor.beginTask("", TASK_UNITS); //$NON-NLS-1$
 
-            pProjectHandle.create(pDescription, SubMonitor.convert(pMonitor, SUBTASK_UNIT));
+            projectHandle.create(description, SubMonitor.convert(monitor, SUBTASK_UNIT));
 
-            if (pMonitor.isCanceled()) {
+            if (monitor.isCanceled()) {
                 throw new OperationCanceledException();
             }
 
-            pProjectHandle.open(IResource.BACKGROUND_REFRESH, SubMonitor.convert(pMonitor, SUBTASK_UNIT));
+            projectHandle.open(IResource.BACKGROUND_REFRESH, SubMonitor.convert(monitor, SUBTASK_UNIT));
 
         } finally {
-            pMonitor.done();
+            monitor.done();
         }
     }
 
@@ -334,19 +334,22 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         prjGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Add the company prefix field
-        mPrefixRow = new TextRow(prjGroup, PREFIX, Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
+        mPrefixRow = new TextRow(prjGroup, PREFIX,
+            Messages.getString("NewUnoProjectPage.RootPackage")); //$NON-NLS-1$
         mPrefixRow.setValue("org.libreoffice.example"); // Setting default value //$NON-NLS-1$
         mPrefixRow.setFieldChangedListener(this);
         mPrefixRow.setTooltip(Messages.getString("NewUnoProjectPage.RootPackageTooltip")); //$NON-NLS-1$
 
         // Add the output directory field
-        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT, Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
+        mOutputExt = new TextRow(prjGroup, OUTPUT_EXT,
+            Messages.getString("NewUnoProjectPage.CompExtension")); //$NON-NLS-1$
         mOutputExt.setValue("comp"); // Setting default value //$NON-NLS-1$
         mOutputExt.setFieldChangedListener(this);
         mOutputExt.setTooltip(Messages.getString("NewUnoProjectPage.CompExtensionTooltip")); //$NON-NLS-1$
 
         // Adding the programming language row
-        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE, Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
+        mLanguageRow = new ChoiceRow(prjGroup, LANGUAGE,
+            Messages.getString("NewUnoProjectPage.Language"), null, false); //$NON-NLS-1$
         mLanguageRow.setTooltip(Messages.getString("NewUnoProjectPage.LanguageTooltip")); //$NON-NLS-1$
 
         // Sets the available programming languages
@@ -376,17 +379,20 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
         group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
         // Add the custom directories checkbox
-        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS, Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
+        mCustomDirsRow = new BooleanRow(group, CUSTOM_DIRS,
+            Messages.getString("NewUnoProjectPage.CustomDirsLabel")); //$NON-NLS-1$
         mCustomDirsRow.setFieldChangedListener(this);
 
         // Add the custom source directory chooser
-        mSourceRow = new TextRow(group, CUSTOM_SRC, Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
+        mSourceRow = new TextRow(group, CUSTOM_SRC,
+            Messages.getString("NewUnoProjectPage.CustomSourcesLabel")); //$NON-NLS-1$
         mSourceRow.setValue(UnoidlProjectHelper.SOURCE_BASIS);
         mSourceRow.setEnabled(false);
         mSourceRow.setFieldChangedListener(this);
 
         // Add the custom idl directory chooser
-        mIdlDirRow = new TextRow(group, CUSTOM_IDL, Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
+        mIdlDirRow = new TextRow(group, CUSTOM_IDL,
+            Messages.getString("NewUnoProjectPage.CustomIdlLabel")); //$NON-NLS-1$
         mIdlDirRow.setValue(UnoidlProjectHelper.IDL_BASIS);
         mIdlDirRow.setEnabled(false);
         mIdlDirRow.setFieldChangedListener(this);
@@ -420,19 +426,19 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     /**
      * Add the modify listener to all the Text children of the control.
      *
-     * @param pControl
+     * @param control
      *            the control on which to add the listener.
      */
-    private void addTextListener(Control pControl) {
+    private void addTextListener(Control control) {
 
-        if (pControl instanceof Composite) {
-            Control[] children = ((Composite) pControl).getChildren();
+        if (control instanceof Composite) {
+            Control[] children = ((Composite) control).getChildren();
             for (int i = 0; i < children.length; i++) {
                 Control child = children[i];
                 addTextListener(child);
             }
-        } else if (pControl instanceof Text) {
-            Text text = (Text) pControl;
+        } else if (control instanceof Text) {
+            Text text = (Text) control;
             if (!text.isDisposed()) {
                 text.addModifyListener(mModifListener);
                 mListenedTexts.add(text);
@@ -444,14 +450,14 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
      * {@inheritDoc}
      */
     @Override
-    public void fieldChanged(FieldEvent pEvent) {
+    public void fieldChanged(FieldEvent event) {
 
         setPageComplete(validatePage());
 
         // Check the prefix correctness
-        if (pEvent.getProperty().equals(PREFIX)) {
+        if (event.getProperty().equals(PREFIX)) {
 
-            String newCompanyPrefix = pEvent.getValue();
+            String newCompanyPrefix = event.getValue();
             /**
              * <p>
              * The company prefix is a package like name used by the project to build the idl file path and the
@@ -471,8 +477,8 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
                 setErrorMessage(null);
                 checkWhiteSpaces();
             }
-        } else if (pEvent.getProperty().equals(OUTPUT_EXT)) {
-            String newOuputExt = pEvent.getValue();
+        } else if (event.getProperty().equals(OUTPUT_EXT)) {
+            String newOuputExt = event.getValue();
             /**
              * <p>
              * The implementation extension is a single word which could contain numbers. It have to begin with a
@@ -496,7 +502,7 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
                         WARNING);
                 }
             }
-        } else if (pEvent.getProperty().equals(CUSTOM_DIRS)) {
+        } else if (event.getProperty().equals(CUSTOM_DIRS)) {
             boolean useCustom = mCustomDirsRow.getBooleanValue();
             mSourceRow.setEnabled(useCustom);
             mIdlDirRow.setEnabled(useCustom);
@@ -517,37 +523,37 @@ public class NewUnoProjectPage extends WizardNewProjectCreationPage implements I
     }
 
     /**
-     * @param pData
+     * @param data
      *            the data to fill.
-     * @param pForce
+     * @param force
      *            forces the project creation. Otherwise, the project handle won't be set
      *
      * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
-    public UnoFactoryData fillData(UnoFactoryData pData, boolean pForce) {
+    public UnoFactoryData fillData(UnoFactoryData data, boolean force) {
 
-        if (pData != null) {
-            if (pForce) {
+        if (data != null) {
+            if (force) {
                 try {
-                    pData.setProperty(IUnoFactoryConstants.PROJECT_HANDLE, createNewProject());
+                    data.setProperty(IUnoFactoryConstants.PROJECT_HANDLE, createNewProject());
                 } catch (Exception e) {
                 }
             }
 
-            pData.setProperty(IUnoFactoryConstants.PROJECT_PATH, getLocationPath());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_NAME, getProjectName());
+            data.setProperty(IUnoFactoryConstants.PROJECT_PATH, getLocationPath());
+            data.setProperty(IUnoFactoryConstants.PROJECT_NAME, getProjectName());
 
-            pData.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, getPrefix());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_COMP, getOutputExt());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_SDK, mOOoConfigPanel.getSDKName());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_OOO, mOOoConfigPanel.getOOoName());
+            data.setProperty(IUnoFactoryConstants.PROJECT_PREFIX, getPrefix());
+            data.setProperty(IUnoFactoryConstants.PROJECT_COMP, getOutputExt());
+            data.setProperty(IUnoFactoryConstants.PROJECT_LANGUAGE, getChosenLanguage());
+            data.setProperty(IUnoFactoryConstants.PROJECT_SDK, mOOoConfigPanel.getSDKName());
+            data.setProperty(IUnoFactoryConstants.PROJECT_OOO, mOOoConfigPanel.getOOoName());
 
-            pData.setProperty(IUnoFactoryConstants.PROJECT_SRC_DIR, mSourceRow.getValue());
-            pData.setProperty(IUnoFactoryConstants.PROJECT_IDL_DIR, mIdlDirRow.getValue());
+            data.setProperty(IUnoFactoryConstants.PROJECT_SRC_DIR, mSourceRow.getValue());
+            data.setProperty(IUnoFactoryConstants.PROJECT_IDL_DIR, mIdlDirRow.getValue());
         }
 
-        return pData;
+        return data;
     }
 
     /**

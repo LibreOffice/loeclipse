@@ -50,7 +50,7 @@ public interface ISdk {
      * Set the new SDK Home after having checked for the existence of the idl and settings directory.
      * If name is empty, it will be fetched from the dk.mk file
      *
-     * @param pHome
+     * @param home
      *            path to the new sdk home
      * @param name
      *            name of the new sdk
@@ -68,7 +68,7 @@ public interface ISdk {
      *                <li>an unexpected exception has been raised</li>
      *                </ul>
      */
-    public void initialize(String pHome, String name) throws InvalidConfigException;
+    public void initialize(String home, String name) throws InvalidConfigException;
 
     /**
      * Returns the SDK home directory. This string could be passed to the Path constructor to get the folder object.
@@ -103,35 +103,35 @@ public interface ISdk {
      * Create a process for the given shell command. This process will be created with the project parameters such as
      * it's SDK and location path
      *
-     * @param pProject
+     * @param project
      *            the UNO project on which to run the tool
-     * @param pShellCommand
+     * @param shellCommand
      *            the shell command to execute the tool
-     * @param pMonitor
+     * @param monitor
      *            a process monitor to watch the tool launching
      *
      * @return the process executing the tool
      */
-    public Process runTool(IUnoidlProject pProject, String pShellCommand, IProgressMonitor pMonitor);
+    public Process runTool(IUnoidlProject project, String shellCommand, IProgressMonitor monitor);
 
     /**
      * Create a process for the given shell command. This process will be created with the project parameters such as
      * it's SDK and location path
      *
-     * @param pProject
+     * @param project
      *            the folder from which to run the command
-     * @param pOOo
+     * @param instance
      *            the ooo instance to run the tool
-     * @param pShellCommand
+     * @param shellCommand
      *            the shell command to execute the tool
-     * @param pEnv
+     * @param env
      *            tool environment variable
-     * @param pMonitor
+     * @param monitor
      *            a process monitor to watch the tool launching
      *
      * @return the process executing the tool
      */
-    public Process runToolWithEnv(IProject pProject, IOOo pOOo, String pShellCommand, String[] pEnv,
-        IProgressMonitor pMonitor);
+    public Process runToolWithEnv(IProject project, IOOo instance, String shellCommand, String[] env,
+        IProgressMonitor monitor);
 
 }

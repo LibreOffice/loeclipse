@@ -70,8 +70,8 @@ public class PythonBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void generateFromTypes(ISdk pSdk, IOOo pOoo, IProject pPrj, File pTypesFile,
-        File pBuildFolder, String pRootModule, IProgressMonitor pMonitor) {
+    public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile,
+        File buildFolder, String rootModule, IProgressMonitor monitor) {
         // Nothing to do for Python
     }
 
@@ -109,22 +109,23 @@ public class PythonBuilder implements ILanguageBuilder {
     }
 
     /**
-     * Get the Python files that are located in the project
+     * Set the Python files (ie: pPythonFiles) that are located in the project
      * directory or one of its sub-folder.
      *
-     * @param pPythonPrj the project from which to get the Python files
-     * @return a list of all the those Python Files
+     * @param pSourceFolder the source folder
+     * @param pPythonFiles the Python files
+     * @param pUnoPrj the project from which to get the Python files
      */
-    private void getPythonFiles(IFolder sourceFolder, ArrayList<IFile> pythonFiles, IUnoidlProject pUnoPrj) {
+    private void getPythonFiles(IFolder pSourceFolder, ArrayList<IFile> pPythonFiles, IUnoidlProject pUnoPrj) {
         try {
-            for (IResource member : sourceFolder.members()) {
-                if (member.getType() == 2) { // '1' is for file and '2' is for folder
+            for (IResource member : pSourceFolder.members()) {
+                if (member.getType() == IResource.FOLDER) {
                     IFolder subSourceFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(member.getFullPath());
-                    getPythonFiles(subSourceFolder, pythonFiles, pUnoPrj);
+                    getPythonFiles(subSourceFolder, pPythonFiles, pUnoPrj);
                     continue;
                 }
                 IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(member.getFullPath());
-                pythonFiles.add(file);
+                pPythonFiles.add(file);
             }
         } catch (Exception e) {
             PluginLogger.error(

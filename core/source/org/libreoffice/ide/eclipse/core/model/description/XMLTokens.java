@@ -77,17 +77,17 @@ public class XMLTokens {
     /**
      * Returns the XML qname corresponding to the given prefix and local name.
      *
-     * @param pPrefix
+     * @param prefix
      *            the prefix (can be <code>null</code>)
-     * @param pLocalName
+     * @param localName
      *            the element local name
      *
      * @return the qname
      */
-    public static String createQName(String pPrefix, String pLocalName) {
-        String qname = pLocalName;
-        if (pPrefix != null) {
-            qname = pPrefix + ":" + qname; //$NON-NLS-1$
+    public static String createQName(String prefix, String localName) {
+        String qname = localName;
+        if (prefix != null) {
+            qname = prefix + ":" + qname; //$NON-NLS-1$
         }
         return qname;
     }

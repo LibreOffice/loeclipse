@@ -90,22 +90,22 @@ public class UnoPackageExportPage extends WizardPage {
     /**
      * Constructor.
      *
-     * @param pPageName
+     * @param pageName
      *            the page id
-     * @param pPrj
+     * @param prj
      *            the project to export
-     * @param pManifestPage
+     * @param manifestPage
      *            the manifest page of the wizard
      */
-    public UnoPackageExportPage(String pPageName, IUnoidlProject pPrj, ManifestExportPage pManifestPage) {
-        super(pPageName);
+    public UnoPackageExportPage(String pageName, IUnoidlProject prj, ManifestExportPage manifestPage) {
+        super(pageName);
 
         setTitle(Messages.getString("UnoPackageExportPage.Title")); //$NON-NLS-1$
         setDescription(Messages.getString("UnoPackageExportPage.Description")); //$NON-NLS-1$
         setImageDescriptor(OOEclipsePlugin.getImageDescriptor(ImagesConstants.PACKAGE_EXPORT_WIZ));
 
-        mSelectedProject = pPrj;
-        mManifestPage = pManifestPage;
+        mSelectedProject = prj;
+        mManifestPage = manifestPage;
     }
 
     /**
@@ -179,7 +179,7 @@ public class UnoPackageExportPage extends WizardPage {
         mProjectsList.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 int id = mProjectsList.getSelectionIndex();
                 if (id != -1) {
                     String name = mProjectsList.getItem(id);
@@ -222,7 +222,7 @@ public class UnoPackageExportPage extends WizardPage {
         mDestinationCombo.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 setPageComplete(checkPageCompletion());
             }
         });
@@ -233,7 +233,7 @@ public class UnoPackageExportPage extends WizardPage {
         btn.addSelectionListener(new SelectionListener() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
                 dlg.setFilterExtensions(new String[] { "*.oxt" });
                 String path = dlg.open();
@@ -243,8 +243,8 @@ public class UnoPackageExportPage extends WizardPage {
             }
 
             @Override
-            public void widgetDefaultSelected(SelectionEvent pE) {
-                widgetSelected(pE);
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
             }
         });
     }
@@ -344,7 +344,8 @@ public class UnoPackageExportPage extends WizardPage {
             boolean doit = true;
             File destFile = new File(mDestinationCombo.getText());
             if (destFile.exists() && !mOverwriteBox.getSelection()) {
-                String msg = MessageFormat.format(Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$
+                String msg = MessageFormat.format(
+                    Messages.getString("UnoPackageExportPage.OverwriteQuestion"), //$NON-NLS-1$
                     destFile.getPath());
                 doit = MessageDialog.openQuestion(getShell(), getTitle(), msg);
             }
@@ -390,14 +391,14 @@ public class UnoPackageExportPage extends WizardPage {
         /**
          * Constructor.
          *
-         * @param pOoo
+         * @param ooo
          *            the LibreOffice where to deploy
-         * @param pDest
+         * @param dest
          *            the package to deploy
          */
-        DeployerJob(IOOo pOoo, File pDest) {
-            mOOo = pOoo;
-            mDest = pDest;
+        DeployerJob(IOOo ooo, File dest) {
+            mOOo = ooo;
+            mDest = dest;
         }
 
         /**

@@ -40,12 +40,12 @@ public class StringUtils {
     /**
      * Checks if the given string is not null and not empty.
      *
-     * @param str
+     * @param pStr
      *            the string
      * @return true, if string is not empty
      */
-    public static boolean isNotEmpty(final String str) {
-        return str != null && str.length() > 0;
+    public static boolean isNotEmpty(final String pStr) {
+        return pStr != null && pStr.length() > 0;
     }
 
 }

@@ -55,47 +55,47 @@ public class DialogRow extends LabeledRow implements ModifyListener {
     /**
      * Simple constructor for the Dialog row creation. The button text will be set to <em>Browse</em>.
      *
-     * @param pParent
+     * @param parent
      *            the composite in which to create the row
-     * @param pProperty
+     * @param property
      *            the property to recognize an event from this row
-     * @param pLabel
+     * @param label
      *            the label on the left of the row
-     * @param pLink
+     * @param link
      *            tells whether to create a browse link or button
      */
-    public DialogRow(Composite pParent, String pProperty, String pLabel, boolean pLink) {
-        this(pParent, pProperty, pLabel, Messages.getString("DialogRow.BrowseLabel"), pLink); //$NON-NLS-1$
+    public DialogRow(Composite parent, String property, String label, boolean link) {
+        this(parent, property, label, Messages.getString("DialogRow.BrowseLabel"), link); //$NON-NLS-1$
     }
 
     /**
      * Constructor for the Dialog row creation allowing to change the button text.
      *
-     * @param pParent
+     * @param parent
      *            the composite in which to create the row
-     * @param pProperty
+     * @param property
      *            the property to recognize an event from this row
-     * @param pLabel
+     * @param label
      *            the label on the left of the row
-     * @param pBtnLabel
+     * @param btnLabel
      *            the label of the button opening the dialog
-     * @param pLink
+     * @param link
      *            tells whether to create a browse link or button
      *
      */
-    public DialogRow(Composite pParent, String pProperty, String pLabel, String pBtnLabel, boolean pLink) {
-        super(pProperty);
+    public DialogRow(Composite parent, String property, String label, String btnLabel, boolean link) {
+        super(property);
 
-        Label aLabel = new Label(pParent, SWT.LEFT | SWT.SHADOW_NONE);
-        aLabel.setText(pLabel);
-        Text aField = new Text(pParent, SWT.BORDER);
+        Label aLabel = new Label(parent, SWT.LEFT | SWT.SHADOW_NONE);
+        aLabel.setText(label);
+        Text aField = new Text(parent, SWT.BORDER);
 
-        createContent(pParent, aLabel, aField, pBtnLabel, pLink);
+        createContent(parent, aLabel, aField, btnLabel, link);
         ((Text) mField).addModifyListener(this);
 
         addBrowseSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 String newValue = doOpenDialog();
                 if (!mValue.equals(newValue)) {
                     setValue(newValue);
@@ -126,7 +126,7 @@ public class DialogRow extends LabeledRow implements ModifyListener {
      * {@inheritDoc}
      */
     @Override
-    public void modifyText(ModifyEvent pEvent) {
+    public void modifyText(ModifyEvent event) {
         setValue(((Text) mField).getText().trim());
     }
 

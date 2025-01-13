@@ -107,7 +107,7 @@ public class LocaleCellProvider extends CellEditor {
         mLanguage.setItems(languagesDisplay);
         mLanguage.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 String lang = mLanguages.get(mLanguage.getSelectionIndex());
                 mValue = new Locale(lang, mValue.getCountry());
             }
@@ -142,7 +142,7 @@ public class LocaleCellProvider extends CellEditor {
         mCountry.setItems(countriesDisplay);
         mCountry.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 String country = mCountries.get(mCountry.getSelectionIndex());
                 mValue = new Locale(mValue.getLanguage(), country);
             }

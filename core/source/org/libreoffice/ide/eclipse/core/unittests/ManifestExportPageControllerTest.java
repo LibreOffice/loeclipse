@@ -19,7 +19,7 @@
  * All Rights Reserved.
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.core.wizards.pages;
+package org.libreoffice.ide.eclipse.core.unittests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.libreoffice.ide.eclipse.core.wizards.pages.ManifestExportPageController;
 
 /**
  * Unit test for the Manifest export page controller, these tests are testing the UI behaviour.

@@ -51,7 +51,7 @@ public class UnoProjectLabelProvider extends LabelProvider {
      * {@inheritDoc}
      */
     @Override
-    public Image getImage(Object pElement) {
+    public Image getImage(Object element) {
         return OOEclipsePlugin.getImage(ImagesConstants.UNO_PROJECT);
     }
 
@@ -59,10 +59,10 @@ public class UnoProjectLabelProvider extends LabelProvider {
      * {@inheritDoc}
      */
     @Override
-    public String getText(Object pElement) {
+    public String getText(Object element) {
         String text = null;
-        if (pElement instanceof IUnoidlProject) {
-            text = ((IUnoidlProject) pElement).getName();
+        if (element instanceof IUnoidlProject) {
+            text = ((IUnoidlProject) element).getName();
         }
         return text;
     }

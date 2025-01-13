@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.libreoffice.ide.eclipse.java" label="LibreOffice Extension/Component Development - Java" version="${java.Bundle-Version}" provider-name="The Document Foundation">
-  <description>
+<feature
+      id="org.libreoffice.ide.eclipse.java"
+      label="LibreOffice Extension/Component Development - Java"
+      version="${java.Bundle-Version}"
+      provider-name="The Document Foundation">
+
+   <description>
       This plugin provides helps with developing Java extensions or components for LibreOffice.
    </description>
-  <copyright>
+
+   <copyright>
       Copyright: (c) 2005-2010 Cedric Bosdonnat
-  </copyright>
-  <license url="http://www.gnu.org/licenses/lgpl.txt">
+   </copyright>
+
+   <license url="http://www.gnu.org/licenses/lgpl.txt">
       GNU LESSER GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 Copyright (C) 2007 Free Software Foundation, Inc. http://fsf.org/
@@ -16,24 +23,24 @@ This version of the GNU Lesser General Public License incorporates
 the terms and conditions of version 3 of the GNU General Public
 License, supplemented by the additional permissions listed below.
 0. Additional Definitions.
-As used herein, "this License" refers to version 3 of the GNU
-Lesser General Public License, and the "GNU GPL" refers to version 3
+As used herein, &quot;this License&quot; refers to version 3 of the GNU
+Lesser General Public License, and the &quot;GNU GPL&quot; refers to version 3
 of the GNU General Public License.
-"The Library" refers to a covered work governed by this License,
+&quot;The Library&quot; refers to a covered work governed by this License,
 other than an Application or a Combined Work as defined below.
-An "Application" is any work that makes use of an interface provided
+An &quot;Application&quot; is any work that makes use of an interface provided
 by the Library, but which is not otherwise based on the Library.
 Defining a subclass of a class defined by the Library is deemed
 a mode of using an interface provided by the Library.
-A "Combined Work" is a work produced by combining or linking
+A &quot;Combined Work&quot; is a work produced by combining or linking
 an Application with the Library.  The particular version of the
-Library with which the Combined Work was made is also called the "Linked
-Version".
-The "Minimal Corresponding Source" for a Combined Work means
+Library with which the Combined Work was made is also called the &quot;Linked
+Version&quot;.
+The &quot;Minimal Corresponding Source&quot; for a Combined Work means
 the Corresponding Source for the Combined Work, excluding any source
 code for portions of the Combined Work that, considered in isolation,
 are based on the Application, and not on the Linked Version.
-The "Corresponding Application Code" for a Combined Work means
+The &quot;Corresponding Application Code&quot; for a Combined Work means
 the object code and/or source code for the Application, including
 any data and utility programs needed for reproducing the Combined Work
 from the Application, but excluding the System Libraries of the Combined
@@ -90,7 +97,7 @@ manner specified by section 6 of the GNU GPL for conveying
 Corresponding Source.
 1) Use a suitable shared library mechanism for linking with the
 Library.  A suitable mechanism is one that (a) uses at run time
-a copy of the Library already present on the user's computer
+a copy of the Library already present on the user&apos;s computer
 system, and (b) will operate properly with a modified version
 of the Library that is interface-compatible with the Linked
 Version.
@@ -124,7 +131,7 @@ new versions will be similar in spirit to the present version, but
 may differ in detail to address new problems or concerns.
 Each version is given a distinguishing version number. If the
 Library as you received it specifies that a certain numbered
-version of the GNU Lesser General Public License "or any later version"
+version of the GNU Lesser General Public License &quot;or any later version&quot;
 applies to it, you have the option of following the terms and
 conditions either of that published version or of any later version
 published by the Free Software Foundation. If the Library as
@@ -133,7 +140,7 @@ General Public License, you may choose any version of the GNU
 Lesser General Public License ever published by the Free Software Foundation.
 If the Library as you received it specifies that a proxy can
 decide whether future versions of the GNU Lesser General Public License
-shall apply, that proxy's public statement of acceptance of any version
+shall apply, that proxy&apos;s public statement of acceptance of any version
 is permanent authorization for you to choose that version for the
 Library.
 GNU LESSER GENERAL PUBLIC LICENSE
@@ -145,25 +152,25 @@ This version of the GNU Lesser General Public License incorporates
 the terms and conditions of version 3 of the GNU General Public
 License, supplemented by the additional permissions listed below.
 0. Additional Definitions.
-As used herein, "this License" refers to version 3 of the GNU
-Lesser General Public License, and the "GNU GPL" refers to 
+As used herein, &quot;this License&quot; refers to version 3 of the GNU
+Lesser General Public License, and the &quot;GNU GPL&quot; refers to 
 version 3 of the GNU General Public License.
-"The Library" refers to a covered work governed by this License,
+&quot;The Library&quot; refers to a covered work governed by this License,
 other than an Application or a Combined Work as defined below.
-An "Application" is any work that makes use of an interface provided
+An &quot;Application&quot; is any work that makes use of an interface provided
 by the Library, but which is not otherwise based on the Library.
 Defining a subclass of a class defined by the Library is deemed
 a mode of using an interface provided by the Library.
-A "Combined Work" is a work produced by combining or linking
+A &quot;Combined Work&quot; is a work produced by combining or linking
 an Application with the Library.  The particular version of the
 Library with which the Combined Work was made is also called the 
-"Linked Version".
-The "Minimal Corresponding Source" for a Combined Work means
+&quot;Linked Version&quot;.
+The &quot;Minimal Corresponding Source&quot; for a Combined Work means
 the Corresponding Source for the Combined Work, excluding any 
 source code for portions of the Combined Work that, considered 
 in isolation, are based on the Application, and not on the 
 Linked Version.
-The "Corresponding Application Code" for a Combined Work means
+The &quot;Corresponding Application Code&quot; for a Combined Work means
 the object code and/or source code for the Application, 
 including any data and utility programs needed for reproducing 
 the Combined Work from the Application, but excluding the System
@@ -221,7 +228,7 @@ manner specified by section 6 of the GNU GPL for conveying
 Corresponding Source.
 1) Use a suitable shared library mechanism for linking with the
 Library.  A suitable mechanism is one that (a) uses at run time
-a copy of the Library already present on the user's computer
+a copy of the Library already present on the user&apos;s computer
 system, and (b) will operate properly with a modified version
 of the Library that is interface-compatible with the Linked
 Version.
@@ -280,8 +287,8 @@ new versions will be similar in spirit to the present version,
 but may differ in detail to address new problems or concerns.
 Each version is given a distinguishing version number. If the
 Library as you received it specifies that a certain numbered
-version of the GNU Lesser General Public License "or any later
-version" applies to it, you have the option of following the
+version of the GNU Lesser General Public License &quot;or any later
+version&quot; applies to it, you have the option of following the
 terms and conditions either of that published version or of 
 any later version published by the Free Software Foundation.
 If the Library as you received it does not specify a version
@@ -290,11 +297,11 @@ any version of the GNU Lesser General Public License ever
 published by the Free Software Foundation. 
 If the Library as you received it specifies that a proxy can
 decide whether future versions of the GNU Lesser General Public
-License shall apply, that proxy's public statement of acceptance
+License shall apply, that proxy&apos;s public statement of acceptance
 of any version is permaneinguishing version number. If the
 Library as you received it specifies that a certain numbered
-version of the GNU Lesser General Public License "or any later
-version" applies to it, you have the option of following the
+version of the GNU Lesser General Public License &quot;or any later
+version&quot; applies to it, you have the option of following the
 terms and conditions either of that published version or of 
 any later version published by the Free Software Foundation.
 If the Library as you received it does not specify a version
@@ -303,16 +310,25 @@ any version of the GNU Lesser General Public License ever
 published by the Free Software Foundation. 
 If the Library as you received it specifies that a proxy can
 decide whether future versions of the GNU Lesser General Public
-License shall apply, that proxy's public statement of acceptance
+License shall apply, that proxy&apos;s public statement of acceptance
 of any version is permanent authorization for you to choose that
 version for the Library.
    </license>
-  <url>
-    <update label="LOEclipse Update Site" url="https://eclipse-plugins.libreoffice.org"/>
-  </url>
-  <requires>
-    <import feature="org.eclipse.jdt"/>
-  </requires>
-  <plugin id="org.libreoffice.ide.eclipse.java" download-size="0" install-size="0" version="${java.Bundle-Version}" unpack="false"/>
-  <plugin id="org.libreoffice.ide.eclipse.core" download-size="0" install-size="0" version="${core.Bundle-Version}" unpack="false"/>
+
+   <url>
+      <update label="LOEclipse Update Site" url="https://eclipse-plugins.libreoffice.org"/>
+   </url>
+
+   <requires>
+      <import feature="org.eclipse.jdt" version="3.20.0.v20241120-1800"/>
+   </requires>
+
+   <plugin
+         id="org.libreoffice.ide.eclipse.java"
+         version="${java.Bundle-Version}"/>
+
+   <plugin
+         id="org.libreoffice.ide.eclipse.core"
+         version="${core.Bundle-Version}"/>
+
 </feature>

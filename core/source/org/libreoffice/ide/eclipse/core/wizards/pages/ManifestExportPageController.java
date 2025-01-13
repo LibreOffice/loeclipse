@@ -61,11 +61,11 @@ public class ManifestExportPageController {
      * Sets whether to use an existing manifest file or generate a new one (note that the generated manifest file may or
      * may not be saved).
      *
-     * @param pGenerate
+     * @param generate
      *            <code>true</code> to generate a new manifest, <code>false</code> to use it.
      */
-    public void setGenerateManifest(boolean pGenerate) {
-        mGenerateManifest = pGenerate;
+    public void setGenerateManifest(boolean generate) {
+        mGenerateManifest = generate;
     }
 
     /**

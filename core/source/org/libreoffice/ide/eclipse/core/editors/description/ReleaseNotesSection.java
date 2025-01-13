@@ -56,17 +56,17 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
     private Text mUrlTxt;
 
     /**
-     * @param pParent
+     * @param parent
      *            the parent composite where to add the section
-     * @param pPage
+     * @param page
      *            the parent page
      */
-    public ReleaseNotesSection(Composite pParent, DescriptionFormPage pPage) {
-        super(pParent, pPage, ExpandableComposite.TITLE_BAR);
+    public ReleaseNotesSection(Composite parent, DescriptionFormPage page) {
+        super(parent, page, ExpandableComposite.TITLE_BAR);
 
         getSection().setText(Messages.getString("ReleaseNotesSection.Title")); //$NON-NLS-1$
 
-        setModel(pPage.getModel());
+        setModel(page.getModel());
     }
 
     /**
@@ -75,8 +75,9 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
     @Override
     public void loadData() {
         getModel().setSuspendEvent(true);
-        if (!getModel().getReleaseNotes().isEmpty())
+        if (!getModel().getReleaseNotes().isEmpty()) {
             mUrlTxt.setText(getModel().getReleaseNotes().get(mCurrentLocale));
+        }
         getModel().setSuspendEvent(false);
     }
 
@@ -87,8 +88,8 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
     protected void createControls(FormToolkit pToolkit, Composite pParent) {
         pParent.setLayout(new GridLayout(LAYOUT_COLS, false));
 
-        Label descrLbl = pToolkit.createLabel(pParent, Messages.getString("ReleaseNotesSection.Description"), //$NON-NLS-1$
-            SWT.WRAP);
+        String msg = Messages.getString("ReleaseNotesSection.Description"); //$NON-NLS-1$
+        Label descrLbl = pToolkit.createLabel(pParent, msg, SWT.WRAP);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = LAYOUT_COLS;
         descrLbl.setLayoutData(gd);
@@ -100,7 +101,7 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
         mUrlTxt.setEnabled(false);
         mUrlTxt.addModifyListener(new ModifyListener() {
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 getModel().addReleaseNote(mCurrentLocale, mUrlTxt.getText());
                 markDirty();
             }
@@ -111,9 +112,9 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
      * {@inheritDoc}
      */
     @Override
-    public void addLocale(Locale pLocale) {
-        if (!getModel().getReleaseNotes().containsKey(pLocale)) {
-            getModel().addReleaseNote(pLocale, new String());
+    public void addLocale(Locale locale) {
+        if (!getModel().getReleaseNotes().containsKey(locale)) {
+            getModel().addReleaseNote(locale, new String());
         }
         mUrlTxt.setEnabled(true);
     }
@@ -122,8 +123,8 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
      * {@inheritDoc}
      */
     @Override
-    public void deleteLocale(Locale pLocale) {
-        getModel().removeReleaseNote(pLocale);
+    public void deleteLocale(Locale locale) {
+        getModel().removeReleaseNote(locale);
         if (getModel().getReleaseNotes().isEmpty()) {
             mUrlTxt.setEnabled(false);
         }
@@ -133,12 +134,12 @@ public class ReleaseNotesSection extends LocalizedSection<DescriptionModel> impl
      * {@inheritDoc}
      */
     @Override
-    public void selectLocale(Locale pLocale) {
+    public void selectLocale(Locale locale) {
 
         if (mCurrentLocale != null) {
             getModel().addReleaseNote(mCurrentLocale, mUrlTxt.getText());
         }
-        super.selectLocale(pLocale);
-        mUrlTxt.setText(getModel().getReleaseNotes().get(pLocale));
+        super.selectLocale(locale);
+        mUrlTxt.setText(getModel().getReleaseNotes().get(locale));
     }
 }

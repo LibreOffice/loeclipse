@@ -105,16 +105,16 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
      * Creates a new browser dialog. The browser, waits for the type provider to finish its work if it's not already
      * over.
      *
-     * @param pParentShell
+     * @param parentShell
      *            the shell where to create the dialog
-     * @param pAllowedTypes
+     * @param allowedTypes
      *            the bit-ORed allowed types
      *
      */
-    public UnoTypeBrowser(Shell pParentShell, int pAllowedTypes) {
-        super(pParentShell);
+    public UnoTypeBrowser(Shell parentShell, int allowedTypes) {
+        super(parentShell);
 
-        mTypes = new Flags(UnoTypeProvider.ALL_TYPES, pAllowedTypes, pAllowedTypes);
+        mTypes = new Flags(UnoTypeProvider.ALL_TYPES, allowedTypes, allowedTypes);
 
         setShellStyle(getShellStyle() | SWT.RESIZE);
         setBlockOnOpen(true);
@@ -141,12 +141,13 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
     @Override
     protected void createButtonsForButtonBar(Composite pParent) {
 
-        mRefreshBtn = createButton(pParent, ID_REFRESH, Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
+        mRefreshBtn = createButton(pParent, ID_REFRESH,
+            Messages.getString("UnoTypeBrowser.RefreshButton"), false); //$NON-NLS-1$
         Image img = OOEclipsePlugin.getImage("REFRESH"); //$NON-NLS-1$
         mRefreshBtn.setImage(img);
         mRefreshBtn.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Refresh the cache and the view
                 activateFields(false);
 
@@ -192,8 +193,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
         createList(body);
 
         // create the types filter row
-        mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER, Messages.getString("UnoTypeBrowser.FilterLabel"), null, //$NON-NLS-1$
-            false);
+        mTypeFilterRow = new ChoiceRow(body, F_TYPE_FILTER,
+            Messages.getString("UnoTypeBrowser.FilterLabel"), null, false); //$NON-NLS-1$
         mTypeFilterRow.setTooltip(Messages.getString("UnoTypeBrowser.FilterTooltip")); //$NON-NLS-1$
         mTypeFilterRow.setFieldChangedListener(this);
         setFilterValues();
@@ -222,8 +223,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
                     mTypesList.refresh();
                     activateFields(true);
 
-                    updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.INFO, "", //$NON-NLS-1$
-                        null));
+                    updateStatus(new Status(IStatus.INFO, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.INFO, "", null)); //$NON-NLS-1$
                 }
             }
         };
@@ -257,8 +258,8 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
         mTypesList.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
-            public void selectionChanged(SelectionChangedEvent pEvent) {
-                if (pEvent.getSelection().isEmpty()) {
+            public void selectionChanged(SelectionChangedEvent event) {
+                if (event.getSelection().isEmpty()) {
                     updateStatus(new Status(IStatus.ERROR, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.ERROR,
                         Messages.getString("UnoTypeBrowser.EmptySelectionError"), //$NON-NLS-1$
                         null));
@@ -266,11 +267,11 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
                     getButton(IDialogConstants.OK_ID).setEnabled(false);
 
                 } else {
-                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
-                        null));
+                    updateStatus(new Status(IStatus.OK, OOEclipsePlugin.OOECLIPSE_PLUGIN_ID,
+                        IStatus.OK, "", null)); //$NON-NLS-1$
                     getButton(IDialogConstants.OK_ID).setEnabled(true);
 
-                    IStructuredSelection selection = (IStructuredSelection) pEvent.getSelection();
+                    IStructuredSelection selection = (IStructuredSelection) event.getSelection();
                     mSelectedType = (InternalUnoType) selection.getFirstElement();
 
                     mTypesList.refresh(mSelectedType, true);
@@ -303,15 +304,15 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
      *
      * The value of the filter option is a string version of the type
      *
-     * @param pType
+     * @param type
      *            the type to add in {@link IUnoFactoryConstants}
-     * @param pMessageKey
+     * @param messageKey
      *            the message key to use to get the message from the messages bundle.
      */
-    private void addFilter(int pType, String pMessageKey) {
-        if (pType == UnoTypeProvider.ALL_TYPES || mTypes.isFlagSet(pType)) {
-            String value = Integer.toString(pType);
-            mTypeFilterRow.add(Messages.getString(pMessageKey), value);
+    private void addFilter(int type, String messageKey) {
+        if (type == UnoTypeProvider.ALL_TYPES || mTypes.isFlagSet(type)) {
+            String value = Integer.toString(type);
+            mTypeFilterRow.add(Messages.getString(messageKey), value);
         }
     }
 
@@ -320,27 +321,27 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
      *
      * This method should be used when long operations are performed.
      *
-     * @param pActivate
+     * @param activate
      *            <code>true</code> to activate all the fields, <code>false</code> to set the fields as not active.
      */
-    public void activateFields(boolean pActivate) {
-        mInputRow.setEnabled(pActivate);
-        mTypesList.getTable().setEnabled(pActivate);
-        mTypeFilterRow.setEnabled(pActivate);
+    public void activateFields(boolean activate) {
+        mInputRow.setEnabled(activate);
+        mTypesList.getTable().setEnabled(activate);
+        mTypeFilterRow.setEnabled(activate);
 
         // The refresh button can be null during the dialog construction
         if (mRefreshBtn != null) {
-            mRefreshBtn.setEnabled(pActivate);
+            mRefreshBtn.setEnabled(activate);
         }
 
         Button okButton = getButton(IDialogConstants.OK_ID);
         if (null != okButton) {
-            okButton.setEnabled(pActivate);
+            okButton.setEnabled(activate);
         }
 
         Button cancelButton = getButton(IDialogConstants.CANCEL_ID);
         if (null != cancelButton) {
-            cancelButton.setEnabled(pActivate);
+            cancelButton.setEnabled(activate);
         }
     }
 
@@ -353,11 +354,11 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
          * {@inheritDoc}
          */
         @Override
-        public Image getImage(Object pElement) {
+        public Image getImage(Object element) {
             Image result = null;
 
-            if (pElement instanceof InternalUnoType) {
-                int type = ((InternalUnoType) pElement).getType();
+            if (element instanceof InternalUnoType) {
+                int type = ((InternalUnoType) element).getType();
 
                 if (IUnoFactoryConstants.SERVICE == type) {
                     result = OOEclipsePlugin.getImage(ImagesConstants.SERVICE);
@@ -383,11 +384,11 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
          * {@inheritDoc}
          */
         @Override
-        public String getText(Object pElement) {
+        public String getText(Object element) {
             String result = ""; //$NON-NLS-1$
 
-            if (pElement instanceof InternalUnoType) {
-                InternalUnoType type = (InternalUnoType) pElement;
+            if (element instanceof InternalUnoType) {
+                InternalUnoType type = (InternalUnoType) element;
                 result = type.getName();
 
                 if (!mTypesList.getSelection().isEmpty()) {
@@ -440,11 +441,11 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
      * {@inheritDoc}
      */
     @Override
-    public void fieldChanged(FieldEvent pEvent) {
+    public void fieldChanged(FieldEvent event) {
 
-        if (pEvent.getProperty().equals(F_TYPE_FILTER)) {
+        if (event.getProperty().equals(F_TYPE_FILTER)) {
             try {
-                mTypes.setTypes(Integer.parseInt(pEvent.getValue()));
+                mTypes.setTypes(Integer.parseInt(event.getValue()));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -466,11 +467,11 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
          * {@inheritDoc}
          */
         @Override
-        public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
+        public boolean select(Viewer viewer, Object parentElement, Object element) {
             boolean select = false;
 
-            if (pElement instanceof InternalUnoType) {
-                InternalUnoType type = (InternalUnoType) pElement;
+            if (element instanceof InternalUnoType) {
+                InternalUnoType type = (InternalUnoType) element;
                 if (mTypes.isFlagSet(type.getType())) {
                     // The type is correct, check the name
                     if (type.getName().startsWith(mInputRow.getValue())) {
@@ -519,7 +520,7 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             ArrayList<String> containers = new ArrayList<String>();
 
             if (mTypes.isFlagSet(IUnoFactoryConstants.BASICS)) {
@@ -541,7 +542,7 @@ public class UnoTypeBrowser extends StatusDialog implements IFieldChangedListene
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             // Should never happen
         }
     }

@@ -83,8 +83,8 @@ public class Language extends AbstractLanguage {
      * {@inheritDoc}
      */
     @Override
-    public void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-        IProgressMonitor pMonitor) {
+    public void connectDebuggerToOffice(IUnoidlProject prj, ILaunch launch, IPath userInstallation,
+        IProgressMonitor monitor) {
 
         try {
             // org.eclipse.jdt.launching.socketListenConnector
@@ -96,22 +96,22 @@ public class Language extends AbstractLanguage {
             //FIXME implement some kind of port pickup/retry mechanism in case the default port is already used.
             argMap.put("port", DEFAULT_JAVA_DEBUG_PORT);
 
-            connector.connect(argMap, pMonitor, pLaunch);
+            connector.connect(argMap, monitor, launch);
 
-            pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation,
-                new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), pMonitor);
+            prj.getOOo().runOffice(prj, launch, userInstallation,
+                new JavaDebugExtraOptionsProvider(DEFAULT_JAVA_DEBUG_PORT), monitor);
         } catch (Exception e) {
             PluginLogger.error("Could not start remote debugger.", e);
         }
     }
 
     @Override
-    public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
-        String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
-        pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
+    public void configureSourceLocator(ILaunchConfigurationWorkingCopy configuration) throws CoreException {
+        String projectName = configuration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
+        configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
             "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
-        pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
+        configuration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
             "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
-        pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+        configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
     };
 }

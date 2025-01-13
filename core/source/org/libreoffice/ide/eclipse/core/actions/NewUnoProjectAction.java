@@ -44,7 +44,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
+import org.eclipse.ui.PlatformUI;
 import org.libreoffice.ide.eclipse.core.wizards.NewUnoProjectWizard;
 
 /**
@@ -58,7 +58,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
      * Default constructor just initializing the action.
      */
     public NewUnoProjectAction() {
-        init(OOEclipsePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow());
+        init(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
     }
 
     /**
@@ -81,7 +81,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void run(IAction pAction) {
+    public void run(IAction action) {
 
         // Launch the new IDL Project wizard
         NewUnoProjectWizard wizard = new NewUnoProjectWizard();
@@ -100,7 +100,7 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void selectionChanged(IAction pAction, ISelection pSelection) {
+    public void selectionChanged(IAction action, ISelection selection) {
         // Nothing to do on selection changed
     }
 

@@ -95,14 +95,14 @@ public class PackageDescriptionSection extends SectionPart {
     /**
      * Constructor.
      *
-     * @param pPage
+     * @param page
      *            the package page where to create the section
      */
-    public PackageDescriptionSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+    public PackageDescriptionSection(PackageFormPage page) {
+        super(page.getManagedForm().getForm().getBody(), page.getManagedForm().getToolkit(),
             ExpandableComposite.TITLE_BAR);
 
-        mPage = pPage;
+        mPage = page;
 
         Section section = getSection();
 
@@ -160,12 +160,12 @@ public class PackageDescriptionSection extends SectionPart {
     /**
      * Set the package descriptions to show in the section.
      *
-     * @param pDescriptions
+     * @param descriptions
      *            the descriptions to show.
      */
-    public void setDescriptions(Map<Locale, IFile> pDescriptions) {
+    public void setDescriptions(Map<Locale, IFile> descriptions) {
         mDescriptions.clear();
-        Iterator<Entry<Locale, IFile>> iter = pDescriptions.entrySet().iterator();
+        Iterator<Entry<Locale, IFile>> iter = descriptions.entrySet().iterator();
 
         while (iter.hasNext()) {
             Entry<Locale, IFile> entry = iter.next();
@@ -205,7 +205,7 @@ public class PackageDescriptionSection extends SectionPart {
         add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
         add.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Open the folder chooser dialog and refresh the table
                 IProject prj = mPage.getProject();
                 PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
@@ -241,7 +241,7 @@ public class PackageDescriptionSection extends SectionPart {
         del.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
         del.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent pEvent) {
+            public void widgetSelected(SelectionEvent event) {
                 // Delete the selected line
                 ISelection sel = mTableViewer.getSelection();
                 if (sel instanceof IStructuredSelection) {
@@ -268,7 +268,7 @@ public class PackageDescriptionSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public Object[] getElements(Object pInputElement) {
+        public Object[] getElements(Object inputElement) {
             return mDescriptions.keySet().toArray();
         }
 
@@ -283,7 +283,7 @@ public class PackageDescriptionSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public void inputChanged(Viewer pViewer, Object pOldInput, Object pNewInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
     }
 
@@ -296,18 +296,18 @@ public class PackageDescriptionSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public boolean canModify(Object pElement, String pProperty) {
-            return pProperty.equals(P_LOCALE);
+        public boolean canModify(Object element, String property) {
+            return property.equals(P_LOCALE);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Object getValue(Object pElement, String pProperty) {
+        public Object getValue(Object element, String property) {
             Object value = null;
-            if (pProperty.equals(P_LOCALE)) {
-                value = mDescriptions.get(pElement);
+            if (property.equals(P_LOCALE)) {
+                value = mDescriptions.get(element);
             }
             return value;
         }
@@ -316,12 +316,12 @@ public class PackageDescriptionSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public void modify(Object pElement, String pProperty, Object pValue) {
-            if (pProperty.equals(P_LOCALE) && pValue instanceof Locale) {
-                if (pElement instanceof TableItem) {
-                    Object o = ((TableItem) pElement).getData();
+        public void modify(Object element, String property, Object value) {
+            if (property.equals(P_LOCALE) && value instanceof Locale) {
+                if (element instanceof TableItem) {
+                    Object o = ((TableItem) element).getData();
                     if (o instanceof IFile) {
-                        mDescriptions.put((IFile) o, (Locale) pValue);
+                        mDescriptions.put((IFile) o, (Locale) value);
                         mTableViewer.refresh(o);
                         fireSectionModified();
                     }
@@ -339,12 +339,12 @@ public class PackageDescriptionSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public Image getColumnImage(Object pElement, int pColumnIndex) {
+        public Image getColumnImage(Object element, int columnIndex) {
             Image image = null;
-            if (pColumnIndex == 0 && pElement instanceof IAdaptable) {
-                IAdaptable adaptable = (IAdaptable) pElement;
+            if (columnIndex == 0 && element instanceof IAdaptable) {
+                IAdaptable adaptable = (IAdaptable) element;
                 IWorkbenchAdapter adapter = adaptable.getAdapter(IWorkbenchAdapter.class);
-                image = adapter.getImageDescriptor(pElement).createImage();
+                image = adapter.getImageDescriptor(element).createImage();
             }
             return image;
         }
@@ -353,12 +353,12 @@ public class PackageDescriptionSection extends SectionPart {
          * {@inheritDoc}
          */
         @Override
-        public String getColumnText(Object pElement, int pColumnIndex) {
+        public String getColumnText(Object element, int columnIndex) {
             String label = null;
-            if (pColumnIndex == 0 && pElement instanceof IFile) {
-                label = ((IResource) pElement).getProjectRelativePath().toOSString();
-            } else if (pColumnIndex == 1) {
-                label = mDescriptions.get(pElement).getDisplayName();
+            if (columnIndex == 0 && element instanceof IFile) {
+                label = ((IResource) element).getProjectRelativePath().toOSString();
+            } else if (columnIndex == 1) {
+                label = mDescriptions.get(element).getDisplayName();
             }
             return label;
         }

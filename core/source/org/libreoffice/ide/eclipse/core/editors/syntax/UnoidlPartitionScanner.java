@@ -62,7 +62,8 @@ public class UnoidlPartitionScanner extends RuleBasedPartitionScanner {
         IToken idlAutoComment = new Token(IDL_AUTOCOMMENT);
         IToken idlPreprocessor = new Token(IDL_PREPROCESSOR);
 
-        IPredicateRule[] rules = new IPredicateRule[] { new MultiLineRule("/**", "*/", idlAutoComment), //$NON-NLS-1$ //$NON-NLS-2$
+        IPredicateRule[] rules = new IPredicateRule[] {
+            new MultiLineRule("/**", "*/", idlAutoComment), //$NON-NLS-1$ //$NON-NLS-2$
             new EndOfLineRule("///", idlAutoComment), //$NON-NLS-1$
             new MultiLineRule("/*", "*/", idlComment), //$NON-NLS-1$ //$NON-NLS-2$
             new EndOfLineRule("//", idlComment), //$NON-NLS-1$

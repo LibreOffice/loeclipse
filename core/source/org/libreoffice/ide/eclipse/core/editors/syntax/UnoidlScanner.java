@@ -59,11 +59,11 @@ public class UnoidlScanner extends RuleBasedScanner implements IUnoidlSyntax {
     /**
      * Default constructor, initializing the rules to apply in the uno-idl code.
      *
-     * @param pColorProvider
+     * @param colorProvider
      *            a color provider to colorize the resulting tokens
      */
-    public UnoidlScanner(ColorProvider pColorProvider) {
-        mColorProvider = pColorProvider;
+    public UnoidlScanner(ColorProvider colorProvider) {
+        mColorProvider = colorProvider;
 
         // Tokens' definitions
         IToken keyword = new Token(new TextAttribute(mColorProvider.getColor(Colors.C_KEYWORD), null, SWT.BOLD));

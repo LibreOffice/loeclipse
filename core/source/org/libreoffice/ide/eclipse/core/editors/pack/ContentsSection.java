@@ -66,14 +66,14 @@ public class ContentsSection extends SectionPart {
     /**
      * Constructor.
      *
-     * @param pPage
+     * @param page
      *            the form page containing the section
      */
-    public ContentsSection(PackageFormPage pPage) {
-        super(pPage.getManagedForm().getForm().getBody(), pPage.getManagedForm().getToolkit(),
+    public ContentsSection(PackageFormPage page) {
+        super(page.getManagedForm().getForm().getBody(), page.getManagedForm().getToolkit(),
             ExpandableComposite.TITLE_BAR);
 
-        mPage = pPage;
+        mPage = page;
         PackagePropertiesModel model = ((PackagePropertiesEditor) mPage.getEditor()).getModel();
 
         Section section = getSection();
@@ -88,6 +88,21 @@ public class ContentsSection extends SectionPart {
         mTreeViewer.setContentProvider(provider);
         mTreeViewer.setComparator(new ViewerComparator(String.CASE_INSENSITIVE_ORDER));
 
+        addChangeListener(model);
+        addCheckStateListener(model);
+        setCheckStateProvider(model);
+        addFilter(model);
+        section.setClient(mTreeViewer.getControl());
+    }
+
+    public void setContents() {
+        // Initialize TreeView
+        if (mTreeViewer != null) {
+            mTreeViewer.setInput(mPage.getProject());
+        }
+    }
+
+    private void addChangeListener(PackagePropertiesModel model) {
         model.addChangeListener(new IModelChangedListener() {
 
             @Override
@@ -101,14 +116,16 @@ public class ContentsSection extends SectionPart {
             public void modelSaved() {
             }
         });
+    }
 
+    private void addCheckStateListener(PackagePropertiesModel model) {
         mTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
             @Override
-            public void checkStateChanged(CheckStateChangedEvent pEvent) {
-                if (pEvent.getElement() instanceof IAdaptable) {
-                    IResource res = ((IAdaptable) pEvent.getElement()).getAdapter(IResource.class);
-                    if (pEvent.getChecked()) {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                if (event.getElement() instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) event.getElement()).getAdapter(IResource.class);
+                    if (event.getChecked()) {
                         model.addResource(res);
                     } else {
                         model.removeResource(res);
@@ -116,71 +133,61 @@ public class ContentsSection extends SectionPart {
                 }
             }
         });
+    }
 
+    private void setCheckStateProvider(PackagePropertiesModel model) {
         mTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
 
             @Override
-            public boolean isChecked(Object pElement) {
-                if (pElement instanceof IAdaptable) {
-                    IResource res = ((IAdaptable) pElement).getAdapter(IResource.class);
-                    return model.isChecked(res);
+            public boolean isChecked(Object element) {
+                boolean checked = false;
+                if (element instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) element).getAdapter(IResource.class);
+                    checked = model.isChecked(res);
                 }
-                return false;
+                return checked;
             }
 
             @Override
-            public boolean isGrayed(Object pElement) {
-                if (pElement instanceof IAdaptable) {
-                    IResource res = ((IAdaptable) pElement).getAdapter(IResource.class);
-                    return model.isGrayed(res);
+            public boolean isGrayed(Object element) {
+                boolean grayed = false;
+                if (element instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) element).getAdapter(IResource.class);
+                    grayed = model.isGrayed(res);
                 }
-                return false;
+                return grayed;
             }
-
         });
+    }
 
+    private void addFilter(PackagePropertiesModel model) {
         mTreeViewer.addFilter(new ViewerFilter() {
 
             @Override
-            public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
                 /*
                  * Files to exclude: .* Folders to exclude: build, bin
                  */
-                if (pElement instanceof IAdaptable) {
-                    IResource resource = ((IAdaptable) pElement).getAdapter(IResource.class);
+                boolean selected = true;
+                if (element instanceof IAdaptable) {
+                    IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
                     if (resource != null) {
                         // FIXME: If we want to be able to see soft link pointing outside
                         // FIXME: the Package we need to accept resource not contained in package
                         if (resource.getName().startsWith(".") || //$NON-NLS-1$
                             resource.getName().equals("build") || //$NON-NLS-1$
                             resource.getName().equals("bin")) { //$NON-NLS-1$
-                            return false;
-                        }
-
-                        // Check if the resource is already selected somewhere
-                        PackagePropertiesEditor editor = (PackagePropertiesEditor) mPage.getEditor();
-                        PackagePropertiesModel model = editor.getModel();
-
-                        if (model.getBasicLibraries().contains(resource)
-                            || model.getDialogLibraries().contains(resource)
-                            || model.getDescriptionFiles().containsValue(resource)) {
-                            return false;
+                            selected = false;
+                        } else if (model.getBasicLibraries().contains(resource) ||
+                                   model.getDialogLibraries().contains(resource) ||
+                                   model.getDescriptionFiles().containsValue(resource)) {
+                            selected = false;
                         }
                     }
                 }
-
-                return true;
+                return selected;
             }
         });
-
-        section.setClient(mTreeViewer.getControl());
-    }
-
-    public void setContents() {
-        // Initialize TreeView
-        if (mTreeViewer != null) {
-            mTreeViewer.setInput(mPage.getProject());
-        }
     }
 
 }

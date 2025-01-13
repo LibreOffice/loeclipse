@@ -27,17 +27,17 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XInterface;
 
 /**
- * Utility class to access OpenOffice.org configuration properties at runtime
+ * Utility class to access OpenOffice.org configuration properties at runtime.
  */
 public class OpenOfficeConfiguration {
 
     public static final String NODE_L10N = "org.openoffice.Setup/L10N";
     public static final String NODE_PRODUCT = "org.openoffice.Setup/Product";
 
-    private OpenOfficeConnection connection;
+    private OpenOfficeConnection mConnection;
 
     public OpenOfficeConfiguration(OpenOfficeConnection connection) {
-        this.connection = connection;
+        mConnection = connection;
     }
 
     public String getOpenOfficeProperty(String nodePath, String node) {
@@ -48,8 +48,8 @@ public class OpenOfficeConfiguration {
         // create the provider and remember it as a XMultiServiceFactory
         try {
             final String sProviderService = "com.sun.star.configuration.ConfigurationProvider";
-            Object configProvider = connection.getRemoteServiceManager().createInstanceWithContext(
-                sProviderService, connection.getComponentContext());
+            Object configProvider = mConnection.getRemoteServiceManager().createInstanceWithContext(
+                sProviderService, mConnection.getComponentContext());
             XMultiServiceFactory xConfigProvider = UnoRuntime.queryInterface(
                 com.sun.star.lang.XMultiServiceFactory.class, configProvider);
 
@@ -75,13 +75,15 @@ public class OpenOfficeConfiguration {
     }
 
     public String getOpenOfficeVersion() {
+        String version;
         try {
             // OOo >= 2.2 returns major.minor.micro
-            return getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersionAboutBox");
+            version = getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersionAboutBox");
         } catch (OpenOfficeException noSuchElementException) {
             // OOo < 2.2 only returns major.minor
-            return getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersion");
+            version = getOpenOfficeProperty(NODE_PRODUCT, "ooSetupVersion");
         }
+        return version;
     }
 
     public String getOpenOfficeLocale() {

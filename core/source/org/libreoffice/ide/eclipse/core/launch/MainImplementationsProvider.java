@@ -72,7 +72,8 @@ public class MainImplementationsProvider {
 
             for (IConfigurationElement providerDef : mainProviders) {
                 try {
-                    IMainProvider provider = (IMainProvider) providerDef.createExecutableExtension("class"); //$NON-NLS-1$
+                    IMainProvider provider = (IMainProvider) providerDef.
+                        createExecutableExtension("class"); //$NON-NLS-1$
                     implementations.addAll(provider.getMainNames(project));
                 } catch (Exception e) {
                     // Impossible to get the provider
@@ -91,7 +92,8 @@ public class MainImplementationsProvider {
         Vector<IConfigurationElement> result = new Vector<IConfigurationElement>();
 
         IExtensionRegistry registry = Platform.getExtensionRegistry();
-        IExtensionPoint point = registry.getExtensionPoint("org.libreoffice.ide.eclipse.core.MainProvider"); //$NON-NLS-1$
+        IExtensionPoint point = registry.getExtensionPoint(
+            "org.libreoffice.ide.eclipse.core.MainProvider"); //$NON-NLS-1$
         if (point != null) {
 
             IExtension[] extensions = point.getExtensions();

@@ -22,11 +22,11 @@ public class FilesFinder implements IResourceVisitor {
     /**
      * Constructor.
      *
-     * @param pExtensions
+     * @param extensions
      *            the file extensions to match
      */
-    public FilesFinder(String[] pExtensions) {
-        mExtensions = pExtensions;
+    public FilesFinder(String[] extensions) {
+        mExtensions = extensions;
         mFiles = new ArrayList<IFile>();
     }
 
@@ -69,10 +69,10 @@ public class FilesFinder implements IResourceVisitor {
     /**
      * Add a path to exclude in the search.
      *
-     * @param pDistPath
+     * @param distPath
      *            the path to exclude
      */
-    public void addExclude(IPath pDistPath) {
-        this.mExcludedPaths.add(pDistPath);
+    public void addExclude(IPath distPath) {
+        this.mExcludedPaths.add(distPath);
     }
 }

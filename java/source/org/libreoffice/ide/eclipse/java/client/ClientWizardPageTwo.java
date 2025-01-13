@@ -72,10 +72,10 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
     }
 
     @Override
-    public void init(IJavaProject jproject, IPath defaultOutputLocation, IClasspathEntry[] defaultEntries,
+    public void init(IJavaProject javaProject, IPath defaultOutputLocation, IClasspathEntry[] defaultEntries,
         boolean defaultsOverrideExistingClasspath) {
 
-        IProject project = jproject.getProject();
+        IProject project = javaProject.getProject();
 
         // Copy the jodconnector.jar file to the new project
         try {
@@ -111,6 +111,6 @@ public class ClientWizardPageTwo extends NewJavaProjectWizardPageTwo {
         System.arraycopy(defaultEntries, 0, entries, 0, defaultEntries.length);
         System.arraycopy(newEntries, 0, entries, defaultEntries.length, newEntries.length);
 
-        super.init(jproject, defaultOutputLocation, entries, defaultsOverrideExistingClasspath);
+        super.init(javaProject, defaultOutputLocation, entries, defaultsOverrideExistingClasspath);
     }
 }

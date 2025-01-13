@@ -61,33 +61,33 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Creates and initializes an {@link OfficeClassLoader} for a given office instance.
      *
-     * @param pOOo
+     * @param ooo
      *            the LibreOffice instance to use for the class loader
-     * @param pParent
+     * @param parent
      *            the parent class loader to set
      */
-    private OfficeClassLoader(IOOo pOOo, ClassLoader pParent) {
-        super(getUrls(pOOo), pParent);
+    private OfficeClassLoader(IOOo ooo, ClassLoader parent) {
+        super(getUrls(ooo), parent);
     }
 
     /**
      * Create or load the classloader for the given LibreOffice instance.
      *
-     * @param pOOo
+     * @param ooo
      *            the LibreOffice instance to load
-     * @param pParent
+     * @param parent
      *            the parent classloader to use if the classloader has to be created.
      *
      * @return the classloader corresponding to the LibreOffice instance
      */
-    public static OfficeClassLoader getClassLoader(IOOo pOOo, ClassLoader pParent) {
+    public static OfficeClassLoader getClassLoader(IOOo ooo, ClassLoader parent) {
         // First try the class loaders cache
-        OfficeClassLoader loader = sClassLoaders.get(pOOo.getHome());
+        OfficeClassLoader loader = sClassLoaders.get(ooo.getHome());
 
         // If not found, create a new class loader for this office instance
         if (loader == null) {
-            loader = new OfficeClassLoader(pOOo, pParent);
-            sClassLoaders.put(pOOo.getHome(), loader);
+            loader = new OfficeClassLoader(ooo, parent);
+            sClassLoaders.put(ooo.getHome(), loader);
         }
 
         return loader;
@@ -98,9 +98,9 @@ public class OfficeClassLoader extends URLClassLoader {
      * loader loadClass method. This order is applied only if the class to load is in the
      * <code>org.libreoffice.ide.eclipse.core.internal.office</code> package.
      *
-     * @param pName
+     * @param name
      *            the name of the class to load
-     * @param pResolve
+     * @param resolve
      *            if <code>true</code> then resolves the class
      *
      * @return the loaded class
@@ -109,20 +109,20 @@ public class OfficeClassLoader extends URLClassLoader {
      *             if the class cannot be found
      */
     @Override
-    protected synchronized Class<?> loadClass(String pName, boolean pResolve) throws ClassNotFoundException {
+    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 
         Class<?> clazz = null;
-        clazz = findLoadedClass(pName);
+        clazz = findLoadedClass(name);
 
         try {
-            if (clazz == null && pName.startsWith(OfficeHelper.OOO_PACKAGE)) {
-                clazz = findClass(pName);
+            if (clazz == null && name.startsWith(OfficeHelper.OOO_PACKAGE)) {
+                clazz = findClass(name);
             }
         } catch (ClassNotFoundException e) {
         }
 
         if (clazz == null) {
-            clazz = super.loadClass(pName, pResolve);
+            clazz = super.loadClass(name, resolve);
         }
 
         return clazz;
@@ -131,15 +131,15 @@ public class OfficeClassLoader extends URLClassLoader {
     /**
      * Get the URLs to add to the class loader from an office instance.
      *
-     * @param pOOo
+     * @param ooo
      *            the LibreOffice instance
      *
      * @return the URL to set to the class loader
      */
-    private static URL[] getUrls(IOOo pOOo) {
+    private static URL[] getUrls(IOOo ooo) {
         LinkedList<URL> oUrls = new LinkedList<URL>();
         try {
-            String[] javaPaths = pOOo.getClassesPath();
+            String[] javaPaths = ooo.getClassesPath();
 
             URL bundleUrl = OOEclipsePlugin.getDefault().getBundle().getResource("/"); //$NON-NLS-1$
             URL plugin = FileLocator.resolve(bundleUrl);
@@ -160,7 +160,7 @@ public class OfficeClassLoader extends URLClassLoader {
                 }
             }
 
-            String[] libsPath = pOOo.getLibsPath();
+            String[] libsPath = ooo.getLibsPath();
             for (String path : libsPath) {
                 oUrls.add(new File(path).toURI().toURL());
             }

@@ -59,16 +59,16 @@ public abstract class LanguageWizardPage extends WizardPage {
     /**
      * Fills the page with the project creation informations.
      *
-     * @param pData
+     * @param data
      *            the data describing the informations to set.
      */
-    public abstract void setProjectInfos(UnoFactoryData pData);
+    public abstract void setProjectInfos(UnoFactoryData data);
 
     /**
-     * @param pData
+     * @param data
      *            to fill with the language specific data.
      *
      * @return the given data with the completed properties, <code>null</code> if the provided data is <code>null</code>
      */
-    public abstract UnoFactoryData fillData(UnoFactoryData pData);
+    public abstract UnoFactoryData fillData(UnoFactoryData data);
 }

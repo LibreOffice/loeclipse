@@ -88,62 +88,62 @@ public class SystemHelper {
     /**
      * Add an environment variable to an array of existing variables.
      *
-     * @param pEnv
+     * @param env
      *            the array of existing environment variables where to add the new variable
-     * @param pName
+     * @param name
      *            the name of the variable to add
-     * @param pValue
+     * @param value
      *            the value of the variable to add
      *
      * @return the completed array
      */
-    public static String[] addPathEnv(String[] pEnv, String pName, String[] pValue) {
+    public static String[] addPathEnv(String[] env, String name, String[] value) {
 
         String values = new String();
-        for (int i = 0; i < pValue.length; i++) {
-            String path = pValue[i];
+        for (int i = 0; i < value.length; i++) {
+            String path = value[i];
             String tmpValue = new Path(path).toOSString();
-            if (i < pValue.length - 1) {
+            if (i < value.length - 1) {
                 tmpValue += PATH_SEPARATOR;
             }
             values += tmpValue;
         }
 
-        return addEnv(pEnv, pName, values, PATH_SEPARATOR);
+        return addEnv(env, name, values, PATH_SEPARATOR);
     }
 
     /**
      * Add an environment variable to an array of existing variables.
      *
-     * @param pEnv
+     * @param env
      *            the array of existing environment variables where to add the new variable
-     * @param pName
+     * @param name
      *            the name of the variable to add
-     * @param pValue
+     * @param value
      *            the value of the variable to add
-     * @param pSeparator
+     * @param separator
      *            the separator to use if there is already a variable with the same name. If <code>null</code>, the old
      *            variable will be replaced
      *
      * @return the completed array
      */
-    public static String[] addEnv(String[] pEnv, String pName, String pValue, String pSeparator) {
+    public static String[] addEnv(String[] env, String name, String value, String separator) {
         /*
          * TODO cdan should add a test for this method (test that the case is preserved even on windows, but compare
          * with ignoring case on windows)
          */
         String[] result = new String[1];
 
-        if (pEnv != null) {
+        if (env != null) {
             int i = 0;
             boolean found = false;
 
-            while (!found && i < pEnv.length) {
-                String tmpEnv = pEnv[i];
-                String tmpName = pName;
+            while (!found && i < env.length) {
+                String tmpEnv = env[i];
+                String tmpName = name;
                 if (Platform.getOS().equals(Platform.OS_WIN32)) {
                     tmpEnv = tmpEnv.toLowerCase();
-                    tmpName = pName.toLowerCase();
+                    tmpName = name.toLowerCase();
                 }
                 if (tmpEnv.startsWith(tmpName + "=")) { //$NON-NLS-1$
                     found = true;
@@ -153,24 +153,24 @@ public class SystemHelper {
             }
 
             if (found) {
-                result = new String[pEnv.length];
-                System.arraycopy(pEnv, 0, result, 0, pEnv.length);
-                if (null != pSeparator) {
+                result = new String[env.length];
+                System.arraycopy(env, 0, result, 0, env.length);
+                if (null != separator) {
                     // First remove the leading NAME=
-                    String tmpEnv =  pEnv[i].replaceFirst(pName+"=", "");
+                    String tmpEnv =  env[i].replaceFirst(name + "=", "");
                     // Put the new env in front of the existing one
-                    result[i] = pName + "=" + pValue + pSeparator + tmpEnv;
+                    result[i] = name + "=" + value + separator + tmpEnv;
                 } else {
-                    result[i] = pName + "=" + pValue; //$NON-NLS-1$
+                    result[i] = name + "=" + value; //$NON-NLS-1$
                 }
 
             } else {
-                result = new String[pEnv.length + 1];
-                System.arraycopy(pEnv, 0, result, 0, pEnv.length);
-                result[result.length - 1] = pName + "=" + pValue; //$NON-NLS-1$
+                result = new String[env.length + 1];
+                System.arraycopy(env, 0, result, 0, env.length);
+                result[result.length - 1] = name + "=" + value; //$NON-NLS-1$
             }
         } else {
-            result[0] = pName + "=" + pValue; //$NON-NLS-1$
+            result[0] = name + "=" + value; //$NON-NLS-1$
         }
 
         return result;
@@ -195,32 +195,32 @@ public class SystemHelper {
     /**
      * Run a shell command with the system environment and an optional execution directory.
      *
-     * @param pShellCommand
+     * @param shellCommand
      *            the command to run
-     * @param pExecDir
+     * @param execDir
      *            the execution directory or <code>null</code> if none
      * @return the process for the running command
      * @throws IOException
      *             if anything wrong happens during the command launch
      */
-    public static Process runToolWithSysEnv(String pShellCommand, File pExecDir) throws IOException {
-        return runTool(pShellCommand, getSystemEnvironement(), pExecDir);
+    public static Process runToolWithSysEnv(String shellCommand, File execDir) throws IOException {
+        return runTool(shellCommand, getSystemEnvironement(), execDir);
     }
 
     /**
      * Run a shell command with a given environment and an optional execution directory.
      *
-     * @param pShellCommand
+     * @param shellCommand
      *            the command to run
-     * @param pEnv
+     * @param env
      *            the environment variables
-     * @param pExecDir
+     * @param execDir
      *            the execution directory or <code>null</code> if none
      * @return the process for the running command
      * @throws IOException
      *             if anything wrong happens during the command launch
      */
-    public static Process runTool(String pShellCommand, String[] pEnv, File pExecDir) throws IOException {
+    public static Process runTool(String shellCommand, String[] env, File execDir) throws IOException {
         String[] command = new String[COMMAND_ARGS_LENGTH];
 
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -232,26 +232,26 @@ public class SystemHelper {
             }
 
             command[1] = "/C"; //$NON-NLS-1$
-            command[2] = pShellCommand;
+            command[2] = shellCommand;
         } else {
             command[0] = "sh"; //$NON-NLS-1$
             command[1] = "-c"; //$NON-NLS-1$
-            command[2] = pShellCommand;
+            command[2] = shellCommand;
         }
 
         String execPath = ""; //$NON-NLS-1$
-        if (pExecDir != null) {
+        if (execDir != null) {
             execPath = " from dir: "; //$NON-NLS-1$
-            execPath += pExecDir.getAbsolutePath();
+            execPath += execDir.getAbsolutePath();
         }
-        PluginLogger.debug("Running command: " + pShellCommand + //$NON-NLS-1$
-            " with env: " + Arrays.toString(pEnv) + //$NON-NLS-1$
+        PluginLogger.debug("Running command: " + shellCommand + //$NON-NLS-1$
+            " with env: " + Arrays.toString(env) + //$NON-NLS-1$
             execPath);
         Process process = null;
-        if (pExecDir != null) {
-            process = Runtime.getRuntime().exec(command, pEnv, pExecDir);
+        if (execDir != null) {
+            process = Runtime.getRuntime().exec(command, env, execDir);
         } else {
-            process = Runtime.getRuntime().exec(command, pEnv);
+            process = Runtime.getRuntime().exec(command, env);
         }
         return process;
     }

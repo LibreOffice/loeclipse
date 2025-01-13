@@ -89,27 +89,29 @@ public class PackagePropertiesModel {
      * Create a new package.properties model for a given file. If the file can be read, the existing properties will be
      * imported.
      *
-     * @param pFile
+     * @param file
      *            the package.properties file represented by the object.
      * @throws IllegalArgumentException
      *             if the file is <code>null</code>
      */
-    public PackagePropertiesModel(IFile pFile) throws IllegalArgumentException {
+    public PackagePropertiesModel(IFile file) throws IllegalArgumentException {
 
         FileInputStream is = null;
 
         try {
-            is = new FileInputStream(pFile.getLocation().toFile());
-            mPropertiesFile = pFile;
+            is = new FileInputStream(file.getLocation().toFile());
+            mPropertiesFile = file;
         } catch (FileNotFoundException e) {
             mPropertiesFile = null;
-            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NullFileException")); //$NON-NLS-1$
+            String msg = Messages.getString("PackagePropertiesModel.NullFileException");
+            throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         try {
             mProperties.load(is);
         } catch (IOException e) {
-            PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException") + pFile.getLocation()); //$NON-NLS-1$
+            PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException")
+                + file.getLocation()); //$NON-NLS-1$
         } finally {
             try {
                 is.close();
@@ -133,22 +135,22 @@ public class PackagePropertiesModel {
     /**
      * Add a listener notified of the model changes.
      *
-     * @param pListener
+     * @param listener
      *            the listener to add.
      */
-    public void addChangeListener(IModelChangedListener pListener) {
-        mListeners.add(pListener);
+    public void addChangeListener(IModelChangedListener listener) {
+        mListeners.add(listener);
     }
 
     /**
      * Removes a class listening the model changes.
      *
-     * @param pListener
+     * @param listener
      *            the listener to remove
      */
-    public void removeChangedListener(IModelChangedListener pListener) {
-        if (mListeners.contains(pListener)) {
-            mListeners.remove(pListener);
+    public void removeChangedListener(IModelChangedListener listener) {
+        if (mListeners.contains(listener)) {
+            mListeners.remove(listener);
         }
     }
 
@@ -214,15 +216,15 @@ public class PackagePropertiesModel {
      * Clears all the content of the package properties and replace it by a string as if it would have been the
      * properties file content.
      *
-     * @param pContent
+     * @param content
      *            the string describing the data
      */
-    public void reloadFromString(String pContent) {
+    public void reloadFromString(String content) {
         String initContent = writeToString();
-        if (!pContent.equals(initContent)) {
+        if (!content.equals(initContent)) {
             mProperties.clear();
             try {
-                mProperties.load(new StringReader(pContent));
+                mProperties.load(new StringReader(content));
             } catch (IOException e) {
                 // Nothing to log
                 return;
@@ -255,12 +257,12 @@ public class PackagePropertiesModel {
     /**
      * Adds a Basic library folder to the package.
      *
-     * @param pLibFolder
+     * @param libFolder
      *            the library folder to add
      * @throws IllegalArgumentException
      *             is thrown if the argument is <code>null</code>
      */
-    public void addBasicLibrary(IFolder pLibFolder) throws IllegalArgumentException {
+    public void addBasicLibrary(IFolder libFolder) throws IllegalArgumentException {
 
         String libs = mProperties.getProperty(BASICLIBS);
         if (libs == null) {
@@ -271,7 +273,7 @@ public class PackagePropertiesModel {
             if (!libs.equals("")) { //$NON-NLS-1$
                 libs += SEPARATOR; //$NON-NLS-1$
             }
-            libs += pLibFolder.getProjectRelativePath().toString();
+            libs += libFolder.getProjectRelativePath().toString();
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
@@ -282,12 +284,12 @@ public class PackagePropertiesModel {
     /**
      * Adds a basic dialog library folder to the package.
      *
-     * @param pLibFolder
+     * @param libFolder
      *            the library folder to add
      * @throws IllegalArgumentException
      *             is thrown if the argument is <code>null</code>
      */
-    public void addDialogLibrary(IFolder pLibFolder) throws IllegalArgumentException {
+    public void addDialogLibrary(IFolder libFolder) throws IllegalArgumentException {
         String libs = mProperties.getProperty(DIALOGLIBS);
         if (libs == null) {
             libs = ""; //$NON-NLS-1$
@@ -297,7 +299,7 @@ public class PackagePropertiesModel {
             if (!libs.equals("")) { //$NON-NLS-1$
                 libs += SEPARATOR; //$NON-NLS-1$
             }
-            libs += pLibFolder.getProjectRelativePath().toString();
+            libs += libFolder.getProjectRelativePath().toString();
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
@@ -367,25 +369,28 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * add resource entry if not already in
+     * add resource entry if not already in.
+     *
+     * @param pRes the resource entry to add
      */
     public void addResource(IResource pRes) {
         // If it's a folder we need to add all children resources
         try {
             if (pRes.getType() == IResource.FOLDER) {
                 addFolderResource(pRes);
-            }
-            else if (!mFiles.contains(pRes)) {
+            } else if (!mFiles.contains(pRes)) {
                 addFileResource(pRes);
             }
             firePackageChanged();
         } catch (CoreException e) {
             // Log ?
-         }
+        }
     }
 
     /**
-     * remove resource entry if already in
+     * remove resource entry if already in.
+     *
+     * @param pRes the resource entry to remove
      */
     public void removeResource(IResource pRes) {
         // If it's a folder we need to remove all children resources to
@@ -402,20 +407,23 @@ public class PackagePropertiesModel {
     }
 
     /**
+     * @param pRes the resource entry to check
+     *
      * @return if resource is checked
      */
     public boolean isChecked(IResource pRes) {
         boolean checked = false;
         if (pRes.getType() == IResource.FILE) {
             checked = mFiles.contains(pRes);
-        }
-        else if (pRes.getType() == IResource.FOLDER) {
+        } else if (pRes.getType() == IResource.FOLDER) {
             checked = mFolders.containsKey(pRes);
         }
         return checked;
     }
 
     /**
+     * @param pRes the resource entry to check
+     *
      * @return if resource is grayed
      */
     public boolean isGrayed(IResource pRes) {
@@ -449,31 +457,33 @@ public class PackagePropertiesModel {
      * Adds a localized package description file. The description file has to exist and the locale can't be
      * <code>null</code>.
      *
-     * @param pDescription
+     * @param description
      *            the description file
-     * @param pLocale
+     * @param locale
      *            the file locale.
      *
      * @throws IllegalArgumentException
      *             is thrown if the file is <code>null</code> or doesn't exists or if the locale is <code>null</code>.
      */
-    public void addDescriptionFile(IFile pDescription, Locale pLocale) throws IllegalArgumentException {
+    public void addDescriptionFile(IFile description, Locale locale) throws IllegalArgumentException {
 
-        if (pLocale == null) {
-            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoLocaleException")); //$NON-NLS-1$
+        if (locale == null) {
+            String msg = Messages.getString("PackagePropertiesModel.NoLocaleException");
+            throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
-        if (pDescription == null || !pDescription.exists()) {
-            throw new IllegalArgumentException(Messages.getString("PackagePropertiesModel.NoDescriptionFileException")); //$NON-NLS-1$
+        if (description == null || !description.exists()) {
+            String msg = Messages.getString("PackagePropertiesModel.NoDescriptionFileException");
+            throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         String countryName = ""; //$NON-NLS-1$
-        if (pLocale.getCountry() != "") { //$NON-NLS-1$
-            countryName = "_" + pLocale.getCountry(); //$NON-NLS-1$
+        if (locale.getCountry() != "") { //$NON-NLS-1$
+            countryName = "_" + locale.getCountry(); //$NON-NLS-1$
         }
 
-        String propertyName = DESCRIPTION + "-" + pLocale.getLanguage() + countryName; //$NON-NLS-1$
-        mProperties.setProperty(propertyName, pDescription.getProjectRelativePath().toString());
+        String propertyName = DESCRIPTION + "-" + locale.getLanguage() + countryName; //$NON-NLS-1$
+        mProperties.setProperty(propertyName, description.getProjectRelativePath().toString());
         firePackageChanged();
     }
 
@@ -531,60 +541,70 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Add all files that are members of a folder resource recursively
+     * Add all files that are members of a folder resource recursively.
+     *
+     * @param folder the resource folder entry
+     *
      */
-    private void addFolderResource(IResource pFolder) throws CoreException {
-        mFolders.put(pFolder, false);
-        IResource[] members = ((IContainer) pFolder).members();
+    private void addFolderResource(IResource folder) throws CoreException {
+        mFolders.put(folder, false);
+        IResource[] members = ((IContainer) folder).members();
         for (IResource res :members) {
             if (res.getType() == IResource.FOLDER) {
                 addFolderResource(res);
-            }
-            else if (!mFiles.contains(res)) {
+            } else if (!mFiles.contains(res)) {
                 mFiles.add(res);
             }
         }
     }
 
     /**
-     * Remove all files that are members of a folder resource recursively
+     * Remove all files that are members of a folder resource recursively.
+     *
+     * @param folder the resource folder entry
+     *
      */
-    private void removeFolderResource(IResource pFolder) throws CoreException {
-        if (mFolders.containsKey(pFolder)) {
-            mFolders.remove(pFolder);
+    private void removeFolderResource(IResource folder) throws CoreException {
+        if (mFolders.containsKey(folder)) {
+            mFolders.remove(folder);
         }
-        IResource[] members = ((IContainer) pFolder).members();
+        IResource[] members = ((IContainer) folder).members();
         for (IResource res : members) {
             if (res.getType() == IResource.FOLDER) {
                 removeFolderResource(res);
-            }
-            else if (mFiles.contains(res)) {
+            } else if (mFiles.contains(res)) {
                 mFiles.remove(res);
             }
         }
     }
 
     /**
-     * Add a files and updated folders
+     * Add a files and updated folders.
+     *
+     * @param file the resource file entry
+     *
      */
-    private void addFileResource(IResource pFile) throws CoreException {
-        mFiles.add(pFile);
+    private void addFileResource(IResource file) throws CoreException {
+        mFiles.add(file);
         IProject prj = mPropertiesFile.getProject();
-        IContainer parent = pFile.getParent();
+        IContainer parent = file.getParent();
         while (parent != null && parent != prj) {
             parent = getParentCheckState(parent);
         }
     }
 
     /**
-     * Remove a files and updated folders
+     * Remove a files and updated folders.
+     *
+     * @param file the resource file entry
+     *
      */
-    private void removeFileResource(IResource pFile) throws CoreException {
-        if (mFiles.contains(pFile)) {
-            mFiles.remove(pFile);
+    private void removeFileResource(IResource file) throws CoreException {
+        if (mFiles.contains(file)) {
+            mFiles.remove(file);
         }
         IProject prj = mPropertiesFile.getProject();
-        IContainer parent = pFile.getParent();
+        IContainer parent = file.getParent();
         while (parent != null && parent != prj) {
             if (mFolders.containsKey(parent)) {
                 if (parent.members().length == 1) {
@@ -599,6 +619,8 @@ public class PackagePropertiesModel {
 
     /**
      * Serialize all files resource to the package properties.
+     *
+     * @return a string corresponding to the value of the contents property of the package.properties file
      */
     private String serializeContent() {
         List<String> result = new ArrayList<>();
@@ -613,6 +635,8 @@ public class PackagePropertiesModel {
 
     /**
      * De-serialize all files resource from the package properties.
+     *
+     * @return a list of resource corresponding to the value of the contents property of the package.properties file
      */
     private List<IResource> deserializeContent() {
         List<IResource> resources = new ArrayList<>();
@@ -635,6 +659,8 @@ public class PackagePropertiesModel {
 
     /**
      * Get project check state from files resource.
+     *
+     * @return a map of resource / boolean corresponding to the folder resources
      */
     private Map<IResource, Boolean> getFolderCheckState() {
         Map<IResource, Boolean> resources = new HashMap<>();
@@ -653,14 +679,18 @@ public class PackagePropertiesModel {
 
     /**
      * Get folder check state from files resource.
+     *
+     * @param folders the map resource / boolean to update
+     *
+     * @param parent the folder resource entry
      */
-    private void getSubFolderCheckState(Map<IResource, Boolean> pFolders, IResource pParent) throws CoreException {
-        IResource[] members = ((IContainer) pParent).members();
+    private void getSubFolderCheckState(Map<IResource, Boolean> folders, IResource parent) throws CoreException {
+        IResource[] members = ((IContainer) parent).members();
         boolean checked = true;
         boolean grayed = false;
         for (IResource res : members) {
             if (res.getType() == IResource.FOLDER) {
-                getSubFolderCheckState(pFolders, res);
+                getSubFolderCheckState(folders, res);
             } else if (mFiles.contains(res)) {
                 grayed = true;
             } else {
@@ -668,15 +698,18 @@ public class PackagePropertiesModel {
             }
         }
         if (members.length == 0) {
-            pFolders.put(pParent, false);
-        }
-        else if (checked || grayed) {
-            pFolders.put(pParent, grayed && !checked);
+            folders.put(parent, false);
+        } else if (checked || grayed) {
+            folders.put(parent, grayed && !checked);
         }
     }
 
     /**
      * Get parent check state from files resource.
+     *
+     * @param pParent the folder resource entry
+     *
+     * @return the parent resource of the folder resource entry or null
      */
     private IContainer getParentCheckState(IResource pParent) throws CoreException {
         IResource[] members = ((IContainer) pParent).members();
@@ -697,8 +730,7 @@ public class PackagePropertiesModel {
         }
         if (members.length == 0) {
             mFolders.put(pParent, false);
-        }
-        else if (checked || grayed) {
+        } else if (checked || grayed) {
             mFolders.put(pParent, grayed && !checked);
         }
         return pParent.getParent();

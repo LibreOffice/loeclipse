@@ -96,11 +96,11 @@ public class ProjectPropertiesPage extends PropertyPage implements IWorkbenchPro
      * {@inheritDoc}
      */
     @Override
-    public void setElement(IAdaptable pElement) {
-        super.setElement(pElement);
+    public void setElement(IAdaptable element) {
+        super.setElement(element);
 
         try {
-            IProject prj = pElement.getAdapter(IProject.class);
+            IProject prj = element.getAdapter(IProject.class);
             if (prj != null) {
                 mProject = (UnoidlProject) ProjectsManager.getProject(prj.getName());
             }

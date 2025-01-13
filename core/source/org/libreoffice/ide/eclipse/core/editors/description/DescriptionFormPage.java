@@ -69,24 +69,24 @@ public class DescriptionFormPage extends FormPage {
     /**
      * Constructor.
      *
-     * @param pEditor
+     * @param editor
      *            the editor where to add the page
-     * @param pId
+     * @param pageId
      *            the page identifier
      */
-    public DescriptionFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
+    public DescriptionFormPage(FormEditor editor, String pageId) {
+        super(editor, pageId, Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
         mSections = new ArrayList<AbstractSection<DescriptionModel>>();
     }
 
     /**
-     * @param pModel
+     * @param model
      *            the description.xml model to set
      */
-    public void setModel(DescriptionModel pModel) {
-        mModel = pModel;
+    public void setModel(DescriptionModel model) {
+        mModel = model;
         for (AbstractSection<DescriptionModel> section : mSections) {
-            section.setModel(pModel);
+            section.setModel(model);
         }
     }
 
@@ -101,18 +101,18 @@ public class DescriptionFormPage extends FormPage {
      * {@inheritDoc}
      */
     @Override
-    protected void createFormContent(IManagedForm pManagedForm) {
-        super.createFormContent(pManagedForm);
+    protected void createFormContent(IManagedForm managedForm) {
+        super.createFormContent(managedForm);
 
-        ScrolledForm form = pManagedForm.getForm();
+        ScrolledForm form = managedForm.getForm();
         form.setText(Messages.getString("PackageOverviewFormPage.Title")); //$NON-NLS-1$
         Composite body = form.getBody();
 
         FormToolkit toolkit = getManagedForm().getToolkit();
         toolkit.decorateFormHeading(form.getForm());
 
-        Label descrLbl = toolkit.createLabel(body, Messages.getString("PackageOverviewFormPage.Description"), //$NON-NLS-1$
-            SWT.WRAP);
+        String msg = Messages.getString("PackageOverviewFormPage.Description"); //$NON-NLS-1$
+        Label descrLbl = toolkit.createLabel(body, msg, SWT.WRAP);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         descrLbl.setLayoutData(gd);

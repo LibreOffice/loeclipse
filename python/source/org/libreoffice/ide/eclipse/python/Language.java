@@ -83,16 +83,16 @@ public class Language extends AbstractLanguage {
      * {@inheritDoc}
      */
     @Override
-    public void connectDebuggerToOffice(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-        IProgressMonitor pMonitor) {
+    public void connectDebuggerToOffice(IUnoidlProject prj, ILaunch launch, IPath userInstallation,
+        IProgressMonitor monitor) {
 
         try {
             if (PydevRemoteDebuggerServer.isRunning()) {
-                pPrj.getOOo().runOffice(pPrj, pLaunch, pUserInstallation, new NullExtraOptionsProvider(), pMonitor);
+                prj.getOOo().runOffice(prj, launch, userInstallation, new NullExtraOptionsProvider(), monitor);
             } else {
                 /* This allows to start the server asynchronously which will give 'Invalid thread access' Exception
                    if started from this thread which has been called by DebugUITools.launch(...)*/
-                Display.getDefault().asyncExec(new debugSeverStart(pPrj, pLaunch, pUserInstallation, pMonitor));
+                Display.getDefault().asyncExec(new debugSeverStart(prj, launch, userInstallation, monitor));
             }
 
         } catch (Exception e) {
@@ -101,17 +101,17 @@ public class Language extends AbstractLanguage {
     }
 
     @Override
-    public void configureSourceLocator(ILaunchConfigurationWorkingCopy pConfiguration) throws CoreException {
-        String projectName = pConfiguration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
-        pConfiguration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
+    public void configureSourceLocator(ILaunchConfigurationWorkingCopy configuration) throws CoreException {
+        String projectName = configuration.getAttribute(IOfficeLaunchConstants.PROJECT_NAME, "");
+        configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,
             "org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector");
-        pConfiguration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
+        configuration.setAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID,
             "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer");
-        pConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+        configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
     };
 
     /**
-     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging
+     * Thread executing the starting of the server followed by launching the LibreOffice instance for debugging.
      */
     private class debugSeverStart implements Runnable {
 
@@ -120,12 +120,12 @@ public class Language extends AbstractLanguage {
         private IPath mUserInstallation;
         private IProgressMonitor mMonitor;
 
-        public debugSeverStart(IUnoidlProject pPrj, ILaunch pLaunch, IPath pUserInstallation,
-            IProgressMonitor pMonitor) {
-            mPrj = pPrj;
-            mLaunch = pLaunch;
-            mUserInstallation = pUserInstallation;
-            mMonitor = pMonitor;
+        public debugSeverStart(IUnoidlProject prj, ILaunch launch, IPath userInstallation,
+            IProgressMonitor monitor) {
+            mPrj = prj;
+            mLaunch = launch;
+            mUserInstallation = userInstallation;
+            mMonitor = monitor;
         }
 
         @Override

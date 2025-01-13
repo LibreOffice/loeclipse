@@ -57,16 +57,16 @@ public class SourcePage extends OOTextEditor implements IFormPage {
     /**
      * Source editor page constructor.
      *
-     * @param pFormEditor
+     * @param formEditor
      *            the editor hosting the page.
-     * @param pId
+     * @param pageId
      *            the page identifier
-     * @param pTitle
+     * @param title
      *            the page title
      */
-    public SourcePage(FormEditor pFormEditor, String pId, String pTitle) {
-        mId = pId;
-        initialize(pFormEditor);
+    public SourcePage(FormEditor formEditor, String pageId, String title) {
+        mId = pageId;
+        initialize(formEditor);
     }
 
     /**
@@ -132,8 +132,8 @@ public class SourcePage extends OOTextEditor implements IFormPage {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(FormEditor pEditor) {
-        mEditor = pEditor;
+    public void initialize(FormEditor editor) {
+        mEditor = editor;
     }
 
     /**
@@ -156,10 +156,10 @@ public class SourcePage extends OOTextEditor implements IFormPage {
      * {@inheritDoc}
      */
     @Override
-    public boolean selectReveal(Object pObject) {
+    public boolean selectReveal(Object object) {
         boolean reveal = false;
-        if (pObject instanceof IMarker) {
-            IDE.gotoMarker(this, (IMarker) pObject);
+        if (object instanceof IMarker) {
+            IDE.gotoMarker(this, (IMarker) object);
             reveal = true;
         }
         return reveal;
@@ -169,14 +169,14 @@ public class SourcePage extends OOTextEditor implements IFormPage {
      * {@inheritDoc}
      */
     @Override
-    public void setActive(boolean pActive) {
+    public void setActive(boolean active) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setIndex(int pIndex) {
-        mIndex = pIndex;
+    public void setIndex(int index) {
+        mIndex = index;
     }
 }

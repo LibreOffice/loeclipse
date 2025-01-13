@@ -320,22 +320,16 @@ version for the Library.
    </url>
 
    <requires>
-      <import feature="org.eclipse.jdt"/>
-      <import feature="org.python.pydev.feature"/>
+      <import feature="org.eclipse.jdt" version="3.20.0.v20241120-1800"/>
+      <import feature="org.python.pydev.feature" version="12.2.0.202409031913"/>
    </requires>
 
    <plugin
          id="org.libreoffice.ide.eclipse.python"
-         download-size="0"
-         install-size="0"
-         version="${python.Bundle-Version}"
-         unpack="false"/>
+         version="${python.Bundle-Version}"/>
 
    <plugin
          id="org.libreoffice.ide.eclipse.core"
-         download-size="0"
-         install-size="0"
-         version="${core.Bundle-Version}"
-         unpack="false"/>
+         version="${core.Bundle-Version}"/>
 
 </feature>

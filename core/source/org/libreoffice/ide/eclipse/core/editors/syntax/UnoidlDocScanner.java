@@ -55,15 +55,15 @@ public class UnoidlDocScanner extends RuleBasedScanner {
     /**
      * Default constructor initializing the color manager to colorize.
      *
-     * @param pColorManager
+     * @param colorManager
      *            the color manager used to provide the colors
      */
-    public UnoidlDocScanner(ColorProvider pColorManager) {
+    public UnoidlDocScanner(ColorProvider colorManager) {
 
-        IToken body = new Token(new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT)));
+        IToken body = new Token(new TextAttribute(colorManager.getColor(Colors.C_AUTODOC_COMMENT)));
 
-        IToken tag = new Token(new TextAttribute(pColorManager.getColor(Colors.C_AUTODOC_COMMENT), null, SWT.BOLD));
-        IToken xmlTag = new Token(new TextAttribute(pColorManager.getColor(Colors.C_XML_TAG)));
+        IToken tag = new Token(new TextAttribute(colorManager.getColor(Colors.C_AUTODOC_COMMENT), null, SWT.BOLD));
+        IToken xmlTag = new Token(new TextAttribute(colorManager.getColor(Colors.C_XML_TAG)));
 
         IRule[] rules = new IRule[2];
         rules[0] = new SingleLineRule("<", ">", xmlTag); //$NON-NLS-1$ //$NON-NLS-2$

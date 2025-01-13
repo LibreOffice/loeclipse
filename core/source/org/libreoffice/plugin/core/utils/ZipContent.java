@@ -57,14 +57,14 @@ public class ZipContent {
     /**
      * Constructor.
      *
-     * @param pEntryName
+     * @param entryName
      *            the name in the ZIP file
-     * @param pResource
+     * @param resource
      *            the file to put in the ZIP file.
      */
-    public ZipContent(String pEntryName, File pResource) {
-        mResource = pResource;
-        mEntryName = pEntryName;
+    public ZipContent(String entryName, File resource) {
+        mResource = resource;
+        mEntryName = entryName;
     }
 
     /**
@@ -77,10 +77,10 @@ public class ZipContent {
     /**
      * Write the ZIP entry to the given Zip output stream.
      *
-     * @param pOutput
+     * @param output
      *            the stream where to write the entry data.
      */
-    public void writeContentToZip(ZipOutputStream pOutput) {
+    public void writeContentToZip(ZipOutputStream output) {
 
         BufferedInputStream origin = null;
         try {
@@ -88,16 +88,16 @@ public class ZipContent {
             origin = new BufferedInputStream(fi, BUFFER_SIZE);
 
             ZipEntry entry = new ZipEntry(mEntryName);
-            pOutput.putNextEntry(entry);
+            output.putNextEntry(entry);
 
             int count;
             byte data[] = new byte[BUFFER_SIZE];
 
             while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
-                pOutput.write(data, 0, count);
+                output.write(data, 0, count);
             }
 
-            pOutput.closeEntry();
+            output.closeEntry();
 
         } catch (IOException e) {
             System.err.println(

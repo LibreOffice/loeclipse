@@ -146,8 +146,8 @@ public class OOoContainerPage extends WizardPage implements
      * {@inheritDoc}
      */
     @Override
-    public void setSelection(IClasspathEntry pContainerEntry) {
-        mContainer = pContainerEntry;
+    public void setSelection(IClasspathEntry containerEntry) {
+        mContainer = containerEntry;
 
         if (mContainer == null) {
             mContainer = getDefaultEntry();
@@ -175,13 +175,13 @@ public class OOoContainerPage extends WizardPage implements
      * {@inheritDoc}
      */
     @Override
-    public void initialize(IJavaProject pProject, IClasspathEntry[] pCurrentEntries) {
-        mProject = pProject;
+    public void initialize(IJavaProject project, IClasspathEntry[] currentEntries) {
+        mProject = project;
 
         boolean found = false;
         int i = 0;
-        while (i < pCurrentEntries.length && !found) {
-            IClasspathEntry entry = pCurrentEntries[i];
+        while (i < currentEntries.length && !found) {
+            IClasspathEntry entry = currentEntries[i];
             if (entry.getPath().segment(0).startsWith(OOoClasspathContainer.ID)) {
                 found = true;
                 mContainer = entry;
@@ -203,23 +203,23 @@ public class OOoContainerPage extends WizardPage implements
     /**
      * Add the LibreOffice common JARs to a projects build path.
      *
-     * @param pOoo the ooo to use for the classpath
-     * @param pProject the project to change
+     * @param ooo the ooo to use for the classpath
+     * @param project the project to change
      */
-    public static void addOOoDependencies(IOOo pOoo, IJavaProject pProject) {
+    public static void addOOoDependencies(IOOo ooo, IJavaProject project) {
 
-        if (null != pOoo) {
+        if (null != ooo) {
             try {
-                IClasspathEntry[] oldEntries = pProject.getRawClasspath();
+                IClasspathEntry[] oldEntries = project.getRawClasspath();
                 IClasspathEntry[] entries = new IClasspathEntry[oldEntries.length + 1];
 
                 System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
 
-                IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + pOoo.getName());
+                IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
                 IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
                 entries[entries.length - 1] = containerEntry;
 
-                pProject.setRawClasspath(entries, null);
+                project.setRawClasspath(entries, null);
             } catch (JavaModelException e) {
                 PluginLogger.error(
                     Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$

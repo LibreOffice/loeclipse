@@ -85,7 +85,7 @@ public class RegexRule implements IRule {
 
         do {
             c = pScanner.read();
-            line = line + new Character((char) c);
+            line = line + Character.valueOf((char) c);
             mCharReadNb++;
 
             if (!isEOL(c)) {
@@ -129,16 +129,16 @@ public class RegexRule implements IRule {
     /**
      * Convenience method to determine if a character corresponds to an end of line.
      *
-     * @param pChar
+     * @param ch
      *            the character to check
      *
      * @return <code>true</code> if the character is an end of line, <code>false</code> otherwise.
      */
-    protected boolean isEOL(int pChar) {
+    protected boolean isEOL(int ch) {
         boolean isEol = false;
 
         for (int i = 0; i < mDelimiters.length; i++) {
-            if (pChar == mDelimiters[i][0] || isEOF(pChar)) {
+            if (ch == mDelimiters[i][0] || isEOF(ch)) {
                 isEol = true;
             }
         }
@@ -148,14 +148,14 @@ public class RegexRule implements IRule {
     /**
      * Convenience method to determine if a character corresponds to an end of file.
      *
-     * @param pChar
+     * @param ch
      *            the character to check
      *
      * @return <code>true</code> if the character is an end of file, <code>false</code> otherwise.
      */
-    protected boolean isEOF(int pChar) {
+    protected boolean isEOF(int ch) {
         boolean result = false;
-        if (ICharacterScanner.EOF == pChar) {
+        if (ICharacterScanner.EOF == ch) {
             result = true;
         }
         return result;

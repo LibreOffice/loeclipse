@@ -55,62 +55,66 @@ public class DescriptionHandler extends DefaultHandler {
     /**
      * The handler uses a reference to the model and only fills it.
      *
-     * @param pModel
+     * @param model
      *            the descriptions.xml model to fill
      */
-    public DescriptionHandler(DescriptionModel pModel) {
-        mModel = pModel;
+    public DescriptionHandler(DescriptionModel model) {
+        mModel = model;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes) throws SAXException {
-        super.startElement(pUri, pLocalName, pName, pAttributes);
+    public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+        super.startElement(uri, localName, name, attributes);
 
         if (mCurrentHandler != null) {
-            mCurrentHandler.startElement(pUri, pLocalName, pName, pAttributes);
-
-        } else if (XMLTokens.ELEMENT_VERSION.equals(pName)) {
-            mModel.setVersion(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-
-        } else if (XMLTokens.ELEMENT_IDENTIFIER.equals(pName)) {
-            mModel.setId(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-
-        } else if (XMLTokens.ELEMENT_PLATFORM.equals(pName)) {
-            mModel.setPlatforms(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-
-        } else if (XMLTokens.ELEMENT_DEPENDENCIES.equals(pName)) {
-            mCurrentHandler = new DependenciesHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_UPDATE_INFORMATION.equals(pName)) {
-            mCurrentHandler = new UpdatesHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_REGISTRATION.equals(pName)) {
-            mCurrentHandler = new LicenseHandler();
-            mHandlerRemoveOn = pName;
-        } else if (XMLTokens.ELEMENT_PUBLISHER.equals(pName)) {
-            mCurrentHandler = new PublisherHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_RELEASE_NOTES.equals(pName)) {
-            mCurrentHandler = new ReleasesHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_DISPLAY_NAME.equals(pName)) {
-            mCurrentHandler = new NameHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_ICON.equals(pName)) {
-            mCurrentHandler = new IconHandler();
-            mHandlerRemoveOn = pName;
-
-        } else if (XMLTokens.ELEMENT_EXTENSION_DESCRIPTION.equals(pName)) {
-            mCurrentHandler = new DescriptionsHandler();
-            mHandlerRemoveOn = pName;
+            mCurrentHandler.startElement(uri, localName, name, attributes);
+        } else {
+            switch (name) {
+                case XMLTokens.ELEMENT_VERSION:
+                    mModel.setVersion(attributes.getValue(XMLTokens.ATTR_VALUE));
+                    break;
+                case XMLTokens.ELEMENT_IDENTIFIER:
+                    mModel.setId(attributes.getValue(XMLTokens.ATTR_VALUE));
+                    break;
+                case XMLTokens.ELEMENT_PLATFORM:
+                    mModel.setPlatforms(attributes.getValue(XMLTokens.ATTR_VALUE));
+                    break;
+                case XMLTokens.ELEMENT_DEPENDENCIES:
+                    mCurrentHandler = new DependenciesHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_UPDATE_INFORMATION:
+                    mCurrentHandler = new UpdatesHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_REGISTRATION:
+                    mCurrentHandler = new LicenseHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_PUBLISHER:
+                    mCurrentHandler = new PublisherHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_RELEASE_NOTES:
+                    mCurrentHandler = new ReleasesHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_DISPLAY_NAME:
+                    mCurrentHandler = new NameHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_ICON:
+                    mCurrentHandler = new IconHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+                case XMLTokens.ELEMENT_EXTENSION_DESCRIPTION:
+                    mCurrentHandler = new DescriptionsHandler();
+                    mHandlerRemoveOn = name;
+                    break;
+            }
         }
     }
 
@@ -118,11 +122,11 @@ public class DescriptionHandler extends DefaultHandler {
      * {@inheritDoc}
      */
     @Override
-    public void characters(char[] pCh, int pStart, int pLength) throws SAXException {
-        super.characters(pCh, pStart, pLength);
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        super.characters(ch, start, length);
 
         if (mCurrentHandler != null) {
-            mCurrentHandler.characters(pCh, pStart, pLength);
+            mCurrentHandler.characters(ch, start, length);
         }
     }
 
@@ -130,14 +134,14 @@ public class DescriptionHandler extends DefaultHandler {
      * {@inheritDoc}
      */
     @Override
-    public void endElement(String pUri, String pLocalName, String pName) throws SAXException {
-        super.endElement(pUri, pLocalName, pName);
+    public void endElement(String uri, String localName, String name) throws SAXException {
+        super.endElement(uri, localName, name);
 
         if (mCurrentHandler != null) {
-            if (mHandlerRemoveOn.equals(pName)) {
+            if (mHandlerRemoveOn.equals(name)) {
                 mCurrentHandler = null;
             } else {
-                mCurrentHandler.endElement(pUri, pLocalName, pName);
+                mCurrentHandler.endElement(uri, localName, name);
             }
         }
     }
@@ -176,14 +180,14 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_OOO_MIN.equals(pName)) {
-                mModel.setMinOOo(pAttributes.getValue(XMLTokens.ATTR_VALUE));
-            } else if (XMLTokens.ELEMENT_OOO_MAX.equals(pName)) {
-                mModel.setMaxOOo(pAttributes.getValue(XMLTokens.ATTR_VALUE));
+            if (XMLTokens.ELEMENT_OOO_MIN.equals(name)) {
+                mModel.setMinOOo(attributes.getValue(XMLTokens.ATTR_VALUE));
+            } else if (XMLTokens.ELEMENT_OOO_MAX.equals(name)) {
+                mModel.setMaxOOo(attributes.getValue(XMLTokens.ATTR_VALUE));
             }
         }
     }
@@ -197,12 +201,12 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_SRC.equals(pName)) {
-                String value = pAttributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
+            if (XMLTokens.ELEMENT_SRC.equals(name)) {
+                String value = attributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
                 mModel.addUpdateInfo(value);
             }
         }
@@ -217,26 +221,26 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_SIMPLE_LICENSE.equals(pName)) {
-                String value = pAttributes.getValue(XMLTokens.ATTR_ACCEPT_BY);
+            if (XMLTokens.ELEMENT_SIMPLE_LICENSE.equals(name)) {
+                String value = attributes.getValue(XMLTokens.ATTR_ACCEPT_BY);
                 if (value != null) {
                     mModel.setAcceptByUser(value.equals(XMLTokens.VALUE_USER));
                 }
 
                 // Optional attribute defaulting to false
-                value = pAttributes.getValue(XMLTokens.ATTR_SUPPRESS_ON_UPDATE);
+                value = attributes.getValue(XMLTokens.ATTR_SUPPRESS_ON_UPDATE);
                 if (value == null) {
                     value = Boolean.FALSE.toString();
                 }
                 mModel.setSuppressOnUpdate(Boolean.parseBoolean(value));
 
-            } else if (XMLTokens.ELEMENT_LICENSE_TEXT.equals(pName)) {
-                String ref = pAttributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
-                String lang = pAttributes.getValue(XMLTokens.ATTR_LANG);
+            } else if (XMLTokens.ELEMENT_LICENSE_TEXT.equals(name)) {
+                String ref = attributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
+                String lang = attributes.getValue(XMLTokens.ATTR_LANG);
 
                 Locale locale = parseLocale(lang);
                 if (locale != null) {
@@ -259,13 +263,13 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_NAME.equals(pName)) {
-                mRef = pAttributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
-                mLocale = parseLocale(pAttributes.getValue(XMLTokens.ATTR_LANG));
+            if (XMLTokens.ELEMENT_NAME.equals(name)) {
+                mRef = attributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
+                mLocale = parseLocale(attributes.getValue(XMLTokens.ATTR_LANG));
             }
         }
 
@@ -273,19 +277,19 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void characters(char[] pCh, int pStart, int pLength) throws SAXException {
-            super.characters(pCh, pStart, pLength);
-            mName = new String(pCh, pStart, pLength);
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            super.characters(ch, start, length);
+            mName = new String(ch, start, length);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void endElement(String pUri, String pLocalName, String pName) throws SAXException {
-            super.endElement(pUri, pLocalName, pName);
+        public void endElement(String uri, String localName, String name) throws SAXException {
+            super.endElement(uri, localName, name);
 
-            if (XMLTokens.ELEMENT_NAME.equals(pName) && mLocale != null) {
+            if (XMLTokens.ELEMENT_NAME.equals(name) && mLocale != null) {
                 PublisherInfos infos = new PublisherInfos();
                 infos.setModel(mModel);
                 infos.setName(mName);
@@ -309,13 +313,13 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_SRC.equals(pName)) {
-                String value = pAttributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
-                Locale locale = parseLocale(pAttributes.getValue(XMLTokens.ATTR_LANG));
+            if (XMLTokens.ELEMENT_SRC.equals(name)) {
+                String value = attributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
+                Locale locale = parseLocale(attributes.getValue(XMLTokens.ATTR_LANG));
                 if (locale != null) {
                     mModel.addReleaseNote(locale, value);
                 }
@@ -335,12 +339,12 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_NAME.equals(pName)) {
-                mLocale = parseLocale(pAttributes.getValue(XMLTokens.ATTR_LANG));
+            if (XMLTokens.ELEMENT_NAME.equals(name)) {
+                mLocale = parseLocale(attributes.getValue(XMLTokens.ATTR_LANG));
             }
         }
 
@@ -348,19 +352,19 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void characters(char[] pCh, int pStart, int pLength) throws SAXException {
-            super.characters(pCh, pStart, pLength);
-            mName = new String(pCh, pStart, pLength);
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            super.characters(ch, start, length);
+            mName = new String(ch, start, length);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void endElement(String pUri, String pLocalName, String pName) throws SAXException {
-            super.endElement(pUri, pLocalName, pName);
+        public void endElement(String uri, String localName, String name) throws SAXException {
+            super.endElement(uri, localName, name);
 
-            if (XMLTokens.ELEMENT_NAME.equals(pName) && mLocale != null) {
+            if (XMLTokens.ELEMENT_NAME.equals(name) && mLocale != null) {
                 mModel.getDisplayNames().put(mLocale, mName);
 
                 // Cleans all the members for the next entry
@@ -379,15 +383,15 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            String ref = pAttributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
-            if (XMLTokens.ELEMENT_DEFAULT.equals(pName)) {
+            String ref = attributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
+            if (XMLTokens.ELEMENT_DEFAULT.equals(name)) {
                 mModel.setDefaultIcon(ref);
 
-            } else if (XMLTokens.ELEMENT_HIGH_CONTRAST.equals(pName)) {
+            } else if (XMLTokens.ELEMENT_HIGH_CONTRAST.equals(name)) {
                 mModel.setHCIcon(ref);
             }
         }
@@ -402,13 +406,13 @@ public class DescriptionHandler extends DefaultHandler {
          * {@inheritDoc}
          */
         @Override
-        public void startElement(String pUri, String pLocalName, String pName, Attributes pAttributes)
+        public void startElement(String uri, String localName, String name, Attributes attributes)
             throws SAXException {
-            super.startElement(pUri, pLocalName, pName, pAttributes);
+            super.startElement(uri, localName, name, attributes);
 
-            if (XMLTokens.ELEMENT_SRC.equals(pName)) {
-                String value = pAttributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
-                Locale locale = parseLocale(pAttributes.getValue(XMLTokens.ATTR_LANG));
+            if (XMLTokens.ELEMENT_SRC.equals(name)) {
+                String value = attributes.getValue(XMLTokens.URI_XLINK, XMLTokens.ATTR_HREF);
+                Locale locale = parseLocale(attributes.getValue(XMLTokens.ATTR_LANG));
                 if (locale != null) {
                     mModel.addDescription(locale, value);
                 }

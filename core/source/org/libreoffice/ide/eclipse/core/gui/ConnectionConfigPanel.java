@@ -169,7 +169,7 @@ public class ConnectionConfigPanel {
             mTypeList.addSelectionListener(new SelectionAdapter() {
 
                 @Override
-                public void widgetSelected(SelectionEvent pEvent) {
+                public void widgetSelected(SelectionEvent event) {
                     mIsPipe = mTypeList.getSelectionIndex() == 0;
                     updateDetails();
                 }
@@ -217,7 +217,7 @@ public class ConnectionConfigPanel {
         mNameTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mNameTxt.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent pE) {
+            public void keyReleased(KeyEvent e) {
                 mName = mNameTxt.getText();
             }
         });
@@ -242,7 +242,7 @@ public class ConnectionConfigPanel {
         mHostTxt.addKeyListener(new KeyAdapter() {
 
             @Override
-            public void keyReleased(KeyEvent pE) {
+            public void keyReleased(KeyEvent e) {
                 mHost = mHostTxt.getText();
             }
         });
@@ -257,19 +257,19 @@ public class ConnectionConfigPanel {
         mPortTxt.addVerifyListener(new VerifyListener() {
 
             @Override
-            public void verifyText(VerifyEvent pEvent) {
+            public void verifyText(VerifyEvent event) {
                 try {
-                    if (pEvent.text.length() > 0) {
-                        Integer.parseInt(pEvent.text);
+                    if (event.text.length() > 0) {
+                        Integer.parseInt(event.text);
                     }
                 } catch (NumberFormatException e) {
-                    pEvent.doit = false;
+                    event.doit = false;
                 }
             }
         });
         mPortTxt.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent pEvent) {
+            public void keyReleased(KeyEvent event) {
                 mPort = mPortTxt.getText();
             }
         });

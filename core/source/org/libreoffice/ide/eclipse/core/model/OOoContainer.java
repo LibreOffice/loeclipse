@@ -84,24 +84,24 @@ public class OOoContainer {
     /**
      * Add a configuration listener to the container.
      *
-     * @param pListener
+     * @param listener
      *            configuration listener to add
      */
-    public static void addListener(IConfigListener pListener) {
-        if (null != pListener) {
-            sInstance.mListeners.add(pListener);
+    public static void addListener(IConfigListener listener) {
+        if (null != listener) {
+            sInstance.mListeners.add(listener);
         }
     }
 
     /**
      * Removes a configuration listener from the container.
      *
-     * @param pListener
+     * @param listener
      *            configuration listener to remove
      */
-    public static void removeListener(IConfigListener pListener) {
-        if (null != pListener) {
-            sInstance.mListeners.remove(pListener);
+    public static void removeListener(IConfigListener listener) {
+        if (null != listener) {
+            sInstance.mListeners.remove(listener);
         }
     }
 
@@ -121,23 +121,23 @@ public class OOoContainer {
     /**
      * Add the OOo given in parameter to the list of the others. Do not use directly the private field to handle OOos
      *
-     * @param pOoo
+     * @param ooo
      *            OOo to add
      */
-    public static void addOOo(IOOo pOoo) {
+    public static void addOOo(IOOo ooo) {
 
         /**
          * If there already is a OOo with such an identifier, replace the values, not the object to keep the references
          * on it
          */
 
-        if (null != pOoo) {
-            if (!sInstance.mElements.containsKey(pOoo.getName())) {
-                sInstance.mElements.put(pOoo.getName(), pOoo);
-                sInstance.fireOOoAdded(pOoo);
+        if (null != ooo) {
+            if (!sInstance.mElements.containsKey(ooo.getName())) {
+                sInstance.mElements.put(ooo.getName(), ooo);
+                sInstance.fireOOoAdded(ooo);
             } else {
-                IOOo oooref = sInstance.mElements.get(pOoo.getName());
-                updateOOo(oooref.getName(), pOoo);
+                IOOo oooref = sInstance.mElements.get(ooo.getName());
+                updateOOo(oooref.getName(), ooo);
             }
         }
     }
@@ -145,28 +145,29 @@ public class OOoContainer {
     /**
      * Notify every listener that a LibreOffice instance configuration has been added.
      *
-     * @param pOoo
+     * @param ooo
      *            the added OOo
      */
-    private void fireOOoAdded(IOOo pOoo) {
+    private void fireOOoAdded(IOOo ooo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
             IConfigListener listeneri = mListeners.get(i);
-            listeneri.ConfigAdded(pOoo);
+            listeneri.ConfigAdded(ooo);
         }
     }
 
     /**
      * remove the given OOo from the list. Do not use directly the private field to handle OOos
      *
-     * @param pOoo
+     * @param ooo
      *            OOo to remove
      */
-    public static void delOOo(IOOo pOoo) {
-        if (null == pOoo || !sInstance.mElements.containsKey(pOoo.getName()))
+    public static void delOOo(IOOo ooo) {
+        if (null == ooo || !sInstance.mElements.containsKey(ooo.getName())) {
             return;
+        }
 
-        sInstance.mElements.remove(pOoo.getName());
-        sInstance.fireOOoRemoved(pOoo);
+        sInstance.mElements.remove(ooo.getName());
+        sInstance.fireOOoRemoved(ooo);
     }
 
     /**
@@ -190,24 +191,24 @@ public class OOoContainer {
     /**
      * Checks whether the corresponding LibreOffice name already exists.
      *
-     * @param pName
+     * @param name
      *            the OOo Name to check
      * @return <code>true</code> if the name is already present, <code>false</code> otherwise.
      */
-    public static boolean containsName(String pName) {
-        return sInstance.mElements.containsKey(pName);
+    public static boolean containsName(String name) {
+        return sInstance.mElements.containsKey(name);
     }
 
     /**
      * Computes a unique name from the given one.
      *
-     * @param pName
+     * @param name
      *            the name to render unique
      * @return the unique name
      */
-    public static String getUniqueName(String pName) {
+    public static String getUniqueName(String name) {
 
-        String newName = pName;
+        String newName = name;
         if (containsName(newName)) {
             Matcher m = Pattern.compile("(.*)#([0-9]+)$").matcher(newName); //$NON-NLS-1$
 
@@ -232,67 +233,68 @@ public class OOoContainer {
     /**
      * Notify all the listeners that a LibreOffice instance configuration has been removed.
      *
-     * @param pOoo
+     * @param ooo
      *            the removed LibreOffice
      */
-    private void fireOOoRemoved(IOOo pOoo) {
+    private void fireOOoRemoved(IOOo ooo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
             IConfigListener listeneri = mListeners.get(i);
-            listeneri.ConfigRemoved(pOoo);
+            listeneri.ConfigRemoved(ooo);
         }
     }
 
     /**
      * Update the with OOo from the list with the given OOo.
      *
-     * @param pOookey
+     * @param oookey
      *            position of the ooo to update
-     * @param pOoo
+     * @param ooo
      *            new value for the OOo
      */
-    public static void updateOOo(String pOookey, IOOo pOoo) {
-        if (null == pOoo || !sInstance.mElements.containsKey(pOookey))
+    public static void updateOOo(String oookey, IOOo ooo) {
+        if (null == ooo || !sInstance.mElements.containsKey(oookey)) {
             return;
+        }
 
-        IOOo oooref = sInstance.mElements.get(pOookey);
+        IOOo oooref = sInstance.mElements.get(oookey);
 
         // update the attributes
         try {
-            oooref.setHome(pOoo.getHome());
+            oooref.setHome(ooo.getHome());
         } catch (InvalidConfigException e) {
             PluginLogger.error(e.getLocalizedMessage(), e);
         }
 
         // Reassign the element in the hashmap
-        sInstance.mElements.put(pOookey, oooref);
-        sInstance.fireOOoUpdated(pOoo);
+        sInstance.mElements.put(oookey, oooref);
+        sInstance.fireOOoUpdated(ooo);
     }
 
     /**
      * Notify every listener that a LibreOffice instance configuration has been updated.
      *
-     * @param pOoo
+     * @param ooo
      *            the updated LibreOffice
      */
-    private void fireOOoUpdated(IOOo pOoo) {
+    private void fireOOoUpdated(IOOo ooo) {
         for (int i = 0, length = mListeners.size(); i < length; i++) {
             IConfigListener listeneri = mListeners.get(i);
-            listeneri.ConfigUpdated(pOoo);
+            listeneri.ConfigUpdated(ooo);
         }
     }
 
     /**
      * Returns the ooo that corresponds to the given ooo name and buildid.
      *
-     * @param pOookey
+     * @param oookey
      *            unique identifier of the wanted ooo
      * @return OOo which name equals the one provided
      */
-    public static IOOo getOOo(String pOookey) {
+    public static IOOo getOOo(String oookey) {
         IOOo ooo = null;
 
-        if (sInstance.mElements.containsKey(pOookey)) {
-            ooo = sInstance.mElements.get(pOookey);
+        if (sInstance.mElements.containsKey(oookey)) {
+            ooo = sInstance.mElements.get(oookey);
         }
         return ooo;
     }
@@ -323,13 +325,7 @@ public class OOoContainer {
 
         // Second attempt: try by path amongst the registered OOos
         if (found == null) {
-            Iterator<IOOo> iter = sInstance.mElements.values().iterator();
-            while (iter.hasNext() && found == null) {
-                IOOo ooo = iter.next();
-                if (ooo.getHome().equals(pValue)) {
-                    found = ooo;
-                }
-            }
+            found = getOOoFromPath(pValue);
         }
 
         // Third attempt: Try to create a new OOo an register it.
@@ -355,6 +351,18 @@ public class OOoContainer {
             found = sInstance.mElements.values().iterator().next();
         }
 
+        return found;
+    }
+
+    private static IOOo getOOoFromPath(String pValue) {
+        IOOo found = null;
+        Iterator<IOOo> iter = sInstance.mElements.values().iterator();
+        while (iter.hasNext() && found == null) {
+            IOOo ooo = iter.next();
+            if (ooo.getHome().equals(pValue)) {
+                found = ooo;
+            }
+        }
         return found;
     }
 

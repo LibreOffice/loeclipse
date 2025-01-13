@@ -94,20 +94,20 @@ public class ManifestExportPage extends WizardPage {
     /**
      * Constructor.
      *
-     * @param pPageName
+     * @param pageName
      *            the page name
-     * @param pProject
+     * @param project
      *            the project to export
      */
-    public ManifestExportPage(String pPageName, IUnoidlProject pProject) {
-        super(pPageName);
+    public ManifestExportPage(String pageName, IUnoidlProject project) {
+        super(pageName);
 
         mController = new ManifestExportPageController();
 
         setTitle(Messages.getString("ManifestExportPage.Title")); //$NON-NLS-1$
         setDescription(Messages.getString("ManifestExportPage.Description")); //$NON-NLS-1$
 
-        mProject = pProject;
+        mProject = project;
     }
 
     /**
@@ -128,32 +128,32 @@ public class ManifestExportPage extends WizardPage {
     /**
      * Set the proper manifest.xml file to the package model from the user selection.
      *
-     * @param pModel
+     * @param model
      *            the model to change
      */
-    public void configureManifest(UnoPackage pModel) {
+    public void configureManifest(UnoPackage model) {
         IFile saveFile = getSaveManifestFile();
         if (saveFile != null) {
-            pModel.setCopyManifestFileTo(SystemHelper.getFile(saveFile));
+            model.setCopyManifestFileTo(SystemHelper.getFile(saveFile));
         }
 
         IFile readFile = getReadManifestFile();
         if (readFile != null) {
-            pModel.setReadManifestFile(SystemHelper.getFile(readFile));
+            model.setReadManifestFile(SystemHelper.getFile(readFile));
         }
     }
 
     /**
      * Define the manifest file to generate and force the dialog to this value.
      *
-     * @param pFile
+     * @param file
      *            the file to set or <code>null</code> to remove the current existing value
      */
-    public void setManifestPath(IFile pFile) {
+    public void setManifestPath(IFile file) {
 
         mController.setGenerateManifest(true);
         mController.setSaveManifest(true);
-        mController.setSaveManifestPath(pFile.getFullPath().toString());
+        mController.setSaveManifestPath(file.getFullPath().toString());
 
         updateControls();
     }
@@ -219,14 +219,14 @@ public class ManifestExportPage extends WizardPage {
         mGenerateManifestBtn.addSelectionListener(new SelectionListener() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 mController.setGenerateManifest(mGenerateManifestBtn.getSelection());
                 updateControls();
             }
 
             @Override
-            public void widgetDefaultSelected(SelectionEvent pE) {
-                widgetSelected(pE);
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
             }
         });
 
@@ -245,14 +245,14 @@ public class ManifestExportPage extends WizardPage {
         mReuseManifestBtn.addSelectionListener(new SelectionListener() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 mController.setGenerateManifest(!mReuseManifestBtn.getSelection());
                 updateControls();
             }
 
             @Override
-            public void widgetDefaultSelected(SelectionEvent pE) {
-                widgetSelected(pE);
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
             }
         });
 
@@ -282,14 +282,14 @@ public class ManifestExportPage extends WizardPage {
         mSaveManifestBtn.addSelectionListener(new SelectionListener() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 mController.setSaveManifest(mSaveManifestBtn.getSelection());
                 updateControls();
             }
 
             @Override
-            public void widgetDefaultSelected(SelectionEvent pE) {
-                widgetSelected(pE);
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
             }
         });
 
@@ -302,7 +302,7 @@ public class ManifestExportPage extends WizardPage {
         mSaveRowTxt.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 mController.setSaveManifestPath(mSaveRowTxt.getText());
             }
         });
@@ -313,7 +313,7 @@ public class ManifestExportPage extends WizardPage {
         mSaveRowBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 SaveAsDialog dlg = new SaveAsDialog(getShell());
                 dlg.setOriginalName(MANIFEST_FILENAME);
                 dlg.setOriginalFile(mProject.getFile(MANIFEST_FILENAME));
@@ -345,7 +345,7 @@ public class ManifestExportPage extends WizardPage {
         mLoadRowTxt.addModifyListener(new ModifyListener() {
 
             @Override
-            public void modifyText(ModifyEvent pE) {
+            public void modifyText(ModifyEvent e) {
                 mController.setLoadManifestPath(mLoadRowTxt.getText());
             }
         });
@@ -356,7 +356,7 @@ public class ManifestExportPage extends WizardPage {
         mLoadRowBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(SelectionEvent pE) {
+            public void widgetSelected(SelectionEvent e) {
                 // Create a workspace file selection dialog
                 ElementTreeSelectionDialog dlg = new ElementTreeSelectionDialog(getShell(),
                     new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -377,10 +377,10 @@ public class ManifestExportPage extends WizardPage {
                 dlg.addFilter(new ViewerFilter() {
 
                     @Override
-                    public boolean select(Viewer pViewer, Object pParentElement, Object pElement) {
+                    public boolean select(Viewer viewer, Object parentElement, Object element) {
                         boolean select = true;
-                        if (pElement instanceof IResource) {
-                            IResource res = (IResource) pElement;
+                        if (element instanceof IResource) {
+                            IResource res = (IResource) element;
                             select &= !res.getName().startsWith("."); //$NON-NLS-1$
                             select &= res instanceof IContainer || res.getName().equals(MANIFEST_FILENAME);
                         }

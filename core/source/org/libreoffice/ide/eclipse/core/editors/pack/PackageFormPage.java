@@ -60,13 +60,13 @@ public class PackageFormPage extends FormPage {
     /**
      * Content form page constructor.
      *
-     * @param pEditor
+     * @param editor
      *            the editor where to create the form page
-     * @param pId
+     * @param pageId
      *            the page identifier
      */
-    public PackageFormPage(FormEditor pEditor, String pId) {
-        super(pEditor, pId, Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
+    public PackageFormPage(FormEditor editor, String pageId) {
+        super(editor, pageId, Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$
     }
 
     /**
@@ -84,11 +84,11 @@ public class PackageFormPage extends FormPage {
      * {@inheritDoc}
      */
     @Override
-    protected void createFormContent(IManagedForm pManagedForm) {
-        super.createFormContent(pManagedForm);
-        ScrolledForm form = pManagedForm.getForm();
+    protected void createFormContent(IManagedForm managedForm) {
+        super.createFormContent(managedForm);
+        ScrolledForm form = managedForm.getForm();
 
-        FormToolkit toolkit = pManagedForm.getToolkit();
+        FormToolkit toolkit = managedForm.getToolkit();
         toolkit.decorateFormHeading(form.getForm());
 
         form.setText(Messages.getString("PackagePropertiesFormPage.PackagePropertiesText")); //$NON-NLS-1$

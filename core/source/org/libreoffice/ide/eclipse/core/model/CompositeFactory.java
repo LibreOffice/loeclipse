@@ -55,22 +55,22 @@ public final class CompositeFactory {
     /**
      * Creates a file node from the fully qualified name of the type which should be described inside.
      *
-     * @param pFullName
+     * @param fullName
      *            is the fully qualified name of the type described in the file to create (eg:
      *            <code>org::libreoffice::foo</code>)
-     * @param pProject
+     * @param project
      *            is the uno project in which to add the type.
      *
      * @return a Uno composite representing a file, or <code>null</code> if the fullName is null or an empty string
      */
-    public static IUnoComposite createTypeFile(String pFullName, IUnoidlProject pProject) {
+    public static IUnoComposite createTypeFile(String fullName, IUnoidlProject project) {
 
         IUnoComposite file = null;
 
-        if (pFullName != null && !pFullName.equals("")) { //$NON-NLS-1$
-            String fileName = pFullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        if (fullName != null && !fullName.equals("")) { //$NON-NLS-1$
+            String fileName = fullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-            IFile filehandle = pProject.getFile(pProject.getIdlPath().append(fileName));
+            IFile filehandle = project.getFile(project.getIdlPath().append(fileName));
 
             file = createFile(filehandle);
         }
@@ -81,21 +81,21 @@ public final class CompositeFactory {
     /**
      * Creates a Uno composite representing a file from its filename.
      *
-     * @param pFilehandle
+     * @param filehandle
      *            the relative filename
      *
      * @see #createTypeFile(String, IUnoidlProject) for file creation from Type name
      *
      * @return a Uno composite of FILE type
      */
-    public static IUnoComposite createFile(IFile pFilehandle) {
+    public static IUnoComposite createFile(IFile filehandle) {
 
         IUnoComposite file = null;
 
-        if (pFilehandle != null) {
+        if (filehandle != null) {
             file = new UnoComposite();
             file.setType(IUnoComposite.COMPOSITE_TYPE_FILE);
-            file.configure(pFilehandle.getLocation().toString());
+            file.configure(filehandle.getLocation().toString());
         }
 
         return file;
@@ -116,20 +116,20 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pFullname
+     * @param fullname
      *            the type fully qualified name (eg: <code>org::foo</code>)
      * @return a uno composite representing the file content
      */
-    public static IUnoComposite createFileContent(String pFullname) {
+    public static IUnoComposite createFileContent(String fullname) {
 
         IUnoComposite content = null;
 
-        if (pFullname != null && !pFullname.equals("")) { //$NON-NLS-1$
+        if (fullname != null && !fullname.equals("")) { //$NON-NLS-1$
             content = new UnoComposite();
             content.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            String define = pFullname.replace("::", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+            String define = fullname.replace("::", "_"); //$NON-NLS-1$ //$NON-NLS-2$
             define = "__" + define + "_idl__"; //$NON-NLS-1$ //$NON-NLS-2$
             properties.put("define", define.toLowerCase()); //$NON-NLS-1$
 
@@ -153,17 +153,17 @@ public final class CompositeFactory {
      * returned. The resulting include line is always in &lt;, &gt; characters.
      * </p>
      *
-     * @param pFullName
+     * @param fullName
      *            the fully qualified name of the type to include
      *
      * @return a parametrized uno composite
      */
-    public static IUnoComposite createInclude(String pFullName) {
+    public static IUnoComposite createInclude(String fullName) {
 
         IUnoComposite include = null;
 
-        if (pFullName != null && !pFullName.equals("")) { //$NON-NLS-1$
-            String fileName = pFullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        if (fullName != null && !fullName.equals("")) { //$NON-NLS-1$
+            String fileName = fullName.replace("::", "/") + ".idl"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
             include = new UnoComposite();
             include.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
@@ -179,20 +179,20 @@ public final class CompositeFactory {
     /**
      * Creates a Uno composite directory.
      *
-     * @param pFullName
+     * @param fullName
      *            is the fully qualified name of the module to create (eg: <code>org::libreoffice::foo</code>)
-     * @param pProject
+     * @param project
      *            is the unoidl project in which to generate the module
      *
      * @return a Uno composite directory.
      */
-    public static IUnoComposite createModuleDir(String pFullName, IUnoidlProject pProject) {
+    public static IUnoComposite createModuleDir(String fullName, IUnoidlProject project) {
 
         UnoComposite module = new UnoComposite();
         module.setType(IUnoComposite.COMPOSITE_TYPE_FOLDER);
-        String path = pFullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+        String path = fullName.replace("::", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        IFolder filehandle = pProject.getFolder(pProject.getIdlPath().append(path));
+        IFolder filehandle = project.getFolder(project.getIdlPath().append(path));
 
         module.configure(filehandle.getLocation().toString());
 
@@ -213,16 +213,16 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pName
+     * @param name
      *            is the module name (eg <code>foo</code>)
      * @return the uno composite corresponding to the module.
      */
-    public static IUnoComposite createModuleSpace(String pName) {
+    public static IUnoComposite createModuleSpace(String name) {
 
         UnoComposite module = new UnoComposite();
         module.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
-        properties.put("name", pName); //$NON-NLS-1$
+        properties.put("name", name); //$NON-NLS-1$
         String template = "module ${name} { ${children} };"; //$NON-NLS-1$
         module.configure(properties, template);
 
@@ -232,16 +232,16 @@ public final class CompositeFactory {
     /**
      * Simple convenient method calling {@link #createModuleSpace(String)} to create cascading modules namespaces.
      *
-     * @param pFullName
+     * @param fullName
      *            is the fully qualified name of the module to create (eg: <code>org::libreoffice::foo</code>)
      * @return the top-most composite corresponding to the top-most module
      */
-    public static IUnoComposite createModulesSpaces(String pFullName) {
+    public static IUnoComposite createModulesSpaces(String fullName) {
 
         IUnoComposite topModule = null;
 
-        if (pFullName != null && !pFullName.equals("")) { //$NON-NLS-1$
-            String[] modules = pFullName.split("::"); //$NON-NLS-1$
+        if (fullName != null && !fullName.equals("")) { //$NON-NLS-1$
+            String[] modules = fullName.split("::"); //$NON-NLS-1$
 
             if (modules.length > 0) {
 
@@ -274,11 +274,11 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pName
+     * @param name
      *            is the service name
-     * @param pIsPublished
+     * @param isPublished
      *            <code>true</code> if the module is a published one.
-     * @param pInterfaceFullName
+     * @param interfaceFullName
      *            is the interface inheritance fully qualified name
      *
      * @see #createModulesSpaces(String) to get all the module declarations
@@ -287,24 +287,24 @@ public final class CompositeFactory {
      *
      * @return the created service composite
      */
-    public static IUnoComposite createService(String pName, boolean pIsPublished, String pInterfaceFullName) {
+    public static IUnoComposite createService(String name, boolean isPublished, String interfaceFullName) {
 
         IUnoComposite service = null;
 
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
             service = new UnoComposite();
             service.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
             service.setIndented(true);
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            properties.put("name", pName); //$NON-NLS-1$
+            properties.put("name", name); //$NON-NLS-1$
 
-            if (pInterfaceFullName != null && !pInterfaceFullName.equals("")) { //$NON-NLS-1$
-                properties.put("interface", ": " + pInterfaceFullName + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (interfaceFullName != null && !interfaceFullName.equals("")) { //$NON-NLS-1$
+                properties.put("interface", ": " + interfaceFullName + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             } else {
                 properties.put("interface", ""); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            if (pIsPublished) {
+            if (isPublished) {
                 properties.put("published", "published "); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 properties.put("published", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -335,9 +335,9 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pName
+     * @param name
      *            is the service name
-     * @param pIsPublished
+     * @param isPublished
      *            <code>true</code> if the module is a published one.
      *
      * @see #createModulesSpaces(String) to get all the module declarations
@@ -346,8 +346,8 @@ public final class CompositeFactory {
      *
      * @return the created service composite
      */
-    public static IUnoComposite createService(String pName, boolean pIsPublished) {
-        return createService(pName, pIsPublished, null);
+    public static IUnoComposite createService(String name, boolean isPublished) {
+        return createService(name, isPublished, null);
     }
 
     /**
@@ -365,7 +365,7 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pName
+     * @param name
      *            is the service name
      *
      * @see #createModulesSpaces(String) to get all the module declarations
@@ -375,8 +375,8 @@ public final class CompositeFactory {
      *
      * @return the created service composite
      */
-    public static IUnoComposite createService(String pName) {
-        return createService(pName, false, null);
+    public static IUnoComposite createService(String name) {
+        return createService(name, false, null);
     }
 
     /**
@@ -404,11 +404,11 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pName
+     * @param name
      *            is the name of the interface (eg: <code>foo</code>)
-     * @param pIsPublished
+     * @param isPublished
      *            <code>true</code> if the interface is published
-     * @param pParentIntfNames
+     * @param parentIntfNames
      *            array of all the mandatory parent interfaces
      *
      * @see #createInterfaceInheritance(String, boolean) for the interfaces inheritances. This method should be called
@@ -416,23 +416,23 @@ public final class CompositeFactory {
      *
      * @return a uno composite representing an interface declaration
      */
-    public static IUnoComposite createInterface(String pName, boolean pIsPublished, String[] pParentIntfNames) {
+    public static IUnoComposite createInterface(String name, boolean isPublished, String[] parentIntfNames) {
 
         IUnoComposite intf = null;
 
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
             intf = new UnoComposite();
             intf.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
             intf.setIndented(true);
 
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            properties.put("name", pName); //$NON-NLS-1$
-            if (pParentIntfNames.length == 1) {
-                properties.put("interface", ": " + pParentIntfNames[0] + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            properties.put("name", name); //$NON-NLS-1$
+            if (parentIntfNames.length == 1) {
+                properties.put("interface", ": " + parentIntfNames[0] + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             } else {
                 properties.put("interface", ""); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            if (pIsPublished) {
+            if (isPublished) {
                 properties.put("published", "published "); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 properties.put("published", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -442,10 +442,10 @@ public final class CompositeFactory {
             intf.configure(properties, template);
 
             // Adds the interfaces if more than 1
-            if (pParentIntfNames.length > 1) {
+            if (parentIntfNames.length > 1) {
 
-                for (int i = 0; i < pParentIntfNames.length; i++) {
-                    IUnoComposite parent = createInterfaceInheritance(pParentIntfNames[i], false);
+                for (int i = 0; i < parentIntfNames.length; i++) {
+                    IUnoComposite parent = createInterfaceInheritance(parentIntfNames[i], false);
                     if (parent != null) {
                         intf.addChild(parent);
                     }
@@ -466,27 +466,27 @@ public final class CompositeFactory {
      * </pre>
      * </p>
      *
-     * @param pName
+     * @param name
      *            the fully qualified name of the interface to inherit from
-     * @param pOptional
+     * @param optional
      *            <code>true</code> if the interface is optional
      *
      * @return a UNO composite
      */
-    public static IUnoComposite createInterfaceInheritance(String pName, boolean pOptional) {
+    public static IUnoComposite createInterfaceInheritance(String name, boolean optional) {
 
         IUnoComposite intf = null;
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
             intf = new UnoComposite();
             intf.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            properties.put("name", pName); //$NON-NLS-1$
-            String optional = ""; //$NON-NLS-1$
-            if (pOptional) {
-                optional = "[optional] "; //$NON-NLS-1$
+            properties.put("name", name); //$NON-NLS-1$
+            String value = ""; //$NON-NLS-1$
+            if (optional) {
+                value = "[optional] "; //$NON-NLS-1$
             }
-            properties.put("optional", optional); //$NON-NLS-1$
+            properties.put("optional", value); //$NON-NLS-1$
             String template = "\t${optional}interface ${name};\n"; //$NON-NLS-1$
             intf.configure(properties, template);
         }
@@ -496,43 +496,43 @@ public final class CompositeFactory {
     /**
      * Creates an interface attribute.
      *
-     * @param pName
+     * @param name
      *            the attribute name
-     * @param pType
+     * @param type
      *            the type of the attribute
-     * @param pFlags
+     * @param flags
      *            the well-formatted string of flags.
      *
      * @return the attribute UNO composite
      */
-    public static IUnoComposite createAttribute(String pName, String pType, String pFlags) {
+    public static IUnoComposite createAttribute(String name, String type, String flags) {
 
         IUnoComposite attribute = null;
-        if (pType == null) {
-            pType = "void"; //$NON-NLS-1$
+        if (type == null) {
+            type = "void"; //$NON-NLS-1$
         }
 
-        if (pFlags == null) {
-            pFlags = ""; //$NON-NLS-1$
+        if (flags == null) {
+            flags = ""; //$NON-NLS-1$
         }
 
-        pFlags.trim();
-        if (pFlags == null || pFlags.equals("")) { //$NON-NLS-1$
-            pFlags = ""; //$NON-NLS-1$
+        flags.trim();
+        if (flags == null || flags.equals("")) { //$NON-NLS-1$
+            flags = ""; //$NON-NLS-1$
         } else {
-            pFlags = pFlags.replace(" ", ", "); //$NON-NLS-1$ //$NON-NLS-2$
-            pFlags = ", " + pFlags; //$NON-NLS-1$
+            flags = flags.replace(" ", ", "); //$NON-NLS-1$ //$NON-NLS-2$
+            flags = ", " + flags; //$NON-NLS-1$
 
         }
 
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
             attribute = new UnoComposite();
             attribute.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            properties.put("name", pName); //$NON-NLS-1$
-            properties.put("type", pType); //$NON-NLS-1$
-            properties.put("flags", pFlags); //$NON-NLS-1$
+            properties.put("name", name); //$NON-NLS-1$
+            properties.put("type", type); //$NON-NLS-1$
+            properties.put("flags", flags); //$NON-NLS-1$
             String template = "\t[attribute${flags}] ${type} ${name};\n"; //$NON-NLS-1$
             attribute.configure(properties, template);
         }
@@ -542,30 +542,30 @@ public final class CompositeFactory {
     /**
      * Creates an interface method.
      *
-     * @param pName
+     * @param name
      *            the method name
-     * @param pType
+     * @param type
      *            the method return type
      *
      * @return the UNO composite representing the method
      *
      * @see #createMethodArgument(String, String, String) for informations on how to add parameters to the method
      */
-    public static IUnoComposite createMethod(String pName, String pType) {
+    public static IUnoComposite createMethod(String name, String type) {
 
         IUnoComposite method = null;
-        if (pType == null || pType.trim().equals("")) { //$NON-NLS-1$
-            pType = "void"; //$NON-NLS-1$
+        if (type == null || type.trim().equals("")) { //$NON-NLS-1$
+            type = "void"; //$NON-NLS-1$
         }
 
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
             method = new UnoComposite();
             method.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
             method.setChildrenSeparator(", "); //$NON-NLS-1$
 
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            properties.put("name", pName); //$NON-NLS-1$
-            properties.put("type", pType); //$NON-NLS-1$
+            properties.put("name", name); //$NON-NLS-1$
+            properties.put("type", type); //$NON-NLS-1$
             String template = "\t${type} ${name}(${children});\n"; //$NON-NLS-1$
             method.configure(properties, template);
         }
@@ -575,34 +575,34 @@ public final class CompositeFactory {
     /**
      * Create a method argument to be added to a method UNO composite.
      *
-     * @param pName
+     * @param name
      *            the argument name
-     * @param pType
+     * @param type
      *            the argument type
-     * @param pDirection
+     * @param direction
      *            the argument direction among <code>in</code>, <code>out</code>, <code>inout</code>.
      *
      * @return the UNO composite representing the parameter
      */
-    public static IUnoComposite createMethodArgument(String pName, String pType, String pDirection) {
+    public static IUnoComposite createMethodArgument(String name, String type, String direction) {
 
         IUnoComposite argument = null;
-        if (pType == null) {
-            pType = "any"; //$NON-NLS-1$
+        if (type == null) {
+            type = "any"; //$NON-NLS-1$
         }
 
-        if (pDirection == null) {
-            pDirection = "inout"; //$NON-NLS-1$
+        if (direction == null) {
+            direction = "inout"; //$NON-NLS-1$
         }
 
-        if (pName != null && !pName.equals("")) { //$NON-NLS-1$
+        if (name != null && !name.equals("")) { //$NON-NLS-1$
             argument = new UnoComposite();
             argument.setType(IUnoComposite.COMPOSITE_TYPE_TEXT);
 
             Hashtable<String, Object> properties = new Hashtable<String, Object>();
-            properties.put("name", pName); //$NON-NLS-1$
-            properties.put("type", pType); //$NON-NLS-1$
-            properties.put("direction", pDirection); //$NON-NLS-1$
+            properties.put("name", name); //$NON-NLS-1$
+            properties.put("type", type); //$NON-NLS-1$
+            properties.put("direction", direction); //$NON-NLS-1$
             String template = "[${direction}] ${type} ${name}"; //$NON-NLS-1$
             argument.configure(properties, template);
         }

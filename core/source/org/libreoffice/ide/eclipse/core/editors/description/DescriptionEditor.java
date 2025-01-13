@@ -91,12 +91,12 @@ public class DescriptionEditor extends FormEditor {
      * {@inheritDoc}
      */
     @Override
-    public void init(IEditorSite pSite, IEditorInput pInput) throws PartInitException {
-        super.init(pSite, pInput);
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
 
-        if (pInput instanceof IFileEditorInput) {
+        if (input instanceof IFileEditorInput) {
 
-            IFileEditorInput fileInput = (IFileEditorInput) pInput;
+            IFileEditorInput fileInput = (IFileEditorInput) input;
 
             setPartName(fileInput.getName());
 
@@ -131,7 +131,7 @@ public class DescriptionEditor extends FormEditor {
      * {@inheritDoc}
      */
     @Override
-    public void doSave(IProgressMonitor pMonitor) {
+    public void doSave(IProgressMonitor monitor) {
         OutputStream out = null;
         try {
             FileEditorInput input = (FileEditorInput) getEditorInput();
@@ -139,7 +139,7 @@ public class DescriptionEditor extends FormEditor {
             out = new FileOutputStream(file);
             getDescriptionModel().serialize(out);
 
-            input.getFile().refreshLocal(IResource.DEPTH_ZERO, pMonitor);
+            input.getFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("DescriptionEditor.ErrorSaving"), e); //$NON-NLS-1$
         } finally {
@@ -216,7 +216,8 @@ public class DescriptionEditor extends FormEditor {
                     SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
                     // Enables the namespaces mapping
                     parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true); //$NON-NLS-1$
-                    parser.getXMLReader().setFeature("http://xml.org/sax/features/namespace-prefixes", true); //$NON-NLS-1$
+                    parser.getXMLReader().setFeature("http://xml.org/sax/features/namespace-prefixes",
+                                                     true); //$NON-NLS-1$
                     DescriptionHandler handler = new DescriptionHandler(getDescriptionModel());
 
                     reader = new StringReader(doc.get());
@@ -229,8 +230,8 @@ public class DescriptionEditor extends FormEditor {
                     getDescriptionModel().setSuspendEvent(false);
 
                 } catch (Exception e) {
-                    PluginLogger.error(Messages.getString("PackagePropertiesEditor.DescriptionParseError"), //$NON-NLS-1$
-                        e);
+                    String msg = Messages.getString("PackagePropertiesEditor.DescriptionParseError"); //$NON-NLS-1$
+                    PluginLogger.error(msg, e);
                 } finally {
                     reader.close();
                 }
