@@ -52,7 +52,6 @@ import org.libreoffice.ide.eclipse.core.model.OOoContainer;
 import org.libreoffice.ide.eclipse.core.model.SDKContainer;
 import org.libreoffice.ide.eclipse.core.Messages;
 import org.libreoffice.ide.eclipse.core.utils.TemplatesHelper;
-import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Dialog part for the Ant scripts export configuration.
@@ -91,17 +90,17 @@ public class ProjectExportPart extends LanguageExportPart {
      * {@inheritDoc}
      */
     @Override
-    public void createControls(Composite pParent) {
+    public void createControls(Composite parent) {
 
         mController = new ProjectExportPageControl();
         mController.setSaveAntScript(true);
 
         if (!sAntSectionDisplay) {
-            mTitleLbl = new Label(pParent, SWT.NONE);
+            mTitleLbl = new Label(parent, SWT.NONE);
             mTitleLbl.setText(Messages.getString("ProjectExportPart.Title")); //$NON-NLS-1$
             mTitleLbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
-            Composite content = new Composite(pParent, SWT.NONE);
+            Composite content = new Composite(parent, SWT.NONE);
             GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
             gd.horizontalIndent = HORIZONTAL_INDENT;
             content.setLayoutData(gd);
@@ -139,7 +138,7 @@ public class ProjectExportPart extends LanguageExportPart {
      * {@inheritDoc}
      */
     @Override
-    public void doFinish(UnoPackage model) {
+    public void doFinish() {
 
         String directory = sAntScriptPage.getPath();
         File antFile = new File(directory + "/build.xml");

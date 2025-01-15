@@ -1,11 +1,14 @@
 /*************************************************************************
- *
  * The Contents of this file are made available subject to the terms of
  * the GNU Lesser General Public License Version 2.1
  *
+ * Sun Microsystems Inc., October, 2000
+ *
+ *
  * GNU Lesser General Public License Version 2.1
  * =============================================
- * Copyright 2009 by Novell, Inc.
+ * Copyright 2000 by Sun Microsystems, Inc.
+ * 901 San Antonio Road, Palo Alto, CA 94303, USA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,44 +24,33 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  *
- * The Initial Developer of the Original Code is: Cédric Bosdonnat.
+ * The Initial Developer of the Original Code is: Sun Microsystems, Inc..
  *
- * Copyright: 2009 by Novell, Inc.
+ * Copyright: 2002 by Sun Microsystems, Inc.
  *
  * All Rights Reserved.
+ *
+ * Contributor(s): Cedric Bosdonnat
+ *
  *
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.model.utils;
 
 /**
- * Interface for listened models.
+ * Generic interface to listen to models.
+ *
  */
-public interface IModel {
+public interface IModelDataListener {
 
     /**
-     * Add a model listener.
+     * Method called each time the listened model has changed.
      *
-     * @param listener
-     *            the listener to add
      */
-    public void addListener(IModelDataListener listener);
+    public void modelChanged();
 
     /**
-     * Remove a model listener.
+     * Method called each time the listened model is saved.
      *
-     * @param listener
-     *            the listener to remove
      */
-    public void removeListener(IModelDataListener listener);
-
-    /**
-     * @return whether the model has been changed without being saved or not.
-     */
-    public boolean isDirty();
-
-    /**
-     * @param pSuspend
-     *            <code>true</code> to suspend the events for the model
-     */
-    public void setSuspendEvent(boolean pSuspend);
+    public void modelSaved();
 }

@@ -41,7 +41,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.libreoffice.ide.eclipse.core.model.utils.IModel;
-import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
+import org.libreoffice.ide.eclipse.core.model.utils.IModelDataListener;
 import org.libreoffice.plugin.core.utils.XMLWriter;
 
 /**
@@ -49,7 +49,7 @@ import org.libreoffice.plugin.core.utils.XMLWriter;
  */
 public class DescriptionModel implements IModel {
 
-    private ArrayList<IModelChangedListener> mListeners;
+    private ArrayList<IModelDataListener> mListeners;
     private boolean mDirty;
     private boolean mSuspendEvents;
 
@@ -79,7 +79,7 @@ public class DescriptionModel implements IModel {
      * Default constructor.
      */
     public DescriptionModel() {
-        mListeners = new ArrayList<IModelChangedListener>();
+        mListeners = new ArrayList<IModelDataListener>();
 
         mDisplayNames = new HashMap<>();
         mDescriptions = new HashMap<>();
@@ -93,7 +93,7 @@ public class DescriptionModel implements IModel {
      * {@inheritDoc}
      */
     @Override
-    public void addListener(IModelChangedListener listener) {
+    public void addListener(IModelDataListener listener) {
         mListeners.add(listener);
     }
 
@@ -101,7 +101,7 @@ public class DescriptionModel implements IModel {
      * {@inheritDoc}
      */
     @Override
-    public void removeListener(IModelChangedListener listener) {
+    public void removeListener(IModelDataListener listener) {
         mListeners.remove(listener);
     }
 
@@ -931,7 +931,7 @@ public class DescriptionModel implements IModel {
     protected void fireModelChanged() {
         if (!mSuspendEvents) {
             mDirty = true;
-            for (IModelChangedListener listener : mListeners) {
+            for (IModelDataListener listener : mListeners) {
                 listener.modelChanged();
             }
         }
@@ -943,7 +943,7 @@ public class DescriptionModel implements IModel {
     protected void fireModelSaved() {
         if (!mSuspendEvents) {
             mDirty = false;
-            for (IModelChangedListener listener : mListeners) {
+            for (IModelDataListener listener : mListeners) {
                 listener.modelSaved();
             }
         }
