@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.libreoffice.ide.eclipse.core.model.utils.IModel;
-import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
+import org.libreoffice.ide.eclipse.core.model.utils.IModelDataListener;
 
 /**
  * Abstract section class providing mechanisms to suspend the dirty state change notifications.
@@ -13,7 +13,7 @@ import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
  * @param <ModelType>
  *            the type of the model object for the section
  */
-public abstract class AbstractSection<ModelType extends IModel> extends SectionPart implements IModelChangedListener {
+public abstract class AbstractSection<ModelType extends IModel> extends SectionPart implements IModelDataListener {
 
     private ModelType mModel;
 

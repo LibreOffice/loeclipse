@@ -41,6 +41,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +52,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,7 +64,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.Messages;
-import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
+import org.libreoffice.ide.eclipse.core.model.utils.IModelDataListener;
+import org.libreoffice.ide.eclipse.core.model.utils.IModelTreeListener;
 
 /**
  *
@@ -81,9 +83,11 @@ public class PackagePropertiesModel {
     private List<IResource> mFiles = null;
     private Map<IResource, Boolean> mFolders = null;
 
-    private boolean mIsDirty = false;
+    private short mDirty = 0;
     private boolean mIsQuiet = false;
-    private Vector<IModelChangedListener> mListeners = new Vector<IModelChangedListener>();
+    private boolean mIsModified = false;
+    private Vector<IModelDataListener> mDataListeners = new Vector<IModelDataListener>();
+    private Vector<IModelTreeListener> mTreeListeners = new Vector<IModelTreeListener>();
 
     /**
      * Create a new package.properties model for a given file. If the file can be read, the existing properties will be
@@ -103,33 +107,92 @@ public class PackagePropertiesModel {
             mPropertiesFile = file;
         } catch (FileNotFoundException e) {
             mPropertiesFile = null;
-            String msg = Messages.getString("PackagePropertiesModel.NullFileException");
+            String msg = Messages.getString("PackagePropertiesModel.NullFileException"); //$NON-NLS-1$
             throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         try {
             mProperties.load(is);
         } catch (IOException e) {
-            PluginLogger.warning(Messages.getString("PackagePropertiesModel.FileReadException")
-                + file.getLocation()); //$NON-NLS-1$
+            String msg = Messages.getString("PackagePropertiesModel.FileReadException"); //$NON-NLS-1$
+            PluginLogger.warning(msg + file.getLocation()); //$NON-NLS-1$
         } finally {
             try {
                 is.close();
             } catch (Exception e) {
             }
-            mFiles = deserializeContent();
-            mFolders = getFolderCheckState();
+        }
+        Map<String, Boolean> paths = new HashMap<>();
+        Map<IResource, Boolean> folders = new HashMap<>();
+        mFiles = deserializeContent(folders, paths);
+        mFolders = getFolderCheckState(folders);
+        // If some resources are missing or modified, we need to log these resources.
+        if (!paths.isEmpty()) {
+            logMissingPaths(paths, true);
+            logMissingPaths(paths, false);
+            firePackageChanged();
+            // the model is marked as dirty with pending changes.
+            mDirty = 2;
         }
     }
 
     /**
      * Set whether the changes should be notified to the listeners or not.
      *
-     * @param pQuiet
+     * @param quiet
      *            <code>true</code> if the changes should be notified, <code>false</code> otherwise.
      */
-    public void setQuiet(boolean pQuiet) {
-        mIsQuiet = pQuiet;
+    public void setQuiet(boolean quiet) {
+        mIsQuiet = quiet;
+    }
+
+    /**
+     * Set whether the changes should come from this data model or not.
+     *
+     * @param modified
+     *            <code>true</code> if the changes come from this data model, <code>false</code> otherwise.
+     */
+    public void setModified(boolean modified) {
+        mIsModified = modified;
+    }
+
+    /**
+     * Get whether the changes come from this data model or not.
+     *
+     * @return <code>true</code> if the changes come from this data model, <code>false</code> otherwise.
+     */
+    public boolean isModified() {
+        return mIsModified;
+    }
+
+    /**
+     * Get whether the resource is filtered or not.
+     *            Files to exclude: .* Folders to exclude: build, bin
+     *
+     * @param res
+     *            the resource to check.
+     *
+     * @return <code>true</code> if resource is filtered, <code>false</code> otherwise.
+     */
+    public boolean isFilteredResource(IResource res) {
+        boolean filtered = false;
+        if (res.getName().startsWith(".") || //$NON-NLS-1$
+            res.getName().equals("bin") || //$NON-NLS-1$
+            res.getName().equals("build")) { //$NON-NLS-1$
+            filtered = true;
+        } else if (getBasicLibraries().contains(res) ||
+                   getDialogLibraries().contains(res) ||
+                   getDescriptionFiles().containsValue(res)) {
+            filtered = true;
+        }
+        return filtered;
+    }
+
+    /**
+     * @return <code>true</code> if the properties model has changed but isn't saved, <code>false</code> otherwise.
+     */
+    public boolean isDirty() {
+        return mDirty != 0;
     }
 
     /**
@@ -138,8 +201,8 @@ public class PackagePropertiesModel {
      * @param listener
      *            the listener to add.
      */
-    public void addChangeListener(IModelChangedListener listener) {
-        mListeners.add(listener);
+    public void addDataListener(IModelDataListener listener) {
+        mDataListeners.add(listener);
     }
 
     /**
@@ -148,19 +211,42 @@ public class PackagePropertiesModel {
      * @param listener
      *            the listener to remove
      */
-    public void removeChangedListener(IModelChangedListener listener) {
-        if (mListeners.contains(listener)) {
-            mListeners.remove(listener);
+    public void removeDataListener(IModelDataListener listener) {
+        if (mDataListeners.contains(listener)) {
+            mDataListeners.remove(listener);
         }
     }
 
     /**
+     * Add a listener notified of the TreeView changes.
+     *
+     * @param listener
+     *            the listener to add.
+     */
+    public void addTreeListener(IModelTreeListener listener) {
+        mTreeListeners.add(listener);
+    }
+
+    /**
+     * Removes a class listening the TreeView changes.
+     *
+     * @param listener
+     *            the listener to remove
+     */
+    public void removeTreeListener(IModelTreeListener listener) {
+        if (mTreeListeners.contains(listener)) {
+            mTreeListeners.remove(listener);
+        }
+    }
+
+
+    /**IModelChangedListener
      * Notify that the package properties model has been saved.
      */
     public void firePackageSaved() {
         if (!mIsQuiet) {
-            mIsDirty = false;
-            for (IModelChangedListener listener : mListeners) {
+            mDirty = 0;
+            for (IModelDataListener listener : mDataListeners) {
                 listener.modelSaved();
             }
         }
@@ -171,31 +257,36 @@ public class PackagePropertiesModel {
      */
     public void firePackageChanged() {
         if (!mIsQuiet) {
-            mIsDirty = true;
-            for (IModelChangedListener listener : mListeners) {
+            mDirty = 1;
+            for (IModelDataListener listener : mDataListeners) {
                 listener.modelChanged();
             }
         }
     }
 
     /**
-     * @return <code>true</code> if the properties model has changed but isn't saved, <code>false</code> otherwise.
+     * Notify that the tree view must do a refresh.
      */
-    public boolean isDirty() {
-        return mIsDirty;
+    public void fireTreeRefresh() {
+        mDirty = 2;
+        for (IModelTreeListener listener : mTreeListeners) {
+            listener.modelRefreshed();
+        }
     }
 
     /**
      * Writes the Package properties to the file.
      *
-     * @return the content of the package properties under the form of a string
-     *         as it would have been written to the file.
-     *
      * @throws Exception
      *             if the data can't be written
+     *
+     * @return <code>true</code> if pending change exist, <code>false</code> otherwise.
      */
-    public String write() throws Exception {
-        String content = writeToString();
+    public boolean write() throws Exception {
+        boolean hasChanges = hasPendingChanges();
+        if (hasChanges) {
+            mProperties.setProperty(CONTENTS, serializeContent());
+        }
         FileOutputStream os = new FileOutputStream(mPropertiesFile.getLocation().toFile());
         try {
             mProperties.store(os, Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
@@ -209,7 +300,7 @@ public class PackagePropertiesModel {
                 // Nothing to log
             }
         }
-        return content;
+        return hasChanges;
     }
 
     /**
@@ -220,21 +311,20 @@ public class PackagePropertiesModel {
      *            the string describing the data
      */
     public void reloadFromString(String content) {
-        String initContent = writeToString();
-        if (!content.equals(initContent)) {
+        if (!content.equals(writeToString())) {
             mProperties.clear();
             try {
                 mProperties.load(new StringReader(content));
             } catch (IOException e) {
                 // Nothing to log
                 return;
-            } 
-            mFiles.clear(); 
-            mFiles.addAll(deserializeContent());
+            }
+            Map<IResource, Boolean> folders = new HashMap<>();
+            mFiles.clear();
+            mFiles.addAll(deserializeContent(folders, null));
             mFolders.clear();
-            mFolders.putAll(getFolderCheckState());
+            mFolders.putAll(getFolderCheckState(folders));
 
-            firePackageChanged();
         }
     }
 
@@ -243,15 +333,13 @@ public class PackagePropertiesModel {
      *         as it would have been written to the file.
      */
     public String writeToString() {
-        String fileContent = ""; //$NON-NLS-1$
-        mProperties.setProperty(CONTENTS, serializeContent());
-        Set<Entry<Object, Object>> entries = mProperties.entrySet();
-        Iterator<Entry<Object, Object>> iter = entries.iterator();
-        while (iter.hasNext()) {
-            Entry<Object, Object> entry = iter.next();
-            fileContent += (String) entry.getKey() + "=" + (String) entry.getValue() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+        Writer writer = new StringWriter();
+        try {
+            mProperties.store(writer, Messages.getString("PackagePropertiesModel.Comment")); //$NON-NLS-1$
+        } catch (IOException e) {
+            // Nothing to log
         }
-        return fileContent;
+        return writer.toString();
     }
 
     /**
@@ -371,75 +459,100 @@ public class PackagePropertiesModel {
     /**
      * add resource entry if not already in.
      *
-     * @param pRes the resource entry to add
+     * @param res
+     *            the resource (ie: file or folder) to add
      */
-    public void addResource(IResource pRes) {
+    public void addResource(IResource res) {
         // If it's a folder we need to add all children resources
         try {
-            if (pRes.getType() == IResource.FOLDER) {
-                addFolderResource(pRes);
-            } else if (!mFiles.contains(pRes)) {
-                addFileResource(pRes);
+            if (res.getType() == IResource.FOLDER) {
+                addFolderResource(res);
+            } else if (res.getType() == IResource.FILE) {
+                addFileResource(res);
             }
+            mProperties.setProperty(CONTENTS, serializeContent());
+            mIsModified = true;
             firePackageChanged();
+            mIsModified = false;
         } catch (CoreException e) {
-            // Log ?
+            // Nothing to log
         }
     }
 
     /**
      * remove resource entry if already in.
      *
-     * @param pRes the resource entry to remove
+     * @param res
+     *            the resource (ie: file or folder) to add
      */
-    public void removeResource(IResource pRes) {
+    public void removeResource(IResource res) {
         // If it's a folder we need to remove all children resources to
         try {
-            if (pRes.getType() == IResource.FOLDER) {
-                removeFolderResource(pRes);
-            } else if (mFiles.contains(pRes)) {
-                removeFileResource(pRes);
+            if (res.getType() == IResource.FOLDER) {
+                removeFolderResource(res);
+            } else if (res.getType() == IResource.FILE) {
+                removeFileResource(res);
             }
+            mProperties.setProperty(CONTENTS, serializeContent());
+            mIsModified = true;
             firePackageChanged();
+            mIsModified = false;
         } catch (CoreException e) {
-            // Log ?
+            // Nothing to log
         }
     }
 
     /**
-     * @param pRes the resource entry to check
+     * @return if resource is checked.
      *
-     * @return if resource is checked
+     * @param res
+     *            the resource (ie: file or folder) to check
      */
-    public boolean isChecked(IResource pRes) {
+    public boolean isChecked(IResource res) {
         boolean checked = false;
-        if (pRes.getType() == IResource.FILE) {
-            checked = mFiles.contains(pRes);
-        } else if (pRes.getType() == IResource.FOLDER) {
-            checked = mFolders.containsKey(pRes);
+        if (res.getType() == IResource.FILE) {
+            checked = mFiles.contains(res);
+        } else if (res.getType() == IResource.FOLDER) {
+            checked = mFolders.containsKey(res);
         }
         return checked;
     }
 
     /**
-     * @param pRes the resource entry to check
+     * @return if resource is grayed.
      *
-     * @return if resource is grayed
+     * @param res
+     *            the resource (ie: file or folder) to check
      */
-    public boolean isGrayed(IResource pRes) {
+    public boolean isGrayed(IResource res) {
         boolean grayed = false;
-        if (pRes.getType() == IResource.FOLDER) {
-            grayed = mFolders.getOrDefault(pRes, false);
+        if (res.getType() == IResource.FOLDER) {
+            grayed = mFolders.getOrDefault(res, false);
         }
         return grayed;
     }
 
     /**
-     * @return the list of the the files and directories added to the package properties that are not dialog or basic
-     *         libraries or package descriptions
+     * @return the list of the the files and selected empty folders added to the package properties
+     *          that are not dialog or basic libraries or package descriptions
      */
     public List<IResource> getContents() {
-        return mFiles;
+        List<IResource> contents = new ArrayList<>();
+        contents.addAll(mFiles);
+        try {
+            for (Entry<IResource, Boolean> entry : mFolders.entrySet()) {
+                if (entry.getValue()) {
+                    continue;
+                }
+                IResource folder = entry.getKey();
+                if (!hasVisibleMembers(folder)) {
+                    contents.add(folder);
+                }
+            }
+        } catch (CoreException e) {
+            // Nothing to log
+        }
+        return contents;
     }
 
     /**
@@ -468,12 +581,12 @@ public class PackagePropertiesModel {
     public void addDescriptionFile(IFile description, Locale locale) throws IllegalArgumentException {
 
         if (locale == null) {
-            String msg = Messages.getString("PackagePropertiesModel.NoLocaleException");
+            String msg = Messages.getString("PackagePropertiesModel.NoLocaleException"); //$NON-NLS-1$
             throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
         if (description == null || !description.exists()) {
-            String msg = Messages.getString("PackagePropertiesModel.NoDescriptionFileException");
+            String msg = Messages.getString("PackagePropertiesModel.NoDescriptionFileException"); //$NON-NLS-1$
             throw new IllegalArgumentException(msg); //$NON-NLS-1$
         }
 
@@ -541,15 +654,27 @@ public class PackagePropertiesModel {
     }
 
     /**
+     * Get pending change status.
+     *
+     * @return <code>true</code> if pending change exist, <code>false</code> otherwise.
+     */
+    private boolean hasPendingChanges() {
+        return mDirty == 2;
+    }
+
+    /**
      * Add all files that are members of a folder resource recursively.
      *
-     * @param folder the resource folder entry
-     *
+     * @param folder
+     *            the folder resource
      */
     private void addFolderResource(IResource folder) throws CoreException {
         mFolders.put(folder, false);
         IResource[] members = ((IContainer) folder).members();
-        for (IResource res :members) {
+        for (IResource res : members) {
+            if (isFilteredResource(res)) {
+                continue;
+            }
             if (res.getType() == IResource.FOLDER) {
                 addFolderResource(res);
             } else if (!mFiles.contains(res)) {
@@ -561,8 +686,8 @@ public class PackagePropertiesModel {
     /**
      * Remove all files that are members of a folder resource recursively.
      *
-     * @param folder the resource folder entry
-     *
+     * @param folder
+     *            the folder resource
      */
     private void removeFolderResource(IResource folder) throws CoreException {
         if (mFolders.containsKey(folder)) {
@@ -581,159 +706,271 @@ public class PackagePropertiesModel {
     /**
      * Add a files and updated folders.
      *
-     * @param file the resource file entry
-     *
+     * @param file
+     *            the folder resource
      */
     private void addFileResource(IResource file) throws CoreException {
-        mFiles.add(file);
-        IProject prj = mPropertiesFile.getProject();
-        IContainer parent = file.getParent();
-        while (parent != null && parent != prj) {
-            parent = getParentCheckState(parent);
+        if (!mFiles.contains(file)) {
+            mFiles.add(file);
         }
+        setFileCheckState(file);
     }
 
     /**
      * Remove a files and updated folders.
      *
-     * @param file the resource file entry
-     *
+     * @param file
+     *            the folder resource
      */
     private void removeFileResource(IResource file) throws CoreException {
         if (mFiles.contains(file)) {
             mFiles.remove(file);
         }
-        IProject prj = mPropertiesFile.getProject();
-        IContainer parent = file.getParent();
-        while (parent != null && parent != prj) {
-            if (mFolders.containsKey(parent)) {
-                if (parent.members().length == 1) {
-                    mFolders.remove(parent);
-                } else {
-                    mFolders.put(parent, true);
-                }
-            }
-            parent = parent.getParent();
-        }
+        setFileCheckState(file);
     }
 
     /**
      * Serialize all files resource to the package properties.
      *
-     * @return a string corresponding to the value of the contents property of the package.properties file
+     * @return a string of all files and empty folder.
      */
     private String serializeContent() {
-        List<String> result = new ArrayList<>();
-        for (IResource res : mFiles) {
-            if (res.getType() == IResource.FILE && res.exists()) {
-                result.add(res.getProjectRelativePath().toString());
+        List<String> results = new ArrayList<>();
+        int nbFiles = 0;
+        int nbFolders = 0;
+        try {
+            for (IResource file : mFiles) {
+                if (file.getType() == IResource.FILE && file.exists()) {
+                    results.add(file.getProjectRelativePath().toString());
+                    nbFiles++;
+                }
+            }
+            for (Entry<IResource, Boolean> entry : mFolders.entrySet()) {
+                nbFolders += serializeFolder(results, entry);
+            }
+
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+        String template = Messages.getString("PackagePropertiesModel.SerializeContent"); //$NON-NLS-1$
+        PluginLogger.info(String.format(template, nbFiles, nbFolders)); //$NON-NLS-1$
+        Collections.sort(results, String.CASE_INSENSITIVE_ORDER);
+        return String.join(SEPARATOR, results);
+    }
+
+    private int serializeFolder(List<String> results, Entry<IResource, Boolean> entry) throws CoreException {
+        // Only empty folder will be saved if checked
+        int nbFolders = 0;
+        IResource folder = entry.getKey();
+        if (folder.getType() == IResource.FOLDER && folder.exists() && !isFilteredResource(folder)) {
+            if (!entry.getValue() && !hasVisibleMembers(folder)) {
+                results.add(folder.getProjectRelativePath().toString());
+                nbFolders++;
             }
         }
-        Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
-        return String.join(SEPARATOR, result);
+        return nbFolders;
     }
 
     /**
      * De-serialize all files resource from the package properties.
      *
-     * @return a list of resource corresponding to the value of the contents property of the package.properties file
-     */
-    private List<IResource> deserializeContent() {
-        List<IResource> resources = new ArrayList<>();
-        try {
-            String libs = mProperties.getProperty(CONTENTS);
-            IProject prj = mPropertiesFile.getProject();
-
-            if (libs != null && !libs.equals("")) { //$NON-NLS-1$
-                for (String path : libs.split(SEPARATOR)) {
-                    if (prj.getFile(path).exists()) {
-                        resources.add(prj.getFile(path));
-                    }
-                }
-            }
-        } catch (NullPointerException e) {
-            // Nothing to do nor return
-        }
-        return resources;
-    }
-
-    /**
-     * Get project check state from files resource.
+     * @param folders
+     *            the folder
      *
-     * @return a map of resource / boolean corresponding to the folder resources
+     * @param paths
+     *            the path of missing resource
+     *
+     * @return a list of the file resource
      */
-    private Map<IResource, Boolean> getFolderCheckState() {
-        Map<IResource, Boolean> resources = new HashMap<>();
+    private List<IResource> deserializeContent(Map<IResource, Boolean> folders, Map<String, Boolean> paths) {
+        List<IResource> files = new ArrayList<>();
+        IProject prj = mPropertiesFile.getProject();
+        int nbFiles = 0;
+        int nbFolders = 0;
         try {
-            IResource [] members = mPropertiesFile.getProject().members();
-            for (IResource res : members) {
-                if (res.getType() == IResource.FOLDER) {
-                    getSubFolderCheckState(resources, res);
+            String contents = mProperties.getProperty(CONTENTS);
+
+            if (contents != null && !contents.equals("")) { //$NON-NLS-1$
+                for (String path : contents.split(SEPARATOR)) {
+                    if (prj.getFile(path).exists()) {
+                        IFile file = prj.getFile(path);
+                        if (!files.contains(file)) {
+                            files.add(file);
+                            nbFiles++;
+                        }
+                    } else if (prj.getFolder(path).exists()) {
+                        nbFolders += deserializeFolder(prj, folders, paths, path);
+                    } else if (paths != null) {
+                        paths.put(path, true);
+                    }
                 }
             }
         } catch (NullPointerException | CoreException e) {
             // Nothing to do nor return
         }
-        return resources;
+        String template = Messages.getString("PackagePropertiesModel.DeserializeContent"); //$NON-NLS-1$
+        PluginLogger.info(String.format(template, nbFiles, nbFolders)); //$NON-NLS-1$
+        return files;
+    }
+
+    private int deserializeFolder(IProject prj, Map<IResource, Boolean> folders,
+                                  Map<String, Boolean> paths, String path) throws CoreException {
+        // Only empty folder will be restored
+        int nbFolders = 0;
+        IFolder folder = prj.getFolder(path);
+        if (!hasVisibleMembers(folder)) {
+            folders.put(folder, false);
+            nbFolders++;
+        } else if (paths != null) {
+            paths.put(path, false);
+        }
+        return nbFolders;
+    }
+
+        /**
+     * Get project folder check state from file resources.
+     *
+     * @param folders
+     *            the folders (ie: map <IResource, Boolean>)
+     *
+     * @return a map of the folder resource / check state
+     */
+    private Map<IResource, Boolean> getFolderCheckState(Map<IResource, Boolean> folders) {
+        try {
+            IContainer parent = mPropertiesFile.getProject();
+            setFolderCheckState(folders, parent);
+        } catch (CoreException e) {
+            // Nothing to do nor return
+        }
+        return folders;
     }
 
     /**
-     * Get folder check state from files resource.
+     * Set folder check state from files resource.
      *
-     * @param folders the map resource / boolean to update
+     * @param folders
+     *            the folders (ie: map <IResource, Boolean>)
      *
-     * @param parent the folder resource entry
+     * @param parent
+     *            the parent resource
      */
-    private void getSubFolderCheckState(Map<IResource, Boolean> folders, IResource parent) throws CoreException {
-        IResource[] members = ((IContainer) parent).members();
-        boolean checked = true;
-        boolean grayed = false;
+    private void setFolderCheckState(Map<IResource, Boolean> folders, IContainer parent) throws CoreException {
+        IResource[] members = parent.members();
+        boolean all = true;
+        boolean any = false;
         for (IResource res : members) {
-            if (res.getType() == IResource.FOLDER) {
-                getSubFolderCheckState(folders, res);
-            } else if (mFiles.contains(res)) {
-                grayed = true;
-            } else {
-                checked = false;
+            // We need to consider only non-hidden resource
+            if (isFilteredResource(res)) {
+                continue;
             }
-        }
-        if (members.length == 0) {
-            folders.put(parent, false);
-        } else if (checked || grayed) {
-            folders.put(parent, grayed && !checked);
-        }
-    }
-
-    /**
-     * Get parent check state from files resource.
-     *
-     * @param pParent the folder resource entry
-     *
-     * @return the parent resource of the folder resource entry or null
-     */
-    private IContainer getParentCheckState(IResource pParent) throws CoreException {
-        IResource[] members = ((IContainer) pParent).members();
-        boolean checked = true;
-        boolean grayed = false;
-        for (IResource res : members) {
-            if (res.getType() == IResource.FOLDER) {
-                if (mFolders.containsKey(res)) {
-                    grayed = mFolders.get(res);
+            if (res.getType() == IResource.FILE) {
+                if (mFiles.contains(res)) {
+                    any = true;
                 } else {
-                    checked = false;
+                    all = false;
                 }
-            } else if (mFiles.contains(res)) {
-                grayed = true;
-            } else {
-                checked = false;
+            } else if (res.getType() == IResource.FOLDER) {
+                setFolderCheckState(folders, (IContainer) res);
+                if (!folders.containsKey(res)) {
+                    all = false;
+                } else if (folders.get(res)) {
+                    any = true;
+                }
+            }
+        }
+        if (isCheckStateSetable(folders, parent)) {
+            if (members.length == 0) {
+                all = false;
+            }
+            setCheckState(folders, parent, all, any);
+        }
+    }
+
+    private boolean isCheckStateSetable(Map<IResource, Boolean> folders, IContainer res) {
+        // We must exclude empty folders already present otherwise they will be lost
+        return res.getType() != IResource.PROJECT && !folders.containsKey(res);
+    }
+
+    private void setFileCheckState(IResource file) throws CoreException {
+        IContainer parent = file.getParent();
+        while (parent.getType() != IResource.PROJECT) {
+            setParentCheckState(parent);
+            parent = parent.getParent();
+        }
+    }
+
+    /**
+     * Set parent check state from files resource.
+     *
+     * @param parent
+     *            the parent resource
+     */
+    private void setParentCheckState(IContainer parent) throws CoreException {
+        IResource[] members = parent.members();
+        boolean all = true;
+        boolean any = false;
+        for (IResource res : members) {
+            // We need to consider only non-hidden resource
+            if (isFilteredResource(res)) {
+                continue;
+            }
+            if (res.getType() == IResource.FILE) {
+                if (mFiles.contains(res)) {
+                    any = true;
+                } else {
+                    all = false;
+                }
+            } else if (res.getType() == IResource.FOLDER) {
+                if (!mFolders.containsKey(res)) {
+                    all = false;
+                } else if (mFolders.get(res)) {
+                    any = true;
+                }
             }
         }
         if (members.length == 0) {
-            mFolders.put(pParent, false);
-        } else if (checked || grayed) {
-            mFolders.put(pParent, grayed && !checked);
+            all = false;
         }
-        return pParent.getParent();
+        setCheckState(mFolders, parent, all, any);
+    }
+
+    private boolean hasVisibleMembers(IResource folder) throws CoreException {
+        boolean hasMembers = false;
+        IResource[] members = ((IContainer) folder).members();
+        for (IResource res : members) {
+            if (!isFilteredResource(res)) {
+                hasMembers = true;
+                break;
+            }
+        }
+        return hasMembers;
+    }
+
+    private void setCheckState(Map<IResource, Boolean> folders, IResource parent, boolean all, boolean any) {
+        if (all || any) {
+            folders.put(parent, any && !all);
+        } else if (folders.containsKey(parent)) {
+            folders.remove(parent);
+        }
+    }
+
+    private void logMissingPaths(Map<String, Boolean> paths, boolean missing) {
+        List<String> resources = new ArrayList<>();
+        for (Entry<String, Boolean> entry : paths.entrySet()) {
+            if (entry.getValue() == missing) {
+                resources.add(entry.getKey());
+            }
+        }
+        if (!resources.isEmpty()) {
+            String template;
+            if (missing) {
+                template = Messages.getString("PackagePropertiesModel.DeserializeAsMissingResource"); //$NON-NLS-1$
+            } else {
+                template = Messages.getString("PackagePropertiesModel.DeserializeAsModifiedResource"); //$NON-NLS-1$
+            }
+            String msg = String.join(SEPARATOR, resources.toArray(new String[0])); //$NON-NLS-1$
+            PluginLogger.warning(String.format(template, msg)); //$NON-NLS-1$ //$NON-NLS-2$
+        }
     }
 
 }
