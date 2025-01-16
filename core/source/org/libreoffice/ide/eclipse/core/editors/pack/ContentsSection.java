@@ -157,24 +157,11 @@ public class ContentsSection extends SectionPart {
 
             @Override
             public boolean select(Viewer viewer, Object parentElement, Object element) {
-                /*
-                 * Files to exclude: .* Folders to exclude: build, bin
-                 */
                 boolean selected = true;
                 if (element instanceof IAdaptable) {
                     IResource res = ((IAdaptable) element).getAdapter(IResource.class);
                     if (res != null) {
-                        // FIXME: If we want to be able to see soft link pointing outside
-                        // FIXME: the Package we need to accept resource not contained in package
-                        if (model.isHidden(res) ||
-                            res.getName().equals("build") || //$NON-NLS-1$
-                            res.getName().equals("bin")) { //$NON-NLS-1$
-                            selected = false;
-                        } else if (model.getBasicLibraries().contains(res) ||
-                                   model.getDialogLibraries().contains(res) ||
-                                   model.getDescriptionFiles().containsValue(res)) {
-                            selected = false;
-                        }
+                        selected = !model.isFilteredResource(res);
                     }
                 }
                 return selected;

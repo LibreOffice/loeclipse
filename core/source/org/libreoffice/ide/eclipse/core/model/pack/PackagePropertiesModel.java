@@ -166,15 +166,26 @@ public class PackagePropertiesModel {
     }
 
     /**
-     * Get whether the resource is hidden or not.
+     * Get whether the resource is filtered or not.
+     *            Files to exclude: .* Folders to exclude: build, bin
      *
      * @param res
      *            the resource to check.
      *
-     * @return <code>true</code> if resource is hidden, <code>false</code> otherwise.
+     * @return <code>true</code> if resource is filtered, <code>false</code> otherwise.
      */
-    public boolean isHidden(IResource res) {
-        return res.getName().startsWith("."); //$NON-NLS-1$
+    public boolean isFilteredResource(IResource res) {
+        boolean filtered = false;
+        if (res.getName().startsWith(".") || //$NON-NLS-1$
+            res.getName().equals("bin") || //$NON-NLS-1$
+            res.getName().equals("build")) { //$NON-NLS-1$
+            filtered = true;
+        } else if (getBasicLibraries().contains(res) ||
+                   getDialogLibraries().contains(res) ||
+                   getDescriptionFiles().containsValue(res)) {
+            filtered = true;
+        }
+        return filtered;
     }
 
     /**
@@ -661,14 +672,13 @@ public class PackagePropertiesModel {
         mFolders.put(folder, false);
         IResource[] members = ((IContainer) folder).members();
         for (IResource res : members) {
+            if (isFilteredResource(res)) {
+                continue;
+            }
             if (res.getType() == IResource.FOLDER) {
-                if (!isHidden(res)) {
-                    addFolderResource(res);
-                }
+                addFolderResource(res);
             } else if (!mFiles.contains(res)) {
-                if (!isHidden(res)) {
-                    mFiles.add(res);
-                }
+                mFiles.add(res);
             }
         }
     }
@@ -752,7 +762,7 @@ public class PackagePropertiesModel {
         // Only empty folder will be saved if checked
         int nbFolders = 0;
         IResource folder = entry.getKey();
-        if (folder.getType() == IResource.FOLDER && folder.exists() && !isHidden(folder)) {
+        if (folder.getType() == IResource.FOLDER && folder.exists() && !isFilteredResource(folder)) {
             if (!entry.getValue() && !hasVisibleMembers(folder)) {
                 results.add(folder.getProjectRelativePath().toString());
                 nbFolders++;
@@ -850,7 +860,7 @@ public class PackagePropertiesModel {
         boolean any = false;
         for (IResource res : members) {
             // We need to consider only non-hidden resource
-            if (isHidden(res)) {
+            if (isFilteredResource(res)) {
                 continue;
             }
             if (res.getType() == IResource.FILE) {
@@ -901,7 +911,7 @@ public class PackagePropertiesModel {
         boolean any = false;
         for (IResource res : members) {
             // We need to consider only non-hidden resource
-            if (isHidden(res)) {
+            if (isFilteredResource(res)) {
                 continue;
             }
             if (res.getType() == IResource.FILE) {
@@ -928,7 +938,7 @@ public class PackagePropertiesModel {
         boolean hasMembers = false;
         IResource[] members = ((IContainer) folder).members();
         for (IResource res : members) {
-            if (!isHidden(res)) {
+            if (!isFilteredResource(res)) {
                 hasMembers = true;
                 break;
             }
