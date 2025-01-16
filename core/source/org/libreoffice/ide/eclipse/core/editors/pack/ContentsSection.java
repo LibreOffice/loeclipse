@@ -53,7 +53,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.libreoffice.ide.eclipse.core.editors.Messages;
 import org.libreoffice.ide.eclipse.core.model.pack.PackagePropertiesModel;
-import org.libreoffice.ide.eclipse.core.model.utils.IModelChangedListener;
+import org.libreoffice.ide.eclipse.core.model.utils.IModelTreeListener;
 
 /**
  * Content section of the Package Contents editor page.
@@ -62,6 +62,10 @@ public class ContentsSection extends SectionPart {
 
     private PackageFormPage mPage;
     private ContainerCheckedTreeViewer mTreeViewer;
+    
+    private ViewerFilter mTreeFilter;
+    private ICheckStateListener mCheckListener;
+    private IModelTreeListener mTreeListener;
 
     /**
      * Constructor.
@@ -74,7 +78,7 @@ public class ContentsSection extends SectionPart {
             ExpandableComposite.TITLE_BAR);
 
         mPage = page;
-        PackagePropertiesModel model = ((PackagePropertiesEditor) mPage.getEditor()).getModel();
+        PackagePropertiesModel model = getModel();
 
         Section section = getSection();
 
@@ -88,10 +92,10 @@ public class ContentsSection extends SectionPart {
         mTreeViewer.setContentProvider(provider);
         mTreeViewer.setComparator(new ViewerComparator(String.CASE_INSENSITIVE_ORDER));
 
-        addChangeListener(model);
+        addTreeListener(model);
         addCheckStateListener(model);
-        setCheckStateProvider(model);
         addFilter(model);
+        setCheckStateProvider(model);
         section.setClient(mTreeViewer.getControl());
     }
 
@@ -102,24 +106,35 @@ public class ContentsSection extends SectionPart {
         }
     }
 
-    private void addChangeListener(PackagePropertiesModel model) {
-        model.addChangeListener(new IModelChangedListener() {
+    @Override
+    public void dispose() {
+        mTreeViewer.removeFilter(mTreeFilter);
+        mTreeViewer.removeCheckStateListener(mCheckListener);
+        getModel().removeTreeListener(mTreeListener);
+        super.dispose();
+    }
+
+    private PackagePropertiesModel getModel() {
+        return ((PackagePropertiesEditor) mPage.getEditor()).getModel();
+    }
+
+    private void addTreeListener(PackagePropertiesModel model) {
+        IModelTreeListener listener = new IModelTreeListener() {
 
             @Override
-            public void modelChanged() {
+            public void modelRefreshed() {
                 if (mTreeViewer != null) {
                     mTreeViewer.refresh();
                 }
             }
 
-            @Override
-            public void modelSaved() {
-            }
-        });
+        };
+        model.addTreeListener(listener);
+        mTreeListener = listener;
     }
 
     private void addCheckStateListener(PackagePropertiesModel model) {
-        mTreeViewer.addCheckStateListener(new ICheckStateListener() {
+        ICheckStateListener listener = new ICheckStateListener() {
 
             @Override
             public void checkStateChanged(CheckStateChangedEvent event) {
@@ -132,7 +147,41 @@ public class ContentsSection extends SectionPart {
                     }
                 }
             }
-        });
+        };
+        mTreeViewer.addCheckStateListener(listener);
+        mCheckListener = listener;
+    }
+
+    private void addFilter(PackagePropertiesModel model) {
+        ViewerFilter filter = new ViewerFilter() {
+
+            @Override
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                /*
+                 * Files to exclude: .* Folders to exclude: build, bin
+                 */
+                boolean selected = true;
+                if (element instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) element).getAdapter(IResource.class);
+                    if (res != null) {
+                        // FIXME: If we want to be able to see soft link pointing outside
+                        // FIXME: the Package we need to accept resource not contained in package
+                        if (model.isHidden(res) ||
+                            res.getName().equals("build") || //$NON-NLS-1$
+                            res.getName().equals("bin")) { //$NON-NLS-1$
+                            selected = false;
+                        } else if (model.getBasicLibraries().contains(res) ||
+                                   model.getDialogLibraries().contains(res) ||
+                                   model.getDescriptionFiles().containsValue(res)) {
+                            selected = false;
+                        }
+                    }
+                }
+                return selected;
+            }
+        };
+        mTreeViewer.addFilter(filter);
+        mTreeFilter = filter;
     }
 
     private void setCheckStateProvider(PackagePropertiesModel model) {
@@ -156,36 +205,6 @@ public class ContentsSection extends SectionPart {
                     grayed = model.isGrayed(res);
                 }
                 return grayed;
-            }
-        });
-    }
-
-    private void addFilter(PackagePropertiesModel model) {
-        mTreeViewer.addFilter(new ViewerFilter() {
-
-            @Override
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
-                /*
-                 * Files to exclude: .* Folders to exclude: build, bin
-                 */
-                boolean selected = true;
-                if (element instanceof IAdaptable) {
-                    IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
-                    if (resource != null) {
-                        // FIXME: If we want to be able to see soft link pointing outside
-                        // FIXME: the Package we need to accept resource not contained in package
-                        if (resource.getName().startsWith(".") || //$NON-NLS-1$
-                            resource.getName().equals("build") || //$NON-NLS-1$
-                            resource.getName().equals("bin")) { //$NON-NLS-1$
-                            selected = false;
-                        } else if (model.getBasicLibraries().contains(resource) ||
-                                   model.getDialogLibraries().contains(resource) ||
-                                   model.getDescriptionFiles().containsValue(resource)) {
-                            selected = false;
-                        }
-                    }
-                }
-                return selected;
             }
         });
     }

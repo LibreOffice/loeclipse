@@ -40,17 +40,12 @@ package org.libreoffice.ide.eclipse.core.model.utils;
  * Generic interface to listen to models.
  *
  */
-public interface IModelChangedListener {
+public interface IModelTreeListener {
 
     /**
-     * Method called each time the listened model has changed.
+     * Method called each time the listened model has been refreshed.
      *
      */
-    public void modelChanged();
+    public void modelRefreshed();
 
-    /**
-     * Method called each time the listened model is saved.
-     *
-     */
-    public void modelSaved();
 }

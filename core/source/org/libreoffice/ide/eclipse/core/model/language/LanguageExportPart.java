@@ -32,7 +32,6 @@ package org.libreoffice.ide.eclipse.core.model.language;
 
 import org.eclipse.swt.widgets.Composite;
 import org.libreoffice.ide.eclipse.core.wizards.pages.ManifestExportPage;
-import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Abstract class for the language specific controls part in the OXT export wizard.
@@ -44,10 +43,10 @@ public abstract class LanguageExportPart {
     /**
      * Create the controls in the part.
      *
-     * @param pParent
+     * @param parent
      *            the parent composite where to create the controls
      */
-    public abstract void createControls(Composite pParent);
+    public abstract void createControls(Composite parent);
 
     /**
      * Cleans the controls.
@@ -59,10 +58,8 @@ public abstract class LanguageExportPart {
      *
      * <strong>Note that the controls might be disposed when this methods is called.</strong>
      *
-     * @param model
-     *            the model of the exported package
      */
-    public abstract void doFinish(UnoPackage model);
+    public abstract void doFinish();
 
     /**
      * @param page

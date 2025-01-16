@@ -103,11 +103,16 @@ public class PackageFormPage extends FormPage {
 
 
         // Get the Libs and Descriptions properties from the document
-        PackagePropertiesModel model = ((PackagePropertiesEditor) getEditor()).getModel();
+        PackagePropertiesModel model = getModel();
         model.setQuiet(true);
         mContents.setContents();
         mLibs.setLibraries(model);
         mDescriptions.setDescriptions(model.getDescriptionFiles());
         model.setQuiet(false);
     }
+
+    private PackagePropertiesModel getModel() {
+        return ((PackagePropertiesEditor) getEditor()).getModel();
+    }
+
 }

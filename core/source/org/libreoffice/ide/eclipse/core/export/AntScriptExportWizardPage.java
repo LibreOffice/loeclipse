@@ -87,11 +87,9 @@ public class AntScriptExportWizardPage extends WizardPage {
     /**
      * Create the build scripts for the package model.
      *
-     * @param model
-     *            the model to be used to build script
      */
-    public void createBuildScripts(UnoPackage model) {
-        mLangPart.doFinish(model);
+    public void createBuildScripts() {
+        mLangPart.doFinish();
         mCheckAntSectionDisplay = false;
         ProjectExportPart.setCheckAntSectionDisplay(mCheckAntSectionDisplay);
     }
@@ -104,11 +102,11 @@ public class AntScriptExportWizardPage extends WizardPage {
     }
 
     /**
-     * @param pProject
+     * @param project
      *            the UNO project selected for the wizard.
      */
-    public void setProject(IUnoidlProject pProject) {
-        mSelectedProject = pProject;
+    public void setProject(IUnoidlProject project) {
+        mSelectedProject = project;
         reloadLanguagePart();
     }
 
@@ -116,9 +114,9 @@ public class AntScriptExportWizardPage extends WizardPage {
      * {@inheritDoc}
      */
     @Override
-    public void createControl(Composite pParent) {
+    public void createControl(Composite parent) {
 
-        Composite body = new Composite(pParent, SWT.NONE);
+        Composite body = new Composite(parent, SWT.NONE);
         body.setLayout(new GridLayout());
         body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         setControl(body);
@@ -226,16 +224,16 @@ public class AntScriptExportWizardPage extends WizardPage {
     }
 
     /**
-     * @param pTempPath
+     * @param tempPath
      *            the t.
      * @return the package model built from the data provided by the user or <code>null</code> if something blocked the
      *         process.
      */
-    public UnoPackage getPackageModel(String pTempPath) {
+    public UnoPackage getPackageModel(String tempPath) {
         UnoPackage pack = null;
 
         try {
-            File destFile = new File(pTempPath);
+            File destFile = new File(tempPath);
             pack = PackageContentSelector.createPackage(mSelectedProject, destFile, new ArrayList<Object>());
         } catch (Exception e) {
             PluginLogger.error(Messages.getString("AntScriptExportWizard.LibraryCreationError"), e); //$NON-NLS-1$

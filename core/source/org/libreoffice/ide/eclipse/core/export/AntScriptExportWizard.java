@@ -44,7 +44,6 @@ import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.Messages;
-import org.libreoffice.plugin.core.model.UnoPackage;
 
 /**
  * Class for the new Ant Script Generation wizard.
@@ -75,10 +74,10 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
      * {@inheritDoc}
      */
     @Override
-    public void init(IWorkbench pWorkbench, IStructuredSelection pSelection) {
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
         // Try hard to find a selected UNO project
         IUnoidlProject prj = null;
-        Iterator<?> it = pSelection.iterator();
+        Iterator<?> it = selection.iterator();
         while (it.hasNext() && prj == null) {
             Object o = it.next();
             if (o instanceof IAdaptable) {
@@ -103,24 +102,20 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
     public boolean performFinish() {
         boolean finished = false;
         String directory = mAntScriptPage.getPath();
-        String tempPath = directory + "/temporary/temp.oxt";
-        UnoPackage model = mAntScriptPage.getPackageModel(tempPath);
-        if (model != null) {
-            try {
-                mAntScriptPage.createBuildScripts(model);
+        try {
+            mAntScriptPage.createBuildScripts();
 
-                mAntScriptPage.refreshProject();
+            mAntScriptPage.refreshProject();
 
-                if (mHasNewDialogSettings) {
-                    IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
-                    IDialogSettings section = workbenchSettings.getSection(ANT_EXPORT_SETTINGS_KEY);
-                    section = workbenchSettings.addNewSection(ANT_EXPORT_SETTINGS_KEY);
-                    setDialogSettings(section);
-                }
-
-            } catch (Exception e) {
-                PluginLogger.error("The Ant Script couldn't be built", e);
+            if (mHasNewDialogSettings) {
+                IDialogSettings workbenchSettings = OOEclipsePlugin.getDefault().getDialogSettings();
+                IDialogSettings section = workbenchSettings.getSection(ANT_EXPORT_SETTINGS_KEY);
+                section = workbenchSettings.addNewSection(ANT_EXPORT_SETTINGS_KEY);
+                setDialogSettings(section);
             }
+
+        } catch (Exception e) {
+            PluginLogger.error("The Ant Script couldn't be built", e);
         }
 
         File antFile = new File(directory + "/build.xml");
