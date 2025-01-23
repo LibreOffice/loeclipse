@@ -39,7 +39,6 @@ package org.libreoffice.ide.eclipse.core.builders;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -52,8 +51,10 @@ public class IdlwBuildVisitor implements IFileVisitor {
     /**
      * Progress monitor used during all the visits.
      */
+    private static String sExtension = ".idl";
     private IProgressMonitor mProgressMonitor;
     private IUnoidlProject mProject;
+    private String mPath;
 
     /**
      * Default constructor.
@@ -67,6 +68,8 @@ public class IdlwBuildVisitor implements IFileVisitor {
         super();
         mProgressMonitor = monitor;
         mProject = project;
+        mPath = project.getProjectPath().append(UnoidlProjectHelper.IDL_BASIS).toOSString();
+
     }
 
     /**
@@ -76,26 +79,17 @@ public class IdlwBuildVisitor implements IFileVisitor {
     public boolean visit(File res) {
 
         boolean visitChildren = false;
+        boolean isChild = res.getAbsolutePath().startsWith(mPath);
 
-        if (res.isFile()) {
-
-            // Try to compile the file if it is an idl file
-            if (res.getName().endsWith("idl")) { //$NON-NLS-1$
-
-                IdlwBuilder.runIdlwOnFile(res, mProject, mProgressMonitor);
-                if (mProgressMonitor != null) {
-                    mProgressMonitor.worked(1);
-                }
+        // Try to compile the file if it is an idl file
+        if (isChild && res.isFile() && res.getName().endsWith(sExtension)) { //$NON-NLS-1$
+            IdlwBuilder.runIdlwOnFile(res, mProject, mProgressMonitor);
+            if (mProgressMonitor != null) {
+                mProgressMonitor.worked(1);
             }
 
-        } else if (res.isDirectory()) {
-            String idlBasis = UnoidlProjectHelper.IDL_BASIS;
-            if (Platform.getOS().equals(Platform.OS_WIN32)) {
-                idlBasis = idlBasis.replace("/", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            if (res.getAbsolutePath().contains(idlBasis)) {
-                visitChildren = true;
-            }
+        } else if (isChild && res.isDirectory()) {
+            visitChildren = true;
 
         } else {
             PluginLogger.debug("Non handled resource"); //$NON-NLS-1$
