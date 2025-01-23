@@ -53,47 +53,47 @@ public class RegmergeBuildVisitor implements IFileVisitor {
      * Progress monitor used during all the visits.
      */
     private IProgressMonitor mProgressMonitor;
-    private IUnoidlProject mUnoprj;
+    private IUnoidlProject mProject;
 
     /**
      * Default constructor.
      *
-     * @param unoProject
+     * @param project
      *            the UNO project to visit
      * @param monitor
      *            progress monitor for the regmerge
      */
-    public RegmergeBuildVisitor(IUnoidlProject unoProject, IProgressMonitor monitor) {
+    public RegmergeBuildVisitor(IUnoidlProject project, IProgressMonitor monitor) {
         super();
         mProgressMonitor = monitor;
-        mUnoprj = unoProject;
+        mProject = project;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean visit(File pResource) {
+    public boolean visit(File res) {
 
         boolean visitChildren = false;
 
-        if (pResource.isFile()) {
+        if (res.isFile()) {
 
-            // Try to compile the file if it is an idl file
-            if (pResource.getName().endsWith("urd")) { //$NON-NLS-1$
+            // Try to compile the file if it is an urd file
+            if (res.getName().endsWith("urd")) { //$NON-NLS-1$
 
-                RegmergeBuilder.runRegmergeOnFile(pResource, mUnoprj, mProgressMonitor);
+                RegmergeBuilder.runRegmergeOnFile(res, mProject, mProgressMonitor);
                 if (mProgressMonitor != null) {
                     mProgressMonitor.worked(1);
                 }
             }
 
-        } else if (pResource.isDirectory()) {
+        } else if (res.isDirectory()) {
             String urdBasis = UnoidlProjectHelper.URD_BASIS;
             if (Platform.getOS().equals(Platform.OS_WIN32)) {
                 urdBasis = urdBasis.replace("/", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            if (pResource.getAbsolutePath().contains(urdBasis)) {
+            if (res.getAbsolutePath().contains(urdBasis)) {
                 visitChildren = true;
             }
 

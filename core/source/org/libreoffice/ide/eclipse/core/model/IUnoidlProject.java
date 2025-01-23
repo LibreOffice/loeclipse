@@ -36,6 +36,8 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.model;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
@@ -347,6 +349,14 @@ public interface IUnoidlProject {
      * Saves the UNO project configuration in a hidden file.
      */
     public void saveAllProperties();
+
+    /**
+     * Saves the Ant build.properties configuration file.
+     *
+     * @param buildFile
+     *            the build.properties file
+     */
+    public void saveBuildProperties(File buildFile);
 
     /**
      * @return the language dependent binaries folders.

@@ -80,13 +80,15 @@ public class TypesBuilder extends IncrementalProjectBuilder {
      */
     public static final String BUILDER_ID = OOEclipsePlugin.OOECLIPSE_PLUGIN_ID + ".types"; //$NON-NLS-1$
 
-    public static final int IDLC_STATE = 1;
+    public static final int IDLW_STATE = 1;
 
-    public static final int REGMERGE_STATE = 2;
+    public static final int IDLC_STATE = 2;
 
-    public static final int GENERATE_TYPES_STATE = 3;
+    public static final int REGMERGE_STATE = 3;
 
-    public static final int COMPLETED_STATE = 4;
+    public static final int GENERATE_TYPES_STATE = 4;
+
+    public static final int COMPLETED_STATE = 5;
 
     public static final int NOT_STARTED_STATE = -1;
 
@@ -181,12 +183,17 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
 
         // Clears the registries before beginning
-        sBuildState = IDLC_STATE;
         removeAllRegistries(prj);
-        buildIdl(unoprj, monitor);
 
-        sBuildState = REGMERGE_STATE;
-        RegmergeBuilder.build(unoprj, monitor);
+        if (unoprj.getSdk().useIdlWrite()) {
+            sBuildState = IDLW_STATE;
+            IdlwBuilder.build(unoprj, monitor);
+        } else {
+            sBuildState = IDLC_STATE;
+            buildIdl(unoprj, monitor);
+            sBuildState = REGMERGE_STATE;
+            RegmergeBuilder.build(unoprj, monitor);
+        }
 
         sBuildState = GENERATE_TYPES_STATE;
         File types = prj.getLocation().append(unoprj.getTypesPath()).toFile();
@@ -290,7 +297,7 @@ public class TypesBuilder extends IncrementalProjectBuilder {
                 " -I \"" + project.getIdlPath().toOSString() + "\"" + //$NON-NLS-1$ //$NON-NLS-2$
                 " " + file.getProjectRelativePath().toOSString(); //$NON-NLS-1$
 
-            Process process = project.getSdk().runTool(project, command, monitor);
+            Process process = sdk.runTool(project, command, monitor);
 
             IdlcErrorReader errorReader = new IdlcErrorReader(process.getErrorStream(), file);
             errorReader.readErrors();

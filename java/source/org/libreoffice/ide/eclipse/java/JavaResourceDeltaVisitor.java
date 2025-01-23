@@ -130,14 +130,14 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     /**
      * Check whether a resource is a UNO implementation.
      *
-     * @param pResource the resource to check.
+     * @param res the resource to check.
      * @return <code>true</code> if it contains the necessary static methods for Java
      *      UNO service implementation registration.
      */
-    private String isJavaServiceImpl(IResource pResource) {
+    private String isJavaServiceImpl(IResource res) {
 
         String className = null;
-        if (pResource.getType() == IResource.FILE && pResource.getName().endsWith(".java")) { //$NON-NLS-1$
+        if (res.getType() == IResource.FILE && res.getName().endsWith(".java")) { //$NON-NLS-1$
             /*
              * For sure the resource is a Java class file.
              * Now the file has to be read to find out if it contains the two
@@ -149,7 +149,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
             FileInputStream in = null;
             BufferedReader reader = null;
             try {
-                File file = pResource.getLocation().toFile();
+                File file = res.getLocation().toFile();
                 in = new FileInputStream(file);
                 reader = new BufferedReader(new InputStreamReader(in));
 
@@ -170,7 +170,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
                 // Do not consider the RegistrationHandler class as a service implementation
                 if (containsGetFactory && containsWriteService &&
-                    !pResource.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
+                    !res.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
                     /*
                      * Computes the class name
                      */
@@ -178,7 +178,7 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
                     if (m3.matches()) {
                         String packageName = m3.group(1);
 
-                        String fileName = pResource.getName();
+                        String fileName = res.getName();
                         className = fileName.substring(0, fileName.length() - ".java".length()); //$NON-NLS-1$
 
                         className = packageName + "." + className; //$NON-NLS-1$

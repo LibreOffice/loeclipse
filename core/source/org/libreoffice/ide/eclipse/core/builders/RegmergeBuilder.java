@@ -125,9 +125,9 @@ public class RegmergeBuilder {
             }
             sPathValue += sPath;
         }
+        
 
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
-        Process process = unoProject.getSdk().runToolWithEnv(prj, unoProject.getOOo(), command,
+        Process process = unoProject.getSdk().runToolWithEnv(unoProject, command,
             new String[] { sPathValue }, monitor);
 
         // Just wait for the process to end before destroying it

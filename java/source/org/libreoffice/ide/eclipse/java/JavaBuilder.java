@@ -176,8 +176,10 @@ public class JavaBuilder implements ILanguageBuilder {
 
         StringBuffer errBuf = new StringBuffer();
         try {
-            String cmdPattern = "javamaker -T {0}.* -nD -Gc -O \"{1}\" \"{2}\" {3}"; //$NON-NLS-1$
-            String command = MessageFormat.format(cmdPattern, firstModule,
+            String cmdPattern = "{0} -T {1}.* -nD -Gc -O \"{2}\" \"{3}\" {4}"; //$NON-NLS-1$
+            String command = MessageFormat.format(cmdPattern,
+                sdk.getCommand("javamaker"),
+                firstModule,
                 buildFolder.getAbsolutePath(),
                 typesFile.getAbsolutePath(),
                 typesArgs);

@@ -36,7 +36,6 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.model.config;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -85,6 +84,21 @@ public interface ISdk {
     public String getName();
 
     /**
+     * Returns the SDK command adapted to the OS.
+     *
+     * @param command
+     *            the Linux SDK tool command
+     *
+     * @return the SDK command adapted to the OS
+     */
+    public String getCommand(String command);
+
+    /**
+     * @return if the SDK have the unoidl-write replacement tool for idlc and regmerge.
+     */
+    public boolean useIdlWrite();
+
+    /**
      * @return the path to the directory containing the binaries in the SDK.
      */
     public IPath getBinPath();
@@ -120,8 +134,6 @@ public interface ISdk {
      *
      * @param project
      *            the folder from which to run the command
-     * @param instance
-     *            the ooo instance to run the tool
      * @param shellCommand
      *            the shell command to execute the tool
      * @param env
@@ -131,7 +143,7 @@ public interface ISdk {
      *
      * @return the process executing the tool
      */
-    public Process runToolWithEnv(IProject project, IOOo instance, String shellCommand, String[] env,
+    public Process runToolWithEnv(IUnoidlProject project, String shellCommand, String[] env,
         IProgressMonitor monitor);
 
 }

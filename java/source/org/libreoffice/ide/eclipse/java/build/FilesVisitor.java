@@ -58,17 +58,17 @@ public class FilesVisitor implements IResourceVisitor {
      * {@inheritDoc}
      */
     @Override
-    public boolean visit(IResource pResource) throws CoreException {
+    public boolean visit(IResource res) throws CoreException {
 
-        if (pResource.getType() == IResource.FILE) {
-            mFiles.add((IFile) pResource);
+        if (res.getType() == IResource.FILE) {
+            mFiles.add((IFile) res);
         }
 
         boolean visitChildren = true;
 
         int i = 0;
         while (visitChildren && i < mExceptions.size()) {
-            visitChildren = !mExceptions.get(i).equals(pResource);
+            visitChildren = !mExceptions.get(i).equals(res);
             i++;
         }
 
