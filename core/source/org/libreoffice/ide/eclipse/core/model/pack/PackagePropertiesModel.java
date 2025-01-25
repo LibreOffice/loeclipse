@@ -858,11 +858,13 @@ public class PackagePropertiesModel {
         IResource[] members = parent.members();
         boolean all = true;
         boolean any = false;
+        int count = 0;
         for (IResource res : members) {
             // We need to consider only non-hidden resource
             if (isFilteredResource(res)) {
                 continue;
             }
+            count++;
             if (res.getType() == IResource.FILE) {
                 if (mFiles.contains(res)) {
                     any = true;
@@ -879,7 +881,7 @@ public class PackagePropertiesModel {
             }
         }
         if (isCheckStateSetable(folders, parent)) {
-            if (members.length == 0) {
+            if (count == 0) {
                 all = false;
             }
             setCheckState(folders, parent, all, any);
@@ -909,11 +911,13 @@ public class PackagePropertiesModel {
         IResource[] members = parent.members();
         boolean all = true;
         boolean any = false;
+        int count = 0;
         for (IResource res : members) {
             // We need to consider only non-hidden resource
             if (isFilteredResource(res)) {
                 continue;
             }
+            count++;
             if (res.getType() == IResource.FILE) {
                 if (mFiles.contains(res)) {
                     any = true;
@@ -928,7 +932,7 @@ public class PackagePropertiesModel {
                 }
             }
         }
-        if (members.length == 0) {
+        if (count == 0) {
             all = false;
         }
         setCheckState(mFolders, parent, all, any);
@@ -946,11 +950,11 @@ public class PackagePropertiesModel {
         return hasMembers;
     }
 
-    private void setCheckState(Map<IResource, Boolean> folders, IResource parent, boolean all, boolean any) {
+    private void setCheckState(Map<IResource, Boolean> folders, IResource res, boolean all, boolean any) {
         if (all || any) {
-            folders.put(parent, any && !all);
-        } else if (folders.containsKey(parent)) {
-            folders.remove(parent);
+            folders.put(res, any && !all);
+        } else if (folders.containsKey(res)) {
+            folders.remove(res);
         }
     }
 

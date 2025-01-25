@@ -103,6 +103,10 @@ public class ContentsSection extends SectionPart {
         // Initialize TreeView
         if (mTreeViewer != null) {
             mTreeViewer.setInput(mPage.getProject());
+            // In order to bypass lazy loading and ensure the correct display of the tree,
+            // it is necessary to force the loading of the entire tree checkboxes state.
+            mTreeViewer.expandAll();
+            mTreeViewer.collapseAll();
         }
     }
 
