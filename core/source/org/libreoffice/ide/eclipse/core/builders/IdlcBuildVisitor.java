@@ -36,64 +36,65 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.builders;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 
 /**
  * Class visiting each child of the idl folder to generate the corresponding <code>urd</code> file.
  */
 public class IdlcBuildVisitor implements IResourceVisitor {
 
+    private static String sExtension = "idl";
     private IProgressMonitor mProgressMonitor;
+    private IUnoidlProject mProject;
+    private String mPath;
 
     /**
      * Default constructor.
      *
+     * @param project
+     *            the project UNO to visit
      * @param monitor
      *            progress monitor
      */
-    public IdlcBuildVisitor(IProgressMonitor monitor) {
+    public IdlcBuildVisitor(IUnoidlProject project, IProgressMonitor monitor) {
+        super();
         mProgressMonitor = monitor;
+        mProject = project;
+        mPath = mProject.getIdlPath().toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean visit(IResource pResource) throws CoreException {
+    public boolean visit(IResource res) {
 
         boolean visitChildren = false;
-        if (TypesBuilder.sBuildState == 1) {
-            if (IResource.FILE == pResource.getType() &&
-                "idl".equalsIgnoreCase(pResource.getFileExtension())) { //$NON-NLS-1$
+        boolean isChild = res.getProjectRelativePath().toString().startsWith(mPath); //$NON-NLS-1$
 
-                TypesBuilder.runIdlcOnFile((IFile) pResource, mProgressMonitor);
-                if (mProgressMonitor != null) {
-                    mProgressMonitor.worked(1);
-                }
-
-            } else if (pResource instanceof IContainer) {
-
-                IUnoidlProject project = ProjectsManager.getProject(pResource.getProject().getName());
-                IPath resPath = pResource.getProjectRelativePath();
-                IPath idlPath = project.getIdlPath();
-
-                if (resPath.segmentCount() < idlPath.segmentCount()
-                    || resPath.toString().startsWith(idlPath.toString())) {
-                    visitChildren = true;
-                }
+        // Try to compile the file if it is an idl file
+        if (isChild && res.getType() == IResource.FILE &&
+            sExtension.equalsIgnoreCase(res.getFileExtension())) { //$NON-NLS-1$
+            TypesBuilder.runIdlcOnFile((IFile) res, mProject, mProgressMonitor);
+            if (mProgressMonitor != null) {
+                mProgressMonitor.worked(1);
             }
 
-            // cleaning
-            mProgressMonitor = null;
+        } else if (isChild && res.getType() == IResource.FOLDER) {
+            visitChildren = true;
+
+        } else {
+            PluginLogger.debug("Non handled resource"); //$NON-NLS-1$
         }
+
+        // cleaning
+        mProgressMonitor = null;
+
         return visitChildren;
     }
 }

@@ -41,14 +41,14 @@ public class FilesFinder implements IResourceVisitor {
      * {@inheritDoc}
      */
     @Override
-    public boolean visit(IResource pResource) throws CoreException {
+    public boolean visit(IResource res) throws CoreException {
 
         boolean result = false;
-        IPath resourcePath = pResource.getFullPath();
+        IPath resourcePath = res.getFullPath();
         if (!this.mExcludedPaths.contains(resourcePath)) {
-            if (pResource.getType() == IResource.FILE) {
+            if (res.getType() == IResource.FILE) {
                 boolean matches = false;
-                String name = pResource.getName();
+                String name = res.getName();
 
                 int i = 0;
                 while (i < mExtensions.length && !matches) {
@@ -57,7 +57,7 @@ public class FilesFinder implements IResourceVisitor {
                 }
 
                 if (matches) {
-                    mFiles.add((IFile) pResource);
+                    mFiles.add((IFile) res);
                 }
             }
             result = true;

@@ -43,8 +43,6 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -336,10 +334,8 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
 
         String[] env = prj.getLanguage().getLanguageBuilder().getBuildEnv(prj);
 
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(prj.getName());
-
         if (getJavaldxPath() != null) {
-            Process p = prj.getSdk().runToolWithEnv(project, prj.getOOo(), getJavaldxPath(), env, monitor);
+            Process p = prj.getSdk().runToolWithEnv(prj, getJavaldxPath(), env, monitor);
             InputStream out = p.getInputStream();
             StringWriter writer = new StringWriter();
 
@@ -357,7 +353,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
                 System.getProperty("path.separator")); //$NON-NLS-1$
         }
 
-        Process p = prj.getSdk().runToolWithEnv(project, prj.getOOo(), command, env, monitor);
+        Process p = prj.getSdk().runToolWithEnv(prj, command, env, monitor);
         DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.UreProcessName") + main); //$NON-NLS-1$
     }
 
@@ -368,7 +364,6 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     public void runOffice(IUnoidlProject prj, ILaunch launch, IPath userInstallation,
         IExtraOptionsProvider extraOptionsProvider, IProgressMonitor monitor) {
         try {
-            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(prj.getName());
             String[] env = prj.getLanguage().getLanguageBuilder().getBuildEnv(prj);
 
             String pathSeparator = System.getProperty("path.separator");
@@ -387,7 +382,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
             env = extraOptionsProvider.addEnv(env);
 
             PluginLogger.debug("Launching LibreOffice from commandline: " + command);
-            Process p = prj.getSdk().runToolWithEnv(project, prj.getOOo(), command, env, monitor);
+            Process p = prj.getSdk().runToolWithEnv(prj, command, env, monitor);
             DebugPlugin.newProcess(launch, p, Messages.getString("AbstractOOo.LibreOfficeProcessName")); //$NON-NLS-1$
         } catch (Exception e) {
             e.printStackTrace();
@@ -399,7 +394,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
      * Adds the proper env variables for the user profile.
      *
      * @param userInstallation
-     *            the path to the user profile foldr.
+     *            the path to the user profile folder.
      * @param env
      *            the original env.
      * @return the new env.

@@ -172,10 +172,10 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
     /**
      * Method opening a file in an UNO-IDL editor.
      *
-     * @param pResource
+     * @param res
      *            the file to open
      */
-    protected void openResource(final IFile pResource) {
+    protected void openResource(final IFile res) {
 
         if (mActivePage != null) {
             final Display display = getShell().getDisplay();
@@ -184,7 +184,7 @@ public class NewInterfaceWizard extends BasicNewResourceWizard implements INewWi
                     @Override
                     public void run() {
                         try {
-                            IDE.openEditor(mActivePage, pResource, true);
+                            IDE.openEditor(mActivePage, res, true);
                         } catch (PartInitException e) {
                             PluginLogger.debug(e.getMessage());
                         }

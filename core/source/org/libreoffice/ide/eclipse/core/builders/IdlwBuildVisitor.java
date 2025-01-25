@@ -40,17 +40,18 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 
 /**
- * Class visiting each child of the urd folder to merge it with the common <code>types.rdb</code> registry.
+ * Class visiting each child of the idl folder to merge it with the common <code>types.rdb</code> registry.
  */
-public class RegmergeBuildVisitor implements IFileVisitor {
+public class IdlwBuildVisitor implements IFileVisitor {
 
     /**
      * Progress monitor used during all the visits.
      */
-    private static String sExtension = ".urd";
+    private static String sExtension = ".idl";
     private IProgressMonitor mProgressMonitor;
     private IUnoidlProject mProject;
     private String mPath;
@@ -59,15 +60,16 @@ public class RegmergeBuildVisitor implements IFileVisitor {
      * Default constructor.
      *
      * @param project
-     *            the UNO project to visit
+     *            the project UNO to visit
      * @param monitor
      *            progress monitor for the regmerge
      */
-    public RegmergeBuildVisitor(IUnoidlProject project, IProgressMonitor monitor) {
+    public IdlwBuildVisitor(IUnoidlProject project, IProgressMonitor monitor) {
         super();
         mProgressMonitor = monitor;
         mProject = project;
-        mPath = project.getProjectPath().append(mProject.getUrdPath().toString()).toOSString(); //$NON-NLS-1$
+        mPath = project.getProjectPath().append(UnoidlProjectHelper.IDL_BASIS).toOSString();
+
     }
 
     /**
@@ -77,11 +79,11 @@ public class RegmergeBuildVisitor implements IFileVisitor {
     public boolean visit(File res) {
 
         boolean visitChildren = false;
-        boolean isChild = res.getAbsolutePath().startsWith(mPath); //$NON-NLS-1$
+        boolean isChild = res.getAbsolutePath().startsWith(mPath);
 
-        // Try to compile the file if it is an urd file
+        // Try to compile the file if it is an idl file
         if (isChild && res.isFile() && res.getName().endsWith(sExtension)) { //$NON-NLS-1$
-            RegmergeBuilder.runRegmergeOnFile(res, mProject, mProgressMonitor);
+            IdlwBuilder.runIdlwOnFile(res, mProject, mProgressMonitor);
             if (mProgressMonitor != null) {
                 mProgressMonitor.worked(1);
             }

@@ -195,7 +195,7 @@ public final class UnoFactory {
             String implementationName = langProjectHandler.getImplementationName(prj, service);
 
             // Run the uno-skeletonmaker command
-            String command = "uno-skeletonmaker" + //$NON-NLS-1$
+            String command = prj.getSdk().getCommand("uno-skeletonmaker") + //$NON-NLS-1$
                 " component " + languageOption + //$NON-NLS-1$
                 " --propertysetmixin" + //$NON-NLS-1$
                 " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$

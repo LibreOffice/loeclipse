@@ -39,6 +39,7 @@ package org.libreoffice.ide.eclipse.core.internal.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Properties;
@@ -116,6 +117,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * Property name for the build directory.
      */
     public static final String BUILD_DIR = "project.build"; //$NON-NLS-1$
+
+    /**
+     * Property name for the build file.
+     */
+    public static final String BUILD_FILE = "build.properties"; //$NON-NLS-1$
 
     /**
      * The name of the file containing the UNO project configuration.
@@ -221,14 +227,14 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * Return the path of the file in the idl folder. If the given file doesn't belong to the idl folder,
      * <code>null</code> is returned.
      *
-     * @param pResource
+     * @param res
      *            resource of which the idl path is asked
      * @return idl relative path or <code>null</code>
      */
-    public IPath getIdlRelativePath(IResource pResource) {
+    public IPath getIdlRelativePath(IResource res) {
         IPath result = null;
 
-        IPath projectRelative = pResource.getProjectRelativePath();
+        IPath projectRelative = res.getProjectRelativePath();
 
         if (projectRelative.toString().startsWith(getIdlPath().toString())) {
             result = projectRelative.removeFirstSegments(getIdlPath().segmentCount());
@@ -665,45 +671,34 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             return;
         }
 
-        Properties properties = new Properties();
-        File configFile = getConfigFile();
+        saveUnoProject();
 
-        // Create a default configuration file if needed
-        if (!configFile.exists()) {
-            UnoidlProjectHelper.createDefaultConfig(configFile);
+        // Save the build.properties file if exist
+        File buildFile = new File(getProjectPath().toOSString(), BUILD_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+        if (buildFile.exists()) {
+            saveBuildProperties(buildFile);
         }
 
-        FileInputStream in = null;
-        FileOutputStream out = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveBuildProperties(File buildFile) {
+        // Save the build.properties file
+        FileWriter writer = null;
+
         try {
-            in = new FileInputStream(configFile);
-            properties.load(in);
+            writer = new FileWriter(buildFile);
+            Properties props = new Properties();
+            props.put("office.install.dir", getOOo().getHome()); //$NON-NLS-1$ //$NON-NLS-2$
+            props.put("sdk.dir", getSdk().getHome()); //$NON-NLS-1$ //$NON-NLS-2$
+            props.store(writer, Messages.getString("UnoidlProject.BuildFileComment")); //$NON-NLS-1$
+            writer.close();
 
-            properties.setProperty(LANGUAGE, mLanguage.getName());
-            properties.setProperty(OOO_NAME, mOOo.getName());
-            properties.setProperty(SDK_NAME, mSdk.getName());
-            properties.setProperty(IDL_DIR, mIdlDir);
-            properties.setProperty(SRC_DIRECTORY, mSourcesDir);
-            properties.setProperty(COMPANY_PREFIX, mCompanyPrefix);
-            properties.setProperty(OUTPUT_EXT, mOutputExtension);
-
-            out = new FileOutputStream(configFile);
-            properties.store(out, Messages.getString("UnoidlProject.ConfigFileComment")); //$NON-NLS-1$
-
-            // Refresh the configuration file
-            getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
-
-        } catch (Exception e) {
-            PluginLogger.warning(Messages.getString("UnoidlProject.ConfigFileSaveError"), e); //$NON-NLS-1$
-        } finally {
-            try {
-                in.close();
-            } catch (Exception e) {
-            }
-            try {
-                out.close();
-            } catch (Exception e) {
-            }
+        } catch (IOException e) {
+            PluginLogger.warning(Messages.getString("UnoidlProject.BuildFileError"), e); //$NON-NLS-1$
         }
     }
 
@@ -826,6 +821,53 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     @Override
     public String toString() {
         return "UNO Project " + getName(); //$NON-NLS-1$
+    }
+
+    /**
+     * Save the .unoproject file.
+     *
+     */
+    private void saveUnoProject() {
+        Properties properties = new Properties();
+        File configFile = getConfigFile();
+
+        // Create a default configuration file if needed
+        if (!configFile.exists()) {
+            UnoidlProjectHelper.createDefaultConfig(configFile);
+        }
+
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+            in = new FileInputStream(configFile);
+            properties.load(in);
+
+            properties.setProperty(LANGUAGE, mLanguage.getName());
+            properties.setProperty(OOO_NAME, mOOo.getName());
+            properties.setProperty(SDK_NAME, mSdk.getName());
+            properties.setProperty(IDL_DIR, mIdlDir);
+            properties.setProperty(SRC_DIRECTORY, mSourcesDir);
+            properties.setProperty(COMPANY_PREFIX, mCompanyPrefix);
+            properties.setProperty(OUTPUT_EXT, mOutputExtension);
+
+            out = new FileOutputStream(configFile);
+            properties.store(out, Messages.getString("UnoidlProject.ConfigFileComment")); //$NON-NLS-1$
+
+            // Refresh the configuration file
+            getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
+
+        } catch (Exception e) {
+            PluginLogger.warning(Messages.getString("UnoidlProject.ConfigFileError"), e); //$NON-NLS-1$
+        } finally {
+            try {
+                in.close();
+            } catch (Exception e) {
+            }
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
+        }
     }
 
     /**

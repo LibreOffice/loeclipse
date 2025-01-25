@@ -44,8 +44,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -127,12 +125,10 @@ public class SDK implements ISdk, ITableElement {
                 // test for the settings directory
                 File settingsFile = checkSettingsDir(homeFile);
 
-                // test for the uno-skeletonmaker tool
-                String binName = "uno-skeletonmaker"; //$NON-NLS-1$
-                if (Platform.getOS().equals(Platform.OS_WIN32)) {
-                    binName += ".exe"; //$NON-NLS-1$
-                }
-                if (!getBinPath(home).append(binName).toFile().exists()) {
+                IPath path = getBinPath(home);
+                // test for the uno-skeletonmaker
+                String binName = getCommand("uno-skeletonmaker"); //$NON-NLS-1$
+                if (!path.append(binName).toFile().exists()) {
                     throw new InvalidConfigException(Messages.getString("SDK.MinSdkVersionError"), //$NON-NLS-1$
                         InvalidConfigException.INVALID_SDK_HOME);
                 }
@@ -144,7 +140,7 @@ public class SDK implements ISdk, ITableElement {
                 } else {
                     mSdkName = getBuildId(settingsFile);
                 }
-                this.mSdkHome = home;
+                mSdkHome = home;
 
             } else {
                 throw new InvalidConfigException(Messages.getString("SDK.NoDirectoryError"), //$NON-NLS-1$
@@ -215,6 +211,27 @@ public class SDK implements ISdk, ITableElement {
      * {@inheritDoc}
      */
     @Override
+    public String getCommand(String command) {
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+            command = command.replace('-', '_');
+            command += ".exe"; //$NON-NLS-1$
+        }
+        return command;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean useIdlWrite() {
+        String idlTool = getCommand("unoidl-write"); //$NON-NLS-1$
+        return getBinPath().append(idlTool).toFile().exists(); //$NON-NLS-1$
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IPath getIncludePath() {
         return new Path(getHome()).append(INCLUDE);
     }
@@ -243,18 +260,17 @@ public class SDK implements ISdk, ITableElement {
      */
     @Override
     public Process runTool(IUnoidlProject project, String shellCommand, IProgressMonitor monitor) {
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName());
-        return runToolWithEnv(prj, project.getOOo(), shellCommand, new String[0], monitor);
+        return runToolWithEnv(project, shellCommand, new String[0], monitor);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Process runToolWithEnv(IProject project, IOOo instance, String shellCommand, String[] env,
-        IProgressMonitor monitor) {
+    public Process runToolWithEnv(IUnoidlProject project, String shellCommand, String[] env, IProgressMonitor monitor) {
 
         Process process = null;
+        IOOo instance = project.getOOo();
 
         try {
             if (null != instance) {
@@ -268,7 +284,7 @@ public class SDK implements ISdk, ITableElement {
 
                 // Run only if the OS and ARCH are valid for the SDK
                 if (null != vars) {
-                    File projectFile = project.getLocation().toFile();
+                    File projectFile = project.getProjectPath().toFile();
                     process = SystemHelper.runTool(shellCommand, vars, projectFile);
                 }
             }

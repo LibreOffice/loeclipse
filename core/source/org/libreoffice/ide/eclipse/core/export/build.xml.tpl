@@ -17,35 +17,35 @@
         <first id="sofficeParents">
             <dirset dir="$'{'office.install.dir}">
                 <present targetdir="$'{'office.install.dir}">
-                    <mapper type="glob" from="*" to="*/soffice.bin" />
+                    <mapper type="glob" from="*" to="*/soffice.bin"/>
                 </present>
             </dirset>
         </first>
-        <property name="office.basis.dir" value="$'{'office.install.dir}"/>
-
         <property name="office.libs.path" value="$'{'office.install.dir}$'{'file.separator}program"/>
 
         <echo message="Office libs path: $'{'office.libs.path}"/>
 
-        <property name="office.unotypes.rdb" 
-            value="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}types.rdb"/>
+        <property name="office.unotypes.rdb" value="$'{'office.libs.path}$'{'file.separator}types.rdb"/>
 
-        <first id="offapirdbPaths">
-            <fileset dir="$'{'office.install.dir}" includes="**/offapi.rdb" />
+        <first id="offapirdb">
+            <fileset dir="$'{'office.install.dir}" includes="**/offapi.rdb"/>
         </first>
-        <property name="office.offapi.rdb" value="$'{'toString:offapirdbPaths}"/>
+        <property name="office.offapi.rdb" value="$'{'toString:offapirdb}"/>
 
         <property name="sdk.idl.dir" location="$'{'sdk.dir}$'{'file.separator}idl"/>
-        <property name="sdk.idlc" value="$'{'sdk.dir}$'{'file.separator}bin$'{'file.separator}idlc"/>
-        <property name="sdk.javamaker" value="$'{'sdk.dir}$'{'file.separator}bin$'{'file.separator}javamaker"/>
+        <property name="sdk.bin.dir" location="$'{'sdk.dir}$'{'file.separator}bin"/>
 
-        <first id="regmergePaths">
-            <union>
-                <fileset dir="$'{'office.libs.path}" includes="**/regmerge" />
-                <fileset dir="$'{'sdk.dir}" includes="**/regmerge" />
-            </union>
+        <first id="idlw">
+            <fileset dir="$'{'sdk.bin.dir}" includes="unoidl-write,unoidl_write.exe"/>
         </first>
-        <property name="sdk.regmerge" value="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}regmerge"/>
+        <property name="sdk.idlw" value="$'{'toString:idlw}"/>
+        <echo message="sdk.idlw: $'{'sdk.idlw}"/>
+        <available file="$'{'sdk.idlw}" property="sdk.useidlw" type="file"/>
+
+        <first id="javamaker">
+            <fileset dir="$'{'sdk.bin.dir}" includes="javamaker,javamaker.exe"/>
+        </first>
+        <property name="sdk.javamaker" value="$'{'toString:javamaker}"/>
 
         <property environment="env"/>
         <property name="office.tool.path" value="$'{'env.PATH}$'{'path.separator}$'{'office.libs.path}"/>
@@ -74,21 +74,41 @@
         <property name="project.files" value="packagefiles.txt"/>
         <property name="project.zip" value="packagefiles.zip"/>
 
+        <!-- clean buid and dist directory -->
+        <delete dir="$'{'build.dir}"/>
+        <delete dir="$'{'dist.dir}"/>
+
         <!-- create a few empty directories -->
-        <mkdir dir="$'{'build.dir}" />
+        <mkdir dir="$'{'build.dir}"/>
         <mkdir dir="$'{'idl.out}"/>
         <mkdir dir="$'{'idl.out.urd}"/>
         <mkdir dir="$'{'idl.out.rdb}"/>
         <mkdir dir="$'{'dist.dir}"/>
 
+        <echo if:set="sdk.useidlw" message="Project SDK use unoidl-write"/>
+        <echo unless:set="sdk.useidlw" message="Project SDK use idlc"/>
+
         <!-- check if project is Java -->
-        <available file="lib" property="project.isjava"/>
-        <echo message="Check if Project is Java"/>
+        <available file="lib" property="project.isjava" type="dir"/>
         <echo if:set="project.isjava" message="Project is Java"/>
         <echo unless:set="project.isjava" message="Project is not Java"/>
     </target>
 
-    <target name="init-java" depends="init-env" if="project.isjava">
+    <target name="init-idlc" depends="init-env" unless="sdk.useidlw">
+        <first id="idlc">
+            <fileset dir="$'{'sdk.bin.dir}" includes="idlc,idlc.exe"/>
+        </first>
+        <property name="sdk.idlc" value="$'{'toString:idlc}"/>
+        <first id="regmerge">
+            <union>
+                <fileset dir="$'{'office.libs.path}" includes="**/regmerge,**/regmerge.exe"/>
+                <fileset dir="$'{'sdk.dir}" includes="**/regmerge,**/regmerge.exe"/>
+            </union>
+        </first>
+        <property name="sdk.regmerge" value="$'{'toString:regmerge}"/>
+    </target>
+
+    <target name="init-java" depends="init-idlc" if="project.isjava">
 
         <property name="lib.dir" value="lib"/>
         <property name="project.jar" value="$'{'ant.project.name}.jar"/>
@@ -99,7 +119,7 @@
         <property name="build.jar" value="$'{'build.dir}$'{'file.separator}$'{'project.jar}"/>
 
         <path id="office.class.path">
-            <fileset dir="$'{'office.basis.dir}$'{'file.separator}program$'{'file.separator}classes">
+            <fileset dir="$'{'office.libs.path}$'{'file.separator}classes">
                 <include name="*.jar"/>
             </fileset>
         </path>
@@ -124,10 +144,6 @@
         <mkdir dir="$'{'build.classes.dir}"/>
 
         <echo message="Manifest Class-Path: $'{'manifest.class.path}"/>
-    </target>
-
-    <target name="clean" depends="init-env">
-        <delete dir="$'{'build.dir}"/>
     </target>
 
     <target name="package-zip" depends="package-jar">
@@ -207,23 +223,34 @@
         </exec>
     </target>
 
-    <target name="merge-urd" depends="compile-idl">
-        <delete file="$'{'idl.rdb.fullpath}"/>    
+    <target name="merge-urd" depends="compile-idlc" unless="sdk.useidlw">
+        <delete file="$'{'idl.rdb.fullpath}"/>
         <apply executable="$'{'sdk.regmerge}" failonerror="true">
             <env key="PATH" path="$'{'office.tool.path}"/>
             <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/> 
+            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
             <arg file="$'{'idl.rdb.fullpath}"/>
             <arg value="/UCR"/>
             <fileset dir="$'{'idl.out.urd}" includes="**/*.urd" casesensitive="yes"/>
         </apply>
     </target>
 
-    <target name="compile-idl" depends="init-java">
-        <echo message="$'{'sdk.idlc}"/>
-        <echo message="$'{'office.tool.path}"/>
+    <target name="compile-idlwrite" depends="init-java" if="sdk.useidlw">
+        <echo message="Compile tool: $'{'sdk.idlw}"/>
 
-        <apply executable="$'{'sdk.idlc}" failonerror="true">
+        <delete file="$'{'idl.rdb.fullpath}"/>
+        <exec executable="$'{'sdk.idlw}" failonerror="true">
+            <arg value="$'{'office.unotypes.rdb}"/>
+            <arg value="$'{'office.offapi.rdb}"/>
+            <arg value="$'{'idl.dir}"/>
+            <arg value="$'{'idl.rdb.fullpath}"/>
+        </exec>
+    </target>
+
+    <target name="compile-idlc" depends="compile-idlwrite" unless="sdk.useidlw">
+        <echo message="Compile tool: $'{'sdk.idlc}"/>
+
+        <apply executable="$'{'sdk.idlc}" failonerror="true" verbose="true">
             <env key="PATH" path="$'{'office.tool.path}"/>
             <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
             <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>

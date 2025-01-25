@@ -31,9 +31,6 @@
 package org.libreoffice.ide.eclipse.core.export;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -45,12 +42,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
-import org.libreoffice.ide.eclipse.core.model.OOoContainer;
-import org.libreoffice.ide.eclipse.core.model.SDKContainer;
 import org.libreoffice.ide.eclipse.core.Messages;
+import org.libreoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.libreoffice.ide.eclipse.core.utils.TemplatesHelper;
 
 /**
@@ -159,41 +154,17 @@ public class ProjectExportPart extends LanguageExportPart {
             // LanguageExportPart is using the Object Class rather than ManifestExportPage
             IUnoidlProject unoProject = sAntScriptPage.getProject();
             String prjName = unoProject.getName();
-            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
+            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
 
             TemplatesHelper.copyTemplate(project, mController.getSavePath(),
                 ProjectExportPart.class, new String(), prjName);
 
-            // Generate the build.properties file
-            File dir = project.getFile(mController.getSavePath()).getLocation().toFile().getParentFile();
-            File propsFile = new File(dir, "build.properties"); //$NON-NLS-1$
-            FileWriter writer = null;
-
-            try {
-                writer = new FileWriter(propsFile);
-
-                Properties props = new Properties();
-
-                if (OOoContainer.getOOoKeys().size() > 0) {
-                    props.put("office.install.dir", //$NON-NLS-1$
-                        OOoContainer.getOOo(OOoContainer.getOOoKeys().get(0)).getHome());
-                } else {
-                    props.put("office.install.dir", ""); //$NON-NLS-1$
-                }
-
-                if (SDKContainer.getSDKKeys().size() > 0) {
-                    props.put("sdk.dir", SDKContainer.getSDK(SDKContainer.getSDKKeys().get(0)).getHome()); //$NON-NLS-1$
-                } else {
-                    props.put("sdk.dir", ""); //$NON-NLS-1$
-                }
-
-                props.store(writer, null);
-                writer.close();
-
-            } catch (IOException e) {
-                PluginLogger.error(Messages.getString("ProjectExportPart.BuildPropertiesError"), e); //$NON-NLS-1$
+            // Create build.properties file if not exist
+            String path = unoProject.getProjectPath().toOSString(); //$NON-NLS-1$
+            File buildFile = new File(path, UnoidlProject.BUILD_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+            if (!buildFile.exists()) {
+                unoProject.saveBuildProperties(buildFile);
             }
-
         }
     }
 }
