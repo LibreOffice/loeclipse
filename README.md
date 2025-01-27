@@ -16,7 +16,7 @@ Only read further if you want to work on LOEclipse itself.
 
 * Ubuntu: Install `libreoffice`,`libreoffice-dev` and `libreoffice-java-common`.
 * Windows: Install LibreOffice and the LibreOffice SDK from https://www.libreoffice.org/download
-* macOS: No support for macOS currently (see bug #54)
+* macOS: No support for macOS currently (see [bug #54](https://github.com/LibreOffice/loeclipse/issues/54))
 
 ### Setup Eclipse for development
 
