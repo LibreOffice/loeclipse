@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.1.0
+* #130 Support LibreOffice SDK >= 24.2
+* #104 Improve error handling for RegistrationHandler.classes file
+* #117, #119: Improved management of package.properties file
+* #127 Improvements to ant build
+
 ## 4.0.2
 * #98 Support LibreOffice >= 7.5
 * #85 Detect subfolders in `lib` directory
@@ -62,7 +68,7 @@
 * #32 Include jodconnector.jar in the build
 
 ## 2.1.2
-* #28: Start LibreOffice with --norestore 
+* #28: Start LibreOffice with --norestore
 * #31: Create dist folder when needed
 
 ## 2.1.1

@@ -4,7 +4,7 @@ Automatic-Module-Name: org.libreoffice.ide.eclipse.python
 Bundle-Name: Python Plug-in for LibreOffice Eclipse integration
 Bundle-SymbolicName: org.libreoffice.ide.eclipse.python;singleton:=true
 Bundle-Vendor: The Document Foundation
-Bundle-Version: 4.0.2
+Bundle-Version: 4.1.0
 Bundle-Activator: org.libreoffice.ide.eclipse.python.OOoPythonPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
