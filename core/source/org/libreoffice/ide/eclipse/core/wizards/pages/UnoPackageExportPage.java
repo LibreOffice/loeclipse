@@ -32,9 +32,11 @@ package org.libreoffice.ide.eclipse.core.wizards.pages;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -165,16 +167,19 @@ public class UnoPackageExportPage extends WizardPage {
         lbl.setText(Messages.getString("UnoPackageExportPage.Project")); //$NON-NLS-1$
         lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        IUnoidlProject[] prjs = ProjectsManager.getProjects();
-        String[] prjNames = new String[prjs.length];
-        for (int i = 0; i < prjs.length; i++) {
-            IUnoidlProject prj = prjs[i];
-            prjNames[i] = prj.getName();
-        }
+        ArrayList<String> prjs = new ArrayList<>();
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        try {
+            for (IUnoidlProject prj : ProjectsManager.getProjects()) {
+                if (root.getProject(prj.getName()).hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
+                    prjs.add(prj.getName());
+                }
+            }
+        } catch (CoreException e) { }
 
         mProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
         mProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mProjectsList.setItems(prjNames);
+        mProjectsList.setItems(prjs.toArray(new String[prjs.size()]));
 
         mProjectsList.addModifyListener(new ModifyListener() {
 
