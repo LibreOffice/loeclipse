@@ -41,6 +41,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
@@ -58,6 +59,7 @@ import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
 import org.libreoffice.ide.eclipse.core.Messages;
+import org.libreoffice.ide.eclipse.core.OOEclipsePlugin;
 import org.libreoffice.plugin.core.model.UnoPackage;
 
 public class AntScriptExportWizardPage extends WizardPage {
@@ -157,22 +159,19 @@ public class AntScriptExportWizardPage extends WizardPage {
         lbl.setText(Messages.getString("AntScriptExportWizard.Project")); //$NON-NLS-1$
         lbl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
-        IUnoidlProject[] prjs = ProjectsManager.getProjects();
-        ArrayList<String> tempPrjNames = new ArrayList<>();
-        for (int i = 0; i < prjs.length; i++) {
-            //The Dropdown for Ant Script should only have Java Uno Projects
-            String language = prjs[i].getLanguage().getName();
-            if (language.equalsIgnoreCase("Java") || language.equalsIgnoreCase("Python")) {
-                IUnoidlProject prj = prjs[i];
-                tempPrjNames.add(prj.getName());
+        ArrayList<String> prjs = new ArrayList<>();
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        try {
+            for (IUnoidlProject prj : ProjectsManager.getProjects()) {
+                if (root.getProject(prj.getName()).hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
+                    prjs.add(prj.getName());
+                }
             }
-        }
-        String[] prjNames = tempPrjNames.toArray(new String[tempPrjNames.size()]);
+        } catch (CoreException e) { }
 
         mProjectsList = new Combo(selectionBody, SWT.DROP_DOWN | SWT.READ_ONLY);
         mProjectsList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        mProjectsList.setItems(prjNames);
-
+        mProjectsList.setItems(prjs.toArray(new String[prjs.size()]));
         mProjectsList.addModifyListener(new ModifyListener() {
 
             @Override

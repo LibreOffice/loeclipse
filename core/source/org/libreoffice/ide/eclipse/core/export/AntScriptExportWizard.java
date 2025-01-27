@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -78,19 +79,17 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
         // Try hard to find a selected UNO project
         IUnoidlProject prj = null;
         Iterator<?> it = selection.iterator();
-        while (it.hasNext() && prj == null) {
-            Object o = it.next();
-            if (o instanceof IAdaptable) {
-                IResource res = ((IAdaptable) o).getAdapter(IResource.class);
-                if (res != null) {
-                    prj = ProjectsManager.getProject(res.getProject().getName());
-                    String language = prj.getLanguage().getName();
-                    if (!language.equalsIgnoreCase("Java") || !language.equalsIgnoreCase("Python")) {
-                        prj = null;
+        try {
+            while (it.hasNext() && prj == null) {
+                Object o = it.next();
+                if (o instanceof IAdaptable) {
+                    IResource res = ((IAdaptable) o).getAdapter(IResource.class);
+                    if (res != null && res.getProject().hasNature(OOEclipsePlugin.UNO_NATURE_ID)) {
+                        prj = ProjectsManager.getProject(res.getProject().getName());
                     }
                 }
             }
-        }
+        } catch (CoreException e) { }
         setWindowTitle(Messages.getString("AntScriptExportWizard.DialogTitle")); //$NON-NLS-1$
 
         mAntScriptPage = new AntScriptExportWizardPage("page1", prj); //$NON-NLS-1$
