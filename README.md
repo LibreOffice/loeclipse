@@ -21,9 +21,10 @@ Only read further if you want to work on LOEclipse itself.
 ### Setup Eclipse for development
 
 1. Install *[Eclipse IDE for Eclipse Committers](https://www.eclipse.org/downloads/packages/)*. The *Eclipse IDE for Java Developers* will **not** work.
-2. Clone this repository
-3. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
-4. Add the LibreOffice jars to the build path
+2. Install [PyDev](https://marketplace.eclipse.org/content/pydev-python-ide-eclipse) (from Help->Eclipse Marketplace)
+3. Clone this repository
+4. Import the three projects `build`, `core` and `java` (using *File->Import->General->Existing projects into workspace*)
+5. Add the LibreOffice jars to the build path
    * Go to *Window->Preferences* in Eclipse and open the *Java->Build path->User Libraries* configuration page.
    * Add a new library named `LO-Classes`
    * Select the Library, click *Add External Jars*
@@ -32,7 +33,7 @@ Only read further if you want to work on LOEclipse itself.
      * Ubuntu: `/usr/lib/libreoffice/program/classes`
      * Windows: `C:\Program Files[ (x86)]\LibreOffice 5\program\classes\`
    * Now there should be no more project errors.
-5. Go to *Run->Run Configurations*, and create a new run configuration of the type *Eclipse Application*. Now you can run or debug the LOEclipse plugin using this run configuration.
+6. Go to *Run->Run Configurations*, and create a new run configuration of the type *Eclipse Application*. Now you can run or debug the LOEclipse plugin using this run configuration.
 
 ### Getting help
 
