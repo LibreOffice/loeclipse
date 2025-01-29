@@ -357,7 +357,7 @@ public class UnoPackage {
      */
     public void addComponentFile(String pathInArchive, File file, String type) {
         if (!file.isFile()) {
-            throw new IllegalArgumentException("pFile [" + file + "] is not a file");
+            throw new IllegalArgumentException("File [" + file + "] is not a file");
         }
 
         pathInArchive = FilenameUtils.separatorsToUnix(pathInArchive);
