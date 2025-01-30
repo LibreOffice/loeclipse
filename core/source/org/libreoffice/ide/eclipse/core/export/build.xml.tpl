@@ -8,6 +8,14 @@
         ************************************************************
     -->
 
+    <fail message="Please build using Ant 1.8.0 or higher.">
+        <condition>
+            <not>
+                <antversion atleast="1.8.0"/>
+            </not>
+        </condition>
+    </fail>
+
     <target name="init-env">
 
         <!-- set properties from Libreoffice installation and its SDK -->
@@ -35,18 +43,6 @@
         <property name="sdk.idl.dir" location="$'{'sdk.dir}$'{'file.separator}idl"/>
         <property name="sdk.bin.dir" location="$'{'sdk.dir}$'{'file.separator}bin"/>
 
-        <first id="idlw">
-            <fileset dir="$'{'sdk.bin.dir}" includes="unoidl-write,unoidl_write.exe"/>
-        </first>
-        <property name="sdk.idlw" value="$'{'toString:idlw}"/>
-        <echo message="sdk.idlw: $'{'sdk.idlw}"/>
-        <available file="$'{'sdk.idlw}" property="sdk.useidlw" type="file"/>
-
-        <first id="javamaker">
-            <fileset dir="$'{'sdk.bin.dir}" includes="javamaker,javamaker.exe"/>
-        </first>
-        <property name="sdk.javamaker" value="$'{'toString:javamaker}"/>
-
         <property environment="env"/>
         <property name="office.tool.path" value="$'{'env.PATH}$'{'path.separator}$'{'office.libs.path}"/>
 
@@ -65,8 +61,7 @@
         <property name="idl.out" value="$'{'project.dir}$'{'file.separator}$'{'build.dir}$'{'file.separator}idl"/>
         <property name="idl.out.urd" value="$'{'idl.out}$'{'file.separator}urd"/>
         <property name="idl.out.rdb" value="$'{'idl.out}$'{'file.separator}rdb"/>
-        <property name="idl.rdb.name" value="types.rdb"/>
-        <property name="idl.rdb.fullpath" value="$'{'idl.out.rdb}$'{'file.separator}$'{'idl.rdb.name}"/>
+        <property name="idl.rdb.fullpath" value="$'{'idl.out.rdb}$'{'file.separator}types.rdb"/>
         <property name="build.classes.dir" value="$'{'build.dir}$'{'file.separator}classes"/>
 
         <!-- create a few temporary files -->
@@ -74,41 +69,46 @@
         <property name="project.files" value="packagefiles.txt"/>
         <property name="project.zip" value="packagefiles.zip"/>
 
-        <!-- clean buid and dist directory -->
-        <delete dir="$'{'build.dir}"/>
-        <delete dir="$'{'dist.dir}"/>
+        <!-- clean the build and dist directory without deleting it -->
+        <delete includeemptydirs="true">
+            <fileset dir="$'{'build.dir}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true">
+            <fileset dir="$'{'dist.dir}" includes="**/*"/>
+        </delete>
 
         <!-- create a few empty directories -->
         <mkdir dir="$'{'build.dir}"/>
+        <mkdir dir="$'{'dist.dir}"/>
         <mkdir dir="$'{'idl.out}"/>
         <mkdir dir="$'{'idl.out.urd}"/>
         <mkdir dir="$'{'idl.out.rdb}"/>
-        <mkdir dir="$'{'dist.dir}"/>
+
+        <first id="idlw">
+            <fileset dir="$'{'sdk.bin.dir}" includes="unoidl-write,unoidl_write.exe"/>
+        </first>
+        <property name="sdk.idlw" value="$'{'toString:idlw}"/>
+        <condition property="sdk.useidlw">
+            <available file="$'{'sdk.idlw}" type="file"/>
+        </condition>
+
+        <condition property="sdk.useidlc">
+            <not>
+                <isset property="sdk.useidlw"/>
+            </not>
+        </condition>
 
         <echo if:set="sdk.useidlw" message="Project SDK use unoidl-write"/>
-        <echo unless:set="sdk.useidlw" message="Project SDK use idlc"/>
+        <echo if:set="sdk.useidlc" message="Project SDK use idlc"/>
 
         <!-- check if project is Java -->
-        <available file="lib" property="project.isjava" type="dir"/>
-        <echo if:set="project.isjava" message="Project is Java"/>
-        <echo unless:set="project.isjava" message="Project is not Java"/>
+        <condition property="project.isjava">
+            <available file="lib" type="dir"/>
+        </condition>
     </target>
 
-    <target name="init-idlc" depends="init-env" unless="sdk.useidlw">
-        <first id="idlc">
-            <fileset dir="$'{'sdk.bin.dir}" includes="idlc,idlc.exe"/>
-        </first>
-        <property name="sdk.idlc" value="$'{'toString:idlc}"/>
-        <first id="regmerge">
-            <union>
-                <fileset dir="$'{'office.libs.path}" includes="**/regmerge,**/regmerge.exe"/>
-                <fileset dir="$'{'sdk.dir}" includes="**/regmerge,**/regmerge.exe"/>
-            </union>
-        </first>
-        <property name="sdk.regmerge" value="$'{'toString:regmerge}"/>
-    </target>
-
-    <target name="init-java" depends="init-idlc" if="project.isjava">
+    <target name="init-java" depends="init-env" if="project.isjava">
+        <echo message="Project is Java"/>
 
         <property name="lib.dir" value="lib"/>
         <property name="project.jar" value="$'{'ant.project.name}.jar"/>
@@ -117,6 +117,32 @@
         <property name="lib.dir" value="lib"/>
         <property name="project.jar" value="$'{'ant.project.name}.jar"/>
         <property name="build.jar" value="$'{'build.dir}$'{'file.separator}$'{'project.jar}"/>
+
+        <first id="module">
+            <fileset dir="$'{'src.dir.absolute}" includes="module-info.java"/>
+        </first>
+        <property name="src.module" value="$'{'toString:module}"/>
+
+        <condition property="src.withmodule">
+            <and>
+                <javaversion atleast="9"/>
+                <available file="$'{'src.module}" type="file"/>
+            </and>
+        </condition>
+
+        <condition property="src.withoutmodule">
+            <not>
+                <isset property="src.withmodule"/>
+            </not>
+        </condition>
+
+        <echo if:set="src.withmodule" message="Compiling jar with module"/>
+        <echo if:set="src.withoutmodule" message="Compiling jar without module"/>
+
+        <first id="javamaker">
+            <fileset dir="$'{'sdk.bin.dir}" includes="javamaker,javamaker.exe"/>
+        </first>
+        <property name="sdk.javamaker" value="$'{'toString:javamaker}"/>
 
         <path id="office.class.path">
             <fileset dir="$'{'office.libs.path}$'{'file.separator}classes">
@@ -143,10 +169,138 @@
         <!-- create a few empty directories -->
         <mkdir dir="$'{'build.classes.dir}"/>
 
-        <echo message="Manifest Class-Path: $'{'manifest.class.path}"/>
+        <echo if:set="src.withmodule" message="Archive Module-Path: $'{'manifest.class.path}"/>
+        <echo if:set="src.withoutmodule" message="Manifest Class-Path: $'{'manifest.class.path}"/>
     </target>
 
-    <target name="package-zip" depends="package-jar">
+    <target name="init-idlc" depends="init-java" if="sdk.useidlc">
+        <first id="idlc">
+            <fileset dir="$'{'sdk.bin.dir}" includes="idlc,idlc.exe"/>
+        </first>
+        <property name="sdk.idlc" value="$'{'toString:idlc}"/>
+        <first id="regmerge">
+            <union>
+                <fileset dir="$'{'office.libs.path}" includes="**/regmerge,**/regmerge.exe"/>
+                <fileset dir="$'{'sdk.dir}" includes="**/regmerge,**/regmerge.exe"/>
+            </union>
+        </first>
+        <property name="sdk.regmerge" value="$'{'toString:regmerge}"/>
+    </target>
+
+    <target name="compile-idlc" depends="init-idlc" if="sdk.useidlc">
+        <echo message="Compile tool: $'{'sdk.idlc}"/>
+
+        <apply executable="$'{'sdk.idlc}" failonerror="true" verbose="true">
+            <env key="PATH" path="$'{'office.tool.path}"/>
+            <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
+            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
+            <arg value="-C"/>
+            <arg value="-O"/>
+            <arg value="$'{'idl.out.urd}"/>
+            <arg value="-I"/>
+            <arg value="$'{'idl.dir}"/>
+            <arg value="-I"/>
+            <arg value="$'{'sdk.idl.dir}"/>
+            <fileset dir="$'{'idl.dir}" includes="**/*.idl" casesensitive="yes"/>
+        </apply>
+    </target>
+
+    <target name="merge-urd" depends="compile-idlc" if="sdk.useidlc">
+        <delete file="$'{'idl.rdb.fullpath}"/>
+        <apply executable="$'{'sdk.regmerge}" failonerror="true">
+            <env key="PATH" path="$'{'office.tool.path}"/>
+            <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
+            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
+            <arg file="$'{'idl.rdb.fullpath}"/>
+            <arg value="/UCR"/>
+            <fileset dir="$'{'idl.out.urd}" includes="**/*.urd" casesensitive="yes"/>
+        </apply>
+    </target>
+
+    <target name="compile-idlwrite" depends="merge-urd" if="sdk.useidlw">
+        <echo message="Compile tool: $'{'sdk.idlw}"/>
+
+        <delete file="$'{'idl.rdb.fullpath}"/>
+        <exec executable="$'{'sdk.idlw}" failonerror="true">
+            <arg value="$'{'office.unotypes.rdb}"/>
+            <arg value="$'{'office.offapi.rdb}"/>
+            <arg value="$'{'idl.dir}"/>
+            <arg value="$'{'idl.rdb.fullpath}"/>
+        </exec>
+    </target>
+
+    <target name="types" depends="compile-idlwrite" if="project.isjava">
+        <condition property="args.offapi" value=" -X&quot;$'{'office.offapi.rdb}&quot;" else="">
+            <length string="$'{'office.offapi.rdb}" when="greater" length="0" trim="true"/>
+        </condition>
+
+        <exec executable="$'{'sdk.javamaker}" failonerror="true">
+            <env key="PATH" path="$'{'office.tool.path}"/>
+            <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
+            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
+            <arg value="-nD"/>
+            <arg value="-Gc"/>
+            <arg value="-O"/>
+            <arg value="$'{'project.dir}$'{'file.separator}$'{'build.classes.dir}"/>
+            <arg file="$'{'idl.rdb.fullpath}"/>
+            <arg line="-X&quot;$'{'office.unotypes.rdb}&quot;"/>
+            <arg line="$'{'args.offapi}"/>
+        </exec>
+    </target>
+
+    <target name="compile-java" depends="types" if="src.withoutmodule">
+        <echo message="Build class path: $'{'build.classes.dir}"/>
+        <echo message="Source dir: $'{'src.dir.absolute}"/>
+        <javac srcdir="$'{'src.dir.absolute}" source="1.8" target="1.8" encoding="UTF-8" includeantruntime="false"
+            destdir="$'{'build.classes.dir}" excludes="**/module-info.java,**/*Test*">
+            <classpath>
+                <pathelement location="$'{'build.classes.dir}"/>
+                <path refid="build.class.path"/>
+                <path refid="office.class.path"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile-module" depends="compile-java" if="src.withmodule">
+        <echo message="Build module path: $'{'build.classes.dir}"/>
+        <echo message="Source dir: $'{'src.dir.absolute}"/>
+        <javac srcdir="$'{'src.dir.absolute}" source="9" target="9" encoding="UTF-8" includeantruntime="false"
+            destdir="$'{'build.classes.dir}" excludes="**/*Test*">
+            <modulepath>
+                <pathelement location="$'{'build.classes.dir}"/>
+                <path refid="build.class.path"/>
+                <path refid="office.class.path"/>
+            </modulepath>
+        </javac>
+    </target>
+
+    <target name="package-jar" depends="compile-module" if="project.isjava">
+        <echo message="Build Java archive: $'{'project.jar}"/>
+
+        <jar destfile="$'{'build.jar}">
+            <manifest>
+                <attribute name="RegistrationClassName" value="$'{'regclassname}"/>
+                <attribute name="Class-Path" value="$'{'manifest.class.path}"/>
+            </manifest>
+            <fileset dir="$'{'build.classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="$'{'src.dir.absolute}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="show-module" depends="package-jar" if="src.withmodule">
+        <echo message="Java module in archive: $'{'project.jar}"/>
+        <exec executable="jar">
+            <arg value="-f"/>
+            <arg value="$'{'build.jar}"/>
+            <arg value="-d"/>
+        </exec>
+    </target>
+
+    <target name="package-zip" depends="show-module">
         <loadproperties srcFile="package.properties">
             <filterchain>
                 <tokenfilter>
@@ -173,96 +327,6 @@
         </zip>
         <delete file="$'{'project.mimetype}"/>
         <delete file="$'{'project.zip}"/>
-    </target>
-
-    <target name="package-jar" depends="compile-java" if="project.isjava">
-        <echo message="Build Java archive: $'{'project.jar}"/>
-
-        <jar destfile="$'{'build.jar}">
-            <manifest>
-                <attribute name="RegistrationClassName" value="$'{'regclassname}"/>
-                <attribute name="Class-Path" value="$'{'manifest.class.path}"/>
-            </manifest>
-            <fileset dir="$'{'build.classes.dir}">
-                <include name="**/*.class"/>
-            </fileset>
-            <fileset dir="$'{'src.dir.absolute}">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </jar>
-    </target>
-
-    <target name="compile-java" depends="types" if="project.isjava">
-        <echo message="Build classes: $'{'build.classes.dir}"/>
-        <javac srcdir="$'{'src.dir.absolute}" source="1.8" target="1.8" encoding="UTF-8"
-            destdir="$'{'build.classes.dir}" excludes="**/*Test*">
-            <classpath>
-                <pathelement location="$'{'build.classes.dir}"/>
-                <path refid="build.class.path"/>
-                <path refid="office.class.path"/>
-            </classpath>
-        </javac>
-    </target>
-
-    <target name="types" depends="merge-urd">
-        <condition property="args.offapi" value=" -X&quot;$'{'office.offapi.rdb}&quot;" else="">
-            <length string="$'{'office.offapi.rdb}" when="greater" length="0" trim="true"/>
-        </condition>
-
-        <exec executable="$'{'sdk.javamaker}" failonerror="true">
-            <env key="PATH" path="$'{'office.tool.path}"/>
-            <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <arg value="-nD"/>
-            <arg value="-Gc"/>
-            <arg value="-O"/>
-            <arg value="$'{'project.dir}$'{'file.separator}$'{'build.classes.dir}"/>
-            <arg file="$'{'idl.rdb.fullpath}"/>
-            <arg line="-X&quot;$'{'office.unotypes.rdb}&quot;"/>
-            <arg line="$'{'args.offapi}"/>
-        </exec>
-    </target>
-
-    <target name="merge-urd" depends="compile-idlc" unless="sdk.useidlw">
-        <delete file="$'{'idl.rdb.fullpath}"/>
-        <apply executable="$'{'sdk.regmerge}" failonerror="true">
-            <env key="PATH" path="$'{'office.tool.path}"/>
-            <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <arg file="$'{'idl.rdb.fullpath}"/>
-            <arg value="/UCR"/>
-            <fileset dir="$'{'idl.out.urd}" includes="**/*.urd" casesensitive="yes"/>
-        </apply>
-    </target>
-
-    <target name="compile-idlwrite" depends="init-java" if="sdk.useidlw">
-        <echo message="Compile tool: $'{'sdk.idlw}"/>
-
-        <delete file="$'{'idl.rdb.fullpath}"/>
-        <exec executable="$'{'sdk.idlw}" failonerror="true">
-            <arg value="$'{'office.unotypes.rdb}"/>
-            <arg value="$'{'office.offapi.rdb}"/>
-            <arg value="$'{'idl.dir}"/>
-            <arg value="$'{'idl.rdb.fullpath}"/>
-        </exec>
-    </target>
-
-    <target name="compile-idlc" depends="compile-idlwrite" unless="sdk.useidlw">
-        <echo message="Compile tool: $'{'sdk.idlc}"/>
-
-        <apply executable="$'{'sdk.idlc}" failonerror="true" verbose="true">
-            <env key="PATH" path="$'{'office.tool.path}"/>
-            <env key="LD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <env key="DYLD_LIBRARY_PATH" path="$'{'office.tool.path}"/>
-            <arg value="-C"/>
-            <arg value="-O"/>
-            <arg value="$'{'idl.out.urd}"/>
-            <arg value="-I"/>
-            <arg value="$'{'idl.dir}"/>
-            <arg value="-I"/>
-            <arg value="$'{'sdk.idl.dir}"/>
-            <fileset dir="$'{'idl.dir}" includes="**/*.idl" casesensitive="yes"/>
-        </apply>
     </target>
 
 </project>

@@ -40,10 +40,13 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -82,8 +85,8 @@ public class OOoContainerPage extends WizardPage implements
 
         setTitle(Messages.getString("OOoContainerPage.DialogTitle")); //$NON-NLS-1$
         setDescription(Messages.getString("OOoContainerPage.DialogDescription")); //$NON-NLS-1$
-        ImageDescriptor image = OOoJavaPlugin.getImageDescriptor(
-            Messages.getString("OOoContainerPage.DialogImage")); //$NON-NLS-1$
+        String msg = Messages.getString("OOoContainerPage.DialogImage"); //$NON-NLS-1$
+        ImageDescriptor image = OOoJavaPlugin.getImageDescriptor(msg);
         setImageDescriptor(image);
 
         mContainer = getDefaultEntry();
@@ -124,9 +127,8 @@ public class OOoContainerPage extends WizardPage implements
                 removeOOoDependencies(mProject);
 
                 // Add the new library
-                IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
-                IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
-                setSelection(containerEntry);
+                IClasspathEntry entry = getOOoLibraryContainer(ooo, mProject);
+                setSelection(entry);
             }
         } catch (Exception e) {
             result = false;
@@ -163,8 +165,7 @@ public class OOoContainerPage extends WizardPage implements
         body.setLayout(new GridLayout(LAYOUT_COLUMNS, false));
 
         // Add a list to select the OOo configuration.
-        String oooName = mContainer.getPath().segment(
-            OooClasspathContainerInitializer.HINT_SEGMENT);
+        String oooName = mContainer.getPath().segment(OooClasspathContainerInitializer.HINT_SEGMENT);
         IOOo ooo = OOoContainer.getOOo(oooName);
         mOOoRow = new OOoRow(body, OOO, ooo);
 
@@ -201,9 +202,10 @@ public class OOoContainerPage extends WizardPage implements
     }
 
     /**
-     * Add the LibreOffice common JARs to a projects build path.
+     * Add the LibreOffice common JARs to a projects module or build path.
      *
-     * @param ooo the ooo to use for the classpath
+     * @param ooo the ooo to use for the module or class path
+     *
      * @param project the project to change
      */
     public static void addOOoDependencies(IOOo ooo, IJavaProject project) {
@@ -215,14 +217,11 @@ public class OOoContainerPage extends WizardPage implements
 
                 System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
 
-                IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
-                IClasspathEntry containerEntry = JavaCore.newContainerEntry(path);
-                entries[entries.length - 1] = containerEntry;
-
+                entries[entries.length - 1] = getOOoLibraryContainer(ooo, project);
                 project.setRawClasspath(entries, null);
+
             } catch (JavaModelException e) {
-                PluginLogger.error(
-                    Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+                PluginLogger.error(Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
             }
         }
     }
@@ -248,12 +247,18 @@ public class OOoContainerPage extends WizardPage implements
 
             IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
             result = newEntries.toArray(result);
-
             pProject.setRawClasspath(result, null);
 
         } catch (JavaModelException e) {
-            PluginLogger.error(
-                Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+            PluginLogger.error(Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
         }
     }
+
+    private static IClasspathEntry getOOoLibraryContainer(IOOo ooo, IJavaProject project) {
+        IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
+        String value = String.valueOf(JavaRuntime.isModularProject(project));
+        IClasspathAttribute attribute = JavaCore.newClasspathAttribute(IClasspathAttribute.MODULE, value);
+        return JavaCore.newContainerEntry(path, new IAccessRule[0], new IClasspathAttribute[]{attribute}, false); 
+    }
+
 }

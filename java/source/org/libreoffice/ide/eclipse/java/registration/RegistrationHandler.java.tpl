@@ -167,7 +167,7 @@ public class RegistrationHandler '{'
             try '{'
                 reader.close();
                 in.close();
-            } catch (Exception e) '{'};
+            } catch (Exception e) '{' }
         }
 
         return classes.toArray(new Class[classes.size()]);

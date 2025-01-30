@@ -242,12 +242,12 @@ public class UnoidlProjectHelper {
     /**
      * Set the project builders and run the build.
      *
-     * @param pUnoProject
+     * @param unoProject
      *            the project on which to set the builders
      */
-    public static void setProjectBuilders(IUnoidlProject pUnoProject) {
+    public static void setProjectBuilders(IUnoidlProject unoProject) {
 
-        UnoidlProject project = (UnoidlProject) pUnoProject;
+        UnoidlProject project = (UnoidlProject) unoProject;
         try {
             // Add the project builders
             project.setBuilders();
@@ -382,8 +382,8 @@ public class UnoidlProjectHelper {
                         Messages.getString("UnoidlProjectHelper.CreationErrorMessage")); //$NON-NLS-1$
                 }
             });
-            PluginLogger.error(Messages.getString("UnoidlProjectHelper.FolderCreationError") + sourcesDir, //$NON-NLS-1$
-                e);
+            String msg = Messages.getString("UnoidlProjectHelper.FolderCreationError"); //$NON-NLS-1$
+            PluginLogger.error(msg + sourcesDir, e);
         }
 
     }
@@ -482,7 +482,7 @@ public class UnoidlProjectHelper {
 
             UnoidlProject unoProject = (UnoidlProject) project.getNature(OOEclipsePlugin.UNO_NATURE_ID);
 
-            // TODO Allow custom configuration
+            // XXX Allow custom configuration
             createDefaultConfig(unoProject.getConfigFile());
 
             ProjectsManager.addProject(unoProject);
