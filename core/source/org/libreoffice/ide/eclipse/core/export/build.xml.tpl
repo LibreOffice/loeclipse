@@ -8,10 +8,10 @@
         ************************************************************
     -->
 
-    <fail message="Please build using Ant 1.8.0 or higher.">
+    <fail message="Please build using Ant 1.9.1 or higher.">
         <condition>
             <not>
-                <antversion atleast="1.8.0"/>
+                <antversion atleast="1.9.1"/>
             </not>
         </condition>
     </fail>
