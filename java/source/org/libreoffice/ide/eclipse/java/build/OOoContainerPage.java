@@ -118,7 +118,8 @@ public class OOoContainerPage extends WizardPage implements
 
             String prjName = mProject.getProject().getName();
             IUnoidlProject unoPrj = ProjectsManager.getProject(prjName);
-            if (unoPrj != null) {
+            // TODO: We need to check if the project is configured correctly and notify
+            if (unoPrj != null && unoPrj.getLanguage() != null) {
                 // The project is a UNO project
                 unoPrj.setOOo(ooo);
                 unoPrj.saveAllProperties();
@@ -127,7 +128,8 @@ public class OOoContainerPage extends WizardPage implements
                 removeOOoDependencies(mProject);
 
                 // Add the new library
-                IClasspathEntry entry = getOOoLibraryContainer(ooo, mProject);
+                IClasspathEntry entry = getOOoLibraryContainer(mProject, ooo);
+                addOOoDependencies(mProject, entry);
                 setSelection(entry);
             }
         } catch (Exception e) {
@@ -160,8 +162,8 @@ public class OOoContainerPage extends WizardPage implements
      * {@inheritDoc}
      */
     @Override
-    public void createControl(Composite pParent) {
-        Composite body = new Composite(pParent, SWT.NONE);
+    public void createControl(Composite parent) {
+        Composite body = new Composite(parent, SWT.NONE);
         body.setLayout(new GridLayout(LAYOUT_COLUMNS, false));
 
         // Add a list to select the OOo configuration.
@@ -202,7 +204,7 @@ public class OOoContainerPage extends WizardPage implements
     }
 
     /**
-     * Add the LibreOffice common JARs to a projects module or build path.
+     * Add the LibreOffice common JARs to a projects build path.
      *
      * @param ooo the ooo to use for the module or class path
      *
@@ -211,29 +213,18 @@ public class OOoContainerPage extends WizardPage implements
     public static void addOOoDependencies(IOOo ooo, IJavaProject project) {
 
         if (null != ooo) {
-            try {
-                IClasspathEntry[] oldEntries = project.getRawClasspath();
-                IClasspathEntry[] entries = new IClasspathEntry[oldEntries.length + 1];
-
-                System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
-
-                entries[entries.length - 1] = getOOoLibraryContainer(ooo, project);
-                project.setRawClasspath(entries, null);
-
-            } catch (JavaModelException e) {
-                PluginLogger.error(Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
-            }
+            addOOoDependencies(project, getOOoLibraryContainer(project, ooo));
         }
     }
 
     /**
      * Remove all the OOo user libraries from the project build path.
      *
-     * @param pProject the project to change
+     * @param project the project to change
      */
-    public static void removeOOoDependencies(IJavaProject pProject) {
+    public static void removeOOoDependencies(IJavaProject project) {
         try {
-            IClasspathEntry[] entries = pProject.getRawClasspath();
+            IClasspathEntry[] entries = project.getRawClasspath();
             Vector<IClasspathEntry> newEntries = new Vector<IClasspathEntry>();
 
             // Copy all the sources in a new entry container
@@ -247,14 +238,47 @@ public class OOoContainerPage extends WizardPage implements
 
             IClasspathEntry[] result = new IClasspathEntry[newEntries.size()];
             result = newEntries.toArray(result);
-            pProject.setRawClasspath(result, null);
+            project.setRawClasspath(result, null);
 
         } catch (JavaModelException e) {
             PluginLogger.error(Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
         }
     }
 
-    private static IClasspathEntry getOOoLibraryContainer(IOOo ooo, IJavaProject project) {
+    /**
+     * Add the LibreOffice common JARs to a projects build path .
+     *
+     * @param project the project to change
+     *
+     * @param entry the library entry to add
+     */
+    private static void addOOoDependencies(IJavaProject project, IClasspathEntry entry) {
+        try {
+            IClasspathEntry[] oldEntries = project.getRawClasspath();
+            IClasspathEntry[] entries = new IClasspathEntry[oldEntries.length + 1];
+
+            System.arraycopy(oldEntries, 0, entries, 0, oldEntries.length);
+
+            entries[entries.length - 1] = entry;
+            project.setRawClasspath(entries, null);
+
+        } catch (JavaModelException e) {
+            PluginLogger.error(Messages.getString("OOoContainerPage.ClasspathSetFailed"), e); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Get the LibreOffice library entry to add to projects build path.
+     *       If the project is modular then the library will be too.
+     *
+     * @param project the project to add library
+     *
+     * @param ooo the library entry to add
+     *
+     * @return the LibreOffice library in modular format if needed.
+     */
+
+    private static IClasspathEntry getOOoLibraryContainer(IJavaProject project, IOOo ooo) {
         IPath path = new Path(OOoClasspathContainer.ID + IPath.SEPARATOR + ooo.getName());
         String value = String.valueOf(JavaRuntime.isModularProject(project));
         IClasspathAttribute attribute = JavaCore.newClasspathAttribute(IClasspathAttribute.MODULE, value);

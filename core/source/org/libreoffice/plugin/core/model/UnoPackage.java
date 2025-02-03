@@ -379,7 +379,7 @@ public class UnoPackage {
      */
     public void addTypelibraryFile(String pathInArchive, File file) {
         if (!file.isFile()) {
-            throw new IllegalArgumentException("pFile [" + file + "] is not a file");
+            throw new IllegalArgumentException("File [" + file + "] is not a file");
         }
 
         pathInArchive = FilenameUtils.separatorsToUnix(pathInArchive);
@@ -552,7 +552,7 @@ public class UnoPackage {
      */
     public void addConfigurationDataFile(String pathInArchive, File file) {
         if (!file.isFile()) {
-            throw new IllegalArgumentException("pFile [" + file + "] is not a file");
+            throw new IllegalArgumentException("File [" + file + "] is not a file");
         }
 
         // Do not change the extension from now
@@ -572,7 +572,7 @@ public class UnoPackage {
      */
     public void addConfigurationSchemaFile(String pathInArchive, File file) {
         if (!file.isFile()) {
-            throw new IllegalArgumentException("file [" + file + "] is not a file");
+            throw new IllegalArgumentException("File [" + file + "] is not a file");
         }
 
         // Do not change the extension from now
@@ -594,7 +594,7 @@ public class UnoPackage {
      */
     public void addPackageDescription(String pathInArchive, File file, Locale locale) {
         if (!file.isFile()) {
-            throw new IllegalArgumentException("file [" + file + "] is not a file");
+            throw new IllegalArgumentException("File [" + file + "] is not a file");
         }
 
         mManifest.addDescription(pathInArchive, locale);
@@ -615,7 +615,7 @@ public class UnoPackage {
      */
     public void addOtherFile(String pPathInArchive, File file) {
         if (!file.isFile()) {
-            throw new IllegalArgumentException("file [" + file.getAbsolutePath() + "] is not a file");
+            throw new IllegalArgumentException("File [" + file.getAbsolutePath() + "] is not a file");
         }
 
         pPathInArchive = FilenameUtils.separatorsToUnix(pPathInArchive);
