@@ -90,7 +90,9 @@ public class JavaProjectHandler implements IProjectHandler {
         "juh.jar", //$NON-NLS-1$
         "jurt.jar", //$NON-NLS-1$
         "unoloader.jar", //$NON-NLS-1$
-        "officebean.jar" //$NON-NLS-1$
+        "officebean.jar", //$NON-NLS-1$
+        "java_websocket.jar", //$NON-NLS-1$
+        "unoagent.jar" //$NON-NLS-1$
     };
 
     /**
@@ -108,19 +110,19 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public void addProjectNature(IProject pProject) {
+    public void addProjectNature(IProject project) {
         try {
-            if (!pProject.exists()) {
-                pProject.create(null);
+            if (!project.exists()) {
+                project.create(null);
                 PluginLogger.debug("Project created during language specific operation"); //$NON-NLS-1$
             }
 
-            if (!pProject.isOpen()) {
-                pProject.open(null);
+            if (!project.isOpen()) {
+                project.open(null);
                 PluginLogger.debug("Project opened"); //$NON-NLS-1$
             }
 
-            IProjectDescription description = pProject.getDescription();
+            IProjectDescription description = project.getDescription();
             String[] natureIds = description.getNatureIds();
             String[] newNatureIds = new String[natureIds.length + 1];
             System.arraycopy(natureIds, 0, newNatureIds, 0, natureIds.length);
@@ -129,7 +131,7 @@ public class JavaProjectHandler implements IProjectHandler {
             newNatureIds[natureIds.length] = JavaCore.NATURE_ID;
 
             description.setNatureIds(newNatureIds);
-            pProject.setDescription(description, null);
+            project.setDescription(description, null);
             PluginLogger.debug(Messages.getString("Language.JavaNatureSet")); //$NON-NLS-1$
 
         } catch (CoreException e) {
@@ -189,17 +191,17 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public String getImplementationName(IUnoidlProject pPrj, String pService) throws Exception {
-        String prefix = pPrj.getCompanyPrefix();
-        String comp = pPrj.getOutputExtension();
+    public String getImplementationName(IUnoidlProject prj, String service) throws Exception {
+        String prefix = prj.getCompanyPrefix();
+        String comp = prj.getOutputExtension();
 
         String implementationName = null;
 
-        if (pService.startsWith(prefix)) {
-            String localName = pService.substring(prefix.length());
+        if (service.startsWith(prefix)) {
+            String localName = service.substring(prefix.length());
             implementationName = prefix + "." + comp + localName + "Impl"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            throw new Exception("Cannot find implementation name for service: " + pService); //$NON-NLS-1$
+            throw new Exception("Cannot find implementation name for service: " + service); //$NON-NLS-1$
         }
 
         return implementationName;
@@ -240,44 +242,44 @@ public class JavaProjectHandler implements IProjectHandler {
      * {@inheritDoc}
      */
     @Override
-    public String getLibraryPath(IUnoidlProject pProject) {
-        return getJarFile(pProject).getLocation().toOSString();
+    public String getLibraryPath(IUnoidlProject project) {
+        return getJarFile(project).getLocation().toOSString();
     }
 
     /**
      * Returns a handle to the project jar file. Beware that this handle may refer to a non-existing file. Users have to
      * create it if necessary.
      *
-     * @param pProject
+     * @param project
      *            the concerned UNO project
      * @return a handle to the jar file of the project
      */
-    public IFile getJarFile(IUnoidlProject pProject) {
-        String filename = pProject.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return pProject.getFile(filename);
+    public IFile getJarFile(IUnoidlProject project) {
+        String filename = project.getName().replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return project.getFile(filename);
     }
 
     /**
      * Returns a handle to the project jar file. Beware that this handle may refer to a non-existing file. Users have to
      * create it if necessary.
      *
-     * @param pProjectDir
+     * @param projectDir
      *            the concerned UNO project directory
      * @return a handle to the jar file of the project
      */
-    public File getJarFile(File pProjectDir) throws IOException, XPathException {
-        String filename = getName(pProjectDir).replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return new File(pProjectDir, filename);
+    public File getJarFile(File projectDir) throws IOException, XPathException {
+        String filename = getName(projectDir).replace(" ", "") + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return new File(projectDir, filename);
     }
 
-    private String getName(File pProjectDir) throws IOException, XPathException {
+    private String getName(File projectDir) throws IOException, XPathException {
         String name = null;
-        File projectFile = new File(pProjectDir, ".project");
+        File projectFile = new File(projectDir, ".project");
         if (projectFile.exists()) {
             final FileInputStream byteStream = new FileInputStream(projectFile);
             InputSource source = new InputSource(byteStream);
 
-            // evaluation de l'expression XPath
+            // XPath expression evaluation
             XPathFactory factory = XPathFactory.newInstance();
             javax.xml.xpath.XPath xpath = factory.newXPath();
             final String xPathExpr = "//projectDescription/name";
@@ -293,24 +295,24 @@ public class JavaProjectHandler implements IProjectHandler {
     /**
      * Get the UNO registration class name of the project.
      *
-     * @param pProject
+     * @param project
      *            the project for witch to get the registration class.
      *
      * @return the registration class name
      */
-    public String getRegistrationClassName(IUnoidlProject pProject) {
-        return pProject.getProperty(P_REGISTRATION_CLASSNAME);
+    public String getRegistrationClassName(IUnoidlProject project) {
+        return project.getProperty(P_REGISTRATION_CLASSNAME);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IFolder[] getBinFolders(IUnoidlProject pUnoidlProject) {
+    public IFolder[] getBinFolders(IUnoidlProject unoProject) {
         ArrayList<IFolder> folders = new ArrayList<IFolder>();
 
         IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
-        IProject prj = workspace.getProject(pUnoidlProject.getName());
+        IProject prj = workspace.getProject(unoProject.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
         try {
             folders.add(workspace.getFolder(javaPrj.getOutputLocation()));

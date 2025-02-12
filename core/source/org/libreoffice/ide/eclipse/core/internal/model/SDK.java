@@ -213,7 +213,6 @@ public class SDK implements ISdk, ITableElement {
     @Override
     public String getCommand(String command) {
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
-            command = command.replace('-', '_');
             command += ".exe"; //$NON-NLS-1$
         }
         return command;
