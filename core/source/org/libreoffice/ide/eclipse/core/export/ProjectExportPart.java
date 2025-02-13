@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.language.LanguageExportPart;
 import org.libreoffice.ide.eclipse.core.Messages;
-import org.libreoffice.ide.eclipse.core.internal.model.UnoidlProject;
 import org.libreoffice.ide.eclipse.core.utils.TemplatesHelper;
 
 /**
@@ -160,10 +159,8 @@ public class ProjectExportPart extends LanguageExportPart {
                 ProjectExportPart.class, new String(), prjName);
 
             // Create build.properties file if not exist
-            String path = unoProject.getProjectPath().toOSString(); //$NON-NLS-1$
-            File buildFile = new File(path, UnoidlProject.BUILD_FILE); //$NON-NLS-1$ //$NON-NLS-2$
-            if (!buildFile.exists()) {
-                unoProject.saveBuildProperties(buildFile);
+            if (!unoProject.hasBuildFile()) {
+                unoProject.createBuildProperties();
             }
         }
     }

@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -82,7 +83,9 @@ import org.libreoffice.plugin.core.model.UnoPackage;
  */
 public class JavaBuilder implements ILanguageBuilder {
 
-    // subdirectory in Project, holds external jars
+    // XXX: directory in the project that contains the external
+    // XXX: jar files and in sub-directories the source jar files
+    private static final String LIB_DIR_NAME = "lib";
     private static final String LIBS_DIR_NAME = "libs";
     private Language mLanguage;
 
@@ -99,22 +102,22 @@ public class JavaBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public IFile createLibrary(IUnoidlProject pUnoProject) throws Exception {
-        IFile jarFile = ((JavaProjectHandler) mLanguage.getProjectHandler()).getJarFile(pUnoProject);
+    public IFile createLibrary(IUnoidlProject unoProject) throws Exception {
+        IFile jarFile = ((JavaProjectHandler) mLanguage.getProjectHandler()).getJarFile(unoProject);
 
         // Add all the jar dependencies
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
-        List<IFile> externalJars = getLibs(javaPrj);
+        List<IResource> externalJars = getProjectLibs(unoProject, javaPrj);
 
         JarPackageData description = new JarPackageData();
         description.setGenerateManifest(true);
         description.setJarLocation(jarFile.getLocation());
 
         String regClassname = ((JavaProjectHandler) mLanguage.getProjectHandler())
-            .getRegistrationClassName(pUnoProject);
-        description.setManifestProvider(new UnoManifestProvider(regClassname, pUnoProject, externalJars));
-        description.setManifestLocation(pUnoProject.getFile("MANIFEST.MF").getFullPath()); //$NON-NLS-1$
+            .getRegistrationClassName(unoProject);
+        description.setManifestProvider(new UnoManifestProvider(regClassname, unoProject, externalJars));
+        description.setManifestLocation(unoProject.getFile("MANIFEST.MF").getFullPath()); //$NON-NLS-1$
         description.setSaveManifest(false);
         description.setReuseManifest(false);
         description.setExportOutputFolders(true);
@@ -124,16 +127,19 @@ public class JavaBuilder implements ILanguageBuilder {
 
         // Get the files to export: javamaker output + project classes
         FilesVisitor visitor = new FilesVisitor();
-        visitor.addException(pUnoProject.getFolder(pUnoProject.getUrdPath()));
+        visitor.addException(unoProject.getFolder(unoProject.getUrdPath()));
+        // TODO: retrieve value from configuration
+        visitor.addException(unoProject.getFolder(unoProject.getBuildPath().append("idl")));
+        visitor.addException(unoProject.getFolder(unoProject.getBuildPath().append("classes")));
 
-        IFolder buildDir = pUnoProject.getFolder(pUnoProject.getBuildPath());
+        IFolder buildDir = unoProject.getFolder(unoProject.getBuildPath());
         buildDir.accept(visitor);
 
         // Adding the source directory is not strictly necessary
         // (and it has practically no impact on the generated jar).
         // But if the build path is empty, the build fails.
         // So the contract seems to be that setElements must be called with a non-empty list of files.
-        IFolder sourceDir = pUnoProject.getFolder(pUnoProject.getSourcePath());
+        IFolder sourceDir = unoProject.getFolder(unoProject.getSourcePath());
         sourceDir.accept(visitor);
         description.setElements(visitor.getFiles());
 
@@ -148,8 +154,9 @@ public class JavaBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj, File typesFile,
-        File buildFolder, String rootModule, IProgressMonitor monitor) {
+    public void generateFromTypes(ISdk sdk, IOOo ooo, IProject prj,
+                                  File typesFile, File buildFolder,
+                                  String rootModule, IProgressMonitor monitor) {
 
         if (typesFile.exists()) {
 
@@ -171,8 +178,8 @@ public class JavaBuilder implements ILanguageBuilder {
     }
 
     private void runJavamaker(String firstModule, String typesArgs,
-        ISdk sdk, IProject prj, File typesFile,
-        File buildFolder, IProgressMonitor monitor) {
+                              ISdk sdk, IProject prj, File typesFile,
+                              File buildFolder, IProgressMonitor monitor) {
 
         StringBuffer errBuf = new StringBuffer();
         try {
@@ -214,9 +221,9 @@ public class JavaBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public String[] getBuildEnv(IUnoidlProject pUnoProject) {
+    public String[] getBuildEnv(IUnoidlProject unoProject) {
 
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoProject.getName());
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(unoProject.getName());
 
         String[] env = new String[2];
 
@@ -273,109 +280,76 @@ public class JavaBuilder implements ILanguageBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void fillUnoPackage(UnoPackage pUnoPackage, IUnoidlProject pUnoPrj) {
+    public void fillUnoPackage(UnoPackage unoPackage, IUnoidlProject unoPrj) {
         // Add the component Jar file
         JavaProjectHandler handler = (JavaProjectHandler) mLanguage.getProjectHandler();
-        File libFile = SystemHelper.getFile(handler.getJarFile(pUnoPrj));
-        File prjFile = SystemHelper.getFile(pUnoPrj);
+        File libFile = SystemHelper.getFile(handler.getJarFile(unoPrj));
+        File prjFile = SystemHelper.getFile(unoPrj);
 
-        pUnoPackage.addComponentFile(
+        unoPackage.addComponentFile(
             UnoPackage.getPathRelativeToBase(libFile, prjFile),
             libFile, "Java"); //$NON-NLS-1$
 
-        // Add all the jar dependencies
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pUnoPrj.getName());
+        // Add all the external jar dependencies
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoPrj.getName());
         IJavaProject javaPrj = JavaCore.create(prj);
-        List<IFile> libs = getLibs(javaPrj);
-        for (IFile lib : libs) {
+        List<IResource> libs = getProjectLibs(unoPrj, javaPrj);
+        for (IResource lib : libs) {
             File jarFile = SystemHelper.getFile(lib);
-            pUnoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
+            unoPackage.addOtherFile(UnoPackage.getPathRelativeToBase(jarFile, prjFile), jarFile);
         }
 
     }
 
     /**
-     * either get list from libs dir when exist, or from the classpath.
+     * either get list from lib or libs dir when exist, or from the classpath.
      * 
-     * @param javaPrj the project from which to extract the libraries
+     * @param unoPrj the UNO project from which to extract the libraries
+     * 
+     * @param javaPrj the Java project from which to extract the libraries
      * 
      * @return list of IFile
      */
-    private List<IFile> getLibs(IJavaProject javaPrj) {
-        List<IFile> libs = new ArrayList<>();
-        if (javaPrj.getProject().getFolder(LIBS_DIR_NAME).exists()) {
-            libs = getLibsFromLibsDir(javaPrj);
+    private List<IResource> getProjectLibs(IUnoidlProject unoPrj, IJavaProject javaPrj) {
+        List<IResource> libs = new ArrayList<>();
+        if (javaPrj.getProject().getFolder(LIB_DIR_NAME).exists()) {
+            libs = getLibsFromDir(javaPrj, LIB_DIR_NAME);
+        } else if (javaPrj.getProject().getFolder(LIBS_DIR_NAME).exists()) {
+            libs = getLibsFromDir(javaPrj, LIBS_DIR_NAME);
         } else {
-            libs = getLibsFromClasspath(javaPrj);
+            libs = JavaClassPathProvider.getProjectLibs(unoPrj, javaPrj);
         }
+        PluginLogger.debug("Found " + libs.size() + " Jars");
         return libs;
     }
 
     /**
-     * Get the libraries in the classpath that are located in the project
-     * directory or one of its subfolder.
-     *
-     * @param javaPrj the project from which to extract the libraries
-     * 
-     * @return a list of all the File pointing to the libraries.
-     */
-    private List<IFile> getLibsFromClasspath(IJavaProject javaPrj) {
-        PluginLogger.debug("Collecting Jars from .classpath");
-
-        ArrayList<IFile> libs = new ArrayList<>();
-        try {
-            IClasspathEntry[] entries = javaPrj.getResolvedClasspath(true);
-            for (IClasspathEntry entry : entries) {
-                if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-                    /*
-                     * At first, add only the libraries located in the project
-                     * or one of its children. All others libraries have to be
-                     * managed by the user.
-                     */
-                    IPath path = entry.getPath();
-                    if (!new File(path.toOSString()).exists() && path.isAbsolute() &&
-                        path.toString().startsWith("/" + javaPrj.getProject().getName())) { //$NON-NLS-1$
-                        // Relative to the project
-                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-                        if (file != null && file.exists()) {
-                            libs.add(file);
-                        }
-                    }
-                }
-            }
-
-        } catch (JavaModelException e) {
-            // Enable to add some missing library
-        }
-        return libs;
-    }
-
-    /**
-     * when an libs dir exist in the project then return a list of jars.
+     * Return all jar files contained in the folder without taking into account sub folders.
      * 
      * @param javaProject the java project
      * 
+     * @param folder the folder in which we must search
+     * 
      * @return list of jar files
      */
-    private List<IFile> getLibsFromLibsDir(IJavaProject javaProject) {
-        PluginLogger.debug("Collecting Jars from " + LIBS_DIR_NAME);
+    private List<IResource> getLibsFromDir(IJavaProject javaProject, String folder) {
+        PluginLogger.debug("Collecting Jars from: /" + folder);
 
-        List<IFile> libs = new ArrayList<>();
-        IFolder libFolder = javaProject.getProject().getFolder(LIBS_DIR_NAME);
+        List<IResource> libs = new ArrayList<>();
+        IFolder libFolder = javaProject.getProject().getFolder(folder);
         if (libFolder.exists()) {
             java.nio.file.Path pathLibs = Paths.get(libFolder.getRawLocation().toOSString());
             try (Stream<java.nio.file.Path> walk = Files.walk(pathLibs)) {
                 libs = walk.map(jarFile -> {
                     java.nio.file.Path pathRelative = pathLibs.relativize(jarFile);
                     return libFolder.getFile(pathRelative.toString());
-                }).filter(f -> "jar".equalsIgnoreCase(f.getFileExtension()))
-                    .collect(Collectors.toList());
+                }).filter(f -> f.getType() == IResource.FILE)
+                  .filter(f -> "jar".equals(f.getFileExtension()))
+                  .collect(Collectors.toList());
             } catch (IOException e) {
-                PluginLogger.error(
-                    Messages.getString("JavaBuilder.GetExternalLibsFailed"), e);
+                PluginLogger.error(Messages.getString("JavaBuilder.GetLibsFromDirFailed"), e);
             }
         }
-        PluginLogger.debug("Found " + libs.size() + " Jars");
         return libs;
     }
 }

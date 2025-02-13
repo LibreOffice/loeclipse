@@ -63,25 +63,25 @@ public class SystemHelper {
     /**
      * Get a normal Java File from an Eclipse IResource.
      *
-     * @param pRes
+     * @param res
      *            the IResource to convert
      *
      * @return the equivalent File
      */
-    public static File getFile(IResource pRes) {
-        return pRes.getLocation().toFile();
+    public static File getFile(IResource res) {
+        return res.getLocation().toFile();
     }
 
     /**
      * Get a normal Java File from an {@link IUnoidlProject}.
      *
-     * @param pPrj
+     * @param unoPrj
      *            {@link IUnoidlProject} to convert
      *
      * @return the equivalent File
      */
-    public static File getFile(IUnoidlProject pPrj) {
-        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(pPrj.getName());
+    public static File getFile(IUnoidlProject unoPrj) {
+        IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(unoPrj.getName());
         return getFile(prj);
     }
 

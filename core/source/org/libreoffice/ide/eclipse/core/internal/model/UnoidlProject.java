@@ -39,10 +39,13 @@ package org.libreoffice.ide.eclipse.core.internal.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -674,9 +677,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         saveUnoProject();
 
         // Save the build.properties file if exist
-        File buildFile = new File(getProjectPath().toOSString(), BUILD_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+        File buildFile = getBuildFile();
         if (buildFile.exists()) {
-            saveBuildProperties(buildFile);
+            Properties properties = getBuildProperties(buildFile);
+            setProjectBuildProperties(properties);
+            saveBuildProperties(properties, buildFile);
         }
 
     }
@@ -685,21 +690,34 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void saveBuildProperties(File buildFile) {
-        // Save the build.properties file
-        FileWriter writer = null;
+    public void saveJavaBuildProperties(List <IResource> files) {
+        File buildFile = getBuildFile();
+        Properties properties = getBuildProperties(buildFile);
+        String libs = String.join(", ", files.stream().map(IResource::getFullPath)
+                                                      .map(IPath::makeRelative)
+                                                      .map(IPath::toString)
+                                                      .collect(Collectors.toList())); //$NON-NLS-1$
+        PluginLogger.debug("UnoidlProject.saveJavaBuildProperties libs: " + libs);
+        properties.put("uno.java.classpath", libs); //$NON-NLS-1$ //$NON-NLS-2$
+        saveBuildProperties(properties, buildFile);
+    }
 
-        try {
-            writer = new FileWriter(buildFile);
-            Properties props = new Properties();
-            props.put("office.install.dir", getOOo().getHome()); //$NON-NLS-1$ //$NON-NLS-2$
-            props.put("sdk.dir", getSdk().getHome()); //$NON-NLS-1$ //$NON-NLS-2$
-            props.store(writer, Messages.getString("UnoidlProject.BuildFileComment")); //$NON-NLS-1$
-            writer.close();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasBuildFile() {
+        return getBuildFile().exists();
+    }
 
-        } catch (IOException e) {
-            PluginLogger.warning(Messages.getString("UnoidlProject.BuildFileError"), e); //$NON-NLS-1$
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createBuildProperties() {
+        Properties properties = new Properties();
+        setProjectBuildProperties(properties);
+        saveBuildProperties(properties, getBuildFile());
     }
 
     /**
@@ -896,6 +914,62 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
                 PluginLogger.error(Messages.getString("UnoidlProject.RemoveMarkerError"), e); //$NON-NLS-1$
             }
         }
-
     }
+
+    /**
+     * Get the build.properties project file.
+     *
+     * @return the build.properties project file.
+     */
+    private File getBuildFile() {
+        return new File(getProjectPath().toOSString(), BUILD_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private void saveBuildProperties(Properties properties, File buildFile) {
+        // Save the build.properties file
+        FileWriter writer = null;
+
+        try {
+            writer = new FileWriter(buildFile);
+            properties.store(writer, Messages.getString("UnoidlProject.BuildFileComment")); //$NON-NLS-1$
+            writer.close();
+
+        } catch (IOException e) {
+            PluginLogger.warning(Messages.getString("UnoidlProject.BuildFileError"), e); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Set the build.properties project properties.
+     *
+     * @param properties
+     *          the properties of build.properties file
+     */
+    private void setProjectBuildProperties(Properties properties) {
+        properties.put("office.install.dir", getOOo().getHome()); //$NON-NLS-1$ //$NON-NLS-2$
+        properties.put("sdk.dir", getSdk().getHome()); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    /**
+     * Get the build.properties project properties.
+     *
+     * @param buildFile
+     *          the build.properties file
+     *
+     * @return the build.properties project properties.
+     */
+    private Properties getBuildProperties(File buildFile) {
+        Properties properties = new Properties();
+        FileReader reader = null;
+        try {
+            reader = new FileReader(buildFile);
+            properties.load(reader);
+            reader.close();
+
+        } catch (IOException e) {
+            PluginLogger.warning(Messages.getString("UnoidlProject.BuildFileError"), e); //$NON-NLS-1$
+        }
+        return properties;
+    }
+
 }

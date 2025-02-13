@@ -36,10 +36,12 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core.model;
 
-import java.io.File;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
@@ -223,6 +225,11 @@ public interface IUnoidlProject {
     public IPath getImplementationPath();
 
     /**
+     * @return the IProject to the project
+     */
+    public IProject getProject();
+
+    /**
      * @return the full path to the project
      */
     public IPath getProjectPath();
@@ -254,7 +261,7 @@ public interface IUnoidlProject {
     public IPath getDistPath();
 
     /**
-     * @return the folder folder containing the distribution .oxt file. If the folder does not exist then it is created.
+     * @return the folder containing the distribution .oxt file. If the folder does not exist then it is created.
      * @throws CoreException
      *             if we were unable to create the folder.
      */
@@ -351,15 +358,27 @@ public interface IUnoidlProject {
     public void saveAllProperties();
 
     /**
-     * Saves the Ant build.properties configuration file.
+     * Create the Ant build.properties configuration file.
      *
-     * @param buildFile
-     *            the build.properties file
      */
-    public void saveBuildProperties(File buildFile);
+    public void createBuildProperties();
 
     /**
      * @return the language dependent binaries folders.
      */
     public IFolder[] getBinFolders();
+
+    /**
+     * @return if the build.properties project file exist.
+     */
+    public boolean hasBuildFile();
+
+    /**
+     * Save in the Ant build.properties the Java class path.
+     *
+     * @param libs
+     *            the files list composing the class path
+     */
+    public void saveJavaBuildProperties(List<IResource> libs);
+
 }

@@ -40,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,8 +49,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
 import org.libreoffice.ide.eclipse.java.registration.RegistrationHelper;
@@ -68,20 +69,21 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
 
         boolean visitChildren = true;
 
-        if (!(delta.getResource() instanceof IWorkspaceRoot)) {
+        IResource res = delta.getResource();
+        if (res != null && res.getType() == IResource.FILE) {
 
             IProject project = delta.getResource().getProject();
-            IUnoidlProject unoprj = ProjectsManager.getProject(project.getName());
-            if (unoprj != null) {
+            IUnoidlProject prj = ProjectsManager.getProject(project.getName());
+            if (prj != null) {
                 // The resource is a UNO project or is contained in a UNO project
                 visitChildren = true;
-
                 // Check if the resource is a service implementation
                 if (delta.getKind() == IResourceDelta.ADDED) {
-                    addImplementation(delta, unoprj);
-
+                    addImplementation(prj, res);
                 } else if (delta.getKind() == IResourceDelta.REMOVED) {
-                    removeImplementation(delta, unoprj);
+                    removeImplementation(prj, delta, res);
+                } else if (delta.getKind() == IResourceDelta.CHANGED) {
+                    changeJavaBuildPorperties(prj, res);
                 }
             }
         }
@@ -92,107 +94,121 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
     /**
      * Remove the delta resource from the implementations.
      *
+     * @param prj the concerned UNO project
      * @param delta the delta to remove
-     * @param pUnoprj the concerned UNO project
+     * @param res the concerned delta resource
      */
-    private void removeImplementation(IResourceDelta delta,
-        IUnoidlProject pUnoprj) {
-        IResource res = delta.getResource();
+    private void removeImplementation(IUnoidlProject prj, IResourceDelta delta, IResource res) {
         if (res.getName().endsWith(".java")) { //$NON-NLS-1$
-            String prjPath = delta.getProjectRelativePath().toString();
-            prjPath = prjPath.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
-            prjPath = prjPath.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
+            String path = delta.getProjectRelativePath().toString();
+            path = path.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            path = path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
-            Vector<String> classes = RegistrationHelper.readClassesList(pUnoprj);
+            Vector<String> classes = RegistrationHelper.readClassesList(prj);
             for (String implName : classes) {
-                if (prjPath.endsWith(implName)) {
-                    RegistrationHelper.removeImplementation(pUnoprj, implName);
+                if (path.endsWith(implName)) {
+                    RegistrationHelper.removeImplementation(prj, implName);
                 }
             }
         } else if (res.getName().endsWith(".jar")) {
-            RegistrationHelper.checkClassesListFile(pUnoprj);
+            RegistrationHelper.checkClassesListFile(prj);
         }
     }
 
     /**
      * Add the delta resource to the implementations.
      *
-     * @param delta the delta resource to add.
-     * @param unoProject the concerned UNO project
+     * @param prj the concerned UNO project
+     * @param res the concerned delta resource
      */
-    private void addImplementation(IResourceDelta delta, IUnoidlProject unoProject) {
-        String className = isJavaServiceImpl(delta.getResource());
-        if (className != null) {
-            RegistrationHelper.addImplementation(unoProject, className);
+    private void addImplementation( IUnoidlProject prj, IResource res) {
+        if (res.getName().endsWith(".java")) { //$NON-NLS-1$
+            String className = getJavaServiceImpl(res);
+            if (className != null) {
+                RegistrationHelper.addImplementation(prj, className);
+            }
         }
     }
 
     /**
-     * Check whether a resource is a UNO implementation.
+     * Change the delta resource to the java project.
+     *
+     * @param prj the concerned UNO project
+     * @param res the concerned delta resource
+     */
+    private void changeJavaBuildPorperties(IUnoidlProject prj, IResource res) {
+        if (res.getName().equals(".classpath") && //$NON-NLS-1$
+            prj.hasBuildFile()) {
+            List <IResource> libs = JavaClassPathProvider.getWorkspaceLibs(prj);
+            PluginLogger.debug("Found " + libs.size() + " Jars");
+            prj.saveJavaBuildProperties(libs);
+        }
+    }
+
+    /**
+     * Get the java service implementation class name.
      *
      * @param res the resource to check.
-     * @return <code>true</code> if it contains the necessary static methods for Java
-     *      UNO service implementation registration.
+     * @return <code>class name</code> if it contains the necessary static methods for Java
+     *      UNO service implementation registration or <code>null</code> if not.
      */
-    private String isJavaServiceImpl(IResource res) {
+    private String getJavaServiceImpl(IResource res) {
 
         String className = null;
-        if (res.getType() == IResource.FILE && res.getName().endsWith(".java")) { //$NON-NLS-1$
-            /*
-             * For sure the resource is a Java class file.
-             * Now the file has to be read to find out if it contains the two
-             * following methods:
-             *
-             *    + public static XSingleComponentFactory __getComponentFactory
-             *    + public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey )
-             */
-            FileInputStream in = null;
-            BufferedReader reader = null;
+        /*
+         * For sure the resource is a Java class file.
+         * Now the file has to be read to find out if it contains the two
+         * following methods:
+         *
+         *    + public static XSingleComponentFactory __getComponentFactory
+         *    + public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey )
+         */
+        FileInputStream in = null;
+        BufferedReader reader = null;
+        try {
+            File file = res.getLocation().toFile();
+            in = new FileInputStream(file);
+            reader = new BufferedReader(new InputStreamReader(in));
+
+            // Read the file into a string without line delimiters
+            String line = reader.readLine();
+            String fileContent = ""; //$NON-NLS-1$
+            while (line != null) {
+                fileContent = fileContent + line;
+                line = reader.readLine();
+            }
+
+            String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory" + //$NON-NLS-1$
+                "\\s+__getComponentFactory"; //$NON-NLS-1$
+            boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
+
+            String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo"; //$NON-NLS-1$
+            boolean containsWriteService = fileContent.split(writeServiceRegex).length > 1;
+
+            // Do not consider the RegistrationHandler class as a service implementation
+            if (containsGetFactory && containsWriteService &&
+                !res.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
+                /*
+                 * Computes the class name
+                 */
+                Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent); //$NON-NLS-1$
+                if (m3.matches()) {
+                    String packageName = m3.group(1);
+
+                    String fileName = res.getName();
+                    className = fileName.substring(0, fileName.length() - ".java".length()); //$NON-NLS-1$
+
+                    className = packageName + "." + className; //$NON-NLS-1$
+                }
+            }
+
+        } catch (Exception e) {
+            // nothing to log
+        } finally {
             try {
-                File file = res.getLocation().toFile();
-                in = new FileInputStream(file);
-                reader = new BufferedReader(new InputStreamReader(in));
-
-                // Read the file into a string without line delimiters
-                String line = reader.readLine();
-                String fileContent = ""; //$NON-NLS-1$
-                while (line != null) {
-                    fileContent = fileContent + line;
-                    line = reader.readLine();
-                }
-
-                String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory" + //$NON-NLS-1$
-                    "\\s+__getComponentFactory"; //$NON-NLS-1$
-                boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
-
-                String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo"; //$NON-NLS-1$
-                boolean containsWriteService = fileContent.split(writeServiceRegex).length > 1;
-
-                // Do not consider the RegistrationHandler class as a service implementation
-                if (containsGetFactory && containsWriteService &&
-                    !res.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
-                    /*
-                     * Computes the class name
-                     */
-                    Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent); //$NON-NLS-1$
-                    if (m3.matches()) {
-                        String packageName = m3.group(1);
-
-                        String fileName = res.getName();
-                        className = fileName.substring(0, fileName.length() - ".java".length()); //$NON-NLS-1$
-
-                        className = packageName + "." + className; //$NON-NLS-1$
-                    }
-                }
-
+                reader.close();
+                in.close();
             } catch (Exception e) {
-                // nothing to log
-            } finally {
-                try {
-                    reader.close();
-                    in.close();
-                } catch (Exception e) {
-                }
             }
         }
 

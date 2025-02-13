@@ -81,7 +81,7 @@ public class UnoProjectPulldownAction extends AbstractPulldownAction {
      * {@inheritDoc}
      */
     @Override
-    public boolean isValidSelection(IStructuredSelection pSelection) {
+    public boolean isValidSelection(IStructuredSelection selection) {
         return true;
     }
 }

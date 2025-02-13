@@ -428,17 +428,17 @@ public class UnoidlProjectHelper {
     /**
      * Returns the UNO project underlying {@link IProject} resource.
      *
-     * @param pUnoProject
+     * @param unoProject
      *            the UNO project for which to return the {@link IProject}
      *
      * @return the underlying {@link IProject} or <code>null</code> if the given project is <code>null</code> or any
      *         problem appear.
      */
-    public static IProject getProject(IUnoidlProject pUnoProject) {
+    public static IProject getProject(IUnoidlProject unoProject) {
 
         IProject project = null;
-        if (pUnoProject != null && pUnoProject instanceof UnoidlProject) {
-            project = ((UnoidlProject) pUnoProject).getProject();
+        if (unoProject != null && unoProject instanceof UnoidlProject) {
+            project = ((UnoidlProject) unoProject).getProject();
         }
 
         return project;
@@ -521,18 +521,18 @@ public class UnoidlProjectHelper {
     /**
      * Checks if the resource is contained in the UNO package.
      *
-     * @param pRes
+     * @param res
      *            the resource to check
      * @return <code>true</code> if the resource is contained in the package
      */
-    public static boolean isContainedInPackage(IResource pRes) {
+    public static boolean isContainedInPackage(IResource res) {
         boolean contained = false;
 
-        String prjName = pRes.getProject().getName();
+        String prjName = res.getProject().getName();
         IUnoidlProject prj = ProjectsManager.getProject(prjName);
 
         try {
-            URI resUri = pRes.getLocationURI();
+            URI resUri = res.getLocationURI();
 
             if (prj != null) {
 
@@ -562,28 +562,28 @@ public class UnoidlProjectHelper {
     /**
      * Get the list of the files contained in the minimal UNO package.
      *
-     * @param pPrj
+     * @param prj
      *            the project for which to get the minimal resources
      * @return the list of files
      */
-    public static List<IResource> getContainedFile(IProject pPrj) {
+    public static List<IResource> getContainedFile(IProject prj) {
         ArrayList<IResource> resources = new ArrayList<IResource>();
 
-        String prjName = pPrj.getName();
-        IUnoidlProject unoprj = ProjectsManager.getProject(prjName);
+        String prjName = prj.getName();
+        IUnoidlProject unoPrj = ProjectsManager.getProject(prjName);
 
-        if (unoprj != null) {
+        if (unoPrj != null) {
 
             File outputDir = new File(System.getProperty("user.home")); //$NON-NLS-1$
 
-            File dest = new File(outputDir, pPrj.getName() + ".zip"); //$NON-NLS-1$
-            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(unoprj, dest);
+            File dest = new File(outputDir, prj.getName() + ".zip"); //$NON-NLS-1$
+            UnoPackage unoPackage = UnoidlProjectHelper.createMinimalUnoPackage(unoPrj, dest);
 
             List<File> files = unoPackage.getContainedFiles();
-            File prjFile = SystemHelper.getFile(pPrj);
+            File prjFile = SystemHelper.getFile(prj);
             for (File file : files) {
                 String relative = UnoPackage.getPathRelativeToBase(file, prjFile);
-                IResource res = pPrj.findMember(relative);
+                IResource res = prj.findMember(relative);
                 if (res != null) {
                     resources.add(res);
                 }

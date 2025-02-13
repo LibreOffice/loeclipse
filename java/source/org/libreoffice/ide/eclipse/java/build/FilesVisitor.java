@@ -48,10 +48,10 @@ public class FilesVisitor implements IResourceVisitor {
     /**
      * Adds a resource to skip during the visit.
      *
-     * @param pRes the resource to skip
+     * @param res the resource to skip
      */
-    public void addException(IResource pRes) {
-        mExceptions.add(pRes);
+    public void addException(IResource res) {
+        mExceptions.add(res);
     }
 
     /**

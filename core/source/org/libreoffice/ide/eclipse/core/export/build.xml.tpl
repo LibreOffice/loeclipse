@@ -21,6 +21,9 @@
         <!-- set properties from Libreoffice installation and its SDK -->
         <property file="$'{'ant.file}/../build.properties"/>
 
+        <path id="workspace.dir" location=".."/>
+        <pathconvert property="workspace.path" refid="workspace.dir"/>
+
         <echo message="Initializing the properties for LibreOffice"/>
         <first id="sofficeParents">
             <dirset dir="$'{'office.install.dir}">
@@ -32,6 +35,7 @@
         <property name="office.libs.path" value="$'{'office.install.dir}$'{'file.separator}program"/>
 
         <echo message="Office libs path: $'{'office.libs.path}"/>
+        <echo message="Workspace path: $'{'workspace.path}"/>
 
         <property name="office.unotypes.rdb" value="$'{'office.libs.path}$'{'file.separator}types.rdb"/>
 
@@ -100,41 +104,45 @@
 
         <echo if:set="sdk.useidlw" message="Project SDK use unoidl-write"/>
         <echo if:set="sdk.useidlc" message="Project SDK use idlc"/>
+        <echo message="Project language $'{'project.language}"/>
 
         <!-- check if project is Java -->
         <condition property="project.isjava">
-            <available file="lib" type="dir"/>
+            <matches pattern="Java" string="$'{'project.language}"/>
         </condition>
     </target>
 
     <target name="init-java" depends="init-env" if="project.isjava">
         <echo message="Project is Java"/>
 
-        <property name="lib.dir" value="lib"/>
-        <property name="project.jar" value="$'{'ant.project.name}.jar"/>
-        <property name="build.jar" value="$'{'build.dir}$'{'file.separator}$'{'project.jar}"/>
+        <!-- Setting lib.dir dependencies default directory is /lib or /libs if exist -->
+        <condition property="lib.dir" value="libs">
+            <and>
+                <not>
+                    <available file="lib" type="dir"/>
+                </not>
+                <available file="libs" type="dir"/>
+            </and>
+        </condition>
+        <condition property="lib.dir" value="lib">
+            <available file="lib" type="dir"/>
+        </condition>
+        <property unless:set="uno.java.classpath" name="lib.dir" value="lib"/>
 
-        <property name="lib.dir" value="lib"/>
         <property name="project.jar" value="$'{'ant.project.name}.jar"/>
-        <property name="build.jar" value="$'{'build.dir}$'{'file.separator}$'{'project.jar}"/>
+        <property name="build.jar" value="$'{'basedir}$'{'file.separator}$'{'project.jar}"/>
 
         <first id="module">
             <fileset dir="$'{'src.dir.absolute}" includes="module-info.java"/>
         </first>
         <property name="src.module" value="$'{'toString:module}"/>
-
         <condition property="src.withmodule">
             <and>
                 <javaversion atleast="9"/>
                 <available file="$'{'src.module}" type="file"/>
             </and>
         </condition>
-
-        <condition property="src.withoutmodule">
-            <not>
-                <isset property="src.withmodule"/>
-            </not>
-        </condition>
+        <property unless:set="src.withmodule" name="src.withoutmodule"/>
 
         <echo if:set="src.withmodule" message="Compiling jar with module"/>
         <echo if:set="src.withoutmodule" message="Compiling jar without module"/>
@@ -150,27 +158,27 @@
             </fileset>
         </path>
 
-        <path id="build.class.path">
+        <path id="build.lib.path">
+            <filelist dir="$'{'workspace.path}" files="$'{'uno.java.classpath}"/>
+        </path>
+
+        <path if:set="lib.dir" id="build.class.path">
             <fileset dir="$'{'basedir}">
-                <include name="$'{'lib.dir}$'{'file.separator}*.jar"/>
+                <include name="$'{'lib.dir}$'{'file.separator}**$'{'file.separator}*.jar"/>
             </fileset>
         </path>
+        <path unless:set="lib.dir" id="build.class.path" refid="build.lib.path"/>
 
         <pathconvert property="manifest.class.path" pathsep=" ">
             <path refid="build.class.path"/>
-            <mapper>
-                <chainedmapper>
-                    <flattenmapper/>
-                    <globmapper from="*.jar" to="$'{'lib.dir}/*.jar"/>
-                </chainedmapper>
-            </mapper>
+            <globmapper from="$'{'basedir}/*" to="*"/>
         </pathconvert>
 
         <!-- create a few empty directories -->
         <mkdir dir="$'{'build.classes.dir}"/>
 
-        <echo if:set="src.withmodule" message="Archive Module-Path: $'{'manifest.class.path}"/>
-        <echo if:set="src.withoutmodule" message="Manifest Class-Path: $'{'manifest.class.path}"/>
+        <echo message="Binary build path: $'{'toString:build.lib.path}"/>
+        <echo message="Manifest class path: $'{'manifest.class.path}"/>
     </target>
 
     <target name="init-idlc" depends="init-java" if="sdk.useidlc">
@@ -256,6 +264,7 @@
             <classpath>
                 <pathelement location="$'{'build.classes.dir}"/>
                 <path refid="build.class.path"/>
+                <path refid="build.lib.path"/>
                 <path refid="office.class.path"/>
             </classpath>
         </javac>
@@ -269,6 +278,7 @@
             <modulepath>
                 <pathelement location="$'{'build.classes.dir}"/>
                 <path refid="build.class.path"/>
+                <path refid="build.lib.path"/>
                 <path refid="office.class.path"/>
             </modulepath>
         </javac>

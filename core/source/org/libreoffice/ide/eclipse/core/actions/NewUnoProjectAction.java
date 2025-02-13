@@ -73,8 +73,8 @@ public class NewUnoProjectAction implements IWorkbenchWindowActionDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void init(IWorkbenchWindow pWindow) {
-        this.mWindow = pWindow;
+    public void init(IWorkbenchWindow window) {
+        this.mWindow = window;
     }
 
     /**

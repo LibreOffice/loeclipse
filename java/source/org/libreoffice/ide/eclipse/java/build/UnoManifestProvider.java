@@ -36,7 +36,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.internal.ui.jarpackager.ManifestProvider;
 import org.eclipse.jdt.ui.jarpackager.JarPackageData;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
@@ -52,7 +52,7 @@ public class UnoManifestProvider extends ManifestProvider {
 
     private String mRegClass;
     private IUnoidlProject mUnoProject;
-    private List<IFile> mExternalJars;
+    private List<IResource> mExternalJars;
 
     /**
      * Constructor.
@@ -63,7 +63,7 @@ public class UnoManifestProvider extends ManifestProvider {
      *
      * @param externalJars the external Jars
      */
-    public UnoManifestProvider(String regClassname, IUnoidlProject unoProject, List<IFile> externalJars) {
+    public UnoManifestProvider(String regClassname, IUnoidlProject unoProject, List<IResource> externalJars) {
         mRegClass = regClassname;
         mUnoProject = unoProject;
         mExternalJars = externalJars;
@@ -76,11 +76,11 @@ public class UnoManifestProvider extends ManifestProvider {
     protected void putAdditionalEntries(Manifest manifest, JarPackageData jarPackage) {
         Name regClassName = new Attributes.Name("RegistrationClassName"); //$NON-NLS-1$
         manifest.getMainAttributes().put(regClassName, mRegClass);
-        
+
         Name classPath = new Attributes.Name("Class-Path");
         List<String> classPathList = new ArrayList<>();
-        for (IFile file:mExternalJars) {
-            String relativePath = UnoPackage.getPathRelativeToBase(SystemHelper.getFile(file),
+        for (IResource res : mExternalJars) {
+            String relativePath = UnoPackage.getPathRelativeToBase(SystemHelper.getFile(res),
                 SystemHelper.getFile(mUnoProject));
             relativePath = FilenameUtils.separatorsToUnix(relativePath);
             classPathList.add(relativePath);
