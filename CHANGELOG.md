@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+* #145 Fix SDK detection on Windows
+* #146 Update build.properties when classpath changes
+* #137 Allow generating ant script from non-UNO project
+* #142 Improve non-UNO project management
+* #136, #140 Recognize modular projects
+
 ## 4.1.0
 * #130 Support LibreOffice SDK >= 24.2
 * #104 Improve error handling for RegistrationHandler.classes file
