@@ -75,7 +75,7 @@
 
         <!-- clean the build and dist directory without deleting it -->
         <delete includeemptydirs="true">
-            <fileset dir="$'{'build.dir}" includes="**/*"/>
+            <fileset dir="$'{'build.dir}" includes="**/idl/,**/classes/"/>
         </delete>
         <delete includeemptydirs="true">
             <fileset dir="$'{'dist.dir}" includes="**/*"/>
@@ -143,7 +143,6 @@
             </and>
         </condition>
         <property unless:set="src.withmodule" name="src.withoutmodule"/>
-
         <echo if:set="src.withmodule" message="Compiling jar with module"/>
         <echo if:set="src.withoutmodule" message="Compiling jar without module"/>
 
