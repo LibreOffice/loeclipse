@@ -142,7 +142,7 @@
                 <available file="$'{'src.module}" type="file"/>
             </and>
         </condition>
-        <property unless:set="src.withmodule" name="src.withoutmodule"/>
+        <property unless:set="src.withmodule" name="src.withoutmodule" value="true"/>
 
         <echo if:set="src.withmodule" message="Compiling jar with module"/>
         <echo if:set="src.withoutmodule" message="Compiling jar without module"/>
