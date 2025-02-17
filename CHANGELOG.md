@@ -1,11 +1,14 @@
 # Changelog
 
 ## Unreleased
+* #57 Allow passive component registration
 * #145 Fix SDK detection on Windows
 * #146 Update build.properties when classpath changes
 * #137 Allow generating ant script from non-UNO project
 * #142 Improve non-UNO project management
 * #136, #140 Recognize modular projects
+* #147 Fix for ant build with non-modular projects
+* #149 Don't empty build/ directory when building with ant
 
 ## 4.1.0
 * #130 Support LibreOffice SDK >= 24.2
