@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.2.0
 * #57 Allow passive component registration
 * #145 Fix SDK detection on Windows
 * #146 Update build.properties when classpath changes
