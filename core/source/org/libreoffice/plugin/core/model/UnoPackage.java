@@ -243,6 +243,8 @@ public class UnoPackage {
             addTypelibraryFile(pathName, content);
         } else if (content.getName().equals("description.xml")) {
             addPackageDescription(pathName, content, Locale.getDefault());
+        } else if (content.getName().endsWith(".component")) {
+            addComponentsFile(pathName, content);
         } else {
             addOtherFile(pathName, content);
         }
@@ -367,6 +369,40 @@ public class UnoPackage {
 
         mManifest.addComponentFile(pathInArchive, type);
         addZipContent(pathInArchive, file);
+    }
+
+    /**
+     * Add a UNO components XML file to the package.
+     *
+     * @param pathInArchive
+     * @param pFile
+     *            the file to add to the package
+     *
+     * @see #addComponentsFile(String, File, String) for platform support
+     */
+    public void addComponentsFile(String pathInArchive, File pFile) {
+        addComponentsFile(pathInArchive, pFile, null);
+    }
+
+    /**
+     * Add a UNO components XML file to the package.
+     *
+     * @param pathInArchive
+     * @param pFile
+     *            the file to add to the package
+     * @param pPlatform
+     *            optional parameter to use only with native type. Please refer
+     *            to the OOo Developer's Guide for more information.
+     */
+    public void addComponentsFile(String pathInArchive, File pFile, String pPlatform) {
+        if (!pFile.isFile())
+            throw new IllegalArgumentException("pFile [" + pFile + "] is not a file");
+
+        // Do not change the extension from now
+        initializeOutput();
+
+        mManifest.addComponentsFile(pathInArchive, pPlatform);
+        addZipContent(pathInArchive, pFile);
     }
 
     /**

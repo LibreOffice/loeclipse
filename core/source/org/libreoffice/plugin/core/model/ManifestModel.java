@@ -128,6 +128,36 @@ public class ManifestModel {
     }
 
     /**
+     * Add a UNO components XML file to the package.
+     *
+     * @param pFile
+     *            the file to add
+     *
+     * @see #addComponentsFile(String, String) for platform support
+     */
+    public void addComponentsFile(String pFile) {
+        addComponentsFile(pFile, null);
+    }
+
+    /**
+     * Add a UNO components XML file to the package.
+     *
+     * @param pFile
+     *            the file to add
+     * @param pPlatform
+     *            optional parameter to use only with native type. Please refer
+     *            to the OOo Developer's Guide for more information.
+     */
+    public void addComponentsFile(String pFile, String pPlatform) {
+        FileType type = new FileType(FileType.MIME_UNO_COMPONENTS);
+        if (pPlatform != null) {
+            type.addParam(FileType.PARAM_PLATFORM, pPlatform);
+        }
+
+        addEntry(pFile, type);
+    }
+
+    /**
      * Add a type library to the package.
      *
      * @param file

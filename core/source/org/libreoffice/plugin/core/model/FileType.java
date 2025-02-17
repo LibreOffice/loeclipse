@@ -47,6 +47,7 @@ public class FileType {
     public static final String MIME_BASIC_LIB = "application/vnd.sun.star.basic-library";
     public static final String MIME_UNO_TYPES = "application/vnd.sun.star.uno-typelibrary";
     public static final String MIME_UNO_COMPONENT = "application/vnd.sun.star.uno-component";
+    public static final String MIME_UNO_COMPONENTS = "application/vnd.sun.star.uno-components";
     public static final String MIME_DESCRIPTION = "application/vnd.sun.star.package-bundle-description";
 
     public static final String PARAM_LOCALE = "locale";

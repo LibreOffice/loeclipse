@@ -196,6 +196,12 @@ public class PackageContentSelector extends Composite {
             pack.addContent(UnoPackage.getPathRelativeToBase(resFile, prjFile), resFile);
         }
 
+        IFile componentFile = project.getFile(project.getName() + ".component");
+        if (componentFile.exists()) {
+            File resFile = SystemHelper.getFile(componentFile);
+            pack.addContent(UnoPackage.getPathRelativeToBase(resFile, prjFile), resFile);
+        }
+
         // Add the additional content to the package
         for (Object item : resources) {
             if (item instanceof IResource) {
