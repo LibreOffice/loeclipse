@@ -38,8 +38,7 @@ package org.libreoffice.ide.eclipse.core.internal.model;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -49,6 +48,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
+import org.libreoffice.ide.eclipse.core.internal.helpers.UnoSkeletonHelper;
 import org.libreoffice.ide.eclipse.core.internal.helpers.UnoidlProjectHelper;
 import org.libreoffice.ide.eclipse.core.model.CompositeFactory;
 import org.libreoffice.ide.eclipse.core.model.IUnoComposite;
@@ -99,7 +99,7 @@ public final class UnoFactory {
             out = new FileOutputStream(file);
             descrModel.serialize(out);
         } catch (Exception e) {
-            // TODO Log ?
+            // XXX: Log ?
         } finally {
             try {
                 out.close();
@@ -148,96 +148,66 @@ public final class UnoFactory {
     public static void makeSkeleton(UnoFactoryData data, IWorkbenchPage activePage, IProgressMonitor monitor)
         throws Exception {
 
-        String prjName = (String) data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
-        IUnoidlProject prj = ProjectsManager.getProject(prjName);
-
+        String serviceName = getSkeletonServiceName(data);
         AbstractLanguage lang = (AbstractLanguage) data.getProperty(IUnoFactoryConstants.PROJECT_LANGUAGE);
         IProjectHandler langProjectHandler = lang.getProjectHandler();
         String languageOption = langProjectHandler.getSkeletonMakerLanguage(data);
 
-        if (languageOption != null) {
+        if (serviceName != null && languageOption != null) {
+            String prjName = (String) data.getProperty(IUnoFactoryConstants.PROJECT_NAME);
+            IUnoidlProject prj = ProjectsManager.getProject(prjName);
 
-            // Get the registries
-            String typesReg = ""; //$NON-NLS-1$
-            String[] oooTypes = prj.getOOo().getTypesPath();
-            for (String oooType : oooTypes) {
-                oooType = oooType.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-                oooType = oooType.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
-                oooType = "file:///" + oooType; //$NON-NLS-1$
+            String command = prj.getSdk().getCommand("uno-skeletonmaker"); //$NON-NLS-1$
+  
+            // We need to know if uno-skeletonmaker support passive registration
+            boolean passiveRegistration = UnoSkeletonHelper.supportPassiveRegistration(prj, command, monitor);
 
-                typesReg += " -l " + oooType; //$NON-NLS-1$
-            }
-
-            String prjTypes = prj.getTypesPath().toString();
-            typesReg += " -l " + prjTypes; //$NON-NLS-1$
-
-            // Get the service for which to generate the skeleton
-            UnoFactoryData[] inner = data.getInnerData();
-            String service = ""; //$NON-NLS-1$
-            int i = 0;
-
-            while (i < inner.length && service.equals("")) { //$NON-NLS-1$
-
-                int typeNature = ((Integer) inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
-                if (typeNature == IUnoFactoryConstants.SERVICE) {
-                    String name = (String) inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
-                    String module = (String) inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
-
-                    String fullname = module + "::" + name; //$NON-NLS-1$
-                    fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
-
-                    service = fullname;
-                }
-
-                i++;
-            }
-
-            String implementationName = langProjectHandler.getImplementationName(prj, service);
+            String typesReg = getSkeletonTypesRegistry(prj);
+            String implementationName = langProjectHandler.getImplementationName(prj, serviceName);
 
             // Run the uno-skeletonmaker command
-            String command = prj.getSdk().getCommand("uno-skeletonmaker") + //$NON-NLS-1$
-                " component " + languageOption + //$NON-NLS-1$
-                " --propertysetmixin" + //$NON-NLS-1$
-                " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$
+            command += " component " + languageOption + //$NON-NLS-1$
+                " --propertysetmixin"; //$NON-NLS-1$
+            if (passiveRegistration) {
+                command += " --passive-registration"; //$NON-NLS-1$
+            }
+            command += " -o ./" + prj.getSourcePath().toOSString() + //$NON-NLS-1$
                 " " + typesReg + //$NON-NLS-1$
                 " -n " + implementationName + //$NON-NLS-1$
-                " -t " + service; //$NON-NLS-1$
+                " -t " + serviceName; //$NON-NLS-1$
 
             Process process = prj.getSdk().runTool(prj, command, monitor);
 
             // Process the error output to add it to the log if needed
-            InputStream err = process.getErrorStream();
-            StringWriter writer = new StringWriter();
-
+            String error = null;
             try {
-                int c = err.read();
-                while (c != -1) {
-                    writer.write(c);
-                    c = err.read();
-                }
-            } finally {
-                try {
-                    err.close();
-                    String error = writer.toString();
-                    if (!error.equals("")) { //$NON-NLS-1$
-                        PluginLogger.error(error);
-                    } else {
-                        PluginLogger.info(Messages.getString("UnoFactory.SkeletonGeneratedMessage") + //$NON-NLS-1$
-                            implementationName);
-                    }
-                } catch (java.io.IOException e) {
-                }
+                error = UnoSkeletonHelper.readErrorStream(process);
+            } catch (IOException e) {
+                error = e.getMessage();
             }
+            if (error != null) {
+                if (error.isEmpty()) {
+                    String msg = Messages.getString("UnoFactory.SkeletonGeneratedMessage"); //$NON-NLS-1$
+                    PluginLogger.info(msg + implementationName);
+                } else {
+                    PluginLogger.error(error);
+                }
+            } else {
+                IPath implementationPath = langProjectHandler.getImplementationFile(implementationName);
+                implementationPath = prj.getSourcePath().append(implementationPath);
+                IFile implementationFile = prj.getFile(implementationPath);
 
-            // Refresh the project to reflect the changes
-            UnoidlProjectHelper.refreshProject(prj, null);
+                // Refresh the project to reflect the changes
+                UnoidlProjectHelper.refreshProject(prj, null);
 
-            // opens the generated files
-            IPath implementationPath = langProjectHandler.getImplementationFile(implementationName);
-            implementationPath = prj.getSourcePath().append(implementationPath);
-            IFile implementationFile = prj.getFile(implementationPath);
+                // If passive registration is not supported we need to cleanup the generated Java skeleton code
+                if (!passiveRegistration) {
+                    UnoSkeletonHelper.cleanupJavaSkeleton(implementationFile, serviceName, monitor);
+                }
 
-            WorkbenchHelper.showFile(implementationFile, activePage);
+                // Opens the generated files
+                WorkbenchHelper.showFile(implementationFile, activePage);
+            }
         }
     }
 
@@ -554,4 +524,41 @@ public final class UnoFactory {
             fileContent.addChild(CompositeFactory.createInclude(types[i]));
         }
     }
+
+    private static String getSkeletonServiceName(UnoFactoryData data) {
+        // Get the service for which to generate the skeleton
+        String service = null;
+        UnoFactoryData[] inner = data.getInnerData();
+        int i = 0;
+        while (i < inner.length && service == null) {
+            int typeNature = ((Integer) inner[i].getProperty(IUnoFactoryConstants.TYPE_NATURE)).intValue();
+            if (typeNature == IUnoFactoryConstants.SERVICE) {
+                String name = (String) inner[i].getProperty(IUnoFactoryConstants.TYPE_NAME);
+                String module = (String) inner[i].getProperty(IUnoFactoryConstants.PACKAGE_NAME);
+                String fullname = module + "::" + name; //$NON-NLS-1$
+                fullname = fullname.replaceAll("::", "."); //$NON-NLS-1$ //$NON-NLS-2$
+                service = fullname;
+            }
+            i++;
+        }
+        return service;
+    }
+
+    private static String getSkeletonTypesRegistry(IUnoidlProject prj) {
+        // Get the registries
+        String typesReg = ""; //$NON-NLS-1$
+        String[] oooTypes = prj.getOOo().getTypesPath();
+        for (String oooType : oooTypes) {
+            oooType = oooType.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+            oooType = oooType.replace(" ", "%20"); //$NON-NLS-1$ //$NON-NLS-2$
+            oooType = "file:///" + oooType; //$NON-NLS-1$
+
+            typesReg += " -l " + oooType; //$NON-NLS-1$
+        }
+
+        String prjTypes = prj.getTypesPath().toString();
+        typesReg += " -l " + prjTypes; //$NON-NLS-1$
+        return typesReg;
+    }
+
 }

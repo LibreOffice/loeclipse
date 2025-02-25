@@ -37,15 +37,10 @@
  ************************************************************************/
 package {0};
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.lang.reflect.Field;
 
 import com.sun.star.lang.XSingleComponentFactory;
-import com.sun.star.registry.XRegistryKey;
+import com.sun.star.lib.uno.helper.Factory;
 
 /**
  * Component main registration class.
@@ -58,118 +53,53 @@ import com.sun.star.registry.XRegistryKey;
 public class RegistrationHandler '{'
 
     /**
-     * Get a component factory for the implementations handled by this class.
-     * 
-     * <p>This method calls all the methods of the same name from the classes listed
-     * in the <code>RegistrationHandler.classes</code> file. <strong>This method
-     * should not be modified.</strong></p>
-     * 
-     * @param sImplementationName the name of the implementation to create.
-     *  
-     * @return the factory which can create the implementation.
-     */
-    public static XSingleComponentFactory __getComponentFactory(String sImplementationName) '{'
-
-        XSingleComponentFactory xFactory = null;
-        Class<?>[] classes = findServicesImplementationClasses();
-
-        int i = 0;
-        while (i < classes.length && xFactory == null) '{'
-            Class<?> clazz = classes[i];
-            if (sImplementationName.equals(clazz.getCanonicalName())) '{'
-                try '{'
-                    Class<?>[] getTypes = new Class[]'{'String.class};
-                    Method getFactoryMethod = clazz.getMethod("__getComponentFactory", getTypes);
-                    Object o = getFactoryMethod.invoke(null, sImplementationName);
-                    xFactory = (XSingleComponentFactory)o;
-                } catch (Exception e) '{'
-                    // Nothing to do: skip
-                    System.err.println("Error happened");
-                    e.printStackTrace();
-                }
-            }
-            i++;
+    * Get a component factory for the implementations handled by this class.
+    *
+    * <p>This method retrieve the Class object associated with the class with the given
+    * <code>implementation</code> String parameter. If this class has a <code>m_serviceNames</code>
+    * static field then the list of its services will be used, otherwise the <code>implementation</code>
+    * parameter will be the only entry in the list of supported services.
+    * <strong>This method should not be modified.</strong></p>
+    *
+    * @param implementation the name of the implementation to create.
+    *
+    * @return the factory which can create the implementation.
+    */
+    public static XSingleComponentFactory __getComponentFactory(final String implementation) '{'
+        Class<?> clazz = null;
+        try '{'
+            clazz = Class.forName(implementation);
+        } catch (ClassNotFoundException e) '{'
+            // Nothing to do: skip
+            System.err.println("Error happened");
+            e.printStackTrace();
         }
-        return xFactory;
-    }
-
-    /**
-     * Writes the services implementation informations to the UNO registry.
-     * 
-     * <p>This method calls all the methods of the same name from the classes listed
-     * in the <code>RegistrationHandler.classes</code> file. <strong>This method
-     * should not be modified.</strong></p>
-     *  
-     * @param xRegistryKey the root registry key where to write the informations.
-     *  
-     * @return <code>true</code> if the informations have been successfully written
-     *      to the registry key, <code>false</code> otherwise.
-     */
-    public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey) '{'
-
-        Class<?>[] classes = findServicesImplementationClasses();
-        boolean success = true;
-
-        int i = 0;
-        while (i < classes.length && success) '{'
-            Class<?> clazz = classes[i];
+        XSingleComponentFactory factory = null;
+        if (clazz != null) '{'
+            String [] services = null;
             try '{'
-                Class<?>[] writeTypes = new Class[]'{'XRegistryKey.class};
-                Method getFactoryMethod = clazz.getMethod("__writeRegistryServiceInfo", writeTypes);
-                Object o = getFactoryMethod.invoke(null, xRegistryKey);
-                success = success && ((Boolean)o).booleanValue();
-            } catch (Exception e) '{'
-                success = false;
+                int i = 0;
+                Field[] fields = clazz.getDeclaredFields();
+                while (i < fields.length && services == null) '{'
+                    Field field = fields[i];
+                    if (field.getName().equals("m_serviceNames")) '{'
+                        field.setAccessible(true);
+                        services = (String[]) field.get(null);
+                    }
+                    i++;
+                }
+            } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) '{'
+                // Nothing to do: skip
+                System.err.println("Error happened");
                 e.printStackTrace();
             }
-            i++;
-        }
-        return success;
-    }
-
-    /**
-     * @return all the UNO implementation classes. 
-     */
-    private static Class<?>[] findServicesImplementationClasses() '{'
-
-        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-
-        InputStream in = RegistrationHandler.class.getResourceAsStream("RegistrationHandler.classes");
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
-
-        try '{'
-            String line = reader.readLine();
-            while (line != null) '{'
-                if (!line.equals("")) '{'
-                    line = line.trim();
-                    try '{'
-                        Class<?> clazz = Class.forName(line);
-
-                        Class<?>[] writeTypes = new Class[]'{'XRegistryKey.class};
-                        Class<?>[] getTypes = new Class[]'{'String.class};
-
-                        Method writeRegMethod = clazz.getMethod("__writeRegistryServiceInfo", writeTypes);
-                        Method getFactoryMethod = clazz.getMethod("__getComponentFactory", getTypes);
-
-                        if (writeRegMethod != null && getFactoryMethod != null) '{'
-                            classes.add(clazz);
-                        }
-
-                    } catch (Exception e) '{'
-                        e.printStackTrace();
-                    }
-                }
-                line = reader.readLine();
+            if (services == null) '{'
+                services = new String[] '{'implementation};
+                System.err.println("No <m_serviceNames> static field, defaulting to: " + implementation);               
             }
-        } catch (IOException e) '{'
-            e.printStackTrace();
-        } finally '{'
-            try '{'
-                reader.close();
-                in.close();
-            } catch (Exception e) '{' }
+            factory = Factory.createComponentFactory(clazz, services);
         }
-
-        return classes.toArray(new Class[classes.size()]);
+        return factory;
     }
+
 }

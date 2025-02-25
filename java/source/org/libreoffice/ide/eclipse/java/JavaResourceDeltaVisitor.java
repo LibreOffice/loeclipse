@@ -36,20 +36,20 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.java;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.core.model.ProjectsManager;
@@ -72,18 +72,18 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
         IResource res = delta.getResource();
         if (res != null && res.getType() == IResource.FILE) {
 
-            IProject project = delta.getResource().getProject();
-            IUnoidlProject prj = ProjectsManager.getProject(project.getName());
-            if (prj != null) {
+            IProject prj = res.getProject();
+            IUnoidlProject unoPrj = ProjectsManager.getProject(prj.getName());
+            if (unoPrj != null) {
                 // The resource is a UNO project or is contained in a UNO project
                 visitChildren = true;
                 // Check if the resource is a service implementation
                 if (delta.getKind() == IResourceDelta.ADDED) {
-                    addImplementation(prj, res);
+                    addImplementation(unoPrj, res);
                 } else if (delta.getKind() == IResourceDelta.REMOVED) {
-                    removeImplementation(prj, delta, res);
+                    removeImplementation(unoPrj, res);
                 } else if (delta.getKind() == IResourceDelta.CHANGED) {
-                    changeJavaBuildPorperties(prj, res);
+                    changeImplementation(unoPrj, res);
                 }
             }
         }
@@ -95,23 +95,14 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
      * Remove the delta resource from the implementations.
      *
      * @param prj the concerned UNO project
-     * @param delta the delta to remove
      * @param res the concerned delta resource
      */
-    private void removeImplementation(IUnoidlProject prj, IResourceDelta delta, IResource res) {
-        if (res.getName().endsWith(".java")) { //$NON-NLS-1$
-            String path = delta.getProjectRelativePath().toString();
-            path = path.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
-            path = path.replace("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
-
-            Vector<String> classes = RegistrationHelper.readClassesList(prj);
-            for (String implName : classes) {
-                if (path.endsWith(implName)) {
-                    RegistrationHelper.removeImplementation(prj, implName);
-                }
+    private void removeImplementation(IUnoidlProject prj, IResource res) {
+        if (isJavaSourceFile(res)) {
+            IType type = getJavaImplementationType(prj.getProject(), res);
+            if (type != null) {
+                RegistrationHelper.removeImplementation(prj, type.getFullyQualifiedName());
             }
-        } else if (res.getName().endsWith(".jar")) {
-            RegistrationHelper.checkClassesListFile(prj);
         }
     }
 
@@ -122,10 +113,13 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
      * @param res the concerned delta resource
      */
     private void addImplementation( IUnoidlProject prj, IResource res) {
-        if (res.getName().endsWith(".java")) { //$NON-NLS-1$
-            String className = getJavaServiceImpl(res);
-            if (className != null) {
-                RegistrationHelper.addImplementation(prj, className);
+        if (isJavaSourceFile(res)) {
+            IType type = getJavaImplementationType(prj.getProject(), res);
+            if (type != null) {
+                IField field = getServiceNameField(type);
+                if (field.exists()) {
+                    addImplementation(prj, type, field);
+                }
             }
         }
     }
@@ -136,82 +130,130 @@ public class JavaResourceDeltaVisitor implements IResourceDeltaVisitor {
      * @param prj the concerned UNO project
      * @param res the concerned delta resource
      */
-    private void changeJavaBuildPorperties(IUnoidlProject prj, IResource res) {
-        if (res.getName().equals(".classpath") && //$NON-NLS-1$
-            prj.hasBuildFile()) {
-            List <IResource> libs = JavaClassPathProvider.getWorkspaceLibs(prj);
-            PluginLogger.debug("Found " + libs.size() + " Jars");
-            prj.saveJavaBuildProperties(libs);
+    private void changeImplementation(IUnoidlProject prj, IResource res) {
+        if (isEclipseClassPath(res) && prj.hasBuildFile()) {
+            changeJavaBuildProperties(prj, res);
+        } else if (isJavaSourceFile(res)) {
+            IType type = getJavaImplementationType(prj.getProject(), res);
+            if (type != null) {
+                IField field = getServiceNameField(type);
+                if (field.exists()) {
+                    addImplementation(prj, type, field);
+                } else {
+                    RegistrationHelper.removeImplementation(prj, type.getFullyQualifiedName());
+                }
+            }
         }
     }
 
     /**
-     * Get the java service implementation class name.
+     * Add the type to the implementations.
+     *
+     * @param prj the concerned UNO project
+     * @param type the concerned delta resource
+     * @param field the concerned delta resource
+     */
+    private void addImplementation(IUnoidlProject prj, IType type, IField field) {
+        String serviceName = getServiceNameValue(field);
+        if (serviceName != null) {
+            RegistrationHelper.addImplementation(prj, type.getFullyQualifiedName(), serviceName);
+        }
+    }
+
+    /**
+     * Is resource a Java source file.
      *
      * @param res the resource to check.
-     * @return <code>class name</code> if it contains the necessary static methods for Java
+     * @return <code>true</code> if resource is a Java source file or <code>false</code> if not.
+     */
+    private boolean isJavaSourceFile(IResource res) {
+        return "java".equals(res.getFileExtension()); //$NON-NLS-1$
+    }
+
+    /**
+     * Is resource the Eclipse .classpath.
+     *
+     * @param res the resource to check.
+     * @return <code>true</code> if resource is the Eclipse .classpath file or <code>false</code> if not.
+     */
+    private boolean isEclipseClassPath(IResource res) {
+        return res.getName().equals(".classpath"); //$NON-NLS-1$
+    }
+
+    /**
+     * Change the delta resource to the java project.
+     *
+     * @param prj the concerned UNO project
+     * @param res the concerned delta resource
+     */
+    private void changeJavaBuildProperties(IUnoidlProject prj, IResource res) {
+        List <IResource> libs = JavaClassPathProvider.getWorkspaceLibs(prj);
+        PluginLogger.debug("Found " + libs.size() + " Jars"); //$NON-NLS-1$ //$NON-NLS-2$
+        prj.saveJavaBuildProperties(libs);
+    }
+
+    /**
+     * Get the java type of resource.
+     *
+     * @param prj the project.
+     * @param res the resource to check.
+     * @return <code>type</code> if it contains the necessary static methods for Java
      *      UNO service implementation registration or <code>null</code> if not.
      */
-    private String getJavaServiceImpl(IResource res) {
+    private IType getJavaImplementationType(IProject prj, IResource res) {
 
-        String className = null;
-        /*
-         * For sure the resource is a Java class file.
-         * Now the file has to be read to find out if it contains the two
-         * following methods:
-         *
-         *    + public static XSingleComponentFactory __getComponentFactory
-         *    + public static boolean __writeRegistryServiceInfo(XRegistryKey xRegistryKey )
-         */
-        FileInputStream in = null;
-        BufferedReader reader = null;
-        try {
-            File file = res.getLocation().toFile();
-            in = new FileInputStream(file);
-            reader = new BufferedReader(new InputStreamReader(in));
-
-            // Read the file into a string without line delimiters
-            String line = reader.readLine();
-            String fileContent = ""; //$NON-NLS-1$
-            while (line != null) {
-                fileContent = fileContent + line;
-                line = reader.readLine();
-            }
-
-            String getFactoryRegex = "public\\s+static\\s+XSingleComponentFactory" + //$NON-NLS-1$
-                "\\s+__getComponentFactory"; //$NON-NLS-1$
-            boolean containsGetFactory = fileContent.split(getFactoryRegex).length > 1;
-
-            String writeServiceRegex = "public\\s+static\\s+boolean\\s+__writeRegistryServiceInfo"; //$NON-NLS-1$
-            boolean containsWriteService = fileContent.split(writeServiceRegex).length > 1;
-
-            // Do not consider the RegistrationHandler class as a service implementation
-            if (containsGetFactory && containsWriteService &&
-                !res.getName().equals("RegistrationHandler.java")) { //$NON-NLS-1$
-                /*
-                 * Computes the class name
-                 */
-                Matcher m3 = Pattern.compile("[^;]*package\\s+([^;]+);.*").matcher(fileContent); //$NON-NLS-1$
-                if (m3.matches()) {
-                    String packageName = m3.group(1);
-
-                    String fileName = res.getName();
-                    className = fileName.substring(0, fileName.length() - ".java".length()); //$NON-NLS-1$
-
-                    className = packageName + "." + className; //$NON-NLS-1$
-                }
-            }
-
-        } catch (Exception e) {
-            // nothing to log
-        } finally {
+        IType implementation = null;
+        IJavaElement element = JavaCore.create(res);
+        if (element.getElementType() == IJavaElement.COMPILATION_UNIT) {
+            ICompilationUnit unit = (ICompilationUnit) element;
+            String[] parameters = {"QXComponentContext;"}; //$NON-NLS-1$
             try {
-                reader.close();
-                in.close();
-            } catch (Exception e) {
+                for (IType type : unit.getAllTypes()) {
+                    // Does this resource has a constructor with XComponentContext has unique parameter
+                    IMethod method = type.getMethod(type.getElementName(), parameters);
+                    if (method.exists() && method.isConstructor()) {
+                        implementation = type;
+                        break;
+                    }
+                }
+            } catch (JavaModelException e) {
+                e.printStackTrace();
             }
         }
-
-        return className;
+        return implementation;
     }
+
+    /**
+     * Get service name filed.
+     *
+     * @param type the type to get field.
+     * @return the service name field from the given type.
+     */
+    private IField getServiceNameField(IType type) {
+        return type.getField("m_serviceName"); //$NON-NLS-1$
+    }
+
+    /**
+     * Get service name value.
+     *
+     * @param field the field having service name.
+     * @return the service name value from the given field.
+     */
+    private String getServiceNameValue(IField field) {
+        Object obj = null;
+        try {
+            obj = field.getConstant();
+        } catch (JavaModelException e) { }
+        String value = null;
+        if (obj != null) {
+            value = (String) obj;
+            if (value != null && !value.isEmpty() &&
+                value.charAt(0) == '"' &&
+                value.charAt(value.length() - 1) == '"') {
+                value = value.substring(1, value.length() - 1);
+            }
+        }
+        return value;
+    }
+
 }

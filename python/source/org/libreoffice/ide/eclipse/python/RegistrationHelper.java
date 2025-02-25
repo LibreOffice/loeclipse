@@ -34,10 +34,9 @@
  *
  *
  ************************************************************************/
-package org.libreoffice.ide.eclipse.java.registration;
+package org.libreoffice.ide.eclipse.python;
 
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
-import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -45,45 +44,28 @@ import org.w3c.dom.NodeList;
 
 
 /**
- * This class provides utility methods to generate the class and files needed
+ * This class provides utility methods to generate the .components files needed
  * by the UNO services implementation registration.
  */
 public abstract class RegistrationHelper {
-
-    public static final String CLASS_FILENAME = "RegistrationHandler"; //$NON-NLS-1$
-
-    /**
-     * Creates all the necessary files for the java registration of UNO services
-     * implementations to the <code>regcomp</code> tool.
-     *
-     * @param project the project where to create the registration handler
-     */
-    public static void generateFiles(IUnoidlProject project) {
-
-        // Copy the RegistrationHandler.java.tpl file
-        TemplatesHelper.copyTemplate(project, CLASS_FILENAME + TemplatesHelper.JAVA_EXT,
-                                     RegistrationHelper.class, new String());
-
-    }
 
     /**
      * Add a UNO service implementation to the list of the project ones.
      *
      * @param project the project where to add the implementation
-     * @param implementation the fully qualified name of the implementation to add,
+     * @param uri the project relative file name of the implementation to add,
      * @param service the fully qualified name of the UNO service to add,
-     *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
      */
-    public static void addImplementation(IUnoidlProject project, String implementation, String service) {
+    public static void addImplementation(IUnoidlProject project, String uri, String service) {
         Element components = null;
         Document document = project.getComponentsDocument();
         if (document != null) {
             components = project.getComponentsElement(document);
         }
         if (components != null) {
-            Element component = getJavaComponent(project, document, components);
+            Element component = getPythonComponent(project, document, components, uri);
             if (component != null) {
-                if (addImplementation(project, document, component, implementation, service)) {
+                if (addImplementation(project, document, component, uri, service)) {
                     project.writeComponentsFile(document);
                 }
             }
@@ -94,17 +76,20 @@ public abstract class RegistrationHelper {
      * remove a UNO service implementation from the list of the project ones.
      *
      * @param project the project where to remove the implementation
-     * @param implementation the fully qualified name of the implementation to remove,
+     * @param uri the fully qualified file of the implementation to remove,
      *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
      */
-    public static void removeImplementation(IUnoidlProject project, String implementation) {
+    public static void removeImplementation(IUnoidlProject project, String uri) {
         boolean removed = false;
         Document document = project.getComponentsDocument(false);
         if (document != null) {
             Element components = project.getComponentsElement(document);
             if (components != null) {
-                Element component = getJavaComponent(project, document, components, false);
-                removed = project.removeImplementation(components, component, implementation);
+                Element component = getPythonComponent(project, document, components, uri, false);
+                if (component != null) {
+                    components.removeChild(component);
+                    removed = true;
+                }
             }
         }
         if (removed) {
@@ -112,74 +97,67 @@ public abstract class RegistrationHelper {
         }
     }
 
-    /**
-     * Computes the registration class name for the given Uno project.
-     *
-     * The registration class name is generally
-     * <code>&lt;COMPANY.PREFIX&gt;.&lt;OUTPUTEXT&gt;.RegistrationHandler</code>.
-     *
-     * @param project the project for which to compute the class name
-     * @return the registration class name
-     */
-    public static String getRegistrationClassName(IUnoidlProject project) {
-        // Compute the name of the main implementation class
-        String implPkg = project.getCompanyPrefix() + "." + project.getOutputExtension(); //$NON-NLS-1$
-        return implPkg + "." + CLASS_FILENAME; //$NON-NLS-1$
-    }
-
     private static boolean addImplementation(IUnoidlProject project, Document document, Element component,
-                                             String implementation, String service) {
+                                             String uri, String service) {
         boolean added = false;
-        setComponentUri(component, project);
-        Element element = project.getImplementationElement(component, implementation);
+        setComponentUri(component, uri);
+        Element element = project.getImplementationElement(component, service);
         if (element != null) {
             added = project.addServiceElement(document, element, service);
         } else {
-            project.createImplementation(document, component, implementation, service);
+            element = project.createImplementation(document, component, service, service);
             added = true;
+        }
+        // If an implementation has been added, we must remove any existing ones.
+        if (added) {
+            project.removeImplementationElements(component, element);
         }
         return added;
     }
 
-    private static Element getJavaComponent(IUnoidlProject project, Document document, Element components) {
-        return getJavaComponent(project, document, components, true);
+    private static Element getPythonComponent(IUnoidlProject project, Document document,
+                                              Element components, String uri) {
+        return getPythonComponent(project, document, components, uri, true);
     }
 
-    private static Element getJavaComponent(IUnoidlProject project, Document document,
-                                            Element components, boolean create) {
+    private static Element getPythonComponent(IUnoidlProject project, Document document,
+                                              Element components, String uri, boolean create) {
         Element component = null;
         NodeList nodes = components.getElementsByTagName("component"); //$NON-NLS-1$
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
-                if (isJavaComponent(element)) {
+                if (isPythonComponent(element, uri)) {
                     component = element;
                     break;
                 }
             }
         }
         if (component == null && create) {
-            component = createJavaComponent(project, document, components);
+            component = createPythonComponent(project, document, components, uri);
         }
         return component;
     }
 
-    private static Element createJavaComponent(IUnoidlProject project, Document document, Element components) {
+    private static Element createPythonComponent(IUnoidlProject project, Document document,
+                                                 Element components, String uri) {
         Element component = document.createElement("component"); //$NON-NLS-1$
-        component.setAttribute("loader", "com.sun.star.loader.Java2"); //$NON-NLS-1$ //$NON-NLS-2$
-        setComponentUri(component, project);
+        component.setAttribute("loader", "com.sun.star.loader.Python"); //$NON-NLS-1$ //$NON-NLS-2$
+        setComponentUri(component, uri);
         components.appendChild(component);
         return component;
     }
 
-    private static boolean isJavaComponent(Element component) {
+    private static boolean isPythonComponent(Element component, String uri) {
         return component.hasAttribute("loader") && //$NON-NLS-1$
-               component.getAttribute("loader").equals("com.sun.star.loader.Java2"); //$NON-NLS-1$ //$NON-NLS-2$
+               component.hasAttribute("uri") && //$NON-NLS-1$
+               component.getAttribute("loader").equals("com.sun.star.loader.Python") && //$NON-NLS-1$ //$NON-NLS-2$
+               component.getAttribute("uri").equals(uri); //$NON-NLS-1$
     }
 
-    private static void setComponentUri(Element component, IUnoidlProject project) {
-        component.setAttribute("uri", project.getName() + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+    private static void setComponentUri(Element component, String uri) {
+        component.setAttribute("uri", uri); //$NON-NLS-1$
     }
 
 }

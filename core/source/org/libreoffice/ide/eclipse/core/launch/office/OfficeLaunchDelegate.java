@@ -34,6 +34,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -104,9 +105,9 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
                     IProject prj = ResourcesPlugin.getWorkspace().getRoot().getProject(prjName);
                     TypesBuilder.build(prj, monitor);
 
-                    PackagePropertiesModel pPropertiesModel = new PackagePropertiesModel(
-                        prj.getFile("package.properties"));
-                    List<IResource> resources = pPropertiesModel.getContents();
+                    IFile properties = prj.getFile("package.properties");
+                    PackagePropertiesModel propertiesModel = new PackagePropertiesModel(properties);
+                    List<IResource> resources = propertiesModel.getContents();
                     File destFile = exportComponent(unoprj, resources);
                     monitor.worked(1);
 
@@ -161,21 +162,21 @@ public class OfficeLaunchDelegate extends LaunchConfigurationDelegate {
     /**
      * Will build and export the .oxt file.
      *
-     * @param pPrj
+     * @param prj
      *            the target project.
-     * @param pResources
+     * @param resources
      *            the resources to add to the package
      *
      * @return the file containing the .oxt file.
      * @throws Exception
      *             if something goes wrong.
      */
-    private File exportComponent(IUnoidlProject pPrj, List<IResource> pResources) throws Exception {
+    private File exportComponent(IUnoidlProject prj, List<IResource> resources) throws Exception {
 
-        IFolder distFolder = pPrj.getDistFolder();
-        File destFile = distFolder.getFile(pPrj.getName() + ".oxt").getLocation().toFile();
+        IFolder distFolder = prj.getDistFolder();
+        File destFile = distFolder.getFile(prj.getName() + ".oxt").getLocation().toFile();
 
-        UnoPackage pack = PackageContentSelector.createPackage(pPrj, destFile, pResources);
+        UnoPackage pack = PackageContentSelector.createPackage(prj, destFile, resources);
 
         pack.close();
         return destFile;
