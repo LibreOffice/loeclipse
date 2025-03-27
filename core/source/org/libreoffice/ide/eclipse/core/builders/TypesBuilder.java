@@ -94,7 +94,6 @@ public class TypesBuilder extends IncrementalProjectBuilder {
 
     static int sBuildState = NOT_STARTED_STATE;
 
-    private static String sExtension = "idl";
     private boolean mChangedIdl = false;
 
     /**
@@ -140,29 +139,26 @@ public class TypesBuilder extends IncrementalProjectBuilder {
             @Override
             public boolean visit(IResourceDelta delta) throws CoreException {
 
-                boolean visitChildren = false;
+                boolean visitChild = false;
                 IProject prj = getProject();
-                IUnoidlProject unoprj = ProjectsManager.getProject(prj.getName());
+                IUnoidlProject unoPrj = ProjectsManager.getProject(prj.getName());
 
-                if (unoprj != null) {
-                    IPath idlPath = unoprj.getIdlPath();
-                    IPath resPath = delta.getResource().getProjectRelativePath();
-                    int resType = delta.getResource().getType();
+                if (unoPrj != null) {
+                    IResource res = delta.getResource();
 
-                    if (resType == IResource.PROJECT) {
-                        visitChildren = true;
-                    } else if (resType == IResource.FOLDER &&
-                        resPath.toString().startsWith(idlPath.toString())) {
-                        visitChildren = true;
-                    } else if (resType == IResource.FILE) {
-                        if (sExtension.equalsIgnoreCase(resPath.getFileExtension())) { //$NON-NLS-1$
+                    if (res.getType() == IResource.PROJECT) {
+                        visitChild = true;
+                    } else if (res.getType() == IResource.FOLDER) {
+                        visitChild = res.getProjectRelativePath().toString().startsWith(unoPrj.getIdlDir());
+                    } else if (res.getType() == IResource.FILE) {
+                        if (res.getFileExtension().equals(IUnoidlProject.IDL_EXTENSION)) {
                             mChangedIdl = true;
-                        } else if (resPath.toString().endsWith(unoprj.getTypesPath().toString())) {
+                        } else if (res.equals(unoPrj.getTypesFile())) {
                             sBuildState = COMPLETED_STATE;
                         }
                     }
                 }
-                return visitChildren;
+                return visitChild;
             }
         });
     }
@@ -202,6 +198,9 @@ public class TypesBuilder extends IncrementalProjectBuilder {
         ILanguageBuilder languageBuilder = unoprj.getLanguage().getLanguageBuilder();
         languageBuilder.generateFromTypes(unoprj.getSdk(), unoprj.getOOo(), prj, types,
             build, unoprj.getRootModule(), monitor);
+
+        // Check manifest.xml types file entry
+        unoprj.checkManifestTypes();
 
         prj.refreshLocal(IResource.DEPTH_INFINITE, monitor);
         sBuildState = NOT_STARTED_STATE;

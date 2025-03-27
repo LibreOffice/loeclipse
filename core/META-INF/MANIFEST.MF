@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.ui.forms,
  org.eclipse.debug.core;visibility:=reexport,
  org.eclipse.debug.ui,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.eclipse.jdt.core
 Export-Package: org.libreoffice.ide.eclipse.core,
  org.libreoffice.ide.eclipse.core.actions,
  org.libreoffice.ide.eclipse.core.builders,

@@ -47,6 +47,20 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -70,6 +84,11 @@ import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
 import org.libreoffice.ide.eclipse.core.model.language.IProjectHandler;
 import org.libreoffice.ide.eclipse.core.model.language.LanguagesHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * This class implements the UNO-IDL and project nature interface.
@@ -130,6 +149,11 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * The name of the file containing the UNO project configuration.
      */
     private static final String CONFIG_FILE = ".unoproject"; //$NON-NLS-1$
+
+    /**
+     * The name of the META-INF/manifest.xml file.
+     */
+    private static final String MANIFEST_FILE = "META-INF/manifest.xml"; //$NON-NLS-1$
 
     private IProject mProject;
 
@@ -428,6 +452,18 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
+    public String getIdlDir() {
+        String idlDir = getProperty(IDL_DIR);
+        if (idlDir.startsWith("/")) { //$NON-NLS-1$
+            idlDir = idlDir.substring(1);
+        }
+        return idlDir;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IPath getIdlPath() {
         String idlDir = getProperty(IDL_DIR);
         if (!idlDir.startsWith("/")) { //$NON-NLS-1$
@@ -459,7 +495,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      */
     @Override
     public IPath getTypesPath() {
-        return new Path("types.rdb"); //$NON-NLS-1$
+        return new Path(IDLTYPES_FILE);
     }
 
     /**
@@ -602,9 +638,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             properties.load(in);
             property = properties.getProperty(pPropertyName);
         } catch (Exception e) {
-            String pattern = Messages.getString("UnoidlProject.UnreadableConfigFileWarning"); //$NON-NLS-1$
-            String msg = MessageFormat.format(pattern, CONFIG_FILE);
-            PluginLogger.warning(msg, e);
+            String msg = Messages.getString("UnoidlProject.UnreadableConfigFileWarning"); //$NON-NLS-1$
+            PluginLogger.warning(MessageFormat.format(msg, CONFIG_FILE), e);
         } finally {
             try {
                 in.close();
@@ -648,9 +683,8 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             getFile(CONFIG_FILE).refreshLocal(IResource.DEPTH_ZERO, null);
 
         } catch (Exception e) {
-            String pattern = Messages.getString("UnoidlProject.PropertyChangeError"); //$NON-NLS-1$
-            String message = MessageFormat.format(pattern, name, value);
-            PluginLogger.warning(message, e);
+            String msg = Messages.getString("UnoidlProject.PropertyChangeError"); //$NON-NLS-1$
+            PluginLogger.warning(MessageFormat.format(msg, name, value), e);
         } finally {
             try {
                 in.close();
@@ -690,15 +724,16 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void saveJavaBuildProperties(List <IResource> files) {
+    public void saveJavaBuildProperties(List<IResource> files) {
         File buildFile = getBuildFile();
         Properties properties = getBuildProperties(buildFile);
         String libs = String.join(", ", files.stream().map(IResource::getFullPath)
                                                       .map(IPath::makeRelative)
                                                       .map(IPath::toString)
                                                       .collect(Collectors.toList())); //$NON-NLS-1$
-        PluginLogger.debug("UnoidlProject.saveJavaBuildProperties libs: " + libs);
-        properties.put("uno.java.classpath", libs); //$NON-NLS-1$ //$NON-NLS-2$
+        String msg = Messages.getString("UnoidlProject.SaveJavaBuildProperties"); //$NON-NLS-1$
+        PluginLogger.debug(MessageFormat.format(msg, buildFile.toString(), libs));
+        properties.put("uno.java.classpath", libs); //$NON-NLS-1$
         saveBuildProperties(properties, buildFile);
     }
 
@@ -726,6 +761,170 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     @Override
     public IFolder[] getBinFolders() {
         return getLanguage().getProjectHandler().getBinFolders(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IFile getComponentsFile() {
+        return getFile(COMPONENTS_FILE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IFile getTypesFile() {
+        return getFile(IDLTYPES_FILE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Document getComponentsDocument() {
+        return getComponentsDocument(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Document getComponentsDocument(boolean create) {
+        Document document = null;
+        File file = getComponentsFile().getLocation().toFile();
+        try {
+            DocumentBuilder builder = getNewDocumentBuilder();
+            if (file.exists()) {
+                document = builder.parse(file);
+            } else if (create) {
+                document = builder.newDocument();
+            }
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            PluginLogger.error(Messages.getString("UnoidlProject.GetComponentsFileError"), e); //$NON-NLS-1$
+        }
+        return document;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Element getComponentsElement(Document document) {
+        Element components = null;
+        File file = getComponentsFile().getLocation().toFile();
+        if (file.exists()) {
+            components = document.getDocumentElement();
+        } else {
+            components = document.createElement("components"); //$NON-NLS-1$
+            components.setAttribute("xmlns", "http://openoffice.org/2010/uno-components"); //$NON-NLS-1$ //$NON-NLS-2$
+            document.appendChild(components);
+        }
+        return components;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean removeImplementation(Element components, Element component, String implementation) {
+        boolean removed = false;
+        if (component != null) {
+            int i = 0;
+            NodeList nodes = component.getElementsByTagName("implementation"); //$NON-NLS-1$
+            int length = nodes.getLength();
+            while (i < length && !removed) {
+                removed = removeImplementation(components, component, nodes.item(i), implementation, length);
+                i++;
+            }
+        }
+        return removed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Element createImplementation(Document document, Element component, String implementation, String service) {
+        Element element = document.createElement("implementation"); //$NON-NLS-1$
+        element.setAttribute("name", implementation); //$NON-NLS-1$
+        element.appendChild(createServiceElement(document, service));
+        component.appendChild(element);
+        return element;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Element getImplementationElement(Element component, String implementation) {
+        Element element = null;
+        int i = 0;
+        NodeList nodes = component.getElementsByTagName("implementation"); //$NON-NLS-1$
+        while (i < nodes.getLength() && element == null) {
+            element = getImplementation(nodes.item(i), implementation);
+            i++;
+        }
+        return element;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean addServiceElement(Document document, Element element, String service) {
+        boolean added = false;
+        NodeList nodes = element.getElementsByTagName("service"); //$NON-NLS-1$
+        if (nodes.getLength() > 0) {
+            if (!hasServiceElement(nodes, service)) {
+                setServiceElement(nodes, service);
+                added = true;
+            }
+        } else {
+            element.appendChild(createServiceElement(document, service));
+            added = true;
+        }
+        return added;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeImplementationElements(Element element, Element implementation) {
+        NodeList nodes = element.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            removeImplementationElement(element, nodes.item(i), implementation);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeComponentsFile(Document document) {
+        // Check presence of package.components in META-INF/manifest.xml file
+        checkManifestComponents();
+        writeXmlFile(document, getComponentsFile().getLocation().toFile());
+    }
+
+    /**
+     * Check the META-INF/manifest.xml file
+     * for the application/vnd.sun.star.uno-typelibrary;type=RDB file entry.
+     */
+    @Override
+    public void checkManifestTypes() {
+        // Check presence of type.rdb in META-INF/manifest.xml file
+        File file = getFile(MANIFEST_FILE).getLocation().toFile();
+        if (!file.exists()) {
+            createManifestFile();
+        }
+        Document document = getManifestXmlDocument(file);
+        if (document != null) {
+            String mediatype = "application/vnd.sun.star.uno-typelibrary;type=RDB"; //$NON-NLS-1$
+            checkManifestFileEntry(document, file, mediatype, IDLTYPES_FILE);
+        }
     }
 
     // *************************************************************************
@@ -891,15 +1090,15 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     /**
      * Toggle an error marker on the project indicating that the there is either no LibreOffice nor SDK set.
      *
-     * @param pSet
+     * @param enabled
      *            <code>true</code> if the error marker should be set, <code>false</code> otherwise.
      */
-    private void setErrorMarker(boolean pSet) {
+    private void setErrorMarker(boolean enabled) {
 
         IProject prjRes = getProject();
 
         try {
-            if (pSet) {
+            if (enabled) {
                 IMarker marker = prjRes.createMarker(IMarker.PROBLEM);
                 marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
                 marker.setAttribute(IMarker.MESSAGE, Messages.getString("UnoidlProject.NoOOoSdkError")); //$NON-NLS-1$
@@ -907,7 +1106,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
                 prjRes.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
             }
         } catch (CoreException e) {
-            if (pSet) {
+            if (enabled) {
                 PluginLogger.error(Messages.getString("UnoidlProject.CreateMarkerError") + //$NON-NLS-1$
                     getProjectPath().toString(), e);
             } else {
@@ -970,6 +1169,234 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
             PluginLogger.warning(Messages.getString("UnoidlProject.BuildFileError"), e); //$NON-NLS-1$
         }
         return properties;
+    }
+
+    private Element getImplementation(Node node, String implementation) {
+        Element element = null;
+        if (node.getNodeType() == Node.ELEMENT_NODE && hasImplementation(node, implementation)) {
+            element = (Element) node;
+        }
+        return element;
+    }
+
+    private boolean hasImplementation(Node node, String implementation) {
+        return hasNamedAttribute((Element) node, "name", implementation); //$NON-NLS-1$
+    }
+
+    private boolean removeImplementation(Element components, Element component,
+                                         Node node, String implementation, int length) {
+        boolean removed = false;
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (hasImplementation(node, implementation)) {
+                component.removeChild(node);
+                // If this is the latest implementation then we also need to remove the component.
+                if (length == 1) {
+                    components.removeChild(component);
+                }
+                removed = true;
+            }
+        }
+        return removed;
+    }
+
+    private void removeImplementationElement(Element parent, Node node, Element implementation) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element element = (Element) node;
+            if (!element.equals(implementation)) {
+                parent.removeChild(element);
+            }
+        }
+    }
+
+    private void setServiceElement(NodeList nodes, String service) {
+        Node node = nodes.item(0);
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element element = (Element) node;
+            element.setAttribute("name", service); //$NON-NLS-1$
+        }
+    }
+
+    private boolean hasServiceElement(NodeList nodes, String service) {
+        boolean hasService = false;
+        int i = 0;
+        while (i < nodes.getLength() && !hasService) {
+            hasService = hasServiceElement(nodes.item(i), service);
+            i++;
+        }
+        return hasService;
+    }
+
+    private boolean hasServiceElement(Node node, String service) {
+        boolean hasService = false;
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            hasService = hasNamedAttribute((Element) node, "name", service); //$NON-NLS-1$
+        }
+        return hasService;
+    }
+
+    private boolean hasNamedAttribute(Element element, String name, String value) {
+        return element.hasAttribute(name) && element.getAttribute(name).equals(value);
+    }
+
+    private Element createServiceElement(Document document, String service) {
+        Element element = document.createElement("service"); //$NON-NLS-1$
+        element.setAttribute("name", service); //$NON-NLS-1$
+        return element;
+    }
+
+    /**
+     * Check the META-INF/manifest.xml file
+     * for the application/vnd.sun.star.uno-components file entry.
+     */
+    private void checkManifestComponents() {
+        File file = getFile(MANIFEST_FILE).getLocation().toFile();
+        if (!file.exists()) {
+            createManifestFile();
+        }
+        Document document = getManifestXmlDocument(file);
+        if (document != null) {
+            String mediatype = "application/vnd.sun.star.uno-components"; //$NON-NLS-1$
+            checkManifestFileEntry(document, file, mediatype, COMPONENTS_FILE);
+        }
+    }
+
+    private void createManifestFile() {
+        File file = getFile(MANIFEST_FILE).getLocation().toFile();
+        if (!file.exists()) {
+            Document document = createManifestXmlDocument(file);
+            if (document != null) {
+                writeXmlFile(document, file);
+            }
+        }
+    }
+
+    private Document getManifestXmlDocument(File file) {
+        Document document = null;
+        if (file.exists()) {
+            try {
+                document = getNewDocumentBuilder(true).parse(file);
+            } catch (IOException | SAXException | ParserConfigurationException e) {
+                PluginLogger.error(Messages.getString("UnoidlProject.GetManifestXmlDocumentError"), e); //$NON-NLS-1$
+            }
+        } else {
+            document = createManifestXmlDocument(file);
+        }
+        return document;
+    }
+
+    private Document createManifestXmlDocument(File file) {
+        Document document = null;
+        file.getParentFile().mkdir();
+        String prefix = "manifest"; //$NON-NLS-1$
+        String uri = "http://openoffice.org/2001/manifest"; //$NON-NLS-1$
+        try {
+            document = getNewDocumentBuilder(true).newDocument();
+            document.appendChild(document.createElementNS(uri, prefix + ":manifest")); //$NON-NLS-1$
+        } catch (ParserConfigurationException e) {
+            PluginLogger.error(Messages.getString("UnoidlProject.CreateManifestXmlDocumentError"), e); //$NON-NLS-1$
+        }
+        return document;
+    }
+
+    private DocumentBuilder getNewDocumentBuilder() throws ParserConfigurationException {
+        return getNewDocumentBuilder(false, false);
+    }
+
+    private DocumentBuilder getNewDocumentBuilder(boolean namespace) throws ParserConfigurationException {
+        return getNewDocumentBuilder(namespace, false);
+    }
+
+    private DocumentBuilder getNewDocumentBuilder(boolean namespace, boolean dtd) throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(namespace);
+        if (dtd) {
+            factory.setValidating(false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+        }
+        return factory.newDocumentBuilder();
+    }
+
+    private void checkManifestFileEntry(Document document, File file, String mediaType, String fullpath) {
+        boolean changed = true;
+        Element entry = null;
+        Element root = document.getDocumentElement();
+        String uri = root.getNamespaceURI();
+        String prefix = root.getPrefix();
+        NodeList nodes = root.getElementsByTagNameNS(uri, "file-entry"); //$NON-NLS-1$
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) node;
+                if (element.hasAttributeNS(uri, "media-type") && //$NON-NLS-1$
+                    element.getAttributeNS(uri, "media-type").equals(mediaType)) { //$NON-NLS-1$
+                    entry = element;
+                    break;
+                }
+            }
+        }
+        if (entry == null) {
+            entry = document.createElementNS(uri, prefix + ":file-entry"); //$NON-NLS-1$
+            entry.setAttributeNS(uri, prefix + ":media-type", mediaType); //$NON-NLS-1$
+            entry.setAttributeNS(uri, prefix + ":full-path", fullpath); //$NON-NLS-1$
+            root.appendChild(entry);
+        } else if (!entry.hasAttributeNS(uri, "full-path") || //$NON-NLS-1$
+                   !entry.getAttributeNS(uri, "full-path").equals(fullpath)) { //$NON-NLS-1$
+            entry.setAttributeNS(uri, prefix + ":full-path", fullpath); //$NON-NLS-1$
+        } else {
+            changed = false;
+        }
+        if (changed) {
+            writeXmlFile(document, file);
+        }
+    }
+
+    private void writeXmlFile(Document document, File file) {
+        writeXmlFile(document, file, false);
+    }
+
+    private void writeXmlFile(Document document, File file, boolean dtd) {
+        // Write dom document to a file
+        try {
+            // Hide the standalone="no"
+            document.setXmlStandalone(true);
+            // Remove whitespaces outside tags
+            document.normalize();
+            XPath path = XPathFactory.newInstance().newXPath();
+            NodeList nodes = (NodeList) path.evaluate("//text()[normalize-space()='']", //$NON-NLS-1$
+                                                      document,
+                                                      XPathConstants.NODESET);
+
+            for (int i = 0; i < nodes.getLength(); ++i) {
+                Node node = nodes.item(i);
+                node.getParentNode().removeChild(node);
+            }
+
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute("indent-number", 2); //$NON-NLS-1$
+            Transformer transformer = factory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+
+            if (dtd) {
+                String doctype = "-//OpenOffice.org//DTD Manifest 1.0//EN"; //$NON-NLS-1$
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype);
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "Manifest.dtd"); //$NON-NLS-1$
+            } else {
+                // XML declaration on its own line
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes"); //$NON-NLS-1$
+            }
+
+            // Pretty print XML
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+
+            try  (FileOutputStream stream = new FileOutputStream(file)) {
+                transformer.transform(new DOMSource(document), new StreamResult(stream));
+            }
+            String msg = Messages.getString("UnoidlProject.WriteXmlFile"); //$NON-NLS-1$
+            PluginLogger.debug(MessageFormat.format(msg, file.toString()));
+        } catch (IOException | TransformerException | XPathExpressionException e) {
+            String msg = Messages.getString("UnoidlProject.WriteXmlFileError"); //$NON-NLS-1$
+            PluginLogger.error(MessageFormat.format(msg, file.toString()), e);
+        }
     }
 
 }

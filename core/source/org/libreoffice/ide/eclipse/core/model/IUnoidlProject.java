@@ -38,6 +38,8 @@ package org.libreoffice.ide.eclipse.core.model;
 
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -47,6 +49,8 @@ import org.eclipse.core.runtime.IPath;
 import org.libreoffice.ide.eclipse.core.model.config.IOOo;
 import org.libreoffice.ide.eclipse.core.model.config.ISdk;
 import org.libreoffice.ide.eclipse.core.model.language.AbstractLanguage;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Interface for a UNO project.
@@ -64,6 +68,12 @@ public interface IUnoidlProject {
     public static final String XCS_EXTENSION = "xcs"; //$NON-NLS-1$
 
     public static final String XCU_EXTENSION = "xcu"; //$NON-NLS-1$
+
+    public static final String IDL_EXTENSION = "idl"; //$NON-NLS-1$
+
+    public static final String IDLTYPES_FILE = "types.rdb"; //$NON-NLS-1$
+
+    public static final String COMPONENTS_FILE = "package.components"; //$NON-NLS-1$
 
     /**
      * Cleans up the project before destroying it.
@@ -112,10 +122,10 @@ public interface IUnoidlProject {
     /**
      * Sets the selected SDK.
      *
-     * @param pSdk
+     * @param sdk
      *            the selected SDK
      */
-    public void setSdk(ISdk pSdk);
+    public void setSdk(ISdk sdk);
 
     /**
      * Set a property to the project.
@@ -173,10 +183,10 @@ public interface IUnoidlProject {
     /**
      * Sets the company prefix.
      *
-     * @param pPrefix
+     * @param prefix
      *            new company prefix
      */
-    public void setCompanyPrefix(String pPrefix);
+    public void setCompanyPrefix(String prefix);
 
     /**
      * Returns the company prefix used in the idl modules and implementation trees. For example, it could be
@@ -213,6 +223,11 @@ public interface IUnoidlProject {
      *         project folder.
      */
     public IPath getBuildPath();
+
+    /**
+     * @return the path to the project directory containing the idl files. This path is relative to the project folder.
+     */
+    public String getIdlDir();
 
     /**
      * @return the path to the project directory containing the idl files. This path is relative to the project folder.
@@ -288,53 +303,159 @@ public interface IUnoidlProject {
      * Returns the file handle for the given project relative path. If the file doesn't exists, the handle will be
      * <code>null</code>.
      *
-     * @param pPath
+     * @param path
      *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
      * @see org.eclipse.core.resources.IProject#getFile(java.lang.String)
      */
-    public IFile getFile(IPath pPath);
+    public IFile getFile(IPath path);
 
     /**
      * Returns the file handle for the given project relative path. If the file doesn't exists, the handle will be
      * <code>null</code>.
      *
-     * @param pPath
+     * @param path
      *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
      * @see org.eclipse.core.resources.IProject#getFile(java.lang.String)
      */
-    public IFile getFile(String pPath);
+    public IFile getFile(String path);
+
+    /**
+     * Returns the file handle for project component XML file.
+     *
+     * @return the file handle or <code>null</code>
+     */
+    public IFile getComponentsFile();
+
+    /**
+     * Returns the file handle for idl types file.
+     *
+     * @return the file handle or <code>null</code>
+     */
+    public IFile getTypesFile();
+
+    /**
+     * Returns the XML document for project component XML file.
+     *
+     * @return the XML document or <code>null</code>
+     */
+    public Document getComponentsDocument();
+
+    /**
+     * Returns the XML document for project component XML file.
+     *
+     * @param create create the XML document if not exist
+     *
+     * @return the XML document or <code>null</code>
+     */
+    public Document getComponentsDocument(boolean create);
+
+    /**
+     * Returns the components XML element.
+     *
+     * @param document the XML document
+     *
+     * @return the components XML element.
+     */
+    public Element getComponentsElement(Document document);
+
+    /**
+     * Remove the implementation XML element.
+     *
+     * @param components the XML document
+     * @param component the XML document
+     * @param implementation the XML document
+     *
+     * @return <code>true</code> if implementation has been removed or <code>false</code>
+     */
+    public boolean removeImplementation(Element components, Element component, String implementation);
+
+    /**
+     * Check manifest types file entry.
+     * @throws ParserConfigurationException 
+     */
+    public void checkManifestTypes();
+
+    /**
+     * Get the implementation XML element.
+     *
+     * @param element the component XML element
+     * @param implementation the implementation name
+     *
+     * @return the implementation XML element
+     */
+    public Element getImplementationElement(Element element, String implementation);
+
+    /**
+     * Create a new implementation.
+     *
+     * @param document the XML document
+     * @param component the XML component
+     * @param implName the implementation name
+     * @param serviceName the service name
+     *
+     * @return the created implementation element
+     */
+    public Element createImplementation(Document document, Element component, String implName, String serviceName);
+
+    /**
+     * Check if service exist.
+     *
+     * @param document the XML document
+     * @param element the implementation XML element
+     * @param service the service name
+     *
+     * @return <code>true</code> if service exist or <code>false</code>
+     */
+    public boolean addServiceElement(Document document, Element element, String service);
+
+    /**
+     * Remove all implementation elements from component except the given implementation.
+     *
+     * @param element the component XML element
+     * @param implementation the implementation element to keep
+     *
+     */
+    public void removeImplementationElements(Element element, Element implementation);
+
+    /**
+     * Write the components XML file.
+     *
+     * @param document the XML document
+     *
+     */
+    public void writeComponentsFile(Document document);
 
     /**
      * Returns the folder handle for the given project relative path. If the folder doesn't exists, the handle will be
      * <code>null</code>.
      *
-     * @param pPath
+     * @param path
      *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
      * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
      */
-    public IFolder getFolder(IPath pPath);
+    public IFolder getFolder(IPath path);
 
     /**
      * Returns the folder handle for the given project relative path. If the folder doesn't exists, the handle will be
      * <code>null</code>.
      *
-     * @param pPath
+     * @param path
      *            the path to the folder to get
      *
      * @return the folder handle or <code>null</code>
      *
      * @see org.eclipse.core.resources.IProject#getFolder(java.lang.String)
      */
-    public IFolder getFolder(String pPath);
+    public IFolder getFolder(String path);
 
     /**
      * Defines the directory containing the IDL files.
@@ -347,10 +468,10 @@ public interface IUnoidlProject {
     /**
      * Defines the directory containing the sources.
      *
-     * @param pSourcesDir
+     * @param sourcesDir
      *            the sources directory
      */
-    public void setSourcesDir(String pSourcesDir);
+    public void setSourcesDir(String sourcesDir);
 
     /**
      * Saves the UNO project configuration in a hidden file.

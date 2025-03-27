@@ -264,16 +264,16 @@ public class UnoPackage {
     /**
      * Adds the directory.
      *
-     * @param pPathInArchive
+     * @param pathInArchive
      *            the path in archive
      * @param directory
      *            the directory
      */
-    public void addDirectory(final String pPathInArchive, final File directory) {
+    public void addDirectory(final String pathInArchive, final File directory) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory + " is not a directory!");
         }
-        this.addDirectory(pPathInArchive, directory, new String[0], new String[0]);
+        this.addDirectory(pathInArchive, directory, new String[0], new String[0]);
     }
 
     /**
@@ -388,21 +388,22 @@ public class UnoPackage {
      * Add a UNO components XML file to the package.
      *
      * @param pathInArchive
-     * @param pFile
+     * @param file
      *            the file to add to the package
-     * @param pPlatform
+     * @param platform
      *            optional parameter to use only with native type. Please refer
      *            to the OOo Developer's Guide for more information.
      */
-    public void addComponentsFile(String pathInArchive, File pFile, String pPlatform) {
-        if (!pFile.isFile())
-            throw new IllegalArgumentException("pFile [" + pFile + "] is not a file");
+    public void addComponentsFile(String pathInArchive, File file, String platform) {
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("pFile [" + file + "] is not a file");
+        }
 
         // Do not change the extension from now
         initializeOutput();
 
-        mManifest.addComponentsFile(pathInArchive, pPlatform);
-        addZipContent(pathInArchive, pFile);
+        mManifest.addComponentsFile(pathInArchive, platform);
+        addZipContent(pathInArchive, file);
     }
 
     /**
@@ -644,22 +645,22 @@ public class UnoPackage {
      * This could be used for example for images.
      * </p>
      *
-     * @param pPathInArchive
+     * @param pathInArchive
      *            the path in archive
      * @param file
      *            the file or directory to add.
      */
-    public void addOtherFile(String pPathInArchive, File file) {
+    public void addOtherFile(String pathInArchive, File file) {
         if (!file.isFile()) {
             throw new IllegalArgumentException("File [" + file.getAbsolutePath() + "] is not a file");
         }
 
-        pPathInArchive = FilenameUtils.separatorsToUnix(pPathInArchive);
+        pathInArchive = FilenameUtils.separatorsToUnix(pathInArchive);
 
         // Do not change the extension from now
         initializeOutput();
 
-        addZipContent(pPathInArchive, file);
+        addZipContent(pathInArchive, file);
     }
 
     /**
@@ -718,7 +719,7 @@ public class UnoPackage {
         return result;
     }
 
-    private void addManifestFile(ZipOutputStream pZipOut) throws IOException {
+    private void addManifestFile(ZipOutputStream zipOut) throws IOException {
         File manifestFile = mReadManifestFile;
         if (manifestFile == null) {
             manifestFile = createManifestFile();
@@ -730,7 +731,7 @@ public class UnoPackage {
             }
         }
         ZipContent manifest = new ZipContent("META-INF/manifest.xml", manifestFile);
-        manifest.writeContentToZip(pZipOut);
+        manifest.writeContentToZip(zipOut);
     }
 
     private File createManifestFile() throws IOException {
@@ -769,11 +770,11 @@ public class UnoPackage {
      * Add the path to a resource to clean after having exported the package. The resource won't be cleaned if the
      * package isn't exported.
      *
-     * @param pPath
+     * @param path
      *            the path to the resource to clean.
      */
-    public void addToClean(File pPath) {
-        mToClean.add(pPath);
+    public void addToClean(File path) {
+        mToClean.add(path);
     }
 
     /**
@@ -792,13 +793,13 @@ public class UnoPackage {
     /**
      * Recursively add the file or directory to the Zip entries.
      *
-     * @param pRelativePath
+     * @param relativePath
      *            the relative path of the file to add
      * @param file
      *            the file or directory to add
      */
-    private void addZipContent(String pRelativePath, File file) {
-        addZipContent(pRelativePath, file, new String[0], new String[0]);
+    private void addZipContent(String relativePath, File file) {
+        addZipContent(relativePath, file, new String[0], new String[0]);
     }
 
     /**
@@ -850,15 +851,15 @@ public class UnoPackage {
     /**
      * Checks if the resource is a dialog library.
      *
-     * @param pRes
+     * @param res
      *            the resource to check
      *
      * @return <code>true</code> if the resource is a dialog library, <code>false</code> in any other case
      */
-    private boolean isDialogLibrary(File pRes) {
+    private boolean isDialogLibrary(File res) {
         boolean result = false;
-        if (pRes.isDirectory()) {
-            result = new File(pRes, DIALOG_LIBRARY_INDEX).exists();
+        if (res.isDirectory()) {
+            result = new File(res, DIALOG_LIBRARY_INDEX).exists();
         }
         return result;
     }
@@ -866,15 +867,15 @@ public class UnoPackage {
     /**
      * Checks if the resource is a basic library.
      *
-     * @param pRes
+     * @param res
      *            the resource to check
      *
      * @return <code>true</code> if the resource is a basic library, <code>false</code> in any other case
      */
-    private boolean isBasicLibrary(File pRes) {
+    private boolean isBasicLibrary(File res) {
         boolean result = false;
-        if (pRes.isDirectory()) {
-            result = new File(pRes, BASIC_LIBRARY_INDEX).exists();
+        if (res.isDirectory()) {
+            result = new File(res, BASIC_LIBRARY_INDEX).exists();
         }
         return result;
     }
