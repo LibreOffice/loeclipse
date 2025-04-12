@@ -129,7 +129,7 @@ public class SystemHelper {
      */
     public static String[] addEnv(String[] env, String name, String value, String separator) {
         /*
-         * TODO cdan should add a test for this method (test that the case is preserved even on windows, but compare
+         * XXX: cdan should add a test for this method (test that the case is preserved even on windows, but compare
          * with ignoring case on windows)
          */
         String[] result = new String[1];

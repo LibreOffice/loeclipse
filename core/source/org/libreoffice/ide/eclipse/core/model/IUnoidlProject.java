@@ -396,23 +396,24 @@ public interface IUnoidlProject {
      *
      * @param document the XML document
      * @param component the XML component
-     * @param implName the implementation name
-     * @param serviceName the service name
+     * @param implementation the implementation name
+     * @param services the service names array
      *
      * @return the created implementation element
      */
-    public Element createImplementation(Document document, Element component, String implName, String serviceName);
+    public Element createImplementation(Document document, Element component,
+                                        String implementation, String[] services);
 
     /**
      * Check if service exist.
      *
      * @param document the XML document
      * @param element the implementation XML element
-     * @param service the service name
+     * @param services the service names array
      *
      * @return <code>true</code> if service exist or <code>false</code>
      */
-    public boolean addServiceElement(Document document, Element element, String service);
+    public boolean addServiceElements(Document document, Element element, String[] services);
 
     /**
      * Remove all implementation elements from component except the given implementation.

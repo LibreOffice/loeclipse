@@ -76,13 +76,14 @@ public class RegistrationHandler '{'
         }
         XSingleComponentFactory factory = null;
         if (clazz != null) '{'
+            String fieldName = "m_serviceNames";
             String [] services = null;
             try '{'
                 int i = 0;
                 Field[] fields = clazz.getDeclaredFields();
                 while (i < fields.length && services == null) '{'
                     Field field = fields[i];
-                    if (field.getName().equals("m_serviceNames")) '{'
+                    if (field.getName().equals(fieldName)) '{'
                         field.setAccessible(true);
                         services = (String[]) field.get(null);
                     }
@@ -95,7 +96,7 @@ public class RegistrationHandler '{'
             }
             if (services == null) '{'
                 services = new String[] '{'implementation};
-                System.err.println("No <m_serviceNames> static field, defaulting to: " + implementation);               
+                System.err.println(String.format("No <%s> static field, defaulting to: '{'%s}", fieldName, implementation));
             }
             factory = Factory.createComponentFactory(clazz, services);
         }

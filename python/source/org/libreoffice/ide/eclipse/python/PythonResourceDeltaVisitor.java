@@ -37,9 +37,10 @@
 package org.libreoffice.ide.eclipse.python;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,44 +64,43 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
     @Override
     public boolean visit(IResourceDelta delta) throws CoreException {
 
-        boolean visitChildren = true;
+        boolean visit = true;
 
         IResource res = delta.getResource();
-        if (res != null && res.getType() == IResource.FILE && isPythonSourceFile(res)) {
+        if (res != null && res.getType() == IResource.FILE) {
 
+            IFile file = (IFile) res;
             IUnoidlProject project = ProjectsManager.getProject(res.getProject().getName());
-            if (project != null) {
-                // The resource is a UNO project or is contained in a UNO project
-                visitChildren = true;
-
+            // The resource is a UNO project or is contained in a UNO project
+            if (project != null && isPythonSourceFile(file)) {
                 // Check if the resource is a service implementation
                 if (delta.getKind() == IResourceDelta.ADDED) {
-                    addImplementation(project, res);
+                    addImplementation(project, file);
                 } else if (delta.getKind() == IResourceDelta.REMOVED) {
-                    removeImplementation(project, res);
+                    removeImplementation(project, file);
                 } else if (delta.getKind() == IResourceDelta.CHANGED) {
-                    changeImplementation(project, res);
+                    changeImplementation(project, file);
                 }
             }
         }
 
-        return visitChildren;
+        return visit;
     }
 
-    private boolean isPythonSourceFile(IResource res) {
-        return ((IFile) res).getFileExtension().equals("py");
+    private boolean isPythonSourceFile(IFile file) {
+        return file.getFileExtension().equals("py"); //$NON-NLS-1$
     }
 
     /**
      * Remove the delta resource from the implementations.
      *
      * @param prj the concerned UNO project
-     * @param res the resource to remove
+     * @param file the resource to remove
      */
-    private void removeImplementation(IUnoidlProject prj, IResource res) {
-        String content = getPythonFileContent(res);
+    private void removeImplementation(IUnoidlProject prj, IFile file) {
+        String content = getPythonFileContent(file);
         if (content != null) {
-            String uri = res.getProjectRelativePath().toString();
+            String uri = file.getProjectRelativePath().toString();
             RegistrationHelper.removeImplementation(prj, uri);
         }
     }
@@ -109,15 +109,15 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
      * Add the delta resource to the implementations.
      *
      * @param prj the concerned UNO project
-     * @param res the resource to add.
+     * @param file the resource to add.
      */
-    private void addImplementation(IUnoidlProject prj, IResource res) {
-        String content = getPythonFileContent(res);
+    private void addImplementation(IUnoidlProject prj, IFile file) {
+        String content = getPythonFileContent(file);
         if (content != null) {
-            String uri = res.getProjectRelativePath().toString();
-            String serviceName = getPythonServiceName(content);
-            if (serviceName != null) {
-                RegistrationHelper.addImplementation(prj, uri, serviceName);
+            String uri = file.getProjectRelativePath().toString();
+            String implementation = getImplementationName(content);
+            if (implementation != null) {
+                addImplementation(prj, uri, implementation, content);
             }
         }
     }
@@ -126,15 +126,15 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
      * Change the delta resource to the java project.
      *
      * @param prj the concerned UNO project
-     * @param res the concerned resource
+     * @param file the concerned resource
      */
-    private void changeImplementation(IUnoidlProject prj, IResource res) {
-        String content = getPythonFileContent(res);
+    private void changeImplementation(IUnoidlProject prj, IFile file) {
+        String content = getPythonFileContent(file);
         if (content != null) {
-            String uri = res.getProjectRelativePath().toString();
-            String serviceName = getPythonServiceName(content);
-            if (serviceName != null) {
-                RegistrationHelper.addImplementation(prj, uri, serviceName);
+            String uri = file.getProjectRelativePath().toString();
+            String implementation = getImplementationName(content);
+            if (implementation != null) {
+                addImplementation(prj, uri, implementation, content);
             } else {
                 RegistrationHelper.removeImplementation(prj, uri);
             }
@@ -142,20 +142,36 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
     }
 
     /**
-     * Get the python source file content.
+     * Add the implementations.
      *
-     * @param res the resource to check.
+     * @param prj the concerned UNO project
+     * @param uri the concerned uri
+     * @param implementation the concerned implementation
+     * @param content the concerned python file content
+     */
+    private void addImplementation(IUnoidlProject prj, String uri, String implementation, String content) {
+        String[] services = getServiceNames(content);
+        if (services.length > 0) {
+            RegistrationHelper.addImplementation(prj, uri, implementation, services);
+        } else {
+            RegistrationHelper.removeImplementation(prj, uri);
+        }
+    }
+
+    /**
+     * Get the Python source file content.
+     *
+     * @param file the resource to check.
      * @return <code>file content</code> if it contains the necessary static methods for Python
      *      UNO service implementation registration or <code>null</code> if not.
      */
-    private String getPythonFileContent(IResource res) {
+    private String getPythonFileContent(IFile file) {
 
         String fileContent = null;
         FileInputStream in = null;
         BufferedReader reader = null;
         try {
-            File file = res.getLocation().toFile();
-            in = new FileInputStream(file);
+            in = new FileInputStream(file.getLocation().toFile());
             reader = new BufferedReader(new InputStreamReader(in));
 
             // Read the .py file into a string without line delimiters
@@ -168,8 +184,9 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
             }
             String content = buffer.toString();
 
-            String implHelper = "g_ImplementationHelper *= *unohelper.ImplementationHelper *\\( *\\)"; //$NON-NLS-1$
-            if (content.split(implHelper).length > 1) {
+            String pattern = "g_ImplementationHelper\\s*=\\s*"; //$NON-NLS-1$
+            pattern += "unohelper.ImplementationHelper\\s*\\(\\s*\\)"; //$NON-NLS-1$
+            if (content.split(pattern).length > 1) {
                 fileContent = content;
             }
 
@@ -186,20 +203,62 @@ public class PythonResourceDeltaVisitor implements IResourceDeltaVisitor {
     }
 
     /**
-     * Get the python service implementation name.
+     * Get the Python implementation name.
      *
      * @param content the .py file content.
-     * @return <code>service name</code> if it contains the necessary static methods for Python
+     * @return <code>implementation name</code> if it contains the necessary static methods for Python
      *      UNO service implementation registration or <code>null</code> if not.
      */
-    private String getPythonServiceName(String content) {
-        String serviceName = null;
-        String pattern = "g_ServiceName *= *[\"']([^\"' ][a-zA-Z0-9\\.\\-_]+)[\"']"; //$NON-NLS-1$
+    private String getImplementationName(String content) {
+        String implementation = null;
+        String pattern = "g_ImplementationName\\s*=\\s*"; //$NON-NLS-1$
+        pattern += "[\"']([^\"' ][\\w\\.\\-_]+)[\"']"; //$NON-NLS-1$
+        String value = getPropertyValue(content, pattern);
+        if (value != null) {
+            implementation = value.trim();
+        }
+        return implementation;
+    }
+
+
+    /**
+     * Get the Python service names.
+     *
+     * @param content the .py file content.
+     * @return <code>service names</code> if it contains the necessary static methods for Python
+     *      UNO service implementation registration or <code>null</code> if not.
+     */
+    private String[] getServiceNames(String content) {
+        List<String> services = new ArrayList<>();
+        String pattern = "g_ServiceNames\\s*=\\s*"; //$NON-NLS-1$
+        pattern += "[\\(\\[]([^\\(\\)\\[\\]][\\w\\.\\-_\\s,\"']+)[\\)\\]]"; //$NON-NLS-1$
+        String values = getPropertyValue(content, pattern);
+        if (values != null) {
+            for (String value : values.split(",")) {
+                String service = value.trim().replace("'", "").replace("\"", "");
+                if (!service.isBlank()) {
+                    services.add(service);
+                }
+            }
+        }
+        return services.toArray(new String[services.size()]);
+    }
+
+    /**
+     * Get the python property value.
+     *
+     * @param content the .py file content.
+     * @param pattern the property to search.
+     * @return <code>property value</code> if it contains the necessary static methods for Python
+     *      UNO service implementation registration or <code>null</code> if not.
+     */
+    private String getPropertyValue(String content, String pattern) {
+        String value = null;
         Matcher matcher = Pattern.compile(pattern).matcher(content);
         if (matcher.find()) {
-            serviceName = matcher.group(1);
+            value = matcher.group(1);
         }
-        return serviceName;
+        return value;
     }
 
 }

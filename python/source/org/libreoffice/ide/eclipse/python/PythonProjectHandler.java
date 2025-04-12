@@ -68,6 +68,7 @@ public class PythonProjectHandler implements IProjectHandler {
 
     private static final String SOURCE_BASIS = "/source"; //$NON-NLS-1$
 
+    private static final String PYTHON_TEMPLATE = "StartingPythonClass.py"; //$NON-NLS-1$
     private static final String PYTHON_NATURE = "org.python.pydev.pythonNature"; //$NON-NLS-1$
     private static final String PYTHON_BUILDER = "org.python.pydev.PyDevBuilder"; //$NON-NLS-1$
 
@@ -150,8 +151,8 @@ public class PythonProjectHandler implements IProjectHandler {
         IPath sourcePath = sourceFolder.getProjectRelativePath();
         Object[] args = { prj.getName() };
         // false denotes that the source .tpl filename and the destination filename are not same
-        TemplatesHelper.copyTemplate(prj, sourcePath.toString(), PythonProjectHandler.class,
-            sourcePath.toString(), false, args); //$NON-NLS-1$
+        TemplatesHelper.copyTemplate(prj, PYTHON_TEMPLATE, PythonProjectHandler.class,
+            sourcePath.toString(), false, args);
 
         // Refresh the project
         try {

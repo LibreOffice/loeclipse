@@ -94,17 +94,8 @@ public final class UnoFactory {
         descrModel.getDisplayNames().put(Locale.ENGLISH, prj.getName());
         descrModel.setId(prj.getCompanyPrefix().toLowerCase() + "." + //$NON-NLS-1$
             prj.getName().replaceAll("[^a-zA-Z0-9]", new String()).toLowerCase()); //$NON-NLS-1$
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(file);
+        try (FileOutputStream out = new FileOutputStream(file)) {
             descrModel.serialize(out);
-        } catch (Exception e) {
-            // XXX: Log ?
-        } finally {
-            try {
-                out.close();
-            } catch (Exception e) {
-            }
         }
 
         UnoidlProjectHelper.refreshProject(prj, null);

@@ -87,7 +87,7 @@ public class AntScriptExportWizard extends Wizard implements IExportWizard {
                     if (res != null &&
                         res.getProject().hasNature(OOEclipsePlugin.UNO_NATURE_ID) &&
                         ProjectsManager.getProject(res.getProject().getName()).getLanguage() != null) {
-                        // TODO: We need to check if the project is configured correctly and notify
+                        // XXX: We need to check if the project is configured correctly and notify
                         prj = ProjectsManager.getProject(res.getProject().getName());
                     }
                 }

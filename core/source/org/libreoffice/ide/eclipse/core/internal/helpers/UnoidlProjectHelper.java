@@ -195,10 +195,10 @@ public class UnoidlProjectHelper {
 
             // Creation of the Code Packages
             createCodePackage(unoProject, monitor);
-
-            // Creation of the urd output directory
-            createUrdDir(unoProject, monitor);
         }
+
+        // Creation of the urd output directory
+        createUrdDir(unoProject, monitor);
 
         return unoProject;
     }

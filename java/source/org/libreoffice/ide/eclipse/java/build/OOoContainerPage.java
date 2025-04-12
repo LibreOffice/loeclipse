@@ -118,7 +118,7 @@ public class OOoContainerPage extends WizardPage implements
 
             String prjName = mProject.getProject().getName();
             IUnoidlProject unoPrj = ProjectsManager.getProject(prjName);
-            // TODO: We need to check if the project is configured correctly and notify
+            // XXX: We need to check if the project is configured correctly and notify
             if (unoPrj != null && unoPrj.getLanguage() != null) {
                 // The project is a UNO project
                 unoPrj.setOOo(ooo);

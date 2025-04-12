@@ -364,17 +364,17 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public void setSourcesDir(String pSourcesDir) {
-        if (pSourcesDir == null || pSourcesDir.equals("")) { //$NON-NLS-1$
-            pSourcesDir = UnoidlProjectHelper.SOURCE_BASIS;
+    public void setSourcesDir(String sourcesDir) {
+        if (sourcesDir == null || sourcesDir.equals("")) { //$NON-NLS-1$
+            sourcesDir = UnoidlProjectHelper.SOURCE_BASIS;
         }
 
         // Add a / at the beginning of the path
-        if (!pSourcesDir.startsWith("/")) { //$NON-NLS-1$
-            pSourcesDir = "/" + pSourcesDir; //$NON-NLS-1$
+        if (!sourcesDir.startsWith("/")) { //$NON-NLS-1$
+            sourcesDir = "/" + sourcesDir; //$NON-NLS-1$
         }
 
-        mSourcesDir = pSourcesDir;
+        mSourcesDir = sourcesDir;
     }
 
     /**
@@ -830,14 +830,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
     @Override
     public boolean removeImplementation(Element components, Element component, String implementation) {
         boolean removed = false;
-        if (component != null) {
-            int i = 0;
-            NodeList nodes = component.getElementsByTagName("implementation"); //$NON-NLS-1$
-            int length = nodes.getLength();
-            while (i < length && !removed) {
-                removed = removeImplementation(components, component, nodes.item(i), implementation, length);
-                i++;
-            }
+        NodeList nodes = component.getElementsByTagName("implementation"); //$NON-NLS-1$
+        int length = nodes.getLength();
+        int i = length - 1;
+        // Since some entries may be deleted, we need to iterate the nodes in reverse order
+        while (i >= 0 && !removed) {
+            removed = removeImplementation(components, component, nodes.item(i), implementation, length);
+            i--;
         }
         return removed;
     }
@@ -846,10 +845,13 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public Element createImplementation(Document document, Element component, String implementation, String service) {
+    public Element createImplementation(Document document, Element component,
+                                        String implementation, String[] services) {
         Element element = document.createElement("implementation"); //$NON-NLS-1$
-        element.setAttribute("name", implementation); //$NON-NLS-1$
-        element.appendChild(createServiceElement(document, service));
+        setNameAttribute(element, implementation);
+        for (String service : services) {
+            element.appendChild(createServiceElement(document, service));
+        }
         component.appendChild(element);
         return element;
     }
@@ -873,29 +875,56 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
      * {@inheritDoc}
      */
     @Override
-    public boolean addServiceElement(Document document, Element element, String service) {
-        boolean added = false;
-        NodeList nodes = element.getElementsByTagName("service"); //$NON-NLS-1$
-        if (nodes.getLength() > 0) {
-            if (!hasServiceElement(nodes, service)) {
-                setServiceElement(nodes, service);
-                added = true;
-            }
-        } else {
-            element.appendChild(createServiceElement(document, service));
-            added = true;
+    public boolean addServiceElements(Document document, Element implementation, String[] services) {
+        boolean changed = true;
+        NodeList nodes = implementation.getElementsByTagName("service"); //$NON-NLS-1$
+        int count = nodes.getLength();
+        if (count > 0 && count == services.length) {
+            changed = isServiceNamesChanged(nodes, count, services);
         }
-        return added;
+        if (changed) {
+            // Since some entries may be deleted, we need to iterate the nodes in reverse order
+            for (int i = count - 1; i >= 0; i--) {
+                implementation.removeChild(nodes.item(i));
+            }
+            for (String service : services) {
+                implementation.appendChild(createServiceElement(document, service));
+            }
+        }
+        return changed;
+    }
+
+    private boolean isServiceNamesChanged(NodeList nodes, int count, String[] services) {
+        boolean changed = false;
+        int i = 0;
+        while (i < count && !changed) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) node;
+                if (!hasNameAttribute(element) || !getNameAttribute(element).equals(services[i])) {
+                    changed = true;
+                }
+            }
+            i++;
+        }
+        return changed;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeImplementationElements(Element element, Element implementation) {
-        NodeList nodes = element.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            removeImplementationElement(element, nodes.item(i), implementation);
+    public void removeImplementationElements(Element component, Element implementation) {
+        NodeList nodes = component.getChildNodes();
+        // Since some entries may be deleted, we need to iterate the nodes in reverse order
+        for (int i = nodes.getLength() - 1; i >= 0; i--) {
+            Node node = nodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) node;
+                if (!element.equals(implementation)) {
+                    component.removeChild(element);
+                }
+            }
         }
     }
 
@@ -1173,21 +1202,17 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
 
     private Element getImplementation(Node node, String implementation) {
         Element element = null;
-        if (node.getNodeType() == Node.ELEMENT_NODE && hasImplementation(node, implementation)) {
+        if (node.getNodeType() == Node.ELEMENT_NODE && hasNameAttribute((Element) node, implementation)) {
             element = (Element) node;
         }
         return element;
-    }
-
-    private boolean hasImplementation(Node node, String implementation) {
-        return hasNamedAttribute((Element) node, "name", implementation); //$NON-NLS-1$
     }
 
     private boolean removeImplementation(Element components, Element component,
                                          Node node, String implementation, int length) {
         boolean removed = false;
         if (node.getNodeType() == Node.ELEMENT_NODE) {
-            if (hasImplementation(node, implementation)) {
+            if (hasNameAttribute((Element) node, implementation)) {
                 component.removeChild(node);
                 // If this is the latest implementation then we also need to remove the component.
                 if (length == 1) {
@@ -1199,49 +1224,26 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         return removed;
     }
 
-    private void removeImplementationElement(Element parent, Node node, Element implementation) {
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-            Element element = (Element) node;
-            if (!element.equals(implementation)) {
-                parent.removeChild(element);
-            }
-        }
-    }
-
-    private void setServiceElement(NodeList nodes, String service) {
-        Node node = nodes.item(0);
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-            Element element = (Element) node;
-            element.setAttribute("name", service); //$NON-NLS-1$
-        }
-    }
-
-    private boolean hasServiceElement(NodeList nodes, String service) {
-        boolean hasService = false;
-        int i = 0;
-        while (i < nodes.getLength() && !hasService) {
-            hasService = hasServiceElement(nodes.item(i), service);
-            i++;
-        }
-        return hasService;
-    }
-
-    private boolean hasServiceElement(Node node, String service) {
-        boolean hasService = false;
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-            hasService = hasNamedAttribute((Element) node, "name", service); //$NON-NLS-1$
-        }
-        return hasService;
-    }
-
-    private boolean hasNamedAttribute(Element element, String name, String value) {
-        return element.hasAttribute(name) && element.getAttribute(name).equals(value);
-    }
-
     private Element createServiceElement(Document document, String service) {
         Element element = document.createElement("service"); //$NON-NLS-1$
-        element.setAttribute("name", service); //$NON-NLS-1$
+        setNameAttribute(element, service);
         return element;
+    }
+
+    private boolean hasNameAttribute(Element element, String value) {
+        return hasNameAttribute(element) && getNameAttribute(element).equals(value);
+    }
+
+    private boolean hasNameAttribute(Element element) {
+        return element.hasAttribute("name"); //$NON-NLS-1$
+    }
+
+    private String getNameAttribute(Element element) {
+        return element.getAttribute("name"); //$NON-NLS-1$
+    }
+
+    private void setNameAttribute(Element element, String value) {
+        element.setAttribute("name", value); //$NON-NLS-1$
     }
 
     /**
@@ -1322,17 +1324,18 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
         Element root = document.getDocumentElement();
         String uri = root.getNamespaceURI();
         String prefix = root.getPrefix();
+        int i = 0;
         NodeList nodes = root.getElementsByTagNameNS(uri, "file-entry"); //$NON-NLS-1$
-        for (int i = 0; i < nodes.getLength(); i++) {
+        while (i < nodes.getLength() && entry == null) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
                 if (element.hasAttributeNS(uri, "media-type") && //$NON-NLS-1$
                     element.getAttributeNS(uri, "media-type").equals(mediaType)) { //$NON-NLS-1$
                     entry = element;
-                    break;
                 }
             }
+            i++;
         }
         if (entry == null) {
             entry = document.createElementNS(uri, prefix + ":file-entry"); //$NON-NLS-1$
@@ -1366,7 +1369,7 @@ public class UnoidlProject implements IUnoidlProject, IProjectNature {
                                                       document,
                                                       XPathConstants.NODESET);
 
-            for (int i = 0; i < nodes.getLength(); ++i) {
+            for (int i = nodes.getLength() - 1; i >= 0; i--) {
                 Node node = nodes.item(i);
                 node.getParentNode().removeChild(node);
             }

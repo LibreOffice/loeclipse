@@ -173,7 +173,7 @@ public class UnoPackageExportPage extends WizardPage {
             for (IUnoidlProject prj : ProjectsManager.getProjects()) {
                 if (root.getProject(prj.getName()).hasNature(OOEclipsePlugin.UNO_NATURE_ID) &&
                     prj.getLanguage() != null) {
-                    // TODO: We need to check if the project is configured correctly and notify
+                    // XXX: We need to check if the project is configured correctly and notify
                     prjs.add(prj.getName());
                 }
             }
