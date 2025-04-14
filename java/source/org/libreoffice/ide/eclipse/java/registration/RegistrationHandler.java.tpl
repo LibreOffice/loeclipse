@@ -96,7 +96,8 @@ public class RegistrationHandler '{'
             }
             if (services == null) '{'
                 services = new String[] '{'implementation};
-                System.err.println(String.format("No <%s> static field, defaulting to: '{'%s}", fieldName, implementation));
+                String template = "No <%s> static field, defaulting to: '{'%s}";
+                System.err.println(String.format(template, fieldName, implementation));
             }
             factory = Factory.createComponentFactory(clazz, services);
         }
