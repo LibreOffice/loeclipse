@@ -73,6 +73,11 @@
         <property name="project.files" value="packagefiles.txt"/>
         <property name="project.zip" value="packagefiles.zip"/>
 
+        <!-- delete temporary files if present -->
+        <delete file="$'{'project.mimetype}"/>
+        <delete file="$'{'project.files}"/>
+        <delete file="$'{'project.zip}"/>
+
         <!-- clean the build and dist directory without deleting it -->
         <delete includeemptydirs="true">
             <fileset dir="$'{'build.dir}" includes="**/idl/,**/classes/"/>
