@@ -36,6 +36,7 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.java.registration;
 
+
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.libreoffice.ide.eclipse.java.utils.TemplatesHelper;
 import org.w3c.dom.Document;
@@ -71,10 +72,10 @@ public abstract class RegistrationHelper {
      *
      * @param project the project where to add the implementation
      * @param implementation the fully qualified name of the implementation to add,
-     * @param service the fully qualified name of the UNO service to add,
      *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
+     * @param services the fully qualified names of UNO services to add,
      */
-    public static void addImplementation(IUnoidlProject project, String implementation, String service) {
+    public static void addImplementation(IUnoidlProject project, String implementation, String[] services) {
         Element components = null;
         Document document = project.getComponentsDocument();
         if (document != null) {
@@ -83,7 +84,8 @@ public abstract class RegistrationHelper {
         if (components != null) {
             Element component = getJavaComponent(project, document, components);
             if (component != null) {
-                if (addImplementation(project, document, component, implementation, service)) {
+                boolean modified = addImplementation(project, document, component, implementation, services);
+                if (modified) {
                     project.writeComponentsFile(document);
                 }
             }
@@ -98,16 +100,18 @@ public abstract class RegistrationHelper {
      *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
      */
     public static void removeImplementation(IUnoidlProject project, String implementation) {
-        boolean removed = false;
+        boolean modified = false;
         Document document = project.getComponentsDocument(false);
         if (document != null) {
             Element components = project.getComponentsElement(document);
             if (components != null) {
                 Element component = getJavaComponent(project, document, components, false);
-                removed = project.removeImplementation(components, component, implementation);
+                if (component != null) {
+                    modified = project.removeImplementation(components, component, implementation);
+                }
             }
         }
-        if (removed) {
+        if (modified) {
             project.writeComponentsFile(document);
         }
     }
@@ -128,14 +132,14 @@ public abstract class RegistrationHelper {
     }
 
     private static boolean addImplementation(IUnoidlProject project, Document document, Element component,
-                                             String implementation, String service) {
+                                             String implementation, String[] services) {
         boolean added = false;
         setComponentUri(component, project);
         Element element = project.getImplementationElement(component, implementation);
         if (element != null) {
-            added = project.addServiceElement(document, element, service);
+            added = project.addServiceElements(document, element, services);
         } else {
-            project.createImplementation(document, component, implementation, service);
+            project.createImplementation(document, component, implementation, services);
             added = true;
         }
         return added;
@@ -148,16 +152,17 @@ public abstract class RegistrationHelper {
     private static Element getJavaComponent(IUnoidlProject project, Document document,
                                             Element components, boolean create) {
         Element component = null;
+        int i = 0;
         NodeList nodes = components.getElementsByTagName("component"); //$NON-NLS-1$
-        for (int i = 0; i < nodes.getLength(); i++) {
+        while (i < nodes.getLength() && component == null) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
                 if (isJavaComponent(element)) {
                     component = element;
-                    break;
                 }
             }
+            i++;
         }
         if (component == null && create) {
             component = createJavaComponent(project, document, components);

@@ -153,7 +153,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
         if (mMainPage.equals(page)) {
 
             // change the language page if possible
-            updateLoanguagePage();
+            updateLanguagePage();
 
             try {
                 // Compute the default service name
@@ -300,7 +300,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
     /**
      * Adapts the language specific page using the selected language.
      */
-    private void updateLoanguagePage() {
+    private void updateLanguagePage() {
         // Create/Remove the language page if needed
         AbstractLanguage lang = mMainPage.getChosenLanguage();
         if (lang != null && !lang.toString().contains("python")) {
@@ -364,6 +364,7 @@ public class NewUnoProjectWizard extends BasicNewProjectResourceWizard implement
                 UnoidlProjectHelper.setProjectBuilders(prj);
 
             } catch (Exception e) {
+                PluginLogger.error(null, e);
                 Object o = mData.getProperty(IUnoFactoryConstants.PROJECT_HANDLE);
                 if (o instanceof IProject) {
                     rollback((IProject) o);

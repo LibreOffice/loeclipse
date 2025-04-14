@@ -36,6 +36,7 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.python;
 
+
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,10 +54,12 @@ public abstract class RegistrationHelper {
      * Add a UNO service implementation to the list of the project ones.
      *
      * @param project the project where to add the implementation
-     * @param uri the project relative file name of the implementation to add,
-     * @param service the fully qualified name of the UNO service to add,
+     * @param uri the project relative file name of the implementation to add
+     * @param implementation name of the UNO component to add
+     * @param services the names of the UNO services to add
      */
-    public static void addImplementation(IUnoidlProject project, String uri, String service) {
+    public static void addImplementation(IUnoidlProject project, String uri,
+                                         String implementation, String[] services) {
         Element components = null;
         Document document = project.getComponentsDocument();
         if (document != null) {
@@ -65,7 +68,8 @@ public abstract class RegistrationHelper {
         if (components != null) {
             Element component = getPythonComponent(project, document, components, uri);
             if (component != null) {
-                if (addImplementation(project, document, component, uri, service)) {
+                boolean modified = addImplementation(project, document, component, uri, implementation, services);
+                if (modified) {
                     project.writeComponentsFile(document);
                 }
             }
@@ -80,7 +84,7 @@ public abstract class RegistrationHelper {
      *         eg: <code>org.libreoffice.comp.test.MyServiceImpl</code>
      */
     public static void removeImplementation(IUnoidlProject project, String uri) {
-        boolean removed = false;
+        boolean modified = false;
         Document document = project.getComponentsDocument(false);
         if (document != null) {
             Element components = project.getComponentsElement(document);
@@ -88,31 +92,29 @@ public abstract class RegistrationHelper {
                 Element component = getPythonComponent(project, document, components, uri, false);
                 if (component != null) {
                     components.removeChild(component);
-                    removed = true;
+                    modified = true;
                 }
             }
         }
-        if (removed) {
+        if (modified) {
             project.writeComponentsFile(document);
         }
     }
 
     private static boolean addImplementation(IUnoidlProject project, Document document, Element component,
-                                             String uri, String service) {
-        boolean added = false;
+                                             String uri, String implementation, String[] services) {
+        boolean modified = false;
         setComponentUri(component, uri);
-        Element element = project.getImplementationElement(component, service);
+        Element element = project.getImplementationElement(component, implementation);
         if (element != null) {
-            added = project.addServiceElement(document, element, service);
+            modified = project.addServiceElements(document, element, services);
         } else {
-            element = project.createImplementation(document, component, service, service);
-            added = true;
-        }
-        // If an implementation has been added, we must remove any existing ones.
-        if (added) {
+            element = project.createImplementation(document, component, implementation, services);
+            // If an implementation has been added, we must remove any existing ones.
             project.removeImplementationElements(component, element);
+            modified = true;
         }
-        return added;
+        return modified;
     }
 
     private static Element getPythonComponent(IUnoidlProject project, Document document,
@@ -123,16 +125,17 @@ public abstract class RegistrationHelper {
     private static Element getPythonComponent(IUnoidlProject project, Document document,
                                               Element components, String uri, boolean create) {
         Element component = null;
+        int i = 0;
         NodeList nodes = components.getElementsByTagName("component"); //$NON-NLS-1$
-        for (int i = 0; i < nodes.getLength(); i++) {
+        while (i < nodes.getLength() && component == null) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
                 if (isPythonComponent(element, uri)) {
                     component = element;
-                    break;
                 }
             }
+            i++;
         }
         if (component == null && create) {
             component = createPythonComponent(project, document, components, uri);

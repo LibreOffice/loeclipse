@@ -53,15 +53,9 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -102,7 +96,6 @@ public final class UnoSkeletonHelper {
     public static void cleanupJavaSkeleton(IFile file, String serviceName, IProgressMonitor monitor) {
         try {
             Document document = removeUnneededCode(file, monitor);
-            addNeededCode(document, serviceName, monitor);
             // Save the document
             Files.writeString(file.getLocation().toPath(), document.get());
         } catch (MalformedTreeException | BadLocationException |
@@ -132,57 +125,13 @@ public final class UnoSkeletonHelper {
         return document;
     }
 
-    @SuppressWarnings("unchecked")
-    private static void addNeededCode(Document document, String serviceName, IProgressMonitor monitor)
-        throws MalformedTreeException, BadLocationException {
-        // Add m_serviceName field
-        CompilationUnit unit = getCompilationUnit(document.get(), monitor);
-        unit.recordModifications();
-        FieldDeclaration serviceNameField = getServiceNameField(unit.getAST(), serviceName);
-        int indexField  = FieldIndexFinder.perform(unit);
-        TypeDeclaration type = (TypeDeclaration) unit.types().get(0);
-        type.bodyDeclarations().add(indexField, (BodyDeclaration) serviceNameField);
-        // Apply changes
-        TextEdit edits = unit.rewrite(document, null);
-        edits.apply(document);
-    }
-
     private static CompilationUnit getCompilationUnit(ICompilationUnit unit, IProgressMonitor monitor) {
-        ASTParser parser = getParser();
+        ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setResolveBindings(true);
         parser.setBindingsRecovery(true);
         parser.setSource(unit);
         return (CompilationUnit) parser.createAST(monitor);
-    }
-
-    private static CompilationUnit getCompilationUnit(String source, IProgressMonitor monitor) {
-        ASTParser parser = getParser();
-        parser.setSource(source.toCharArray());
-        return (CompilationUnit) parser.createAST(monitor);
-    }
-
-    private static ASTParser getParser() {
-        ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        return parser;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static FieldDeclaration getServiceNameField(AST ast, String serviceName) {
-        VariableDeclarationFragment fragment = ast.newVariableDeclarationFragment();
-
-        StringLiteral literal = ast.newStringLiteral();
-        literal.setLiteralValue(serviceName);
-
-        fragment.setInitializer(literal);
-        fragment.setName(ast.newSimpleName("m_serviceName"));
-
-        FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(fragment);
-        fieldDeclaration.setType(ast.newSimpleType(ast.newSimpleName("String")));
-
-        fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
-
-        return fieldDeclaration;
     }
 
     private static final class MethodDeclarationFinder extends ASTVisitor {
@@ -233,33 +182,6 @@ public final class UnoSkeletonHelper {
          */
         public List <ImportDeclaration> getImports() {
             return Collections.unmodifiableList(mImports);
-        }
-    }
-
-    private static final class FieldIndexFinder extends ASTVisitor {
-        private int mCount = 0;
-        private int mIndex = 0;
-
-        public static int perform(ASTNode node) {
-            FieldIndexFinder finder = new FieldIndexFinder();
-            node.accept(finder);
-            return finder.getFieldIndex();
-        }
-
-        @Override
-        public boolean visit (final FieldDeclaration field) {
-            if (field.toString().contains("m_serviceNames")) {
-                mIndex = mCount;
-            }
-            mCount ++;
-            return super.visit(field);
-        }
-
-        /**
-         * @return index of m_serviceNames field discovered by this visitor
-         */
-        public int getFieldIndex() {
-            return mIndex;
         }
     }
 

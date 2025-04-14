@@ -36,6 +36,9 @@
  ************************************************************************/
 package org.libreoffice.ide.eclipse.core;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -57,6 +60,9 @@ public class PluginLogger {
      */
     public static void debug(String message, Throwable exc) {
         if (sLevel.equals(LogLevels.DEBUG)) {
+            if (message == null && exc != null) {
+                message = getStackTrace(exc);
+            }
             OOEclipsePlugin.getDefault().getLog().log(new Status(IStatus.OK,
                 OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, message, exc));
         }
@@ -105,6 +111,9 @@ public class PluginLogger {
      */
     public static void warning(String message, Throwable exc) {
         if (!sLevel.equals(LogLevels.ERROR)) {
+            if (message == null && exc != null) {
+                message = getStackTrace(exc);
+            }
             OOEclipsePlugin.getDefault().getLog()
                 .log(new Status(IStatus.WARNING, OOEclipsePlugin.getDefault().getBundle().getSymbolicName(),
                 IStatus.WARNING, message, exc));
@@ -121,6 +130,9 @@ public class PluginLogger {
      */
     public static void error(String message, Throwable exc) {
 
+        if (message == null && exc != null) {
+            message = getStackTrace(exc);
+        }
         OOEclipsePlugin.getDefault().getLog().log(new Status(IStatus.ERROR,
             OOEclipsePlugin.getDefault().getBundle().getSymbolicName(), IStatus.ERROR, message, exc));
     }
@@ -165,5 +177,12 @@ public class PluginLogger {
         }
 
         return result;
+    }
+
+    private static String getStackTrace(Throwable exc) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        exc.printStackTrace(pw);
+        return sw.toString();
     }
 }

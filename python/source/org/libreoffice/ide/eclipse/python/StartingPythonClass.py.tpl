@@ -14,16 +14,18 @@ import uno, unohelper
 from com.sun.star.task import XJobExecutor
 from com.sun.star.document import XEventListener
 
+g_ImplementationName = "org.libreoffice.{0}"
+g_ServiceNames = ("com.sun.star.task.JobExecutor", )
 
 class {0}(unohelper.Base, XJobExecutor, XEventListener):
-    
+
     def trigger(self, args):
         pass
-        
+
     # boilerplate code below this point
     def __init__(self, context):
         pass
-        
+
     def createUnoService(self, name):
         pass
 
@@ -34,7 +36,5 @@ class {0}(unohelper.Base, XJobExecutor, XEventListener):
         pass
 
 g_ImplementationHelper = unohelper.ImplementationHelper()
-g_ImplementationHelper.addImplementation(
-    {0},
-    "org.libreoffice.{0}",
-    ("com.sun.star.task.JobExecutor",))
+g_ImplementationHelper.addImplementation({0}, g_ImplementationName, g_ServiceNames)
+

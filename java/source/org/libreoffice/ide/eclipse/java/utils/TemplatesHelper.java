@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.libreoffice.ide.eclipse.core.PluginLogger;
 import org.libreoffice.ide.eclipse.core.model.IUnoidlProject;
+import org.libreoffice.ide.eclipse.core.wizards.Messages;
 
 /**
  * Provides convenient methods to load, and save templates of Java source

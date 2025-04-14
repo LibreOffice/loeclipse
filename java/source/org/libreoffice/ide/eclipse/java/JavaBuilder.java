@@ -128,7 +128,7 @@ public class JavaBuilder implements ILanguageBuilder {
         // Get the files to export: javamaker output + project classes
         FilesVisitor visitor = new FilesVisitor();
         visitor.addException(unoProject.getFolder(unoProject.getUrdPath()));
-        // TODO: retrieve value from configuration
+        // XXX: retrieve value from configuration
         visitor.addException(unoProject.getFolder(unoProject.getBuildPath().append("idl")));
         visitor.addException(unoProject.getFolder(unoProject.getBuildPath().append("classes")));
 

@@ -404,7 +404,7 @@ public abstract class AbstractOOo implements IOOo, ITableElement {
     protected String[] addUserProfile(IPath userInstallation, String[] env) throws URISyntaxException {
         if (null != userInstallation) {
             // We have to turn the path to a URI something like file:///foo/bar/.ooo-debug
-            // TODO find a better way to get the proper URI.
+            // XXX: find a better way to get the proper URI.
             URI userInstallationURI = new URI("file", "", userInstallation.toFile().toURI().getPath(), null);
             env = SystemHelper.addEnv(env, "UserInstallation", userInstallationURI.toString(), null);
         }
