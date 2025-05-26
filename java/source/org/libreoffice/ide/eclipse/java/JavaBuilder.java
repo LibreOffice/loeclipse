@@ -169,24 +169,23 @@ public class JavaBuilder implements ILanguageBuilder {
                     oooTypesArgs += " -X\"" + ooTypesPath.toOSString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
-                // Todo: What if the user creates other root modules ?
-                String firstModule = rootModule.split("::")[0]; //$NON-NLS-1$
+                String allModule = "*"; //$NON-NLS-1$
 
-                runJavamaker(firstModule, oooTypesArgs, sdk, prj, typesFile, buildFolder, monitor);
+                runJavamaker(allModule, oooTypesArgs, sdk, prj, typesFile, buildFolder, monitor);
             }
         }
     }
 
-    private void runJavamaker(String firstModule, String typesArgs,
+    private void runJavamaker(String allModule, String typesArgs,
                               ISdk sdk, IProject prj, File typesFile,
                               File buildFolder, IProgressMonitor monitor) {
 
         StringBuffer errBuf = new StringBuffer();
         try {
-            String template = "{0} -T {1}.* -nD -Gc -O \"{2}\" \"{3}\" {4}"; //$NON-NLS-1$
+            String template = "{0} -T{1} -nD -Gc -O\"{2}\" \"{3}\" {4}"; //$NON-NLS-1$
             String command = MessageFormat.format(template,
                 sdk.getCommand("javamaker"), //$NON-NLS-1$
-                firstModule,
+                allModule,
                 buildFolder.getAbsolutePath(),
                 typesFile.getAbsolutePath(),
                 typesArgs);

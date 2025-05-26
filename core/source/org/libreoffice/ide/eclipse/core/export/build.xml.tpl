@@ -8,10 +8,10 @@
         ************************************************************
     -->
 
-    <fail message="Please build using Ant 1.9.1 or higher.">
+    <fail message="Please build using Ant 1.10.0 or higher.">
         <condition>
             <not>
-                <antversion atleast="1.9.1"/>
+                <antversion atleast="1.10.0"/>
             </not>
         </condition>
     </fail>
@@ -78,6 +78,10 @@
         <delete file="$'{'project.files}"/>
         <delete file="$'{'project.zip}"/>
 
+        <!-- create the build and dist directory if not exist -->
+        <mkdir dir="$'{'build.dir}"/>
+        <mkdir dir="$'{'dist.dir}"/>
+
         <!-- clean the build and dist directory without deleting it -->
         <delete includeemptydirs="true">
             <fileset dir="$'{'build.dir}" includes="**/idl/,**/classes/"/>
@@ -87,16 +91,25 @@
         </delete>
 
         <!-- create a few empty directories -->
-        <mkdir dir="$'{'build.dir}"/>
-        <mkdir dir="$'{'dist.dir}"/>
         <mkdir dir="$'{'idl.out}"/>
         <mkdir dir="$'{'idl.out.urd}"/>
         <mkdir dir="$'{'idl.out.rdb}"/>
 
+        <first id="regview">
+            <fileset dir="$'{'office.libs.path}" includes="**/regview,**/regview.exe"/>
+        </first>
+        <property name="sdk.regview" value="$'{'toString:regview}"/>
+
+        <first id="idlr">
+            <fileset dir="$'{'sdk.bin.dir}" includes="unoidl-read,unoidl-read.exe"/>
+        </first>
+        <property name="sdk.idlr" value="$'{'toString:idlr}"/>
+
         <first id="idlw">
-            <fileset dir="$'{'sdk.bin.dir}" includes="unoidl-write,unoidl_write.exe"/>
+            <fileset dir="$'{'sdk.bin.dir}" includes="unoidl-write,unoidl-write.exe"/>
         </first>
         <property name="sdk.idlw" value="$'{'toString:idlw}"/>
+
         <condition property="sdk.useidlw">
             <available file="$'{'sdk.idlw}" type="file"/>
         </condition>
@@ -118,7 +131,7 @@
     </target>
 
     <target name="init-java" depends="init-env" if="project.isjava">
-        <echo message="Project is Java"/>
+        <echo message="Project is Java using version: $'{'ant.java.version}"/>
 
         <!-- Setting lib.dir dependencies default directory is /lib or /libs if exist -->
         <condition property="lib.dir" value="libs">
@@ -143,7 +156,7 @@
         <property name="src.module" value="$'{'toString:module}"/>
         <condition property="src.withmodule">
             <and>
-                <javaversion atleast="9"/>
+                <javaversion atleast="11"/>
                 <available file="$'{'src.module}" type="file"/>
             </and>
         </condition>
@@ -160,6 +173,12 @@
         <path id="office.class.path">
             <fileset dir="$'{'office.libs.path}$'{'file.separator}classes">
                 <include name="*.jar"/>
+            </fileset>
+        </path>
+
+        <path id="office.module.path">
+            <fileset dir="$'{'office.libs.path}$'{'file.separator}classes">
+                <include name="libreoffice.jar"/>
             </fileset>
         </path>
 
@@ -232,6 +251,10 @@
 
     <target name="compile-idlwrite" depends="merge-urd" if="sdk.useidlw">
         <echo message="Compile tool: $'{'sdk.idlw}"/>
+        <echo message="Office unotype: $'{'office.unotypes.rdb}"/>
+        <echo message="Office offapi: $'{'office.offapi.rdb}"/>
+        <echo message="idl dir: $'{'idl.dir}"/>
+        <echo message="rdb dir: $'{'idl.rdb.fullpath}"/>
 
         <delete file="$'{'idl.rdb.fullpath}"/>
         <exec executable="$'{'sdk.idlw}" failonerror="true">
@@ -242,7 +265,23 @@
         </exec>
     </target>
 
-    <target name="types" depends="compile-idlwrite" if="project.isjava">
+    <target name="show-idlc" depends="compile-idlwrite" if="sdk.useidlc">
+        <echo message="Tool regview: $'{'sdk.regview}"/>
+        <exec executable="$'{'sdk.regview}" failonerror="true">
+            <arg value="$'{'idl.rdb.fullpath}"/>
+        </exec>
+    </target>
+
+    <target name="show-idlw" depends="show-idlc" if="sdk.useidlw">
+        <echo message="Tool unoidl-read: $'{'sdk.idlr}"/>
+        <exec executable="$'{'sdk.idlr}" failonerror="true">
+            <arg value="$'{'office.unotypes.rdb}"/>
+            <arg value="$'{'office.offapi.rdb}"/>
+            <arg value="$'{'idl.rdb.fullpath}"/>
+        </exec>
+    </target>
+
+    <target name="types" depends="show-idlw" if="project.isjava">
         <condition property="args.offapi" value=" -X&quot;$'{'office.offapi.rdb}&quot;" else="">
             <length string="$'{'office.offapi.rdb}" when="greater" length="0" trim="true"/>
         </condition>
@@ -278,13 +317,13 @@
     <target name="compile-module" depends="compile-java" if="src.withmodule">
         <echo message="Build module path: $'{'build.classes.dir}"/>
         <echo message="Source dir: $'{'src.dir.absolute}"/>
-        <javac srcdir="$'{'src.dir.absolute}" source="9" target="9" encoding="UTF-8" includeantruntime="false"
+        <javac srcdir="$'{'src.dir.absolute}" source="11" target="11" encoding="UTF-8" includeantruntime="false"
             destdir="$'{'build.classes.dir}" excludes="**/*Test*">
             <modulepath>
                 <pathelement location="$'{'build.classes.dir}"/>
                 <path refid="build.class.path"/>
                 <path refid="build.lib.path"/>
-                <path refid="office.class.path"/>
+                <path refid="office.module.path"/>
             </modulepath>
         </javac>
     </target>
