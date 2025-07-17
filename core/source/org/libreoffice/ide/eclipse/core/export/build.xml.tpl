@@ -303,8 +303,9 @@
     <target name="compile-java" depends="types" if="src.withoutmodule">
         <echo message="Build class path: $'{'build.classes.dir}"/>
         <echo message="Source dir: $'{'src.dir.absolute}"/>
-        <javac srcdir="$'{'src.dir.absolute}" source="1.8" target="1.8" encoding="UTF-8" includeantruntime="false"
-            destdir="$'{'build.classes.dir}" excludes="**/module-info.java,**/*Test*">
+        <javac srcdir="$'{'src.dir.absolute}" source="1.8" target="1.8" encoding="UTF-8"
+               includeantruntime="false" debug="true" debuglevel="lines,vars,source"
+               destdir="$'{'build.classes.dir}" excludes="**/module-info.java,**/*Test*">
             <classpath>
                 <pathelement location="$'{'build.classes.dir}"/>
                 <path refid="build.class.path"/>
@@ -317,8 +318,9 @@
     <target name="compile-module" depends="compile-java" if="src.withmodule">
         <echo message="Build module path: $'{'build.classes.dir}"/>
         <echo message="Source dir: $'{'src.dir.absolute}"/>
-        <javac srcdir="$'{'src.dir.absolute}" source="11" target="11" encoding="UTF-8" includeantruntime="false"
-            destdir="$'{'build.classes.dir}" excludes="**/*Test*">
+        <javac srcdir="$'{'src.dir.absolute}" source="11" target="11" encoding="UTF-8"
+               includeantruntime="false" debug="true" debuglevel="lines,vars,source"
+               destdir="$'{'build.classes.dir}" excludes="**/*Test*">
             <modulepath>
                 <pathelement location="$'{'build.classes.dir}"/>
                 <path refid="build.class.path"/>
