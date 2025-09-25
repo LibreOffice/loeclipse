@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.2.1
+* #57 Improvements to passive component registration
+* #156 Passive registration should list all services that an implementation has in package.components
+* #158 Allow ant build to be cancelled
+* #163 Make sure modules are compiled correctly with ant
+* #165 Enable Java debug symbols with Ant
+
 ## 4.2.0
 * #57 Allow passive component registration
 * #145 Fix SDK detection on Windows
